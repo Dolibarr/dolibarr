@@ -375,6 +375,7 @@ ErrorBlockLogNeedObject=Het onveranderlijke logboekobject moet worden ingesteld.
 ErrorBadParameterWhenCallingCreateOfBlockedLog=Ongeldige parameter bij het aanroepen van de functie `create` van een geblokkeerd logbestand.
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=De waarde voor 'Max. aantal decimalen voor prijzen weergegeven op het scherm' (%s) moet gelijk zijn aan of groter zijn dan zowel 'Max. aantal decimalen voor eenheidsprijzen' (%s) als 'Max. aantal decimalen voor totaalprijzen' (%s). Dit is vereist om afrondingsfouten in documenten te voorkomen.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Alleen elementen met de status 'concept' kunnen in een massabewerking worden verwijderd.
+ErrorLDAPFunctionsAreDisabledOnThisPHP=LDAP-functies zijn uitgeschakeld in deze PHP-versie.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Uw PHP-parameter upload_max_filesize (%s) is hoger dan PHP-parameter post_max_size (%s). Dit is geen consistente opstelling.
@@ -466,3 +467,4 @@ SomeShipmentExists=Fout, er is een zending gekoppeld aan Bestelling. Verwijderin
 WarningEvaluationEmptyValidate=Evaluatie kan niet gevalideerd worden, vaardigheidsniveaus niet gedefinieerd
 ErrorBadParametersForDirectDebitFileCreate=Kan geen bankoverschrijvingsbestand aanmaken: de verwachte formaatparameter ontbreekt.
 ErrorBadParametersForDirectDebitFileCreateDids=Kan geen bankoverschrijvingsbestand aanmaken: de ID's van bestaande betalingsverzoeken ontbreken.
+UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password

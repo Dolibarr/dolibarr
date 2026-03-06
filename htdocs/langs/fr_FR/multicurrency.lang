@@ -41,4 +41,4 @@ CurrencyCode=Code de devise
 CurrencyUnitPrice=Prix unitaire en devise étrangère
 CurrencyPrice=Prix en devise étrangère
 MutltiCurrencyAutoUpdateCurrencies=Mettre à jour tous les taux de change
-MulticurrencyOriginalCurrency=original currency
+MulticurrencyOriginalCurrency=monnaie d'origine

@@ -340,6 +340,7 @@ SearchIntoInterventions=Arbeitseinsätze
 SearchIntoExpenseReports=Spesenrapporte
 SearchIntoLeaves=Ferien
 SearchIntoVendorPayments=Lieferantenzahlungen
+SearchIntoMiscPayments=Manual Journal Entries
 NbComments=Anzahl Kommentare
 CommentPage=Kommentare
 CommentDeleted=Kommentar entfernt

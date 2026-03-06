@@ -2258,6 +2258,9 @@ class BookKeeping extends CommonObject
 				$error++;
 			}
 
+			// Store the new piece_num so caller can use it after transformTransaction()
+			$this->piece_num = $next_piecenum;
+
 			if (!$error) {
 				// Delete if there is an empty line
 				$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity)." AND numero_compte IS NULL AND debit = 0 AND credit = 0";

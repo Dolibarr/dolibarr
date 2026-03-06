@@ -60,13 +60,13 @@ repos:
 
   # Gitleaks is a SAST tool for detecting and preventing hardcoded secrets like passwords, api keys, and tokens in git repos
   - repo: https://github.com/gitleaks/gitleaks.git
-    rev: v8.29.0
+    rev: v8.30.0
     hooks:
       - id: gitleaks
 
   # Check github actions
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.10
+    rev: v1.7.11
     hooks:
       - id: actionlint
         stages: [manual]  # To run: pre-commit run -a --hook-stage=manual actionlint
@@ -196,7 +196,7 @@ repos:
 
   # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         args:
@@ -257,7 +257,7 @@ repos:
 
   # Check sql file syntax
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.3.1
+    rev: 4.0.4
     hooks:
       - id: sqlfluff-lint
         stages: [pre-commit, manual]  # manual needed for ci

@@ -145,8 +145,8 @@ class CLeadStatus extends CommonDict
 		if ($id) {
 			$sql_where[] = " t.rowid = ".((int) $id);
 		}
-		if ($code >= 0) {
-			$sql_where[] = " t.code = ".((int) $code);
+		if ($code) {
+			$sql_where[] = " t.code = '".$this->db->escape($code)."'";
 		}
 		if (count($sql_where) > 0) {
 			$sql .= ' WHERE '.implode(' AND ', $sql_where);

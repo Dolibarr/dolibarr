@@ -457,7 +457,7 @@ class ActionComm extends CommonObject
 		"recurid" => array("type" => "varchar(128)", "label" => "Recurid", "enabled" => "1", 'position' => 195, 'notnull' => 0, "visible" => "0",),
 		"recurrule" => array("type" => "varchar(128)", "label" => "Recurrule", "enabled" => "1", 'position' => 200, 'notnull' => 0, "visible" => "0",),
 		"recurdateend" => array("type" => "datetime", "label" => "Recurdateend", "enabled" => "1", 'position' => 205, 'notnull' => 0, "visible" => "0",),
-		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "0",),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "-1",),
 		"extraparams" => array("type" => "varchar(255)", "label" => "Extraparams", "enabled" => "1", 'position' => 215, 'notnull' => 0, "visible" => "0",),
 		"calling_duration" => array("type" => "integer", "label" => "Callingduration", "enabled" => "1", 'position' => 220, 'notnull' => 0, "visible" => "0",),
 		"visibility" => array("type" => "varchar(12)", "label" => "Visibility", "enabled" => "1", 'position' => 225, 'notnull' => 0, "visible" => "0",),
@@ -1423,6 +1423,9 @@ class ActionComm extends CommonObject
 		$hookmanager->initHooks(array('agendadao'));
 
 		$sql = "SELECT a.id";
+		if ($elementtype == 'user') {
+			$sql .= ",a.datep";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
@@ -1442,10 +1445,13 @@ class ActionComm extends CommonObject
 				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'socpeople' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
 			} elseif ($elementtype == 'user') {
-				$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
-				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql1 = $sql;
+				$sql .= " AND a.fk_user_action = ".((int) $fk_element);
+				$sql = "SELECT a.id FROM ((" . $sql . ") UNION (" . $sql1;
+				$sql .= " AND EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
-				$sql .= ")";
+				$sql .= " AND a.fk_user_action <> ".((int) $fk_element);
+				$sql .= ")) as a";
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
@@ -1987,7 +1993,7 @@ class ActionComm extends CommonObject
 	/**
 	 *  Return label of type of event
 	 *
-	 *  @param	int		$mode			0=Mode short, 1=Mode long
+	 *  @param	int		$mode			0=Mode short, 1=Mode long, 2=Mode very long
 	 *  @return	string					HTML String
 	 */
 	public function getTypeLabel($mode = 0)
@@ -2021,6 +2027,11 @@ class ActionComm extends CommonObject
 
 		if ($this->type == 'systemauto' && $mode == 1) {
 			$labeltype .= ' ('.$langs->trans("auto").')';
+		}
+		if ($this->type == 'systemauto' && $mode == 2) {
+			$labeltype = $langs->trans("AutoActions").($this->type_code == 'AC_OTH_AUTO' ? '' : ': '.$labeltype);
+		} elseif ($this->type != 'systemauto' && $mode == 2) {
+			$labeltype = $langs->trans("ManualActions").($this->type_code == 'AC_OTH' ? '' : ': '.$labeltype);
 		}
 
 

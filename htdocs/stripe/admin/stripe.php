@@ -35,16 +35,18 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $servicename = 'Stripe';
-$listofsupportedhooks = array('payment_intent.payment_failed', 'payment_intent.succeeded');
+$listofsupportedhooks = array();
+// For payment by credit card or SEPA
+$listofsupportedhooks[] = array('code' => 'payment_intent.payment_failed', 'status' => 1);
+$listofsupportedhooks[] = array('code' => 'payment_intent.succeeded', 'status' => 1);
 // Add IPN for dispute (used mostly by SEPA)
-$listofsupportedhooks[] = 'charge.dispute.closed';
-$listofsupportedhooks[] = 'charge.dispute.created';
-$listofsupportedhooks[] = 'charge.dispute.funds_withdrawn';
+$listofsupportedhooks[] = array('code' => 'charge.dispute.closed', 'status' => 1);
+$listofsupportedhooks[] = array('code' => 'charge.dispute.created', 'status' => 1);
+$listofsupportedhooks[] = array('code' => 'charge.dispute.funds_withdrawn', 'status' => 1);
 // Add IPN for Payout
-if (getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
-	$listofsupportedhooks[] = 'payout.create';
-	$listofsupportedhooks[] = 'payout.paid';
-}
+$listofsupportedhooks[] = array('code' => 'payout.create', 'status' => getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT') ? 1 : 0);
+$listofsupportedhooks[] = array('code' => 'payout.paid', 'status' => getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT') ? 1 : 0);
+
 
 /**
  * @var Conf $conf
@@ -263,7 +265,15 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinetestwebhookurl");
 	print '<br>'.$out;
-	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.implode('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodetest');
+
+	$messagepopup = $langs->trans('ListOfSupportedHooksToActivate').':<br><br>';
+	foreach ($listofsupportedhooks as $val) {
+		$messagepopup .= '<br>'.(empty($val['status']) ? '<span class="opacitymedium">' : '');
+		$messagepopup .= $val['code'];
+		$messagepopup .= (empty($val['status']) ? ' - '.$langs->trans("FeatureNotUsedAccordingtoSetup", 'Stripe').'</span>' : '');
+	}
+
+	print $form->textwithpicto('', $messagepopup, 1, 'help', 'valignmiddle', 0, 3, 'webhookscodetest');
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY') && getDolGlobalString('STRIPE_TEST_SECRET_KEY') && getDolGlobalString('STRIPE_TEST_WEBHOOK_ID')) {
@@ -337,7 +347,15 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", '0');
 	print '<br>'.$out;
-	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.implode('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodeprod');
+
+	$messagepopup = $langs->trans('ListOfSupportedHooksToActivate').':<br><br>';
+	foreach ($listofsupportedhooks as $val) {
+		$messagepopup .= '<br>'.(empty($val['status']) ? '<span class="opacitymedium">' : '');
+		$messagepopup .= $val['code'];
+		$messagepopup .= (empty($val['status']) ? ' - '.$langs->trans("FeatureNotUsedAccordingtoSetup", 'Stripe').'</span>' : '');
+	}
+
+	print $form->textwithpicto('', $messagepopup, 1, 'help', 'valignmiddle', 0, 3, 'webhookscodeprod');
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY') && getDolGlobalString('STRIPE_LIVE_SECRET_KEY') && getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {

@@ -146,4 +146,37 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 ALTER TABLE llx_adherent_type ADD COLUMN minimumamount    double(24,8) DEFAULT NULL;
 ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text;
 
+ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
+
+ALTER TABLE llx_website_page ADD COLUMN keep_history integer DEFAULT 5;
+ALTER TABLE llx_website_page ADD COLUMN metarobots varchar(128) after keywords;
+
+
+CREATE TABLE llx_accounting_balance_snapshot (
+	rowid              integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	entity             integer DEFAULT 1 NOT NULL,
+	fk_fiscalyear      integer NOT NULL,
+	account_number     varchar(32) NOT NULL,
+	account_label      varchar(255) NOT NULL,
+	subledger_account  varchar(32),
+	subledger_label    varchar(255),
+	debit              double(24,8) NOT NULL default 0,
+	credit             double(24,8) NOT NULL default 0,
+	date_snapshot      datetime,
+	tms                timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_balance_snapshot ADD UNIQUE INDEX uk_accounting_balance_snapshot(entity, fk_fiscalyear, account_number, subledger_account);
+
+ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_account (entity, fk_fiscalyear, account_number, debit, credit);
+ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_subaccount (entity, fk_fiscalyear, subledger_account, debit, credit);
+
+
+-- Switch all crabe templates into sponge
+UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
+UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
+UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
+UPDATE llx_document_model as dm SET nom = 'sponge' WHERE nom = 'crabe' AND type ='invoice' AND NOT EXISTS (SELECT nom FROM llx_document_model AS dm2 WHERE nom = 'sponge' AND type = 'invoice' and dm2.entity = dm.entity);
+
+
 -- end of migration

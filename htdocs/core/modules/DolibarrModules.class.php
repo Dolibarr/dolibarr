@@ -1037,10 +1037,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') {
 			return 'core';
 		}
-		if (!empty($this->version) && !in_array($this->version, array('experimental', 'development')) && empty($this->version_core)) {
+		if (!empty($this->version) && !in_array($this->version, array('experimental', 'development')) && empty($this->version_if_core)) {
 			return 'external';
 		}
-		if (!empty($this->editor_name) || !empty($this->editor_url) && empty($this->version_core)) {
+		if (!empty($this->editor_name) || !empty($this->editor_url) && empty($this->version_if_core)) {
 			return 'external';
 		}
 		if ($this->numero >= 100000) {
