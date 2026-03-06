@@ -25,6 +25,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			persist: true,  				// Keep dialog in DOM after close (avoid reloading content)
 			footer: null,    				// Footer config: { showCancel, cancelLabel, showSubmit, submitLabel, submitFormId, borderTop }
 			onSuccess: null, 				// Callback fired after dialog closes on AJAX form success
+			onLoad: null,    				// Callback fired after dialog content is injected (url or content)
 		};
 
 		// --- Default footer params ---
@@ -136,6 +137,10 @@ document.addEventListener('Dolibarr:Init', function () {
 				});
 
 				bindAjaxForms();
+
+				// Dispatch event and fire onLoad callback after static content injection.
+				dialogEl.dispatchEvent(new CustomEvent('dol-dialog:loaded', { bubbles: true, detail: { dialogId: param.dialogId, triggerData: triggerData } }));
+				if (param.onLoad) param.onLoad(dialogEl, triggerData);
 			}
 
 			// --- Load AJAX content if url is provided ---
@@ -185,6 +190,9 @@ document.addEventListener('Dolibarr:Init', function () {
 
 						// AJAX forms
 						bindAjaxForms();
+
+						dialogEl.dispatchEvent(new CustomEvent('dol-dialog:loaded', { bubbles: true, detail: { dialogId: param.dialogId, triggerData: triggerData } }));
+						if (param.onLoad) param.onLoad(dialogEl, triggerData);
 					})
 					.catch(function () { contentEl.innerHTML = '<span class="dol-dialog-error">Erreur lors du chargement.</span>'; });
 			}
