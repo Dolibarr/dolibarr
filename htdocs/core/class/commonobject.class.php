@@ -1030,6 +1030,12 @@ abstract class CommonObject
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
 					continue;
 				}
+
+				if (empty($extrafields->attributes[$this->table_element]['showintooltip'][$key])) {
+					continue;
+				}
+
+
 				if ($count >= abs($MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP)) {
 					$data['more_extrafields'] = '<br>...';
 					break;

@@ -2788,3 +2788,5 @@ YouAreUsingTheSimplePermissionsMode=You are using the simple permission mode. Go
 GoodiesButtonTitle=Visit Our Merch & Gifts Store
 InitModuleIsSlow=Init of module is slow
 PreviousOptionGuaranteeThatDateIsAlwaysHigher=The previous option already guarantees that the date of invoice is always higher than the previous validated invoice
+DisplayExtraOnTooltip = Display on Tooltips
+DisplayExtraOnTooltipDesc = This field will be displayed on dynamically loaded tooltips.
