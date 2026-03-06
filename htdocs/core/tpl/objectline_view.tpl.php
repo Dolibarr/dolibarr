@@ -185,12 +185,12 @@ if (($line->info_bits & 2) == 2) {
 
 	if ($line->fk_product > 0) {
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : '') . $text;
 			if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
 				print $form->textwithpicto('', $description);
 			}
 		} else {
-			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : ''));
 		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
@@ -205,7 +205,7 @@ if (($line->info_bits & 2) == 2) {
 			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
-				print img_picto('', 'rightarrow');
+				print img_picto('', 'rightarrow.png');
 			}
 			if (preg_match('/^\(DEPOSIT\)/', $line->description)) {
 				$newdesc = preg_replace('/^\(DEPOSIT\)/', $langs->trans("Deposit"), $line->description);

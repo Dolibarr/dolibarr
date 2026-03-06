@@ -19,7 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
- * Copyright (C) 2022-2025  Charlene Benke           	<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2026  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -1595,13 +1595,24 @@ if (!function_exists('dol_getprefix')) {
  *  To link to a module file from a module file, use include './mymodulefile';
  *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
- * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ./myfile, ...)
  * 	@param	string	$classname	Class name (deprecated)
  *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname = '')
 {
 	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we make "include". Other globals var must be retrieved with $GLOBALS['var']
+
+	if (strpos($relpath, '..') !== false) {
+		// Found a not valid path
+		dol_syslog('functions::dol_include_once Tried to load a file with a path including a forbidden sequence ".." : ' . $relpath, LOG_WARNING);
+		return false;
+	}
+	if (!preg_match('/\.php$/', $relpath)) {
+		// Found a not valid path
+		dol_syslog('functions::dol_include_once Tried to load a file that is not a PHP file : ' . $relpath, LOG_WARNING);
+		return false;
+	}
 
 	$fullpath = dol_buildpath($relpath);
 
@@ -3853,7 +3864,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *                                  	    'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
  *	@param	?Translate		$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean			$encodetooutput Use true to convert/encode string into the HTML rendering pagecode (false=keep UTF8 by default)
- *  @param	int				$decorate		Use 1 to apply a HTML css style to decorate the date
+ *  @param	int|string		$decorate		Use 1 or a css to apply a HTML css style to decorate the date
  * 	@return string      					Formatted date or '' if time is null
  *
  *  @see        dol_mktime(), dol_stringtotime(), dol_getdate(), selectDate()
@@ -4102,8 +4113,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	}
 
 	if ($decorate) {
-		$ret = preg_replace('/(\d\d:\d\d [AP]M)$/', '<span class="opacitymedium">\1</span>', $ret);
-		$ret = preg_replace('/(\d\d:\d\d)$/', '<span class="opacitymedium">\1</span>', $ret);
+		$ret = preg_replace('/(\d\d:\d\d [AP]M)$/', '<span class="'.($decorate === 1 ? 'opacitymedium' : $decorate).'">\1</span>', $ret);
+		$ret = preg_replace('/(\d\d:\d\d)$/', '<span class="'.($decorate === 1 ? 'opacitymedium' : $decorate).'">\1</span>', $ret);
 	}
 
 	return $ret;
@@ -5886,6 +5897,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'square' => '#888',
 				'stop-circle' => '#888',
 				'stats' => '#444',
+				'superadmin' => '#600',
 				'switch_off' => '#999',
 				'technic' => '#999',
 				'tick' => '#282',
@@ -6749,7 +6761,7 @@ function img_searchclear($titlealt = 'default', $other = '')
 		$titlealt = $langs->trans('Search');
 	}
 
-	$img = img_picto($titlealt, 'searchclear', $other, 0, 1);
+	$img = img_picto($titlealt, 'searchclear.png', $other, 0, 1);
 
 	$input = '<input type="image" class="liste_titre" name="button_removefilter" src="' . $img . '" ';
 	$input .= 'value="' . dol_escape_htmltag($titlealt) . '" title="' . dol_escape_htmltag($titlealt) . '" >';
@@ -14882,7 +14894,7 @@ function getElementProperties($elementType)
 		$module = 'facture';
 		$table_element = 'facturedet';
 		$parent_element = 'facture';
-	} elseif ($elementType == 'facturerec') {
+	} elseif ($elementType == 'facturerec'|| $elementType == 'facture_rec') {
 		$classpath = 'compta/facture/class';
 		$classfile = 'facture-rec';
 		$module = 'facture';
@@ -16375,7 +16387,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'message' => dol_htmlentitiesbr($obj->message),
+						'message' => $obj->message,
 						'percent' => $obj->percent,
 
 						'userid' => $obj->user_id,
@@ -16405,7 +16417,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'message' => dol_htmlentitiesbr($obj->message),
+						'message' => $obj->message,
 						'percent' => $obj->percent,
 						'acode' => $obj->acode,
 
@@ -16617,16 +16629,23 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$out .= '</span>';
 
 			// Date
-			$out .= '<span class="time"><i class="fa fa-clock-o valignmiddle"></i> <span class="valignmiddle">';
+			$out .= '<span class="time"><i class="fa fa-clock valignmiddle"></i> ';
+			$out .= '<span class="valignmiddle marginrightonly">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'day', 'tzuserrel');
-			$out .= ' &nbsp; '.dol_print_date($histo[$key]['datestart'], 'hour', 'tzuserrel', null, false, 1);
+			//$out .= '</span>';
+			//$out .= '<span class="valignmiddle">'.
+			$out .= ' '.dol_print_date($histo[$key]['datestart'], 'hour', 'tzuserrel', null, false, 'opacitymedium');
+			//$out .= '</span>';
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
 				$tmpb = dol_getdate($histo[$key]['dateend'], true);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel', null, false, 1);
+					$out .= ' - ' . dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel', null, false, 1);
 				} else {
-					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel', null, false, 1);
+					$out .= ' - ' . dol_print_date($histo[$key]['dateend'], 'day', 'tzuserrel');
+					//$out .= '<span class="valignmiddle marginrightonly">';
+					$out .= ' '.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel', null, false, 'opacitymedium');
+					//$out .= '</span>';
 				}
 			}
 			$late = 0;
@@ -16671,6 +16690,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					}
 				}
 				$out .= $contactGetNomUrlCache[$histo[$key]['msg_from']];
+			} else {
+				$out .= '<img class="photomemberphoto userphoto" alt="" src="/public/theme/common/user_anonymous.png">'.$langs->trans("Anonymous");
 			}
 			$out .= '</div>';
 
@@ -16735,20 +16756,21 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			) {
 				$out .= '<div class="timeline-body wordbreak small">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
-				$truncatedText = dolGetFirstLineOfText($histo[$key]['message'], $truncateLines);
-				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
+				$newmess = dol_htmlentitiesbr($histo[$key]['message']);
+				$truncatedText = dolGetFirstLineOfText($newmess, $truncateLines);
+				if ($truncateLines > 0 && strlen($newmess) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
 					$out .= 	dolPrintHTML($truncatedText);
 					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="' . DOL_MAIN_URL_ROOT . '/comm/action/card.php?id=' . $actionstatic->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '" >' . $langs->trans("ReadMore") . ' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
-					$out .=  dolPrintHTML($histo[$key]['message']);
+					$out .=  dolPrintHTML($newmess);
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> ' . $langs->trans("ReadLess") . '</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					$out .= dolPrintHTML($histo[$key]['message']);
+					$out .= dolPrintHTML($newmess);
 				}
 
 				$out .= '</div>';

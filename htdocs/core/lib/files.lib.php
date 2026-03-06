@@ -3491,7 +3491,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif ($modulepart == 'payment') {
 		// Wrapping pour les rapport de paiements
-		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->compta->payment->dir_output.'/'.$original_file;
@@ -3511,7 +3511,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output)) {
+	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
 		// Wrapping pour les expedition
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;

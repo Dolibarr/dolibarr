@@ -301,6 +301,7 @@ if (empty($reshook)) {
 						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, (string) $diroutput, (string) $template, dol_sanitizeFileName($outfile));
 					} catch (Exception $e) {
 						$mesg = $langs->trans('ErrorGeneratingBarcode');
+						$error++;
 					}
 
 					$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = $previousConf;

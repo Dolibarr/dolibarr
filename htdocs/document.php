@@ -33,7 +33,7 @@
  * 				DOL_URL_ROOT.'/document.php?hashp=sharekey'
  */
 
-define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -278,7 +278,7 @@ if (empty($modulepart)) {
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name

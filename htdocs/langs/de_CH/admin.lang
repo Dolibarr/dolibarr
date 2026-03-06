@@ -560,7 +560,6 @@ ResourceSetup=Modul Ressourcen einrichten
 UseSearchToSelectResource=Zeige eine Suchmaske für Ressourcen, statt eine Drop-down - Liste
 DisabledResourceLinkUser=Verknüpfungsmöglichkeit zwischen Ressource und Benutzer unterbinden.
 DisabledResourceLinkContact=Verknüpfungsmöglichkeit zwischen Ressource und Kontakt unterbinden.
-ConfirmUnactivation=Bestätige das Zurücksetzen des Moduls.
 ExportSetup=Modul Daten-Export einrichten
 FeatureNotAvailableWithReceptionModule=Diese Funktion ist nicht verfügbar, wenn das Modul 'Lieferungen' aktiv ist
 DictionaryProductNature=Produktart

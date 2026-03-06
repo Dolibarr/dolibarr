@@ -71,7 +71,6 @@ EnableBarOrRestaurantFeatures=Enable features for Bar or Restaurant
 ConfirmDeletionOfThisPOSSale=Do your confirm the deletion of this current sale ?
 ConfirmDiscardOfThisPOSSale=Do you want to discard this current sale ?
 NoClientErrorMessage=Please select a customer first
-History=History
 ValidateAndClose=Validate and close
 Terminal=Terminal
 NumberOfTerminals=Number of Terminals

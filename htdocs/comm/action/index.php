@@ -9,6 +9,7 @@
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,6 +461,9 @@ if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month') {
 if ($search_categ_cus != 0) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
+if ($check_holiday) {
+	$param .= '&check_holiday=1';
+}
 
 // Show navigation bar
 $nav = '';
@@ -629,7 +633,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle class .family_birthday"); jQuery(".family_birthday").toggle(); });'."\n";
-	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .family_holiday"); jQuery(".family_holiday").toggle(); });'."\n";
+	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .family_holiday"); jQuery(".family_holiday").toggle(); jQuery(this).closest("form").submit(); });'."\n";
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
 			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
@@ -1173,8 +1177,13 @@ if ($user->hasRight("holiday", "read")) {
 		$sql .= " AND x.date_debut <= '".$db->idate(dol_get_last_day($year, $month))."'";
 		$sql .= " AND x.date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 	}
-	if (!$user->hasRight('holiday', 'readall')) {
+	if (!$user->hasRight('holiday', 'readall') || $filtert == '-3') {
+		// Restrict on users of current user and his children
 		$sql .= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
+	}
+	if ($filtert > 0) {
+		// Restrict on user
+		$sql .= " AND x.fk_user = ".((int) $filtert);
 	}
 
 	$resql = $db->query($sql);

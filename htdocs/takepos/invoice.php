@@ -2018,7 +2018,7 @@ if ($placeid > 0) {
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
-				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow');
+				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow.png');
 				if ($line->product_label) {
 					$htmlsupplements[$line->fk_parent_line] .= $line->product_label;
 				}

@@ -1711,12 +1711,12 @@ if ($action == 'create') {
 							$description = $objp->description;
 
 							if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : '') . $text;
 								if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
 									print $form->textwithpicto('', $description);
 								}
 							} else {
-								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : ''));
 							}
 
 							// Add description in form
@@ -2014,7 +2014,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Activate");
 							if ($objp->statut == 4) {
 								$tmpaction = 'unactivateline';
-								$tmpactionpicto = 'playstop';
+								$tmpactionpicto = 'playstop.png';
 								$tmpactiontext = $langs->trans("Disable");
 							}
 							if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {

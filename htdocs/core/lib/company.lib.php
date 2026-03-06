@@ -2419,43 +2419,45 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 
 			// Date
 			$out .= '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
-			if ($histo[$key]['dateend']) {	// There is also a end date
-				$tmpa = dol_getdate($histo[$key]['datestart']);
+			$tmpa = dol_getdate($histo[$key]['datestart']);
+			if (!empty($histo[$key]['dateend'])) {
 				$tmpb = dol_getdate($histo[$key]['dateend']);
-				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					// The same day
-					if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-						$out .= '<div class="center inline-block lineheightsmall">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .= '<br><span class="opacitymedium hourspan">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
-						$out .= '</span>';
-						$out .= '</div>';
-					} else {
-						$out .= '<div class="center inline-block lineheightsmall">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .= '<br><span class="opacitymedium hourspan">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .= '</span>';
-						$out .= '</div>';
-					}
+			} else {
+				$tmpb = $tmpa;
+			}
+			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+				// The same day
+				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+					$out .= '<div class="center inline-block lineheightsmall">';
+					$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+					$out .= '<br><span class="opacitymedium hourspan">';
+					$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+					$out .= '</span>';
+					$out .= '</div>';
 				} else {
-					// Not the same day
-					$out .=  '<div class="center inline-block lineheightsmall">';
-					$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="opacitymedium hourspan">';
-					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-					$out .=  '</span>';
-					$out .=  '</div>';
-					$out .=  ' - ';
-					$out .=  '<div class="center inline-block lineheightsmall">';
-					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="opacitymedium hourspan">';
-					$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
-					$out .=  '</span>';
-					$out .=  '</div>';
+					$out .= '<div class="center inline-block lineheightsmall">';
+					$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+					$out .= '<br><span class="opacitymedium hourspan">';
+					$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+					$out .= '</span>';
+					$out .= '</div>';
 				}
+			} else {
+				// Not the same day
+				$out .=  '<div class="center inline-block lineheightsmall">';
+				$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
+				$out .=  '<br><span class="opacitymedium hourspan">';
+				$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
+				$out .=  '</span>';
+				$out .=  '</div>';
+				$out .=  ' - ';
+				$out .=  '<div class="center inline-block lineheightsmall">';
+				$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
+				$out .=  '<br><span class="opacitymedium hourspan">';
+				$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
+				$out .=  '</span>';
+				$out .=  '</div>';
 			}
 			// Add the late warning
 			$late = 0;
@@ -2798,7 +2800,7 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	if (is_array($filters) && !empty($filters['search_rowid'])) {
 		$sql .= natural_search('a.id', $filters['search_rowid'], 1);
 	}
-	if (is_array($filters) && !empty($filters['search_filtert'])) {
+	if (is_array($filters) && !empty($filters['search_filtert']) && ((int) $filters['search_filtert']) != -1) {
 		$sql .= natural_search('a.fk_user_action', $filters['search_filtert'], 1);
 	}
 

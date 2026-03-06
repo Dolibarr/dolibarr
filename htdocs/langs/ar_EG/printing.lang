@@ -6,3 +6,4 @@ PRINTIPP_HOST=خادم الطباعة
 PRINTIPP_PORT=المنفذ
 PRINTIPP_USER=تسجيل دخول
 PRINTIPP_PASSWORD=كلمة السر
+STATE_IPP_none=بدون شركة أم

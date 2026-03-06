@@ -376,6 +376,7 @@ ErrorBadParameterWhenCallingCreateOfBlockedLog=Bad parameter when calling create
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Value for 'Max. decimals for prices shown on screen' (%s) must be equal to or greater than both 'Max. decimals for unit prices' (%s) and 'Max. decimals for total prices' (%s). This is required to prevent rounding inconsistencies on documents.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 ErrorLDAPFunctionsAreDisabledOnThisPHP=LDAP functions are disabled on this PHP.
+ErrorFailedToGetTokenFromClientIdAndSecret=Failed to get a %s token from client ID and client secret
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

@@ -319,10 +319,13 @@ ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh text NULL AFTER token
 ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 ALTER TABLE llx_blockedlog ADD COLUMN linktoref text;
+ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
 ALTER TABLE llx_blockedlog MODIFY COLUMN linktoref text;
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
 ALTER TABLE llx_blockedlog ADD COLUMN module_source varchar(32) DEFAULT '' AFTER action;
 ALTER TABLE llx_blockedlog ADD COLUMN amounts_taxexcl double(24,8) DEFAULT NULL AFTER amounts;
+
+-- VMYSQL4.3 ALTER TABLE llx_blockedlog ADD INDEX idx_linktoref (linktoref(255));
 
 
 -- Incoterms 2025 and specific terms
@@ -371,6 +374,8 @@ ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
 ALTER TABLE llx_blockedlog ADD COLUMN actionrefisunique varchar(16) DEFAULT NULL;
 
+ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 
@@ -392,11 +397,6 @@ CREATE TABLE llx_expensereport_det_extrafields
 	fk_object                 integer NOT NULL,
 	import_key                varchar(14)
 ) ENGINE=innodb;
-
-
-ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
-ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
--- VMYSQL4.3 ALTER TABLE llx_blockedlog ADD INDEX idx_linktoref (linktoref(255));
 
 
 ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;

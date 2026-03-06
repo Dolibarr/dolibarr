@@ -5731,7 +5731,7 @@ abstract class CommonObject
 
 		$this->tpl['label'] = '';
 		if (!empty($line->fk_parent_line)) {
-			$this->tpl['label'] .= img_picto('', 'rightarrow');
+			$this->tpl['label'] .= img_picto('', 'rightarrow.png');
 		}
 
 		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object

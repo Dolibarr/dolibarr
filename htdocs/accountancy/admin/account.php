@@ -100,7 +100,7 @@ if (!$sortorder) {
 $object = new AccountingAccount($db);
 
 $arrayfields = array(
-	'aa.account_number' => array('label' => "AccountNumber", 'checked' => '1'),
+	'aa.account_number' => array('label' => "AccountNumber", 'checked' => '1', 'csslist' => 'maxwidth50'),
 	'aa.label' => array('label' => "Label", 'checked' => '1'),
 	'aa.labelshort' => array('label' => "ShortLabel", 'checked' => '1'),
 	'aa.account_parent' => array('label' => "Accountparent", 'checked' => '1'),
@@ -527,10 +527,10 @@ if ($resql) {
 		print '</td>';
 	}
 	if (!empty($arrayfields['aa.account_number']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="flat width100" name="search_account" value="'.$search_account.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_account" value="'.$search_account.'"></td>';
 	}
 	if (!empty($arrayfields['aa.label']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$search_label.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat width100" name="search_label" value="'.$search_label.'"></td>';
 	}
 	if (!empty($arrayfields['aa.labelshort']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat width100" name="search_labelshort" value="'.$search_labelshort.'"></td>';

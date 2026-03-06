@@ -2045,7 +2045,6 @@ Captcha=كابتشا
 CaptchaDesc=إذا كنت ترغب بحماية صفحة تسجيل الدخول بكابتشا، يمكنك اختيار النوع المناسب هنا
 DolibarrStandardCaptcha=كابتشا أصلية من Dolibarr
 SALES_ORDER_SHOW_SHIPPING_ADDRESSMore=إلزامي في بعض الدول (فرنسا، ...)
-PDF_INVOICE_SHOW_VAT_ANALYSIS=عرض تحليل ضريبة القيمة المضافة حسب النسبة
 MaxNbOfRecordOnListIsOk=الحد الأقصى لعدد السطور في القوائم مضبوط على <b>%s</b>. هذه قيمة مناسبة
 YouHaveALargeAmountOfRecordOnLists=الحد الافتراضي لعدد السطور في القوائم مضبوط على <b>%s</b>، وهي قيمة كبيرة تتطلب التمرير. يُفضل استخدام قيمة أقل من <b>%s</b> واستخدام الترقيم لعرض السجلات الزائدة. يمكن تغيير هذا في القائمة الرئيسية - الإعداد - العرض
 RoundBorders=زوايا مستديرة

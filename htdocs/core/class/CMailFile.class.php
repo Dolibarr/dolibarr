@@ -108,7 +108,6 @@ class CMailFile
 	 */
 	public $errors = array();
 
-
 	/**
 	 * @var SMTPS (if this method is used)
 	 */
@@ -202,7 +201,6 @@ class CMailFile
 		'webp' => 'image/webp',
 	);
 
-
 	/**
 	 *	CMailFile
 	 *
@@ -233,7 +231,6 @@ class CMailFile
 
 		dol_syslog("CMailFile::CMailFile: charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext");
 		dol_syslog("CMailFile::CMailFile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
-
 
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
@@ -1315,6 +1312,7 @@ class CMailFile
 					$this->transport->setPassword(getDolGlobalString($keyforsmtppw));
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					$this->transport->setAuthMode('XOAUTH2');
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
 					$supportedoauth2array = getSupportedOauth2Array();
@@ -1391,6 +1389,7 @@ class CMailFile
 							$this->transport->setPassword($tokenobj->getAccessToken());
 						} else {
 							$this->errors[] = "Token not found";
+							dol_syslog("CMailFile::sendfile: OAuth2 token object is not valid", LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1525,7 +1524,6 @@ class CMailFile
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
@@ -1610,7 +1608,6 @@ class CMailFile
 		}
 	}
 
-
 	/**
 	 * Correct an incomplete html string
 	 *
@@ -1662,7 +1659,6 @@ class CMailFile
 			$this->styleCSS .= '</style>';
 		}
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1746,7 +1742,6 @@ class CMailFile
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1923,7 +1918,6 @@ class CMailFile
 		return $out;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Attach an image to email (mode = 'mail')
@@ -1953,7 +1947,6 @@ class CMailFile
 
 		return $out;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

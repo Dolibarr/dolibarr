@@ -750,7 +750,8 @@ if (!empty($socid)) {
 		print '</div>';
 		print dol_get_fiche_end();
 
-		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting")).'';
+		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting"));
+		print '<br>';
 
 		// Choice of mode (customer / supplier)
 		if (!empty($conf->dol_use_jmobile)) {
