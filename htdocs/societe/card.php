@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2011-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -376,6 +376,7 @@ if (empty($reshook)) {
 			$object->capital				= GETPOST('capital');	// Can be null or 0 or a float value
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
+			$object->euid					= GETPOST('euid', 'alphanohtml');
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 			$object->tva_assuj				= GETPOSTINT('assujtva_value');
 			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
@@ -959,6 +960,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
+$formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -1135,6 +1137,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->localtax1_value = GETPOST('lt1', 'alpha');
 		$object->localtax2_value = GETPOST('lt2', 'alpha');
 
+		$object->euid = GETPOST('euid', 'alphanohtml');
 		$object->tva_intra = GETPOST('tva_intra', 'alphanohtml');
 
 		$object->commercial_id = GETPOSTINT('commercial_id');
@@ -1757,7 +1760,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
-					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (empty($conf->global->$idprof_mandatory) ? 0 : 1)).'</td><td>';
+					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (getDolGlobalString($idprof_mandatory) ? 1 : 0)).'</td><td>';
 
 					print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
 					print '</td>';
@@ -1821,25 +1824,31 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
+			print '<td class="nowrap">'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
+			print '<td class="nowrap">';
+			print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+			print '</td>';
+			print '</tr>';
+
 			// Local Taxes
 			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX1') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
 				print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX2') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			} elseif ($mysoc->localtax1_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX1') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			} elseif ($mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX2') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			}
 
@@ -1908,7 +1917,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 
 			// Date birth
-			print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+			print '<tr class="morefields"><td>'.$form->editfieldkey('CompanyBirthDate', 'birth', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 			print '</td></tr>';
@@ -2166,6 +2175,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				$object->tva_assuj				= GETPOSTINT('assujtva_value');
 				$object->vat_reverse_charge		= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
+				$object->euid					= GETPOST('euid', 'alphanohtml');
 				$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 				$object->status =				GETPOSTINT('status');
 
@@ -2720,6 +2730,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td>';
 				print '</tr>';
 
+				print '<tr><td>'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
+				print '<td colspan="3">';
+				print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+				print '</td>';
+				print '</tr>';
+
+
 				$colspan = 4;
 
 				print '<tr><td colspan="'.$colspan.'"><hr></td></tr>';
@@ -2775,7 +2792,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Date birth
-				print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+				print '<tr class="morefields"><td>'.$form->editfieldkey('CompanyBirthDate', 'birth', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 				print '</td></tr>';
@@ -3032,7 +3049,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 				$tmpcheck = $object->check_codeclient();
 				if ($tmpcheck != 0 && $tmpcheck != -5) {
-					print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+					print img_warning($langs->trans("WrongCustomerCode"));
 				}
 				print '</td>';
 				print '</tr>';
@@ -3045,7 +3062,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 				$tmpcheck = $object->check_codefournisseur();
 				if ($tmpcheck != 0 && $tmpcheck != -5) {
-					print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+					print img_warning($langs->trans("WrongSupplierCode"));
 				}
 				print '</td>';
 				print '</tr>';
@@ -3076,11 +3093,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
 					if ($object->$key) {
 						if ($object->id_prof_check($i, $object) > 0) {
-							if (!empty($object->id_prof_url($i, $object))) {
-								print ' &nbsp; '.$object->id_prof_url($i, $object);
+							$profidurl = $object->id_prof_url($i, $object);
+							if (!empty($profidurl)) {
+								print ' &nbsp; '.$profidurl;
 							}
 						} else {
-							print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
+							print img_warning($langs->trans("ErrorWrongValue"));
 						}
 					}
 					print '</td>';
@@ -3231,6 +3249,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 			print '</td></tr>';
 
+			// EUID
+			print '<tr>';
+			print '<td class="nowrap">'.$langs->trans('EUIDShort').'</td><td>';
+			if ($object->euid) {
+				print dol_print_profids($object->euid, 'EUID', $object->country_code, 1);
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr>';
+
 			// Warehouse
 			if (isModEnabled('stock') && getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE')) {
 				$langs->load('stocks');
@@ -3301,7 +3329,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
 
 			// Date birth
-			print '<tr><td>'.$langs->trans('CompnanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
+			print '<tr><td>'.$langs->trans('CompanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';

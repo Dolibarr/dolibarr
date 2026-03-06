@@ -348,16 +348,17 @@ class pdf_espadon extends ModelePdfExpedition
 				if (!empty($notetoshow) || !empty($object->tracking_number)) {
 					$tab_top -= 2;
 					$tab_topbeforetrackingnumber = $tab_top;
+					$height_trackingnumber = 0;
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
-						$height_trackingnumber = 4;
+						$tracking_block_start_y = $tab_top;
 
 						$pdf->SetFont('', 'B', $default_font_size - 2);
-						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
 						$tab_top_alt = $pdf->GetY();
 
-						$object->getUrlTrackingStatus($object->tracking_number);
+						$object->getUrlTrackingStatus((string) $object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
@@ -373,12 +374,15 @@ class pdf_espadon extends ModelePdfExpedition
 									$label .= $object->tracking_url;
 								}
 
-								$height_trackingnumber += 4;
 								$pdf->SetFont('', 'B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 							}
 						}
 						$tab_top = $pdf->GetY();
+						$height_trackingnumber = $tab_top - $tracking_block_start_y;
+						if ($height_trackingnumber < 4) {
+							$height_trackingnumber = 4;
+						}
 					}
 
 					// Notes
@@ -532,7 +536,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
 						$newcode = (string) $object->ref;
@@ -734,6 +738,11 @@ class pdf_espadon extends ModelePdfExpedition
 
 					if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$this->printStdColumnContent($pdf, $curY, 'subprice', price($object->lines[$i]->subprice, 0, $outputlangs));
+						$nexY = max($pdf->GetY(), $nexY);
+					}
+
+					if ($this->getColumnStatus('totalexcltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+						$this->printStdColumnContent($pdf, $curY, 'totalexcltax', price($object->lines[$i]->total_ht, 0, $outputlangs));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -954,8 +963,8 @@ class pdf_espadon extends ModelePdfExpedition
 			$this->printStdColumnContent($pdf, $tab2_top, 'qty_shipped', $totalToShip);
 		}
 
-		if ($this->getColumnStatus('subprice')) {
-			$this->printStdColumnContent($pdf, $tab2_top, 'subprice', price($object->total_ht, 0, $outputlangs));
+		if ($this->getColumnStatus('totalexcltax')) {
+			$this->printStdColumnContent($pdf, $tab2_top, 'totalexcltax', price($object->total_ht, 0, $outputlangs));
 		}
 
 		$pdf->SetTextColor(0, 0, 0);

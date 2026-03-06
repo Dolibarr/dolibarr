@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /**
  *      \file       htdocs/core/class/html.formbarcode.class.php
- *      \brief      Fichier de la class des functions predefinie de composants html
+ *      \brief      File for class to manage barcode HTML
  */
 
 
@@ -55,7 +55,7 @@ class FormBarCode
 	/**
 	 *	Return HTML select with list of bar code generators
 	 *
-	 *  @param	int		$selected       Id code pre-selected
+	 *  @param	int		$selected       Id code preselected
 	 *  @param 	array<string,string>	$barcodelist	Array of barcodes generators
 	 *  @param  int		$code_id        Id du code barre
 	 *  @param  string	$idForm			Id of html form, ex id="idform"
@@ -113,7 +113,7 @@ class FormBarCode
 	/**
 	 *  Print form to select type of barcode
 	 *
-	 *  @param  int     $selected          Id code pre-selected
+	 *  @param  int     $selected          Id code preselected
 	 *  @param  string  $htmlname          Name of HTML select field
 	 *  @param  int     $useempty          Display empty value in list
 	 *  @return void
@@ -128,7 +128,7 @@ class FormBarCode
 	/**
 	 *  Return html form to select type of barcode
 	 *
-	 *  @param  int     $selected          Id code pre-selected
+	 *  @param  int     $selected          Id code preselected
 	 *  @param  string  $htmlname          Name of HTML select field
 	 *  @param  int     $useempty          Display empty value in select
 	 *  @return string

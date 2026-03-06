@@ -491,9 +491,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails			Do not show line details
+	 *  @param	int<0,1>	$hidedesc				Do not show desc
+	 *  @param	int<0,1>	$hideref				Do not show ref
 	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath = '')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -1061,7 +1064,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$element->fetch_thirdparty();
 
 									//Ref object
-									$ref_array['ref'] = $element->ref;
+									$ref_array['ref'] = (string) $element->ref;
 
 									//Date object
 									$dateref = $element->date;
@@ -1083,8 +1086,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 									//Amount object
 									if (empty($valueref['disableamount'])) {
 										if (!empty($element->total_ht)) {
-											$ref_array['amountht'] = $element->total_ht;
-											$ref_array['amountttc'] = $element->total_ttc;
+											$ref_array['amountht'] = (float) $element->total_ht;
+											$ref_array['amountttc'] = (float) $element->total_ttc;
 										} else {
 											$ref_array['amountht'] = 0;
 											$ref_array['amountttc'] = 0;

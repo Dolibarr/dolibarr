@@ -75,6 +75,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force string $text
 @phan-var-force string $description
 @phan-var-force Object $objp
+@phan-var-force int $i
 ';
 
 // Handle subtotals line view
@@ -127,7 +128,7 @@ $coldisplay = 0;
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print($i + 1); ?></span></td>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
@@ -185,12 +186,12 @@ if (($line->info_bits & 2) == 2) {
 
 	if ($line->fk_product > 0) {
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : '') . $text;
 			if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
 				print $form->textwithpicto('', $description);
 			}
 		} else {
-			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : ''));
 		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
@@ -205,7 +206,7 @@ if (($line->info_bits & 2) == 2) {
 			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
-				print img_picto('', 'rightarrow');
+				print img_picto('', 'rightarrow.png');
 			}
 			if (preg_match('/^\(DEPOSIT\)/', $line->description)) {
 				$newdesc = preg_replace('/^\(DEPOSIT\)/', $langs->trans("Deposit"), $line->description);
@@ -408,10 +409,19 @@ print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')'
 print $tooltiponpriceend;
 ?></td>
 
-	<td class="linecoluht nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
+<td class="linecoluht nowraponall right">
+	<?php
+	$coldisplay++;
+	if (empty($line->fk_remise_except)) print price($sign * $line->subprice);
+	?>
+</td>
 
 <?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
+	<td class="linecoluht_currency nowraponall right">
+	<?php $coldisplay++;
+	if (empty($line->fk_remise_except)) print price($sign * $line->multicurrency_subprice);
+	?>
+	</td>
 <?php }
 
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
@@ -423,7 +433,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	if (!$upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
 	}
-	print (isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));	// if upinctax can't be known, we show subprice excl ta
+	if (empty($line->fk_remise_except)) print (isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));	// if upinctax can't be known, we show subprice excl ta
 	?></td>
 <?php }
 
@@ -437,7 +447,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	if (!$multicurrency_upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
 	}
-	print (isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
+	if (empty($line->fk_remise_except)) print (isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
 	?></td>
 <?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>

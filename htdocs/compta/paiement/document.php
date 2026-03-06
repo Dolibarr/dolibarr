@@ -113,48 +113,13 @@ llxHeader('', $title);
 
 if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_prepare_head($object);
+
 	print dol_get_fiche_head($head, 'documents', $langs->trans("Payment"), -1, 'payment');
 
 	// Supplier order card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<div class="refidno">';
-
-	// Date of payment
-	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight('facture', 'creer'))), 'datehourpicker', '', 0, 3).': ';
-	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight('facture', 'creer'))), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
-
-	// Payment mode
-	$morehtmlref .= '<br>'.$langs->trans('PaymentMode').' : ';
-	$morehtmlref .= $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
-	$morehtmlref .= $object->num_payment ? ' - '.$object->num_payment : '';
-
-	// Thirdparty
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-
-	// Amount
-	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
-
-	$allow_delete = 1;
-	// Bank account
-	if (isModEnabled('bank')) {
-		if ($object->fk_account) {
-			$bankline = new AccountLine($db);
-			$bankline->fetch($object->bank_line);
-			if ($bankline->rappro) {
-				$allow_delete = 0;
-				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-			}
-
-			$morehtmlref .= '<br>'.$langs->trans('BankAccount').' : ';
-			$accountstatic = new Account($db);
-			$accountstatic->fetch($bankline->fk_account);
-			$morehtmlref .= $accountstatic->getNomUrl(1);
-
-			$morehtmlref .= '<br>'.$langs->trans('BankTransactionLine').' : ';
-			$morehtmlref .= $bankline->getNomUrl(1, 0, 'showconciliated');
-		}
-	}
+	$morehtmlref = '';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -168,7 +133,8 @@ if ($object->id > 0 && $upload_dir !== null) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">'."\n";
+
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 	print "</table>\n";

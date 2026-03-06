@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2025  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW	                    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
@@ -560,7 +560,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
+		global $extrafields;
 
 		if (empty($object->country) && !empty($object->country_code)) {
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
@@ -585,13 +585,14 @@ abstract class CommonDocGenerator
 			$array_key.'_country' => $object->country,
 			$array_key.'_poste' => $object->poste,
 			$array_key.'_socid' => $object->socid,
-			$array_key.'_statut' => $object->statut,
+			$array_key.'_statut' => $object->statut ? $object->statut : $object->status,
 			$array_key.'_code' => $object->code,
 			$array_key.'_email' => $object->email,
 			$array_key.'_phone_pro' => $object->phone_pro,
 			$array_key.'_phone_perso' => $object->phone_perso,
 			$array_key.'_phone_mobile' => $object->phone_mobile,
 			$array_key.'_fax' => $object->fax,
+			$array_key.'_birthday_locale' => (!empty($object->birthday) ? dol_print_date($object->birthday, 'day', false, $outputlangs) : ''),
 			$array_key.'_birthday' => $object->birthday,
 			$array_key.'_default_lang' => $object->default_lang,
 			$array_key.'_note_public' => $object->note_public,
@@ -1188,7 +1189,7 @@ abstract class CommonDocGenerator
 	 *  Note that vars into substitutions array are formatted.
 	 *
 	 *	@param  CommonObject						$object				Object with extrafields (must have $object->array_options filled)
-	 *	@param  array<string,?int|?float|?string>	$array_to_fill      Substitution array
+	 *	@param  array<string,null|int|float|string>	$array_to_fill      Substitution array
 	 *  @param  ExtraFields							$extrafields        ExtraFields object
 	 *  @param  string								$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate							$outputlangs        Lang object to use for output

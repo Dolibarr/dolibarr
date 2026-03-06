@@ -649,8 +649,10 @@ class Facture extends CommonInvoice
 					$_facrec->date_when = $now;
 				}
 				$next_date = $_facrec->getNextDate(); // Calculate next date
+
 				$result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
 				//$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
+
 				$result = $_facrec->setNextDate($next_date, 1);
 			}
 
@@ -820,8 +822,8 @@ class Facture extends CommonInvoice
 			}
 
 			// Propagate contacts
-			if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
-				$originforcontact = $this->origin;
+			if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && (!empty($this->origin_type) || !empty($this->origin)) && !empty($this->origin_id)) {   // Get contact from origin object
+				$originforcontact = empty($this->origin_type) ? $this->origin : $this->origin_type;
 				$originidforcontact = $this->origin_id;
 				if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
 					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
@@ -4271,7 +4273,9 @@ class Facture extends CommonInvoice
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
 			$pu_ttc = (float) price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
-
+			if (strpos((string) $txtva, '*') !== false) {
+				$info_bits |= 1;
+			}
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
@@ -4591,6 +4595,9 @@ class Facture extends CommonInvoice
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
 			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 
+			if (strpos((string) $txtva, '*') !== false) {
+				$info_bits |= 1;
+			}
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
@@ -4821,7 +4828,7 @@ class Facture extends CommonInvoice
 	 * Update invoice line with percentage
 	 *
 	 * @param  FactureLigne $line       	Invoice line
-	 * @param  int          $percent    	Percentage
+	 * @param  int|float    $percent    	Percentage
 	 * @param  boolean      $update_price   Update object price
 	 * @return void
 	 */

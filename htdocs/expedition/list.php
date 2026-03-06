@@ -556,6 +556,11 @@ if (empty($reshook)) {
 			if ($search_company) {
 				$param .= "&search_company=".urlencode($search_company);
 			}
+			if ($search_shipping_method_ids) {
+				foreach ($search_shipping_method_ids as $value) {
+					$param .= "&search_shipping_method_ids[]=".urlencode($value);
+				}
+			}
 			if ($search_tracking) {
 				$param .= "&search_tracking=".urlencode($search_tracking);
 			}
@@ -611,8 +616,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -985,7 +990,7 @@ if ($search_company) {
 }
 if ($search_shipping_method_ids) {
 	foreach ($search_shipping_method_ids as $value) {
-		$param .= "&amp;search_shipping_method_ids[]=".urlencode($value);
+		$param .= "&search_shipping_method_ids[]=".urlencode($value);
 	}
 }
 if ($search_tracking) {

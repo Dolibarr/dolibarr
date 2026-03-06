@@ -731,6 +731,7 @@ print '</div>';
 
 print '</fieldset>';
 
+print '<br><br>';
 
 // End of page
 llxFooter();

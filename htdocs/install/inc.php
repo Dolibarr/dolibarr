@@ -570,19 +570,19 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	if ($jQueryUiCustomPath) {
 		print '<link rel="stylesheet" type="text/css" href="'.$jQueryUiCustomPath.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	} else {
-		print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
+		print '<link rel="stylesheet" type="text/css" href="../public/includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	}
 
 	print '<!-- Includes JS for JQuery -->'."\n";
 	if ($jQueryCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryCustomPath.'jquery.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery.min.js"></script>'."\n";
 	}
 	if ($jQueryUiCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryUiCustomPath.'jquery-ui.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery-ui.min.js"></script>'."\n";
 	}
 
 	print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";

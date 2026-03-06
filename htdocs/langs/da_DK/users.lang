@@ -163,3 +163,5 @@ TOTP=TOTP (tidsbaseret engangsadgangskode)
 UserRemovedFromGroup=Bruger fjernet fra gruppen
 UserSetInGroup=Bruger sat i gruppe
 ColorGroup=Gruppens farve
+NotHolidayApprover=Ikke tilladt at godkende ferie
+NotExpenseReportApprover=Ikke tilladt at godkende udgiftsrapport

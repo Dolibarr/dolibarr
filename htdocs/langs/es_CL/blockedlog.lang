@@ -1,13 +1,10 @@
 # Dolibarr language file - Source file is en_US - blockedlog
 OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos en esta línea no se modificaron y la entrada sigue a la anterior.
 ListOfTrackedEvents=Lista de eventos rastreados
-ImpossibleToReloadObject=Objeto original (escriba %s, id %s) no vinculado (consulte la columna &#39;Datos completos&#39; para obtener datos guardados inalterables)
-BlockedLogActivatedBecauseRequiredByYourCountryLegislation=El módulo de Registros inalterables se activó debido a la legislación de su país. La desactivación de este módulo puede invalidar cualquier transacción futura con respecto a la ley y el uso de software legal, ya que no pueden ser validados por una auditoría fiscal.
 TooManyRecordToScanRestrictFilters=Demasiados registros para escanear / analizar. Por favor restringe la lista con filtros más restrictivos.
 logBILL_SENTBYMAIL=Factura del cliente enviar por correo
 logBILL_UNPAYED=Factura del cliente fijada sin pagar
 logBILL_VALIDATE=Factura del cliente validada
-logDOC_PREVIEW=Vista previa de un documento validado para imprimir o descargar.
 logMEMBER_SUBSCRIPTION_DELETE=Suscripción de miembros de eliminación lógica
 logPAYMENT_ADD_TO_BANK=Pago agregado al banco
 logPAYMENT_VARIOUS_CREATE=Pago (no asignado a una factura) creado

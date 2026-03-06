@@ -173,3 +173,5 @@ RefSalary=Salary
 NoSalaryInvoiceToWithdraw=No salary waiting for a '%s'. Go on tab '%s' on salary card to make a request.
 SalaryInvoiceWaitingWithdraw=Salaries waiting for payment by credit transfer
 ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

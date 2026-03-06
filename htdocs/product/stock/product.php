@@ -1137,7 +1137,7 @@ if ($showstockdetails) {
 			print '<td class="right">'.$stock_real.($stock_real < 0 ? ' '.img_warning() : '').'</td>';
 
 			// PMP
-			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
+			print '<td class="right nowraponall">'.($usercancreadsupplierprice ? (price2num($object->pmp) ? price2num($object->pmp, 'MU') : '') : '').'</td>';
 
 			// Value purchase
 			if ($usercancreadsupplierprice) {

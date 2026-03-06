@@ -218,6 +218,7 @@ $dolibarr_main_dolcrypt_key='';
 $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
 
+
 //##################
 // Login
 //##################
@@ -242,6 +243,15 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 // $dolibarr_main_authentication='googleoauth';    // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
 //
 $dolibarr_main_authentication='dolibarr';
+
+
+// dolibarr_main_authentication_autocreateuser
+// ============================================
+// Auto-creation of Dolibarr users on first OIDC login.
+// Set to 1 to allow new user accounts to be created automatically
+// when a user authenticates via OpenID Connect but has no existing account.
+// IMPORTANT: This must be set here in conf.php, not via the database setup.
+$dolibarr_main_authentication_autocreateuser=0;
 
 
 // Parameters used to setup LDAP authentication
@@ -325,7 +335,8 @@ $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDo
 // dolibarr_main_disabled_modules
 // ==================================
 // To restrict the activation and use of certain potentially security-sensitive modules.
-// Default value: array('dav')
+// TODO Not yet implemented
+// Default value: array()
 // Examples:
 // $dolibarr_main_disabled_modules = array('dav', 'api');
 //
@@ -354,10 +365,9 @@ $dolibarr_main_restrict_ip='';
 //
 $dolibarr_nocsrfcheck='0';
 
-// dolibarr_nocsrfcheck
-// ====================
-// This parameter can be used to disable CSRF protection.
-// This might be required for debug purpose or if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
+// dolibarr_api_count_always_enabled
+// =================================
+// Set this value to 1 so disabling the count of each API call will not be possible from the admin setup pages.
 // In most cases, you should always keep this to 0.
 // Default value: 0
 // Possible values: 0 or 1 (API is always enabled, can't be disabled from admin setup)
@@ -398,19 +408,18 @@ $dolibarr_cron_allow_cli='0';
 //
 // $dolibarr_main_stream_to_disable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib');
 
-// MAIN_ANTIVIRUS_COMMAND (as a constant)
-// ======================
-// Force a value for the antivirus command line tool so setup for admin user interface has no effect.
-// Default value: ''
-// Example: '/usr/bin/clamdscan';
-// define('MAIN_ANTIVIRUS_COMMAND', '/usr/bin/clamdscan');
+// $dolibarr_website_allow_custom_php
+// ==================================
+// By default for security purpose, it is not possible to add or edit PHP dynamic content into a website (even if user has permission for this). To be able
+// to edit PHP content in website page, you must first allow this globally, by setting this parameter to 1 or 2.
+// 0 will disallow use of dynamic PHP inside the website features. Only HTML and js will be possible.
+// 1 will allow custom PHP inside website features, but only if dangerous PHP system functions are disabled (using the PHP disable_functions parameter)
+// 2 will allow custom PHP inside website features even if your PHP setup does not protect you against dangerous system calls (this may be dangerous if you don't have a RCE protection like SELnux or Apparmor).
+// Default value: '0'
+// Examples: '0', '1' or '2'
 
-// MAIN_ANTIVIRUS_PARAM (as a constant)
-// ====================
-// Force a value for the antivirus parameters on command line so setup for admin user interface has no effect.
-// Default value: ''
-// Example: '--fdpass';
-// define('MAIN_ANTIVIRUS_PARAM', '--fdpass');
+// $dolibarr_website_allow_custom_php='0';
+
 
 // php_session_save_handler
 // ========================
@@ -433,6 +442,20 @@ $dolibarr_cron_allow_cli='0';
 // Example: '444';
 // $force_install_lockinstall='440';
 
+
+// MAIN_ANTIVIRUS_COMMAND (as a constant)
+// ======================
+// Force a value for the antivirus command line tool so setup for admin user interface has no effect.
+// Default value: ''
+// Example: '/usr/bin/clamdscan';
+// define('MAIN_ANTIVIRUS_COMMAND', '/usr/bin/clamdscan');
+
+// MAIN_ANTIVIRUS_PARAM (as a constant)
+// ====================
+// Force a value for the antivirus parameters on command line so setup for admin user interface has no effect.
+// Default value: ''
+// Example: '--fdpass';
+// define('MAIN_ANTIVIRUS_PARAM', '--fdpass');
 
 
 //##################
