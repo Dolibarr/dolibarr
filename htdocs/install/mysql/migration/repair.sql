@@ -428,6 +428,12 @@ create table tmp_bank_url_expense_user as (select e.fk_user_author, bu2.fk_bank 
 update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
+-- Fix accounting account unique index and orphans
+ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+UPDATE llx_facturedet SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 
 -- VMYSQL4.1 update llx_element_time set element_datehour = element_date where element_datehour < element_date or element_datehour > DATE_ADD(element_date, interval 1 day);
 

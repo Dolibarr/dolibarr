@@ -284,4 +284,11 @@ UPDATE llx_expensereport_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_
 DELETE FROM llx_accounting_account WHERE rowid IN (SELECT rowid FROM tmp_llx_accouting_account);
 DROP TABLE IF EXISTS tmp_llx_accouting_account;
 
+-- Fix accounting account unique index and orphans
+ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+UPDATE llx_facturedet SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+
 UPDATE llx_projet SET fk_opp_status = NULL WHERE fk_opp_status = -1;
