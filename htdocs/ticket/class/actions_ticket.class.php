@@ -182,8 +182,10 @@ class ActionsTicket
 	{
 		global $conf, $langs;
 
+		$closeStatuses = [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED];
+
 		print '<!-- initial message of ticket -->'."\n";
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if (!empty($user->rights->ticket->write) && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
@@ -199,14 +201,14 @@ class ActionsTicket
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
-		if ($user->hasRight("ticket", "manage")) {
+		if ($user->hasRight("ticket", "write")  && !in_array($object->status, $closeStatuses) ) {
 			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr>';
 
 		print '<tr>';
 		print '<td colspan="2">';
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'write') && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -234,7 +236,7 @@ class ActionsTicket
 
 			//print '<div>' . $object->message . '</div>';
 		}
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if (!empty($user->rights->ticket->write) && !in_array($object->status, $closeStatuses)  && $action == 'edit_message_init') {
 			print '<div class="center">';
 			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -245,7 +247,7 @@ class ActionsTicket
 		print '</table>';
 		print '</div>';
 
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if (!empty($user->rights->ticket->write) && !in_array($object->status, $closeStatuses)  && $action == 'edit_message_init') {
 			// MESSAGE
 			print '</form>';
 		}
