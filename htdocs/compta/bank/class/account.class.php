@@ -1410,7 +1410,6 @@ class Account extends CommonObject
 		if ($filteraccountid) {
 			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
-
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
@@ -1431,7 +1430,6 @@ class Account extends CommonObject
 					$response->nbtodolate++;
 				}
 			}
-
 			return $response;
 		} else {
 			dol_print_error($this->db);

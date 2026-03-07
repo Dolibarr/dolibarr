@@ -949,7 +949,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		print '<br><br>';
 
-		if ($recalculatedhashsign && $recalculatedhashsign == $hashsign) {
+		if ($recalculatedhashsign && hash_equals($recalculatedhashsign, $hashsign)) {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
 			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algosign.' = '.$recalculatedhashsign);
@@ -960,12 +960,12 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		}
 		print '<br><br>';
 
-		if ($recalculatedhashauth && $recalculatedhashauth == $hashauth) {
+		if ($recalculatedhashauth && hash_equals($recalculatedhashauth, $hashauth)) {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
 			print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
 			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algoauth.' = '.$recalculatedhashauth);
-		} elseif ($recalculatedhashsign == $hashsign) {
+		} elseif ($recalculatedhashsign && hash_equals($recalculatedhashsign, $hashsign)) {
 			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
 			print ' '.$form->textwithpicto('', $langs->trans("FileNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);

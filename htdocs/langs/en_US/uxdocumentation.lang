@@ -195,3 +195,5 @@ SetEventMessageTool = Dolibarr Tool : Set event message
 ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.
 CacheCleared = Cache cleared
+
+JSDolibarrhooksAjaxSpecial = Dom reloaded Hook

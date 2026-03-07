@@ -37,7 +37,7 @@ require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
@@ -179,7 +179,6 @@ $objmodelimport = new ModeleImports();
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-$formfile = new FormFile($db);
 
 // Init $array_match_file_to_database from _SESSION
 if (empty($array_match_file_to_database)) {
@@ -535,7 +534,7 @@ if ($step == 2 && $datatoimport) {
 
 	// Add format information and link to download example
 	print '<tr class="liste_titre"><td colspan="4">';
-	print $langs->trans("FileMustHaveOneOfFollowingFormat");
+	print $langs->trans("FileMustHaveOneOfFollowingFormat").'...';
 	print '</td></tr>';
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	foreach ($list as $key) {
@@ -559,6 +558,9 @@ if ($step == 2 && $datatoimport) {
 	}
 
 	print '</table>';
+
+	print '<br>';
+
 	// Input file name box
 	print '<div class="marginbottomonly">';
 	$maxfilesizearray = getMaxFileSizeArray();
@@ -621,6 +623,8 @@ if ($step == 2 && $datatoimport) {
 		$out .= ' ('.$langs->trans("UploadDisabled").')';
 	}
 	print $out;
+
+	print '<br><br>';
 
 	// Search available imports
 	$filearray = dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
@@ -1169,6 +1173,7 @@ if ($step == 3 && $datatoimport) {
 
 			$labelhtml = $label.' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 1);
 
+
 			$selectforline .= '<option value="'.$tmpcode.'"';
 			if ($modetoautofillmapping == 'orderoftargets') {
 				// The mode where we fill the preselected value of combo one by one in order of available targets fields in the declaration in descriptor file.
@@ -1644,25 +1649,25 @@ if ($step == 4 && $datatoimport) {
 	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action == 'launchsimu') {
-		print '<input type="number" class="maxwidth50 right" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 		print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
 	} else {
-		print '<input type="number" class="maxwidth50 right" name="excludefirstline" value="'.$excludefirstline.'">';
+		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
 		print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print ' - ';
 	if ($action == 'launchsimu') {
-		print '<input type="text" class="maxwidth50" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
+		print '<input type="text" class="maxwidth50 valignmiddle" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
 		print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
 	} else {
-		print '<input type="text" class="maxwidth50" name="endatlinenb" value="'.$endatlinenb.'">';
+		print '<input type="text" class="maxwidth50 valignmiddle" name="endatlinenb" value="'.$endatlinenb.'">';
 		print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
 	if ($action == 'launchsimu') {
 		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	if ($excludefirstline == 2) {
-		print $form->textwithpicto("", $langs->trans("WarningFirstImportedLine", $excludefirstline), 1, 'warning', "warningexcludefirstline");
+		print $form->textwithpicto("", $langs->trans("WarningFirstImportedLine", $excludefirstline), 1, 'warning', "warningexcludefirstline valignmiddle");
 		print '<script>
 			$( document ).ready(function() {
 				$("input[name=\'excludefirstline\']").on("change",function(){
@@ -1702,31 +1707,6 @@ if ($step == 4 && $datatoimport) {
 	/*echo '<pre>';
 	print_r($objimport->array_import_updatekeys);
 	echo '</pre>';*/
-	print '</td></tr>';
-
-	// Trigger mode
-	print '<tr><td>';
-	print $langs->trans("ImportTriggerModeLabel");
-	print '</td><td>';
-	$triggerModeChoices = array(
-		'strict_line' => $langs->trans("ImportTriggerModeStrictLine"),
-		'fast_bulk' => $langs->trans("ImportTriggerModeFastBulk"),
-	);
-	if ($action == 'launchsimu') {
-		print dol_escape_htmltag($triggerModeChoices[$importtriggermode] ?? $importtriggermode);
-		print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
-		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
-	} else {
-			print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
-	}
-	print '<br><span class="opacitymedium">';
-	print $langs->trans("ImportTriggerModeHint");
-	print '</span>';
-	if ($importtriggermode === 'fast_bulk') {
-		print '<br><span class="warning">';
-		print $langs->trans("ImportTriggerModeFastBulkWarning");
-		print '</span>';
-	}
 	print '</td></tr>';
 
 	print '</table>';
@@ -1804,6 +1784,28 @@ if ($step == 4 && $datatoimport) {
 	print count($listfields) ? (implode(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';
 
+	// Trigger mode
+	print '<tr><td>';
+	print $form->textwithpicto($langs->trans("ImportTriggerModeLabel"), $langs->trans("ImportTriggerModeHint"));
+	print '</td><td>';
+	$triggerModeChoices = array(
+		'strict_line' => $langs->trans("ImportTriggerModeStrictLine"),
+		'fast_bulk' => $langs->trans("ImportTriggerModeFastBulk"),
+	);
+	if ($action == 'launchsimu') {
+		print dol_escape_htmltag($triggerModeChoices[$importtriggermode] ?? $importtriggermode);
+		print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
+	} else {
+			print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
+	}
+	if ($importtriggermode === 'fast_bulk') {
+		print '<br><span class="warning">';
+		print $langs->trans("ImportTriggerModeFastBulkWarning");
+		print '</span>';
+	}
+	print '</td></tr>';
+
 	print '</table>';
 	print '</div>';
 
@@ -1828,7 +1830,8 @@ if ($step == 4 && $datatoimport) {
 		print '<div class="warning">';
 		print '<b>'.$langs->trans("ImportTriggerModeSimulationWarningTitle").'</b><br>';
 		print $langs->trans("ImportTriggerModeSimulationWarning");
-		print '</div><br>';
+		print '</div>';
+
 		// Launch import
 		$arrayoferrors = array();
 		$arrayofwarnings = array();
@@ -1942,7 +1945,7 @@ if ($step == 4 && $datatoimport) {
 
 		// Show OK
 		if (!count($arrayoferrors) && !count($arrayofwarnings)) {
-			print '<br>';
+			//print '<br>';
 			print '<div class="info">';
 			print '<div class=""><b>'.$langs->trans("ResultOfSimulationNoError").'</b></div>';
 			print $langs->trans("NbInsertSim", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
@@ -1950,7 +1953,7 @@ if ($step == 4 && $datatoimport) {
 			print '</div>';
 			print '<br>';
 		} else {
-			print '<br>';
+			//print '<br>';
 			print '<div class="warning">';
 			print $langs->trans("NbOfLinesOK", $nbok).'...<br>';
 			print '</div>';

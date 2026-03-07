@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/import/modules_import.php
+ *	\file       htdocs/core/modules/import/modules_import.class.php
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
  */
@@ -997,7 +997,7 @@ class ModeleImports
 	 * @param	string						$importid						Import key
 	 * @param	string[]					$updatekeys						Array of keys used to update first before insert
 	 * @param	int							$recordpositionbase				0 when $arrayrecord starts at 0, 1 when starts at 1
-	 * @return	int														Return integer <0 if KO, >0 if OK
+	 * @return	int															Return integer <0 if KO, >0 if OK
 	 */
 	protected function commonImportInsert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys, $recordpositionbase = 0)
 	{

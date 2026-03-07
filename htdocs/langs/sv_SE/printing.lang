@@ -46,6 +46,10 @@ IPP_Color=Färg
 IPP_Device=Enhet
 IPP_Media=Utskriftmedia
 IPP_Supported=Papperstyp
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Ingen
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Färg
 DirectPrintingJobsDesc=På den här sidan visas utskriftsjobb som finns tillgängliga för tillgängliga skrivare.
 GoogleAuthNotConfigured=Google OAuth har inte installerats. Aktivera modulen OAuth och ange ett Google ID / Secret.
 GoogleAuthConfigured=Google OAuth-behörighetsuppgifter hittades i installationen av modul OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Konfigurationsvariabler för skrivardrivrutin Google 
 PrintingDriverDescprintipp=Konfigurationsvariabler för utskriftskoppar Cups.
 PrintTestDescprintgcp=Lista över skrivare för Google Cloud Print.
 PrintTestDescprintipp=Lista över skrivare för koppar.
-Testbbbb
+PrinterLocation=Printer location

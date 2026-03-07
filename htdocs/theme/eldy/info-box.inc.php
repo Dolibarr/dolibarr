@@ -5,16 +5,23 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+
+// Expected to be defined by including parent
 /**
  * @var Conf $conf
  * @var string $left
  * @var string $right
  */
-// Expected to be defined by including parent
 '
 @phan-var-force string $right
 @phan-var-force string $left
 ';
+
+$heightbox = 94;
+if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("paymentbybanktransfer")) {
+	$heightbox = 110;
+}
+
 ?>
 /* IDE Hack <style type="text/css"> */
 
@@ -34,7 +41,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 94px;	/* must be same height than info-box-icon */
+	min-height: <?php echo $heightbox; ?>px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	box-shadow: 1px 1px 20px rgba(192, 192, 192, 0.2);
@@ -97,8 +104,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	overflow: hidden;
 	float: left;
-	line-height: 94px;	/* must be same height as min-height of .info-box */
-	height: 94px; 	    /* must be same height as min-height of .info-box */
+	line-height: <?php echo $heightbox; ?>px;	/* must be same height as min-height of .info-box */
+	height: <?php echo $heightbox; ?>px; 	    /* must be same height as min-height of .info-box */
 	width: 88px;
 	text-align: center;
 	font-size: 2.8em;

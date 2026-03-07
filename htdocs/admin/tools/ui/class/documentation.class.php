@@ -251,6 +251,7 @@ class Documentation
 						'JSDolibarrhooks' => '#titlesection-hooks',
 						'JSDolibarrhooksReadyVsInit' => '#titlesection-event-init-vs-ready',
 						'JSDolibarrAwaitHooks' => '#titlesection-await-hooks',
+						'JSDolibarrhooksAjaxSpecial' => '#titlesection-dom-initnewcontent',
 						'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
 						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
