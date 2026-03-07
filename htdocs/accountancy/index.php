@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
@@ -154,6 +153,8 @@ if (isModEnabled('accounting')) {
 		print '<hr>';
 		print "<br>\n";
 
+		print '<div class="info">';
+
 		// STEPS
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescJournalSetup", $step, '{s}');
@@ -199,12 +200,15 @@ if (isModEnabled('accounting')) {
 			print $s;
 			print "<br>\n";
 		}
+		print '</div>';
 
 
 		print "<br>\n";
 		print $langs->trans("AccountancyAreaDescActionOnceBis");
 		print "<br>\n";
 		print "<br>\n";
+
+		print '<div class="info">';
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
@@ -247,6 +251,8 @@ if (isModEnabled('accounting')) {
 		print $s;
 		print "<br>\n";
 
+		print '</div>';
+
 		print '<br>';
 	}
 
@@ -259,6 +265,8 @@ if (isModEnabled('accounting')) {
 	$step = 0;
 
 	$langs->loadLangs(array('bills', 'trips'));
+
+	print '<div class="info">';
 
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '{s}')."\n";
@@ -292,6 +300,9 @@ if (isModEnabled('accounting')) {
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescClosePeriod", chr(64 + $step))."<br>\n";
 	print $s;
+
+	print '</div>';
+
 
 	if (!empty($resultboxes['boxlista']) || !empty($resultboxes['boxlistb'])) {
 		print "<br>\n";
