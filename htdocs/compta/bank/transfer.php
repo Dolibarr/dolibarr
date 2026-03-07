@@ -154,11 +154,11 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 			}
 
 			if ($tmpaccountfrom->currency_code != $conf->currency && $tmpaccountto->currency_code == $conf->currency) {
-				$amount_main_currency_from = price2num(-1 * (float) $amountto[$n]);
+				$amount_main_currency_from = (float) price2num(-1 * (float) $amountto[$n]);
 			}
 
 			if ($tmpaccountto->currency_code != $conf->currency && $tmpaccountfrom->currency_code == $conf->currency) {
-				$amount_main_currency_to = price2num((float) $amount[$n]);
+				$amount_main_currency_to = (float) price2num((float) $amount[$n]);
 			}
 
 			if ($amountto[$n] < 0) {
@@ -186,13 +186,13 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				}
 
 				if (!$error) {
-					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * (float) $amount[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_from);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], (float) price2num(-1 * (float) $amount[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_from);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$error++;
 				}
 				if (!$error) {
-					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], price2num((float) $amountto[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_to);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], (float) price2num((float) $amountto[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_to);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$error++;
