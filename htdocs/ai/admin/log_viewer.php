@@ -95,20 +95,36 @@ $search_array = array(
  */
 
 $error = '';
-if ($action == 'purge') {
-	$db->query("TRUNCATE TABLE ".MAIN_DB_PREFIX."ai_request_log");
-	setEventMessages($langs->trans("LogsCleared"), null, 'mesgs');
-	// Redirect to the same page
+if ($action == 'purge' && $confirm == 'yes') {
+	$db->begin();
+
+	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
+	$sql .= " WHERE entity IN (" . getEntity('ai') . ")";
+
+	$resql = $db->query($sql);
+
+	if ($resql) {
+		$nbDeleted = $db->affected_rows($resql);
+		$db->commit();
+		setEventMessages($langs->trans("LogsCleared") . " (" . $nbDeleted . ")", null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($db->lasterror(), null, 'errors');
+	}
+
 	header('Location: ' . $_SERVER["PHP_SELF"]);
 	exit;
 }
 
 // Purge selection
-if ($massaction == 'purge' && !empty($toselect)) {
+if ($massaction == 'purge' && !empty($toselect) && is_array($toselect)) {
 	$db->begin();
 
 	foreach ($toselect as $id) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ai_request_log WHERE rowid = " . (int) $id;
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
+		$sql .= " WHERE rowid = " . ((int) $id);
+		$sql .= " AND entity IN (" . getEntity('ai') . ")";
+
 		$resql = $db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -120,7 +136,9 @@ if ($massaction == 'purge' && !empty($toselect)) {
 
 	if (!$error) {
 		$db->commit();
-		setEventMessages($langs->trans("SelectedLogsDeleted"), null, 'mesgs');
+		setEventMessages($langs->trans("SelectedLogsDeleted") . " (" . $deleted . ")", null, 'mesgs');
+	} else {
+		$db->rollback();
 	}
 
 	$action = 'list';
@@ -165,6 +183,8 @@ llxHeader('', $langs->trans("AIRequestLogs"), '');
 
 // Build WHERE clause
 $where = array();
+
+$where[] = "l.entity IN (" . getEntity('ai') . ")";
 
 if ($search_date_start) {
 	$where[] = "l.date_request >= '" . $db->escape(date('Y-m-d H:i:s', $search_date_start)) . "'";
