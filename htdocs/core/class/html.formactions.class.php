@@ -276,7 +276,7 @@ class FormActions
 			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
@@ -322,10 +322,11 @@ class FormActions
 					//$actionstatic->type_code = 'AC_OTHER_AUTO'
 
 					// Type
-					$labeltype = $actioncomm->getTypeLabel(0);
-					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
-					print $actioncomm->getTypePicto();
-					print $labeltype;
+					$labeltypelong = $actioncomm->getTypeLabel(2);
+					print '<td class="tdoverflowmax100 center" title="'.dolPrintHTML($labeltypelong).'">';
+					print $actioncomm->getTypePicto('valignmiddle');
+					//$labeltype = $actioncomm->getTypeLabel(0);
+					//print $labeltype;
 					print '</td>';
 
 					// Label / Title

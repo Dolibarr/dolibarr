@@ -966,10 +966,6 @@ if (empty($reshook)) {
 		$price_ht_devise = '';
 		$price_ttc = '';
 		$price_ttc_devise = '';
-		$pu_ht = '';
-		$pu_ttc = '';
-		$pu_ht_devise = '';
-		$pu_ttc_devise  = '';
 
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
@@ -1061,13 +1057,20 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+			$pu_ht = 0;
+			$pu_ttc = 0;
+			$pu_ht_devise = 0;
+			$pu_ttc_devise = 0;
+			$price_min = 0;
+			$price_min_ttc = 0;
+			$tva_npr = 0;
+			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
+
 			// Clean parameters
 			$date_start = dol_mktime(GETPOSTINT('date_start' . $predef . 'hour'), GETPOSTINT('date_start' . $predef . 'min'), GETPOSTINT('date_start' . $predef . 'sec'), GETPOSTINT('date_start' . $predef . 'month'), GETPOSTINT('date_start' . $predef . 'day'), GETPOSTINT('date_start' . $predef . 'year'));
 			$date_end = dol_mktime(GETPOSTINT('date_end' . $predef . 'hour'), GETPOSTINT('date_end' . $predef . 'min'), GETPOSTINT('date_end' . $predef . 'sec'), GETPOSTINT('date_end' . $predef . 'month'), GETPOSTINT('date_end' . $predef . 'day'), GETPOSTINT('date_end' . $predef . 'year'));
-			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
-			$price_min = $price_min_ttc = 0;
-			$tva_npr = 0;
+			$db->begin();
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
@@ -1085,6 +1088,7 @@ if (empty($reshook)) {
 					$tva_npr = 0;
 				}*/
 
+				// Price unique per product
 				$pu_ht = $prod->price;
 				$pu_ttc = $prod->price_ttc;
 				$price_min = $prod->price_min;
@@ -1103,6 +1107,7 @@ if (empty($reshook)) {
 					$pricebycustomerexist = false;
 					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result >= 0) {
+						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
 							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
 							foreach ($prodcustprice->lines as $k => $custprice_line) {
@@ -1113,14 +1118,14 @@ if (empty($reshook)) {
 									$price_min = price($custprice_line->price_min);
 									$price_min_ttc = price($custprice_line->price_min_ttc);
 									$price_base_type = $custprice_line->price_base_type;
-									$tva_tx = $custprice_line->tva_tx;
+									/*$tva_tx = $custprice_line->tva_tx;
 									if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', (string) $tva_tx)) {
 										$tva_tx .= ' (' . $custprice_line->default_vat_code . ')';
 									}
 									$tva_npr = $custprice_line->recuperableonly;
 									if (empty($tva_tx)) {
 										$tva_npr = 0;
-									}
+									}*/
 									break;
 								}
 							}
@@ -1129,7 +1134,7 @@ if (empty($reshook)) {
 						setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					}
 
-					if (!$pricebycustomerexist && !empty($object->thirdparty->price_level)) { //// If price per segment
+					if (!$pricebycustomerexist && !empty($object->thirdparty->price_level)) { // If price per segment
 						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
@@ -1144,9 +1149,7 @@ if (empty($reshook)) {
 							}
 						}
 					}
-				}
-				// If price per segment
-				if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
+				} elseif (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) { // If price per segment
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
@@ -1170,6 +1173,7 @@ if (empty($reshook)) {
 
 					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result >= 0) {
+						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
 							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
 							foreach ($prodcustprice->lines as $k => $custprice_line) {
@@ -1179,14 +1183,14 @@ if (empty($reshook)) {
 									$price_min = price($custprice_line->price_min);
 									$price_min_ttc = price($custprice_line->price_min_ttc);
 									$price_base_type = $custprice_line->price_base_type;
-									$tva_tx = $custprice_line->tva_tx;
+									/*$tva_tx = $custprice_line->tva_tx;
 									if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
 										$tva_tx .= ' (' . $custprice_line->default_vat_code . ')';
 									}
 									$tva_npr = $custprice_line->recuperableonly;
 									if (empty($tva_tx)) {
 										$tva_npr = 0;
-									}
+									}*/
 									break;
 								}
 							}
@@ -1241,18 +1245,22 @@ if (empty($reshook)) {
 				$tmpprodvat = (float) price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// Set unit price to use
-				if (!empty($price_ht) || $price_ht === '0') {
+				if (!empty($price_ht) || (string) $price_ht === '0') {
 					$pu_ht = (float) price2num($price_ht, 'MU');
-					$pu_ttc = (float) price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
-				} elseif (!empty($price_ttc) || $price_ttc === '0') {
+					$pu_ttc = (float) price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ht_devise) || (string) $price_ht_devise === '0') {
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ht = '';
+					$pu_ttc = '';
+				} elseif (!empty($price_ttc) || (string) $price_ttc === '0') {
 					$pu_ttc = (float) price2num($price_ttc, 'MU');
-					$pu_ht = (float) price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$pu_ht = (float) price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
-						$pu_ht = (float) price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = (float) price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = (float) price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = (float) price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					}
 				}
 
@@ -1356,12 +1364,12 @@ if (empty($reshook)) {
 			}
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
 			// Margin
-			$fournprice = (int) (GETPOST('fournprice' . $predef) ? GETPOSTINT('fournprice' . $predef) : 0);	// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
-			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : ''); // If buying_price is '0', we must keep this value
+			$fournprice = (int) (GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : 0);	// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
+			$buyingprice = price2num((GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''), '', 2); // If buying_price is '0', we must keep this value
 
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
@@ -1378,7 +1386,7 @@ if (empty($reshook)) {
 				$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 			}
 
-			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one defined
+			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
 			/*
 			if ($pu_equivalent) {
 				$tmp = calcul_price_total(1, $pu_equivalent, 0, $tva_tx, -1, -1, 0, 'HT', $info_bits, $type);
@@ -1388,6 +1396,9 @@ if (empty($reshook)) {
 				$pu_equivalent_ht = ...
 			}
 			*/
+
+			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
+			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
 			$desc = dol_htmlcleanlastbr($desc);
 
@@ -1409,8 +1420,12 @@ if (empty($reshook)) {
 				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
 
 				if ($result > 0) {
+					$db->commit();
+
 					$ret = $object->fetch($object->id); // Reload to get new records
-					$object->fetch_thirdparty();
+					if ($ret > 0) {
+						$object->fetch_thirdparty();
+					}
 
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						// Define output language
@@ -1460,6 +1475,8 @@ if (empty($reshook)) {
 					unset($_POST['date_endmonth']);
 					unset($_POST['date_endyear']);
 				} else {
+					$db->rollback();
+
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -1551,6 +1568,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('save')) {
 		// Update a line
+
 		// Clean parameters
 		$date_start = '';
 		$date_end = '';
@@ -1619,15 +1637,15 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code');
+		$special_code = GETPOSTINT('special_code');
 		if (!GETPOST('qty')) {
 			$special_code = 3;
 		}
 
 		$remise_percent = GETPOST('remise_percent') != '' ? price2num(GETPOST('remise_percent'), '', 2) : 0;
 
-		$price_base_type = 'HT';
 		$pu = $pu_ht;
+		$price_base_type = 'HT';
 		if (empty($pu) && !empty($pu_ttc)) {
 			$pu = $pu_ttc;
 			$price_base_type = 'TTC';
@@ -1654,12 +1672,12 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
-				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - $remise_percent / 100)) < (float) price2num($price_min)) && $price_base_type == 'HT') {
+				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && (((float) price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < (float) price2num($price_min_ttc)) && $price_base_type == 'TTC') {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && (((float) price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -1694,6 +1712,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$db->begin();
+
 			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOSTINT('lineid')) {
@@ -1706,7 +1726,10 @@ if (empty($reshook)) {
 
 			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise);
 
+
 			if ($result >= 0) {
+				$db->commit();
+
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
@@ -1753,6 +1776,8 @@ if (empty($reshook)) {
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
 			} else {
+				$db->rollback();
+
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
