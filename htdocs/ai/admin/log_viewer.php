@@ -136,7 +136,7 @@ if ($massaction == 'purge' && !empty($toselect) && is_array($toselect)) {
 
 	if (!$error) {
 		$db->commit();
-		setEventMessages($langs->trans("SelectedLogsDeleted") . " (" . $deleted . ")", null, 'mesgs');
+		setEventMessages($langs->trans("SelectedLogsDeleted"), null, 'mesgs');
 	} else {
 		$db->rollback();
 	}
