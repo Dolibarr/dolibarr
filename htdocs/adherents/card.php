@@ -1189,9 +1189,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td id="tdcompany">'.$langs->trans("Company").' / '.$langs->trans("Organization").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
-		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOSTISSET('civility_code') ? GETPOST('civility_code') : $object->civility_code, 'civility_code', 'maxwidth150', 1).'</td>';
-		print '</tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_MEMBER')) {
+			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+			print $formcompany->select_civility(GETPOSTISSET('civility_code') ? GETPOST('civility_code', "aZ09") : $object->civility_code, 'civility_code', 'maxwidth150', 1);
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Lastname
 		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET('lastname') ? GETPOST('lastname', 'alphanohtml') : $object->lastname).'"></td>';
@@ -1423,10 +1426,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
 
 		// Civility
-		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code', 'maxwidth150', 1);
-		print '</td>';
-		print '</tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_MEMBER')) {
+			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code', 'maxwidth150', 1);
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Lastname
 		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("lastname") ? GETPOST("lastname", 'alphanohtml', 2) : $object->lastname).'"></td>';

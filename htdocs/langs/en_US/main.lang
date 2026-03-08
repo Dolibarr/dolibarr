@@ -1224,7 +1224,6 @@ Civility=Title of courtesy
 AffectTag=Assign a Tag
 AffectUser=Assign a User
 SetSupervisor=Set the supervisor
-ForcePasswordChange=Force password change at next login
 CreateExternalUser=Create external user
 ConfirmAffectTag=Bulk Tag Assignment
 ConfirmAffectUser=Bulk User Assignment
