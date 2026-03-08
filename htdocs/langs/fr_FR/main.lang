@@ -1223,7 +1223,6 @@ Civility=Titres de civilité
 AffectTag=Affecter un tag/catégorie
 AffectUser=Assigné un utilisateur
 SetSupervisor=Définir le responsable
-ForcePasswordChange=Forcer le changement de mot de passe à la prochaine connexion
 CreateExternalUser=Créer utilisateur externe
 ConfirmAffectTag=Attribution de tags/catégories en masse
 ConfirmAffectUser=Affectation d'utilisateurs en masse

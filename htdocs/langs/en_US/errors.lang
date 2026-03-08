@@ -470,4 +470,3 @@ SomeShipmentExists=Error, there is some shipment linked to the order. Deletion r
 WarningEvaluationEmptyValidate=Can't validate evaluation, levels on skills not defined
 ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expected format parameter is not provided.
 ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.
-UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password

@@ -52,6 +52,7 @@ Stock=Stock
 MenuStocks=Stocks
 Stocks=Stocks and location (warehouse) of products
 Movements=Movements
+ProductStatus=Products or services status
 Sell=Sell
 Buy=Purchase
 OnSell=For sale
