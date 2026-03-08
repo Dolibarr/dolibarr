@@ -58,19 +58,23 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
-	$head[$h][1] = $langs->trans("UserRegistration");
-	$head[$h][2] = 'registration';
-	$h++;
-
-	$b = new BlockedLog($db);
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
-	$head[$h][1] = $langs->trans("BrowseBlockedLog");
-	if ($b->alreadyUsed()) {
-		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
+	if (!getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
+		$head[$h][1] = $langs->trans("UserRegistration");
+		$head[$h][2] = 'registration';
+		$h++;
 	}
-	$head[$h][2] = 'fingerprints';
-	$h++;
+
+	if (!getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+		$b = new BlockedLog($db);
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
+		$head[$h][1] = $langs->trans("BrowseBlockedLog");
+		if ($b->alreadyUsed()) {
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
+		}
+		$head[$h][2] = 'fingerprints';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
@@ -85,7 +89,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 		$h++;
 	}
 
-	if ($withtabsetup) {
+	if ($withtabsetup && !getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
 		$head[$h][1] = $langs->trans("TechnicalInformation");
 		$head[$h][2] = 'technicalinfo';
