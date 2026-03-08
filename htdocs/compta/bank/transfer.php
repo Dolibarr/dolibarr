@@ -141,8 +141,10 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 			$tmpaccountto = new Account($db);
 			$tmpaccountto->fetch(GETPOSTINT($n.'_account_to'));
 
+			/** @var ?float $amount_main_currency_from */
 			$amount_main_currency_from = null;
-			$amount_main_currency_to   = null;
+			/** @var ?float $amount_main_currency_to */
+			$amount_main_currency_to = null;
 
 			if ($tmpaccountto->currency_code == $tmpaccountfrom->currency_code) {
 				$amountto[$n] = $amount[$n];
@@ -186,13 +188,13 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				}
 
 				if (!$error) {
-					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], (float) price2num(-1 * (float) $amount[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_from);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], (float) price2num(-1 * (float) $amount[$n]), '', 0, $user, '', '', '', null, '', (float) $amount_main_currency_from);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$error++;
 				}
 				if (!$error) {
-					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], (float) price2num((float) $amountto[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_to);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], (float) price2num((float) $amountto[$n]), '', 0, $user, '', '', '', null, '', (float) $amount_main_currency_to);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$error++;
