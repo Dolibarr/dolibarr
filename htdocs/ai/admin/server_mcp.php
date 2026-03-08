@@ -302,7 +302,7 @@ $currentService = getDolGlobalString('AI_API_SERVICE');
 
 print load_fiche_titre($langs->trans("AIProviderConfigTitle"), '', 'fa fa-plug');
 
-if ((string) $currentService !== '-1') {
+if ((string) $currentService == '-1') {
 	print '<div class="warning">'.$langs->trans("NoAIProviderSelected").' <a href="'.dol_buildpath('/ai/admin/setup.php', 1).'">'.$langs->trans("ConfigureHere").'</a></div>';
 } else {
 	print '<div class="div-table-responsive-no-min">';
