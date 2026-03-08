@@ -9043,7 +9043,7 @@ class Form
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
-		global $conf, $extrafields, $user;
+		global $conf, $extrafields, $user, $hookmanager;
 
 		// Example of common usage for a link to a thirdparty
 
@@ -9199,6 +9199,19 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 			//$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1'.(is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
+
+			// Hook 'selectForFormsListUrl' - Added to allow modules to modify the AJAX URL
+			$parameters = array(
+				'urloption' => $urloption,
+				'object'    => $objecttmp,
+				'htmlname'  => $htmlname,
+				'filter'    => $filter,
+				'searchkey' => $searchkey,
+			);
+			$reshook = $hookmanager->executeHooks('selectForFormsListUrl', $parameters, $objecttmp, $action);
+			if (!empty($reshook)) {
+				$urloption = $hookmanager->resPrint;
+			}
 
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter((string) $preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
