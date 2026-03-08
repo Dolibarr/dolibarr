@@ -169,7 +169,16 @@ $documentation->showSidebar(); ?>
 			);
 			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
-		<!--  -->
+
+
+
+		<?php
+		$setEventMessageJsContextTitle = $langs->trans('DocSetEventMessageJsContext');
+		include __DIR__ . '/../dolibarr-context/inc_seteventmessage.php';
+		?>
+
+
+
 	</div>
 
 </div>
