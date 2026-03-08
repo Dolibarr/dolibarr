@@ -9043,7 +9043,7 @@ class Form
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
-		global $conf, $extrafields, $user, $hookmanager;
+		global $conf, $extrafields, $user, $hookmanager, $action;
 
 		// Example of common usage for a link to a thirdparty
 
