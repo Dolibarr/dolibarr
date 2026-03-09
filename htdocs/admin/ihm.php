@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2021-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2021-2023	Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023		Eric Seigne					<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
@@ -256,10 +255,14 @@ if ($action == 'update') {
 		} else {
 			dolibarr_set_const($db, 'THEME_ELDY_TEXTBTNACTION', $val, 'chaine', 0, '', $conf->entity);
 		}
+
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	if ($mode == 'dashboard') {
 		dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
+
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	if ($mode == 'other') {
@@ -284,6 +287,9 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST("MAIN_BUGTRACK_ENABLELINK", 'alpha'), 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
+
+
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	if ($mode == 'login') {
@@ -294,7 +300,7 @@ if ($action == 'update') {
 		$dirforimage = $conf->mycompany->dir_output . '/logos/';
 		if ($_FILES[$varforimage]["tmp_name"]) {
 			$reg = array();
-			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
+			if (preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
 
 				$isimage = image_format_supported($original_file);
@@ -322,6 +328,10 @@ if ($action == 'update') {
 				}
 			}
 		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("SetupSaved"), null);
+		}
 	}
 
 	if ($mode == 'css') {
@@ -330,7 +340,7 @@ if ($action == 'update') {
 
 		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", $csscontent, 'chaine', 0, '', $conf->entity);
 
-		setEventMessages($langs->trans("RecordSaved"), null);
+		setEventMessages($langs->trans("SetupSaved"), null);
 	}
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
@@ -523,7 +533,7 @@ if ($mode == 'other') {
 
 
 	// Show search area in top menu
-	print '<tr class="oddeven"><td>' . $langs->trans("ShowSearchAreaInTopMenu") . '</td><td>';
+	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
 	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
 	print '</tr>';
@@ -659,6 +669,12 @@ if ($mode == 'dashboard') {
 		print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
 		print '</td>';
 		print '</tr>';
+
+		// Block mrp
+		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockMrp') . '</td><td>';
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_MRP", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print '</td>';
+		print '</tr>';
 	}
 
 	print '</table>' . "\n";
@@ -674,7 +690,6 @@ if ($mode == 'login') {
 	print '<tr class="liste_titre"><td class="titlefieldmax45">';
 	print $langs->trans("Parameter");
 	print '</td><td>';
-	print $langs->trans("Value");
 	print '</td></tr>';
 
 	// Hide helpcenter link on login page

@@ -99,7 +99,7 @@ class Odf
 	 * Class constructor
 	 *
 	 * @param string $filename     The name of the odt file
-	 * @param array $config       Array of config data
+	 * @param array $config        Array of config data
 	 * @throws OdfException
 	 */
 	public function __construct($filename, $config = array())
@@ -293,6 +293,7 @@ class Odf
 			// Check if the current item is a tag or just plain text
 			if (isset($tag['text'])) {
 				$text = $this->encode_chars($tag['text'], $encode, $charset);
+				$text = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $text);
 				$odtResult .= $text;
 			} elseif (isset($tag['name'])) {
 				switch ($tag['name']) {
@@ -872,8 +873,8 @@ IMG;
 	 *
 	 * @param 	string 	$name 					Name of ODT file to generate before generating PDF
 	 * @param	int		$dooutputfordownload	Output the file content to make the download
-	 * @throws OdfException
-	 * @return void
+	 * @throws 	OdfException
+	 * @return 	void
 	 */
 	public function exportAsAttachedPDF($name = "", $dooutputfordownload = 1)
 	{
@@ -887,12 +888,11 @@ IMG;
 		$execmethod = (getDolGlobalString('MAIN_EXEC_USE_POPEN') ? 2 : 1);	// 1 or 2
 		// Method 1 sometimes hang the server.
 
-
 		// Export to PDF using LibreOffice
 		if (getDolGlobalString('MAIN_ODT_AS_PDF') == 'libreoffice') {
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
-			// We delete and recreate a subdir because the soffice may have change pemrissions on it
+			// We delete and recreate a subdir because the soffice may have change permissions on it
 			$countdeleted = 0;
 			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 0, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
@@ -901,8 +901,10 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:'.(getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').'\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
+			// This feature is now disabled by default. Must set var in conf.php to allow it.
+			global $dolibarr_main_allow_unoconv;
 			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
 
 			// MAIN_ODT_AS_PDF should be   "sudo -u unoconv /usr/bin/unoconv" and userunoconv must have sudo to be root by adding file /etc/sudoers.d/unoconv with content  www-data ALL=(unoconv) NOPASSWD: /usr/bin/unoconv .
@@ -926,18 +928,22 @@ IMG;
 			// If it fails:
 			// - set shell of user to bash instead of nologin.
 			// - set permission to read/write to user on home directory /var/www so user can create the libreoffice , dconf and .cache dir and files then set permission back
-
-			$command = getDolGlobalString('MAIN_ODT_AS_PDF').' '.escapeshellcmd($name);
-			//$command = '/usr/bin/unoconv -vvv '.escapeshellcmd($name);
+			if (!empty($dolibarr_main_allow_unoconv)) {
+				$command = dol_sanitizePathName(getDolGlobalString('MAIN_ODT_AS_PDF'), '_', 0, 1).' '.escapeshellarg($name);
+				//$command = '/usr/bin/unoconv -vvv '.escapeshellcmd($name);
+			} else {
+				throw new OdfException('Use of the unoconv method is deprecated. Try to use "libreoffice" method instead of set $dolibarr_main_allow_unoconv to 1 in conf.php for backward compatibility.');
+			}
 		} else {
 			// deprecated old method using odt2pdf.sh (native, jodconverter, ...)
-			$tmpname=preg_replace('/\.odt/i', '', $name);
+			$tmpname = dol_sanitizePathName(preg_replace('/\.odt/i', '', $name));
 
 			if (getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT')) {
-				$command = getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT').'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric(getDolGlobalString('MAIN_ODT_AS_PDF'))?'jodconverter':getDolGlobalString('MAIN_ODT_AS_PDF'));
+				$paramodt2pdf = (is_numeric(getDolGlobalString('MAIN_ODT_AS_PDF')) ? 'jodconverter' : getDolGlobalString('MAIN_ODT_AS_PDF'));
+				$paramodt2pdf = dol_sanitizePathName($paramodt2pdf);
+				$command = dol_sanitizePathName(getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT')).'/scripts/odt2pdf/odt2pdf.sh '.escapeshellarg($tmpname).' '.escapeshellarg($paramodt2pdf);
 			} else {
-				dol_syslog(get_class($this).'::exportAsAttachedPDF is used but the constant MAIN_DOL_SCRIPTS_ROOT with path to script directory was not defined.', LOG_WARNING);
-				$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric(getDolGlobalString('MAIN_ODT_AS_PDF'))?'jodconverter':getDolGlobalString('MAIN_ODT_AS_PDF'));
+				throw new OdfException('Use of the ODT to PDF convertion with odt2pdf.sh script is deprecated when option MAIN_DOL_SCRIPTS_ROOT to define path of scripts directory is no set.');
 			}
 		}
 
@@ -945,24 +951,38 @@ IMG;
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
 
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command, LOG_DEBUG);
+
 		// TODO Use:
 		// $outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
 		// $result = $utils->executeCLI($command, $outputfile);  and replace test on $execmethod.
 		// $retval will be $result['result']
 		// $errorstring will be $result['output']
+
+		// Protect parentheses from being double-escaped by escapeshellcmd().
+		// The $command is already built with escapeshellarg() for all arguments,
+		// but escapeshellcmd() escapes parentheses inside quoted strings, breaking
+		// filenames like "(PROV35)_invoice.odt" for draft invoices.
+		// Security: reject if placeholder strings already exist to prevent injection.
+		if (strpos($command, '__PARENTHESIS_OPEN__') !== false || strpos($command, '__PARENTHESIS_CLOSE__') !== false) {
+			dol_syslog(get_class($this).'::exportAsAttachedPDF Invalid characters in command path: '.$command, LOG_WARNING);
+			throw new OdfException('Invalid characters in command path');
+		}
+		$commandprotected = str_replace(array('(', ')'), array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), $command);
+		$commandescaped = escapeshellcmd($commandprotected);
+		$commandescapedtoexec = str_replace(array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), array('(', ')'), $commandescaped);
+
 		$retval=0; $output_arr=array();
 		if ($execmethod == 1) {
-			exec($command, $output_arr, $retval);
-		}
-		if ($execmethod == 2) {
+			exec($commandescapedtoexec, $output_arr, $retval);
+		} elseif ($execmethod == 2) {
 			$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
 
-			$ok=0;
 			$handle = fopen($outputfile, 'w');
 			if ($handle) {
 				dol_syslog(get_class($this)."Run command ".$command, LOG_DEBUG);
+				dol_syslog(get_class($this)."escapeshellcmd(command) = ".$commandescapedtoexec, LOG_DEBUG);
 				fwrite($handle, $command."\n");
-				$handlein = popen($command, 'r');
+				$handlein = popen($commandescapedtoexec, 'r');
 				while (!feof($handlein)) {
 					$read = fgets($handlein);
 					fwrite($handle, $read);
@@ -986,6 +1006,7 @@ IMG;
 
 					if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$name = preg_replace('/\.od(x|t)/i', '', $name);
+
 						header('Content-type: application/pdf');
 						header('Content-Disposition: attachment; filename="' . basename($name) . '.pdf"');
 						readfile($name . ".pdf");
@@ -998,7 +1019,7 @@ IMG;
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
-			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.formatLogObject($output_arr), LOG_DEBUG);
 
 			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);
@@ -1007,7 +1028,7 @@ IMG;
 				foreach ($output_arr as $line) {
 					$errorstring.= $line."<br>";
 				}
-				throw new OdfException('ODT to PDF convert fail (option MAIN_ODT_AS_PDF is '.$conf->global->MAIN_ODT_AS_PDF.', command was '.$command.', retval='.$retval.') : ' . $errorstring);
+				throw new OdfException('ODT to PDF convert fail (option MAIN_ODT_AS_PDF is '.getDolGlobalString('MAIN_ODT_AS_PDF').', command was '.$command.', retval='.$retval.') : ' . $errorstring);
 			}
 		}
 	}

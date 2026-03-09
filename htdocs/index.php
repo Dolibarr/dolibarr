@@ -6,7 +6,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ require 'main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -113,11 +114,13 @@ if (getDolGlobalString('MAIN_MOTD')) {
  */
 
 // Specific warning to propose to upgrade invoice situation to progressive mode
+/*
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 	$langs->loadLangs(array("admin"));
 	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org'));
 	//print "<br>";
 }
+*/
 
 /*
  * Show security warnings
@@ -132,7 +135,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
 	}
 
 	// Conf files must be in read only mode
@@ -146,7 +149,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
-			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
 		}
 	}
 
@@ -288,23 +291,22 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		}
 	}
 
-
 	// Number of cheque to send
-	if (isModEnabled('bank')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
+	if (isModEnabled('bank') && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT')) {
 			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
-			$dashboardlines[$board->element] = $board->load_board($user);
+			$dashboardlines[$board->element] = $board->load_board($user);	// board->element is 'withdraw'
 		}
 		if (isModEnabled('prelevement')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct_debit');
+			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct-debit');
 		}
 		if (isModEnabled('paymentbybanktransfer')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit_transfer');
+			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit-transfer');
 		}
 	}
 
@@ -337,7 +339,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
-	if (isModEnabled('mrp')) {
+	if (isModEnabled('mrp')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_MRP')) {
 		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 		$board = new Mo($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -529,7 +531,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 	// Show dashboard
 	$nbworkboardempty = 0;
-	$isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
+	$isIntopOpenedDashBoard = array();
 	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
@@ -593,7 +595,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 				// Show the span for the total of record. TODO This seems not used.
 				if (!empty($groupElement['globalStats'])) {
-					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
 					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
 				}
 
@@ -653,7 +654,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					// Forge the line to show into the open object box
 					$labeltoshow = $board->label.' ('.$board->nbtodo.')';
 					if ($board->total > 0) {
-						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, getDolCurrency());
 					}
 					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
 					$openedDashBoard .= $infoName;
@@ -663,7 +664,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$openedDashBoard .= '<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'">';
 					$openedDashBoard .= $board->nbtodo;
 					if ($board->total > 0 && getDolGlobalString('MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX')) {
-						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, getDolCurrency());
 					}
 					$openedDashBoard .= '</span>';
 					$openedDashBoard .= '</a>';

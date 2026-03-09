@@ -54,8 +54,30 @@ require_once __DIR__.'/../webportal.main.inc.php'; // __DIR__ allow this script 
  * @var	string	$dolibarr_nocache
  */
 
+/**
+ _____   ____   _____   ____
+|_   _| |  _ \ |_   _| |  _ \
+  | |   | | | |  | |   | | | |
+  | |   | |_| |  | |   | |_| |
+  |_|   |____/   |_|   |____/
+
+TODO: This is a CSS file — remove all PHP.
+If you want customizations, use custom.css.php.
+Before doing so, ask yourself if it’s really necessary.
+
+You can also add a body class such as:
+  - direction-ltr
+  - direction-rtl
+  - login-form-right
+to change CSS behavior based on context.
+*/
+
+
+// TODO : USE CSS VAR(--font-family)
 $fontlist = 'arial,tahoma,verdana,helvetica';
 $colorbacktitle1 = '#fff';
+
+// TODO remove hard coded direction and use body.direction-rtl or body.direction-ltr in css code
 $langs->load("main", 0, 1);
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
@@ -77,9 +99,18 @@ if (empty($dolibarr_nocache)) {
 @import "badges.css";
 @import "title-buttons.css";
 @import "nav.css";
+@import "card.css";
+@import "dialog.css";
+@import "btn.css";
+@import "form-input-special.css";
 /**
 This file can overwrite default pico css
  */
+
+
+.maxwidthdate {
+	max-width: 110px;
+}
 
 
 /**
@@ -125,10 +156,6 @@ ul.menu-entries-alt {
 	display: none;
 }
 
-.maxwidthdate {
-	max-width: 110px;
-}
-
 @media (max-width: 576px) {
 	ul.brand li.brand {
 		padding-left: 0px;
@@ -140,8 +167,6 @@ ul.menu-entries-alt {
 		display: block;
 	}
 }
-
-
 
 
 /**
@@ -332,6 +357,7 @@ table.dp {
 	width: 180px;
 	background-color: var(--inputbackgroundcolor);
 	border-top: solid 2px #DDDDDD;
+	/* TODO remove hard coded direction and use body.direction-rtl or body.direction-ltr in css code */
 	border-<?php print $left; ?>: solid 2px #DDDDDD;
 	border-<?php print $right; ?>: solid 1px #222222;
 	border-bottom: solid 1px #222222;

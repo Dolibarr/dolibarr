@@ -6,7 +6,7 @@
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -85,8 +85,9 @@ if (!$sortorder) {
 $hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 // Security check
-//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
-$result = restrictedArea($user, 'stock');
+$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
+
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -109,7 +110,7 @@ $usercandelete = $user->hasRight('stock', 'supprimer');
 $permissiontoeditextra = $usercancreate;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 
@@ -284,6 +285,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
@@ -555,9 +558,11 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfield">';
 
 			// Value
-			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-			print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
-			print "</td></tr>";
+			if ($usercancreadsupplierprice) {
+				print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
+				print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+				print "</td></tr>";
+			}
 
 			// Last movement
 			if ($user->hasRight('stock', 'mouvement', 'lire')) {
@@ -648,35 +653,35 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("Products", "", "p.ref", "", "&id=".$object->id, "", $sortfield, $sortorder);
+			print_liste_field_titre("Label", "", "p.label", "", "&id=".$object->id, "", $sortfield, $sortorder);
+			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
 			$totalarray['type'][$totalarray['nbfield']] = 'stock';
 
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+				print_liste_field_titre("Unit", "", "p.fk_unit", "", "&id=".$object->id, 'align="left"', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
 				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
+			if ($usercancreadsupplierprice) {
+				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
 
-			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-			$totalarray['nbfield']++;
-
-			print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-			$totalarray['nbfield']++;
-			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
-			$totalarray['type'][$totalarray['nbfield']] = '';
-
+				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+				$totalarray['type'][$totalarray['nbfield']] = '';
+			}
 
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("SellPriceMin", "", "p.price", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 			}
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
 				$totalarray['type'][$totalarray['nbfield']] = '';
@@ -832,14 +837,14 @@ if ($action == 'create') {
 						print $productstatic->getLabelOfUnit('long', $langs);
 						print '</td>';
 					}
+					if ($usercancreadsupplierprice) {
+						// Price buy PMP
+						print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
-					// Price buy PMP
-					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
-
-					// Total PMP
-					print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
-					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
-
+						// Total PMP
+						print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
+						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
+					}
 					$pricemin = 0;
 					// Price sell min
 					if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
@@ -856,7 +861,7 @@ if ($action == 'create') {
 
 					// Link to transfer
 					if ($user->hasRight('stock', 'mouvement', 'creer')) {
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfer&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("TransferStock");
 						print "</a></td>";
@@ -1036,7 +1041,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<a name="builddoc"></a>'; // ancre
 
 	// Documents
-	$objectref = dol_sanitizeFileName($object->ref);
+	$objectref = dol_sanitizeFileName((string) $object->ref);
 	$relativepath = $object->ref.'/'.$objectref.'.pdf';
 	$filedir = $conf->stock->dir_output.'/'.$objectref;
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

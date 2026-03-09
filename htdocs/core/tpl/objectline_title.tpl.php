@@ -104,7 +104,10 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 	//print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
 	if (GETPOST('mode', 'aZ09') == 'vatforalllines') {
 		print '<div class="classvatforalllines inline-block nowraponall">';
-		print $form->load_tva('vatforalllines', '', $mysoc, $object->thirdparty, 0, 0, '', false, 1);
+		$societe_vendeuse = strpos($object->element, 'supplier') === false ? $mysoc : $object->thirdparty;
+		$societe_acheteuse = strpos($object->element, 'supplier') === false ? $object->thirdparty : $mysoc;
+		$vat_mode = strpos($object->element, 'supplier') === false ? 1 : 2;
+		print $form->load_tva('vatforalllines', '', $societe_vendeuse, $societe_acheteuse, 0, 0, '', false, 1, $vat_mode);
 		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
 		print '</div>';
 	}
@@ -115,7 +118,7 @@ print '</th>';
 print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
 // Multicurrency HT / excl tax
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHT');
 	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
@@ -126,7 +129,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 }
 
 // Multicurrency TTC / incl tax
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 	print '<th class="linecoluttc_currency right " style="width: 80px">'.$langs->trans('PriceUTTC');
 	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
@@ -144,7 +147,7 @@ print '<th class="linecoldiscount right nowraponall">';
 print $langs->trans('ReductionShort');
 
 // @phan-suppress-next-line PhanUndeclaredConstantOfClass
-if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
+if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
 	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'remiseforalllines') {
@@ -212,7 +215,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort');
 	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }

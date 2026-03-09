@@ -9,11 +9,12 @@
  * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,15 @@
  */
 
 require "../main.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
@@ -54,15 +64,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
@@ -134,7 +135,7 @@ $permissiontodisable = $user->hasRight('contrat', 'desactiver');	// TODO use sam
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $error = 0;
@@ -1142,7 +1143,7 @@ if (isModEnabled('project')) {
 }
 
 // Load object modContract
-$module = (getDolGlobalString('CONTRACT_ADDON') ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
+$module = getDolGlobalString('CONTRACT_ADDON', 'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 	$module = substr($module, 0, dol_strlen($module) - 4);
 }
@@ -1150,6 +1151,7 @@ $result = dol_include_once('/core/modules/contract/'.$module.'.php');
 $modCodeContract = null;
 if ($result > 0) {
 	$modCodeContract = new $module();
+	/** @var ModelNumRefContracts $modCodeContract */
 	'@phan-var-force ModelNumRefContracts $modCodeContract';
 }
 
@@ -1233,11 +1235,11 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td><td>';
 	if (!empty($modCodeContract->code_auto)) {
 		$tmpcode = $langs->trans("Draft");
 	} else {
-		$tmpcode = '<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref') ? GETPOST('ref') : $tmpcode).'">';
+		$tmpcode = '<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref', 'alpha')).'">';
 	}
 	print $tmpcode;
 	print '</td></tr>';
@@ -1261,14 +1263,14 @@ if ($action == 'create') {
 	} else {
 		print '<td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth150 widthcentpercentminusxx maxwidth500');
 		print ' <a href="'.dolBuildUrl(DOL_URL_ROOT . '/societe/card.php', ['action' => 'create', 'customer' => 3, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
 
 	if ($socid > 0) {
-		// Ligne info remises tiers
+		// Third-party discount info
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 		if ($soc->remise_percent) {
 			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent).' ';
@@ -1309,16 +1311,18 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1);
+		$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, "projectid", 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'minwidth150 maxwidth300 widthcentpercentminusxx');
 		print ' &nbsp; <a href="' . dolBuildUrl(DOL_URL_ROOT . '/projet/card.php', ['socid' => $soc->id, 'action' => 'create', 'status' => 1, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'socid' => $soc->id])]) . '"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print "</td></tr>";
 	}
 
+	// Note public
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
 	$doleditor = new DolEditor('note_public', (string) $note_public, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
+	// Note private
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
 		$doleditor = new DolEditor('note_private', (string) $note_private, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
@@ -1386,10 +1390,10 @@ if ($action == 'create') {
 
 
 		if ($action == 'delete') {
-			//Confirmation de la suppression du contrat
+			// Confirm contract deletion
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("DeleteAContract"), $langs->trans("ConfirmDeleteAContract"), "confirm_delete", '', 0, 1);
 		} elseif ($action == 'valid') {
-			//Confirmation de la validation
+			// Confirm contract validation
 			$ref = substr($object->ref, 1, 4);
 			if ($ref == 'PROV' && !empty($modCodeContract->code_auto)) {
 				$numref = $object->getNextNumRef($object->thirdparty);
@@ -1399,7 +1403,7 @@ if ($action == 'create') {
 			$text = $langs->trans('ConfirmValidateContract', $numref);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ValidateAContract"), $text, "confirm_valid", '', 0, 1);
 		} elseif ($action == 'close') {
-			// Confirmation de la fermeture
+			// Confirm closing contract
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CloseAContract"), $langs->trans("ConfirmCloseContract"), "confirm_close", '', 0, 1);
 		} elseif ($action == 'activate') {
 			$formquestion = array(
@@ -1407,7 +1411,7 @@ if ($action == 'create') {
 				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), 0 => '', 1 => ''),
 				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', 0 => '', 1 => '', 'class' => 'minwidth300', 'moreattr' => 'autofocus')
 			);
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 300);
 		} elseif ($action == 'clone') {
 			$filter = '(s.client:IN:1,2,3)';
 			// Clone confirmation
@@ -1708,12 +1712,12 @@ if ($action == 'create') {
 							$description = $objp->description;
 
 							if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : '') . $text;
 								if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
 									print $form->textwithpicto('', $description);
 								}
 							} else {
-								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : ''));
 							}
 
 							// Add description in form
@@ -1827,7 +1831,7 @@ if ($action == 'create') {
 						}
 					} else {
 						// Line in mode update
-						// Ligne carac
+						// Line carac
 						print '<tr class="oddeven">';
 						print '<td>';
 						$currentLineProductId = GETPOSTISSET('idprod') ? GETPOST('idprod') : (!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0);
@@ -2011,7 +2015,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Activate");
 							if ($objp->statut == 4) {
 								$tmpaction = 'unactivateline';
-								$tmpactionpicto = 'playstop';
+								$tmpactionpicto = 'playstop.png';
 								$tmpactiontext = $langs->trans("Disable");
 							}
 							if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {
@@ -2250,9 +2254,9 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if ($object->status == $object::STATUS_VALIDATED) {
 						if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('contrat', 'creer'))) {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false, $params);
 						}
 					}
 				}
@@ -2280,7 +2284,6 @@ if ($action == 'create') {
 				$arrayofcreatebutton = array();
 				if (isModEnabled('propal') && $object->status > 0 && $soc->client > 0) {
 					$arrayofcreatebutton[] = array(
-						'attr' => array('style' => 'text-align: left;'),
 						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
 						'label' => $langs->trans('AddProp'),
 						'lang' => 'propal',
@@ -2340,7 +2343,7 @@ if ($action == 'create') {
 
 				if (count($arrayforbutaction)) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction('', $langs->trans("Services"), 'default', $arrayforbutaction, '', true, $params);
+					print dolGetButtonAction('', $langs->trans("Enable")." / ".$langs->trans("Close"), 'default', $arrayforbutaction, '', true, $params);
 				}
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {
@@ -2385,9 +2388,12 @@ if ($action == 'create') {
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->hasRight('contrat', 'lire');
 			$delallowed = $user->hasRight('contrat', 'creer');
+			$tooltipAfterComboOfModels = '';
+			if (getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT')) {
+				$tooltipAfterComboOfModels = $langs->trans("AccordingToYourSetupTheFileWillBeConcatenated", getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE'));
+			}
 
-
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', '0', '', $soc->default_lang, '', $object);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', '0', '', $soc->default_lang, '', $object, 0, 'remove_file', $tooltipAfterComboOfModels);
 
 
 			// Show links to link elements

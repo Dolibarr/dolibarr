@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ if (isset($_SESSION["nbrecases"])) {
 			$_SESSION["typecolonne".$i] = $arrayoftypecolumn[$i];
 		}
 	}
-} else { //nombre de cases par défaut
+} else { // Number of cases by default
 	$_SESSION["nbrecases"] = 5;
 }
 

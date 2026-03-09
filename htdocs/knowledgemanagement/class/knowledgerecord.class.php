@@ -88,7 +88,7 @@ class KnowledgeRecord extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -1003,28 +1003,28 @@ class KnowledgeRecord extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
+	// /**
+	//  * 	Create an array of lines
+	//  *
+	//  * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
+	//  */
+	// public function getLinesArray()
+	// {
+	// 	$this->lines = array();
 
-		$objectline = new KnowledgeRecordLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
+	// 	$objectline = new KnowledgeRecordLine($this->db);
+	// 	$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
 
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			// @phpstan-ignore-next-line
-			return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
-		}
-	}
+	// 	if (is_numeric($result)) {
+	// 		$this->error = $objectline->error;
+	// 		$this->errors = $objectline->errors;
+	// 		return $result;
+	// 	} else {
+	// 		$this->lines = $result;
+	// 		// @phpstan-ignore-next-line
+	// 		return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
+	// 	}
+	// }
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
@@ -1236,25 +1236,25 @@ class KnowledgeRecord extends CommonObject
 }
 
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+// require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
-/**
- * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class KnowledgeRecordLine extends CommonObjectLine
-{
-	// To complete with content of an object KnowledgeRecordLine
-	// We should have a field rowid, fk_knowledgerecord and position
+// /**
+//  * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
+//  */
+// class KnowledgeRecordLine extends CommonObjectLine
+// {
+// 	// To complete with content of an object KnowledgeRecordLine
+// 	// We should have a field rowid, fk_knowledgerecord and position
 
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
+// 	/**
+// 	 * Constructor
+// 	 *
+// 	 * @param DoliDB $db Database handler
+// 	 */
+// 	public function __construct(DoliDB $db)
+// 	{
+// 		$this->db = $db;
 
-		$this->isextrafieldmanaged = 0;
-	}
-}
+// 		$this->isextrafieldmanaged = 0;
+// 	}
+// }

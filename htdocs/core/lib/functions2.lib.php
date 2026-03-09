@@ -1989,7 +1989,7 @@ function is_ip($ip)
 		return 1;
 	}
 
-	return 0;
+	return 0;	// If not valid
 }
 
 /**
@@ -2007,7 +2007,11 @@ function dol_buildlogin($lastname, $firstname)
 		$charforseparator = '';
 	}
 
-	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
+	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {			// flastname
+		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
@@ -2031,14 +2035,12 @@ function dol_buildlogin($lastname, $firstname)
  */
 function getSoapParams()
 {
-	global $conf;
-
 	$params = array();
 	$proxyuse = getDolGlobalString('MAIN_PROXY_USE');
-	$proxyhost = (!$proxyuse ? false : $conf->global->MAIN_PROXY_HOST);
-	$proxyport = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (!$proxyuse ? false : $conf->global->MAIN_PROXY_USER);
-	$proxypass = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PASS);
+	$proxyhost = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_HOST'));
+	$proxyport = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PORT'));
+	$proxyuser = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_USER'));
+	$proxypass = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PASS'));
 	$timeout = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 10); // Connection timeout
 	$response_timeout = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30); // Response timeout
 	//print extension_loaded('soap');
@@ -2658,11 +2660,11 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'api';
 	} elseif (in_array($moduleobject, ['contact', 'contacts', 'customer', 'thirdparty', 'thirdparties'])) {
 		$moduledirforclass = 'societe';
-	} elseif ($moduleobject == 'propale' || $moduleobject == 'proposals') {
+	} elseif ($moduleobject == 'propal' || $moduleobject == 'propale' || $moduleobject == 'proposals') {
 		$moduledirforclass = 'comm/propal';
 	} elseif ($moduleobject == 'agenda' || $moduleobject == 'agendaevents') {
 		$moduledirforclass = 'comm/action';
-	} elseif ($moduleobject == 'mailing') {
+	} elseif ($moduleobject == 'mailing' || $moduleobject == 'mailings') {
 		$moduledirforclass = 'comm/mailing';
 	} elseif (in_array($moduleobject, ['adherent', 'members', 'memberstypes', 'subscriptions'])) {
 		$moduledirforclass = 'adherents';
@@ -2682,7 +2684,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {
 		$moduledirforclass = 'projet';
-	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses') {
+	} elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses' || $moduleobject == 'productlots') {
 		$moduledirforclass = 'product/stock';
 	} elseif ($moduleobject == 'supplierproposals' || $moduleobject == 'supplierproposal' || $moduleobject == 'supplier_proposal') {
 		$moduledirforclass = 'supplier_proposal';
@@ -2704,6 +2706,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'salaries';
 	} elseif ($moduleobject == 'paymentexpensereports') {
 		$moduledirforclass = 'expensereport';
+	} elseif ($moduleobject == 'eventattendees') {
+		$moduledirforclass = 'eventorganization';
+	} elseif ($moduleobject == 'holidays') {
+		$moduledirforclass = 'holiday';
 	}
 
 	return $moduledirforclass;
@@ -3055,10 +3061,10 @@ function removeEmoji($text, $allowedemoji = 1)
 /**
  * Clean a cell to respect rules of CSV file cells
  *
- * @param 	string	$newvalue	String to clean (must be UTF-8 encoded)
- * @param	string	$charset	Expected output character set ('UTF-8', 'ISO-8859-1', ...). Default '' will use the value into EXPORT_CSV_FORCE_CHARSET.
- * @param	string	$separator	CSV char separator (often ',' or ';'). Default '' will use the value into EXPORT_CSV_SEPARATOR_TO_USE.
- * @return 	string				Value cleaned
+ * @param 	string|int|float	$newvalue	String to clean (must be UTF-8 encoded)
+ * @param	string				$charset	Expected output character set ('UTF-8', 'ISO-8859-1', ...). Default '' will use the value into EXPORT_CSV_FORCE_CHARSET.
+ * @param	string				$separator	CSV char separator (often ',' or ';'). Default '' will use the value into EXPORT_CSV_SEPARATOR_TO_USE.
+ * @return 	string							Value cleaned
  */
 function csvClean($newvalue, $charset = '', $separator = '')
 {
@@ -3074,7 +3080,7 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 
-	$newvalue = $langs->convToOutputCharset($newvalue, 'UTF-8', $charset); // newvalue is now encoded into $charset
+	$newvalue = $langs->convToOutputCharset((string) $newvalue, 'UTF-8', $charset); // newvalue is now encoded into $charset
 
 
 	// Rule Dolibarr: No HTML
@@ -3108,4 +3114,97 @@ function csvClean($newvalue, $charset = '', $separator = '')
 	}
 
 	return ($addquote ? '"' : '').$newvalue.($addquote ? '"' : '');
+}
+
+
+/**
+ * Function to output HTML to make an ajax call to make registration
+ *
+ * @param	string					$constanttosavelastko		Name of constant to save the last call that failed
+ * @param	string					$constanttosavefirstok		Name of constant to save the first try that succeed
+ * @param	array<string,string>	$arrayofdata				Array of key-value to add as parameter in the ajax call
+ * @param	int						$forceping					Value 1 to force the ping, even if it was already done
+ * @return 	void
+ */
+function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata = array(), $forceping = 0)
+{
+	global $dolibarr_distrib;
+	global $db, $conf;
+
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+	$algo = 'sha256';
+	$hash_unique_id = getHashUniqueIdOfRegistration($algo);
+
+	// Disable ping if $constanttosavelastpingko is set and is recent (this month)
+	if (getDolGlobalString($constanttosavelastko) && substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
+		print "\n";
+		print '<!-- printCodeForPing: NO JS CODE TO ENABLE the call for '.$constanttosavefirstok.'. An error already occurred this month ('.$constanttosavelastko.' is set), we will re-try next month. -->'."\n";
+	} else {
+		print "\n";
+		print '<!-- printCodeForPing: Includes JS to make ajax call for '.$constanttosavefirstok.'. forceping='.$forceping.' '.$constanttosavefirstok.'='.getDolGlobalString($constanttosavefirstok).' '.$constanttosavelastko.'='.getDolGlobalString($constanttosavelastko).' -->'."\n";
+		print "<!-- JS CODE TO ENABLE the call -->\n";
+		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+		// Try to guess the distrib used
+		$distrib = 'standard';
+		if (isset($_SERVER["SERVER_ADMIN"]) && $_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {
+			$distrib = 'doliwamp';
+		}
+		if (!empty($dolibarr_distrib)) {
+			$distrib = $dolibarr_distrib;
+		}
+		?>
+			<script>
+			jQuery(document).ready(function (tmp) {
+				console.log("Try remote call with hash_unique_id is dol_hash('dolibarr'+instance_unique_id, 'sha256')");
+				$.ajax({
+					method: "POST",
+					url: "<?php echo $url_for_ping ?>",
+					timeout: 500,     // timeout milliseconds
+					cache: false,
+					data: {
+						<?php
+						foreach ($arrayofdata as $datakey => $dataval) {
+							print $datakey.": '".dol_escape_js($dataval)."',\n";
+						}
+						?>
+						hash_algo: 'dol_hash-<?php echo $algo; ?>',
+						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
+						version: '<?php echo (float) DOL_VERSION; ?>',
+						version_full: '<?php echo DOL_VERSION; ?>',
+						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
+						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
+						entity: '<?php echo (int) $conf->entity; ?>',
+						dbtype: '<?php echo dol_escape_js($db->type); ?>',
+						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
+						os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
+						db_version: '<?php echo dol_escape_js(version_db()); ?>',
+						distrib: '<?php echo dol_escape_js($distrib); ?>',
+						token: 'notrequired'
+					},
+					success: function (data, status, xhr) {   // success callback function (data contains body of response)
+							console.log("Ping ok - we call pingresult to save this");
+							$.ajax({
+								method: 'GET',
+								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
+								timeout: 500,     // timeout milliseconds
+								cache: false,
+								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavefirstok ?>', token: '<?php echo currentToken(); ?>' },	// for update
+							});
+					},
+					error: function (data,status,xhr) {   // error callback function
+							console.log("Ping ko - we call pingresult to save this: " + data);
+							$.ajax({
+								method: 'GET',
+								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
+								timeout: 500,     // timeout milliseconds
+								cache: false,
+								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavelastko ?>', token: '<?php echo currentToken(); ?>' },
+							});
+					}
+				});
+			});
+			</script>
+		<?php
+	}
 }

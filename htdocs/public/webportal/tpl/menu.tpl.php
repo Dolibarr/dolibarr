@@ -167,7 +167,7 @@ if ($context->userIsLog()) {
 			'id' => 'user_account',
 			'rank' => 99998,
 			'url' => false,
-			'name' => '<img class="top-nav-icon user-account" src="' . WebPortalTheme::getIconImagesUrl() . 'user.svg" aria-hidden="true" /> '.$context->logged_thirdparty->getFullName($langs),
+			'name' => '<img class="top-nav-icon user-account" src="' . WebPortalTheme::getIconImagesUrl() . 'user.svg" aria-hidden="true" /> <span class="user-account-name">'.$context->logged_thirdparty->getFullName($langs).'</span>',
 		);
 	}
 
@@ -245,7 +245,7 @@ if (empty($reshook)) {
 					// ajout du group au menu
 					$navMenu[$groupId] = $groupItem;
 
-					// suppression des items enfant du group du menu
+					// remove child item of the group of the menu
 					foreach ($groupItem['children'] as $menuId => $menuItem) {
 						if (isset($navMenu[$menuId])) {
 							unset($navMenu[$menuId]);
@@ -261,6 +261,20 @@ if (empty($reshook)) {
 }
 ?>
 <nav class="primary-top-nav container-fluid">
+	<ul class="menu-entries-alt">
+		<?php
+		// show menu
+		print '<li data-deep="0" class="nav-item">';
+		print '	<details class="main-nav-dropdown dropdown">';
+		print '		<summary><img class="top-nav-icon menu-icon-dropdown" src="' . WebPortalTheme::getIconImagesUrl() . 'menu.svg" alt="'.dol_escape_htmltag($langs->trans("Menu")).'" /></summary>';
+		print '		<ul >';
+		print 			getNav($navMenu);
+		print '		</ul>';
+		print '	</details>';
+		print '</li>';
+		?>
+	</ul>
+
 	<ul class="brand">
 		<li class="brand">
 		<?php
@@ -283,12 +297,7 @@ if (empty($reshook)) {
 	}
 	?>
 	</ul>
-	<ul class="menu-entries-alt">
-	<?php
-	// show menu
-	print '<li data-deep="0" class="--item-propal-list nav-item "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
-	?>
-	</ul>
+
 	<ul class="logout">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {

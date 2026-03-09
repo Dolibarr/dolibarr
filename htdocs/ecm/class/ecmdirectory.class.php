@@ -476,7 +476,7 @@ class EcmDirectory extends CommonObject
 	 *  @param	int		$max			Max length
 	 *  @param	string	$more			Add more param on a link
 	 *  @param	int		$notooltip		1=Disable tooltip
-	 *  @return	string					Chaine avec URL
+	 *  @return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $more = '', $notooltip = 0)
 	{
@@ -798,8 +798,8 @@ class EcmDirectory extends CommonObject
 	 * NB2: if trigger fail, action should be canceled.
 	 * NB3: Should be deleted if EcmDirectory extend CommonObject
 	 *
-	 * @param   string    $triggerName   trigger's name to execute
-	 * @param   User      $user           Object user
+	 * @param   string    $triggerName    Trigger's name to execute
+	 * @param   ?User     $user           Object user
 	 * @return  int                       Result of run_triggers
 	 */
 	public function call_trigger($triggerName, $user)

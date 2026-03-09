@@ -403,17 +403,17 @@ class EcmFiles extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param  int    $id          	   	Id object
-	 * @param  string $ref         	   	Hash of file name (filename+filepath). Not always defined on some version.
-	 * @param  string $relativepath    	Relative path of file from document directory. Example: 'path/path2/file' or 'path/path2/*'
-	 * @param  string $hashoffile      	Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
-	 * @param  string $hashforshare    	Hash of file sharing, or 'shared'
-	 * @param  string $src_object_type 	src_object_type to search (value of object->table_element)
-	 * @param  int    $src_object_id 	src_object_id to search
-	 * @param  int    $entity 	        entity
-	 * @return int                 	   	Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param  int		$id					Id object
+	 * @param  string	$ref				Hash of file name (filename+filepath). Not always defined on some version.
+	 * @param  string	$relativepath		Relative path of file from document directory. Example: 'path/path2/file' or 'path/path2/*'
+	 * @param  string	$hashoffile			Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
+	 * @param  string	$hashforshare		Hash of file sharing, or 'shared'
+	 * @param  string	$src_object_type	src_object_type to search (value of object->table_element)
+	 * @param  int		$src_object_id		src_object_id to search
+	 * @param  int|null	$entity 	        entity (it's null by default to avoid problem with entity = 0)
+	 * @return int							Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $relativepath = '', $hashoffile = '', $hashforshare = '', $src_object_type = '', $src_object_id = 0, $entity = 0)
+	public function fetch($id, $ref = '', $relativepath = '', $hashoffile = '', $hashforshare = '', $src_object_type = '', $src_object_id = 0, $entity = null)
 	{
 		global $conf;
 
@@ -461,7 +461,7 @@ class EcmFiles extends CommonObject
 			if ($filename != '*') {
 				$sql .= " AND t.filename = '".$this->db->escape($filename)."'";
 			}
-			if (! empty($entity)) {
+			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
@@ -470,7 +470,7 @@ class EcmFiles extends CommonObject
 		}
 		if (!empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
-			if (! empty($entity)) {
+			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
@@ -479,7 +479,7 @@ class EcmFiles extends CommonObject
 		}
 		if (!empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
-			if (! empty($entity)) {
+			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
@@ -497,7 +497,7 @@ class EcmFiles extends CommonObject
 		}
 		if ($src_object_type && $src_object_id) {
 			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
-			if (! empty($entity)) {
+			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
@@ -684,6 +684,7 @@ class EcmFiles extends CommonObject
 				$line->src_object_type = $obj->src_object_type;
 				$line->src_object_id = $obj->src_object_id;
 				$line->agenda_id = $obj->agenda_id;
+				$line->fetch_optionals();
 				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
@@ -996,12 +997,12 @@ class EcmFiles extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to (propal, etc) module name
-	 *  @param	int  	$notooltip			1=Disable tooltip
-	 *  @param	int		$maxlen				Max length of visible user name
-	 *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int					$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string				$option				On what the link point to (propal, etc) module name
+	 *  @param	int  				$notooltip			1=Disable tooltip
+	 *  @param	int					$maxlen				Max length of visible user name
+	 *  @param  string  			$morecss            Add more css on link
+	 *	@return	string									String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
@@ -1076,9 +1077,6 @@ class EcmFiles extends CommonObject
 				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			} else {
 				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
-			}
-			if ($withpicto != 2) {
-				$result .= ' ';
 			}
 		}
 		$result .= $linkstart.$this->filename.$linkend;
@@ -1174,6 +1172,11 @@ class EcmFilesLine extends CommonObjectLine
 	 * @var int Entity
 	 */
 	public $entity;
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'ecm_files';
 
 	/**
 	 * @var string

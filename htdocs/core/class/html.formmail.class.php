@@ -34,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';	// So the
 
 
 /**
- *      Class permettant la generation du formulaire html d'envoi de mail unitaire
+ *      Class to manage a HTML form to send a unitary email
  *      Usage: $formail = new FormMail($db)
- *             $formmail->proprietes=1 ou chaine ou tableau de valeurs
- *             $formmail->show_form() affiche le formulaire
+ *             $formmail->proprietes=1 or string or array of values
+ *             $formmail->show_form() show the form
  */
 class FormMail extends Form
 {
@@ -566,6 +566,7 @@ class FormMail extends Form
 				$out .= '<a id="formmail" name="formmail"></a>';
 				$out .= '<input style="display:none" type="submit" id="sendmailhidden" name="sendmail">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'" />';
+				$out .= '<input type="hidden" name="page_y" value="" />';
 				$out .= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
 				$out .= '<input type="hidden" name="inreplyto" value="'.$this->inreplyto.'" />';
 			}
@@ -628,7 +629,7 @@ class FormMail extends Form
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
 					'shipping_send', 'reception_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
-					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
+					'invoice_supplier_send', 'supplier_payment_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
@@ -658,9 +659,9 @@ class FormMail extends Form
 						continue;
 					}
 					if (is_array($val)) $val = implode(', ', $val); // key __MULTICURRENCY_CODE__ is an array and crashes dolGetFirstLineOfText function which accept only text
-					$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
-					$helpforsubstitution .= '</span>';
+					$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText((string) $val))).'<br>';
 				}
+				$helpforsubstitution .= '</span>';
 			}
 
 			/*
@@ -711,19 +712,18 @@ class FormMail extends Form
 
 						// Add also company main email
 						if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-							$s = (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? $conf->global->MAIN_INFO_SOCIETE_EMAIL : $conf->global->MAIN_INFO_SOCIETE_NOM).' &lt;' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'&gt;';
+							$s = getDolGlobalString('MAIN_INFO_SOCIETE_NOM', getDolGlobalString('MAIN_INFO_SOCIETE_EMAIL')).' &lt;' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'&gt;';
 							$liste['company'] = array('label' => $s, 'data-html' => $s);
 						}
 
 						// Add also email aliases if there is some
 						$listaliases = array(
-							'user_aliases' => (empty($user->email_aliases) ? '' : $user->email_aliases),
 							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
 						);
 
 						if (!empty($arraydefaultmessage->email_from)) {
 							$templatemailfrom = ' &lt;'.$arraydefaultmessage->email_from.'&gt;';
-							$liste['from_template_'.GETPOST('modelmailselected')] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
+							$liste['from_template_'.$arraydefaultmessage->id] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
 						}
 
 						// Also add robot email
@@ -782,7 +782,7 @@ class FormMail extends Form
 								$liste[$key]['data-html'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $liste[$key]['data-html']);
 							}
 						}
-						$out .= ' '.$form->selectarray('fromtype', $liste, empty($arraydefaultmessage->email_from) ? $this->fromtype : 'from_template_'.GETPOST('modelmailselected'), 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
+						$out .= ' '.$form->selectarray('fromtype', $liste, empty($arraydefaultmessage->email_from) ? $this->fromtype : 'from_template_'.$arraydefaultmessage->id, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
 					}
 
 					$out .= "</td></tr>\n";
@@ -835,7 +835,7 @@ class FormMail extends Form
 					//$out .= '</span>';
 					if (getDolGlobalString('MASS_ACTION_EMAIL_ON_DIFFERENT_THIRPARTIES_ADD_CUSTOM_EMAIL')) {
 						if (!empty($this->withto) && !is_array($this->withto)) {
-							$out .= ' '.$langs->trans("or").' <input type="email" name="emailto" value="">';
+							$out .= ' <span class="opacitymedium">'.$langs->trans("or").'</span> <input type="email" name="emailto" value="">';
 						}
 					}
 					$out .= '</td></tr>';
@@ -1072,6 +1072,9 @@ class FormMail extends Form
 					if (!dol_textishtml($this->substit['__SENDEREMAIL_SIGNATURE__'])) {
 						$this->substit['__SENDEREMAIL_SIGNATURE__'] = dol_nl2br($this->substit['__SENDEREMAIL_SIGNATURE__']);
 					}
+					if (!dol_textishtml($this->substit['__LINES__'])) {
+						$this->substit['__LINES__'] = dol_nl2br($this->substit['__LINES__']);
+					}
 					if (!dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
 						$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = dol_nl2br($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']);
 					}
@@ -1227,7 +1230,7 @@ class FormMail extends Form
 			// The select combo
 			if (!empty($this->withto) && is_array($this->withto)) {
 				if (!empty($this->withtofree)) {
-					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+					$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 				}
 
 				$tmparray = $this->withto;
@@ -1281,7 +1284,7 @@ class FormMail extends Form
 		} else {
 			$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 			if (!empty($this->withtocc) && is_array($this->withtocc)) {
-				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
@@ -1331,7 +1334,7 @@ class FormMail extends Form
 		} else {
 			$out .= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
 			if (!empty($this->withtoccc) && is_array($this->withtoccc)) {
-				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 
 				$tmparray = $this->withtoccc;
 				foreach ($tmparray as $key => $val) {
@@ -1480,7 +1483,7 @@ class FormMail extends Form
 
 		$out = '<tr>';
 		$out .= '<td class="fieldrequired">';
-		$out .= $form->textwithpicto($langs->trans('MailTopic'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfromtopic');
+		$out .= $form->textwithpicto($langs->trans('MailTopicShort'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfromtopic');
 		$out .= '</td>';
 		$out .= '<td>';
 		if ($this->withtopicreadonly) {
@@ -1532,7 +1535,6 @@ class FormMail extends Form
 		}
 		//}
 		// TODO Add a hook to allow to complete the list
-
 		foreach ($layouts as $layout => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($layout);
 
@@ -1575,22 +1577,47 @@ class FormMail extends Form
 			}
 		}
 
-		// Use the multiselect array function to create the dropdown
-		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
-		$out .= '<label for="blogpost-select">Select Posts: </label>';
-		$out .= '<!-- select component for selection of blog posts -->'."\n";
-		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
-		$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
-		$out .= '</div>';
+		// Fetch Product / Services
+		/* to use with multiselectarray but consume too much memory so replaced
+		if (in_array('product', array_keys($layouts))) {
+			$productArray = array();
+			if (isModEnabled('product') || isModEnabled('service')) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$form = new Form($this->db);
+				$arrayofproduct = $form->select_produits_list(0, 'product-select', '', 0, 0, '', 1, 2, 1);
+				if (!empty($arrayofproduct)) {
+					foreach ($arrayofproduct as $product) {
+						$productArray[$product["key"]] = array(
+							'id' => $product["key"],
+							'label' => $product["value"].' - '.dol_trunc($product["label2"], 40),
+							'labelhtml' => $product["value"].' - '.dol_trunc($product["label2"], 40),
+						);
+					}
+				}
+			}
+		}
+		*/
 
-		if (isModEnabled('product') || isModEnabled('service')) {
+		// Use the multiselect array function to create the dropdown
+		if (in_array('news', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
+			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<label for="blogpost-select">Select Posts: </label>';
+			$out .= '<!-- select component for selection of blog posts -->'."\n";
+			// TODO WARNING: multiselectarray is ok only for very small list
+			$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200 select-template');
+			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="post-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= '</div>';
+		}
+		if (in_array('product', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
 			$out .= '<!-- select component for selection of product -->'."\n";
-			$out .= $form->select_produits(0, 'product-select', '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, '', 0, '', null, 1);
-			$out .= ' <input type="submit" class="smallpaddingimp button" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
+			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'inline-block valignmiddle', 0, '', null, 1);
+			// TODO multiselectarray is ok only for very small list but is ok for multiselect. We need a multiselect ok with ajax for long list
+			//$out .= self::multiselectarray('product-select', $productArray, array(), 0, 0, 'minwidth200 select-template');
+			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 			$out .= '</div>';
 		}
 
@@ -1609,6 +1636,7 @@ class FormMail extends Form
 
 				$(".template-option").removeClass("selected");
 				$(this).addClass("selected");
+				$(".select-template").val("").trigger("change");
 
 				if (template === "news") {
 					$("#post-dropdown-container").show();
@@ -1656,51 +1684,38 @@ class FormMail extends Form
 
 				updateSelectedPostsContent(contentHtml, selectedIds);
 			});
+			$("#product-select").change(function() {
+				var selectedIds = $(this).val();
+				var contentHtml = $(".template-option.selected").data("content");
+
+				updateSelectedPostsContent(contentHtml, selectedIds);
+			});
 
 			function updateSelectedPostsContent(contentHtml, selectedIds) {
 				var csrfToken = "' .newToken().'";
+				template = $(".template-option.selected").data("template");
+				var subject = $("#subject").val();
 				$.ajax({
 					type: "POST",
-					url: "/core/ajax/getnews.php",
+					url: "'.dol_buildpath('/core/ajax/mailtemplate.php', 1).'",
 					data: {
-						selectedIds: JSON.stringify(selectedIds),
-						token : csrfToken
+						token: csrfToken,
+						template: template,
+						subject: subject,
+						selectedPosts: JSON.stringify(selectedIds)
 					},
 					success: function(response) {
-						var selectedPosts = JSON.parse(response);
-						var subject = $("#subject").val();
-
-						contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
-
-						$.ajax({
-							type: "POST",
-							url: "/core/ajax/mailtemplate.php",
-							data: {
-								token: csrfToken,
-								template: template,
-								subject: subject,
-								fromtype: fromtype,
-								sendto: sendto,
-								sendtocc: sendtocc,
-								sendtoccc: sendtoccc,
-								selectedPosts: selectedIds.join(",")
-							},
-							success: function(response) {
-								jQuery("#'.$htmlContent.'").val(response);
-								var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
-								if (editorInstance) {
-									editorInstance.setData(response);
-								}
-							},
-							error: function(xhr, status, error) {
-								console.error("An error occurred: " + xhr.responseText);
-							}
-						});
+						jQuery("#'.$htmlContent.'").val(response);
+						var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+						if (editorInstance) {
+							editorInstance.setData(response);
+						}
 					},
 					error: function(xhr, status, error) {
 						console.error("An error occurred: " + xhr.responseText);
 					}
 				});
+
 			}
 		});
 	</script>';

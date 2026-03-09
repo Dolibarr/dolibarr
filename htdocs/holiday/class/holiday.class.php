@@ -3,9 +3,10 @@
  * Copyright (C) 2012-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018-2026	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,12 @@ class Holiday extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'holiday';
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'HOLIDAY';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -168,19 +175,6 @@ class Holiday extends CommonObject
 	 */
 	public $logs = array();
 
-
-	/**
-	 * @var string
-	 */
-	public $optName = '';
-	/**
-	 * @var string
-	 */
-	public $optValue = '';
-	/**
-	 * @var int
-	 */
-	public $optRowid = 0;
 
 	/**
 	 * Draft status
@@ -774,12 +768,14 @@ class Holiday extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$error = 0;
 
+
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			if ($balance < 0) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -901,8 +897,9 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			if ($balance < 0) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1029,8 +1026,9 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			if ($balance < 0) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1041,6 +1039,11 @@ class Holiday extends CommonObject
 
 		$sql .= " description= '".$this->db->escape($this->description)."',";
 
+		if (!empty($this->date_create)) {
+			$sql .= " date_create = '".$this->db->idate($this->date_create)."',";
+		} else {
+			$error++;
+		}
 		if (!empty($this->date_debut)) {
 			$sql .= " date_debut = '".$this->db->idate($this->date_debut)."',";
 		} else {
@@ -1596,8 +1599,8 @@ class Holiday extends CommonObject
 	/**
 	 *  Met à jour une option du module Holiday Payés
 	 *
-	 *  @param	string	$name       name du paramètre de configuration
-	 *  @param	string	$value      vrai si mise à jour OK sinon faux
+	 *  @param	string	$name       name settings parameter
+	 *  @param	string	$value      true if update OK else false
 	 *  @return boolean				ok or ko
 	 */
 	public function updateConfCP($name, $value)
@@ -1660,7 +1663,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *	Met à jour le timestamp de la dernière mise à jour du solde des CP
+	 *	Updates the timestamp of the last CP balance update.
 	 *
 	 *	@param		int		$userID		Id of user
 	 *	@param		float	$nbHoliday	Nb of days
@@ -1678,7 +1681,7 @@ class Holiday extends CommonObject
 
 			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
 
-			// Si mise à jour pour tout le monde en début de mois
+			// If updated for everyone at the beginning of the month
 			$now = dol_now();
 
 			// Get month of last update
@@ -1759,7 +1762,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday']);
+						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
@@ -1779,7 +1782,7 @@ class Holiday extends CommonObject
 					}
 				}
 
-				//updating the date of the last monthly balance update
+				// Updating the date of the last monthly balance update
 				$newMonth = dol_get_next_month((int) dol_print_date($lastUpdate, '%m'), (int) dol_print_date($lastUpdate, '%Y'));
 				$lastUpdate = dol_mktime(0, 0, 0, (int) $newMonth['month'], 1, (int) $newMonth['year']);
 
@@ -1804,7 +1807,7 @@ class Holiday extends CommonObject
 				return 0;
 			}
 		} else {
-			// Mise à jour pour un utilisateur
+			// Update for one user
 			$nbHoliday = price2num($nbHoliday, 5);
 
 			$sql = "SELECT nb_holiday FROM ".MAIN_DB_PREFIX."holiday_users";
@@ -1924,8 +1927,6 @@ class Holiday extends CommonObject
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
 
 		if ($stringlist) {
@@ -1954,13 +1955,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -1972,10 +1973,10 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $stringlist;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -1990,13 +1991,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2008,16 +2009,16 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $stringlist;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
 			}
 		} else {
-			// Si faux donc return array
+			// If false, return array
 			// List for Dolibarr users
 			if ($type) {
 				// If we need users of Dolibarr
@@ -2025,7 +2026,7 @@ class Holiday extends CommonObject
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " DISTINCT";
 				}
-				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut as status, u.fk_user";
+				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.fk_country as country_id, u.photo, u.employee, u.statut as status, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -2045,13 +2046,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$tab_result = $this->holiday;
 					$num = $this->db->num_rows($resql);
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2065,15 +2066,16 @@ class Holiday extends CommonObject
 						$tab_result[$i]['employee'] = (int) $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
 						$tab_result[$i]['fk_user'] = (int) $obj->fk_user; // rowid of manager
+						$tab_result[$i]['country_id'] = (int) $obj->country_id; // id of country of user
 						//$tab_result[$i]['type'] = $obj->type;
 						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $tab_result;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->errors[] = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -2088,13 +2090,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$tab_result = $this->holiday;
 					$num = $this->db->num_rows($resql);
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2114,10 +2116,10 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $tab_result;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -2167,9 +2169,9 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr
+	 *	Count number of active users in Dolibarr
 	 *
-	 *  @return     int      retourne le nombre d'utilisateur
+	 *  @return     int      Return numbers of users
 	 */
 	public function countActiveUsers()
 	{
@@ -2183,9 +2185,9 @@ class Holiday extends CommonObject
 		return $object->compteur;
 	}
 	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr sans CP
+	 *	Count number of active users in Dolibarr without Paid leave
 	 *
-	 *  @return     int      retourne le nombre d'utilisateur
+	 *  @return     int      Return numbers of users
 	 */
 	public function countActiveUsersWithoutCP()
 	{
@@ -2200,7 +2202,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Compare le nombre d'utilisateur actif de Dolibarr à celui des utilisateurs des congés payés
+	 *  Compare the number of active Dolibarr users to the number of paid leave users
 	 *
 	 *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
 	 *  @param    int	$userCP    				Number of active users into table of holidays
@@ -2228,8 +2230,6 @@ class Holiday extends CommonObject
 	 */
 	public function addLogCP($fk_user_action, $fk_user_update, $label, $new_solde, $fk_type)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$prev_solde = price2num((float) $this->getCPforUser($fk_user_update, $fk_type), 5);
@@ -2267,8 +2267,9 @@ class Holiday extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		$optRowid = 0;
 		if (!$error) {
-			$this->optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
+			$optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
 		}
 
 		// Commit or rollback
@@ -2281,7 +2282,7 @@ class Holiday extends CommonObject
 			return -1 * $error;
 		} else {
 			$this->db->commit();
-			return $this->optRowid;
+			return $optRowid;
 		}
 	}
 
@@ -2346,11 +2347,11 @@ class Holiday extends CommonObject
 
 				$i++;
 			}
-			// Retourne 1 et ajoute le tableau à la variable
+			// Returns 1 and adds the array to the variable
 			$this->logs = $tab_result;
 			return 1;
 		} else {
-			// Erreur SQL
+			// SQL error
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -2386,7 +2387,15 @@ class Holiday extends CommonObject
 			if ($num) {
 				$types = array();
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('id' => $obj->rowid, 'rowid' => $obj->rowid, 'code' => $obj->code, 'label' => $obj->label, 'affect' => $obj->affect, 'delay' => $obj->delay, 'newbymonth' => $obj->newbymonth);
+					$types[$obj->rowid] = array(
+						'id' => $obj->rowid,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'label' => $obj->label,
+						'affect' => $obj->affect,
+						'delay' => $obj->delay,
+						'newbymonth' => $obj->newbymonth
+					);
 				}
 
 				return $types;
@@ -2530,7 +2539,7 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$now = dol_now();

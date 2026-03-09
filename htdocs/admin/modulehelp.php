@@ -34,10 +34,6 @@ if (!defined('NOTOKENRENEWAL')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
@@ -268,7 +267,7 @@ $head = modulehelp_prepare_head($objMod);
 
 // Check filters
 $modulename = $objMod->getName();
-$moduledesc = $objMod->getDesc();
+$moduledesc = $objMod->getDesc(1);
 $moduleauthor = $objMod->getPublisher();
 $moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 
@@ -379,10 +378,12 @@ if ($mode == 'desc') {
 		}
 		$editor_url = $objMod->editor_url;
 		if (!preg_match('/^http/', $editor_url)) {
-			$editor_url = 'http://'.$editor_url;
+			$editor_url = 'https://'.$editor_url;
 		}
+		$editor_url_to_show = preg_replace('/(utm_[a-z_]+|origin)=[a-z0-9_]+/i', '', $editor_url);
+		$editor_url_to_show = preg_replace('/[\/\?]+$/', '', $editor_url_to_show);
 		if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) {
-			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
+			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$editor_url_to_show.'</a>';
 		}
 		$text .= $textexternal;
 	} else {

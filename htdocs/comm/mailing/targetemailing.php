@@ -28,6 +28,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
@@ -36,20 +43,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
 $action = GETPOST('action', 'aZ09');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
+$contextpage = GETPOST('contextpage', 'aZ');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $mode       = GETPOST('mode', 'aZ'); // The display mode ('list', 'kanban', 'hierarchy', 'calendar', 'gantt', ...)
 
@@ -100,6 +99,8 @@ $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
 if (version_compare(phpversion(), '7.0', '>=')) {
 	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 }
+
+$arrayfields = array();
 
 // Security check
 if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
@@ -576,7 +577,7 @@ if ($object->fetch($id) >= 0) {
 				'@phan-var-force MailingTargets $obj';
 
 				// Check if qualified
-				$qualified = (is_null($obj->enabled) ? 1 : (int) dol_eval($obj->enabled, 1));
+				$qualified = (is_null($obj->enabled) ? 1 : (int) dol_eval((string) $obj->enabled, 1));
 
 				// Check dependencies
 				foreach ($obj->require_module as $key) {
@@ -620,7 +621,9 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd center valignmiddle">';
 					if ($nbofrecipient === '' || $nbofrecipient >= 0) {
-						print $nbofrecipient;
+						if ($nbofrecipient !== '') {
+							print '<span class="badge badge-info">'.$nbofrecipient.'</span>';
+						}
 					} else {
 						print $langs->trans("Error").' '.img_error($obj->error);
 					}
@@ -778,7 +781,8 @@ if ($object->fetch($id) >= 0) {
 		if ($object->status == $object::STATUS_DRAFT) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
-		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>';
+
+		$morehtmlrightbeforearrow = '<a class="reposition marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>&nbsp;';
 
 		print '</form>';
 
@@ -793,7 +797,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page_y" value="">';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlrightbeforearrow);
 
 		if ($massaction == 'reset_target') {
 			// Confirm reset
@@ -877,8 +881,8 @@ if ($object->fetch($id) >= 0) {
 		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", '', $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", '', $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", '', $param, "", $sortfield, $sortorder);
-		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], '', $param, "", "", $sortfield, $sortorder);
-		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], '', $param, "", '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], '', "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ');
 		// Date last update
 		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "mc.tms", '', $param, '', $sortfield, $sortorder, 'center ');
 		// Date sending

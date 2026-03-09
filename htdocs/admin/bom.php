@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2019 		Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2019       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 /**
  * @var Conf $conf
@@ -151,11 +153,19 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
+	$bomsearch = GETPOST('activate_BOM_USE_SEARCH_TO_SELECT', 'alpha');
+	$res = dolibarr_set_const($db, "BOM_USE_SEARCH_TO_SELECT", $bomsearch, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
 	$freetext = GETPOST("BOM_FREE_TEXT", 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "BOM_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
+
+
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -163,7 +173,6 @@ if ($action == 'updateMask') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
 
 /*
  * View
@@ -478,6 +487,25 @@ if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
 }
 
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseSearchToSelectBom").'</td>';
+if (!$conf->use_javascript_ajax) {
+	print '<td></td>';
+	print '<td class="nowrap right">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
+} else {
+	print '<td>';
+	$arrval = array('0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	);
+	print $form->selectarray("activate_BOM_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("BOM_USE_SEARCH_TO_SELECT")).'</td>';
+}
+print '</form>';
+print '</tr>';
+
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
@@ -507,15 +535,13 @@ print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" va
 print "</td></tr>\n";
 
 print '</table>';
-
-print '<center><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></center>';
-
 print '</div>';
+
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
-print '<br>';
-
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

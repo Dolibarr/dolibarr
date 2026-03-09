@@ -112,6 +112,7 @@ $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 $showtot = 0;
+$shownb = 0;
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
@@ -218,6 +219,16 @@ if ($result) {
 		}
 	}
 
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus3
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus5
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus8
+	 * @var string $badgeStatus9
+	 */
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
 	$colorseries = array();

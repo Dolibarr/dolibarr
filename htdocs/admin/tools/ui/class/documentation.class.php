@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024        Anthony Damhet        <a.damhet@progiseize.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,21 +31,21 @@ class Documentation
 	/**
 	 * Views
 	 *
-	 * @var array
+	 * @var array|array<int,string>
 	 */
 	public $view = array();
 
 	/**
 	 * Menu - Set in setMenu in order to use dol_buildpath and called in constructor
 	 *
-	 * @var array
+	 * @var array<array{url?: string, summary?: array<string,string>, submenu?: array<string,mixed>}>
 	 */
 	public $menu = array();
 
 	/**
 	 * Summary - Set in setSummary and called in constructor
 	 *
-	 * @var array
+	 * @var array<int,string>
 	 */
 	public $summary = array();
 
@@ -87,7 +88,7 @@ class Documentation
 
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
-			'url' => DOL_URL_ROOT,
+			'url' => dol_buildpath('modulebuilder/index.php', 1),
 			'icon' => 'fas fa-arrow-left',
 			'submenu' => array(),
 		);
@@ -158,13 +159,19 @@ class Documentation
 				),
 				'Inputs' => array(
 					'url' => dol_buildpath($this->baseUrl.'/components/inputs.php', 1),
-					'icon' => 'fas fa-comments',
+					'icon' => 'far fa-edit',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#setinputssection-basicusage',
 						'DocHelperFunctionsInputUsage' => '#setinputssection-helperfunctions',
 						'DocHelperFunctionsGetSearchFilterToolInput' => '#setinputssection-getSearchFilterToolInput',
 					)
+				),
+				'ExperimentalUxInputAjaxFeedback' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/input-feedback.php', 1),
+					'icon' => 'far fa-share-square',
+					'submenu' => array(),
+					'summary' => array(),
 				),
 			),
 		);
@@ -201,6 +208,13 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+
+				'FreezeTooltip' => array(
+					'url' => dol_buildpath($this->baseUrl.'/content/freeze-tooltip.php', 1),
+					'icon' => 'far fa-comment',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
@@ -222,7 +236,35 @@ class Documentation
 			)
 		);
 
-
+		// Elements
+		$this->menu['UxDolibarrContext'] = array(
+			'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/index.php', 1),
+			'icon' => 'fab fa-fort-awesome',
+			'submenu' => array(
+				'UxDolibarrContextHowItWork' => array(
+					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/index.php', 1),
+					'icon' => 'fab fa-fort-awesome',
+					'submenu' => array(),
+					'summary' => array(
+						'Introduction' => '#titlesection-basicusage',
+						'ConsoleHelp' => '#titlesection-console-help',
+						'JSDolibarrhooks' => '#titlesection-hooks',
+						'JSDolibarrhooksReadyVsInit' => '#titlesection-event-init-vs-ready',
+						'JSDolibarrAwaitHooks' => '#titlesection-await-hooks',
+						'JSDolibarrhooksAjaxSpecial' => '#titlesection-dom-initnewcontent',
+						'ExampleOfCreatingNewContextTool' => '#titlesection-create-tool-example',
+						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
+						'SetAndUseContextVars' => '#titlesection-contextvars',
+					),
+				),
+				'UxDolibarrContextLangsTool' => array(
+					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/langs-tool.php', 1),
+					'icon' => 'far fa-flag',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+			)
+		);
 
 		// Elements
 		$this->menu['ExperimentalUx'] = array(
@@ -238,20 +280,6 @@ class Documentation
 						'ExperimentalUxIntroductionTitle' => '#experimental-ux-introduction',
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
-				),
-
-				'ExperimentalUxFreezeTooltip' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/freeze-tooltip/index.php', 1),
-					'icon' => 'fas fa-flask',
-					'submenu' => array(),
-					'summary' => array(),
-				),
-
-				'ExperimentalUxInputAjaxFeedback' => array(
-					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
-					'icon' => 'fas fa-flask',
-					'submenu' => array(),
-					'summary' => array(),
 				),
 			)
 		);
@@ -341,7 +369,7 @@ class Documentation
 	/**
 	 *    Recursive function to set Menu
 	 *
-	 * @param array $menu  $this->menu or submenus
+	 * @param array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>}> $menu Menu entry or submenu
 	 * @param int   $level level of menu
 	 * @return void
 	 */
@@ -414,13 +442,13 @@ class Documentation
 		$i = 0;
 		$menu_entry = [];
 		if (!empty($this->view)) {
-			// On se place au bon niveau
+			// Set the correct menu depth (level)
 			foreach ($this->view as $view) {
 				$i++;
 				if ($i == 1) {
-					$menu_entry = $this->menu[$view];
+					$menu_entry = $this->menu[$view] ?? [];
 				} else {
-					$menu_entry = $menu_entry['submenu'][$view];
+					$menu_entry = $menu_entry['submenu'][$view] ?? [];
 				}
 			}
 		}
@@ -436,7 +464,7 @@ class Documentation
 	/**
 	 *    Recursive function for Automatic Summary
 	 *
-	 * @param array $menu  					$this->menu or submenus
+	 * @param array{summary?: array<string,string>, submenu?: array<string,array>} $menu $this->menu or submenus
 	 * @param int   $level 					level of menu
 	 * @param int   $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int   $showsubmenu_summary 	Show summary of sub menus: 0 = No, 1 = Yes
@@ -471,7 +499,13 @@ class Documentation
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {
 				print '<li class="summary-title ">';
+
+				if (!empty($item['url'])) {
+					print '<h3 class="level-'.$level.'"><a href="'.dolBuildUrl($item['url']).'" >'.$langs->trans($key).'</a></h3>';
+				} else {
 					print '<h3 class="level-'.$level.'">'.$langs->trans($key).'</h3>';
+				}
+
 				if ($showsubmenu_summary) {
 					$this->displaySummary($item, $level);
 				}
@@ -484,7 +518,7 @@ class Documentation
 	/**
 	 *    Output a View Code area
 	 *
-	 * @param array $lines Lines of code to show
+	 * @param array<int,string> $lines Lines of code to show
 	 * @param string $option Source code language ('html', 'php' etc)
 	 * @return void
 	 */

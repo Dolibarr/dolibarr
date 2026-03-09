@@ -93,7 +93,9 @@ if ($action == 'update') {
 	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", $showtable ? 0 : 1, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
-	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", $showvoteallowed ? 0 : 1, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
+	if (GETPOSTISSET('MEMBER_HIDE_VOTE_ALLOWED')) {
+		$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", $showvoteallowed ? 0 : 1, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
+	}
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
@@ -225,6 +227,24 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<td></td>';
 	print "</tr>\n";
 
+	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
+	$skiptable = getDolGlobalInt('MEMBER_SKIP_TABLE');
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("MembersShowMembershipTypesTable");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_SHOW_TABLE", (int) !$skiptable, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print "</td></tr>\n";
+
+	// Show "vote allowed" setting for membership types
+	if (!$skiptable) {
+		$hidevoteallowed = getDolGlobalInt('MEMBER_HIDE_VOTE_ALLOWED');
+		print '<tr class="oddeven" id="tredit"><td>';
+		print $langs->trans("MembersShowVotesAllowed");
+		print '</td><td>';
+		print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", (int) !$hidevoteallowed, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
+		print "</td></tr>\n";
+	}
+
 	// Force Type
 	$adht = new AdherentType($db);
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
@@ -270,22 +290,6 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';
 	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", getDolGlobalInt('MEMBER_COUNTERS_ARE_PUBLIC'), 1, false, 0, 1);
-	print "</td></tr>\n";
-
-	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
-	$skiptable = getDolGlobalInt('MEMBER_SKIP_TABLE');
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("MembersShowMembershipTypesTable");
-	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_TABLE", (int) !$skiptable, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
-	print "</td></tr>\n";
-
-	// Show "vote allowed" setting for membership types
-	$hidevoteallowed = getDolGlobalInt('MEMBER_HIDE_VOTE_ALLOWED');
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("MembersShowVotesAllowed");
-	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", (int) !$hidevoteallowed, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Jump to an online payment page

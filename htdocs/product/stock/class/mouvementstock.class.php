@@ -127,9 +127,16 @@ class MouvementStock extends CommonObject
 	public $line_id_oject_origin;
 
 	/**
-	 * @var string inventory code
+	 * @var string 	Movement code
+	 * @deprecated
+	 * @see $movement_code
 	 */
 	public $inventorycode;
+
+	/**
+	 * @var string 	Movement code
+	 */
+	public $movementcode;
 
 	/**
 	 * @var string batch reference
@@ -171,7 +178,7 @@ class MouvementStock extends CommonObject
 		'fk_origin' => array('type' => 'integer', 'label' => 'Fk origin', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'origintype' => array('type' => 'varchar(32)', 'label' => 'Origintype', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 70),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => '$conf->project->enabled', 'visible' => -1, 'notnull' => 1, 'position' => 75),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'notnull' => 1, 'position' => 75),
 		'inventorycode' => array('type' => 'varchar(128)', 'label' => 'InventoryCode', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'batch' => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'eatby' => array('type' => 'date', 'label' => 'Eatby', 'enabled' => 1, 'visible' => -1, 'position' => 90),
@@ -211,7 +218,7 @@ class MouvementStock extends CommonObject
 	 *	@param		int|string		$datem				Force date of movement
 	 *	@param		int|''			$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		int|''			$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
-	 *	@param		string			$batch				batch number
+	 *	@param		string|null		$batch				batch number
 	 *	@param		bool			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch table to use)
 	 *  @param		int<0,1>		$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a kit)
@@ -272,6 +279,8 @@ class MouvementStock extends CommonObject
 		}
 		$now = (!empty($datem) ? $datem : dol_now());
 
+		//print "livraison fk_product=".$fk_product." entrepot_id=".$entrepot_id; exit;
+
 		// Check parameters
 		if (!($fk_product > 0)) {
 			return 0;
@@ -324,7 +333,8 @@ class MouvementStock extends CommonObject
 		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 			$productChildrenNb = $product->hasFatherOrChild(1);
 		}
-		if (($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && ($productChildrenNb == 0 || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) {
+
+		if ($product->isStockManaged() && ($productChildrenNb == 0 || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) { // For kit parent, we disable stock move, except if option PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE is set. For this option on, code must be completed to finish implementation, for example to have kit supported in shipments.
 			$movestock = 1;
 		}
 
@@ -362,8 +372,7 @@ class MouvementStock extends CommonObject
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num > 0) {
-					while ($i < $num) {
-						$obj = $this->db->fetch_object($resql);
+					while ($i < $num && $obj = $this->db->fetch_object($resql)) {
 						if ($obj->eatby) {
 							if ($eatby) {
 								$tmparray = dol_getdate((int) $eatby, true);
@@ -386,8 +395,7 @@ class MouvementStock extends CommonObject
 								$productlot->eatby = $eatby;
 								$result = $productlot->update($user);
 								if ($result <= 0) {
-									$this->error = $productlot->error;
-									$this->errors = $productlot->errors;
+									$this->setErrorsFromObject($productlot);
 									$this->db->rollback();
 									return -5;
 								}
@@ -414,8 +422,7 @@ class MouvementStock extends CommonObject
 								$productlot->sellby = $sellby;
 								$result = $productlot->update($user);
 								if ($result <= 0) {
-									$this->error = $productlot->error;
-									$this->errors = $productlot->errors;
+									$this->setErrorsFromObject($productlot);
 									$this->db->rollback();
 									return -5;
 								}
@@ -436,8 +443,7 @@ class MouvementStock extends CommonObject
 					$productlot->sellby = $sellby;
 					$result = $productlot->create($user);
 					if ($result <= 0) {
-						$this->error = $productlot->error;
-						$this->errors = $productlot->errors;
+						$this->setErrorsFromObject($productlot);
 						$this->db->rollback();
 						return -4;
 					}
@@ -458,7 +464,8 @@ class MouvementStock extends CommonObject
 				$qtyisnotenough = 0;
 				if (isset($product->stock_warehouse[$entrepot_id])) {
 					foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch) {
-						if ((string) $batch != (string) $batchcursor) {        // Lot '59' must be different than lot '59c'
+						// Lot '59' must be different than lot '59c' and also '0123' must be different than '123'
+						if ((string) $batch !== (string) $batchcursor) {
 							continue;
 						}
 
@@ -475,8 +482,8 @@ class MouvementStock extends CommonObject
 					$tmpwarehouse = new Entrepot($this->db);
 					$tmpwarehouse->fetch($entrepot_id);
 
-					$this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
-					$this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, $batch, $qtyisnotenough, $tmpwarehouse->ref);
+					$this->error = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, (string) $batch, $qtyisnotenough, $tmpwarehouse->ref);
+					$this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough', $product->ref, (string) $batch, $qtyisnotenough, $tmpwarehouse->ref);
 					$this->db->rollback();
 					return -8;
 				}
@@ -513,7 +520,7 @@ class MouvementStock extends CommonObject
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
 			$sql .= " VALUES ('".$this->db->idate($this->datem)."', ".((int) $this->product_id).", ";
-			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
+			$sql .= " ".(isset($batch) ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
 			$sql .= " ".((int) $this->entrepot_id).", ".((float) $this->qty).", ".((int) $this->type).",";
@@ -621,11 +628,11 @@ class MouvementStock extends CommonObject
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 					if ($result == -2 && $fk_product_stock > 0) {	// The entry for this product batch does not exists anymore, bu we already have a llx_product_stock, so we recreate the batch entry in product_batch
-						$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
+						$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => (string) $batch);
 						$result = $this->createBatch($param_batch, $qty);
 					}
 				} else {
-					$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
+					$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => (string) $batch);
 					$result = $this->createBatch($param_batch, $qty);
 				}
 				if ($result < 0) {
@@ -678,9 +685,9 @@ class MouvementStock extends CommonObject
 			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
-					if ($this->getBatchCount($fk_product, $batch) > 1) {
+					if ($this->getBatchCount($fk_product, (string) $batch) > 1) {
 						$error++;
-						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
+						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, (string) $batch);
 					}
 				}
 			}
@@ -722,7 +729,7 @@ class MouvementStock extends CommonObject
 		$sql .= " t.label,";
 		$sql .= " t.fk_origin as origin_id,";
 		$sql .= " t.origintype as origin_type,";
-		$sql .= " t.inventorycode,";
+		$sql .= " t.inventorycode as movementcode,";
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
@@ -752,7 +759,8 @@ class MouvementStock extends CommonObject
 				$this->origintype = $obj->origin_type;	// For backward compatibility
 				$this->origin_id = $obj->origin_id;
 				$this->origin_type = $obj->origin_type;
-				$this->inventorycode = $obj->inventorycode;
+				$this->inventorycode = $obj->movementcode;	// For backward compatibility
+				$this->movementcode = $obj->movementcode;
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
@@ -856,8 +864,6 @@ class MouvementStock extends CommonObject
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
-		global $conf;
-
 		$skip_batch = !isModEnabled('productbatch');
 
 		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
@@ -884,8 +890,6 @@ class MouvementStock extends CommonObject
 	 */
 	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0, $disablestockchangeforsubproduct = 0)
 	{
-		global $conf;
-
 		$skip_batch = !isModEnabled('productbatch');
 
 		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, $disablestockchangeforsubproduct, $donotcleanemptylines);
@@ -984,8 +988,7 @@ class MouvementStock extends CommonObject
 
 				$result = $pdluo->create($user, 1);
 				if ($result < 0) {
-					$this->error = $pdluo->error;
-					$this->errors = $pdluo->errors;
+					$this->setErrorsFromObject($pdluo);
 				}
 			}
 		}
@@ -1127,25 +1130,25 @@ class MouvementStock extends CommonObject
 		$s = '';
 		switch ($this->type) {
 			case "0":
-				$s = '<span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockIncreaseAfterCorrectTransfer');
 				}
 				break;
 			case "1":
-				$s = '<span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockDecreaseAfterCorrectTransfer');
 				}
 				break;
 			case "2":
-				$s = '<span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockDecrease');
 				}
 				break;
 			case "3":
-				$s = '<span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockIncrease');
 				}

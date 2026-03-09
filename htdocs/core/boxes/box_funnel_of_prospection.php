@@ -280,8 +280,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->setBorderWidth(2);
 					$dolgraph->setBorderSkip('false');
 					$dolgraph->SetType(array('horizontalbars'));
-					$dolgraph->SetHeight('200');
-					$dolgraph->SetWidth('600');
+					$dolgraph->SetHeight('150');
+					$dolgraph->SetWidth($conf->dol_optimize_smallscreen ? '300' : '600');
 					$dolgraph->setTooltipsTitles($liststatus);
 					$dolgraph->setTooltipsLabels($customlabels);
 					$dolgraph->mode = 'depth';
@@ -303,7 +303,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="oddeven"',
 					'td' => 'class="left "',
 					'maxlength' => 500,
-					'text' => $langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')'
+					'asis' => 1,
+					'text' => $langs->trans("OpportunityTotalAmount").'  <span class="opacitymedium hideonsmartphone">('.$langs->trans("WonLostExcluded").')</span>'
 				);
 				$this->info_box_contents[$line][] = array(
 					'tr' => 'class="oddeven"',
@@ -316,7 +317,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="oddeven"',
 					'td' => 'class="left "',
 					'maxlength' => 500,
-					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
+					'asis' => 1,
+					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' <span class="opacitymedium hideonsmartphone">('.$langs->trans("WonLostExcluded").')</span>', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
 
 				);
 				$this->info_box_contents[$line][] = array(

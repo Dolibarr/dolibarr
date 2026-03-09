@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -258,7 +258,7 @@ $min_year = 10;
 $user_id = $user->id;
 
 if ($id > 0) {
-	// Charge utilisateur edite
+	// Load editing user
 	$fuser->fetch($id, '', '', 1);
 	$fuser->loadRights();
 	$user_id = $fuser->id;
@@ -300,6 +300,7 @@ $sql .= " uu.email as user_email,";
 $sql .= " uu.login as user_login,";
 $sql .= " uu.statut as user_status,";
 $sql .= " uu.photo as user_photo,";
+$sql .= " uu.fk_country as user_country_id,";
 
 $sql .= " ua.lastname as validator_lastname,";
 $sql .= " ua.firstname as validator_firstname,";
@@ -858,6 +859,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$userstatic->login = $obj->user_login;
 		$userstatic->status = $obj->user_status;
 		$userstatic->photo = $obj->user_photo;
+		$userstatic->country_id = $obj->user_country_id;
 
 		// Validator
 		$approbatorstatic->id = $obj->fk_validator;
@@ -875,7 +877,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday, $userstatic->country_id);	// user jdate(..., 1) because num_open_day need UTC dates
 		$totalduration += $nbopenedday;
 
 		if ($mode == 'kanban') {

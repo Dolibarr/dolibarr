@@ -14,6 +14,7 @@ DeleteProp=Slett tilbud
 ValidateProp=Valider tilbud
 CancelPropal=Avbryt
 AddProp=Skriv tilbud
+AddRenewalProp=Opprett fornyelse av tilbud
 ConfirmDeleteProp=Er du sikker på at du vil slette dette tilbudet?
 ConfirmValidateProp=Er du sikker på at du vil validere dette tilbudet under navnet <b>%s</b>?
 ConfirmCancelPropal=Er du sikker på at du vil avbryte Tilbud <b>%s</b>?

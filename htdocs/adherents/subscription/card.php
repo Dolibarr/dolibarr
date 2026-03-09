@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-if (isModEnabled("bank")) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +33,13 @@ if (isModEnabled("bank")) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+if (isModEnabled("bank")) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills", "users", "banks"));
@@ -345,7 +345,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public)).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
@@ -373,7 +373,7 @@ if ($rowid && $action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
-		if (empty($bankline->rappro) || empty($bankline)) {
+		if (empty($bankline) || empty($bankline->rappro)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated").'" href="#">'.$langs->trans("Modify")."</a></div>";

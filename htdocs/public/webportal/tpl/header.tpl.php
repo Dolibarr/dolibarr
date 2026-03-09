@@ -18,7 +18,10 @@
 
 /**
  * @var Context $context	Object context for webportal
+ * @var HookManager	$hookmanager
  * @var Translate $langs
+ * @@var string[] $vars['body-class'] more CSS classes  for body
+ * @@var string[] $vars['body-theme'] theme css to apply default is custom
  */
 
 // Protection to avoid direct call of template
@@ -49,12 +52,13 @@ top_httphead();
 	</title>
 	<?php
 
-	$jQueryUICSSUrl = dirname($context->rootUrl).'/includes/jquery/css/base/jquery-ui.min.css?layout=classic';
+
+	$jQueryUICSSUrl = $context->cdnUrl . '/jquery/css/base/jquery-ui.min.css?layout=classic';
 	print '<link rel="stylesheet" href="'.$jQueryUICSSUrl.' ">'."\n";
 
-	//$jNotifyCSSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.css';
-	//$jNotifyCSSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
-	$jNotifyCSSUrl = dirname($context->rootUrl).'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css?layout=classic';
+	//$jNotifyCSSUrl = $context->rootUrl.'public/includes/jquery/plugins/jnotify/jquery.jnotify.css';
+	//$jNotifyCSSUrl = dol_buildpath('/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
+	$jNotifyCSSUrl =  $context->cdnUrl . '/jquery/plugins/jnotify/jquery.jnotify.min.css?layout=classic';
 	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">'."\n";
 
 	?>
@@ -63,24 +67,48 @@ top_httphead();
 
 	<link rel="stylesheet" href="<?php print dirname($context->rootUrl).'/theme/common/fontawesome-5/css/all.min.css?layout=classic'; ?>">
 	<?php
-	// JQuery
-	//$jQueryJSUrl = $context->rootUrl.'includes/jquery/js/jquery.js';
-	//$jQueryJSUrl = dol_buildpath('/includes/jquery/js/jquery.js', 2);
-	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery.min.js';
-	print '<script src="'.$jQueryJSUrl.'"></script>'."\n";
 
-	$jQueryUIJSUrl = dirname($context->rootUrl).'/includes/jquery/jquery-ui.min.js';
-	print '<script src="'.$jQueryUIJSUrl.'"></script>'."\n";
+	// JQuery
+	$jQueryJSUrl =  $context->cdnUrl . '/jquery/js/jquery.min.js';
+	print '<script nonce="'.getNonce().'" src="'.$jQueryJSUrl.'"></script>'."\n";
+
+	$jQueryUIJSUrl =  $context->cdnUrl . '/jquery/js/jquery-ui.min.js';
+	print '<script nonce="'.getNonce().'" src="'.$jQueryUIJSUrl.'"></script>'."\n";
 
 	// JNotify
 	//$jNotifyJSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.js';
-	//$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
-	$jNotifyJSUrl = dirname($context->rootUrl).'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js';
-	print '<script src="'.$jNotifyJSUrl.'"></script>'."\n";
+	//$jNotifyJSUrl = dol_buildpath('/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
+	$jNotifyJSUrl =  $context->cdnUrl . '/jquery/plugins/jnotify/jquery.jnotify.min.js';
+	print '<script nonce="'.getNonce().'" src="'.$jNotifyJSUrl.'"></script>'."\n";
+
+	// SELECT 2
+	print '<link rel="stylesheet" href="'.$context->cdnUrl . '/jquery/plugins/select2/dist/css/select2.css">'."\n";
+	print '<script nonce="'.getNonce().'" src="'.$context->cdnUrl . '/jquery/plugins/select2/dist/js/select2.full.min.js"></script>'."\n";
+
+	// Modal script
+	$ModalJSUrl = $context->rootUrl.'js/modal.js';
+	print '<script nonce="'.getNonce().'" src="'.$ModalJSUrl.'"></script>'."\n";
 
 	// Common dolibarr js functions
 	$jQueryUIJSUrl = $context->rootUrl.'js/lib_head.js.php';
-	print '<script src="'.$jQueryUIJSUrl.'"></script>'."\n";
+	print '<script nonce="'.getNonce().'" src="'.$jQueryUIJSUrl.'"></script>'."\n";
+
+	$bodyAttributes = [
+		'data-theme' => $vars['body-theme']??'custom',
+		'data-controller' => $context->controller,
+	];
+
+	if (!empty($vars['body-class'])) {
+		$bodyAttributes['class'] = $vars['body-class'];
+	}
+
+	$parameters = array(
+		'bodyAttributes' => &$bodyAttributes
+	);
+	$hookmanager->executeHooks('webPortalHeader', $parameters, $context);
+	print $hookmanager->resPrint;
+
+	$bodyCompiledAttributes = commonHtmlAttributeBuilder($bodyAttributes);
 	?>
 </head>
-<body data-theme="custom" data-controller="<?php print dol_escape_htmltag($context->controller); ?>">
+<body <?php print empty($bodyCompiledAttributes) ? '' : implode(' ', $bodyCompiledAttributes); ?> >

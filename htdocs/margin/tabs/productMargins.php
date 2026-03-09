@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/margin/tabs/productMargins.php
  *	\ingroup    product margins
- *	\brief      Page des marges des factures clients pour un produit
+ *	\brief      Page for Product Margins on Customer Invoices
  */
 
 // Load Dolibarr environment
@@ -499,7 +499,7 @@ if ($id > 0 || !empty($ref)) {
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT'), 1, $langs, 1, -1, -1, $conf->currency).'");
+        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT'), 1, $langs, 1, -1, -1, getDolCurrency()).'");
         $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
         $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
     });

@@ -17,7 +17,7 @@
  * Copyright (C) 2021		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -296,7 +296,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -681,7 +681,7 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
 }
-// Rechercher dans code_client si SOCIETE_ADD_REF_IN_LIST est égal à 1
+// Search in 'code_client' when SOCIETE_ADD_REF_IN_LIST is set to 1
 if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
 	$sql .= natural_search('s.code_client', $search_code_client);
 }
@@ -782,7 +782,7 @@ if ($search_note_public) {
 	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("p.import_key", $search_import_key);
 }
 // Search on user
 $param = '';
@@ -1286,7 +1286,7 @@ if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
-	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse');
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, '', 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 $parameters = array();

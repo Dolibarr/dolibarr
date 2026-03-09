@@ -136,7 +136,7 @@ if ($action == 'convertutf8mb4') {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_dbtable');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?restore_lastsearch_values=1">'.img_picto($langs->trans("Back"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("Back").'</span></a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?restore_lastsearch_values=1">'.img_picto($langs->trans("GoBack"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("GoBack").'</span></a>';
 
 print load_fiche_titre($langs->trans("Table")." ".$table, $linkback, 'title_setup');
 
@@ -147,6 +147,7 @@ if ($logsql) {
 // Define request to get table description
 $base = 0;
 $sql = null;
+$row = array();
 if (preg_match('/mysql/i', $conf->db->type)) {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($db->escapeforlike($table))."'";
 	$base = 1;

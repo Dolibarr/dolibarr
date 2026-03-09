@@ -69,25 +69,11 @@ $error = 0;
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
-// Shipment note
+// Shipment note. We force MAIN_SUBMODULE_EXPEDITION to on because this var is still used. TODO We should remove it, only MAIN_SUBMODULE_DELIVERY must be used.
 if (isModEnabled('shipping') && !getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
-/*
- if ($action == 'activate_sending')
- {
- dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
- header("Location: confexped.php");
- exit;
- }
- if ($action == 'disable_sending')
- {
- dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
- header("Location: confexped.php");
- exit;
- }
- */
 
 // Delivery note
 if ($action == 'activate_delivery') {

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 class BankAccounts extends DolibarrApi
 {
 	/**
-	 * array $FIELDS Mandatory fields, checked when creating an object
+	 * @var string[] Mandatory fields, checked when creating an object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -59,7 +59,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
-	 * @param  int		$category   Use this param to filter list by category
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
@@ -428,9 +428,12 @@ class BankAccounts extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -592,6 +595,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$url = sanitizeVal($url);
 		$label = sanitizeVal($label);
 		$type = sanitizeVal($type);
@@ -688,6 +695,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$accountLine->label = sanitizeVal($label);
 
 		$result = $accountLine->updateLabel();
@@ -724,6 +735,10 @@ class BankAccounts extends DolibarrApi
 		$result = $accountLine->fetch($line_id);
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
+		}
+
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
 		}
 
 		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {

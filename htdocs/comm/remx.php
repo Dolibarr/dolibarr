@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2019  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							            <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				            <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		    Anthony Damhet				      <a.damhet@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
 	}
-	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
+	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2, 'MT') != $discount->amount_ttc) {
 		$error++;
 		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
 	}
@@ -372,10 +372,11 @@ if ($socid > 0) {
 		$sql .= " GROUP BY rc.fk_user";
 		$resql = $db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
-			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
-				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+			while ($obj = $db->fetch_object($resql)) {
+				$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+				if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+					$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -401,10 +402,11 @@ if ($socid > 0) {
 		$sql .= " GROUP BY rc.fk_user";
 		$resql = $db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
-			if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
-				$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+			while ($obj = $db->fetch_object($resql)) {
+				$remise_all += (!empty($obj->amount) ? $obj->amount : 0);
+				if (!empty($obj->fk_user) && $obj->fk_user == $user->id) {
+					$remise_user += (!empty($obj->amount) ? $obj->amount : 0);
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -486,7 +488,7 @@ if ($socid > 0) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
-				print ' &nbsp; ';
+				print ' &nbsp; &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</div>';
@@ -586,21 +588,21 @@ if ($socid > 0) {
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
@@ -824,7 +826,7 @@ if ($socid > 0) {
 		}
 
 		/*
-		 * Liste remises fixes fournisseur restant en cours (= liees a aucune facture ni ligne de facture)
+		 * List of fixed supplier discounts still available (=not linked to any invoice nor invoice line)
 		 */
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
@@ -884,21 +886,21 @@ if ($socid > 0) {
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
@@ -1117,7 +1119,7 @@ if ($socid > 0) {
 	print '<div class="clearboth"></div><br><br>';
 
 	/*
-	 * List discount consumed (=liees a une ligne de facture ou facture)
+	 * List discount consumed (=linked to an invoice line or invoice)
 	 */
 
 	print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));
@@ -1232,21 +1234,21 @@ if ($socid > 0) {
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
@@ -1402,21 +1404,21 @@ if ($socid > 0) {
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';

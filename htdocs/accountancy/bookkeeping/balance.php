@@ -235,8 +235,8 @@ if ($action == 'export' && $user->hasRight('accounting', 'mouvements', 'lire')) 
 
 	if ($exportType === 'csv') {
 		$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
-		$filename = 'balance';
-		$type_export = 'balance';
+		$filename = 'balance';		// Used by the tpl
+		$type_export = 'balance';	// Used by the tpl
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 		foreach ($object->lines as $line) {
@@ -488,11 +488,11 @@ if ($action != 'export') {
 	//	print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
 	//}
 	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
-		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", $param, "", 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
 	print_liste_field_titre("AccountingDebit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AccountingCredit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 
 	// Hook fields
 	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);

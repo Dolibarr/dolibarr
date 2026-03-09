@@ -41,7 +41,7 @@ class modKnowledgeManagement extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -56,7 +56,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->family = "crm";
 
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '61';
 
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
@@ -354,7 +354,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'url' => '/categories/categorie_list.php?type=13',
 			'langs' => 'knowledgemanagement',
 			'position' => 112,
-			'enabled' => 'isModEnabled("knowledgemanagement") && isModenabled("category")',
+			'enabled' => 'isModEnabled("knowledgemanagement") && isModEnabled("category")',
 			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			'user' => 0

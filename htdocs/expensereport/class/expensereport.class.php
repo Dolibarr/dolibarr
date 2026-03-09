@@ -55,6 +55,11 @@ class ExpenseReport extends CommonObject
 	public $table_element_line = 'expensereport_det';
 
 	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'ExpenseReportLine';
+
+	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expensereport';
@@ -626,17 +631,20 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".((float) $this->total_ht);
 		$sql .= " , total_ttc = ".((float) $this->total_ttc);
 		$sql .= " , total_tva = ".((float) $this->total_tva);
+		if (!empty($this->date_create)) {
+			$sql .= " , date_create = '".$this->db->idate($this->date_create)."'";
+		}
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport)) {
-			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
+			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? (int) $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		}
-		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
-		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
-		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? $this->fk_user_approve : "null");
+		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? (int) $this->fk_user_validator : "null");
+		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? (int) $this->fk_user_valid : "null");
+		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? (int) $this->fk_user_approve : "null");
 		$sql .= " , fk_user_modif = ".((int) $user->id);
-		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut : '0');
-		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement : "null");
+		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? (int) $this->fk_statut : 0);
+		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? (int) $this->fk_c_paiement : "null");
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
 		$sql .= " , note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "''");
 		$sql .= " , detail_refuse = ".(!empty($this->detail_refuse) ? "'".$this->db->escape($this->detail_refuse)."'" : "''");
@@ -2351,11 +2359,11 @@ class ExpenseReport extends CommonObject
 	 * deleteline
 	 *
 	 * @param   int			$rowid      	Row id
-	 * @param   User|string	$fuser      	User
+	 * @param   ?User		$fuser      	User
 	 * @param   int<0,1>	$notrigger      1=No trigger
 	 * @return  int<-1,1>                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -2394,11 +2402,11 @@ class ExpenseReport extends CommonObject
 	 * periodExists
 	 *
 	 * @param   User       $fuser          User
-	 * @param   integer    $date_debut     Start date
-	 * @param   integer    $date_fin       End date
+	 * @param   integer    $startDate     Start date timestamp
+	 * @param   integer    $endDate       End date timestamp
 	 * @return  int                        Return integer <0 if KO, >0 if OK
 	 */
-	public function periodExists($fuser, $date_debut, $date_fin)
+	public function periodExists(User $fuser, $startDate, $endDate)
 	{
 		global $conf;
 
@@ -2406,39 +2414,17 @@ class ExpenseReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
 		$sql .= " AND fk_user_author = ".((int) $fuser->id);
+		$sql .= " AND (date_fin >= '".$this->db->idate($startDate)."' AND date_debut <= '".$this->db->idate($endDate)."')";
 
-		dol_syslog(get_class($this)."::periodExists sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$num_rows = $this->db->num_rows($result);
-			$i = 0;
+		$row = $this->db->getRow($sql);
 
-			if ($num_rows > 0) {
-				$date_d_form = $date_debut;
-				$date_f_form = $date_fin;
-
-				while ($i < $num_rows) {
-					$objp = $this->db->fetch_object($result);
-
-					$date_d_req = $this->db->jdate($objp->date_debut); // 3
-					$date_f_req = $this->db->jdate($objp->date_fin); // 4
-
-					if (!($date_f_form < $date_d_req || $date_d_form > $date_f_req)) {
-						return $objp->rowid;
-					}
-
-					$i++;
-				}
-
-				return 0;
-			} else {
-				return 0;
-			}
-		} else {
+		if ($row === false) {
 			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this)."::periodExists  Error ".$this->error, LOG_ERR);
+			dol_syslog(__CLASS__."::". __METHOD__."  Error ".$this->error, LOG_ERR);
 			return -1;
 		}
+
+		return $row->rowid ?? 0;
 	}
 
 
@@ -2591,7 +2577,7 @@ class ExpenseReport extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$now = dol_now();

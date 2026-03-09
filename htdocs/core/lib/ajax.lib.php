@@ -498,80 +498,67 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
-	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
+	$msg = "\n";
+	$msg .= '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
 	$msg .= "<script>\n";
-
-	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {
-		$msg .= '
-			// lowercase + remove accents
-			function normalizeString(str) {
-				return str
-					.normalize("NFD")
-					.replace(/[\u0300-\u036f]/g, "")
-					.toLowerCase();
-			}
-		';
-	} else {
-		$msg .= '
-			// lowercase only (accents kept)
-			function normalizeString(str) {
-				return str.toLowerCase();
-			}
-		';
-	}
-
-	$msg .= '
-		$(document).ready(function () {
-			$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
-				dir: \'ltr\',';
+	$msg .= '$(document).ready(function () {
+		$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({';
 	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
 	}
-	$msg .= '		width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
-					minimumInputLength: '.((int) $minLengthToAutocomplete).',
-					language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
-					matcher: function (params, data) {
-						if ($.trim(params.term) === "") {
-							return data;
-						}
-						var term = normalizeString(params.term);
-						var text = normalizeString(data.text || "");
-						var keywords = term.split(" ");
-						for (var i = 0; i < keywords.length; i++) {
-							if (text.indexOf(keywords[i]) === -1) {
-								return null;
-							}
-						}
-						return data;
-					},
-					theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
-					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-					dropdownCssClass: \'ui-dialog\',
-					templateResult: function (data, container) {	/* Format visible output into combo list */
-	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
-						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-						//console.log("data html is "+$(data.element).attr("data-html"));
-						if (data.id == \''.(dol_escape_js($idforemptyvalue)).'\' && $(data.element).attr("data-html") == undefined) {
-							return \'&nbsp;\';
-						}
-						if ($(data.element).attr("data-html") != undefined) {
-							/* If property html set, we decode html entities and use this. */
-							/* Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
-							if (typeof htmlEntityDecodeJs === "function") {
-								return htmlEntityDecodeJs($(data.element).attr("data-html"));
-							}
-						}
-						return data.text;
-					},
-					templateSelection: function (selection) {		/* Format visible output of selected value */
-						if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
-						return selection.text;
-					},
-					escapeMarkup: function(markup) {
-						return markup;
+	$msg .= '
+			dir: \'ltr\',
+			width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
+			minimumInputLength: '.((int) $minLengthToAutocomplete).',
+			language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
+			matcher: function (params, data) {
+				if ($.trim(params.term) === "") { return data; }';
+	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {	// lowercase + remove accents
+		$msg .= '
+				var term = params.term.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+				var text = (data.text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
+	} else {															// lowercase only (accent kept)
+		$msg .= '
+				var term = params.term.toLowerCase();
+				var text = (data.text || "").toLowerCase();';
+	}
+	$msg .= '
+				var keywords = term.split(" ");
+				for (var i = 0; i < keywords.length; i++) {
+					if (text.indexOf(keywords[i]) === -1) {
+						return null;
 					}
-				})';
+				}
+				return data;
+			},
+			theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
+			containerCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+			selectionCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+			dropdownCssClass: \'ui-dialog\',
+			templateResult: function (data, container) {	/* Format visible output into combo list */
+ 				/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
+				if (data.element) { $(container).addClass($(data.element).attr("class")); }
+				/* console.log("data html is "+$(data.element).attr("data-html")); */
+				if (data.id == \''.(dol_escape_js($idforemptyvalue)).'\' && $(data.element).attr("data-html") == undefined) {
+					return \'&nbsp;\';
+				}
+				if ($(data.element).attr("data-html") != undefined) {
+					/* If property html set, we decode html entities and use this. */
+					/* Note that HTML content must have been sanitized against js injection with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
+					if (typeof htmlEntityDecodeJs === "function") {
+						return htmlEntityDecodeJs($(data.element).attr("data-html"));
+					}
+				}
+				return data.text;
+			},
+			templateSelection: function (selection) {		/* Format visible output of selected value */
+				if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+				return selection.text;
+			},
+			escapeMarkup: function(markup) {
+				return markup;
+			}
+		})';
 	if ($forcefocus) {
 		$msg .= '.select2(\'focus\')';
 	}
@@ -708,7 +695,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 		}
 
 		if ($disabled) {
-			$morecss .= ' disabled';
+			$morecss .= ' disabled opacitymedium';
 		} else {
 			$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 			<script>
@@ -795,10 +782,11 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on the same page for the same field.
  *  @param	int		$forcenojs	Force the component to work as link post (without javascript) instead of ajax call
  *  @param	string	$moreparam	When $forcenojs=1 then we can add more parameters to the backtopage URL. String must url encoded. Example: 'abc=def&fgh=ijk'
+ *  @param	int     $readonly	Use 1 if button not allowed.
  *  @return string              html for button on/off
  *  @see ajax_constantonoff() to update that value of a constant
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0, $moreparam = '')
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0, $moreparam = '', $readonly = 0)
 {
 	global $conf, $langs;
 
@@ -808,7 +796,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 
 	$out = '';
 
-	if (!empty($conf->use_javascript_ajax) && empty($forcenojs)) {
+	if (!empty($conf->use_javascript_ajax) && empty($forcenojs) && empty($readonly)) {
 		$out .= '<script>
         $(function() {
             var input = '.json_encode($input).';
@@ -902,8 +890,16 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	}
 
 	if (empty($conf->use_javascript_ajax) || $forcenojs) {
-		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : '')).'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</a>';
-		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : '')).'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</a>';
+		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
+		if ($readonly) {
+			$url ='#';
+		}
+		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</a>';
+		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
+		if ($readonly) {
+			$url ='#';
+		}
+		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</a>';
 	} else {
 		$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</span>';
 		$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</span>';

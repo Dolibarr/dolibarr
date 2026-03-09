@@ -67,7 +67,7 @@ $id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -662,6 +662,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'cc' => array('label' => 'Cc', 'data-placeholder' => $langs->trans('SearchString')),
 		'bcc' => array('label' => 'Bcc', 'data-placeholder' => $langs->trans('SearchString')),
 		'replyto' => array('label' => 'ReplyTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'excludeemail' => array('label' => 'EmailCollectorExcludeEmails', 'data-placeholder' => $langs->trans('EmailCollectorExcludeEmailsPlaceholder')),
+		'excludedomain' => array('label' => 'EmailCollectorExcludeDomains', 'data-placeholder' => $langs->trans('EmailCollectorExcludeDomainsPlaceholder')),
 		'subject' => array('label' => 'Subject', 'data-placeholder' => $langs->trans('SearchString')),
 		'body' => array('label' => 'Body', 'data-placeholder' => $langs->trans('SearchString')),
 		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2

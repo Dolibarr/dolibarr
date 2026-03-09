@@ -212,7 +212,7 @@ function propal_admin_prepare_head()
  */
 function getCustomerProposalPieChart($socid = 0)
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs, $user, $hookmanager;
 
 	$result = '';
 
@@ -239,6 +239,10 @@ function getCustomerProposalPieChart($socid = 0)
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY p.fk_statut";
 	$resql = $db->query($sql);
 	if ($resql) {

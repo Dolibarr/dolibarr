@@ -163,7 +163,7 @@ $permissiontoadd = $user->hasRight('societe', 'creer');
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 
@@ -378,13 +378,6 @@ if ($object->id > 0) {
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
-
-	// Prefix
-	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-		print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
-		print($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
-		print '</td></tr>';
-	}
 
 	if ($object->client) {
 		$langs->loadLangs(array("compta", "accountancy"));
@@ -891,6 +884,7 @@ if ($object->id > 0) {
 	 * Latest proposals
 	 */
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
+		$propal_static = new Propal($db);
 		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_projet, p.fk_statut, p.total_ht";
@@ -902,12 +896,13 @@ if ($object->id > 0) {
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $propal_static); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY p.datep DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$propal_static = new Propal($db);
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -960,7 +955,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0);
+					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
@@ -992,10 +987,12 @@ if ($object->id > 0) {
 
 	$orders2invoice = null;
 	$param = "";
+
 	/*
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
+		$commande_static = new Commande($db);
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
 		$sql .= ", c.total_tva";
@@ -1007,12 +1004,13 @@ if ($object->id > 0) {
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND c.entity IN (".getEntity('commande').')';
+		$parameters = array();
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $commande_static); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY c.date_commande DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$commande_static = new Commande($db);
-
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				// Check if there are orders billable
@@ -1079,7 +1077,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
@@ -1112,6 +1110,8 @@ if ($object->id > 0) {
 	 *   Latest shipments
 	 */
 	if (isModEnabled("shipping") && $user->hasRight('expedition', 'lire')) {
+		$param = '';
+
 		$sql = 'SELECT e.rowid as id';
 		$sql .= ', e.ref, e.entity, e.fk_projet';
 		$sql .= ', e.date_creation';
@@ -1149,6 +1149,8 @@ if ($object->id > 0) {
 			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
 
+				$param = 'entity=' . ((int) $objp->entity);
+
 				$sendingstatic->id = $objp->id;
 				$sendingstatic->ref = $objp->ref;
 				$sendingstatic->fk_project = $objp->fk_projet;
@@ -1180,7 +1182,8 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $sendingstatic->table_element, $relativepath, 0, $param);
+
+					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
@@ -1294,7 +1297,7 @@ if ($object->id > 0) {
 							}
 						}
 						$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
+						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1395,7 +1398,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
+					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($fichinter_static->fk_project > 0) {
@@ -1626,7 +1629,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0);
+					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {

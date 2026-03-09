@@ -74,6 +74,8 @@ print "Memory limit: ". ini_get('memory_limit')."\n";
 /**
  * Class for PHPUnit tests
  *
+ * #LNE1-QU2507-0005
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
@@ -467,15 +469,19 @@ class SecurityTest extends CommonClassTest
 		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
 		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
 
-		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 response');
+		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
 
-		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
+		if (empty($DISABLEREMOTEACCESSTODOLIBARRFR)) {
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Test getURLContent '.$url.' - Should GET url 301 response');
+
+			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+			$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
+			print __METHOD__." url=".$url."\n";
+			$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
+		}
 
 		$url = 'http://localhost';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
@@ -615,7 +621,13 @@ class SecurityTest extends CommonClassTest
 		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
 		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
-		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
+		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+
+		// We force $dolibarr_main_restrict_eval_methods to empty, so the code will use the old black-list patterns.
+		global $dolibarr_main_restrict_eval_methods;
+		print "\ndolibarr_main_restrict_eval_methods = ".$dolibarr_main_restrict_eval_methods."\n";
+
+		//$dolibarr_main_restrict_eval_methods = array();
 
 
 		//$resulttest = dol_eval('((getDolGlobalString("MAIN_USE_ADVANCED_PERMS") ? $user->hasRight("user","group_advance","read") : $user->hasRight("user","user","lire")) || $user->admin) && !(isModEnabled("multicompany") && $conf->entity > 1 && getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE"))', 1, 0);
@@ -630,22 +642,22 @@ class SecurityTest extends CommonClassTest
 		print "result2 = ".$result."\n";
 		$this->assertFalse($result);
 
-		$s = '((($reloadedobj = new ClassThatDoesNotExists($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+		$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
 		$result3a = dol_eval($s, 1, 1, '2');
 		print "result3a = ".$result3a."\n";
 		$this->assertStringContainsString('Exception during evaluation: '.$s, $result3a);
 
-		$s = '((($reloadedobj = new Project($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+		$s = '((($var1 = new Project($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
 		$result3b = dol_eval($s, 1, 1, '2');
 		print "result3b = ".$result."\n";
 		$this->assertEquals('0', $result3b);
 
-		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
+		$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : "Parent project not found"';
 		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result3c = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
-		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
+		$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : \'Parent project not found\'';
 		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result4 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result, 'Test 4');
@@ -659,12 +671,12 @@ class SecurityTest extends CommonClassTest
 		print "result6 = ".$result."\n";
 		$this->assertEquals('1', $result, 'Test 5');
 
+		/*
 		$s = 'MyClass::MyMethod()';
 		$result = dol_eval($s, 1, 1, '2');
 		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result);
-
-
+		$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result, 'The string was not detected as evil');
+		*/
 
 		/* not allowed. Not a one line eval string
 		$result = (string) dol_eval('if ($a == 1) { }', 1, 1);
@@ -718,23 +730,23 @@ class SecurityTest extends CommonClassTest
 		print "result7 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
 
-		$result = (string) dol_eval('$a=exec("ls")', 1, 1);
+		$result = (string) dol_eval('$var1=exec("ls")', 1, 1);
 		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
-		$result = (string) dol_eval('$a=exec(\'ls\')', 1, 1);
+		$result = (string) dol_eval('$var1=exec(\'ls\')', 1, 1);
 		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
-		$result = (string) dol_eval('$a=exec ("ls")', 1, 1);
+		$result = (string) dol_eval('$var1=exec ("ls")', 1, 1);
 		print "result8 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
 		$result = (string) dol_eval("strrev('metsys') ('whoami')", 1, 1);
 		print "result8b = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
-		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1;
+		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
 
 		$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
 		print "result9 = ".$result."\n";
@@ -746,11 +758,11 @@ class SecurityTest extends CommonClassTest
 
 		$result = (string) dol_eval("('ex'.'ec')('ls')", 1, 0);	// This will execute exec of ls
 		print "result11 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
 		$result = (string) dol_eval("('ex'.'ec') /* */ (/* */'ls')", 1, 0);	// This will execute exec of ls
 		print "result11 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
 		$result = (string) dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
 		print "result12 = ".$result."\n";
@@ -765,23 +777,23 @@ class SecurityTest extends CommonClassTest
 		global $mainmenu,$leftmenu;	// Used into following strings to eval
 
 		$leftmenu = 'AAA';
-		$result = dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
 		// Same with a value that does not match
 		$leftmenu = 'XXX';
-		$result = dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result14 = ".$result."\n";
 		$this->assertFalse($result);
 
 		$leftmenu = 'AAA';
-		$result = dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
 		print "result15 = ".$result."\n";
 		$this->assertTrue($result);
 
 		$leftmenu = 'XXX';
-		$result = dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
 		print "result16 = ".$result."\n";
 		$this->assertFalse($result);
 
@@ -792,7 +804,7 @@ class SecurityTest extends CommonClassTest
 		print "result17 = ".$result."\n";
 		$this->assertTrue($result);
 
-		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && getDolGlobalInt("MAIN_FEATURES_LEVEL")', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
 		print "result18 = ".$result."\n";
 		$this->assertFalse($result);
 
@@ -803,34 +815,34 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('1', $result, 'The string was not detected as evil');
 
 
-		// Test option MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL
+		// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL
 
-		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
+		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
 
 		$mainmenu = 'ex';
 		$result = (string) dol_eval('$mainmenu.\'ec\'', 1, 0);
 		print "resultconcat1 = ".$result."\n";
-		$this->assertStringContainsString('exec', $result, 'With MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL off. we should accept concat');
+		$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
 
 		$mainmenu = 'ex';
 		$leftmenu = 'ec';
 		$result = (string) dol_eval("\$mainmenu.\$leftmenu", 1, 0);
 		print "resultconcat2 = ".$result."\n";
-		$this->assertStringContainsString('exec', $result, 'With MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL off. we should accept concat');
+		$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
 
-		// Test option MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1
+		// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0
 
-		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1;
+		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
 
 		$leftmenu = 'ab';
 		$result = (string) dol_eval("(\$leftmenu.'s')", 1, 0);
 		print "resultconcat3 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden)', $result, 'Test concat - The string was not reported as a bad syntax when it should');
+		$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden if not strictly between 2 numbers)', $result, 'Test concat - The string was not reported as a bad syntax when it should');
 
 
 		// Not allowed
 
-		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
+		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
 
 		$leftmenu = 'abs';
 		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
@@ -847,11 +859,15 @@ class SecurityTest extends CommonClassTest
 
 		$result = (string) dol_eval('\'exec\'("aaa")', 1, 0);
 		print "result23 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when it should');
 
 		$result = (string) dol_eval('1 + 2 <? echo "aaa" ?>', 1, 0, '2');
 		print "result24 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate (The char ? can be used only with a space before and after)', json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+
+		$result = (string) dol_eval('$$a', 1, 0);
+		print "result25 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 25 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 	}
 
 
@@ -913,6 +929,26 @@ class SecurityTest extends CommonClassTest
 		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
 		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
 		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest, 0, array('code'));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
 

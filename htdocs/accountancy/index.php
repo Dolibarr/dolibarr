@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
@@ -132,12 +131,14 @@ if (isModEnabled('accounting')) {
 
 	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
+	/*
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 		$messagewarning = $langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices");
 		$messagewarning .= ' '.$langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org');
 		print info_admin($messagewarning);
 		print "<br>";
 	}
+	*/
 
 	if (!$helpisexpanded && empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])) {
 		print '<div class="opacitymedium idfaq2"><br>'.$langs->trans("ClickOnUseTutorialForHelp", $langs->transnoentities("ShowTutorial"))."</div>\n";
@@ -151,6 +152,8 @@ if (isModEnabled('accounting')) {
 		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '', 0, '', 'nomarginbottom')."\n";
 		print '<hr>';
 		print "<br>\n";
+
+		print '<div class="info">';
 
 		// STEPS
 		$step++;
@@ -197,12 +200,15 @@ if (isModEnabled('accounting')) {
 			print $s;
 			print "<br>\n";
 		}
+		print '</div>';
 
 
 		print "<br>\n";
 		print $langs->trans("AccountancyAreaDescActionOnceBis");
 		print "<br>\n";
 		print "<br>\n";
+
+		print '<div class="info">';
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
@@ -245,6 +251,8 @@ if (isModEnabled('accounting')) {
 		print $s;
 		print "<br>\n";
 
+		print '</div>';
+
 		print '<br>';
 	}
 
@@ -257,6 +265,8 @@ if (isModEnabled('accounting')) {
 	$step = 0;
 
 	$langs->loadLangs(array('bills', 'trips'));
+
+	print '<div class="info">';
 
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '{s}')."\n";
@@ -290,6 +300,9 @@ if (isModEnabled('accounting')) {
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescClosePeriod", chr(64 + $step))."<br>\n";
 	print $s;
+
+	print '</div>';
+
 
 	if (!empty($resultboxes['boxlista']) || !empty($resultboxes['boxlistb'])) {
 		print "<br>\n";

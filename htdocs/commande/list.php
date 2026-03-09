@@ -216,6 +216,9 @@ if (empty($user->socid)) {
 	$fieldstosearchall["c.note_private"] = "NotePrivate";
 }
 
+// Show POS fields if cashdesk or takepos module enabled or if global configuration to show POS fields on order list is enabled
+$showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS')) ? '1' : '0';
+
 $checkedtypetiers = '0';
 $arrayfields = array(
 	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
@@ -238,8 +241,8 @@ $arrayfields = array(
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '-1', 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '-1', 'position' => 68),
 	'c.fk_input_reason' => array('label' => "Origin", 'checked' => '-1', 'position' => 69),
-	'c.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS'))", 'position' => 90),
-	'c.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS'))", 'position' => 91),
+	'c.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 90),
+	'c.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 91),
 	'c.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 75),
 	'c.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 80),
 	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => '0', 'position' => 85),
@@ -465,7 +468,7 @@ if (empty($reshook)) {
 
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin    = 'commande';
-				$objecttmp->origin_id = $id_order;
+				$objecttmp->origin_id = (int) $id_order;
 
 				$objecttmp->array_options = $cmd->array_options; // Copy extrafields
 
@@ -637,6 +640,13 @@ if (empty($reshook)) {
 								$lines[$i]->fk_unit
 							);
 							if ($result > 0) {
+								if (!empty($lines[$i]->extraparams)) {
+									$factureLine = new FactureLigne($db);
+									$factureLine->id = $result;
+									$factureLine->extraparams = $lines[$i]->extraparams;
+									$factureLine->setExtraParameters();
+								}
+
 								$lineid = $result;
 							} else {
 								$lineid = 0;
@@ -813,8 +823,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
-			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -1165,7 +1175,7 @@ if ($search_pos_source) {
 	$sql .= natural_search("c.pos_source", $search_pos_source);
 }
 if ($search_import_key) {
-	$sql .= natural_search("s.import_key", $search_import_key);
+	$sql .= natural_search("c.import_key", $search_import_key);
 }
 // Search on user
 if ($search_user > 0) {
@@ -2610,9 +2620,9 @@ while ($i < $imaxinloop) {
 
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center tdoverflowmax100">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
-			print $tmparray['label'];
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($tmparray['label']).'">';
+			print dolPrintHTML($tmparray['label']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2624,9 +2634,12 @@ while ($i < $imaxinloop) {
 			if (!is_array($typenArray) || count($typenArray) == 0) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
 			if (!empty($obj->typent_code)) {
+				print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
 				print $typenArray[$obj->typent_code];
+			} else {
+				print '<td class="center tdoverflowmax100">';
+				print '';
 			}
 			print '</td>';
 			if (!$i) {

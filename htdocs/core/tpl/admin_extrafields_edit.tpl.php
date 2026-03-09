@@ -58,7 +58,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 	jQuery(document).ready(function() {
 		function init_typeoffields(type)
 		{
-			console.log("select a new type (edit) = "+type);
+			console.log("admin_extrafields_edit select a new type (edit) = "+type);
 			var size = jQuery("#size");
 			var computed_value = jQuery("#computed_value");
 			var langfile = jQuery("#langfile");
@@ -256,7 +256,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </td></tr>
 
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
+<tr class="extra_size"><td><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
 
 <!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">
@@ -288,9 +288,9 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Computed value -->
 <tr class="extra_computed_value">
 <?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$db, $langs, $mysoc, $user, $objectoffield').'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
 <?php } else { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$db, $langs, $mysoc, $user, $objectoffield').'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
 <?php } ?>
 <td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($computed); ?></textarea></td>
 </tr>
@@ -317,10 +317,12 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 		$elementprop["module"] = "intervention";
 	}
 	$substitutionarray = getCommonSubstitutionArray($langs, 1, null, $object, array("object", $elementprop["module"]));
-	$texthelp = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+	$texthelp = $langs->trans("AIPromptExtrafieldDesc").'<br><br>';
+	$texthelp .= $langs->trans("FollowingConstantsWillBeSubstituted").'<br><small>';
 	foreach ($substitutionarray as $key => $val) {
 		$texthelp .= $key.' -> '.$val.'<br>';
 	}
+	$texthelp .= '</small>';
 	echo $form->textwithpicto($langs->trans("AIPromptExtrafield"), $texthelp, 1, 'help', 'valignmiddle', 0, 3, 'abc');?></td>
 <td class="valeur"><textarea name="ai_prompt" id="ai_prompt" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo($aiprompt); ?></textarea></td></tr>
 
@@ -344,7 +346,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
-</td><td class="valeur"><input id="list" class="width50" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
 
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>

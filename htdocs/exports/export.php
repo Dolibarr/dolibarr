@@ -28,12 +28,6 @@
  */
 
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank', 'bills'));
@@ -90,7 +89,8 @@ $entitytoicon = array(
 	'bomline'      => 'bom',
 	'conferenceorboothattendee' => 'contact',
 	'inventory_line' => 'inventory',
-	'mrp_line' => 'mrp'
+	'mrp_line' => 'mrp',
+	'task_time'    => 'clock',
 );
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
@@ -144,10 +144,12 @@ $entitytolang = array(
 	'bomline'      => 'BOMLine',
 	'mrp'          => 'ManufacturingOrder',
 	'mrp_line'     => 'ManufacturingOrderLine',
+	'conferenceorbooth' => 'ConferenceOrBooth',
 	'conferenceorboothattendee' => 'Attendee',
 	'inventory'   => 'Inventory',
 	'inventory_line' => 'InventoryLine'
 );
+
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
 $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["export_filtered_fields"] : array();
@@ -158,10 +160,11 @@ $step = GETPOSTINT("step") ? GETPOSTINT("step") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
 $exportmodelid = GETPOSTINT("exportmodelid");
-$field = GETPOST("field", "alpha");
+$field = (string) GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
+
 
 $objmodelexport = new ModeleExports($db);
 $form = new Form($db);
@@ -639,7 +642,7 @@ if ($step == 2 && $datatoexport) {
 		$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
 		$entitylang = (!empty($entitytolang[$entity]) ? $entitytolang[$entity] : $entity);
 
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		// If value of entityicon=entitylang='icon:Label'
 		//print $code.'-'.$label.'-'.$entity;
 
@@ -808,23 +811,21 @@ if ($step == 3 && $datatoexport) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
-	//print '<td>'.$langs->trans("ExportableFields").'</td>';
-	//print '<td class="center"></td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="25%">'.$langs->trans("FilteredFieldsValues").'</td>';
 	print '</tr>';
 
-	// Champs exportables
+	// Field we can export
 	$fieldsarray = $objexport->array_export_fields[0];
-	// Champs filtrable
+	// Field that can be filtered
 	$Typefieldsarray = $objexport->array_export_TypeFields[0];
-	// valeur des filtres
+	// Value of filters
 	$ValueFiltersarray = (!empty($objexport->array_export_FilterValue[0]) ? $objexport->array_export_FilterValue[0] : '');
 	// Select request if all fields are selected
 	$sqlmaxforexport = $objexport->build_sql(0, array(), array());
 
 	$i = 0;
-	// on boucle sur les champs
+	// We loop on fields
 	foreach ($fieldsarray as $code => $label) {
 		print '<tr class="oddeven">';
 
@@ -1021,6 +1022,7 @@ if ($step == 4 && $datatoexport) {
 	// Select request if all fields are selected
 	$sqlmaxforexport = $objexport->build_sql(0, array(), array());
 
+	print '<br>';
 	print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1247,7 +1249,7 @@ if ($step == 5 && $datatoexport) {
 	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	/*
-	 * Confirmation suppression fichier
+	 * Confirmation of deletion of file
 	 */
 	if ($action == 'remove_file') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
@@ -1351,15 +1353,16 @@ if ($step == 5 && $datatoexport) {
 	}
 	$htmltabloflibs .= '</table><br>';
 
+	print '<br>';
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;
-	print '<br>';
 
 	print '</div>';
 
 
 	if ($sqlusedforexport && $user->admin) {
-		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation');
+		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation').'<br>';
+		print '<br>';
 	}
 
 
@@ -1368,7 +1371,7 @@ if ($step == 5 && $datatoexport) {
 	}
 
 	// Show existing generated documents
-	// NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
+	// NB: The function show_documents rescan all modules when  genallowed=1, else we take $liste
 	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (GETPOST('model') ? GETPOST('model') : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 

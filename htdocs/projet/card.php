@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -40,14 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'companies');
@@ -119,7 +118,7 @@ $permissiontoeditextra = $permissiontoadd;
 
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
-	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 
@@ -364,13 +363,13 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 			}
 
-			if (!$error) {
-				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
-					// Get ID of the special opportunity status code 'WON'
-					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
+			if (!$error && !is_null($object->thirdparty) && ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2)) {		// If not yet customer
+				// Get ID of the special opportunity status code 'WON'
+				$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
-					if ($object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
+				if ($object->opp_status == $idoppstatuswon) {
+					// Switch the thirdparty into a customer (only if thirdparty exists)
+					if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
 						$object->thirdparty->setAsCustomer();
 					}
 				}
@@ -461,14 +460,16 @@ if (empty($reshook)) {
 			}
 
 			// If opportunities are used and the customer is not yet a customer
-			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity && !is_null($object->thirdparty)) {
 				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
 					// Get ID of the special opportunity status code 'WON'
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
 					if (!$error && $object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
-						$object->thirdparty->setAsCustomer();
+						// Switch the thirdparty into a customer (only if thirdparty exists)
+						if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
+							$object->thirdparty->setAsCustomer();
+						}
 					}
 				}
 			}
@@ -613,6 +614,9 @@ if (empty($reshook)) {
 			$action = 'edit_extras';
 		}
 	}
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
 	$triggersendname = 'PROJECT_SENTBYMAIL';
@@ -1666,7 +1670,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Send
 			if (empty($user->socid)) {
 				if ($object->status != Project::STATUS_CLOSED) {
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 

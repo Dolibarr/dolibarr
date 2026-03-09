@@ -28,8 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -262,7 +261,7 @@ foreach ($syslogModules as $moduleName) {
 				$value = (isset($option['default']) ? $option['default'] : '');
 			}
 
-			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
+			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" placeholder="'.$option['default'].'" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (!empty($option['example'])) {
 				print '<br>'.$langs->trans("Example").': '.dol_escape_htmltag($option['example']);
 			}
@@ -332,7 +331,7 @@ print '</td></tr>';
 if (!empty($conf->loghandlers['mod_syslog_file']) && isModEnabled('cron')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
 	print '<td colspan="2"><input class="width50" type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.getDolGlobalString('SYSLOG_FILE_SAVES').'" />';
-	print ' &nbsp; (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
+	print ' &nbsp; <a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a></td></tr>';
 }
 
 print '</table>';

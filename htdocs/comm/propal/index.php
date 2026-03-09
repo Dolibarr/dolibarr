@@ -111,7 +111,10 @@ if (isModEnabled("propal")) {
 	if ($socid) {
 		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
-
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -171,12 +174,12 @@ print '<div class="fichetwothirdright">';
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+$sql = "SELECT p.rowid, p.entity, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status, date_cloture as datec, p.tms as datem,";
 $sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
-$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
+$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
-$sql .= " AND c.fk_soc = s.rowid";
+$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
+$sql .= " AND p.fk_soc = s.rowid";
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
 if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -185,16 +188,20 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
 // Search on socid
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".((int) $socid);
+	$sql .= " AND p.fk_soc = ".((int) $socid);
 }
-$sql .= " ORDER BY c.tms DESC";
+// Add where from hooks
+$parameters = array('socid' => $user->socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " ORDER BY p.tms DESC";
 
 $sql .= $db->plimit($max, 0);
 
@@ -289,6 +296,10 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	if ($socid) {
 		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY p.rowid DESC";
 
 	$resql = $db->query($sql);
