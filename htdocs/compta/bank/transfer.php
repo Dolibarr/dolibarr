@@ -141,9 +141,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 			$tmpaccountto = new Account($db);
 			$tmpaccountto->fetch(GETPOSTINT($n.'_account_to'));
 
-			/** @var ?float $amount_main_currency_from */
 			$amount_main_currency_from = null;
-			/** @var ?float $amount_main_currency_to */
 			$amount_main_currency_to = null;
 
 			if ($tmpaccountto->currency_code == $tmpaccountfrom->currency_code) {
@@ -365,7 +363,7 @@ for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 
 	// Date
 	print '<td class="nowraponall">';
-	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
+	print $form->selectDate((!empty($dateo[$i] ?? null) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
 	print "</td>\n";
 
 	// Cheque Number
