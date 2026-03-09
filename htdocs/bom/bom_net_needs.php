@@ -268,6 +268,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if (!empty($TProduct['position'])) {
 						$position = $TProduct['position'];
 					}
+					if (!empty($TProduct['level'])) {
+						$position = sprintf('%d.%d', $position, $TProduct['level']);
+					}
 					$prod = new Product($db);
 					$prod->fetch($TProduct['bom']->fk_product);
 					if ($TProduct['parentid'] != $object->id) {
@@ -275,18 +278,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					} else {
 						$tablerows[$position] = '<tr class="oddeven">';
 					}
-					if ($action == 'treeview') {
-						$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
-					} else {
-						$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
-					}
+					$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
 					$tablerows[$position] .= ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
 					$tablerows[$position] .= img_picto('', 'folder-open');
 					$tablerows[$position] .= '</a>';
 					$tablerows[$position] .=  '</td>';
-					if ($action == 'treeview') {
-						$tablerows[$position] .= '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
-					}
+					$tablerows[$position] .= '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					$tablerows[$position] .= '<td class="linecolqty right">'.price(price2num($TProduct['qty'], 'MS')).'</td>';
 					$tablerows[$position] .= '<td>';
 					$tablerows[$position] .= '</td>';
