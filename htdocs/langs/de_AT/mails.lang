@@ -1,6 +1,0 @@
-# Dolibarr language file - Source file is en_US - mails
-MailText=Nachricht
-MailingStatusValidated=Bestätigt
-CloneContent=Nachricht duplizieren
-MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr geändert werden
-IdRecord=Eintrags ID

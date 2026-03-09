@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - mailmanspip
-MailmanCreationSuccess=Anmeldung Test wurde erfolgreich durchgeführt
-MailmanDeletionSuccess=Abmeldung Test wurde erfolgreich durchgeführt
-SuccessToAddToMailmanList=Hinzufügen von %s, in mailman-Liste %s oder SPIP-Datenbank erfolgreich
-SuccessToRemoveToMailmanList=Entfernung von %s, in mailman-Liste %s oder SPIP-Datenbank durchgeführt

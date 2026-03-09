@@ -1,3 +1,0 @@
-Require all granted
-
-Options -MultiViews -Indexes

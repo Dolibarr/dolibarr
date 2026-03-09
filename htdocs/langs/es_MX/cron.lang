@@ -1,6 +1,0 @@
-# Dolibarr language file - Source file is en_US - cron
-CronLastResult=Último código de resultado
-CronMethod=Método
-CronModule=Módulo
-CronArgs=Parámetros
-CronStatusInactiveBtn=Desactivar

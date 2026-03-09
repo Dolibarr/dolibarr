@@ -1,6 +1,0 @@
-# Dolibarr language file - Source file is en_US - members
-WaitingSubscriptionShort=Pedente
-MemberStatusDraft=Rascunho (precisa ser validada)
-MemberStatusDraftShort=Minuta
-MemberStatusActiveShort=Validada
-MemberStatusNoSubscriptionShort=Validada

@@ -1,1 +1,0 @@
-Directory where triggers files are stored.

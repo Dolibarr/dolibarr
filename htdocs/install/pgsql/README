@@ -1,9 +1,0 @@
-# README
-########
-
-This directory contains files to create functions required
-to have PgSql database being compatible with Dolibarr.
-
-Note that all scripts to create database and to load initial data
-are the mysql scripts that are converted on the fly by the driver
-to be compatible with PgSql.

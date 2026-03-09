@@ -1,9 +1,0 @@
-# Dolibarr language file - Source file is en_US - multicurrency
-multicurrency_appId=API-sleutel
-multicurrency_appCurrencySource=Bronvaluta
-multicurrency_alternateCurrencySource=Alternatieve bronvaluta
-MulticurrencyReceived=Ontvangen, oorspronkele valuta
-Codemulticurrency=valutacode
-CancelUpdate=Annuleren
-CurrencyCode=Valutacode
-MutltiCurrencyAutoUpdateCurrencies=Alle valutakoersen bijwerken

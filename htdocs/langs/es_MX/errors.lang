@@ -1,3 +1,0 @@
-# Dolibarr language file - Source file is en_US - errors
-ErrorFieldAccountNotDefinedForLine=Valor para la cuenta contable no definido para la línea (%s)
-ErrorTooManyErrorsProcessStopped=Demasiados errores. Se detuvo el proceso.

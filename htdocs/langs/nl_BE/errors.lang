@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - errors
-ErrorBadFormatValueList=De waarde uit de lijst kan niet meer dan 1 komma bevatten :  <u>%s</u>, maar op zijn minst een : key,value
-ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Verkeerde Definition Of Menu Array in de Module Descriptor (verkeerde waarde voor referentie fk_menu)
-WarningPasswordSetWithNoAccount=Een paswoord is aanwezig voor deze gebruiker. Alhoewel, geen gebruikers account werd aangemaakt. Dus dit paswoord is bewaard maar kan niet gebruikt worden om in te loggen in Dolibarr. Het kan zij dat het gebruikt wordt door een externe module/interface maar indien je het niet nodig acht om een login noch paswoord te definiëren voor een gebruiker,  kan je de optie "Manage a login for each member" deactiveren van de Member module setup. Indien je een login dient te begeren maar zonder paswoord, dan kun je dit veld leeg laten om deze waarschuwing te vermijden. Nota: Email kan ook gebruikt worden als login indien het lid gekoppeld is aan een gebruiker.
-WarningTooManyDataPleaseUseMoreFilters=Te veel gegevens (meer dan %s lijnen). Gebruik meer filters of zet deze constante %s op een hogere limiet.

@@ -1,6 +1,0 @@
-# Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinter=Belegdrucker
-ReceiptPrinterTemplateDesc=Vorlagen einstellen
-SetupReceiptTemplate=Vorlagensetup
-PROFILE_SIMPLE=Einfaches Profil
-PROFILE_DEFAULT_HELP=Standard Profil für Epson Drucker
