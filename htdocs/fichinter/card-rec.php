@@ -794,7 +794,7 @@ if ($action == 'create') {
 	} else {
 		// List mode
 		$param = '';
-	
+
 		$sql = "SELECT f.rowid as id, s.nom as name, s.rowid as socid, f.title,";
 		$sql .= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
 		$sql .= " f.date_last_gen, f.date_when, f.datec, f.status";
