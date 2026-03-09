@@ -69,6 +69,15 @@ $error = 0;
  */
 
 $parameters = array('socid' => $socid);
+$dateo = array();
+$label = array();
+$amount = array();
+$amountto = array();
+$accountfrom = array();
+$accountto = array();
+$type = array();
+$number = array();
+$tabnum = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -76,16 +85,6 @@ if ($reshook < 0) {
 if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$langs->load('errors');
 	$i = 1;
-
-	$dateo = array();
-	$label = array();
-	$amount = array();
-	$amountto = array();
-	$accountfrom = array();
-	$accountto = array();
-	$type = array();
-	$number = array();
-	$tabnum = array();
 
 	while ($i < $MAXLINESFORTRANSFERT) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOSTINT($i.'_month'), GETPOSTINT($i.'_day'), GETPOSTINT($i.'_year'));
