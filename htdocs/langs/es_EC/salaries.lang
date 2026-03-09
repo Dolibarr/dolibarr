@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta de contabilidad por defecto para pagos de sueldos
+Salary=Sueldo
+SalaryPayment=Pago de sueldo
+SalariesPayments=Pagos de sueldos
+ShowSalaryPayment=Mostrar pago de sueldo
+THM=Tasa promedio por hora
+TJM=Tarifa diaria promedio
+CurrentSalary=Sueldo actual
+THMDescription=Este valor puede usarse para calcular el costo del tiempo consumido en un proyecto ingresado por los usuarios si se usa el proyecto del módulo
+TJMDescription=Actualmente, este valor es solo informativo y no se utiliza para ningún cálculo

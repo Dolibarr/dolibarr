@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - oauth
+ManualTokenGeneration=Génération de jetons manuels
+IsTokenGenerated=Le jeton est-il généré?
+NoAccessToken=Pas de jeton d'accès enregistré dans la base de données locale
+HasAccessToken=Un jeton a été généré et enregistré dans la base de données locale
+NewTokenStored=Jeton reçu et enregistré
+ToCheckDeleteTokenOnProvider=Cliquez ici pour vérifier / supprimer l'autorisation enregistrée par %s OAuth provider
+TokenDeleted=Jeton supprimé
+SeePreviousTab=Voir l'onglet précédent
+TOKEN_EXPIRED=Jeton expiré
+TOKEN_EXPIRE_AT=Token expire à
+TOKEN_DELETE=Supprimer le jeton enregistré

@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Установка модуля Рабочих процессов
+WorkflowDesc=Этот модуль предусматривает автоматические действия. По умолчанию рабочий процесс открыт (вы можете делать все в нужном вам порядке), но здесь вы можете включить какие-либо автоматические действия.
+ThereIsNoWorkflowToModify=Для активированных модулей нет доступных изменений рабочего процесса.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Автоматически создавать заказ на продажу после подписания коммерческого предложения (новый заказ будет иметь ту же сумму, что и предложение)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Автоматически создавать счет-фактуру клиента после подписания коммерческого предложения (новый счет-фактура будет иметь ту же сумму, что и предложение)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Автоматически создавать счет клиента после проверки договора
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Автоматически создавать счет клиента после закрытия заказа на продажу (новый счет будет иметь ту же сумму, что и заказ)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=При создании заявки автоматически создайте вмешательство.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Классифицировать связанный источник предложения как счет выставлен, если продажи заказ имеет значение счет выставлен (и, если количество заказ соответствует общей сумме подписанной ссылки предложения)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Классифицировать связанный источник продажи заказ как счет выставлен, когда счет-фактура клиента проверяется (и, если сумма счет-фактура равна общей сумме связанные заказы продажи). Если у вас есть 1 счет-фактура, проверенный для n заказов, это также может установить для всех заказов значение счет выставлен.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Классифицировать связанный источник продажи как счет выставлен, если для счет-фактура клиента установлено значение Оплачен (и, если сумма счет-фактура равна общей сумме количество связанных продажи заказов). Если у вас есть 1 счет-фактура set счет выставлен для n заказов, это может установить для всех заказов значение счет выставлен  тоже.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Классифицировать заказы из связанного источника продажи как отгруженные, если отгрузка подтверждена (и, если количество, отгруженное всеми поставками, такое же, как в заказ для обновления)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Классифицируйте связанный исходный заказ на продажу как отгруженный, когда отгрузка закрывается (и если количество, отгруженное всеми отгрузками, такое же, как в заказе на обновление)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Классифицировать связанный источник покупка заказ как счет выставлен, если поставщик счет-фактура проверяется (и, если сумма счет-фактура равна общей сумме связанные заказы)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Классифицировать связанный исходный заказ на покупку как полученный, когда прием подтвержден (и если количество, полученное всеми приемами, такое же, как в заказе на покупку для обновления)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Классифицировать связанный исходный заказ на покупку как полученный, когда прием закрыт (и если количество, полученное всеми приемами, такое же, как в заказе на покупку для обновления)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Классифицировать поставку связанного источника как закрытую, если счет-фактура клиента подтвержден (и, если сумма  счет-фактура соответствует общей сумме связанных поставок)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Классифицировать отправку связанного источника как счет выставлен, если счет-фактура клиента подтвержден (и, если сумма счет-фактура равна общей сумме связанных отправлений)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Классифицировать приемы связанных источников как счет выставлен, если покупка счет-фактура проверен (и, если сумма счет-фактура равна общей сумме связанных приемов)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Классифицировать приемы связанных источников как счет выставлен, если покупка счет-фактура проверен (и, если сумма счет-фактура равна общей сумме связанных приемов)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=При создании талон, ссылка всех доступных контрактов соответствия третьему стороны
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=При привязке договоров искать среди договоров материнских компаний
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Закройте все вмешательства, связанные с заявкой, когда заявка закрыта
+AutomaticCreation=Автоматическое создание
+AutomaticClassification=Автоматическая классификация
+AutomaticClosing=Автоматическое закрытие
+AutomaticLinking=Автоматическое связывание

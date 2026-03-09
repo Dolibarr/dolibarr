@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Privzeti računovodski račun za izplačila plač
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Pri ustvarjanju plače privzeto pustite prazno možnost »Samodejno ustvari skupno plačilo«.
+Salary=Plača
+Salaries=Plače
+NewSalary=Nova plača
+AddSalary=Dodajte plačo
+NewSalaryPayment=Nova plačna kartica
+AddSalaryPayment=Dodajte izplačilo plače
+SalaryPayment=Izplačilo plače
+SalariesPayments=Izplačila plač
+SalariesPaymentsOf=Izplačila plač %s
+ShowSalaryPayment=Prikaži izplačilo plač
+THM=Povprečna urna postavka
+TJM=Povprečna dnevna stopnja
+CurrentSalary=Trenutna plača
+THMDescription=Ta vrednost se lahko uporabi za izračun stroškov časa, porabljenega za projekt, ki so ga vnesli uporabniki, če je uporabljen projekt modula
+TJMDescription=Ta vrednost je trenutno samo informativna in se ne uporablja za noben izračun
+LastSalaries=Zadnje %s plače
+AllSalaries=Vse plače
+SalariesStatistics=Statistika plač
+SalariesAndPayments=Plače in plačila
+ConfirmDeleteSalaryPayment=Ali želite izbrisati to izplačilo plače?
+FillFieldFirst=Najprej izpolnite polje zaposlenega
+UpdateAmountWithLastSalary=Set amount of last salary

@@ -1,0 +1,100 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Preberi načrtovano delo
+Permission23102 = Ustvari/posodobi načrtovano delo
+Permission23103 = Izbriši načrtovano delo
+Permission23104 = Izvedi načrtovano delo
+# Admin
+CronSetup=Načrtovana nastavitev upravljanja opravil
+URLToLaunchCronJobs=URL za preverjanje in zagon kvalificiranih opravil cron iz brskalnika
+OrToLaunchASpecificJob=Ali da preverite in zaženete določeno opravilo iz brskalnika
+KeyForCronAccess=Varnostni ključ za URL za zagon opravil cron
+FileToLaunchCronJobs=Ukazna vrstica za preverjanje in zagon kvalificiranih cron opravil
+CronExplainHowToRunUnix=V okolju Unix morate uporabiti naslednji vnos v crontab za zagon ukazne vrstice vsakih 5 minut
+CronExplainHowToRunWin=V okolju Microsoft(tm) Windows lahko z orodji Scheduled Task zaženete ukazno vrstico vsakih 5 minut
+CronMethodDoesNotExists=Class %s does not contain any method %s
+CronMethodNotAllowed=Metoda %s razreda %s je na črnem seznamu prepovedanih metod
+CronJobDefDesc=Profili opravil Cron so definirani v datoteki deskriptorja modula. Ko je modul aktiviran, so naloženi in na voljo, tako da lahko upravljate opravila iz menija skrbniških orodij %s.
+CronJobProfiles=Seznam vnaprej določenih profilov opravil cron
+# Menu
+EnabledAndDisabled=Omogočeno in onemogočeno
+# Page list
+CronLastOutput=Zadnji izhod
+CronLastResult=Koda zadnjega rezultata
+CronCommand=Ukaz
+CronList=Načrtovana delovna mesta
+CronDelete=Izbrišite načrtovana opravila
+CronConfirmDelete=Ali ste prepričani, da želite izbrisati ta načrtovana opravila?
+CronExecute=Launch now
+CronConfirmExecute=Ali ste prepričani, da želite ta načrtovana opravila izvesti zdaj?
+CronInfo=Modul za razporejena opravila omogoča načrtovanje opravil za njihovo samodejno izvedbo. Dela se lahko zaženejo tudi ročno.
+CronTask=Naloga
+CronNone=Nič
+CronDtStart=Ne prej
+CronDtEnd=Ne po
+CronDtNextLaunch=Naslednja izvedba
+CronDtLastLaunch=Začetni datum zadnje izvršitve
+CronDtLastResult=Končni datum zadnje izvedbe
+CronFrequency=Frekvenca
+CronClass=Razred
+CronMethod=Metoda
+CronModule=Modul
+CronNoJobs=Nobene naloge niso registrirane
+CronPriority=Prioriteta
+CronLabel=Oznaka
+CronNbRun=Število izstrelitev
+CronMaxRun=Največje število izstrelitev
+CronEach=vsak
+JobFinished=Delo začeto in končano
+Scheduled=Načrtovano
+#Page card
+CronAdd= Dodaj naloge
+CronEvery=Izvedite delo vsak
+CronObject=Primerek/predmet za ustvarjanje
+CronArgs=Parametri
+CronSaveSucess=Uspešno shranjevanje
+CronNote=Komentar
+CronFieldMandatory=Polja %s so obvezna
+CronErrEndDateStartDt=Končni datum ne more biti pred začetnim datumom
+StatusAtInstall=Stanje ob namestitvi modula
+CronStatusActiveBtn=Enable scheduling
+CronStatusInactiveBtn=Onemogoči
+CronTaskInactive=To opravilo je onemogočeno (ni načrtovano)
+CronId=Id
+CronClassFile=Ime datoteke z razredom
+CronModuleHelp=Ime imenika modulov Dolibarr (deluje tudi z zunanjim modulom Dolibarr). <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/ <u> product </u> /class/product.class.php, je vrednost za modul <br> <i> izdelek </i>
+CronClassFileHelp=Relativna pot in ime datoteke za nalaganje (pot je relativna glede na korenski imenik spletnega strežnika). <BR> Na primer, če želite poklicati metodo pridobivanja predmeta Dolibarr Product htdocs/product/class/ <u> product.class.php </u> , je vrednost za ime datoteke razreda <br> <i> product/class/product.bace363z.php a058
+CronObjectHelp=Ime predmeta za nalaganje. <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/product/class/product.class.php, je vrednost za ime datoteke razreda <br> <i> Product </i>
+CronMethodHelp=Objektna metoda za zagon. <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/product/class/product.class.php, je vrednost za metodo <br> <i> pridobivanje </i>
+CronArgsHelp=Argumenti metode. <BR> Če želite na primer poklicati metodo pridobivanja predmeta Dolibarr Product /htdocs/product/class/product.class.php, je lahko vrednost za parametre <br> <i> 0, ProductRef </i>
+CronCommandHelp=Sistemska ukazna vrstica za izvedbo.
+CronCreateJob=Ustvari novo načrtovano opravilo
+CronFrom=Od
+# Info
+# Common
+CronType=Vrsta dela
+CronType_method=Klicna metoda razreda PHP
+CronType_command=Ukaz lupine
+CronCannotLoadClass=Ni mogoče naložiti datoteke razreda %s (za uporabo razreda %s)
+CronCannotLoadObject=Datoteka razreda %s je bila naložena, vendar v njej ni bilo najdenega predmeta %s
+UseMenuModuleToolsToAddCronJobs=Pojdite v meni " <a href="%s"> Domov - Skrbniška orodja - Načrtovana opravila </a> " za ogled in urejanje načrtovanih opravil.
+JobDisabled=Delo onemogočeno
+MakeLocalDatabaseDumpShort=Varnostno kopiranje lokalne baze podatkov
+MakeLocalDatabaseDump=Ustvarite izpis lokalne baze podatkov. Parametri so: stiskanje ('gz' ali 'bz' ali 'none'), vrsta varnostne kopije ('mysql', 'pgsql', 'auto'), 1, 'auto' ali ime datoteke za izdelavo, število datotek varnostne kopije, ki jih je treba hraniti
+MakeSendLocalDatabaseDumpShort=Pošlji varnostno kopijo lokalne baze podatkov
+MakeSendLocalDatabaseDump=Pošlji varnostno kopijo lokalne baze podatkov po e-pošti. Parametri so: do, od, predmet, sporočilo, ime datoteke (ime poslane datoteke), filter ('sql' samo za varnostno kopijo baze podatkov)
+BackupIsTooLargeSend=Žal je zadnja varnostna kopija prevelika za pošiljanje po e-pošti
+CleanUnfinishedCronjobShort=Očistite nedokončan cronjob
+CleanUnfinishedCronjob=Očistite cronjob, ki se je zataknil v obdelavi, ko se proces ne izvaja več
+WarningCronDelayed=Pozor, zaradi zmogljivosti, ne glede na naslednji datum izvedbe omogočenih opravil, so lahko vaša opravila pred izvajanjem odložena za največ %s ur.
+DATAPOLICYJob=Čistilec in anonimizator podatkov
+JobXMustBeEnabled=Opravilo %s mora biti omogočeno
+EmailIfError=E-pošta za opozorilo o napaki
+ErrorInBatch=Napaka pri izvajanju opravila %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Zadnje izvedeno načrtovano opravilo
+NextScheduledJobExecute=Naslednje načrtovano opravilo za izvedbo
+NumberScheduledJobError=Število napačno načrtovanih opravil
+NumberScheduledJobNeverFinished=Število nikoli dokončanih načrtovanih opravil

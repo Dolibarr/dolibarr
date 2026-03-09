@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=የስራ ፍሰት ሞጁል ማዋቀር
+WorkflowDesc=ይህ ሞጁል አንዳንድ አውቶማቲክ ድርጊቶችን ያቀርባል. በነባሪ, የስራ ፍሰቱ ክፍት ነው (በሚፈልጉት ቅደም ተከተል ውስጥ ነገሮችን ማድረግ ይችላሉ) ግን እዚህ አንዳንድ አውቶማቲክ ድርጊቶችን ማግበር ይችላሉ.
+ThereIsNoWorkflowToModify=ከነቃ ሞጁሎች ጋር ምንም አይነት የስራ ፍሰት ማሻሻያዎች የሉም።
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=የንግድ ፕሮፖዛል ከተፈረመ በኋላ የሽያጭ ማዘዣን በራስ-ሰር ይፍጠሩ (አዲሱ ትዕዛዝ ከቀረበው ጋር ተመሳሳይ መጠን ይኖረዋል)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=የንግድ ፕሮፖዛል ከተፈረመ በኋላ የደንበኛ ደረሰኝ በራስ-ሰር ይፍጠሩ (አዲሱ የክፍያ መጠየቂያ ከቀረበው ጋር ተመሳሳይ መጠን ይኖረዋል)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=ኮንትራቱ ከተረጋገጠ በኋላ የደንበኛ ደረሰኝ በራስ-ሰር ይፍጠሩ
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=የሽያጭ ማዘዣ ከተዘጋ በኋላ የደንበኛ ደረሰኝ በራስ-ሰር ይፍጠሩ (አዲሱ ደረሰኝ ከትዕዛዙ ጋር ተመሳሳይ መጠን ይኖረዋል)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=በቲኬት ፈጠራ ላይ በራስ-ሰር ጣልቃ ገብነት ይፍጠሩ።
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=የሽያጭ ማዘዣ እንዲከፍል ሲዋቀር የተገናኙትን የምንጭ ሀሳቦችን እንደ ክፍያ መድብ (እና የትዕዛዙ መጠን ከተፈረሙት የተገናኙት ሀሳቦች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=የደንበኛ ክፍያ መጠየቂያ ደረሰኝ ሲረጋገጥ የተገናኙትን የምንጭ ሀሳቦችን እንደ ክፍያ መድብ (እና የክፍያ መጠየቂያው መጠን ከተፈረሙት የተገናኙት ሀሳቦች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=የደንበኛ መጠየቂያ ደረሰኝ ሲረጋገጥ የተገናኘውን የምንጭ ሽያጭ ትዕዛዝ እንደ ደረሰኝ መድብ (እና የክፍያ መጠየቂያው መጠን ከተገናኙት የሽያጭ ትዕዛዞች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ)። ለ n ትዕዛዞች የተረጋገጠ 1 ደረሰኝ ካልዎት፣ ይህ ሁሉንም ትዕዛዞች እንዲከፍሉ ሊያደርግ ይችላል።
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=የተገናኙትን የምንጭ ሽያጭ ትዕዛዞችን የደንበኛ ደረሰኝ እንዲከፈል ሲዋቀር (እና የክፍያ መጠየቂያው መጠን ከተገናኙት የሽያጭ ትዕዛዞች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ) እንደ ሂሳቡ መድብ። ለ n ትእዛዝ የሚከፈል 1 ደረሰኝ ካለህ፣ ይህ ሁሉንም ትዕዛዞች እንዲከፍሉ ሊያደርግ ይችላል።
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=ማጓጓዣው ሲረጋገጥ የተገናኙትን የምንጭ ሽያጭ ትዕዛዞችን እንደተላከ መድብ (እና በሁሉም ማጓጓዣዎች የተላከው መጠን ለማዘመን ከትእዛዝ ጋር ተመሳሳይ ከሆነ)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=ጭነት ሲዘጋ የተያያዘውን የምንጭ ሽያጭ ትዕዛዝ እንደተላከ መድብ (እና በሁሉም ማጓጓዣዎች የተላከው መጠን ለማዘመን ከትእዛዝ ጋር አንድ አይነት ከሆነ)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=የተገናኘውን የምንጭ አቅራቢ ፕሮፖዛል የሻጭ መጠየቂያ መጠየቂያ ደረሰኝ ከተረጋገጠ (እና የክፍያ መጠየቂያው መጠን ከተገናኙት ፕሮፖዛሎች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ) እንደ ደረሰኝ ይመድቡ።
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=የአቅራቢው ደረሰኝ ሲረጋገጥ የተገናኘውን የምንጭ ግዢ ትዕዛዝ እንደደረሰው ይመድቡ (እና የክፍያ መጠየቂያው መጠን ከተገናኙት ትዕዛዞች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=መቀበያው ሲፀድቅ እንደደረሰው የተገናኘውን የምንጭ ግዢ ትዕዛዝ መድብ (እና በሁሉም ተጋባዦች የተቀበለው መጠን ለማዘመን በግዢ ትዕዛዝ ውስጥ ካለው ጋር ተመሳሳይ ከሆነ)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=መስተንግዶ ሲዘጋ የተገናኘውን የምንጭ ግዢ ትዕዛዝ እንደደረሰው መድብ (እና በሁሉም ተቀባዮች የተቀበለው መጠን ለማዘመን በግዢው ትዕዛዝ ላይ ካለው ጋር ተመሳሳይ ከሆነ)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=የደንበኛ ክፍያ መጠየቂያ ደረሰኝ ሲረጋገጥ የተገናኘውን ምንጭ ጭነት እንደ ዝግ መድብ (እና የክፍያ መጠየቂያው መጠን ከተገናኙት መላኪያዎች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=የደንበኛ ክፍያ መጠየቂያ ደረሰኝ ከተረጋገጠ (እና የክፍያ መጠየቂያው መጠን ከተገናኙት መላኪያዎች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ) የተገናኘውን ምንጭ ጭነት እንደ ክፍያ መድብ።
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=የግዢ ክፍያ መጠየቂያ ደረሰኝ ሲረጋገጥ የተገናኙትን የምንጭ መቀበያዎች እንደ ሂሣብ መድብ (እና የክፍያ መጠየቂያው መጠን ከተገናኙት መቀበያዎች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=የግዢ ክፍያ መጠየቂያ ደረሰኝ ሲረጋገጥ የተገናኙትን የምንጭ መቀበያዎች እንደ ሂሣብ መድብ (እና የክፍያ መጠየቂያው መጠን ከተገናኙት መቀበያዎች አጠቃላይ መጠን ጋር ተመሳሳይ ከሆነ)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=ትኬት በሚፈጥሩበት ጊዜ ሁሉንም የሶስተኛ ወገኖች ተዛማጅ ኮንትራቶችን ያገናኙ
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=ኮንትራቶችን በሚያገናኙበት ጊዜ, ከወላጆች ኩባንያዎች መካከል ይፈልጉ
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=ትኬቱ ሲዘጋ ከትኬቱ ጋር የተገናኙትን ሁሉንም ጣልቃገብነቶች ዝጋ
+AutomaticCreation=ራስ-ሰር መፍጠር
+AutomaticClassification=ራስ-ሰር ምደባ
+AutomaticClosing=በራስ-ሰር መዝጋት
+AutomaticLinking=ራስ-ሰር ማገናኘት

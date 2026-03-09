@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - contracts
+ActivateService=Activar servicio
+ConfirmActivateService=¿Está seguro de querer activar este servicio con fecha <b>%s</b>?
+DateServiceActivate=Fecha de activación del servicio
+BoardNotActivatedServices=Servicios para activar entre contratos validados
+BoardNotActivatedServicesShort=Servicios por activar

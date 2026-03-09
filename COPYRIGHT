@@ -1,0 +1,88 @@
+
+Copyright and license
+----------------------
+
+The Dolibarr software as a whole is distributed under the GNU General Public License as published by the Free Software Foundation;
+either version 3 of the License, or (at your option) any later version (GPL-3+). More information: https://www.gnu.org/licenses/gpl-3.0.txt.
+A copy of this license is available in the COPYING file.
+Dolibarr depends on third-party components and code snippets released under their own license (obviously, all compatible with the one of Dolibarr).
+These dependencies are listed in the bottom of this file.
+
+
+The Dolibarr images resources (available in the doc directory) is distributed under the Creative Commons Attribution 4.0 International license (CC BY 4.0).
+
+
+The name Dolibarr is a trademark initially registered by Laurent Destailleur and ceased to the Dolibarr foundation. You can use the name Dolibarr
+for your own need as long as you follow the rules defined on the page https://wiki.dolibarr.org/index.php/Rules_to_use_the_brand_name_%22Dolibarr%22
+The use of the name DoliStore is also restricted to the same rules defined on https://wiki.dolibarr.org/index.php/Rules_to_use_the_brand_name_%22Dolibarr%22
+
+
+
+Licence of dependencies of third-party components used by Dolibarr (all compatible with the Licence of Dolibarr):
+
+Component              Version       License                     GPL Compatible  Usage
+-------------------------------------------------------------------------------------
+PHP libraries:
+EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation. Used by dynamic price only. TODO Replace with dol_eval ?
+Escpos-php             3.0           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
+GeoIP2                 0.2.0         Apache License 2.0          Yes             Lib to make geoip convert
+GeoPHP                 1.2           Modified BSD License        Yes             Lib to make geo convert
+MathPHP                2.8.1         MIT License                 Yes             Modern math library for PHP (only few files)
+Mobiledetect           2.8.41        MIT License                 Yes             Detect mobile devices browsers
+NuSoap                 0.9.16        LGPL 2.1+                   Yes             Library to develop SOAP Web services. From https://github.com/f00b4r/nusoap/tree/v0.9.16
+PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
+ParseDown              1.7.4         MIT License                 Yes             Markdown parser
+PCLZip                 2.8.4         LGPL-3+                     Yes             Library to zip/unzip files
+PHPDebugBar            1.18.2        MIT License                 Yes             Used only by the module "debugbar" for developers
+PHPSpreadSheet         1.12.0        LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
+PHP-Iban               4.1.1         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP
+PHP-Imap               2.7.2         MIT License                 Yes             Library to use IMAP with OAuth
+PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
+PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
+PrestaShop-WS-Lib      94feb5f       OSL-3.0                     No              Library providing API client for Prestashop.
+PSR/Logs               1.0           MIT License                 Yes             Library for logs (used by DebugBar)
+PSR/simple-cache       ?             MIT License                 Yes             Library for cache (used by PHPSpreadSheet)
+Restler                3.1.1         LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
+Sabre                  4.6.0         BSD                         Yes             DAV support
+Swift Mailer           5.4.2-DEV     MIT License                 Yes             Comprehensive mailing tools for PHP
+Symfony/var-dumper     ??? 			 MIT License                 Yes             Library to make var dump (used by DebugBar)
+Stripe                 10.7.0        MIT Licence                 Yes             Library for Stripe module
+TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
+TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
+
+bacon, dasprid, swiss-qr-bill, kmukku, symfony/validator
+
+JS libraries:
+Ace                    1.4.14        BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
+ChartJS                3.7.1         MIT License                 Yes             JS library for graph
+CKEditor               4.22.1        LGPL-2.1+                   Yes             Editor WYSIWYG
+jQuery                 3.6.4         MIT License                 Yes             JS library
+jQuery UI              1.13.2        GPL and MIT License         Yes             JS library plugin UI
+jQuery select2         4.0.13        GPL and Apache License      Yes             JS library plugin for sexier multiselect. Warning: 4.0.6+ create troubles without patching css
+jQuery blockUI         2.70.0        GPL and MIT License         Yes             JS library plugin blockUI (to use ajax popups)
+jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors
+jQuery JCrop           0.9.8         GPL and MIT License         Yes             JS library plugin Crop (to crop images)
+jQuery Jeditable       1.7.1         GPL and MIT License         Yes             JS library plugin jeditable (to edit in place)
+jQuery jNotify         1.1.00        Apache License 2.0          Yes             JS library plugin jNotify (to use ajax popups)
+jQuery jPicker         1.1.6         GPL and MIT License         Yes             JS library for color picker with not defined list of colors
+jQuery jqueryFileTree  1.0.1         GPL and MIT License         Yes             JS library for filetree
+jQuery jquerytreeview  1.4.1         MIT License                 Yes             JS library for filetree
+jQuery TableDnD        0.6           GPL and MIT License         Yes             JS library plugin TableDnD (to reorder table rows)
+jQuery Timepicker      1.1.0         GPL and MIT License         Yes             JS library Timepicker addon for Datepicker
+jsGanttImproved        2.8.10        BSD License                 Yes             JS library (to build Gantt reports)
+SwaggerUI              2.2.10        GPL-2+                      Yes             JS library to offer the REST API explorer
+
+Image libraries:
+Octicons               8.1           MIT                         Yes
+
+Font libraries:
+Fontawesome            5.13          Font Awesome Free Licence   Yes
+
+
+For more licenses compatibility information: https://www.gnu.org/licenses/licenses.en.html
+
+
+Authors
+-------------------
+
+See page https://github.com/Dolibarr/dolibarr/graphs/contributors

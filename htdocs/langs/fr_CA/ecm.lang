@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - ecm
+ECMSectionManual=Annuaire manuel
+ECMAddSection=Ajouter un répertoire
+ECMCreationDate=Date création
+ECMSectionWasRemoved=Le répertoire <b>%s</b> a été supprimé.
+ECMSectionOfDocuments=Répertoires de documents
+ShowECMSection=Afficher le répertoire
+DeleteSection=Supprimer le répertoire
+ConfirmDeleteSection=Pouvez-vous confirmer que vous souhaitez supprimer le répertoire <b>%s</b>?
+ECMDirectoryForFiles=Répertoire relatif des fichiers
+ECMFileManager=Gestionnaire de fichiers

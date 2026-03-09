@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Levering
+DeliveryRef=Referentie aflevering
+DeliveryCard=Voorraad ontvangst
+DeliveryOrder=Ontvangstbewijs
+DeliveryDate=Leveringsdatum
+CreateDeliveryOrder=Genereer afleverbon
+DeliveryStateSaved=Status aflevering opgeslagen
+SetDeliveryDate=Stel verzenddatum in
+ValidateDeliveryReceipt=Valideer ontvangstbewijs
+ValidateDeliveryReceiptConfirm=Weet u zeker dat u de afleverbon wilt valideren?
+DeleteDeliveryReceipt=Verwijder ontvangstbewijs
+DeleteDeliveryReceiptConfirm=Weet u zeker dat u de afleverbon wilt verwijderen <b>%s</b>?
+DeliveryMethod=Leveringswijze
+TrackingNumber=Volgnummer
+DeliveryNotValidated=Levering niet gevalideerd
+StatusDeliveryCanceled=Geannuleerd
+StatusDeliveryDraft=Ontwerp
+StatusDeliveryValidated=Ontvangen
+# merou PDF model
+NameAndSignature=Naam en handtekening:
+ToAndDate=Aan________________________________ op ____ / _____ / __________
+GoodStatusDeclaration=Hebben de bovenstaande goederen in goede conditie ontvangen,
+Deliverer=Afgeleverd door:
+Sender=Afzender
+Recipient=Ontvanger
+ErrorStockIsNotEnough=Er is niet genoeg voorraad
+Shippable=Zendklaar
+NonShippable=Niet verzendbaar
+ShowShippableStatus=Toon verzendstatus
+ShowReceiving=Toon afleverbon
+NonExistentOrder=Niet bestaande order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Hoeveelheid al toegekend in vorige regels

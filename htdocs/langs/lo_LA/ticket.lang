@@ -1,0 +1,369 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=ປີ້
+Module56000Desc=ລະບົບປີ້ ສຳ ລັບການຈັດການບັນຫາຫຼືການຮ້ອງຂໍ
+
+Permission56001=ເບິ່ງປີ້
+Permission56002=ແກ້ໄຂປີ້
+Permission56003=ລຶບປີ້
+Permission56004=ຈັດການປີ້
+Permission56005=ເບິ່ງປີ້ຂອງພາກສ່ວນທີສາມທັງ(ົດ (ບໍ່ມີປະສິດທິພາບສໍາລັບຜູ້ໃຊ້ພາຍນອກ, ຈໍາກັດສະເພາະກັບບຸກຄົນທີສາມທີ່ພວກເຂົາຂຶ້ນກັບ)
+Permission56006=ປີ້ສົ່ງອອກ
+
+Tickets=ປີ້
+TicketDictType=ປີ້ - ປະເພດ
+TicketDictCategory=ປີ້ - ກຸ່ມ
+TicketDictSeverity=ປີ້ - ຄວາມຮຸນແຮງ
+TicketDictResolution=ປີ້ - ຄວາມລະອຽດ
+
+TicketTypeShortCOM=ຄໍາຖາມການຄ້າ
+TicketTypeShortHELP=ຮ້ອງຂໍການຊ່ວຍເຫຼືອທີ່ເປັນປະໂຫຍດ
+TicketTypeShortISSUE=ບັນຫາຫຼືຂໍ້ຜິດພາດ
+TicketTypeShortPROBLEM=ບັນຫາ
+TicketTypeShortREQUEST=ການປ່ຽນແປງຫຼືການຮ້ອງຂໍການປັບປຸງ
+TicketTypeShortPROJET=ໂຄງການ
+TicketTypeShortOTHER=ອື່ນ
+
+TicketSeverityShortLOW=ຕ່ ຳ
+TicketSeverityShortNORMAL=ປົກກະຕິ
+TicketSeverityShortHIGH=ສູງ
+TicketSeverityShortBLOCKING=ສຳ ຄັນ, ຂັດຂວາງ
+
+TicketCategoryShortOTHER=ອື່ນໆ
+
+ErrorBadEmailAddress=ຊ່ອງຂໍ້ມູນ '%s' ບໍ່ຖືກຕ້ອງ
+MenuTicketMyAssign=ປີ້ຂອງຂ້ອຍ
+MenuTicketMyAssignNonClosed=ປີ້ເປີດຂອງຂ້ອຍ
+MenuListNonClosed=ເປີດປີ້
+
+TypeContact_ticket_internal_CONTRIBUTOR=ຜູ້ປະກອບສ່ວນ
+TypeContact_ticket_internal_SUPPORTTEC=ມອບາຍຜູ້ໃຊ້
+TypeContact_ticket_external_SUPPORTCLI=ຕິດຕາມລູກຄ້າ / ຕິດຕາມເຫດການ
+TypeContact_ticket_external_CONTRIBUTOR=ຜູ້ປະກອບສ່ວນພາຍນອກ
+
+OriginEmail=ອີເມລ orter ຂອງນັກຂ່າວ
+Notify_TICKET_SENTBYMAIL=ສົ່ງຂໍ້ຄວາມປີ້ທາງອີເມລ
+
+ExportDataset_ticket_1=ປີ້
+
+# Status
+Read=ອ່ານ
+Assigned=ມອບາຍ
+NeedMoreInformation=ລໍຖ້າ ຄຳ ຕິຊົມຂອງນັກຂ່າວ
+NeedMoreInformationShort=ກຳ ລັງລໍຖ້າ ຄຳ ຕິຊົມ
+TicketAnswered=Answered
+Waiting=ລໍຖ້າ
+SolvedClosed=ແກ້ໄຂແລ້ວ
+Deleted=ລຶບແລ້ວ
+
+# Dict
+Type=ປະເພດ
+Severity=ຄວາມຮຸນແຮງ
+TicketGroupIsPublic=ກຸ່ມສາທາລະນະ
+TicketGroupIsPublicDesc=ຖ້າກຸ່ມປີ້ເປັນສາທາລະນະ, ມັນຈະປາກົດຢູ່ໃນຮູບແບບເມື່ອສ້າງປີ້ຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ
+
+# Email templates
+MailToSendTicketMessage=ເພື່ອສົ່ງອີເມວຈາກຂໍ້ຄວາມປີ້
+
+#
+# Admin page
+#
+TicketSetup=ການຕັ້ງຄ່າໂມດູນປີ້
+TicketSettings=ການຕັ້ງຄ່າ
+TicketPublicAccess=ສ່ວນຕິດຕໍ່ສາທາລະນະທີ່ບໍ່ຕ້ອງມີການລະບຸຕົວຕົນແມ່ນມີຢູ່ໃນ url ຕໍ່ໄປນີ້
+TicketSetupDictionaries=ປະເພດຂອງປີ້, ຄວາມຮຸນແຮງແລະລະຫັດການວິເຄາະແມ່ນສາມາດຕັ້ງຄ່າໄດ້ຈາກວັດຈະນານຸກົມ
+TicketParamModule=ການຕັ້ງຄ່າຕົວປ່ຽນໂມດູນ
+TicketParamMail=ການຕັ້ງອີເມລ
+TicketEmailNotificationFrom=ສົ່ງອີເມລສໍາລັບການແຈ້ງເຕືອນກ່ຽວກັບຄໍາຕອບ
+TicketEmailNotificationFromHelp=ສົ່ງອີເມລເພື່ອໃຊ້ເພື່ອສົ່ງອີເມວແຈ້ງເຕືອນເມື່ອມີຄໍາຕອບຢູ່ໃນຫ້ອງການຫຼັງ. ຕົວຢ່າງ noreply@example.com
+TicketEmailNotificationTo=ແຈ້ງການສ້າງປີ້ກັບທີ່ຢູ່ອີເມວນີ້
+TicketEmailNotificationToHelp=ຖ້າມີ, ທີ່ຢູ່ອີເມວນີ້ຈະຖືກແຈ້ງໃຫ້ຮູ້ກ່ຽວກັບການສ້າງປີ້
+TicketNewEmailBodyLabel=ຂໍ້ຄວາມໄດ້ຖືກສົ່ງຫຼັງຈາກການສ້າງປີ້
+TicketNewEmailBodyHelp=ຂໍ້ຄວາມທີ່ລະບຸຢູ່ທີ່ນີ້ຈະຖືກໃສ່ເຂົ້າໄປໃນອີເມວຢືນຢັນການສ້າງປີ້ໃfrom່ຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ. ຂໍ້ມູນກ່ຽວກັບການປຶກສາຫາລືຂອງປີ້ຈະຖືກເພີ່ມເຂົ້າໂດຍອັດຕະໂນມັດ.
+TicketParamPublicInterface=ຕັ້ງຄ່າສ່ວນຕິດຕໍ່ຜູ້ໃຊ້ສາທາລະນະ
+TicketsEmailMustExist=ຕ້ອງການທີ່ຢູ່ອີເມວທີ່ມີຢູ່ແລ້ວເພື່ອສ້າງປີ້
+TicketsEmailMustExistHelp=ຢູ່ໃນບ່ອນຕິດຕໍ່ສາທາລະນະ, ທີ່ຢູ່ອີເມວຄວນຈະຖືກຕື່ມໃສ່ໃນຖານຂໍ້ມູນເພື່ອສ້າງປີ້ໃnew່.
+TicketsShowProgression=ສະແດງຄວາມຄືບໜ້າຂອງປີ້ໃນສ່ວນຕິດຕໍ່ສາທາລະນະ
+TicketsShowProgressionHelp=ເປີດໃຊ້ຕົວເລືອກນີ້ເພື່ອເຊື່ອງຄວາມຄືບໜ້າຂອງປີ້ຢູ່ໃນໜ້າສ່ວນຕິດຕໍ່ສາທາລະນະ
+TicketCreateThirdPartyWithContactIfNotExist=ຖາມຊື່ແລະຊື່ບໍລິສັດສໍາລັບອີເມວທີ່ບໍ່ຮູ້ຈັກ.
+TicketCreateThirdPartyWithContactIfNotExistHelp=ກວດເບິ່ງວ່າມີບຸກຄົນທີສາມຫຼືຜູ້ຕິດຕໍ່ສໍາລັບອີເມວທີ່ເຂົ້າມາ. ຖ້າບໍ່, ຖາມຊື່ແລະຊື່ບໍລິສັດເພື່ອສ້າງບຸກຄົນທີສາມທີ່ມີການຕິດຕໍ່.
+PublicInterface=ການໂຕ້ຕອບສາທາລະນະ
+TicketPublicInterfaceTextHomeLabelAdmin=ຂໍ້ຄວາມຍິນດີຕ້ອນຮັບຂອງການໂຕ້ຕອບສາທາລະນະ
+TicketPublicInterfaceTextHome=ເຈົ້າສາມາດສ້າງປີ້ສະ ໜັບ ສະ ໜູນ ຫຼືເບິ່ງທີ່ມີຢູ່ຈາກປີ້ຕິດຕາມຕົວລະບຸ.
+TicketPublicInterfaceTextHomeHelpAdmin=ຂໍ້ຄວາມທີ່ ກຳ ນົດຢູ່ນີ້ຈະປາກົດຢູ່ ໜ້າ ຫຼັກຂອງສ່ວນຕິດຕໍ່ຜູ້ໃຊ້ສາທາລະນະ.
+TicketPublicInterfaceTopicLabelAdmin=ຊື່ສ່ວນຕິດຕໍ່
+TicketPublicInterfaceTopicHelp=ຂໍ້ຄວາມນີ້ຈະປະກົດຂຶ້ນເປັນຫົວຂໍ້ຂອງການໂຕ້ຕອບສາທາລະນະ.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=ຊ່ວຍສົ່ງຂໍ້ຄວາມເຂົ້າຫາຂໍ້ຄວາມ
+TicketPublicInterfaceTextHelpMessageHelpAdmin=ຂໍ້ຄວາມນີ້ຈະປະກົດຂຶ້ນຢູ່ເທິງພື້ນທີ່ປ້ອນຂໍ້ຄວາມຂອງຜູ້ໃຊ້.
+ExtraFieldsTicket=ຄຸນລັກສະນະພິເສດ
+TicketCkEditorEmailNotActivated=ຕົວແກ້ໄຂ HTML ບໍ່ໄດ້ຖືກເປີດ ນຳ ໃຊ້. ກະລຸນາໃສ່ເນື້ອໃນ FCKEDITOR_ENABLE_MAIL ໃສ່ 1 ເພື່ອເອົາມັນ.
+TicketsDisableEmail=ຢ່າສົ່ງອີເມວເພື່ອສ້າງປີ້ຫຼືບັນທຶກຂໍ້ຄວາມ
+TicketsDisableEmailHelp=ໂດຍຄ່າເລີ່ມຕົ້ນ, ອີເມວຈະຖືກສົ່ງເມື່ອມີການສ້າງປີ້ຫຼືຂໍ້ຄວາມໃnew່. ເປີດໃຊ້ຕົວເລືອກນີ້ເພື່ອປິດການແຈ້ງເຕືອນອີເມລ all * ທັງົດ
+TicketsLogEnableEmail=ເປີດ ນຳ ໃຊ້ບັນທຶກທາງອີເມລ
+TicketsLogEnableEmailHelp=ໃນແຕ່ລະການປ່ຽນແປງ, ອີເມລ be ຈະຖືກສົ່ງ ** ໃຫ້ກັບແຕ່ລະຄົນຕິດຕໍ່ພົວພັນ ** ກັບປີ້.
+TicketParams=ພາລາມິເຕີ
+TicketsShowModuleLogo=ສະແດງໂລໂກ້ຂອງໂມດູນໃນສ່ວນຕິດຕໍ່ສາທາລະນະ
+TicketsShowModuleLogoHelp=ເປີດໃຊ້ຕົວເລືອກນີ້ເພື່ອເຊື່ອງໂມດູນໂລໂກ້ຢູ່ໃນ ໜ້າ ຂອງສ່ວນຕິດຕໍ່ສາທາລະນະ
+TicketsShowCompanyLogo=ສະແດງໂລໂກ້ຂອງບໍລິສັດຢູ່ໃນອິນເຕີເນັດສາທາລະນະ
+TicketsShowCompanyLogoHelp=ເປີດໃຊ້ຕົວເລືອກນີ້ເພື່ອສະແດງໂລໂກ້ຂອງບໍລິສັດຫຼັກໃນຫນ້າເວັບຕ່າງໆຂອງການໂຕ້ຕອບສາທາລະນະ
+TicketsShowCompanyFooter=ສະແດງສ່ວນທ້າຍຂອງບໍລິສັດໃນການໂຕ້ຕອບສາທາລະນະ
+TicketsShowCompanyFooterHelp=ເປີດໃຊ້ຕົວເລືອກນີ້ເພື່ອສະແດງສ່ວນທ້າຍຂອງບໍລິສັດຕົ້ນຕໍໃນຫນ້າເວັບຕ່າງໆຂອງການໂຕ້ຕອບສາທາລະນະ
+TicketsEmailAlsoSendToMainAddress=ສົ່ງແຈ້ງການຫາທີ່ຢູ່ອີເມລ main ຫຼັກ
+TicketsEmailAlsoSendToMainAddressHelp=ເປີດໃຊ້ຕົວເລືອກນີ້ເພື່ອສົ່ງອີເມລຫາທີ່ຢູ່ທີ່ໄດ້ກໍານົດໄວ້ໃນການຕັ້ງ "%s" (ເບິ່ງແຖບ "%s")
+TicketsLimitViewAssignedOnly=ຈໍາກັດການສະແດງຜົນຕໍ່ກັບປີ້ທີ່ມອບໃຫ້ກັບຜູ້ໃຊ້ປະຈຸບັນ (ບໍ່ມີປະສິດທິພາບສໍາລັບຜູ້ໃຊ້ພາຍນອກ, ຈໍາກັດສະເພາະກັບບຸກຄົນທີສາມທີ່ເຂົາເຈົ້າອາໄສຢູ່)
+TicketsLimitViewAssignedOnlyHelp=ມີພຽງປີ້ທີ່ມອບtoາຍໃຫ້ກັບຜູ້ໃຊ້ປະຈຸບັນເທົ່ານັ້ນທີ່ຈະສາມາດເບິ່ງເຫັນໄດ້. ບໍ່ ນຳ ໃຊ້ກັບຜູ້ໃຊ້ທີ່ມີສິດການຈັດການປີ້.
+TicketsActivatePublicInterface=ເປີດ ນຳ ໃຊ້ສ່ວນຕິດຕໍ່ສາທາລະນະ
+TicketsActivatePublicInterfaceHelp=ສ່ວນຕິດຕໍ່ສາທາລະນະອະນຸຍາດໃຫ້ນັກທ່ອງທ່ຽວສາມາດສ້າງປີ້ໄດ້.
+TicketsAutoAssignTicket=ມອບtheາຍໃຫ້ຜູ້ໃຊ້ທີ່ສ້າງປີ້ໂດຍອັດຕະໂນມັດ
+TicketsAutoAssignTicketHelp=ເມື່ອສ້າງປີ້, ຜູ້ໃຊ້ສາມາດຖືກມອບtoາຍໃຫ້ກັບປີ້ໂດຍອັດຕະໂນມັດ.
+TicketNumberingModules=ໂມດູນຕົວເລກປີ້
+TicketsModelModule=ແມ່ແບບເອກະສານ ສຳ ລັບປີ້
+TicketNotifyTiersAtCreation=ແຈ້ງໃຫ້ບຸກຄົນທີສາມໃນເວລາສ້າງ
+TicketsDisableCustomerEmail=ປິດການ ນຳ ໃຊ້ອີເມວທຸກເທື່ອເມື່ອມີການສ້າງປີ້ຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ
+TicketsPublicNotificationNewMessage=ສົ່ງອີເມວເມື່ອຂໍ້ຄວາມ/ຄຳ ເຫັນໃis່ຖືກເພີ່ມໃສ່ປີ້
+TicketsPublicNotificationNewMessageHelp=ສົ່ງອີເມລ when ເມື່ອມີການເພີ່ມຂໍ້ຄວາມໃfrom່ຈາກອິນເຕີເຟດສາທາລະນະ (ໃຫ້ກັບຜູ້ໃຊ້ທີ່ໄດ້ຮັບມອບorາຍຫຼືອີເມລແຈ້ງການຫາ (ອັບເດດ) ແລະ/ຫຼືອີເມວແຈ້ງການຫາ)
+TicketPublicNotificationNewMessageDefaultEmail=ອີເມວແຈ້ງເຕືອນຫາ (ອັບເດດ)
+TicketPublicNotificationNewMessageDefaultEmailHelp=ສົ່ງອີເມວໄປຫາທີ່ຢູ່ນີ້ສໍາລັບການແຈ້ງເຕືອນຂໍ້ຄວາມໃeach່ແຕ່ລະອັນຖ້າປີ້ບໍ່ມີຜູ້ໃຊ້ມອບitາຍໃຫ້ຫຼືຖ້າຜູ້ໃຊ້ບໍ່ມີອີເມວທີ່ຮູ້ຈັກ.
+TicketsAutoReadTicket=ໝາຍປີ້ໂດຍອັດຕະໂນມັດວ່າອ່ານແລ້ວ (ເມື່ອສ້າງຈາກຫ້ອງການຫຼັງ)
+TicketsAutoReadTicketHelp=ໝາຍປີ້ໂດຍອັດຕະໂນມັດວ່າອ່ານແລ້ວເມື່ອສ້າງຈາກຫ້ອງການຫຼັງ. ເມື່ອຕົ໋ວຖືກສ້າງຈາກການໂຕ້ຕອບສາທາລະນະ, ປີ້ຍັງຄົງຢູ່ໃນສະຖານະ "ບໍ່ໄດ້ອ່ານ".
+TicketsDelayBeforeFirstAnswer=ປີ້ໃໝ່ຄວນໄດ້ຮັບຄຳຕອບທຳອິດກ່ອນ (ຊົ່ວໂມງ):
+TicketsDelayBeforeFirstAnswerHelp=ຖ້າປີ້ໃຫມ່ບໍ່ໄດ້ຮັບຄໍາຕອບຫຼັງຈາກໄລຍະເວລານີ້ (ເປັນຊົ່ວໂມງ), ໄອຄອນເຕືອນໄພທີ່ສໍາຄັນຈະສະແດງຢູ່ໃນລາຍການເບິ່ງ.
+TicketsDelayBetweenAnswers=ປີ້ທີ່ບໍ່ໄດ້ຮັບການແກ້ໄຂບໍ່ຄວນມີການເຄື່ອນໄຫວໃນລະຫວ່າງ (ຊົ່ວໂມງ):
+TicketsDelayBetweenAnswersHelp=ຖ້າປີ້ທີ່ບໍ່ໄດ້ຮັບການແກ້ໄຂທີ່ໄດ້ຮັບຄໍາຕອບແລ້ວບໍ່ມີການໂຕ້ຕອບຕື່ມອີກຫຼັງຈາກໄລຍະເວລານີ້ (ເປັນຊົ່ວໂມງ), ໄອຄອນເຕືອນຈະຖືກສະແດງຢູ່ໃນລາຍການເບິ່ງ.
+TicketsAutoNotifyClose=ແຈ້ງເຕືອນບຸກຄົນທີສາມໂດຍອັດຕະໂນມັດເມື່ອປິດປີ້
+TicketsAutoNotifyCloseHelp=ເມື່ອປິດປີ້, ທ່ານຈະຖືກສະເຫນີໃຫ້ສົ່ງຂໍ້ຄວາມໄປຫາຫນຶ່ງໃນຜູ້ຕິດຕໍ່ພາກສ່ວນທີສາມ. ໃນການປິດມະຫາຊົນ, ຂໍ້ຄວາມຈະຖືກສົ່ງໄປຫາຜູ້ຕິດຕໍ່ຂອງບຸກຄົນທີສາມທີ່ເຊື່ອມຕໍ່ກັບປີ້.
+TicketWrongContact=ລາຍຊື່ຕິດຕໍ່ທີ່ສະໜອງໃຫ້ບໍ່ແມ່ນສ່ວນໜຶ່ງຂອງລາຍຊື່ປີ້ປັດຈຸບັນ. ບໍ່ໄດ້ສົ່ງອີເມວ.
+TicketChooseProductCategory=ປະເພດຜະລິດຕະພັນສໍາລັບການສະຫນັບສະຫນູນປີ້
+TicketChooseProductCategoryHelp=ເລືອກປະເພດຜະລິດຕະພັນຂອງການສະຫນັບສະຫນູນປີ້. ອັນນີ້ຈະຖືກໃຊ້ເພື່ອເຊື່ອມຕໍ່ສັນຍາກັບປີ້ໂດຍອັດຕະໂນມັດ.
+TicketUseCaptchaCode=ໃຊ້ລະຫັດກາຟິກ (CAPTCHA) ເມື່ອສ້າງປີ້
+TicketUseCaptchaCodeHelp=ເພີ່ມການຢັ້ງຢືນ CAPTCHA ເມື່ອສ້າງປີ້ໃໝ່.
+TicketsAllowClassificationModificationIfClosed=ອະນຸຍາດໃຫ້ແກ້ໄຂການຈັດປະເພດຂອງປີ້ປິດ
+TicketsAllowClassificationModificationIfClosedHelp=ອະນຸຍາດໃຫ້ແກ້ໄຂການຈັດປະເພດ (ປະເພດ, ກຸ່ມປີ້, ຄວາມຮຸນແຮງ) ເຖິງແມ່ນວ່າປີ້ຈະຖືກປິດ.
+
+#
+# Index & list page
+#
+TicketsIndex=ປີ້ພື້ນທີ່
+TicketList=ລາຍຊື່ປີ້
+TicketAssignedToMeInfos=ໜ້າ ນີ້ສະແດງລາຍການປີ້ທີ່ສ້າງຂຶ້ນໂດຍຫຼືມອບtoາຍໃຫ້ກັບຜູ້ໃຊ້ປະຈຸບັນ
+NoTicketsFound=ບໍ່ພົບປີ້
+NoUnreadTicketsFound=ບໍ່ພົບປີ້ທີ່ຍັງບໍ່ໄດ້ອ່ານ
+TicketViewAllTickets=ເບິ່ງປີ້ທັງົດ
+TicketViewNonClosedOnly=ເບິ່ງປີ້ເປີດເທົ່ານັ້ນ
+TicketStatByStatus=ປີ້ຕາມສະຖານະພາບ
+OrderByDateAsc=ຈັດຮຽງຕາມວັນທີທີ່ຫານ້ອຍ
+OrderByDateDesc=ຈັດຮຽງຕາມວັນທີໃຫຍ່ຫານ້ອຍ
+ShowAsConversation=ສະແດງເປັນລາຍການສົນທະນາ
+MessageListViewType=ສະແດງເປັນລາຍການຕາຕະລາງ
+ConfirmMassTicketClosingSendEmail=ສົ່ງອີເມວອັດຕະໂນມັດເມື່ອປິດປີ້
+ConfirmMassTicketClosingSendEmailQuestion=ທ່ານຕ້ອງການແຈ້ງບຸກຄົນທີສາມໃນເວລາປິດປີ້ເຫຼົ່ານີ້ບໍ?
+
+#
+# Ticket card
+#
+Ticket=ປີ້
+TicketCard=ບັດປີ້
+CreateTicket=ສ້າງປີ້
+EditTicket=ແກ້ໄຂປີ້
+TicketsManagement=ການຄຸ້ມຄອງປີ້
+CreatedBy=ສ້າງ​ໂດຍ
+NewTicket=ປີ້ໃ່
+SubjectAnswerToTicket=ຄຳ ຕອບປີ້
+TicketTypeRequest=ປະເພດການຮ້ອງຂໍ
+TicketCategory=ກຸ່ມປີ້
+SeeTicket=ເບິ່ງປີ້
+TicketMarkedAsRead=ປີ້ຖືກmarkedາຍວ່າອ່ານແລ້ວ
+TicketReadOn=ອ່ານສຸດ
+TicketCloseOn=ວັນທີປິດ
+MarkAsRead=ticketາຍປີ້ວ່າອ່ານແລ້ວ
+TicketHistory=ປະຫວັດປີ້
+AssignUser=ມອບາຍໃຫ້ຜູ້ໃຊ້
+TicketAssigned=ຕອນນີ້ໄດ້ມອບicketາຍປີ້ແລ້ວ
+TicketChangeType=ປ່ຽນປະເພດ
+TicketChangeCategory=ປ່ຽນລະຫັດການວິເຄາະ
+TicketChangeSeverity=ປ່ຽນຄວາມຮຸນແຮງ
+TicketAddMessage=ເພີ່ມ ຫຼືສົ່ງຂໍ້ຄວາມ
+TicketAddPrivateMessage=ເພີ່ມຂໍ້ຄວາມສ່ວນຕົວ
+MessageSuccessfullyAdded=ເພີ່ມປີ້ແລ້ວ
+TicketMessageSuccessfullyAdded=ເພີ່ມຂໍ້ຄວາມ ສຳ ເລັດແລ້ວ
+TicketMessagesList=ລາຍການຂໍ້ຄວາມ
+NoMsgForThisTicket=ບໍ່ມີຂໍ້ຄວາມ ສຳ ລັບປີ້ນີ້
+TicketProperties=ການຈັດປະເພດ
+LatestNewTickets=ປີ້ໃest່ລ້າສຸດ %s (ບໍ່ໄດ້ອ່ານ)
+TicketSeverity=ຄວາມຮຸນແຮງ
+ShowTicket=ເບິ່ງປີ້
+RelatedTickets=ປີ້ທີ່ກ່ຽວຂ້ອງ
+TicketAddIntervention=ສ້າງການແຊກແຊງ
+CloseTicket=ປິດ|ແກ້ໄຂ
+AbandonTicket=ປະຖິ້ມ
+CloseATicket=ປິດ | ແກ້ປີ້
+ConfirmCloseAticket=ຢືນຢັນການປິດປີ້
+ConfirmAbandonTicket=ເຈົ້າຢືນຢັນການປິດປີ້ເຂົ້າສູ່ສະຖານະ 'ປະຖິ້ມ'
+ConfirmDeleteTicket=ກະລຸນາຢືນຢັນການລຶບປີ້
+TicketDeletedSuccess=ລຶບປີ້ດ້ວຍຄວາມ ສຳ ເລັດ
+TicketMarkedAsClosed=icketາຍປີ້ວ່າປິດແລ້ວ
+TicketDurationAuto=ໄລຍະເວລາທີ່ ຄຳ ນວນແລ້ວ
+TicketDurationAutoInfos=ໄລຍະເວລາຄິດໄລ່ອັດຕະໂນມັດຈາກການແຊກແຊງທີ່ກ່ຽວຂ້ອງ
+TicketUpdated=ອັບເດດປີ້ແລ້ວ
+SendMessageByEmail=ສົ່ງຂໍ້ຄວາມທາງອີເມລ
+TicketNewMessage=ຂໍ້ຄວາມໃ່
+ErrorMailRecipientIsEmptyForSendTicketMessage=ຜູ້ຮັບບໍ່ຫວ່າງ. ບໍ່ມີອີເມວສົ່ງ
+TicketGoIntoContactTab=ກະລຸນາເຂົ້າໄປທີ່ແຖບ "ລາຍຊື່ຜູ້ຕິດຕໍ່" ເພື່ອເລືອກພວກມັນ
+TicketMessageMailIntro=ສ່ວນຫົວຂໍ້ຄວາມ
+TicketMessageMailIntroHelp=ຂໍ້ຄວາມນີ້ຖືກເພີ່ມໃສ່ແຕ່ຕອນຕົ້ນຂອງອີເມວແລະຈະບໍ່ຖືກບັນທຶກໄວ້.
+TicketMessageMailIntroText=ສະບາຍດີ,<br>ໄດ້ເພີ່ມຄຳຕອບໃໝ່ໃສ່ປີ້ທີ່ທ່ານຕິດຕາມ. ນີ້ແມ່ນຂໍ້ຄວາມ:<br>
+TicketMessageMailIntroHelpAdmin=ຂໍ້ຄວາມນີ້ຈະຖືກແຊກໃສ່ກ່ອນຄຳຕອບເມື່ອຕອບກັບຫາປີ້ຈາກ Dolibarr
+TicketMessageMailFooter=ສ່ວນທ້າຍຂໍ້ຄວາມ
+TicketMessageMailFooterHelp=ຂໍ້ຄວາມນີ້ຖືກເພີ່ມໃສ່ໃນຕອນທ້າຍຂອງຂໍ້ຄວາມທີ່ສົ່ງໂດຍອີເມລ໌ແລະຈະບໍ່ຖືກບັນທຶກໄວ້.
+TicketMessageMailFooterText=ຂໍ້ຄວາມທີ່ສົ່ງໂດຍ <b>%s</b> ຜ່ານ Dolibarr
+TicketMessageMailFooterHelpAdmin=ຂໍ້ຄວາມນີ້ຈະຖືກໃສ່ຫຼັງຈາກຂໍ້ຄວາມຕອບ.
+TicketMessageHelp=ສະເພາະຂໍ້ຄວາມນີ້ຈະຖືກບັນທຶກໄວ້ໃນລາຍການຂໍ້ຄວາມຢູ່ໃນບັດປີ້.
+TicketMessageSubstitutionReplacedByGenericValues=ຕົວປ່ຽນການປ່ຽນແທນໄດ້ຖືກແທນທີ່ດ້ວຍຄຸນຄ່າທົ່ວໄປ.
+ForEmailMessageWillBeCompletedWith=ສໍາລັບຂໍ້ຄວາມອີເມລ໌ທີ່ຖືກສົ່ງໄປຫາຜູ້ໃຊ້ພາຍນອກ, ຂໍ້ຄວາມຈະຖືກສໍາເລັດດ້ວຍ
+TimeElapsedSince=ເວລາຜ່ານໄປຕັ້ງແຕ່
+TicketTimeToRead=ເວລາໄດ້ຜ່ານໄປກ່ອນທີ່ຈະອ່ານ
+TicketTimeElapsedBeforeSince=ເວລາຜ່ານໄປກ່ອນ / ນັບຕັ້ງແຕ່
+TicketContacts=ປີ້ຕິດຕໍ່
+TicketDocumentsLinked=ເອກະສານທີ່ເຊື່ອມໂຍງກັບປີ້
+ConfirmReOpenTicket=ຢືນຢັນເປີດປີ້ນີ້ຄືນໃ?່ບໍ?
+TicketMessageMailIntroAutoNewPublicMessage=ຂໍ້ຄວາມໃwas່ໄດ້ຖືກລົງໃນປີ້ໂດຍມີຫົວຂໍ້ %s:
+TicketAssignedToYou=ມອບicketາຍປີ້ແລ້ວ
+TicketAssignedEmailBody=ເຈົ້າໄດ້ຮັບມອບtheາຍປີ້ #%s ໂດຍ %s
+TicketAssignedCustomerEmail=ປີ້ຂອງທ່ານໄດ້ຖືກມອບໝາຍໃຫ້ດຳເນີນການແລ້ວ.
+TicketAssignedCustomerBody=ນີ້ແມ່ນອີເມວອັດຕະໂນມັດເພື່ອຢືນຢັນວ່າປີ້ຂອງທ່ານໄດ້ຖືກມອບໝາຍໃຫ້ດຳເນີນການແລ້ວ.
+MarkMessageAsPrivate=messageາຍຂໍ້ຄວາມເປັນສ່ວນຕົວ
+TicketMessageSendEmailHelp=ອີເມວຈະຖືກສົ່ງໄປຫາຜູ້ຕິດຕໍ່ທີ່ໄດ້ຮັບມອບຫມາຍທັງຫມົດ
+TicketMessageSendEmailHelp2a=(ການ​ຕິດ​ຕໍ່​ພົວ​ພັນ​ພາຍ​ໃນ​, ແຕ່​ຍັງ​ຕິດ​ຕໍ່​ພົວ​ພັນ​ພາຍ​ນອກ​ຍົກ​ເວັ້ນ​ແຕ່​ຖ້າ​ຫາກ​ວ່າ​ທາງ​ເລືອກ "%s" ຖືກ​ກວດ​ສອບ​)
+TicketMessageSendEmailHelp2b=(ຕິດຕໍ່ພົວພັນພາຍໃນ, ແຕ່ຍັງຕິດຕໍ່ພົວພັນພາຍນອກ)
+TicketMessagePrivateHelp=ຂໍ້ຄວາມນີ້ຈະບໍ່ເຫັນກັບຜູ້ໃຊ້ພາຍນອກ
+TicketMessageRecipientsHelp=ຊ່ອງຜູ້ຮັບສໍາເລັດດ້ວຍລາຍຊື່ຕິດຕໍ່ທີ່ເຊື່ອມຕໍ່ກັບປີ້
+TicketEmailOriginIssuer=ຜູ້ອອກແຫຼ່ງທີ່ມາຂອງປີ້
+InitialMessage=ຂໍ້ຄວາມເບື້ອງຕົ້ນ
+LinkToAContract=ເຊື່ອມຕໍ່ກັບສັນຍາ
+TicketPleaseSelectAContract=ເລືອກສັນຍາ
+UnableToCreateInterIfNoSocid=ບໍ່ສາມາດສ້າງການແຊກແຊງໄດ້ເມື່ອບໍ່ມີການກໍານົດພາກສ່ວນທີສາມ
+TicketMailExchanges=ການແລກປ່ຽນຈົດາຍ
+TicketInitialMessageModified=ຂໍ້ຄວາມເບື້ອງຕົ້ນຖືກດັດແກ້
+TicketMessageSuccesfullyUpdated=ອັບເດດຂໍ້ຄວາມ ສຳ ເລັດແລ້ວ
+TicketChangeStatus=ປ່ຽນສະຖານະພາບ
+TicketConfirmChangeStatus=ຢືນຢັນການປ່ຽນສະຖານະ: %s?
+TicketLogStatusChanged=ສະຖານະມີການປ່ຽນແປງ: %s ເປັນ %s
+TicketNotNotifyTiersAtCreate=ບໍ່ແຈ້ງໃຫ້ບໍລິສັດສ້າງ
+NotifyThirdpartyOnTicketClosing=ຕິດຕໍ່ເພື່ອແຈ້ງໃນຂະນະທີ່ປິດປີ້
+TicketNotifyAllTiersAtClose=ຕິດຕໍ່ພົວພັນທັງຫມົດ
+TicketNotNotifyTiersAtClose=ບໍ່ມີການຕິດຕໍ່ທີ່ກ່ຽວຂ້ອງ
+Unread=ຍັງບໍ່ໄດ້ອ່ານ
+TicketNotCreatedFromPublicInterface=ບໍ່​ສາ​ມາດ​ໃຊ້​ໄດ້. ປີ້ບໍ່ໄດ້ຖືກສ້າງຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ.
+ErrorTicketRefRequired=ຕ້ອງລະບຸຊື່ການອ້າງອີງປີ້
+TicketsDelayForFirstResponseTooLong=ເວລາຜ່ານໄປຫຼາຍໂພດນັບຕັ້ງແຕ່ການເປີດປີ້ໂດຍບໍ່ມີຄໍາຕອບໃດໆ.
+TicketsDelayFromLastResponseTooLong=ເວລາຜ່ານໄປຫຼາຍໂພດນັບຕັ້ງແຕ່ຄຳຕອບສຸດທ້າຍກ່ຽວກັບປີ້ນີ້.
+TicketNoContractFoundToLink=ບໍ່ພົບສັນຍາທີ່ຈະເຊື່ອມຕໍ່ອັດຕະໂນມັດກັບປີ້ນີ້. ກະລຸນາເຊື່ອມຕໍ່ສັນຍາດ້ວຍຕົນເອງ.
+TicketManyContractsLinked=ສັນຍາຈໍານວນຫຼາຍໄດ້ຖືກເຊື່ອມຕໍ່ໂດຍອັດຕະໂນມັດກັບປີ້ນີ້. ໃຫ້ແນ່ໃຈວ່າການກວດສອບທີ່ຄວນຈະຖືກເລືອກ.
+TicketRefAlreadyUsed=ການອ້າງອີງ [%s] ຖືກໃຊ້ແລ້ວ, ການອ້າງອີງໃໝ່ຂອງເຈົ້າແມ່ນ [%s]
+
+#
+# Logs
+#
+TicketLogMesgReadBy=ປີ້ %s ອ່ານໂດຍ %s
+NoLogForThisTicket=ບໍ່ມີບັນທຶກສໍາລັບປີ້ນີ້ເທື່ອ
+TicketLogAssignedTo=ປີ້ %s ມອບaາຍໃຫ້ %s
+TicketLogPropertyChanged=ປີ້ %s ຖືກແກ້ໄຂ: ການຈັດປະເພດຈາກ %s ຫາ %s
+TicketLogClosedBy=ປີ້ %s ປິດໂດຍ %s
+TicketLogReopen=ປີ້ %s ເປີດຄືນໃ່
+
+#
+# Public pages
+#
+TicketSystem=ລະບົບປີ້
+ShowListTicketWithTrackId=ສະແດງລາຍການປີ້ຈາກ ID ແທຣັກ
+ShowTicketWithTrackId=ສະແດງປີ້ຈາກ ID ແທຣັກ
+TicketPublicDesc=ເຈົ້າສາມາດສ້າງປີ້ສະ ໜັບ ສະ ໜູນ ຫຼືກວດເບິ່ງຈາກບັດປະ ຈຳ ຕົວທີ່ມີຢູ່.
+YourTicketSuccessfullySaved=ບັນທຶກປີ້ ສຳ ເລັດແລ້ວ!
+MesgInfosPublicTicketCreatedWithTrackId=ປີ້ໃhas່ໄດ້ຖືກສ້າງຂຶ້ນດ້ວຍ ID %s ແລະ Ref %s.
+PleaseRememberThisId=ກະລຸນາເກັບnumberາຍເລກຕິດຕາມທີ່ພວກເຮົາອາດຈະຖາມເຈົ້າໃນພາຍຫຼັງ.
+TicketNewEmailSubject=ການຢືນຢັນການສ້າງປີ້ - ອ້າງອີງ %s (ID ປີ້ສາທາລະນະ %s)
+TicketNewEmailSubjectCustomer=ປີ້ສະ ໜັບ ສະ ໜູນ ໃ່
+TicketNewEmailBody=ນີ້ແມ່ນອີເມວອັດຕະໂນມັດເພື່ອຢືນຢັນວ່າເຈົ້າໄດ້ລົງທະບຽນປີ້ໃ່.
+TicketNewEmailBodyCustomer=ນີ້ແມ່ນອີເມວອັດຕະໂນມັດເພື່ອຢືນຢັນວ່າປີ້ໃhas່ຫາກໍ່ຖືກສ້າງຂຶ້ນໃນບັນຊີຂອງເຈົ້າ.
+TicketNewEmailBodyInfosTicket=ຂໍ້ມູນສໍາລັບການຕິດຕາມປີ້
+TicketNewEmailBodyInfosTrackId=trackingາຍເລກຕິດຕາມປີ້: %s
+TicketNewEmailBodyInfosTrackUrl=ທ່ານສາມາດເບິ່ງຄວາມຄືບຫນ້າຂອງປີ້ໂດຍການຄລິກໃສ່ການເຊື່ອມຕໍ່ຕໍ່ໄປນີ້
+TicketNewEmailBodyInfosTrackUrlCustomer=ເຈົ້າສາມາດເບິ່ງຄວາມຄືບ ໜ້າ ຂອງປີ້ຢູ່ໃນສ່ວນຕິດຕໍ່ສະເພາະໂດຍການຄລິກທີ່ລິ້ງຕໍ່ໄປນີ້
+TicketCloseEmailBodyInfosTrackUrlCustomer=ທ່ານສາມາດປຶກສາປະຫວັດຂອງປີ້ນີ້ໂດຍການຄລິກໃສ່ການເຊື່ອມຕໍ່ຕໍ່ໄປນີ້
+TicketEmailPleaseDoNotReplyToThisEmail=ກະລຸນາຢ່າຕອບກັບອີເມລ directly ນີ້ໂດຍກົງ! ໃຊ້ຕົວເຊື່ອມຕໍ່ເພື່ອຕອບກັບເຂົ້າໄປໃນອິນເຕີເຟດ.
+TicketPublicInfoCreateTicket=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ເຈົ້າບັນທຶກປີ້ສະ ໜັບ ສະ ໜູນ ໃນລະບົບການຈັດການຂອງພວກເຮົາ.
+TicketPublicPleaseBeAccuratelyDescribe=ກະລຸນາອະທິບາຍຄຳຮ້ອງຂໍຂອງເຈົ້າຢ່າງຖືກຕ້ອງ. ໃຫ້ຂໍ້ມູນຫຼາຍທີ່ສຸດທີ່ເປັນໄປໄດ້ເພື່ອໃຫ້ພວກເຮົາກໍານົດຄໍາຮ້ອງຂໍຂອງທ່ານຢ່າງຖືກຕ້ອງ.
+TicketPublicMsgViewLogIn=ກະລຸນາໃສ່ ID ຕິດຕາມປີ້
+TicketTrackId=ID ຕິດຕາມສາທາລະນະ
+OneOfTicketTrackId=ຫນຶ່ງໃນ ID ຕິດຕາມຂອງເຈົ້າ
+ErrorTicketNotFound=ບໍ່ພົບປີ້ທີ່ມີ ID ການຕິດຕາມ %s!
+Subject=ຫົວຂໍ້
+ViewTicket=ເບິ່ງປີ້
+ViewMyTicketList=ເບິ່ງລາຍຊື່ປີ້ຂອງຂ້ອຍ
+ErrorEmailMustExistToCreateTicket=ຜິດພາດ: ບໍ່ພົບທີ່ຢູ່ອີເມວໃນຖານຂໍ້ມູນຂອງພວກເຮົາ
+TicketNewEmailSubjectAdmin=ສ້າງປີ້ໃ--່ແລ້ວ - ອ້າງອີງ %s (ID ປີ້ສາທາລະນະ %s)
+TicketNewEmailBodyAdmin= <p> ປີ້ຫາກໍ່ຖືກສ້າງຂຶ້ນດ້ວຍ ID #%s, ເບິ່ງຂໍ້ມູນ: </p>
+SeeThisTicketIntomanagementInterface=ເບິ່ງປີ້ຢູ່ໃນສ່ວນຕິດຕໍ່ຜູ້ບໍລິຫານ
+TicketPublicInterfaceForbidden=ອິນເຕີເຟດສາທາລະນະ ສຳ ລັບປີ້ບໍ່ໄດ້ຖືກເປີດ ນຳ ໃຊ້
+ErrorEmailOrTrackingInvalid=ຄ່າບໍ່ດີ ສຳ ລັບການຕິດຕາມ ID ຫຼືອີເມວ
+OldUser=ຜູ້ໃຊ້ເກົ່າ
+NewUser=ຜູ້ນຳໃຊ້ໃໝ່
+NumberOfTicketsByMonth=ຈຳ ນວນປີ້ຕໍ່ເດືອນ
+NbOfTickets=ຈຳ ນວນປີ້
+ExternalContributors=ຜູ້ປະກອບສ່ວນພາຍນອກ
+AddContributor=ເພີ່ມຜູ້ປະກອບສ່ວນພາຍນອກ
+
+# notifications
+TicketCloseEmailSubjectCustomer=ປິດປີ້
+TicketCloseEmailBodyCustomer=ນີ້ແມ່ນຂໍ້ຄວາມອັດຕະໂນມັດເພື່ອແຈ້ງໃຫ້ທ່ານຮູ້ວ່າປີ້ %s ຫາກໍ່ປິດແລ້ວ.
+TicketCloseEmailSubjectAdmin=ປິດປີ້ - Réf %s ( ID ປີ້ສາທາລະນະ %s)
+TicketCloseEmailBodyAdmin=ປີ້ທີ່ມີບັດປະຈຳຕົວ #%s ຫາກໍປິດແລ້ວ, ເບິ່ງຂໍ້ມູນ:
+TicketNotificationEmailSubject=ປີ້ %s ອັບເດດແລ້ວ
+TicketNotificationEmailBody=ນີ້ແມ່ນຂໍ້ຄວາມອັດຕະໂນມັດເພື່ອແຈ້ງໃຫ້ເຈົ້າຮູ້ວ່າປີ້ %s ຫາກໍ່ຖືກອັບເດດ
+TicketNotificationRecipient=ຜູ້ຮັບການແຈ້ງເຕືອນ
+TicketNotificationLogMessage=ຂໍ້ຄວາມບັນທຶກ
+TicketNotificationEmailBodyInfosTrackUrlinternal=ເບິ່ງປີ້ເຂົ້າໄປໃນສ່ວນຕິດຕໍ່
+TicketNotificationNumberEmailSent=ສົ່ງອີເມວແຈ້ງເຕືອນແລ້ວ: %s
+
+ActionsOnTicket=ເຫດການຢູ່ໃນປີ້
+
+#
+# Boxes
+#
+BoxLastTicket=ປີ້ສ້າງຫຼ້າສຸດ
+BoxLastTicketDescription=ປີ້ສ້າງຫຼ້າສຸດ %s
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=ບໍ່ມີປີ້ຫຼ້າສຸດທີ່ຍັງບໍ່ໄດ້ອ່ານ
+BoxLastModifiedTicket=ປີ້ທີ່ດັດແກ້ຫຼ້າສຸດ
+BoxLastModifiedTicketDescription=ປີ້ແກ້ໄຂຫຼ້າສຸດ %s
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=ບໍ່ມີປີ້ແກ້ໄຂຫຼ້າສຸດ
+BoxTicketType=ການແຈກຢາຍປີ້ເປີດຕາມປະເພດ
+BoxTicketSeverity=ຈຳ ນວນປີ້ເປີດຕາມຄວາມຮຸນແຮງ
+BoxNoTicketSeverity=ບໍ່ມີປີ້ເປີດ
+BoxTicketLastXDays=ຈຳ ນວນປີ້ໃby່ຕາມວັນສຸດທ້າຍ %s ວັນ
+BoxTicketLastXDayswidget = ຈຳ ນວນປີ້ໃby່ຕາມມື້ X ມື້ສຸດທ້າຍ
+BoxNoTicketLastXDays=ບໍ່ມີປີ້ໃnew່ %s ມື້ສຸດທ້າຍ
+BoxNumberOfTicketByDay=ຈຳ ນວນປີ້ໃby່ຕໍ່ມື້
+BoxNewTicketVSClose=ຈຳນວນປີ້ທຽບກັບປີ້ປິດ (ມື້ນີ້)
+TicketCreatedToday=ປີ້ສ້າງມື້ນີ້
+TicketClosedToday=ປີ້ປິດມື້ນີ້
+KMFoundForTicketGroup=ພວກ​ເຮົາ​ພົບ​ເຫັນ​ຫົວ​ຂໍ້​ແລະ FAQs ທີ່​ອາດ​ຈະ​ຕອບ​ຄໍາ​ຖາມ​ຂອງ​ທ່ານ, ຂໍ​ຂອບ​ໃຈ​ທີ່​ຈະ​ກວດ​ເບິ່ງ​ໃຫ້​ເຂົາ​ເຈົ້າ​ກ່ອນ​ທີ່​ຈະ​ສົ່ງ​ປີ້

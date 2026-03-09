@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=บัญชี (จากผังบัญชี) ใช้เป็นค่าเริ่มต้นสำหรับบุคคลที่สาม "ผู้ใช้"
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=บัญชีเฉพาะที่กำหนดไว้ในบัตรผู้ใช้จะใช้สำหรับบัญชีแยกประเภทย่อยเท่านั้น ค่านี้จะใช้สำหรับบัญชีแยกประเภททั่วไปและเป็นค่าเริ่มต้นของการบัญชีแยกประเภทย่อย หากไม่ได้กำหนดบัญชีผู้ใช้เฉพาะสำหรับผู้ใช้
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=บัญชีโดยปริยายสำหรับการจ่ายค่าจ้าง
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=ตามค่าเริ่มต้น ให้เว้นว่างตัวเลือก "สร้างการชำระเงินทั้งหมดโดยอัตโนมัติ" เมื่อสร้างเงินเดือน
+Salary=เงินเดือน
+Salaries=เงินเดือน
+NewSalary=เงินเดือนใหม่
+AddSalary=เพิ่มเงินเดือน
+NewSalaryPayment=บัตรเงินเดือนใหม่
+AddSalaryPayment=เพิ่มการจ่ายเงินเดือน
+SalaryPayment=การชำระเงินเงินเดือน
+SalariesPayments=การชำระเงินเงินเดือน
+SalariesPaymentsOf=การจ่ายเงินเดือนของ %s
+ShowSalaryPayment=แสดงการชำระเงินเงินเดือน
+THM=อัตราเฉลี่ยต่อชั่วโมง
+TJM=อัตรารายวันเฉลี่ย
+CurrentSalary=เงินเดือนปัจจุบัน
+THMDescription=ค่านี้อาจใช้เพื่อคำนวณต้นทุนของเวลาที่ใช้ในโปรเจ็กต์ที่ป้อนโดยผู้ใช้ หากใช้โปรเจ็กต์โมดูล
+TJMDescription=ปัจจุบันค่านี้มีไว้เพื่อเป็นข้อมูลเท่านั้นและไม่ได้ใช้สำหรับการคำนวณใดๆ
+LastSalaries=เงินเดือน %s ล่าสุด
+AllSalaries=เงินเดือนทั้งหมด
+SalariesStatistics=สถิติเงินเดือน
+SalariesAndPayments=เงินเดือนและการจ่ายเงิน
+ConfirmDeleteSalaryPayment=คุณต้องการลบการจ่ายเงินเดือนนี้หรือไม่ ?
+FillFieldFirst=กรอกช่องพนักงานก่อน
+UpdateAmountWithLastSalary=Set amount of last salary

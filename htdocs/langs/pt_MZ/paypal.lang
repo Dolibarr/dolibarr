@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuração do módulo PayPal
+PaypalDesc=Este módulo permite o pagamento por clientes via <a href="http://www.paypal.com" target="_blank">PayPal</a>. Isso pode ser usado para um pagamento ad-hoc ou para um pagamento relacionado a um objeto Dolibarr (fatura, pedido, ...)
+PAYPAL_API_SANDBOX=Modo teste/caixa de areia
+PAYPAL_API_USER=API usuario
+PAYPAL_API_PASSWORD=API senha
+PAYPAL_API_SIGNATURE=API assinatura
+PAYPAL_SSLVERSION=Versão do SSL do cURL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pagamento "integral" (cartão de crédito + PayPal) ou apenas "PayPal"
+PaypalModeIntegral=Integralmente
+PaypalModeOnlyPaypal=PayPal apenas
+ThisIsTransactionId=Eis o id da transação: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Inclua o URL de pagamento do PayPal quando enviar um documento por e-mail
+NewOnlinePaymentFailed=Foi tentado novo pagamento online, mas sem hêxito
+ONLINE_PAYMENT_SENDEMAIL=Endereço de e-mail para notificações após cada tentativa de pagamento (para sucesso e falha)
+ReturnURLAfterPayment=Retornar ao URL após o pagamento
+ValidationOfOnlinePaymentFailed=A validação do pagamento online falhou
+PaymentSystemConfirmPaymentPageWasCalledButFailed=A página de confirmação de pagamento, que foi chamada pelo sistema de pagamento, retornou um erro
+SetExpressCheckoutAPICallFailed=Falha ao chamar a API: SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=Falha ao chamar a API: DoExpressCheckoutPayment.
+DetailedErrorMessage=Mensagem de erro detalhada
+ShortErrorMessage=Mensagem curta de erro
+ErrorCode=Código do erro
+ErrorSeverityCode=Erro grave de código
+PaypalLiveEnabled=Modo "ao vivo" do PayPal ativado (caso contrário, modo teste/sandbox)
+PostActionAfterPayment=Poste as ações após os pagamentos
+PayPalBalance=Crédito Paypal

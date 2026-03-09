@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta (del Plan Contable) utilizada por defecto para terceros "usuarios"
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta dedicada definida en la tarjeta de usuario se usará solo para contabilidad auxiliar. Este se usará para el Libro mayor y como valor predeterminado de la contabilidad del Libro mayor auxiliar si no se define una cuenta de contabilidad de usuario dedicada en el usuario.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta contable por defecto para pagos de salarios
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=De forma predeterminada, deje vacía la opción "Crear automáticamente un pago total" al crear un Salario.
+Salary=Salario
+Salaries=Salarios
+NewSalary=Nuevo salario
+AddSalary=Agregar salario
+NewSalaryPayment=Nueva tarjeta de salario
+AddSalaryPayment=Añadir pago de salario
+SalaryPayment=Pago de salario
+SalariesPayments=Pagos de salarios
+SalariesPaymentsOf=Pagos de sueldos de %s
+ShowSalaryPayment=Ver pago
+THM=Tasa media por hora
+TJM=Tasa media por día
+CurrentSalary=Salario actual
+THMDescription=Este valor puede ser usado para calcular los costos de tiempo consumidos en un proyecto indicados por los usuarios si se utiliza el módulo proyectos
+TJMDescription=Este valor actualmente es informativo y no se utiliza para realizar cualquier tipo de cálculo
+LastSalaries=Últimos salario de %s
+AllSalaries=Todos los salarios
+SalariesStatistics=Estadísticas salariales
+SalariesAndPayments=Salarios y pagos
+ConfirmDeleteSalaryPayment=¿Está seguro de querer eliminar este pago de salario?
+FillFieldFirst=Primero rellene el campo de empleado
+UpdateAmountWithLastSalary=Fijar el monto del último salario

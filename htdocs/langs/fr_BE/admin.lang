@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - admin
+Foundation=Fondation
+VersionExperimental=Expérimentale
+VersionRecommanded=Recommandée
+SessionId=ID de session
+SessionSaveHandler=Gestionnaire de sessions
+PurgeSessions=Nettoyage des sessions
+LockNewSessions=Bloquer les nouvelles connexions
+UnlockNewSessions=Éliminer le blocage des connexions
+WebUserGroup=Utilisateur/groupe du serveur web
+DBStoringCharset=Codification de caractères de base de données pour stocker les données
+DBSortingCharset=Codification de caractères de base de données pour trier les données
+WarningModuleNotActive=Le module <b>%s</b> doit être activé
+WarningOnlyPermissionOfActivatedModules=Seules les permissions liées à des modules activés sont montrées ici. Vous pouvez activer d'autres modules sur la page Accueil->Configuration->Modules.
+FormToTestFileUploadForm=Formulaire pour tester l'upload de fichiers (selon la configuration)
+IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
+Module20Name=Propales
+Module30Name=Factures
+Target=Objectif
+OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+Recommended=Recommandée
+IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
+IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax

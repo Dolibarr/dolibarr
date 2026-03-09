@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox moduļa iestatīšana
+PayBoxDesc=Šis modulis piedāvā lapas, kas ļauj klientiem veikt maksājumus <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>. To var izmantot bezmaksas maksājumam vai maksājumam par konkrētu Dolibarr objektu (rēķins, pasūtījums, ...)
+PayBoxDoPayment=Maksājiet ar Paybox
+YouWillBeRedirectedOnPayBox=Jums tiks novirzīts uz drošu Paybox lapā, lai ievadi kredītkartes informāciju
+SetupPayBoxToHavePaymentCreatedAutomatically=Izveidojiet savu Paybox ar URL <b> %s </b>, lai maksājums tiktu izveidots automātiski, ja to apstiprina Paybox.
+YourPaymentHasBeenRecorded=Šajā lapā apliecina, ka jūsu maksājums ir reģistrēts. Paldies.
+YourPaymentHasNotBeenRecorded=Jūsu maksājums NAV reģistrēts un darījums ir atcelts. Paldies.
+PAYBOX_CGI_URL_V2=URL Paybox CGI modulis par samaksu
+NewPayboxPaymentReceived=Jauns Paybox maksājums saņemts
+NewPayboxPaymentFailed=Jauns Paybox maksājums mēģināju, bet neizdevās
+PAYBOX_PAYONLINE_SENDEMAIL=E-pasta paziņojums pēc maksājuma mēģinājuma (veiksmes vai neveiksmes)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC taustiņš

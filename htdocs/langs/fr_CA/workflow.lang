@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configuration du module de workflow
+ThereIsNoWorkflowToModify=Il n'y a pas de modification de flux de travail disponibles avec les modules activés .
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer automatiquement une facture client après un contrat est validé

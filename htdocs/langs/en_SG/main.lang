@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - main
+DIRECTION=ltr
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
+SeparatorDecimal=.
+SeparatorThousand=,
+FormatDateShort=%d.%m.%Y
+FormatDateShortInput=%d.%m.%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
+FormatHourShortJQuery=HH:MI
+FormatHourShort=%I:%M %p
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %I:%M %p
+FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
+FormatDateHourTextShort=%d/%m/%Y %I:%M %p
+FormatDateHourText=%d/%m/%Y %I:%M %p
+AmountVAT=Amount GST
+MulticurrencyAmountVAT=Amount GST, original currency
+TotalTTC=Total (incl GST)
+TotalVAT=Total GST
+HT=Excl GST
+TTC=Incl GST
+INCVATONLY=Incl GST
+VAT=GST
+VATs=GST
+VATRate=GST Rate
+VATCode=GST Rate
+SearchSyntaxTooltipForStringOrNum=For searching inside text fields, you can use the characters ^ or $ to make a 'start or end with' search or use the ! to make a 'does not contain' test. You can use the | between two strings instead of a space for a 'OR' condition instead of 'AND'. For numeric values, you can use the operator <, >, <=, >= or != before the value to filter using a mathematical comparison

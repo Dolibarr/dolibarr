@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marže
+Margins=Marže
+TotalMargin=Celková marže
+MarginOnProducts=Marže/Produkty
+MarginOnServices=Marže/služby
+MarginRate=Hodnocení marže
+MarkRate=Hodnocení značky
+DisplayMarginRates=Zobrazení hodnocení marže
+DisplayMarkRates=Zobrazit hodnocení značek
+InputPrice=Vstupní cena
+margin=Řízení ziskové marže
+margesSetup=Nastavení řízení ziskové marže
+MarginDetails=Detaily marže
+ProductMargins=Produktová marže
+CustomerMargins=Zákaznická marže
+SalesRepresentativeMargins=Obchodní zástupce marže
+ContactOfInvoice=Kontakt na fakturu
+UserMargins=Uživatelské marže
+ProductService=Produkt nebo služba
+AllProducts=Všechny produkty a služby
+ChooseProduct/Service=Zvolte produkt nebo službu
+ForceBuyingPriceIfNull=Nákup síly/cena za cenu prodejní ceny, pokud není definována
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=Metoda marže pro globální slevy
+UseDiscountAsProduct=Jako produkt
+UseDiscountAsService=Jako služba
+UseDiscountOnTotal=Na mezisoučet
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definuje, zda globální sleva je považován za výrobek, službu, nebo pouze za mezisoučet pro výpočet marže.
+MARGIN_TYPE=Nákupní/prodejní cena implicitně navrhovaná pro výpočet marže
+MargeType1=Marže za nejlepší cenu dodavatele
+MargeType2=Marže z vážené průměrné ceny (WAP)
+MargeType3=Marže z prodejní ceny
+MarginTypeDesc=* Rozpětí pro nejlepší nákupní cenu = Prodejní cena - Nejlepší cena prodejce definovaná na produktové kartě <br> * Marže na váženou průměrnou cenu (WAP) = Prodejní cena (WAP) nebo nejlepší cena prodejce, pokud WAP ještě není definován <br> * Marže na nákladové ceně = Prodejní cena - Nákladová cena definovaná na produktové kartě nebo WAP, pokud cena není definována, nebo nejlepší cena prodejce, pokud WAP ještě není definován
+CostPrice=Náklady
+UnitCharges=Jednotkové poplatky
+Charges=Poplatky
+AgentContactType=Obchodní zástupce - typ kontaktu
+AgentContactTypeDetails=Určete, jaký typ kontaktu (propojený na fakturách) bude použit pro hlášení marží na jeden kontakt / adresu. Čtení statistik o kontaktu není spolehlivé, protože ve většině případů nemusí být kontakt výslovně definován na fakturách.
+rateMustBeNumeric=Hodnocení musí být číselná hodnota
+markRateShouldBeLesserThan100=Označení sazby by měla být nižší než 100
+ShowMarginInfos=Ukázat informace o marži
+CheckMargins=Detail marže
+MarginPerSaleRepresentativeWarning=Zpráva o marži na uživatele používá spojení mezi subjekty a prodejními zástupci pro výpočet marže každého prodejního zástupce. Vzhledem k tomu, že některé subjekty nemusí mít žádný specializovaný prodej a některé subjekty mohou být propojeny s několika, některé částky nemusí být zahrnuty do této zprávy (pokud neexistuje obchodní zástupce) a některé se mohou objevit na různých řádcích (u každého prodejce) .

@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - margins
+MarginOnProducts=Marge / Producten
+ForceBuyingPriceIfNull=Gebruik de koop/kost prijs als verkoopsprijs indien niet gedefinieerd
+UseDiscountAsProduct=Als een product
+MargeType3=Marge op kostprijs
+AgentContactType=Contacttype van commercieel medewerker
+CheckMargins=Marges detail

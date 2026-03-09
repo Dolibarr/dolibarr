@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - stocks
+StocksArea=Warehouse area
+QtyDispatchedShort=Quantity dispatched
+QtyToDispatchShort=Quantity to be dispatched
+OrderStatusNotReadyToDispatch=Order Status does not allow dispatching of products in stock warehouses.
+NoPredefinedProductToDispatch=No predefined products for this object. So no dispatching of stock is required.
+IdWarehouse=Warehouse ID
+LieuWareHouse=Locality of warehouse
+EstimatedStockValueSellShort=Value of stock at selling price
+RuleForStockReplenishment=Rule for stock replenishment
+IsInPackage=Packaged
+ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different useby or sellby dates (found <strong>%s</strong> but you entered <strong>%s</strong>).
+OptionMULTIPRICESIsOn=Option "several prices per segment" is on. It means a product has several selling price so total of stock by sales value can't be calculated
+AddNewProductStockWarehouse=Set new limit for alert and desired optimal stock level

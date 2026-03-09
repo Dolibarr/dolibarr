@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - sendings
+Sendings=Fretes
+Shipments=Fretes
+StatusSendingDraft=Minuta
+StatusSendingDraftShort=Minuta
+StatusSendingValidatedShort=Validada

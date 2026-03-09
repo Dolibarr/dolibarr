@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Kredi
+Loans=Krediler
+NewLoan=Yeni Kredi
+ShowLoan=Kredi Göster
+PaymentLoan=Kredi ödemesi
+LoanPayment=Kredi ödemesi
+ShowLoanPayment=Kredi Ödemesi Göster
+LoanCapital=Sermaye
+Insurance=Sigorta
+Interest=Faiz
+Nbterms=Koşul sayısı
+Term=Koşul
+LoanAccountancyCapitalCode=Muhasebe hesabı sermayesi
+LoanAccountancyInsuranceCode=Muhasebe hesabı sigortası
+LoanAccountancyInterestCode=Muhasebe hesabı faiz oranı
+ConfirmDeleteLoan=Bu kredinin silinmesini onayla
+LoanDeleted=Kredi Başarıyla Silindi
+ConfirmPayLoan=Bu krediyi ödendi olarak sınıflandırmayı onayla
+LoanPaid=Kredi Ödendi
+ListLoanAssociatedProject=Proje ile ilişkili kredi listesi
+AddLoan=Kredi oluştur
+FinancialCommitment=Finansal taahhüt
+InterestAmount=Faiz
+CapitalRemain=Kalan sermaye
+TermPaidAllreadyPaid = Bu dönem zaten ödendi
+CantUseScheduleWithLoanStartedToPaid = Ödemesi başlamış bir kredi için zaman çizelgesi oluşturulamıyor
+CantModifyInterestIfScheduleIsUsed = Programı kullanırsanız ilgi alanını değiştiremezsiniz
+# Admin
+ConfigLoan=Kredi modülünün yapılandırılması
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Sermaye için varsayılan olarak kullanılacak hesap (Hesap Planı'ndan) (Kredi modülü)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Faiz için varsayılan olarak kullanılacak hesap (Hesap Planı'ndan) (Kredi modülü)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Sigorta için varsayılan olarak kullanılacak hesap (Hesap Planı'ndan) (Kredi modülü)
+CreateCalcSchedule=Finansal taahhüdü düzenle

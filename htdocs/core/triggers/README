@@ -1,0 +1,15 @@
+Directory content
+--------------------------------------------------------
+This directory contains all available Dolibarr triggers.
+
+Trigger file name syntax is:
+> interface_modModule_Mytrigger.php[-NORUN]
+
+where:
+> modModule is part of module descriptor file name found in core/modules
+            directory or value 'all' if not enabled by a particular module.
+> Mytrigger is name of the trigger. The PHP class inside the trigger file
+            would be named InterfaceMytrigger.
+> -NORUN is optional and disable completely a trigger file if set. To use 
+            a trigger with such a name, rename file to remove the -NORUN part.
+

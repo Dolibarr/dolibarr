@@ -1,0 +1,369 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Vstupenky
+Module56000Desc=Systém vstupenek pro správu nebo řízení požadavků
+
+Permission56001=Viz vstupenky
+Permission56002=Změnit vstupenky
+Permission56003=Smazat vstupenky
+Permission56004=Správa vstupenek
+Permission56005=Viz vstupenky všech subjektů (neplatí pro externí uživatele, vždy se omezují na subjekt, na který se vztahují)
+Permission56006=Export tickets
+
+Tickets=Vstupenky
+TicketDictType=Vstupenka - Typy
+TicketDictCategory=Ticket - Groups
+TicketDictSeverity=Vstupenka - závažnosti
+TicketDictResolution=Vstupenka - rozlišení
+
+TicketTypeShortCOM=Obchodní otázka
+TicketTypeShortHELP=Request for functional help
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
+TicketTypeShortREQUEST=Žádost o změnu nebo vylepšení
+TicketTypeShortPROJET=Projekt
+TicketTypeShortOTHER=Jiný
+
+TicketSeverityShortLOW=Nízký
+TicketSeverityShortNORMAL=Normální
+TicketSeverityShortHIGH=Vysoký
+TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Jiný
+
+ErrorBadEmailAddress=Pole '%s' nesprávné
+MenuTicketMyAssign=Moje jízdenky
+MenuTicketMyAssignNonClosed=Moje otevřené vstupenky
+MenuListNonClosed=Otevřené vstupenky
+
+TypeContact_ticket_internal_CONTRIBUTOR=Přispěvatel
+TypeContact_ticket_internal_SUPPORTTEC=Přiřazený uživatel
+TypeContact_ticket_external_SUPPORTCLI=Kontakt zákazníka / sledování incidentů
+TypeContact_ticket_external_CONTRIBUTOR=Externí přispěvatel
+
+OriginEmail=Reporter Email
+Notify_TICKET_SENTBYMAIL=Odeslat e-mailem zprávu o lince
+
+ExportDataset_ticket_1=Vstupenky
+
+# Status
+Read=Číst
+Assigned=Přidělené
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
+TicketAnswered=Odpovězeno
+Waiting=Čekání
+SolvedClosed=Solved
+Deleted=Smazáno
+
+# Dict
+Type=Typ
+Severity=Vážnost
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+
+# Email templates
+MailToSendTicketMessage=Chcete-li poslat e-mail z lístkové zprávy
+
+#
+# Admin page
+#
+TicketSetup=Nastavení modulu vstupenek
+TicketSettings=Nastavení
+TicketPublicAccess=Veřejné rozhraní nevyžadující identifikaci je k dispozici na následující adrese URL
+TicketSetupDictionaries=Typ vstupenky, závažnosti a analytické kódy lze konfigurovat ze slovníků
+TicketParamModule=Nastavení proměnné modulu
+TicketParamMail=Nastavení e-mailu
+TicketEmailNotificationFrom=Sender e-mail for notification on answers
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
+TicketNewEmailBodyLabel=Textová zpráva odeslaná po vytvoření vstupenky
+TicketNewEmailBodyHelp=Zde zadaný text bude vložen do e-mailu s potvrzením vytvoření nové vstupenky z veřejného rozhraní. Informace o konzultaci s letenkou jsou automaticky přidány.
+TicketParamPublicInterface=Nastavení veřejného rozhraní
+TicketsEmailMustExist=Chcete-li vytvořit letenku, požadujte existující e-mailovou adresu
+TicketsEmailMustExistHelp=Ve veřejném rozhraní musí být e-mailová adresa již vyplněna v databázi, aby se vytvořil nový lístek
+TicketsShowProgression=Display the ticket progress in the public interface
+TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
+TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
+PublicInterface=Veřejné rozhraní
+TicketPublicInterfaceTextHomeLabelAdmin=Úvodní text veřejného rozhraní
+TicketPublicInterfaceTextHome=Můžete vytvořit lístek podpory nebo zobrazit existující z jeho lístku pro sledování identifikátorů.
+TicketPublicInterfaceTextHomeHelpAdmin=Zde definovaný text se zobrazí na domovské stránce veřejného rozhraní.
+TicketPublicInterfaceTopicLabelAdmin=Název rozhraní
+TicketPublicInterfaceTopicHelp=Tento text se zobrazí jako název veřejného rozhraní.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Text nápovědy k záznamu zprávy
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Tento text se zobrazí nad vstupní oblastí zprávy uživatele.
+ExtraFieldsTicket=Další atributy
+TicketCkEditorEmailNotActivated=HTML editor není aktivován. Chcete-li jej získat, vložte prosím obsah FCKEDITOR_ENABLE_MAIL do 1.
+TicketsDisableEmail=Neposílejte e-maily pro tvorbu lístků nebo pro nahrávání zpráv
+TicketsDisableEmailHelp=Ve výchozím nastavení jsou e-maily odesílány, když jsou vytvořeny nové vstupenky nebo zprávy. Povolte tuto možnost a zakažte * všechna e-mailová upozornění
+TicketsLogEnableEmail=Povolit přihlášení e-mailem
+TicketsLogEnableEmailHelp=Při každé změně bude každému kontaktu **, který je spojen s letenkou, zaslán e-mail **.
+TicketParams=Params
+TicketsShowModuleLogo=Zobrazit logo modulu ve veřejném rozhraní
+TicketsShowModuleLogoHelp=Povolte tuto možnost, pokud chcete skrýt modul loga na stránkách veřejného rozhraní
+TicketsShowCompanyLogo=Zobrazit logo společnosti ve veřejném rozhraní
+TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
+TicketsShowCompanyFooter=Display the footer of the company in the public interface
+TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsLimitViewAssignedOnly=Omezit zobrazení na vstupenky přiřazené aktuálnímu uživateli (neúčinné pro externí uživatele, vždy omezeno na třetí stranu, na které závisí)
+TicketsLimitViewAssignedOnlyHelp=Viditelné budou pouze vstupenky přiřazené aktuálnímu uživateli. Nevztahuje se na uživatele s právy správy vstupenek.
+TicketsActivatePublicInterface=Aktivovat veřejné rozhraní
+TicketsActivatePublicInterfaceHelp=Veřejné rozhraní umožňuje všem návštěvníkům vytvářet vstupenky.
+TicketsAutoAssignTicket=Automaticky přiřadit uživateli, který vytvořil lístek
+TicketsAutoAssignTicketHelp=Při tvorbě vstupenky může být uživateli automaticky přiřazen lístek.
+TicketNumberingModules=Modul číslování vstupenek
+TicketsModelModule=Document templates for tickets
+TicketNotifyTiersAtCreation=Upozornit subjekt na vytvoření
+TicketsDisableCustomerEmail=Pokud je lístek vytvořen z veřejného rozhraní, vždy zakažte e-maily
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessageHelp=Odeslat e-mail(y) při přidání nové zprávy z veřejného rozhraní (přiřazenému uživateli nebo e-mailu s oznámením do (aktualizace) a/nebo e-mailu s oznámením do)
+TicketPublicNotificationNewMessageDefaultEmail=E-mail s oznámeními (aktualizace)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
+TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
+
+#
+# Index & list page
+#
+TicketsIndex=Vstupenky
+TicketList=Seznam vstupenek
+TicketAssignedToMeInfos=Tato stránka zobrazuje seznam lístků vytvořených nebo přiřazených aktuálnímu uživateli
+NoTicketsFound=Nebyla nalezena žádná vstupenka
+NoUnreadTicketsFound=Nebyl nalezen žádný nepřečtený lístek
+TicketViewAllTickets=Zobrazit všechny vstupenky
+TicketViewNonClosedOnly=Zobrazit pouze otevřené vstupenky
+TicketStatByStatus=Vstupenky podle statusu
+OrderByDateAsc=Seřadit podle vzestupného data
+OrderByDateDesc=Seřadit podle sestupného data
+ShowAsConversation=Zobrazit jako seznam konverzací
+MessageListViewType=Zobrazit jako seznam tabulek
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
+
+#
+# Ticket card
+#
+Ticket=Lístek
+TicketCard=Karta lístků
+CreateTicket=Vytvořit lístek
+EditTicket=Upravit lístek
+TicketsManagement=Správa vstupenek
+CreatedBy=Vytvořil
+NewTicket=Nová vstupenka
+SubjectAnswerToTicket=Odpověď na lístek
+TicketTypeRequest=Typ požadavku
+TicketCategory=Ticket group
+SeeTicket=Viz lístek
+TicketMarkedAsRead=Lístek byl označen jako přečtený
+TicketReadOn=Číst dál
+TicketCloseOn=Uzávěrka
+MarkAsRead=Označte lístek jako přečtený
+TicketHistory=Historie vstupenek
+AssignUser=Přiřadit uživateli
+TicketAssigned=Vstupenka je nyní přiřazena
+TicketChangeType=Změnit typ
+TicketChangeCategory=Změňte analytický kód
+TicketChangeSeverity=Změnit závažnost
+TicketAddMessage=Add or send a message
+TicketAddPrivateMessage=Add a private message
+MessageSuccessfullyAdded=Přidána vstupenka
+TicketMessageSuccessfullyAdded=Zpráva byla úspěšně přidána
+TicketMessagesList=Seznam zpráv
+NoMsgForThisTicket=Žádná zpráva pro tuto letenku
+TicketProperties=Klasifikace
+LatestNewTickets=Nejnovější %s nejnovější vstupenky (nečtené)
+TicketSeverity=Vážnost
+ShowTicket=Viz lístek
+RelatedTickets=Související vstupenky
+TicketAddIntervention=Vytvořit intervenci
+CloseTicket=Close|Solve
+AbandonTicket=Abandon
+CloseATicket=Close|Solve a ticket
+ConfirmCloseAticket=Potvrďte uzavření lístku
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+ConfirmDeleteTicket=Potvrďte prosím vymazání lístku
+TicketDeletedSuccess=Lístek byl vymazán s úspěchem
+TicketMarkedAsClosed=Lístek označený jako zavřený
+TicketDurationAuto=Vypočítaná doba trvání
+TicketDurationAutoInfos=Trvání automaticky vypočtené z intervence
+TicketUpdated=Lístek byl aktualizován
+SendMessageByEmail=Poslat zprávu e-mailem
+TicketNewMessage=Nová zpráva
+ErrorMailRecipientIsEmptyForSendTicketMessage=Příjemce je prázdný. Neposílat žádné e-maily
+TicketGoIntoContactTab=Přejděte na kartu Kontakty a vyberte je
+TicketMessageMailIntro=Message header
+TicketMessageMailIntroHelp=Tento text bude přidán pouze na začátek e-mailu a nebude uložen.
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
+TicketMessageMailFooter=Message footer
+TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
+TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
+TicketMessageMailFooterHelpAdmin=Tento text bude vložen za zprávu s odpovědí.
+TicketMessageHelp=Pouze tento text bude uložen do seznamu zpráv na kartě lístků.
+TicketMessageSubstitutionReplacedByGenericValues=Substituční proměnné jsou nahrazeny obecnými hodnotami.
+ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
+TimeElapsedSince=Čas uplynul od
+TicketTimeToRead=Čas uplynul před čtením
+TicketTimeElapsedBeforeSince=Time elapsed before / since
+TicketContacts=Kontaktní lístek
+TicketDocumentsLinked=Dokumenty spojené s lístkem
+ConfirmReOpenTicket=Potvrďte znovutevření tento lístek?
+TicketMessageMailIntroAutoNewPublicMessage=Nová zpráva byla zveřejněna na lístku s předmětem %s:
+TicketAssignedToYou=Lístek přiřazen
+TicketAssignedEmailBody=Byl vám přidělen lístek # %s by %s
+TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
+TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+MarkMessageAsPrivate=Označit zprávu jako soukromou
+TicketMessageSendEmailHelp=An email will be sent to all assigned contact
+TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
+TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
+TicketMessagePrivateHelp=This message will not be visible to external users
+TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
+TicketEmailOriginIssuer=Emitent při vzniku jízdenek
+InitialMessage=Počáteční zpráva
+LinkToAContract=Odkaz na smlouvu
+TicketPleaseSelectAContract=Vyberte smlouvu
+UnableToCreateInterIfNoSocid=Nelze vytvořit zásah, pokud není definován žádný subjekt
+TicketMailExchanges=Poštovní výměny
+TicketInitialMessageModified=Původní zpráva byla změněna
+TicketMessageSuccesfullyUpdated=Zpráva byla úspěšně aktualizována
+TicketChangeStatus=Změnit stav
+TicketConfirmChangeStatus=Potvrďte změnu stavu: %s?
+TicketLogStatusChanged=Stav změněn: %s až %s
+TicketNotNotifyTiersAtCreate=Neinformovat společnost na vytvoření
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
+Unread=Nepřečtený
+TicketNotCreatedFromPublicInterface=Není dostupný. Vstupenka nebyla vytvořena z veřejného rozhraní.
+ErrorTicketRefRequired=Je vyžadován referenční název vstupenky
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
+TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Vstupenka %s přečtena %s
+NoLogForThisTicket=Pro tento lístek zatím není žádný záznam
+TicketLogAssignedTo=Vstupenka %s přiřazena %s
+TicketLogPropertyChanged=Vstupenka %s upraveno: klasifikace z %s do %s
+TicketLogClosedBy=Vstupenka %s uzavřena %s
+TicketLogReopen=Vstupenka %s se znovu otevře
+
+#
+# Public pages
+#
+TicketSystem=Systém lístků
+ShowListTicketWithTrackId=Zobrazí seznam lístků z ID stopy
+ShowTicketWithTrackId=Zobrazit jízdenku z ID stopy
+TicketPublicDesc=Můžete vytvořit lístek podpory nebo šek z existujícího ID.
+YourTicketSuccessfullySaved=Lístek byl úspěšně uložen!
+MesgInfosPublicTicketCreatedWithTrackId=Byl vytvořen nový lístek s ID %s a Ref %s.
+PleaseRememberThisId=Udržujte prosím sledovací číslo, které bychom vás mohli požádat později.
+TicketNewEmailSubject=Potvrzení vytvoření lístku - Ref %s (ID veřejné vstupenky %s)
+TicketNewEmailSubjectCustomer=Nová podpora lístku
+TicketNewEmailBody=Jedná se o automatický e-mail, který potvrzuje, že jste zaregistrovali nový lístek.
+TicketNewEmailBodyCustomer=Jedná se o automatický e-mail, který potvrzuje, že byl do vašeho účtu právě vytvořen nový lístek.
+TicketNewEmailBodyInfosTicket=Informace pro sledování lístku
+TicketNewEmailBodyInfosTrackId=Číslo sledování jízdenek: %s
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
+TicketNewEmailBodyInfosTrackUrlCustomer=Průběh vstupenky můžete zobrazit v konkrétním rozhraní klepnutím na následující odkaz
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
+TicketEmailPleaseDoNotReplyToThisEmail=Neodpovídejte prosím přímo na tento e-mail! Pomocí odkazu odpovíte do rozhraní.
+TicketPublicInfoCreateTicket=Tento formulář vám umožňuje zaznamenat si lístek podpory v našem systému řízení.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicMsgViewLogIn=Zadejte ID sledování trasy
+TicketTrackId=ID veřejného sledování
+OneOfTicketTrackId=Jedno z vašich ID sledování
+ErrorTicketNotFound=Lístek s ID sledování %s nebyl nalezen!
+Subject=Předmět
+ViewTicket=Zobrazit lístek
+ViewMyTicketList=Zobrazit seznam lístků
+ErrorEmailMustExistToCreateTicket=Chyba: e-mailová adresa nebyla nalezena v naší databázi
+TicketNewEmailSubjectAdmin=Byl vytvořen nový lístek - Ref %s (ID veřejné vstupenky %s)
+TicketNewEmailBodyAdmin=<p> Lístek byl právě vytvořen s ID # %s, viz informace: </p>
+SeeThisTicketIntomanagementInterface=Viz tiket v rozhraní pro správu
+TicketPublicInterfaceForbidden=Veřejné rozhraní pro vstupenky nebylo povoleno
+ErrorEmailOrTrackingInvalid=Špatná hodnota pro ID sledování nebo e-mail
+OldUser=Starý uživatel
+NewUser=Nový uživatel
+NumberOfTicketsByMonth=Počet vstupenek za měsíc
+NbOfTickets=Počet vstupenek
+ExternalContributors=External contributors
+AddContributor=Add external contributor
+
+# notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
+TicketNotificationEmailSubject=Vstupenka %s aktualizována
+TicketNotificationEmailBody=Toto je automatická zpráva, která vás upozorní, že právě byla aktualizována vstupenka %s
+TicketNotificationRecipient=Příjemce oznámení
+TicketNotificationLogMessage=Zpráva protokolu
+TicketNotificationEmailBodyInfosTrackUrlinternal=Zobrazit lístek do rozhraní
+TicketNotificationNumberEmailSent=E-mail s oznámením: %s
+
+ActionsOnTicket=Akce na lístku
+
+#
+# Boxes
+#
+BoxLastTicket=Poslední vytvořené vstupenky
+BoxLastTicketDescription=Poslední %s vytvořil vstupenky
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Žádné nepřečtené vstupenky
+BoxLastModifiedTicket=Poslední změněné vstupenky
+BoxLastModifiedTicketDescription=Poslední %s změněné vstupenky
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Žádné poslední změněné vstupenky
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

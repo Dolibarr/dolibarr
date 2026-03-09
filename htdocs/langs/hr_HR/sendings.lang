@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Broj
+Sending=Isporuka
+Sendings=Isporuke
+AllSendings=Sve otpremnice
+Shipment=Isporuka
+Shipments=Dostavnice
+ShowSending=Prikaži otrpemnice
+Receivings=Otpremnice
+SendingsArea=Isporuka
+ListOfSendings=Popis pošiljki
+SendingMethod=Način dostave
+LastSendings=Zadnje %s dostavnice
+StatisticsOfSendings=Statistike pošiljki
+NbOfSendings=Broj pošiljki
+NumberOfShipmentsByMonth=Broj pošiljki tijekom mjeseca
+SendingCard=Dostavnica
+NewSending=Nova isporuka
+CreateShipment=Izradi isporuku
+QtyShipped=Isporučena količina
+QtyShippedShort=Isporučena količina
+QtyPreparedOrShipped=Pripremljena ili isporučena količina
+QtyToShip=Za otpremu
+QtyToReceive=Qty to receive
+QtyReceived=Količina primljena
+QtyInOtherShipments=Količina u drugim isporukama
+KeepToShip=Preostalo za isporuku
+KeepToShipShort=Preosta. količina
+OtherSendingsForSameOrder=Ostale isporuke za ovu narudžbu
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Isporuke za ovjeru
+StatusSendingCanceled=Poništeno
+StatusSendingCanceledShort=Poništeno
+StatusSendingDraft=Skica
+StatusSendingValidated=Ovjereno (proizvodi za isporuku ili su isporučeni)
+StatusSendingProcessed=Obrađen
+StatusSendingDraftShort=Skica
+StatusSendingValidatedShort=Ovjereno
+StatusSendingProcessedShort=Obrađen
+SendingSheet=Dostavnica
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 model
+WarningNoQtyLeftToSend=Upozorenje, nema prozvoda za isporuku.
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+DateDeliveryPlanned=Planirani datum isporuke
+RefDeliveryReceipt=Broj otpremnice
+StatusReceipt=Stanje otpremnice
+DateReceived=Datum primitka pošiljke
+ClassifyReception=Classify Received
+SendShippingByEMail=Send shipment by email
+SendShippingRef=Dostavnica %s
+ActionsOnShipping=Događaji na otpremnici
+LinkToTrackYourPackage=Poveznica na praćenje pošiljke
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentLine=Stavka otpremnice
+ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
+ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
+NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Masa/Volum.
+ValidateOrderFirstBeforeShipment=Prvo morate ovjeriti narudžbu prije izrade otpremnice.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Kompletan model dokumenta za dostavnu primku (logo...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER nije definirana
+SumOfProductVolumes=Ukupni volumen proizvoda
+SumOfProductWeights=Ukupna masa proizvoda
+
+# warehouse details
+DetailWarehouseNumber= Skladišni detalji
+DetailWarehouseFormat= W:%s (Qty: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

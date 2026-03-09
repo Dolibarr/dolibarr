@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - boxes
+BoxProductsAlertStock=Alertes de stock pour les produits
+BoxLastProductsInContract=%s derniers produits / services sous contrat
+BoxOldestUnpaidCustomerBills=Les factures des clients non payées les plus anciennes
+BoxLastActions=Dernières actions
+BoxLastContacts=Derniers contacts / adresses
+BoxLastMembers=Derniers membres
+BoxCurrentAccounts=Soldes Comptes ouverts
+BoxTitleLastRssInfos=%s dernières nouvelles de %s
+BoxTitleLastSuppliers=%s derniers fournisseurs enregistrés
+BoxTitleLastCustomersOrProspects=%s derniers  clients ou prospects
+BoxTitleLastModifiedMembers=%s derniers membres
+BoxTitleLastFicheInter=%s dernières interventions modifiées
+BoxLastExpiredServices=Les %s derniers contacts les plus anciens avec les services expirés actifs
+BoxTitleLastActionsToDo=%s dernières actions à faire
+BoxTitleGoodCustomers=%s Bons clients
+LastRefreshDate=Dernière date de rafraîchissement
+NoRecordedInvoices=Aucune facture de client enregistrée
+NoUnpaidCustomerBills=Pas de factures de clients non payées
+LastXMonthRolling=Le dernier roulement du mois de %s
+ChooseBoxToAdd=Ajouter un widget sur votre tableau de bord
+BoxAdded=Le Widget a été ajouté dans votre tableau de bord

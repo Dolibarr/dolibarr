@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=حاشیه
+Margins=حاشیه‌ه
+TotalMargin=حاشیۀ کل
+MarginOnProducts=حاشیه / محصولات
+MarginOnServices=حاشیه / خدمات
+MarginRate=نرخ حاشیه
+MarkRate=نرخ نشانه
+DisplayMarginRates=نمایش نرخ‌های حاشیه
+DisplayMarkRates=نمایش نرخ‌های نشانه
+InputPrice=قیمت ورودی
+margin=مدیریت حاشیۀ سود
+margesSetup=برپاسازی مدیریت حاشیۀ سود
+MarginDetails=جزئیات حاشیه
+ProductMargins=حاشیۀ محصولات
+CustomerMargins=حاشیۀ مشتری
+SalesRepresentativeMargins=حاشیه‌های نمایندۀ فروش
+ContactOfInvoice=Contact of invoice
+UserMargins=حاشیه‌های کاربر
+ProductService=محصولات و خدمات
+AllProducts=همۀ محصولات و خدمات
+ChooseProduct/Service=انتخاب محصول و یا خدمات
+ForceBuyingPriceIfNull=الزام مبلغ خرید/هزینه به قیمت فروش، در صورتی که تعریف نشده باشد
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=روش حاشیه برای تخفیف‌های سراسری
+UseDiscountAsProduct=به عنوان یک محصول
+UseDiscountAsService=به عنوان خدمات
+UseDiscountOnTotal=روی جمع‌جزء
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=در صورتی تعریف می‌شود که تخفیف عمومی به عنوان یک محصول، خدمات یا تنها مجموع‌جزء به‌عنوان محاسبه حاشیه برخورد شود.
+MARGIN_TYPE=مبلغ خرید/هزینه به‌طور پیش‌فرض توسط محاسبۀ حاشیه پیشنهاد می‌شو
+MargeType1=حاشیه براساس بهترین مبلغ فروشنده
+MargeType2=حاشیه بر اساس قیمت میانگین متوازن (WAP)
+MargeType3=حاشیه بر اساس مبلغ هزینه
+MarginTypeDesc=* حاشیه بر اساس بهترین قیمت خرید = قیمت فروش - بهترین قیمت فروش که بر روی کارت محصول تعیین می‌شود. <br> * حاشیه بر اساس مبلغ میانگین متوازن (WAP) = قیمت فروش - قیمت میانگین متوازن محصول یا بهترین قیمت فروش فروشنده در صورتی که هنوز (WAP) تعریف نشده باشد <br> * حاشیه بر اساس قیمت هزینه = قیمت فروش - قیمت هزینه تعریف شده در روی کارت محصول یا WAP در صورتی که قیمت هزینه تعریف نشده باشد، یا بهترین قیمت فروشنده در صورتی که هنوز WAP تعریف نشده باشد
+CostPrice=قیمت هزینه
+UnitCharges=عوارض واحد
+Charges=عوارض
+AgentContactType=نوع طرف‌تماس نمایندۀ تجاری
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+rateMustBeNumeric=نرخ باید یک مقدار عددی باشد
+markRateShouldBeLesserThan100=نرخ نشان باید کم‌تر از 100 باشد
+ShowMarginInfos=نمایش اطلاعات حاشیه‌ها
+CheckMargins=جزئیات حاشیه‌ها
+MarginPerSaleRepresentativeWarning=گزارش حاشیه بر حسب کاربر با استفاده از پیوند میان اشخاص سوم و نمایندگان فروش برای محاسبۀ حاشیۀ هر نمایندۀ فروش. چون برخی از اشخاص سوم یک نمایندۀ فروش اختصاصی ندارند و برخی نمایندگان فروش ممکن است چند نمایندۀ فروش داشته باشند، برخی مقادیر در گزارش‌ها نخواهد آمد (در صورتی که هیچ نمایندۀ فروشی نباشد) و برخی مقادیر در چند سطر مختلف خواهند آمد (برای هر نمایندۀ فروشی).

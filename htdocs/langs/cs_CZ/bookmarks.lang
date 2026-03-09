@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Přidat stránku do záložek
+Bookmark=Záložka
+Bookmarks=Záložky
+ListOfBookmarks=Seznam záložek
+EditBookmarks=Seznam/úprava záložek
+NewBookmark=Nová záložka
+ShowBookmark=Zobrazit záložku
+OpenANewWindow=Otevřete novou kartu
+ReplaceWindow=Nahradit aktuální kartu
+BookmarkTargetNewWindowShort=Nová karta
+BookmarkTargetReplaceWindowShort=Aktuální karta
+BookmarkTitle=Název záložky
+UrlOrLink=URL
+BehaviourOnClick=Chování při kliknutí na URL
+CreateBookmark=Vytvořit záložku
+SetHereATitleForLink=Nastavte název záložky
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Zvolte, zda se má odkazovaná stránka otevřít na aktuální kartě nebo na nové kartě
+BookmarksManagement=Záložky řízení
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

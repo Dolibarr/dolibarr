@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+SupplierProposal=Vendor commercial quotes
+SupplierProposalsDraft=Draft vendor quotes
+SupplierProposalArea=Vendor Quotes area
+SupplierProposalShort=Vendor quote
+SupplierProposals=Vendor quotes
+SupplierProposalsShort=Vendor quotes
+SupplierProposalRefFournNotice=Before closing as "Accepted", think of obtaining suppliers references.
+ConfirmReOpenAsk=Are you sure you want to reopen the price request <b>%s</b>?
+ActionsOnSupplierProposal=Actions on price request
+DocModelAuroreDescription=A complete template for a vendor quotation request template (old implementation of Sponge template)
+DefaultModelSupplierProposalCreate=Default template creation
+ListOfSupplierProposals=List of vendor quotes requested
+ListSupplierProposalsAssociatedProject=List of vendor quotes associated with project
+SupplierProposalsToClose=Vendor quotes to close
+SupplierProposalsToProcess=Vendor quotes to process

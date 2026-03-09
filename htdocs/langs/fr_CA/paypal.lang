@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuration du module PayPal
+PAYPAL_API_SANDBOX=Mode test / sandbox
+PAYPAL_API_USER=Nom d'utilisateur de l'API
+PAYPAL_API_PASSWORD=Mot de passe de l'API
+PAYPAL_API_SIGNATURE=Signature de l'API
+PaypalModeOnlyPaypal=PayPal uniquement
+ThisIsTransactionId=Ceci est un identifiant de transaction: <b> %s</b>
+NewOnlinePaymentFailed=Nouveau paiement en ligne essayé mais échoué
+ReturnURLAfterPayment=Retourner l'URL après le paiement
+ValidationOfOnlinePaymentFailed=La validation du paiement en ligne a échoué
+PaymentSystemConfirmPaymentPageWasCalledButFailed=La page de confirmation de paiement a été appelée par système de paiement renvoyé une erreur
+SetExpressCheckoutAPICallFailed=L'appel de l'API SetExpressCheckout a échoué.
+DoExpressCheckoutPaymentAPICallFailed=L'appel de l'API DoExpressCheckoutPayment a échoué.
+ErrorCode=Code d'erreur
+ErrorSeverityCode=Code de gravité des erreurs

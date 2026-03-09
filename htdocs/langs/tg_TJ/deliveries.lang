@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Расонидани
+DeliveryRef=Интиқоли Ref
+DeliveryCard=Stock receipt
+DeliveryOrder=Хати расонидани
+DeliveryDate=Санаи расондан
+CreateDeliveryOrder=Эҷоди квитансияи интиқол
+DeliveryStateSaved=Ҳолати расонидани захира карда шуд
+SetDeliveryDate=Санаи интиқолро таъин кунед
+ValidateDeliveryReceipt=Тасдиқи расонидани расонидани
+ValidateDeliveryReceiptConfirm=Шумо мутмаин ҳастед, ки ин квитансияи интиқолро тасдиқ кардан мехоҳед?
+DeleteDeliveryReceipt=Нусхаи квитансияро расонед
+DeleteDeliveryReceiptConfirm=Шумо мутмаин ҳастед, ки квитансияи расонидани <b> %s </b> нест кардан мехоҳед?
+DeliveryMethod=Усули расонидани
+TrackingNumber=Шумораи пайгирӣ
+DeliveryNotValidated=Интиқол тасдиқ нашудааст
+StatusDeliveryCanceled=Бекор карда шуд
+StatusDeliveryDraft=Лоиҳа
+StatusDeliveryValidated=Гирифта шуд
+# merou PDF model
+NameAndSignature=Ном ва имзо:
+ToAndDate=Ба ___________________________________ дар ____/_____/__________
+GoodStatusDeclaration=Моли дар боло бударо дар ҳолати хуб гирифтанд,
+Deliverer=Таъминкунанда:
+Sender=Ирсолкунанда
+Recipient=Гиранда
+ErrorStockIsNotEnough=Захираи кофӣ нест
+Shippable=Интиқолшаванда
+NonShippable=Интиқол нест
+ShowShippableStatus=Ҳолати интиқолшавандаро нишон диҳед
+ShowReceiving=Нишон додани квитансия
+NonExistentOrder=Тартиби вуҷуддошта
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Миқдори саҳмияҳое, ки аллакай дар сатрҳои қаблӣ ҷудо карда шудаанд

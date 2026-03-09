@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=「ユーザ」取引先にデフォルトで使用されるアカウント (勘定科目表から)
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=ユーザカードに定義された専用口座は補助元帳会計のみに使用される。これは、General Ledger に使用され、ユーザの専用ユーザ アカウンティング アカウントが定義されていない場合は Subledger アカウンティングのデフォルト値として使用される。
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=賃金支払のデフォルトの勘定科目
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=デフォルトでは、給与を作成するときに ”支払合計を自動的に作成" オプションを空のままにする
+Salary=給料
+Salaries=給与
+NewSalary=新規給与
+AddSalary=給与を追加
+NewSalaryPayment=新規給与カード
+AddSalaryPayment=給与支払を追加する
+SalaryPayment=給与の支払
+SalariesPayments=給与の支払
+SalariesPaymentsOf=%sの給与支払
+ShowSalaryPayment=給与の支払を表示する
+THM=平均時給
+TJM=1日あたりの平均料金
+CurrentSalary=現在の給与
+THMDescription=この値は、プロジェクトモジュールが使用されている場合に、ユーザが入力したプロジェクトで消費された時間のコストを計算するために使用できる。
+TJMDescription=この値は現在情報提供のみを目的としており、計算には使用されない。
+LastSalaries=最新%s給与
+AllSalaries=全給与
+SalariesStatistics=給与統計
+SalariesAndPayments=給与と支払
+ConfirmDeleteSalaryPayment=この給与支払を削除するか？
+FillFieldFirst=最初に従業員フィールドに入力する
+UpdateAmountWithLastSalary=最終給与額の設定

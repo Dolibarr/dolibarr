@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Livrare
+DeliveryRef=Ref Livrare
+DeliveryCard=Bon de stoc
+DeliveryOrder=Bon de livrare
+DeliveryDate=Dată de livrare
+CreateDeliveryOrder=Generați nota de livrare
+DeliveryStateSaved=Stare livrare salvată
+SetDeliveryDate=Setaţi data de expediere
+ValidateDeliveryReceipt=Validare notă de livrare
+ValidateDeliveryReceiptConfirm=Sigur doriți să validați această notă de livrare?
+DeleteDeliveryReceipt=Ştergere notă de livrare
+DeleteDeliveryReceiptConfirm=Sigur doriți să ștergeți nota de livrare <b>%s</b>?
+DeliveryMethod=Metodă de livrare
+TrackingNumber=Număr de urmărire AWB
+DeliveryNotValidated=Livrare nevalidată
+StatusDeliveryCanceled=Anulată
+StatusDeliveryDraft=Schiţă
+StatusDeliveryValidated=Primit
+# merou PDF model
+NameAndSignature=Numele și semnătura:
+ToAndDate=Către___________________________________ pe data de ____ / _____ / __________
+GoodStatusDeclaration=Au primit bunurile de mai sus, în stare bună,
+Deliverer=Livrator:
+Sender=Expeditor
+Recipient=Destinatar
+ErrorStockIsNotEnough=Nu există stoc suficient
+Shippable=Livrabil
+NonShippable=Nelivrabil
+ShowShippableStatus=Afișare status de expediere
+ShowReceiving= Afișare notă de recepție
+NonExistentOrder=Comandă inexistentă
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Cantități de stoc deja alocate pe liniile anterioare

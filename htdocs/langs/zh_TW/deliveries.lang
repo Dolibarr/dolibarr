@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=發貨
+DeliveryRef=發貨參考
+DeliveryCard=Stock receipt
+DeliveryOrder=交貨單
+DeliveryDate=發貨日期
+CreateDeliveryOrder=產生交貨單
+DeliveryStateSaved=發貨狀態已儲存
+SetDeliveryDate=設定出貨日期
+ValidateDeliveryReceipt=驗證交貨單
+ValidateDeliveryReceiptConfirm=您確定要驗證此交貨單嗎？
+DeleteDeliveryReceipt=刪除交貨單
+DeleteDeliveryReceiptConfirm=您確定要刪除交貨單<b>%s</b>嗎？
+DeliveryMethod=發貨方式
+TrackingNumber=追蹤號碼
+DeliveryNotValidated=發貨未驗證
+StatusDeliveryCanceled=已取消
+StatusDeliveryDraft=草案
+StatusDeliveryValidated=已收到
+# merou PDF model
+NameAndSignature=名稱和簽名：
+ToAndDate=To___________________________________在____ / _____ / __________
+GoodStatusDeclaration=已收到貨物,且貨物狀況良好
+Deliverer=發貨人：
+Sender=寄件人
+Recipient=收貨人
+ErrorStockIsNotEnough=庫存不足
+Shippable=可運送
+NonShippable=無法運送
+ShowShippableStatus=顯示可運送狀態
+ShowReceiving=顯示交貨單
+NonExistentOrder=不存在的訂單
+StockQuantitiesAlreadyAllocatedOnPreviousLines = 已在先前的行上分配庫存數量

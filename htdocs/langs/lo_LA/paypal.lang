@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=ການຕັ້ງຄ່າໂມດູນ PayPal
+PaypalDesc=ໂມດູນນີ້ອະນຸຍາດໃຫ້ລູກຄ້າຊໍາລະຜ່ານ <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. ນີ້ສາມາດຖືກນໍາໃຊ້ສໍາລັບການຈ່າຍເງິນສະເພາະຫຼືສໍາລັບການຈ່າຍເງິນທີ່ກ່ຽວຂ້ອງກັບວັດຖຸ Dolibarr (ໃບແຈ້ງຫນີ້, ຄໍາສັ່ງຊື້, ... )
+PaypalOrCBDoPayment=ຈ່າຍດ້ວຍ PayPal (ບັດຫຼື PayPal)
+PaypalDoPayment=ຈ່າຍດ້ວຍ PayPal
+PAYPAL_API_SANDBOX=ການທົດສອບໂModeດ/ກ່ອງຊາຍ
+PAYPAL_API_USER=ຊື່ຜູ້ໃຊ້ API
+PAYPAL_API_PASSWORD=ລະຫັດຜ່ານ API
+PAYPAL_API_SIGNATURE=ລາຍເຊັນ API
+PAYPAL_SSLVERSION=ສະບັບ Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=ສະ ເໜີ ໃຫ້ການຊໍາລະ "ແບບຄົບວົງຈອນ" (ບັດເຄຣດິດ+PayPal) ຫຼື "PayPal" ເທົ່ານັ້ນ
+PaypalModeIntegral=ປະສົມປະສານ
+PaypalModeOnlyPaypal=PayPal ເທົ່ານັ້ນ
+ONLINE_PAYMENT_CSS_URL=URL ທາງເລືອກຂອງແຜ່ນຮູບແບບ CSS ຢູ່ໃນ ໜ້າ ການຊໍາລະເງິນອອນໄລນ
+ThisIsTransactionId=ນີ້ແມ່ນ id ຂອງທຸລະກໍາ: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=ລວມເອົາ url ການຈ່າຍເງິນຂອງ PayPal ເມື່ອເຈົ້າສົ່ງເອກະສານທາງອີເມລ
+NewOnlinePaymentReceived=ໄດ້ຮັບການຊໍາລະເງິນທາງອອນໄລນໃ່
+NewOnlinePaymentFailed=ການຊໍາລະເງິນທາງອອນໄລນ tried ໃtried່ໄດ້ພະຍາຍາມແຕ່ບໍ່ສໍາເລັດ
+ONLINE_PAYMENT_SENDEMAIL=ທີ່ຢູ່ອີເມລ for ສໍາລັບການແຈ້ງເຕືອນຫຼັງຈາກການພະຍາຍາມຊໍາລະແຕ່ລະຄັ້ງ (ສໍາລັບຜົນສໍາເລັດແລະຄວາມລົ້ມເຫຼວ)
+ReturnURLAfterPayment=ສົ່ງຄືນ URL ຫຼັງຈາກການຈ່າຍເງິນ
+ValidationOfOnlinePaymentFailed=ການກວດສອບການຊໍາລະເງິນອອນໄລນບໍ່ສໍາເລັດ
+PaymentSystemConfirmPaymentPageWasCalledButFailed=ໜ້າ ການຢືນຢັນການຈ່າຍເງິນຖືກເອີ້ນໂດຍລະບົບການຈ່າຍເງິນສົ່ງຄືນຂໍ້ຜິດພາດ
+SetExpressCheckoutAPICallFailed=ການໂທຫາ SetExpressCheckout API ບໍ່ສໍາເລັດ.
+DoExpressCheckoutPaymentAPICallFailed=ການໂທ DoExpressCheckoutPayment API ບໍ່ ສຳ ເລັດ.
+DetailedErrorMessage=ຂໍ້ຄວາມຜິດພາດລາຍລະອຽດ
+ShortErrorMessage=ຂໍ້ຄວາມຜິດພາດສັ້ນ
+ErrorCode=ລະຫັດຄວາມຜິດພາດ
+ErrorSeverityCode=ລະຫັດຄວາມຮຸນແຮງຜິດພາດ
+OnlinePaymentSystem=ລະບົບການຊໍາລະເງິນອອນໄລນ
+PaypalLiveEnabled=ເປີດໃຊ້ໂmodeດ "ສົດ" ຂອງ PayPal ແລ້ວ (ບໍ່ດັ່ງນັ້ນທົດສອບ/ໂsandດ sandbox)
+PaypalImportPayment=ນຳ ເຂົ້າການຊໍາລະດ້ວຍ PayPal
+PostActionAfterPayment=ປະຕິບັດການປະກາດຫຼັງຈາກການຈ່າຍເງິນ
+ARollbackWasPerformedOnPostActions=ການຖອຍຫຼັງໄດ້ຖືກປະຕິບັດຢູ່ໃນທຸກການກະທໍາຂອງ Post. ເຈົ້າຕ້ອງເຮັດ ສຳ ເລັດການກະ ທຳ ດ້ວຍຕົນເອງຖ້າມັນ ຈຳ ເປັນ.
+ValidationOfPaymentFailed=ການກວດສອບການຊໍາລະບໍ່ສໍາເລັດ
+CardOwner=ຜູ້ຖືບັດ
+PayPalBalance=ສິນເຊື່ອ Paypal
+OnlineSubscriptionPaymentLine=ການສະໝັກໃຊ້ອອນໄລນ໌ທີ່ບັນທຶກໄວ້ໃນ %s<br>ຈ່າຍຜ່ານ %s<br>ທີ່ຢູ່ IP ທີ່ມາ: %s<br>ID ທຸລະກຳ:  

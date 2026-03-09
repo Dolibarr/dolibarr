@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Доставка
+DeliveryRef=Доставка №
+DeliveryCard=Stock receipt
+DeliveryOrder=Разписка за доставка
+DeliveryDate=Дата на доставка
+CreateDeliveryOrder=Генериране на разписка за доставка
+DeliveryStateSaved=Състоянието на доставката е записано
+SetDeliveryDate=Задаване на дата за доставка
+ValidateDeliveryReceipt=Валидиране на разписка за доставка
+ValidateDeliveryReceiptConfirm=Сигурни ли сте, че искате да валидирате тази разписка за доставка?
+DeleteDeliveryReceipt=Изтриване на разписка за доставка
+DeleteDeliveryReceiptConfirm=Сигурни ли сте, че искате да изтриете тази разписка за доставка с № <b>%s</b>?
+DeliveryMethod=Начин на доставка
+TrackingNumber=Проследяващ номер
+DeliveryNotValidated=Доставката не е валидирана
+StatusDeliveryCanceled=Анулирана
+StatusDeliveryDraft=Чернова
+StatusDeliveryValidated=Получена
+# merou PDF model
+NameAndSignature=Име и подпис:
+ToAndDate=От ___________________________________ на ____ / _____ / __________
+GoodStatusDeclaration=Получих стоките (артикулите) описани по-горе в добро състояние,
+Deliverer=Доставчик:
+Sender=Подател
+Recipient=Получател
+ErrorStockIsNotEnough=Няма достатъчна наличност
+Shippable=Годно за изпращане
+NonShippable=Негодно за изпращане
+ShowShippableStatus=Show shippable status
+ShowReceiving=Показване на разписка за доставка
+NonExistentOrder=Несъществуваща поръчка
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

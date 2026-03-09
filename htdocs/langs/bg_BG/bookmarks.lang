@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Добавяне на тази страница към отметките
+Bookmark=Отметка
+Bookmarks=Отметки
+ListOfBookmarks=Списък с отметки
+EditBookmarks=Списък / промяна на отметки
+NewBookmark=Нова отметка
+ShowBookmark=Показване на отметка
+OpenANewWindow=Отваряне на нов раздел
+ReplaceWindow=Заменяне на текущ раздел
+BookmarkTargetNewWindowShort=Нов раздел
+BookmarkTargetReplaceWindowShort=Текущ раздел
+BookmarkTitle=Име на отметка
+UrlOrLink=URL адрес
+BehaviourOnClick=Поведение при кликване върху URL адрес на отметка
+CreateBookmark=Създаване на отметка
+SetHereATitleForLink=Определете име на отметка
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Изберете дали страницата да бъде отворена в текущия или в нов раздел
+BookmarksManagement=Управление на отметки
+BookmarksMenuShortCut=Ctrl + shift + M
+NoBookmarks=No bookmarks defined

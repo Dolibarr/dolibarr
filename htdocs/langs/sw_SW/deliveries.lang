@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Uwasilishaji
+DeliveryRef=Uwasilishaji wa Marejeleo
+DeliveryCard=Risiti ya hisa
+DeliveryOrder=Risiti ya uwasilishaji
+DeliveryDate=Tarehe ya utoaji
+CreateDeliveryOrder=Tengeneza risiti ya uwasilishaji
+DeliveryStateSaved=Hali ya uwasilishaji imehifadhiwa
+SetDeliveryDate=Weka tarehe ya usafirishaji
+ValidateDeliveryReceipt=Thibitisha risiti ya uwasilishaji
+ValidateDeliveryReceiptConfirm=Je, una uhakika unataka kuthibitisha risiti hii ya uwasilishaji?
+DeleteDeliveryReceipt=Futa risiti ya uwasilishaji
+DeleteDeliveryReceiptConfirm=Je, una uhakika unataka kufuta risiti ya uwasilishaji <b> %s </b> ?
+DeliveryMethod=Njia ya utoaji
+TrackingNumber=Nambari ya ufuatiliaji
+DeliveryNotValidated=Uwasilishaji haujathibitishwa
+StatusDeliveryCanceled=Imeghairiwa
+StatusDeliveryDraft=Rasimu
+StatusDeliveryValidated=Imepokelewa
+# merou PDF model
+NameAndSignature=Jina na Sahihi:
+ToAndDate=Kwa ___________________________________ tarehe ___________/_______
+GoodStatusDeclaration=Umepokea bidhaa hapo juu katika hali nzuri,
+Deliverer=Mtoa huduma:
+Sender=Mtumaji
+Recipient=Mpokeaji
+ErrorStockIsNotEnough=Hakuna hisa ya kutosha
+Shippable=Inaweza kusafirishwa
+NonShippable=Haiwezi kusafirishwa
+ShowShippableStatus=Onyesha hali ya kusafirishwa
+ShowReceiving=Onyesha risiti ya uwasilishaji
+NonExistentOrder=Utaratibu haupo
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Kiasi cha hisa ambacho tayari kimetengwa kwenye laini zilizopita

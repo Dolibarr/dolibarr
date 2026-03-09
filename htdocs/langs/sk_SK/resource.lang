@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Zdroje
+MenuResourceAdd=Nový zdroj
+DeleteResource=Zmazať zdro
+ConfirmDeleteResourceElement=Potvrďte zmazanie zdroja pre túto časť
+NoResourceInDatabase=Žiadne zdroje
+NoResourceLinked=Žiadne zdroje poriradené
+
+ResourcePageIndex=Zoznam zdojov
+ResourceSingular=Zdroj
+ResourceCard=Karta Zdroja
+AddResource=Vytvoriť zdroj
+ResourceFormLabel_ref=Meno zdroja
+ResourceType=Typ zdroja
+ResourceFormLabel_description=Popis zdroja
+
+ResourcesLinkedToElement=Zdroje priradené pre časť
+
+ShowResource=Zobraziť zdroj
+
+ResourceElementPage=Čiastočné zdroje
+ResourceCreatedWithSuccess=Zdroj úspešne vytvorený
+RessourceLineSuccessfullyDeleted=Riadok zdroja úspešne zmazaný
+RessourceLineSuccessfullyUpdated=Riadok zdroja úspešne aktualizovaný
+ResourceLinkedWithSuccess=Rdroj úspešne priradený
+
+ConfirmDeleteResource=Potvrďte zmazanie zdroja
+RessourceSuccessfullyDeleted=Zdroj úspešne zmazaný
+DictionaryResourceType=Typ zdroja
+
+SelectResource=Vybrať zdroj
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Zdroje

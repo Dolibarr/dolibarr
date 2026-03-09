@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - cashdesk
+CashDeskBankCheque=Bankkonto(Scheckzahlung)
+CashdeskShowServices=Verkauf von Dienstleistungen
+TotalTicket=Gesamtanzahl Ticket
+BankToPay=Zahlungskonto
+FilterRefOrLabelOrBC=Suche (Art-Nr./Name)
+Receipt=Beleg

@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Ρύθμιση ενότητας Mailman και SPIP
+MailmanTitle=Σύστημα διαχείρισης λιστών ηλεκτρονικού ταχυδρομείου Mailman
+TestSubscribe=Δοκιμή ενεργοποίησης συνδρομής για τις λίστες Mailman
+TestUnSubscribe=Δοκιμή διαγραφής συνδρομής από τις λίστες Mailman
+MailmanCreationSuccess=Η δοκιμή ενεργοποίησης συνδρομής εκτελέστηκε με επιτυχία
+MailmanDeletionSuccess=Η δοκιμή κατάργησης συνδρομής εκτελέστηκε με επιτυχία
+SynchroMailManEnabled=Θα πραγματοποιηθεί ενημέρωση του Mailman
+SynchroSpipEnabled=Θα πραγματοποιηθεί ενημέρωση του Spip
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Κωδικός πρόσβασης διαχειριστή του Mailman 
+DescADHERENT_MAILMAN_URL=URL για συνδρομές Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL για κατάργηση συνδρομών Mailman
+DescADHERENT_MAILMAN_LISTS=Λίστα (ες) για την αυτόματη αναγραφή των νέων μελών (χωρισμένες με κόμμα)
+SPIPTitle=Σύστημα Διαχείρισης Περιεχομένου SPIP 
+DescADHERENT_SPIP_SERVEUR=SPIP Server
+DescADHERENT_SPIP_DB=Όνομα βάσης δεδομένων SPIP
+DescADHERENT_SPIP_USER=Όνομα χρήστη βάσης δεδομένων SPIP 
+DescADHERENT_SPIP_PASS=Κωδικός πρόσβασης βάσης δεδομένων SPIP
+AddIntoSpip=Προσθήκη στο SPIP
+AddIntoSpipConfirmation=Είστε σίγουροι ότι θέλετε να προσθέσετε αυτό το μέλος στο SPIP;
+AddIntoSpipError=Η προσθήκη του χρήστη στο SPIP απέτυχε
+DeleteIntoSpip=Αφαίρεση από SPIP
+DeleteIntoSpipConfirmation=Είστε σίγουροι ότι θέλετε να αφαιρέσετε αυτό το μέλος από SPIP;
+DeleteIntoSpipError=Απέτυχε η κατάργηση του χρήστη από το SPIP
+SPIPConnectionFailed=Αποτυχία σύνδεσης με SPIP
+SuccessToAddToMailmanList=%s προστέθηκε επιτυχώς στη λίστα mailman %s ή στη βάση δεδομένων SPIP
+SuccessToRemoveToMailmanList=Το %s καταργήθηκε επιτυχώς από τη λίστα mailman %s ή τη βάση δεδομένων SPIP

@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - paypal
+PAYPAL_API_SANDBOX=Mode (test/sandbox)
+PaypalModeIntegral=Integrated
+ThisIsTransactionId=This is the transaction id: <b>%s</b>
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system, returned an error

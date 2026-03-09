@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - interventions
+InterventionCard=Interventiedetails
+AddIntervention=Nieuwe interventie
+InterventionContact=Interventiecontactpersoon
+ValidateIntervention=Inteverntie valideren
+DocumentModelStandard=Standaard modeldocument voor interventies
+InterventionCardsAndInterventionLines=Inteventiebladen en -regels
+SendInterventionRef=Indiening van de interventie %s
+InterventionsArea=Interventieruimte
+DraftFichinter=Concept interventie
+LastModifiedInterventions=Laatste %s gemodificeerde interventies
+InterventionStatistics=Statistieken van de interventies
+InterId=Interventie id
+InterDateCreation=Datum aanmaak interventie
+InterDuration=Duur interventie
+InterStatus=Status interventie
+InterNote=Nota interventie
+InterLineId=Lijn id interventie
+InterLineDate=Lijn datum interventie
+InterLineDuration=Lijn duur interventie
+InterLineDesc=Lijn omschrijving interventie
+TypeContact_fichinter_external_CUSTOMER=Nabehandeling afnemerscontact

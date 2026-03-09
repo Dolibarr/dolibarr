@@ -1,0 +1,369 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Заявки
+Module56000Desc=Система заявок для управління питаннями або запитами
+
+Permission56001=Дивіться заявки
+Permission56002=Редагувати заявки
+Permission56003=Видалити заявки
+Permission56004=Управління заявками
+Permission56005=Перегляньте заявки всіх контрагентів (не діє для зовнішніх користувачів, завжди обмежуйтеся третьою стороною, від якої вони залежать)
+Permission56006=Експортні квитки
+
+Tickets=Заявки
+TicketDictType=Заявка - Типи
+TicketDictCategory=Квиток - групи
+TicketDictSeverity=Заявка - серйозності
+TicketDictResolution=Заявка - Резолюція
+
+TicketTypeShortCOM=Комерційне питання
+TicketTypeShortHELP=Запит на функціональну допомогу
+TicketTypeShortISSUE=Проблема або помилка
+TicketTypeShortPROBLEM=Проблема
+TicketTypeShortREQUEST=Запит на зміну або покращення
+TicketTypeShortPROJET=Проект
+TicketTypeShortOTHER=Інший
+
+TicketSeverityShortLOW=Низька
+TicketSeverityShortNORMAL=Нормальний
+TicketSeverityShortHIGH=Високий
+TicketSeverityShortBLOCKING=Критичний, блокуючий
+
+TicketCategoryShortOTHER=Інший
+
+ErrorBadEmailAddress=Поле "%s" неправильне
+MenuTicketMyAssign=Мої заявки
+MenuTicketMyAssignNonClosed=Мої відкриті заявки
+MenuListNonClosed=Відкриті заявки
+
+TypeContact_ticket_internal_CONTRIBUTOR=Дописувач
+TypeContact_ticket_internal_SUPPORTTEC=Призначений користувач
+TypeContact_ticket_external_SUPPORTCLI=Контакти з клієнтами / відстеження інцидентів
+TypeContact_ticket_external_CONTRIBUTOR=Зовнішній учасник
+
+OriginEmail=Електронна пошта репортера
+Notify_TICKET_SENTBYMAIL=Надішліть повідомлення про квиток електронною поштою
+
+ExportDataset_ticket_1=Заявки
+
+# Status
+Read=Прочитані
+Assigned=Призначений
+NeedMoreInformation=Чекаємо відгуку журналіста
+NeedMoreInformationShort=Чекаємо зворотного зв'язку
+TicketAnswered=Answered
+Waiting=Очікування
+SolvedClosed=Вирішено
+Deleted=Видалено
+
+# Dict
+Type=Тип
+Severity=Тяжкість
+TicketGroupIsPublic=Група публічна
+TicketGroupIsPublicDesc=Якщо група квитків є загальнодоступною, вона буде видима у формі під час створення квитка з загальнодоступного інтерфейсу
+
+# Email templates
+MailToSendTicketMessage=Щоб надіслати електронну пошту з квитка
+
+#
+# Admin page
+#
+TicketSetup=Налаштування квиткового модуля
+TicketSettings=Налаштування
+TicketPublicAccess=Загальнодоступний інтерфейс, який не потребує ідентифікації, доступний за наступною URL-адресою
+TicketSetupDictionaries=Тип заявки, складність та аналітичні коди можна налаштувати із словників
+TicketParamModule=Налаштування змінної модуля
+TicketParamMail=Налаштування електронної пошти
+TicketEmailNotificationFrom=Електронна пошта відправника для сповіщення про відповіді
+TicketEmailNotificationFromHelp=Електронна адреса відправника, яка використовуватиметься для надсилання сповіщення електронною поштою, коли відповідь надається в бек-офісі. Наприклад noreply@example.com
+TicketEmailNotificationTo=Повідомте про створення заявки на цю адресу електронної пошти
+TicketEmailNotificationToHelp=За наявності цієї адреси електронної пошти буде сповіщено про створення заявки
+TicketNewEmailBodyLabel=Текстове повідомлення надіслано після створення квитка
+TicketNewEmailBodyHelp=Вказаний тут текст буде вставлено в електронний лист із підтвердженням створення нового квитка з загальнодоступного інтерфейсу. Інформація про консультацію квитка додається автоматично.
+TicketParamPublicInterface=Налаштування загальнодоступного інтерфейсу
+TicketsEmailMustExist=Для створення квитка потрібна наявна адреса електронної пошти
+TicketsEmailMustExistHelp=У загальнодоступному інтерфейсі електронна адреса вже має бути заповнена в базі даних, щоб створити новий квиток.
+TicketsShowProgression=Відображення прогресу заявки в публічному інтерфейсі
+TicketsShowProgressionHelp=Увімкніть цю опцію, щоб приховати прогрес заявки на сторінках публічного інтерфейсу
+TicketCreateThirdPartyWithContactIfNotExist=Запитуйте ім’я та назву компанії для невідомих електронних адрес.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Перевірте, чи існує третя особа або контакт для введеної електронної пошти. Якщо ні, запитайте ім’я та назву компанії, щоб створити третю сторону з контактом.
+PublicInterface=Загальнодоступний інтерфейс
+TicketPublicInterfaceTextHomeLabelAdmin=Вітальний текст загальнодоступного інтерфейсу
+TicketPublicInterfaceTextHome=Ви можете створити заявку на підтримку або переглянути наявний за його ідентифікатором квиток відстеження.
+TicketPublicInterfaceTextHomeHelpAdmin=Визначений тут текст з’явиться на домашній сторінці загальнодоступного інтерфейсу.
+TicketPublicInterfaceTopicLabelAdmin=Назва інтерфейсу
+TicketPublicInterfaceTopicHelp=Цей текст відображатиметься як назва загальнодоступного інтерфейсу.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Текст довідки до запису повідомлення
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Цей текст з’явиться над областю введення повідомлення користувача.
+ExtraFieldsTicket=Додаткові атрибути
+TicketCkEditorEmailNotActivated=Редактор HTML не активований. Помістіть вміст FCKEDITOR_ENABLE_MAIL на 1, щоб отримати його.
+TicketsDisableEmail=Не надсилайте електронні листи для створення квитка або запису повідомлень
+TicketsDisableEmailHelp=За замовчуванням електронні листи надсилаються, коли створюються нові квитки або повідомлення. Увімкніть цей параметр, щоб вимкнути *всі* сповіщення електронною поштою
+TicketsLogEnableEmail=Увімкнути журнал по електронній пошті
+TicketsLogEnableEmailHelp=При кожній зміні **кожному контакту**, пов’язаному з квитком, надсилатиметься електронний лист.
+TicketParams=Параметри
+TicketsShowModuleLogo=Відобразити логотип модуля в загальнодоступному інтерфейсі
+TicketsShowModuleLogoHelp=Увімкніть цю опцію, щоб приховати модуль логотипу на сторінках загальнодоступного інтерфейсу
+TicketsShowCompanyLogo=Відображати логотип компанії в загальнодоступному інтерфейсі
+TicketsShowCompanyLogoHelp=Увімкніть цю опцію, щоб показувати логотип головної компанії на сторінках загальнодоступного інтерфейсу
+TicketsShowCompanyFooter=Відображати нижній колонтитул компанії в публічному інтерфейсі
+TicketsShowCompanyFooterHelp=Увімкніть цю опцію, щоб відображати нижній колонтитул головної компанії на сторінках публічного інтерфейсу
+TicketsEmailAlsoSendToMainAddress=Також надішліть сповіщення на основну електронну адресу
+TicketsEmailAlsoSendToMainAddressHelp=Увімкніть цю опцію, щоб також надіслати електронний лист на адресу, визначену в налаштуваннях «%s» (див. вкладку «%s»)
+TicketsLimitViewAssignedOnly=Обмежити відображення квитками, призначеними поточному користувачу (не діє для зовнішніх користувачів, завжди обмежується третьою стороною, від якої вони залежать)
+TicketsLimitViewAssignedOnlyHelp=Будуть видимі лише квитки, призначені поточному користувачеві. Не стосується користувача з правами керування квитками.
+TicketsActivatePublicInterface=Активувати загальнодоступний інтерфейс
+TicketsActivatePublicInterfaceHelp=Публічний інтерфейс дозволяє будь-яким відвідувачам створювати квитки.
+TicketsAutoAssignTicket=Автоматично призначати користувача, який створив квиток
+TicketsAutoAssignTicketHelp=При створенні квитка користувач може бути автоматично призначений до квитка.
+TicketNumberingModules=Модуль нумерації квитків
+TicketsModelModule=Шаблони документів для квитків
+TicketNotifyTiersAtCreation=Повідомте третю сторону про створення
+TicketsDisableCustomerEmail=Завжди вимикайте електронні листи, коли квиток створюється з загальнодоступного інтерфейсу
+TicketsPublicNotificationNewMessage=Надсилайте електронні листи, коли до квитка буде додано нове повідомлення/коментар
+TicketsPublicNotificationNewMessageHelp=Надсилати електронні листи, коли з загальнодоступного інтерфейсу додається нове повідомлення (призначеному користувачеві або електронний лист із сповіщеннями (оновлення) та/або повідомлення електронної пошти до)
+TicketPublicNotificationNewMessageDefaultEmail=Сповіщення електронною поштою (оновлення)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Надсилайте електронний лист на цю адресу для кожного повідомлення про нове повідомлення, якщо для квитка не призначено користувача або якщо користувач не має жодної відомої електронної пошти.
+TicketsAutoReadTicket=Автоматично позначати заявку як прочитану (якщо вона створюється з бек-офісу)
+TicketsAutoReadTicketHelp=Автоматично позначати заявку як прочитану, створену в бек-офісі. Коли заявка створюється з публічного інтерфейсу, заявка залишається зі статусом «Не прочитано».
+TicketsDelayBeforeFirstAnswer=Новий квиток має отримати першу відповідь до (години):
+TicketsDelayBeforeFirstAnswerHelp=Якщо новий квиток не отримав відповіді після цього періоду часу (у годинах), у списку буде відображено важливе попередження.
+TicketsDelayBetweenAnswers=Невирішений квиток не повинен бути неактивним протягом (години):
+TicketsDelayBetweenAnswersHelp=Якщо невирішений квиток, який уже отримав відповідь, не мав подальшої взаємодії після цього періоду часу (у годинах), у перегляді списку відобразиться піктограма попередження.
+TicketsAutoNotifyClose=Автоматично сповіщати третю сторону під час закриття квитка
+TicketsAutoNotifyCloseHelp=Під час закриття заявки вам буде запропоновано надіслати повідомлення одному з контрагент контактів. При масовому закритті повідомлення буде надіслано на один контакт третьої сторони, пов’язаної з тикетом.
+TicketWrongContact=Наданий контакт не є частиною поточних контактів для квитка. Електронна пошта не надіслана.
+TicketChooseProductCategory=Категорія продуктів для підтримки квитків
+TicketChooseProductCategoryHelp=Виберіть категорію продукту підтримки квитків. Це буде використано для автоматичного зв’язування контракту з квитком.
+TicketUseCaptchaCode=Використовуйте графічний код (CAPTCHA) під час створення квитка
+TicketUseCaptchaCodeHelp=Додає перевірку CAPTCHA під час створення нового квитка.
+TicketsAllowClassificationModificationIfClosed=Дозволяє змінювати класифікацію закритих квитків
+TicketsAllowClassificationModificationIfClosedHelp=Дозволяє змінювати класифікацію (тип, групу заявок, серйозність), навіть якщо заявки закрито.
+
+#
+# Index & list page
+#
+TicketsIndex=Квиткова зона
+TicketList=Список заявок
+TicketAssignedToMeInfos=На цій сторінці відображається список заявок, створений або призначений поточним користувачем
+NoTicketsFound=Квиток не знайдено
+NoUnreadTicketsFound=Непрочитаний квиток не знайдено
+TicketViewAllTickets=Переглянути всі квитки
+TicketViewNonClosedOnly=Переглянути лише відкриті квитки
+TicketStatByStatus=Квитки за статусом
+OrderByDateAsc=Сортувати за зростаючою датою
+OrderByDateDesc=Сортувати за датою убування
+ShowAsConversation=Показати як список бесід
+MessageListViewType=Показати як список таблиці
+ConfirmMassTicketClosingSendEmail=Автоматично надсилати електронні листи під час закриття квитків
+ConfirmMassTicketClosingSendEmailQuestion=Ви хочете повідомити третіх осіб про закриття цих квитків?
+
+#
+# Ticket card
+#
+Ticket=Квиток
+TicketCard=Квиткова картка
+CreateTicket=Створити квиток
+EditTicket=Редагувати квиток
+TicketsManagement=Управління квитками
+CreatedBy=Створено
+NewTicket=Новий квиток
+SubjectAnswerToTicket=Відповідь на квиток
+TicketTypeRequest=Тип запиту
+TicketCategory=Квиткова група
+SeeTicket=Дивіться квиток
+TicketMarkedAsRead=Квиток позначено як прочитаний
+TicketReadOn=Читайте далі
+TicketCloseOn=Кінцева дата
+MarkAsRead=Позначити квиток як прочитаний
+TicketHistory=Історія квитків
+AssignUser=Призначити користувачеві
+TicketAssigned=Квиток призначено
+TicketChangeType=Змінити тип
+TicketChangeCategory=Змінити аналітичний код
+TicketChangeSeverity=Зміна тяжкості
+TicketAddMessage=Додати або надіслати повідомлення
+TicketAddPrivateMessage=Додайте приватне повідомлення
+MessageSuccessfullyAdded=Квиток додано
+TicketMessageSuccessfullyAdded=Повідомлення успішно додано
+TicketMessagesList=Список повідомлень
+NoMsgForThisTicket=Немає повідомлення для цього квитка
+TicketProperties=Класифікація
+LatestNewTickets=Останні %s найновіші квитки (не прочитані)
+TicketSeverity=Тяжкість
+ShowTicket=Дивіться квиток
+RelatedTickets=Пов'язані квитки
+TicketAddIntervention=Створіть втручання
+CloseTicket=Закрити|Розв'язати
+AbandonTicket=Відмовитися
+CloseATicket=Закрити|Розгадати квиток
+ConfirmCloseAticket=Підтвердьте закриття квитка
+ConfirmAbandonTicket=Чи підтверджуєте ви закриття квитка до статусу «Закинутий»
+ConfirmDeleteTicket=Будь ласка, підтвердьте видалення квитка
+TicketDeletedSuccess=Квиток успішно видалено
+TicketMarkedAsClosed=Квиток позначено як закритий
+TicketDurationAuto=Розрахована тривалість
+TicketDurationAutoInfos=Тривалість розраховується автоматично на основі втручання
+TicketUpdated=Квиток оновлено
+SendMessageByEmail=Надіслати повідомлення електронною поштою
+TicketNewMessage=Нове повідомлення
+ErrorMailRecipientIsEmptyForSendTicketMessage=Одержувач порожній. Немає надсилання електронної пошти
+TicketGoIntoContactTab=Будь ласка, перейдіть на вкладку «Контакти», щоб вибрати їх
+TicketMessageMailIntro=Заголовок повідомлення
+TicketMessageMailIntroHelp=Цей текст додається лише на початку листа і не буде збережено.
+TicketMessageMailIntroText=Привіт, <br> Нова відповідь була додана до заявки, на яку ви підписалися. Ось повідомлення: <br>
+TicketMessageMailIntroHelpAdmin=Цей текст буде вставлено перед відповіддю під час відповіді на заявку від Dolibarr
+TicketMessageMailFooter=Нижній колонтитул повідомлення
+TicketMessageMailFooterHelp=Цей текст додається лише в кінці повідомлення, надісланого електронною поштою, і не буде збережено.
+TicketMessageMailFooterText=Повідомлення надіслано <b>%s</b> через Dolibarr
+TicketMessageMailFooterHelpAdmin=Цей текст буде вставлено після повідомлення відповіді.
+TicketMessageHelp=Тільки цей текст буде збережено в списку повідомлень на картці квитка.
+TicketMessageSubstitutionReplacedByGenericValues=Змінні підстановки замінюються загальними значеннями.
+ForEmailMessageWillBeCompletedWith=Для повідомлень електронної пошти, надісланих зовнішнім користувачам, повідомлення буде доповнено
+TimeElapsedSince=З того часу минув час
+TicketTimeToRead=Минув час до прочитання
+TicketTimeElapsedBeforeSince=Час, що минув до / після
+TicketContacts=Контактний квиток
+TicketDocumentsLinked=Документи, пов’язані з квитком
+ConfirmReOpenTicket=Підтвердити повторно відкрити цей квиток?
+TicketMessageMailIntroAutoNewPublicMessage=На квитку було розміщено нове повідомлення з темою %s:
+TicketAssignedToYou=Квиток призначено
+TicketAssignedEmailBody=Вам призначено квиток #%s від %s
+TicketAssignedCustomerEmail=Ваш квиток призначено для обробки.
+TicketAssignedCustomerBody=Це автоматичний електронний лист для підтвердження того, що ваш квиток призначено для обробки.
+MarkMessageAsPrivate=Позначити повідомлення як приватне
+TicketMessageSendEmailHelp=Електронний лист буде надіслано всім призначеним контактам
+TicketMessageSendEmailHelp2a=(внутрішні контакти, а також зовнішні контакти, за винятком випадків, коли позначено параметр «%s»)
+TicketMessageSendEmailHelp2b=(внутрішні контакти, а також зовнішні контакти)
+TicketMessagePrivateHelp=Це повідомлення не буде видимим для зовнішніх користувачів
+TicketMessageRecipientsHelp=Поле одержувача заповнено активними контактами, пов’язаними з квитком
+TicketEmailOriginIssuer=Емітент при відправленні квитків
+InitialMessage=Початкове повідомлення
+LinkToAContract=Посилання на договір
+TicketPleaseSelectAContract=Виберіть договір
+UnableToCreateInterIfNoSocid=Не можна створити втручання, якщо третя сторона не визначена
+TicketMailExchanges=Поштовий обмін
+TicketInitialMessageModified=Початкове повідомлення змінено
+TicketMessageSuccesfullyUpdated=Повідомлення успішно оновлено
+TicketChangeStatus=Змінити статус
+TicketConfirmChangeStatus=Підтвердьте зміну статусу: %s ?
+TicketLogStatusChanged=Статус змінено: %s на %s
+TicketNotNotifyTiersAtCreate=Не повідомляти компанію при створенні
+NotifyThirdpartyOnTicketClosing=Контакти для сповіщення під час закриття квитка
+TicketNotifyAllTiersAtClose=Усі пов’язані контакти
+TicketNotNotifyTiersAtClose=Немає пов’язаного контакту
+Unread=Непрочитані
+TicketNotCreatedFromPublicInterface=Недоступний. Квиток не створено з загальнодоступного інтерфейсу.
+ErrorTicketRefRequired=Укажіть назву квитка
+TicketsDelayForFirstResponseTooLong=Забагато часу минуло з моменту відкриття квитка без відповіді.
+TicketsDelayFromLastResponseTooLong=Забагато часу минуло з моменту останньої відповіді на цей квиток.
+TicketNoContractFoundToLink=Не знайдено жодного контракту, який би автоматично пов’язано з цим квитком. Будь ласка, зв’яжіть договір вручну.
+TicketManyContractsLinked=Багато контрактів були автоматично пов’язані з цим квитком. Обов’язково перевірте, що слід вибрати.
+TicketRefAlreadyUsed=Посилання [%s] уже використовується, ваше нове посилання [%s]
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Квиток %s читає %s
+NoLogForThisTicket=Ще немає журналу для цього квитка
+TicketLogAssignedTo=Квиток %s призначено для %s
+TicketLogPropertyChanged=Квиток %s змінено: класифікація з %s до %s
+TicketLogClosedBy=Квиток %s закрито %s
+TicketLogReopen=Квиток %s знову відкрити
+
+#
+# Public pages
+#
+TicketSystem=Квиткова система
+ShowListTicketWithTrackId=Відображення списку квитків із ідентифікатора треку
+ShowTicketWithTrackId=Показати квиток з ідентифікатора треку
+TicketPublicDesc=Ви можете створити заявку на підтримку або перевірити за наявним ідентифікатором.
+YourTicketSuccessfullySaved=Квиток успішно збережено!
+MesgInfosPublicTicketCreatedWithTrackId=Створено новий квиток з ідентифікатором %s та Ref %s.
+PleaseRememberThisId=Будь ласка, збережіть номер відстеження, який ми можемо запитати у вас пізніше.
+TicketNewEmailSubject=Підтвердження створення квитка - Ref %s (загальнодоступний ідентифікатор квитка %s)
+TicketNewEmailSubjectCustomer=Новий квиток у службу підтримки
+TicketNewEmailBody=Це автоматичний електронний лист, щоб підтвердити, що ви зареєстрували новий квиток.
+TicketNewEmailBodyCustomer=Це автоматичний електронний лист, щоб підтвердити, що новий квиток щойно створено у вашому обліковому записі.
+TicketNewEmailBodyInfosTicket=Інформація для моніторингу квитка
+TicketNewEmailBodyInfosTrackId=Номер відстеження квитка: %s
+TicketNewEmailBodyInfosTrackUrl=Ви можете переглянути хід оформлення заявки, натиснувши наступне посилання
+TicketNewEmailBodyInfosTrackUrlCustomer=Ви можете переглянути хід оформлення квитка в спеціальному інтерфейсі, натиснувши наступне посилання
+TicketCloseEmailBodyInfosTrackUrlCustomer=Ви можете ознайомитися з історією цього квитка, натиснувши наступне посилання
+TicketEmailPleaseDoNotReplyToThisEmail=Будь ласка, не відповідайте безпосередньо на цей електронний лист! Використовуйте посилання, щоб відповісти в інтерфейсі.
+TicketPublicInfoCreateTicket=Ця форма дозволяє записати заявку на підтримку в нашій системі управління.
+TicketPublicPleaseBeAccuratelyDescribe=Будь ласка, точно опишіть свій запит. Надайте якомога більше інформації, щоб ми могли правильно визначити ваш запит.
+TicketPublicMsgViewLogIn=Будь ласка, введіть ідентифікатор відстеження квитка
+TicketTrackId=Загальнодоступний ідентифікатор відстеження
+OneOfTicketTrackId=Один із ваших ідентифікаторів відстеження
+ErrorTicketNotFound=Квиток з ідентифікатором відстеження %s не знайдено!
+Subject=Тема
+ViewTicket=Переглянути квиток
+ViewMyTicketList=Переглянути мій список квитків
+ErrorEmailMustExistToCreateTicket=Помилка: адресу електронної пошти не знайдено в нашій базі даних
+TicketNewEmailSubjectAdmin=Створено новий квиток – Ref %s (загальнодоступний ідентифікатор квитка %s)
+TicketNewEmailBodyAdmin= <p> Квиток щойно створено з ідентифікатором #%s, дивіться інформацію: </p>
+SeeThisTicketIntomanagementInterface=Дивіться квиток в інтерфейсі керування
+TicketPublicInterfaceForbidden=Загальнодоступний інтерфейс для квитків не ввімкнено
+ErrorEmailOrTrackingInvalid=Погане значення для ідентифікатора відстеження або електронної пошти
+OldUser=Старий користувач
+NewUser=Новий користувач
+NumberOfTicketsByMonth=Кількість заявок за місяць
+NbOfTickets=Кількість заявок
+ExternalContributors=Зовнішні учасники
+AddContributor=Додайте зовнішнього учасника
+
+# notifications
+TicketCloseEmailSubjectCustomer=Квиток закритий
+TicketCloseEmailBodyCustomer=Це автоматичне повідомлення про те, що квиток %s щойно закрито.
+TicketCloseEmailSubjectAdmin=Квиток закрито - Réf %s (загальнодоступний ідентифікатор квитка %s)
+TicketCloseEmailBodyAdmin=Квиток з ідентифікатором #%s щойно закрито, дивіться інформацію:
+TicketNotificationEmailSubject=Квиток %s оновлено
+TicketNotificationEmailBody=Це автоматичне повідомлення для сповіщення про те, що квиток %s щойно оновлено
+TicketNotificationRecipient=Одержувач сповіщення
+TicketNotificationLogMessage=Повідомлення журналу
+TicketNotificationEmailBodyInfosTrackUrlinternal=Перегляд квитка в інтерфейсі
+TicketNotificationNumberEmailSent=Надіслано сповіщення електронною поштою: %s
+
+ActionsOnTicket=Події за квитком
+
+#
+# Boxes
+#
+BoxLastTicket=Останні створені квитки
+BoxLastTicketDescription=Останні створені квитки %s
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Немає останніх непрочитаних квитків
+BoxLastModifiedTicket=Останні модифіковані квитки
+BoxLastModifiedTicketDescription=Останні модифіковані квитки %s
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Немає останніх змінених квитків
+BoxTicketType=Розподіл відкритих квитків за видами
+BoxTicketSeverity=Кількість відкритих квитків за тяжкістю
+BoxNoTicketSeverity=Квитків не відкривали
+BoxTicketLastXDays=Кількість нових квитків за днями за останні %s днів
+BoxTicketLastXDayswidget = Кількість нових квитків за днями за останні X днів
+BoxNoTicketLastXDays=Немає нових квитків за останні %s днів
+BoxNumberOfTicketByDay=Кількість нових квитків по днях
+BoxNewTicketVSClose=Кількість квитків порівняно з закритими квитками (сьогодні)
+TicketCreatedToday=Квиток створено сьогодні
+TicketClosedToday=Квиток сьогодні закритий
+KMFoundForTicketGroup=Ми знайшли теми та поширені запитання, які можуть дати відповідь на ваше запитання, завдяки перевірці їх перед подачею квитка

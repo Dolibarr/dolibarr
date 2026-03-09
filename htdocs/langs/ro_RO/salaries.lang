@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cont contabil (din Planul de Conturi) utilizat implicit pentru terți tip "utilizator".
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Contul contabil dedicat definit pe fișa de utilizator va fi folosit doar pentru contabilitate analitică. Acesta va fi folosit pentru Registrul general și ca valoare implicită de Subregistru dacă nu este definit un cont contabil dedicat pentru utilizator.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Contul contabil implicit pentru plata salariilor
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=În mod implicit, lăsați necompletată opțiunea "Creați automat o plată totală” la crearea unui salariu 
+Salary=Salariu
+Salaries=Salarii
+NewSalary=Salariu nou
+AddSalary=Adaugă salariu
+NewSalaryPayment=Card de salariu nou
+AddSalaryPayment=Adăugare plată salariu
+SalaryPayment=Plată salariu
+SalariesPayments=Plăţi salarii
+SalariesPaymentsOf=Plăţi salarii pentru %s
+ShowSalaryPayment=Arată plată salariu
+THM=Tarif orar mediu
+TJM=Tarif zilnic mediu
+CurrentSalary=Salariu curent
+THMDescription=Această valoare poate fi utilizată pentru a calcula costul timpului consumat pe un proiect introdus de utilizatori dacă se utilizează modulul Proiecte
+TJMDescription=Această valoare este în prezent doar informativă și nu este utilizată pentru niciun calcul
+LastSalaries=Ultimele %s salarii
+AllSalaries=Toate salariile
+SalariesStatistics=Statistici salariale
+SalariesAndPayments=Salarii și plăți
+ConfirmDeleteSalaryPayment=Vrei să ştergi această plată salarială ?
+FillFieldFirst=Completați mai întâi câmpul angajat
+UpdateAmountWithLastSalary=Setare valoare a ultimului salariu

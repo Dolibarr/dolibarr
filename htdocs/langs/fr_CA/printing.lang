@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - printing
+PrintingDriverDesc=Variables de configuration pour l'impression du pilote.
+ListDrivers=Liste des conducteurs
+PrintTestDesc=Liste des imprimantes.
+PleaseSelectaDriverfromList=Sélectionnez un pilote de la liste.
+PleaseConfigureDriverfromList=Configurez le pilote sélectionné dans la liste.
+SetupDriver=Configuration du pilote
+TargetedPrinter=Imprimante ciblée
+PRINTGCP_INFO=Configuration de Google OAuth API
+GCP_displayName=Afficher un nom
+GCP_Id=ID de l'imprimante
+GCP_OwnerName=Le nom du propriétaire
+GCP_State=État de l'imprimante
+GCP_connectionStatus=État en ligne
+PRINTIPP_HOST=Serveur d'imprimante
+NoDefaultPrinterDefined=Aucune imprimante par défaut n'est définie
+IPP_Uri=Imprimante Uri
+IPP_Name=Nom de l'imprimante
+IPP_State=État de l'imprimante
+IPP_State_reason=Raison de l'état
+IPP_State_reason1=Motif de l'État1
+IPP_Media=Imprimante média
+DirectPrintingJobsDesc=Cette page répertorie les travaux d'impression trouvés pour les imprimantes disponibles.
+GoogleAuthConfigured=Les informations d'identification de Google OAuth ont été trouvées dans la configuration du module OAuth.
+PrintingDriverDescprintgcp=Variables de configuration pour l'impression du pilote Google Cloud Print.
+PrintTestDescprintgcp=Liste des imprimantes pour Google Cloud Print.

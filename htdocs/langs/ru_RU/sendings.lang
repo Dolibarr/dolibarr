@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ссылка поставки
+Sending=Поставки
+Sendings=Поставки
+AllSendings=Все поставки
+Shipment=Поставка
+Shipments=Поставки
+ShowSending=Показать поставки
+Receivings=Квитанции о доставке
+SendingsArea=Раздел поставок
+ListOfSendings=Список поставок
+SendingMethod=Метод отправки
+LastSendings=Последние поставки %s
+StatisticsOfSendings=Статистика поставок
+NbOfSendings=Число поставок
+NumberOfShipmentsByMonth=Количество поставок по месяцам
+SendingCard=Карточка поставки
+NewSending=Новая поставка
+CreateShipment=Создать поставку
+QtyShipped=Количество отгруженных
+QtyShippedShort=Кол-во кораблей.
+QtyPreparedOrShipped=Кол-во подготовленных или отправленных
+QtyToShip=Количество для отправки
+QtyToReceive=Кол-во для получения
+QtyReceived=Количество получено
+QtyInOtherShipments=Кол-во в других поставках
+KeepToShip=Осталось отправить
+KeepToShipShort=Оставаться
+OtherSendingsForSameOrder=Другие поставки для этого заказа
+SendingsAndReceivingForSameOrder=Отгрузки и квитанции по этому заказу
+SendingsToValidate=Поставки для проверки
+StatusSendingCanceled=Отменена
+StatusSendingCanceledShort=Отменена
+StatusSendingDraft=Черновик
+StatusSendingValidated=Утверждена (товары для отправки или уже отправлены)
+StatusSendingProcessed=Обработано
+StatusSendingDraftShort=Черновик
+StatusSendingValidatedShort=Утверждена
+StatusSendingProcessedShort=Обработано
+SendingSheet=Лист поставки
+ConfirmDeleteSending=Вы уверены, что хотите удалить этот груз?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmCancelSending=Вы уверены, что хотите отменить эту доставку?
+DocumentModelMerou=Модель Merou A5
+WarningNoQtyLeftToSend=Внимание, нет товаров ожидающих отправки.
+StatsOnShipmentsOnlyValidated=Статистика предназначена только для подтвержденных отправлений. Используемая дата - это дата подтверждения отгрузки (плановая дата доставки не всегда известна)
+DateDeliveryPlanned=Планируемая дата доставки
+RefDeliveryReceipt=Квитанция о доставке реф.
+StatusReceipt=Квитанция о доставке статуса
+DateReceived=Дата доставки получена
+ClassifyReception=Классифицировать полученные
+SendShippingByEMail=Отправить посылку по электронной почте
+SendShippingRef=Представление поставки %s
+ActionsOnShipping=События поставки
+LinkToTrackYourPackage=Ссылка на номер для отслеживания посылки
+ShipmentCreationIsDoneFromOrder=На данный момент создание новой отгрузки выполняется из записи «Заказ на продажу».
+ShipmentLine=Линия поставки
+ProductQtyInCustomersOrdersRunning=Количество продукта из открытых заказов на продажу
+ProductQtyInSuppliersOrdersRunning=Количество товара из открытых заказов на поставку
+ProductQtyInShipmentAlreadySent=Количество товара из уже отправленного открытого заказа на продажу
+ProductQtyInSuppliersShipmentAlreadyRecevied=Количество товаров из открытых заказов на поставку уже получено
+NoProductToShipFoundIntoStock=Товаров для отправки не обнаружено на складе <b>%s</b>. Исправьте запас или вернитесь, чтобы выбрать другой склад.
+WeightVolShort=Вес / об.
+ValidateOrderFirstBeforeShipment=Вы должны сначала подтвердить заказ перед отправкой.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Более полная модель документа для доставки квитанций (logo. ..)
+DocumentModelStorm=Более полная модель документа для квитанций о доставке и совместимость дополнительных полей (логотип ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянное EXPEDITION_ADDON_NUMBER не определена
+SumOfProductVolumes=Сумма сторон товара
+SumOfProductWeights=Вес товара в сумме
+
+# warehouse details
+DetailWarehouseNumber= Детали склада
+DetailWarehouseFormat= W: %s (Кол-во: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

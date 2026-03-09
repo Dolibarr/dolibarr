@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - install
+InstallEasy=Simplemente siga las instrucciones paso a paso.
+MiscellaneousChecks=Verificación de prerequisitos
+ConfFileDoesNotExistsAndCouldNotBeCreated=¡El archivo de configuración <b>%s</b> no existe ni se pudo crear!
+ConfFileCouldBeCreated=Se ha creado el archivo de configuración <b>%s</b>.

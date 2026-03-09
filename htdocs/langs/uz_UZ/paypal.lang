@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modulini sozlash
+PaypalDesc=Ushbu modul <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> orqali mijozlar tomonidan to'lovlarni amalga oshirish imkonini beradi. Bu vaqtinchalik to'lov uchun yoki Dolibarr ob'ekti bilan bog'liq to'lov uchun (hisob-faktura, buyurtma, ...)
+PaypalOrCBDoPayment=PayPal (Card yoki PayPal) bilan to'lash
+PaypalDoPayment=PayPal bilan to'lash
+PAYPAL_API_SANDBOX=Rejim sinovi / qum qutisi
+PAYPAL_API_USER=API foydalanuvchi nomi
+PAYPAL_API_PASSWORD=API paroli
+PAYPAL_API_SIGNATURE=API imzosi
+PAYPAL_SSLVERSION=Curl SSL versiyasi
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Faqat "ajralmas" to'lovni taklif eting (Kredit karta + PayPal) yoki faqat "PayPal"
+PaypalModeIntegral=Ajralmas
+PaypalModeOnlyPaypal=Faqat PayPal
+ONLINE_PAYMENT_CSS_URL=Onlayn to'lovlar sahifasida CSS uslublar jadvalining ixtiyoriy URL manzili
+ThisIsTransactionId=Bu tranzaksiya identifikatori: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=Hujjatni elektron pochta orqali yuborganingizda PayPal to'lov urlini qo'shing
+NewOnlinePaymentReceived=Yangi onlayn to'lov qabul qilindi
+NewOnlinePaymentFailed=Yangi onlayn to'lov amalga oshirildi, ammo muvaffaqiyatsiz tugadi
+ONLINE_PAYMENT_SENDEMAIL=Har bir to'lov urinishidan so'ng bildirishnomalar uchun elektron pochta manzili (muvaffaqiyatli va muvaffaqiyatsiz bo'lganligi uchun)
+ReturnURLAfterPayment=To'lovdan so'ng URL manzilini qaytaring
+ValidationOfOnlinePaymentFailed=Onlayn to'lovni tasdiqlash amalga oshmadi
+PaymentSystemConfirmPaymentPageWasCalledButFailed=To'lov tizimi tomonidan to'lovni tasdiqlash sahifasi chaqirildi, xato yuz berdi
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API chaqiruvi amalga oshmadi.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API chaqiruvi amalga oshmadi.
+DetailedErrorMessage=Batafsil xato xabari
+ShortErrorMessage=Qisqa xato xabari
+ErrorCode=Xato kodi
+ErrorSeverityCode=Xatolik darajasi kodi
+OnlinePaymentSystem=Onlayn to'lov tizimi
+PaypalLiveEnabled=PayPal "jonli" rejimi yoqilgan (aks holda sinov / sandbox rejimi)
+PaypalImportPayment=PayPal to'lovlarini import qilish
+PostActionAfterPayment=To'lovlardan so'ng harakatlarni joylashtiring
+ARollbackWasPerformedOnPostActions=Postning barcha harakatlarida orqaga qaytarish amalga oshirildi. Agar kerak bo'lsa, post harakatlarini qo'lda bajarishingiz kerak.
+ValidationOfPaymentFailed=To'lov tasdiqlanmadi
+CardOwner=Karta egasi
+PayPalBalance=Paypal krediti
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

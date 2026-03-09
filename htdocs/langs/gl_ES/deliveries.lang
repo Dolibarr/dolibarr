@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Envío
+DeliveryRef=Ref. envío
+DeliveryCard=Recibo de existencias
+DeliveryOrder=Nota de recepción
+DeliveryDate=Data de entrega
+CreateDeliveryOrder=Xerar nota de entrega
+DeliveryStateSaved=Estado de entrega gardado
+SetDeliveryDate=Indicar a data de entrega
+ValidateDeliveryReceipt=Validar a nota de entrega
+ValidateDeliveryReceiptConfirm=¿Está certo de querer validar esta entrega?
+DeleteDeliveryReceipt=Eliminar a nota de entrega
+DeleteDeliveryReceiptConfirm=¿Está certo de querer eliminar a nota de entrega <b>%s</b>?
+DeliveryMethod=Método de envío
+TrackingNumber=Nº de seguimento
+DeliveryNotValidated=Nota de recepción non validada
+StatusDeliveryCanceled=Anulado
+StatusDeliveryDraft=Borrador
+StatusDeliveryValidated=Recibido
+# merou PDF model
+NameAndSignature=Nome e sinatura :
+ToAndDate=En___________________________________ a ____/_____/__________
+GoodStatusDeclaration=Teño recibido a mercancía en bo estado,
+Deliverer=Destinatario :
+Sender=Orixe
+Recipient=Destinatario
+ErrorStockIsNotEnough=Non hai suficiente stock
+Shippable=Enviable
+NonShippable=Non enviable
+ShowShippableStatus=Amosar estado de envío
+ShowReceiving=Mostrar nota de recepción
+NonExistentOrder=Pedimento inexistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Cantidades de stock xa asignadas en liñas anteriores 

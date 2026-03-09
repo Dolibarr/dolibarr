@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Saadetis
+DeliveryRef=Saadetise viide
+DeliveryCard=Stock receipt
+DeliveryOrder=Kohaletoimetamise kviitung
+DeliveryDate=Kohaletoimetamise kuupäev
+CreateDeliveryOrder=Loo kohaletoimetamise kviitung
+DeliveryStateSaved=Saadetise olek salvestatud
+SetDeliveryDate=Määra saadetise kuupäev
+ValidateDeliveryReceipt=Kinnita vastuvõtu kviitung
+ValidateDeliveryReceiptConfirm=Kas kindlasti kinnitada selle saadetise vastuvõtu kviitungi?
+DeleteDeliveryReceipt=Kustuta vastuvõtu kviitung
+DeleteDeliveryReceiptConfirm=Kas tahad kindlasti kustutada saadetise vastuvõtu kviitungit <b>%s</b>?
+DeliveryMethod=Tarneviis
+TrackingNumber=Jälgimiskood
+DeliveryNotValidated=Saadetis on kinnitamata
+StatusDeliveryCanceled=Tühistatud
+StatusDeliveryDraft=Mustand
+StatusDeliveryValidated=Vastu võetud
+# merou PDF model
+NameAndSignature=Nimi ja allkiri:
+ToAndDate=Saaja___________________________________ kuupäev ____ . _____. __________
+GoodStatusDeclaration=Olen ülalloetletud kaubad vastavalt tellimusele heas seisukorras kätte saanud,
+Deliverer=Kohaletoimetaja:
+Sender=Saatja
+Recipient=Vastuvõtja
+ErrorStockIsNotEnough=Laoseis ei ole piisav
+Shippable=Saab transportida
+NonShippable=Ei saa transportida
+ShowShippableStatus=Näita transporditavuse olekut
+ShowReceiving=Näita saadetise kviitungit
+NonExistentOrder=Olematu tellimus
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Laokogus on juba eraldatud eelmistele ridadele

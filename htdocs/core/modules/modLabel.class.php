@@ -1,0 +1,111 @@
+<?php
+/* Copyright (C) 2007-2009 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2008      Laurent Destailleur <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\defgroup   label         Module labels
+ *	\brief      Module pour gerer les formats d'impression des etiquettes
+ *	\file       htdocs/core/modules/modLabel.class.php
+ *	\ingroup    other
+ *	\brief      Description and activation file for the module Labels
+ */
+
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
+
+/**
+ *	Class to describe and enable module Label
+ */
+class modLabel extends DolibarrModules
+{
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+		$this->numero = 60;
+
+		$this->family = "technic";
+		$this->module_position = '75';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+		$this->description = "Management of stickers";
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'development';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->picto = 'generic';
+
+		// Data directories to create when module is enabled
+		$this->dirs = array("/label/temp");
+
+		// Dependencies
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+
+		// Config pages
+		// $this->config_page_url = array("label.php");
+
+		// Constants
+		$this->const = array();
+
+		// Boxes
+		$this->boxes = array();
+
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'label';
+
+		$this->rights[1][0] = 601; // id de la permission
+		$this->rights[1][1] = 'Read stickers';
+		$this->rights[1][3] = 0; // La permission est-elle une permission par default
+		$this->rights[1][4] = 'lire';
+
+		$this->rights[2][0] = 602; // id de la permission
+		$this->rights[2][1] = 'Create/modify stickers';
+		$this->rights[2][3] = 0; // La permission est-elle une permission par default
+		$this->rights[2][4] = 'creer';
+
+		$this->rights[4][0] = 609; // id de la permission
+		$this->rights[4][1] = 'Delete stickers';
+		$this->rights[4][3] = 0; // La permission est-elle une permission par default
+		$this->rights[4][4] = 'supprimer';
+	}
+
+	/**
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		// Permissions
+		$this->remove($options);
+
+		$sql = array();
+
+		return $this->_init($sql, $options);
+	}
+}

@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=ຕັ້ງ Mailman ແລະ SPIP module
+MailmanTitle=ລະບົບບັນຊີລາຍຊື່ຜູ້ຮັບຈົດMailາຍ
+TestSubscribe=ເພື່ອທົດສອບການສະtoັກໃຊ້ລາຍຊື່ Mailman
+TestUnSubscribe=ເພື່ອທົດສອບຍົກເລີກການສະfromັກໃຊ້ລາຍຊື່ Mailman
+MailmanCreationSuccess=ການທົດສອບການສະcriptionັກໃຊ້ ສຳ ເລັດແລ້ວ
+MailmanDeletionSuccess=ການທົດສອບຍົກເລີກການເປັນສະມາຊິກ ສຳ ເລັດແລ້ວ
+SynchroMailManEnabled=ຈະມີການອັບເດດ Mailman
+SynchroSpipEnabled=ຈະມີການອັບເດດ Spip
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=ລະຫັດຜ່ານຂອງຜູ້ເບິ່ງແຍງລະບົບ Mailman
+DescADHERENT_MAILMAN_URL=URL ສໍາລັບການສະMailັກໃຊ້ Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL ສໍາລັບການຍົກເລີກການເປັນສະມາຊິກ Mailman
+DescADHERENT_MAILMAN_LISTS=ລາຍຊື່ ສຳ ລັບການຂຽນຊື່ສະມາຊິກໃautomatic່ໂດຍອັດຕະໂນມັດ (ແຍກດ້ວຍaາຍຈຸດ)
+SPIPTitle=ລະບົບການຈັດການເນື້ອຫາຂອງ SPIP
+DescADHERENT_SPIP_SERVEUR=ເຊີບເວີ SPIP
+DescADHERENT_SPIP_DB=ຊື່ຖານຂໍ້ມູນ SPIP
+DescADHERENT_SPIP_USER=ເຂົ້າສູ່ລະບົບຖານຂໍ້ມູນ SPIP
+DescADHERENT_SPIP_PASS=ລະຫັດຜ່ານຖານຂໍ້ມູນ SPIP
+AddIntoSpip=ເພີ່ມໃສ່ SPIP
+AddIntoSpipConfirmation=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການເພີ່ມສະມາຊິກນີ້ໃສ່ໃນ SPIP?
+AddIntoSpipError=ການເພີ່ມຜູ້ໃຊ້ເຂົ້າໄປໃນ SPIP ລົ້ມເຫລວ
+DeleteIntoSpip=ລຶບອອກຈາກ SPIP
+DeleteIntoSpipConfirmation=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບສະມາຊິກນີ້ອອກຈາກ SPIP?
+DeleteIntoSpipError=ສະກັດຜູ້ໃຊ້ຈາກ SPIP ບໍ່ສໍາເລັດ
+SPIPConnectionFailed=ເຊື່ອມຕໍ່ກັບ SPIP ບໍ່ສໍາເລັດ
+SuccessToAddToMailmanList=%s ຖືກເພີ່ມເຂົ້າໃນລາຍຊື່ mailman ສຳ ເລັດ %s ຫຼືຖານຂໍ້ມູນ SPIP
+SuccessToRemoveToMailmanList=%s ຖືກລຶບອອກຈາກບັນຊີລາຍຊື່ mailman ສຳ ເລັດ %s ຫຼືຖານຂໍ້ມູນ SPIP

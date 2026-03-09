@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=論壇/ Wiki 支援
+EMailSupport=電子郵件支援
+RemoteControlSupport=線上/遠端支援
+OtherSupport=其他支援
+ToSeeListOfAvailableRessources=聯絡/查看可用的資源：
+HelpCenter=幫助中心
+DolibarrHelpCenter=Dolibarr幫助和支援中心
+ToGoBackToDolibarr=否則， <a href="%s">請點擊此處繼續使用Dolibarr</a> 。
+TypeOfSupport=支援類型
+TypeSupportCommunauty=論壇（免費）
+TypeSupportCommercial=商業
+TypeOfHelp=類型
+NeedHelpCenter=Need support?
+Efficiency=效率
+TypeHelpOnly=只需要說明
+TypeHelpDev=說明+開發
+TypeHelpDevForm=幫助+開發+培訓
+BackToHelpCenter=否則， <a href="%s">請返回幫助中心首頁</a> 。
+LinkToGoldMember=您可以通過點擊他們的小工具來預先選擇語言的培訓師（%s）（狀態和最高價格會自動更新）：
+PossibleLanguages=支持的語言
+SubscribeToFoundation=幫助Dolibarr項目，訂閱基金會
+SeeOfficalSupport=使用您語言的 Dolibarr 官方支援：<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

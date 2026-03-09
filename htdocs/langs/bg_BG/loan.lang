@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Кредит
+Loans=Кредити
+NewLoan=Нов кредит
+ShowLoan=Показване на кредит
+PaymentLoan=Плащане по кредит
+LoanPayment=Плащане по кредит
+ShowLoanPayment=Показване на плащане по кредит
+LoanCapital=Капитал
+Insurance=Застраховка
+Interest=Лихва
+Nbterms=Брой условия
+Term=Условие
+LoanAccountancyCapitalCode=Счетоводна сметка за капитал
+LoanAccountancyInsuranceCode=Счетоводна сметка за застраховка
+LoanAccountancyInterestCode=Счетоводна сметка за лихва
+ConfirmDeleteLoan=Потвърдете изтриването на този кредит
+LoanDeleted=Кредитът е успешно изтрит
+ConfirmPayLoan=Потвърдете класифицирането на този кредит като платен
+LoanPaid=Кредитът е платен
+ListLoanAssociatedProject=Списък на кредити, свързани с проекта
+AddLoan=Създаване на кредит
+FinancialCommitment=Финансово задължение
+InterestAmount=Лихва
+CapitalRemain=Оставащ капитал
+TermPaidAllreadyPaid = This term is allready paid
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+# Admin
+ConfigLoan=Конфигуриране на модула кредити
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+CreateCalcSchedule=Променяне на финансово задължение

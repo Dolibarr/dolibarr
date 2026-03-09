@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Доставка
+DeliveryRef=Ссылка Доставка
+DeliveryCard=Товарный чек
+DeliveryOrder=Квитанция о доставке
+DeliveryDate=Дата доставки
+CreateDeliveryOrder=Создать квитанцию о доставке
+DeliveryStateSaved=Состояние доставки сохранено
+SetDeliveryDate=Установить дату отправки
+ValidateDeliveryReceipt=Подтверждение получения доставки
+ValidateDeliveryReceiptConfirm=Вы уверены, что хотите подтвердить эту квитанцию о доставке?
+DeleteDeliveryReceipt=Удалить подтверждение доставки
+DeleteDeliveryReceiptConfirm=Вы действительно хотите удалить квитанцию о доставке <b>%s</b>?
+DeliveryMethod=Способ доставки
+TrackingNumber=Номер отправления
+DeliveryNotValidated=Доставка не подтверждена
+StatusDeliveryCanceled=Отменена
+StatusDeliveryDraft=Проект
+StatusDeliveryValidated=Получено
+# merou PDF model
+NameAndSignature=Имя и подпись:
+ToAndDate=Получатель ___________________________________ доставлено ____ / _____ / __________
+GoodStatusDeclaration=Указанные выше товары получены в надлежащем состоянии,
+Deliverer=Поставщик:
+Sender=Отправитель
+Recipient=Получатель
+ErrorStockIsNotEnough=Нет достаточного запаса на складе
+Shippable=Возможно к отправке
+NonShippable=Не возможно к отправке
+ShowShippableStatus=Показать статус доставки
+ShowReceiving=Показать квитанцию о доставке
+NonExistentOrder=Несуществующий заказ
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Объемы запасов, уже распределенные по предыдущим строкам

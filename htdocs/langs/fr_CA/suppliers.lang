@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - suppliers
+TotalBuyingPriceMinShort=Total de sous-produits par prix d'achat
+SomeSubProductHaveNoPrices=Certains sous-produits n'ont pas de prix défini
+ChangeSupplierPrice=Changer le prix d'achat
+Availability=Disponible
+ApproveThisOrder=Approuver cette commande
+ConfirmApproveThisOrder=Êtes-vous sûr de vouloir approuver la commande <b> %s</b>?
+ConfirmDenyingThisOrder=Êtes-vous sûr de vouloir refuser cette commande <b> %s</b>?
+ConfirmCancelThisOrder=Êtes-vous sûr de vouloir annuler cette commande <b> %s</b>?
+DoNotOrderThisProductToThisSupplier=Ne commandez pas
+AllProductServicePrices=Tous les prix des produits / services

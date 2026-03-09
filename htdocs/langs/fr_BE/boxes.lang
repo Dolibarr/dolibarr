@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - boxes
+BoxGlobalActivity=Activité globale (factures, propales, commandes)
+NoRecordedBookmarks=Aucun bookmark défini
+ClickToAdd=Cliquer ici pour ajouter
+NoRecordedCustomers=Aucun client enregistré
+NoRecordedContacts=Aucun contact enregistré
+NoActionsToDo=Aucune action à faire
+NoRecordedProposals=Aucune propale enregistrée
+NoRecordedProducts=Aucun produit/service enregistré
+NoRecordedProspects=Aucun prospect enregistré
+NoContractedProducts=Aucun produit/service contraté
+NoRecordedContracts=Aucun contrat enregistré
+NoRecordedInterventions=Aucune intervention enregistrée
+BoxProposalsPerMonth=Propales par mois
+ForCustomersInvoices=Factures client
+ForCustomersOrders=Commandes client
+ForProposals=Propales

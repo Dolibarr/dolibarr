@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Workflow-modul opsætning
+WorkflowDesc=Dette modul giver nogle automatiske handlinger. Som standard er arbejdsprocessen åben (du kan gøre ting i den ønskede rækkefølge), men her kan du aktivere nogle automatiske handlinger.
+ThereIsNoWorkflowToModify=Der er ingen arbejdsgang ændringer tilgængelige med de aktiverede moduler.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Opret automatisk en salgsordre, når et kommercielt forslag er underskrevet (den nye ordre har samme beløb som forslaget)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Opret automatisk en kundefaktura, når et kommercielt forslag er underskrevet (den nye faktura vil have samme beløb som forslaget)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Opret automatisk en kundefaktura efter en kontrakt er bekræftet
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Opret automatisk en kundefaktura, når en salgsordre er lukket (den nye faktura har samme beløb som ordren)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Ved oprettelse af billet skal du automatisk oprette en intervention.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassificer linkede kildeforslag som faktureret, når en salgsordre er indstillet til faktureret (og hvis ordrebeløbet er det samme som det samlede beløb for de signerede linkede forslag)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassificer linkede kildeforslag som faktureret, når en kundefaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de signerede linkede forslag)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassificer tilknyttet kildesalgsordre som faktureret, når en kundefaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de tilknyttede salgsordrer). Hvis du har 1 faktura valideret for n ordrer, kan dette også indstille alle ordrer til at blive faktureret.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassificer linkede kildesalgsordrer som faktureret, når en kundefaktura er indstillet til betalt (og hvis fakturabeløbet er det samme som det samlede beløb for de tilknyttede salgsordrer). Hvis du har 1 fakturasæt faktureret for n ordrer, kan dette også indstille alle ordrer til fakturering.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassificer linkede kildesalgsordrer som afsendt, når en forsendelse er valideret (og hvis mængden afsendt af alle forsendelser er den samme som i ordren, der skal opdateres)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Klassificer tilknyttet kildesalgsordre som afsendt, når en forsendelse lukkes (og hvis mængden, der sendes af alle forsendelser, er den samme som i ordren, der skal opdateres)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klassificer linket kildeleverandørforslag som faktureret, når leverandørfakturaen er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de linkede forslag)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassificer linket kildekøbsordre som faktureret, når leverandørfakturaen er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de linkede ordrer)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Klassificer linket kildeindkøbsordre som modtaget, når en modtagelse er valideret (og hvis mængden modtaget af alle modtagelser er den samme som i indkøbsordren, der skal opdateres)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Klassificer tilknyttet kildeindkøbsordre som modtaget, når en modtagelse lukkes (og hvis mængden modtaget af alle modtagelser er den samme som i indkøbsordren for at opdatere)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassificer linket kildeforsendelse som lukket, når en kundefaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de linkede forsendelser)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Klassificer linket kildeforsendelse som faktureret, når en kundefaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de linkede forsendelser)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Klassificer tilknyttede kildemodtagelser som faktureret, når en købsfaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de tilknyttede modtagelser)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Klassificer tilknyttede kildemodtagelser som faktureret, når en købsfaktura er valideret (og hvis fakturabeløbet er det samme som det samlede beløb for de tilknyttede modtagelser)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Når du opretter en billet, skal du tilknytte alle tilgængelige kontrakter fra matchende tredjeparter
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Når du sammenkæder kontrakter, søg blandt moderselskabers
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Luk alle indgreb, der er knyttet til billetten, når en billet er lukket
+AutomaticCreation=Automatisk oprettelse
+AutomaticClassification=Automatisk klassificering
+AutomaticClosing=Automatisk lukning
+AutomaticLinking=Automatisk forbinde 

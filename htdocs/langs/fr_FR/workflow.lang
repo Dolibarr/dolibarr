@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configuration du module workflow
+WorkflowDesc=Ce module est conçu pour modifier le comportement des actions automatiques dans l'application. Par défaut, le workflow est ouvert (vous pouvez faire les choses dans l'ordre que vous voulez). Vous pouvez toutefois activer des actions automatiques qui vous intéressent.
+ThereIsNoWorkflowToModify=Il n'y a pas de modifications de workflow disponibles avec les modules activés.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer automatiquement une commande client à la signature d'un proposition commerciale (la commande sera du même montant que la proposition commerciale)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la signature d'une proposition commerciale (la facture sera du même montant que la proposition commerciale source)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la cloture d'un commande (la facture sera du même montant que la commande)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Crée une intervention automatiquement à la création d'un ticket
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Lorsqu'une commande client est définie sur "facturée", classez le devis source lié comme facturé (et si le montant de la commande est le même que le montant total du devis signé lié )
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Lorsqu'une facture client est validée, classez le devis source lié comme facturé (et si le montant de la facture est le même que le montant total du devis signé lié)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Lorsqu'une facture client est définie comme payée, classez les commandes client sources liées comme facturées (et si le montant de la facture est le même que le montant total des commandes client liées). Si vous générez 1 facture pour n commandes, cela peut également définir toutes les commandes sur "facturé".
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Lorsqu'une facture client est validée, classez toutes les commandes client source liées comme facturé (et si le montant de la facture est le même que le montant total des commandes client sources liées). Si vous générez 1 facture commune pour n commandes, cela peut définir toutes les commandes sources sur "facturé".
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Lorsqu'une facture client est validée, classez la commande client liée (s'il n'y en a qu'une) comme facturé, si le montant total de la commande client liée est égal au montant total de toutes les factures issues. Si vous générez n factures pour 1 commande, cela permet de définir la commande à "facturé" dès que toutes les factures sont validées.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Lorsqu'une expédition est validée, classez les commandes client source liées comme expédiées (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Lorsqu'une expédition est clôturée, classez les commandes client sources liées comme expédiées (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Lorsqu'une facture fournisseur est validée, classez le devis fournisseur source lié comme facturé (et si le montant de la facture est le même que le montant total des devis liés)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Lorsqu'une facture fournisseur est validée, classez la commande d'achat source lié comme facturé (et si le montant de la facture est le même que le montant total des commandes liées)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Lorsqu'une réception est validée, classez la commande d'achat source liée comme reçu (et si la quantité reçue par toutes les réceptions est la même que dans la commande d'achat à mettre à jour)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Lorsqu'une réception est clôturée, classez les bons de commande source liés comme reçus (et si la quantité reçue par toutes les réceptions issues de la commande d'achat est le même que dans la commande d'achat à mettre à jour)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Lorsqu'une facture client est validée, classez l'expédition source liée comme fermée (et si le montant de la facture est le même que le montant total des expéditions liées)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Lorsqu'une facture client est validée, classez l'expédition source liée comme facturé (et si le montant de la facture est le même que le montant total des expéditions liées)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Lorsqu'une facture d'achat est validée, classez les réceptions sources liées comme fermées (et si le montant de la facture est le même que le montant total des réceptions liées)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Lorsqu'une facture d'achat est validée, classez les réceptions sources liées comme facturé (et si le montant de la facture est le même que le montant total des réceptions liées)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Lorsqu'un ticket est créé, associez-le aux contrats disponibles, correspondant au même tiers que le  ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Lors de la liaison automatique à un ticket avec des contrats, recherchez les contrats parmi ceux des sociétés mères.
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Fermer toutes les interventions liées au ticket lorsqu'un ticket est fermé
+AutomaticCreation=Création automatique
+AutomaticClassification=Classification automatique
+AutomaticClosing=Fermeture automatique
+AutomaticLinking=Liaison automatique

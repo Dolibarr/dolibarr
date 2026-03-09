@@ -1,0 +1,45 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+# Generic
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Bilgi Yönetim Sistemi
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Bir Bilgi Yönetimi (BY) veya Yardım-Masası tabanını yönetin
+# Admin page
+KnowledgeManagementSetup = Bilgi Yönetim Sistemi Kurulumu
+KnowledgeManagementSetupPage = Bilgi Yönetim Sistemi Kurulum Sayfası
+# About page
+KnowledgeManagementAbout = Bilgi Yönetimi Hakkında
+KnowledgeManagementAboutPage = Bilgi Yönetimi hakkında sayfa
+KnowledgeManagementArea = Bilgi Yönetimi
+MenuKnowledgeRecord = Bilgi tabanı
+MenuKnowledgeRecordShort = Bilgi tabanı
+ListKnowledgeRecord = Makale listesi
+NewKnowledgeRecord = Yeni makale
+ValidateReply = Çözümü doğrula
+KnowledgeRecords = Nesne
+KnowledgeRecord = Mal
+KnowledgeRecordExtraFields = Makale için Ekstra Alanlar
+GroupOfTicket=Grup bilet
+YouCanLinkArticleToATicketCategory=Makaleyi bir destek talebi grubuna bağlayabilirsiniz (böylece makale bu gruptaki tüm destek taleplerinde vurgulanacaktır)
+SuggestedForTicketsInGroup=Bilet oluşturmada önerildi
+SetObsolete=Eski olarak ayarla
+ConfirmCloseKM=Bu makalenin kapatılmasının geçersiz olduğunu onaylıyor musunuz?
+ConfirmReopenKM=Bu makaleyi "Doğrulandı" durumuna geri yüklemek istiyor musunuz?
+BoxLastKnowledgerecordDescription=Son %s makaleleri
+BoxLastKnowledgerecord=Son makaleler
+BoxLastKnowledgerecordContent=Son makaleler
+BoxLastKnowledgerecordModifiedContent=Son değiştirilen makaleler
+BoxLastModifiedKnowledgerecordDescription=En son %s değiştirilen makaleler
+BoxLastModifiedKnowledgerecord=Son değiştirilen makaleler

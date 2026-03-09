@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. transporten
+Sending=Sändning
+Sendings=Transporter
+AllSendings=Alla leveranser
+Shipment=Sändning
+Shipments=Transporter
+ShowSending=Visa leveranser
+Receivings=Leverans kvitton
+SendingsArea=Transporter område
+ListOfSendings=Lista över transporter
+SendingMethod=Frakt metod
+LastSendings=Senaste %s sändningar
+StatisticsOfSendings=Statistik för transporter
+NbOfSendings=Antal transporter
+NumberOfShipmentsByMonth=Antal leveranser per månad
+SendingCard=Fraktkort
+NewSending=Ny leverans
+CreateShipment=Skapa leverans
+QtyShipped=Antal sändas
+QtyShippedShort=Antal fartyg.
+QtyPreparedOrShipped=Antal beredda eller levererade
+QtyToShip=Antal till-fartyg
+QtyToReceive=Antal att ta emot
+QtyReceived=Antal mottagna
+QtyInOtherShipments=Antal i andra transporter
+KeepToShip=Återstår att skicka
+KeepToShipShort=Förbli
+OtherSendingsForSameOrder=Andra sändningar för denna beställning
+SendingsAndReceivingForSameOrder=Sändningar och kvitton för denna beställning
+SendingsToValidate=Transporter för att bekräfta
+StatusSendingCanceled=Annullerad
+StatusSendingCanceledShort=Annullerad
+StatusSendingDraft=Förslag
+StatusSendingValidated=Bekräftat (produkter till ett fartyg eller som redan sänts)
+StatusSendingProcessed=Bearbetade
+StatusSendingDraftShort=Förslag
+StatusSendingValidatedShort=Bekräftat
+StatusSendingProcessedShort=Bearbetade
+SendingSheet=Packsedel
+ConfirmDeleteSending=Är du säker på att du vill radera den här sändningen?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmCancelSending=Är du säker på att du vill avbryta denna leverans?
+DocumentModelMerou=Merou A5-modellen
+WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
+StatsOnShipmentsOnlyValidated=Statistik gäller endast för validerade försändelser. Datum som används är datumet för validering av leveransen (planerat leveransdatum är inte alltid känt)
+DateDeliveryPlanned=Planerat leveransdatum
+RefDeliveryReceipt=Ref leverans kvitto
+StatusReceipt=Status leverans kvitto
+DateReceived=Datum leverans fick
+ClassifyReception=Classify Received
+SendShippingByEMail=Skicka leverans via e-post
+SendShippingRef=Inlämning av leveransen %s
+ActionsOnShipping=Evenemang på leverans
+LinkToTrackYourPackage=Länk till spåra ditt paket
+ShipmentCreationIsDoneFromOrder=För tillfället skapas en ny försändelse från försäljningsorderposten.
+ShipmentLine=Transport linje
+ProductQtyInCustomersOrdersRunning=Produktkvantitet från öppna försäljningsorder
+ProductQtyInSuppliersOrdersRunning=Produktkvantitet från öppna beställningar
+ProductQtyInShipmentAlreadySent=Produktkvantitet från öppen försäljningsorder redan skickad
+ProductQtyInSuppliersShipmentAlreadyRecevied=Produktkvantitet från öppna inköpsorder redan mottagna
+NoProductToShipFoundIntoStock=Ingen produkt skickas i frakt <b> %s </b>. Rätt lager eller gå tillbaka för att välja ett annat lager.
+WeightVolShort=Vikt / vol.
+ValidateOrderFirstBeforeShipment=Du måste först validera ordern innan du kan göra sändningar.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
+DocumentModelStorm=Mer komplett dokumentmodell för leveranskvitton och extrafältkompatibilitet (logo ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER definieras inte
+SumOfProductVolumes=Summan av produktvolymer
+SumOfProductWeights=Summan av produktvikter
+
+# warehouse details
+DetailWarehouseNumber= Lagerinformation
+DetailWarehouseFormat= W: %s (Antal: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

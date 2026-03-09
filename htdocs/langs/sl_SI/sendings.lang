@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Referenca pošiljke
+Sending=Odprema
+Sendings=Pošiljke
+AllSendings=Vse pošiljke
+Shipment=Odprema
+Shipments=Odpreme
+ShowSending=Prikaži pošiljke
+Receivings=Potrdila o dostavi
+SendingsArea=Področje pošiljk
+ListOfSendings=Seznam pošiljk
+SendingMethod=Način pošiljanja
+LastSendings=Najnovejše pošiljke %s
+StatisticsOfSendings=Statistika pošiljk
+NbOfSendings=Število pošiljk
+NumberOfShipmentsByMonth=Število pošiljk po mesecih
+SendingCard=Pošiljna kartica
+NewSending=Nova pošiljka
+CreateShipment=Kreiranje pošiljke
+QtyShipped=Poslana količina
+QtyShippedShort=Količina ladje.
+QtyPreparedOrShipped=Količina pripravljena ali poslana
+QtyToShip=Količina za pošiljanje
+QtyToReceive=Količina za prejem
+QtyReceived=Prejeta količina
+QtyInOtherShipments=Količina v drugih pošiljkah
+KeepToShip=Ostanek za pošiljanje
+KeepToShipShort=Ostani
+OtherSendingsForSameOrder=Ostale pošiljke za to naročilo
+SendingsAndReceivingForSameOrder=Pošiljke in potrdila za to naročilo
+SendingsToValidate=Pošiljke za potrditev
+StatusSendingCanceled=Preklicano
+StatusSendingCanceledShort=Preklicano
+StatusSendingDraft=Osnutek
+StatusSendingValidated=Potrjeno (proizvodi za pošiljanje ali že poslani)
+StatusSendingProcessed=Obdelani
+StatusSendingDraftShort=Osnutek
+StatusSendingValidatedShort=Potrjena
+StatusSendingProcessedShort=Obdelani
+SendingSheet=Odpremni list
+ConfirmDeleteSending=Ali ste prepričani, da želite izbrisati to pošiljko?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmCancelSending=Ali ste prepričani, da želite preklicati to pošiljko?
+DocumentModelMerou=Vzorec dokumenta Merou A5
+WarningNoQtyLeftToSend=Pozor, noben proizvod ne čaka na pošiljanje.
+StatsOnShipmentsOnlyValidated=Statistika je samo za potrjene pošiljke. Uporabljeni datum je datum potrditve pošiljke (načrtovani datum dostave ni vedno znan)
+DateDeliveryPlanned=Načrtovani datum dostave
+RefDeliveryReceipt=Ref potrdilo o dostavi
+StatusReceipt=Potrdilo o dostavi statusa
+DateReceived=Datum prejema dobave
+ClassifyReception=Classify Received
+SendShippingByEMail=Pošljite pošiljko po elektronski pošti
+SendShippingRef=Oddaja pošiljke %s
+ActionsOnShipping=Aktivnosti v zvezi z odpremnico
+LinkToTrackYourPackage=Povezave za sledenje vaše pošiljke
+ShipmentCreationIsDoneFromOrder=Zaenkrat se kreiranje nove pošiljke izvede iz zapisa Prodajni nalog.
+ShipmentLine=Vrstica na odpremnici
+ProductQtyInCustomersOrdersRunning=Količina izdelkov iz odprtih prodajnih naročil
+ProductQtyInSuppliersOrdersRunning=Količina izdelkov iz odprtih naročilnic
+ProductQtyInShipmentAlreadySent=Količina izdelka iz odprtega prodajnega naročila je že poslana
+ProductQtyInSuppliersShipmentAlreadyRecevied=Količina izdelkov iz že prejetih odprtih naročilnic
+NoProductToShipFoundIntoStock=V skladišču ni bilo mogoče najti nobenega izdelka za pošiljanje <b> %s </b>. Popravite zalogo ali se vrnite in izberite drugo skladišče.
+WeightVolShort=Teža/prostornina
+ValidateOrderFirstBeforeShipment=Preden lahko pošiljate pošiljke, morate najprej potrditi naročilo.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Popolnejši vzorec dobavnice (logo...)
+DocumentModelStorm=Popolnejši model dokumenta za združljivost potrdil o dostavi in dodatnih polj (logotip...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined==
+SumOfProductVolumes=Vsota volumnov proizvodov
+SumOfProductWeights=Vsota tež proizvodov
+
+# warehouse details
+DetailWarehouseNumber= Podrobnosti o skladišču
+DetailWarehouseFormat= W:%s (Št.: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

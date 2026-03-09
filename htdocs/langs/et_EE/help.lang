@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Foorum/wiki tugi
+EMailSupport=E-kirja tugi
+RemoteControlSupport=Online reaalaja / kaugtugi
+OtherSupport=Muu tugi
+ToSeeListOfAvailableRessources=Kontakteerumiseks/vaata saadaval ressursse
+HelpCenter=Tugikeskus
+DolibarrHelpCenter=Dolibarri Abi ja Tugikeskus
+ToGoBackToDolibarr=Muul juhul </a>klõpsa Dolibarri kasutamiseks siia</a>
+TypeOfSupport=Toe tüüp
+TypeSupportCommunauty=Kogukond (tasuta)
+TypeSupportCommercial=Äriline
+TypeOfHelp=Tüüp
+NeedHelpCenter=Need support?
+Efficiency=Tõhusus
+TypeHelpOnly=Ainult abi
+TypeHelpDev=Abi+Arendus
+TypeHelpDevForm=Abi+Arendus+Koolitus
+BackToHelpCenter=Muul juhul klõpsa <a href="%s">siia, et minna tagasi Abikeskuse kodulehele</a>.
+LinkToGoldMember=Võid helistada ühele Dolibarri poolt eelvalitud koolitajale Sinu keele (%s) jaoks tema vidinal klõpsates (olekut ja maksimaalset hinda uuendatakse automaatselt):
+PossibleLanguages=Toetatud keeled
+SubscribeToFoundation=Aita Dolibarri projekti, liitu sihtasutusega
+SeeOfficalSupport=Ametlikuks Dolibarri toeks Sinu keeles: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

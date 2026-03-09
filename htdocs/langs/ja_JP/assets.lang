@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = 資産
+NewAsset = 新規資産
+AccountancyCodeAsset = 会計コード(資産)
+AccountancyCodeDepreciationAsset = 会計コード(減価償却資産勘定)
+AccountancyCodeDepreciationExpense = 会計コード(減価償却費勘定)
+NewAssetType=新規資産種別
+AssetsTypeSetup=資産種別の設定
+AssetTypeModified=資産種別変更済
+AssetType=資産種別
+AssetsLines=資産
+DeleteType=削除
+DeleteAnAssetType=資産種別を削除
+ConfirmDeleteAssetType=この資産種別を削除したいのね、いいよね？
+ShowTypeCard=種別 ’%s' を表示
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = 資産
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = 資産の説明
+
+#
+# Admin page
+#
+AssetsSetup = 資産s設定
+Settings = 設定
+AssetsSetupPage = 資産s設定ページ
+ExtraFieldsAssetsType = 補完属性(資産種別)
+AssetsType=資産種別
+AssetsTypeId=資産種別 ID
+AssetsTypeLabel=資産種別ラベル
+AssetsTypes=資産種別
+
+#
+# Menu
+#
+MenuAssets = 資産
+MenuNewAsset = 新規資産
+MenuTypeAssets = 種別 資産s
+MenuListAssets = 一覧
+MenuNewTypeAssets = 新規
+MenuListTypeAssets = 一覧
+
+#
+# Module
+#
+NewAssetType=新規資産種別
+NewAsset=新規資産

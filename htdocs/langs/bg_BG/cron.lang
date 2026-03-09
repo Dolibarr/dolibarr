@@ -1,0 +1,100 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Преглед на планирани задачи
+Permission23102 = Създаване / промяна на планирани задачи
+Permission23103 = Изтриване на планирани задачи
+Permission23104 = Стартиране на планирани задачи
+# Admin
+CronSetup=Настройки за управление на планирани задачи
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+KeyForCronAccess=Защитен ключ на URL за зареждане на cron задачи
+FileToLaunchCronJobs=Команден ред за проверка и стартиране на определени cron задачи
+CronExplainHowToRunUnix=В Unix среда би трябвало да използвате следния crontab ред за изпълнение на командния ред на всеки 5 минути
+CronExplainHowToRunWin=В среда на Microsoft (tm) Windows можете да използвате инструментите за планирани задачи, за да стартирате командния ред на всеки 5 минути
+CronMethodDoesNotExists=Class %s does not contain any method %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
+CronJobDefDesc=Профилите на Cron задачите се дефинират в дескрипторния файл на модула. Когато модулът е активиран, те са заредени и достъпни, така че можете да администрирате задачите от менюто за администриране %s.
+CronJobProfiles=Списък на предварително определени профили на cron задачи
+# Menu
+EnabledAndDisabled=Активирани и деактивирани
+# Page list
+CronLastOutput=Последен изходен резултат
+CronLastResult=Последен код на резултат
+CronCommand=Команда
+CronList=Планирани задачи
+CronDelete=Изтриване на планирани задачи
+CronConfirmDelete=Сигурни ли сте, че искате да изтриете тези планирани задачи?
+CronExecute=Launch now
+CronConfirmExecute=Сигурни ли сте, че искате да изпълните тези планирани задачи сега?
+CronInfo=Модулът за планирани задачи позволява да планирате задача и да я изпълните автоматично. Задачата може да се стартира и ръчно.
+CronTask=Задача
+CronNone=Няма
+CronDtStart=Не преди
+CronDtEnd=Не след
+CronDtNextLaunch=Следващо изпълнение
+CronDtLastLaunch=Начална дата на последно изпълнение
+CronDtLastResult=Крайна дата на последно изпълнение
+CronFrequency=Честота
+CronClass=Клас
+CronMethod=Метод
+CronModule=Модул
+CronNoJobs=Няма регистрирани задачи
+CronPriority=Приоритет
+CronLabel=Име
+CronNbRun=Брой стартирания
+CronMaxRun=Максимален брой стартирания
+CronEach=Всеки
+JobFinished=Задачи заредени и приключили
+Scheduled=Scheduled
+#Page card
+CronAdd= Добавяне на задачи
+CronEvery=Изпълни задачата всеки
+CronObject=Инстанция / обект за създаване
+CronArgs=Параметри
+CronSaveSucess=Съхраняването е успешно
+CronNote=Коментар
+CronFieldMandatory=Полета %s са задължителни
+CronErrEndDateStartDt=Крайната дата не може да бъде преди началната дата
+StatusAtInstall=Състояние при инсталиране на модула
+CronStatusActiveBtn=Enable scheduling
+CronStatusInactiveBtn=Деактивиране
+CronTaskInactive=This job is disabled (not scheduled)
+CronId=Идентификатор
+CronClassFile=Име на файл с клас
+CronModuleHelp=Име на Dolibarr директорията с модули (работи и с външен Dolibarr модул).<BR>Например, за да извикате метода на извличане от Dolibarr продуктов обект /htdocs/<u>product</u>/class/product.class.php, стойността за модула е<br><i>product</i>
+CronClassFileHelp=Относителният път и името на файла за зареждане (пътят е относителен към основната директория на уеб сървъра).<BR>Например, за да извикате метода на извличане на Dolibarr продуктов обект htdocs/product/class/<u>product.class.php</u>, стойността за файлово име на класът е<br><i>product/class/product.class.php</i>
+CronObjectHelp=Името на обекта за зареждане.<BR>Например, за да извикате метода на извличане от Dolibarr продуктов обект /htdocs/product/class/product.class.php, стойността на файловото име на класът е<br><i>Product</i>
+CronMethodHelp=Методът на обекта за стартиране.<BR>Например, за да извикате метода на извличане от Dolibarr продуктов обект /htdocs/product/class/product.class.php, стойността за метода е<br><i>fetch</i>
+CronArgsHelp=Аргументите на метода.<BR>Например, за да извикате метода на извличане от Dolibarr продуктов обект /htdocs/product/class/product.class.php, стойността за параметрите може да бъде<br><i>0, ProductRef</i>
+CronCommandHelp=Системният команден ред за изпълнение.
+CronCreateJob=Създаване на нова планирана задача
+CronFrom=От
+# Info
+# Common
+CronType=Тип задача
+CronType_method=Метод за извикване на PHP клас
+CronType_command=Терминална команда
+CronCannotLoadClass=Не може да бъде зареден клас файл %s (за да се използва клас %s)
+CronCannotLoadObject=Клас файл %s е зареден, но обект %s не е открит в него
+UseMenuModuleToolsToAddCronJobs=Отидете в меню '<a href="%s">Начало -> Администрация -> Планирани задачи</a>', за да видите и редактирате планираните задачи.
+JobDisabled=Задачата е деактивирана
+MakeLocalDatabaseDumpShort=Архивиране на локална база данни
+MakeLocalDatabaseDump=Създаване на локална база данни. Параметрите са: компресия ('gz' or 'bz' or 'none'), вид архивиране ('mysql', 'pgsql', 'auto'), 1, 'auto' или име на файла за съхранение, брой резервни файлове, които да се запазят
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+WarningCronDelayed=Внимание, за целите на изпълнението, каквато и да е следващата дата на изпълнение на активирани задачи, вашите задачи могат да бъдат забавени до максимум %s часа, преди да бъдат стартирани.
+DATAPOLICYJob=Почистване на данни и анонимност
+JobXMustBeEnabled=Job %s must be enabled
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

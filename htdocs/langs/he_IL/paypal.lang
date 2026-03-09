@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=הגדרת מודול PayPal
+PaypalDesc=מודול זה מאפשר תשלום על ידי לקוחות באמצעות <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. זה יכול לשמש עבור תשלום אד-הוק או עבור תשלום הקשור לאובייקט Dolibarr (חשבונית, הזמנה, ...)
+PaypalOrCBDoPayment=שלם עם PayPal (כרטיס או PayPal)
+PaypalDoPayment=שלם עם PayPal
+PAYPAL_API_SANDBOX=בדיקת מצב/ארגז חול
+PAYPAL_API_USER=שם משתמש API
+PAYPAL_API_PASSWORD=סיסמת API
+PAYPAL_API_SIGNATURE=חתימת API
+PAYPAL_SSLVERSION=גרסת SSL של סלסול
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=מציע תשלום "אינטגרלי" (כרטיס אשראי+PayPal) או "PayPal" בלבד
+PaypalModeIntegral=בלתי נפרד
+PaypalModeOnlyPaypal=PayPal בלבד
+ONLINE_PAYMENT_CSS_URL=כתובת אתר אופציונלית של גיליון סגנונות CSS בדף תשלום מקוון
+ThisIsTransactionId=זהו מזהה העסקה: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=כלול את כתובת האתר לתשלום של PayPal כאשר אתה שולח מסמך בדוא"ל
+NewOnlinePaymentReceived=תשלום מקוון חדש התקבל
+NewOnlinePaymentFailed=נוסה תשלום מקוון חדש אך נכשל
+ONLINE_PAYMENT_SENDEMAIL=כתובת אימייל להתראות לאחר כל ניסיון תשלום (להצלחה וכישלון)
+ReturnURLAfterPayment=החזר כתובת URL לאחר תשלום
+ValidationOfOnlinePaymentFailed=אימות התשלום המקוון נכשל
+PaymentSystemConfirmPaymentPageWasCalledButFailed=דף אישור התשלום נקרא על ידי מערכת התשלום החזיר שגיאה
+SetExpressCheckoutAPICallFailed=קריאת ה-API של SetExpressCheckout נכשלה.
+DoExpressCheckoutPaymentAPICallFailed=קריאת ה-API של DoExpressCheckoutPayment נכשלה.
+DetailedErrorMessage=הודעת שגיאה מפורטת
+ShortErrorMessage=הודעת שגיאה קצרה
+ErrorCode=קוד שגיאה
+ErrorSeverityCode=קוד חומרת שגיאה
+OnlinePaymentSystem=מערכת תשלום מקוונת
+PaypalLiveEnabled=מצב "חי" של PayPal מופעל (אחרת מצב בדיקה/ארגז חול)
+PaypalImportPayment=ייבוא תשלומי PayPal
+PostActionAfterPayment=פרסם פעולות לאחר תשלומים
+ARollbackWasPerformedOnPostActions=בוצעה החזרה לאחור על כל פעולות הפוסט. עליך להשלים פעולות פרסום באופן ידני אם הן נחוצות.
+ValidationOfPaymentFailed=אימות התשלום נכשל
+CardOwner=בעל כרטיס
+PayPalBalance=אשראי Paypal
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Empréstimo
+Loans=Empréstimos
+NewLoan=Novo Empréstimo
+ShowLoan=Mostrar Empréstimo
+PaymentLoan=Pagamento do Empréstimo
+LoanPayment=Pagamento do Empréstimo
+ShowLoanPayment=Mostrar Pagamento do Empréstimo
+LoanCapital=Capital
+Insurance=Seguro
+Interest=Juros
+Nbterms=Número de termos
+Term=Termos
+LoanAccountancyCapitalCode=Capital da conta de contabilidade
+LoanAccountancyInsuranceCode=Contabilista conta seguro
+LoanAccountancyInterestCode=Contabilista conta interesse
+ConfirmDeleteLoan=Confirme a eliminação deste empréstimo
+LoanDeleted=Empréstimo Apagado Com Sucesso
+ConfirmPayLoan=Confirmar classificação deste empréstimo como pago
+LoanPaid=Empréstimo Liquidado
+ListLoanAssociatedProject=Lista de empréstimos associados ao projeto
+AddLoan=Criar empréstimo
+FinancialCommitment=Compromisso financeiro
+InterestAmount=Juros
+CapitalRemain=Capital restante
+TermPaidAllreadyPaid = Este prazo já está pago
+CantUseScheduleWithLoanStartedToPaid = Não é possível gerar um cronograma para um empréstimo com pagamento iniciado
+CantModifyInterestIfScheduleIsUsed = Você não pode modificar juros se usar agendamento
+# Admin
+ConfigLoan=Configuração do módulo de empréstimo
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=conta (do gráfico de conta) a ser usado por padrão para capital (Empréstimo módulo )
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=conta (do gráfico de conta) a ser usado por padrão para juros (Empréstimo módulo )
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=conta (do gráfico de conta) a ser usado por padrão para seguros (Empréstimo módulo )
+CreateCalcSchedule=Editar compromisso financeiro

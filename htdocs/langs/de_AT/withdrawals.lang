@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - withdrawals
+WithdrawalRefused=Abbuchungen abgelehnt
+StatusWaiting=Wartestellung
+StatusMotif2=Abbuchung angefochten
+StatusMotif5=Fehlerhafte Kontodaten
+OrderWaiting=Wartestellung

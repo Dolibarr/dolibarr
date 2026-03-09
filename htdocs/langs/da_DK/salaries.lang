@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra kontoplanen) bruges som standard til "bruger" tredjeparter
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerede konto, der er defineret på brugerkortet, vil kun blive brugt til underreskontering. Denne vil blive brugt til hovedbog og som standardværdi for underreskontering, hvis dedikeret brugerkonti på bruger ikke er defineret.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskabskonto som standard for lønudbetalinger
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lad som standard tomt være indstillingen "Opret automatisk en samlet betaling", når du opretter en løn
+Salary=Løn
+Salaries=Løn
+NewSalary=Ny løn
+AddSalary=Tilføj løn
+NewSalaryPayment=Nyt lønkort
+AddSalaryPayment=Tilføj lønbetaling
+SalaryPayment=Løn betaling
+SalariesPayments=Lønudbetalinger
+SalariesPaymentsOf=Lønudbetalinger på %s
+ShowSalaryPayment=Vis lønbetaling
+THM=Gennemsnitlig timepris
+TJM=Gennemsnitlig dagspris
+CurrentSalary=Nuværende løn
+THMDescription=Denne værdi kan bruges til at beregne omkostningerne til den tid, der er forbrugt på et projekt, der er indtastet af brugere, hvis modulprojektet bruges
+TJMDescription=Denne værdi er i øjeblikket kun til information og bruges ikke til nogen beregning
+LastSalaries=Seneste %s lønninger
+AllSalaries=Alle lønninger
+SalariesStatistics=Lønstatistik
+SalariesAndPayments=Løn og betalinger
+ConfirmDeleteSalaryPayment=Vil du slette denne lønudbetaling?
+FillFieldFirst=Udfyld medarbejderfeltet først
+UpdateAmountWithLastSalary=Sæt beløb for sidste løn

@@ -1,0 +1,66 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = 招聘
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = 管理及追蹤新職位的招聘活動
+# Admin page
+RecruitmentSetup = 招聘設定
+RecruitmentSetupPage = 在此輸入招聘模組主要選項的設定
+RecruitmentArea=招聘領域
+PublicInterfaceRecruitmentDesc=職位公告頁面是公開的 URL，用於顯示和回應公開招聘的職位。每個公開招聘的職位都有一個不同的連接，可在每個職位記錄中找到。
+EnablePublicRecruitmentPages=啟用公開職位公告頁面
+
+NbOfEmployeesExpected=預期員工數
+JobLabel=職位標籤
+WorkPlace=工作地點
+DateExpected=預期日期
+FutureManager=未來經理
+ResponsibleOfRecruitement=招聘負責人
+IfJobIsLocatedAtAPartner=如果工作地點在合作夥伴處
+PositionToBeFilled=職位
+PositionsToBeFilled=職位
+ListOfPositionsToBeFilled=職位列表
+NewPositionToBeFilled=新職位
+JobOfferToBeFilled=待填補的職位
+ThisIsInformationOnJobPosition=待填補職位的資訊
+ContactForRecruitment=招聘聯絡人
+EmailRecruiter=招聘人員電郵
+ToUseAGenericEmail=使用通用電郵地址。如果未定義，將使用招聘負責人的電郵地址。
+NewCandidature=新申請
+ListOfCandidatures=申請列表
+Remuneration=薪金
+RequestedRemuneration=要求薪金
+ProposedRemuneration=建議薪金
+ContractProposed=合約已提出
+ContractSigned=合約已簽署
+ContractRefused=合約已拒絕
+RecruitmentCandidature=申請
+JobPositions=職位
+RecruitmentCandidatures=申請
+InterviewToDo=需跟進的聯絡人
+AnswerCandidature=申請回覆
+YourCandidature=你的申請
+YourCandidatureAnswerMessage=感謝您的申請。<br>...
+JobClosedTextCandidateFound=該職位已關閉。該職位已被填補。
+JobClosedTextCanceled=該職位已關閉。
+ExtrafieldsJobPosition=補充屬性 (職位)
+ExtrafieldsApplication=補充屬性 (職位申請)
+MakeOffer=發出錄用通知
+WeAreRecruiting=我們正在招聘。以下是待填補的空缺職位...
+NoPositionOpen=目前沒有空缺職位
+ConfirmClose=確認取消
+ConfirmCloseAsk=您確定要取消此招聘申請嗎？
+Recruitment=招聘

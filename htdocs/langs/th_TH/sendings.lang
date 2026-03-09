@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=อ้าง การส่งสินค้า
+Sending=การส่งสินค้า
+Sendings=การจัดส่ง
+AllSendings=ทั้งหมดจัดส่ง
+Shipment=การส่งสินค้า
+Shipments=การจัดส่ง
+ShowSending=แสดงการจัดส่ง
+Receivings=ใบเสร็จรับเงินการจัดส่ง
+SendingsArea=พื้นที่การจัดส่ง
+ListOfSendings=รายชื่อของการจัดส่ง
+SendingMethod=วิธีการจัดส่งสินค้า
+LastSendings=การจัดส่ง %s ล่าสุด
+StatisticsOfSendings=สถิติสำหรับการจัดส่ง
+NbOfSendings=จำนวนการจัดส่ง
+NumberOfShipmentsByMonth=จำนวนการจัดส่งโดย
+SendingCard=การจัดส่งบัตร
+NewSending=การจัดส่งใหม่
+CreateShipment=สร้างการจัดส่ง
+QtyShipped=จำนวนการจัดส่ง
+QtyShippedShort=จำนวนเรือ.
+QtyPreparedOrShipped=จำนวนที่จัดเตรียมหรือจัดส่ง
+QtyToShip=จำนวนที่จะจัดส่ง
+QtyToReceive=จำนวนที่จะได้รับ
+QtyReceived=จำนวนที่ได้รับ
+QtyInOtherShipments=จำนวนในการจัดส่งอื่นๆ
+KeepToShip=ยังคงอยู่ในการจัดส่ง
+KeepToShipShort=ยังคง
+OtherSendingsForSameOrder=การจัดส่งอื่น ๆ สำหรับการสั่งซื้อนี้
+SendingsAndReceivingForSameOrder=การจัดส่งและใบเสร็จรับเงินสำหรับคำสั่งซื้อนี้
+SendingsToValidate=ในการตรวจสอบการจัดส่ง
+StatusSendingCanceled=ยกเลิก
+StatusSendingCanceledShort=ยกเลิก
+StatusSendingDraft=ร่าง
+StatusSendingValidated=การตรวจสอบ (สินค้าจะจัดส่งหรือจัดส่งแล้ว)
+StatusSendingProcessed=การประมวลผล
+StatusSendingDraftShort=ร่าง
+StatusSendingValidatedShort=ผ่านการตรวจสอบ
+StatusSendingProcessedShort=การประมวลผล
+SendingSheet=แผ่นจัดส่ง
+ConfirmDeleteSending=คุณแน่ใจหรือไม่ว่าต้องการลบการจัดส่งนี้
+ConfirmValidateSending=คุณแน่ใจหรือไม่ว่าต้องการตรวจสอบการจัดส่งนี้ด้วยข้อมูลอ้างอิง <b>%s</b>?
+ConfirmCancelSending=คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจัดส่งนี้
+DocumentModelMerou=Merou A5 รูปแบบ
+WarningNoQtyLeftToSend=คำเตือนผลิตภัณฑ์ไม่มีการรอคอยที่จะส่ง
+StatsOnShipmentsOnlyValidated=สถิติมีไว้สำหรับการจัดส่งที่ผ่านการตรวจสอบแล้วเท่านั้น วันที่ที่ใช้คือวันที่ตรวจสอบความถูกต้องของการจัดส่ง (วันที่จัดส่งตามแผนไม่เป็นที่รู้จักเสมอไป)
+DateDeliveryPlanned=วันที่มีการวางแผนในการส่งสินค้า
+RefDeliveryReceipt=อ้างอิงใบเสร็จรับเงินการจัดส่ง
+StatusReceipt=ใบเสร็จรับเงินการจัดส่งสถานะ
+DateReceived=วันที่ได้รับการส่งมอบ
+ClassifyReception=จำแนกประเภทที่ได้รับ
+SendShippingByEMail=ส่งของทางอีเมล์ครับ
+SendShippingRef=การส่งของการขนส่ง% s
+ActionsOnShipping=เหตุการณ์ที่เกิดขึ้นในการจัดส่ง
+LinkToTrackYourPackage=เชื่อมโยงไปยังติดตามแพคเกจของคุณ
+ShipmentCreationIsDoneFromOrder=ในขณะนี้ การสร้างการจัดส่งใหม่เสร็จสิ้นจากบันทึกใบสั่งขาย
+ShipmentLine=สายการจัดส่ง
+ProductQtyInCustomersOrdersRunning=ปริมาณผลิตภัณฑ์จากใบสั่งขายที่เปิดอยู่
+ProductQtyInSuppliersOrdersRunning=ปริมาณผลิตภัณฑ์จากคำสั่งซื้อที่เปิดอยู่
+ProductQtyInShipmentAlreadySent=จำนวนสินค้าจากการเปิดใบสั่งขายที่ส่งไปแล้ว
+ProductQtyInSuppliersShipmentAlreadyRecevied=จำนวนสินค้าจากการเปิดคำสั่งซื้อที่ได้รับแล้ว
+NoProductToShipFoundIntoStock=ไม่พบผลิตภัณฑ์ที่จะจัดส่งในคลังสินค้า <b>%s</b> แก้ไขสต๊อกหรือกลับไปเลือกคลังสินค้าอื่น
+WeightVolShort=น้ำหนัก/ปริมาตร
+ValidateOrderFirstBeforeShipment=คุณต้องตรวจสอบความถูกต้องของคำสั่งซื้อก่อนจึงจะสามารถดำเนินการจัดส่งได้
+NoLineGoOnTabToAddSome=ไม่มีบรรทัด ไปที่แท็บ "%s" เพื่อเพิ่ม
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=รูปแบบเอกสารที่สมบูรณ์มากขึ้นสำหรับการจัดส่งใบเสร็จรับเงิน (โลโก้ ... )
+DocumentModelStorm=แบบจำลองเอกสารที่สมบูรณ์ยิ่งขึ้นสำหรับใบเสร็จรับเงินการจัดส่งและความเข้ากันได้กับฟิลด์พิเศษ (โลโก้...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER คงที่ไม่ได้กำหนดไว้
+SumOfProductVolumes=ผลรวมของปริมาณสินค้า
+SumOfProductWeights=ผลรวมของน้ำหนักสินค้า
+
+# warehouse details
+DetailWarehouseNumber= รายละเอียดคลังสินค้า
+DetailWarehouseFormat= W:%s (จำนวน: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=แสดงวันที่ล่าสุดของสินค้าในสต็อกระหว่างการสร้างการจัดส่งสำหรับหมายเลขซีเรียลหรือชุดงาน
+CreationOptions=ตัวเลือกที่มีให้ระหว่างการสร้างการจัดส่ง
+
+ShipmentDistribution=การกระจายสินค้า
+
+ErrorTooManyCombinationBatchcode=ไม่มีการจัดส่งสำหรับบรรทัด %s เนื่องจากพบคลังสินค้า ผลิตภัณฑ์ รหัสชุดงานมากเกินไป (%s)
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=ปริมาณที่จัดส่งไม่ควรมากกว่าปริมาณที่สั่งซื้อสำหรับบรรทัด %s

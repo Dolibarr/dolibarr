@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marža
+Margins=Marže
+TotalMargin=Ukupno marže
+MarginOnProducts=Marža / Proizvodi
+MarginOnServices=Marža / Usluge
+MarginRate=Stopa marže
+MarkRate=Označite stopu
+DisplayMarginRates=Prikaži stope marže
+DisplayMarkRates=Prikaži stope bodova
+InputPrice=Ulazna cijena
+margin=Upravljanje profitnim maržama
+margesSetup=Podešavanje upravljanja profitnim maržama
+MarginDetails=Detalji marže
+ProductMargins=Marže proizvoda
+CustomerMargins=Marže kupaca
+SalesRepresentativeMargins=Marže prodajnog predstavnika
+ContactOfInvoice=Kontakt fakture
+UserMargins=Korisničke marže
+ProductService=Proizvod ili usluga
+AllProducts=Svi proizvodi i usluge
+ChooseProduct/Service=Odaberite proizvod ili uslugu
+ForceBuyingPriceIfNull=Forsiraj kupovno/troškovnu cijenu kao prodajnu cijenu ako nije definirano
+ForceBuyingPriceIfNullDetails=Ako kupovna cijena/cijena troška nije navedena kada dodamo novi red, a ova opcija je "UKLJUČENO", marža će biti 0%% na novom redu (kupovna/troškovna cijena = prodajna cijena). Ako je ova opcija "ISKLJUČENO" (preporučeno), margina će biti jednaka vrijednosti predloženoj prema zadanim postavkama (i može biti 100%% ako se ne može pronaći zadana vrijednost).
+MARGIN_METHODE_FOR_DISCOUNT=Načini marže za globalne rabate
+UseDiscountAsProduct=Kao proizvod
+UseDiscountAsService=Kao usluga
+UseDiscountOnTotal=Na međuzbroju
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definira ako je globalni rabat tretiran kao prozvod ili usluga, ili samo na međusumi za izračun marže.
+MARGIN_TYPE=Kupovno/troškovna cijena sugerirana za izračun marže
+MargeType1=Marža na cijenu najboljeg dobavljača
+MargeType2=Marža prema Procjenjenoj prosječnoj cijeni (PPC)
+MargeType3=Marža po cijeni troškova
+MarginTypeDesc=* Marža na najbolju kupovnu cijenu = Prodajna cijena - Najbolja cijena dobavljača definirana na kartici proizvoda <br> * Marža na ponderiranoj prosječnoj cijeni (WAP) = Prodajna cijena - Prosječna ponderirana cijena proizvoda (WAP) ili najbolja prodajna cijena ako WAP još nije definiran <br> * Marža na cijenu koštanja = prodajna cijena - cijena koštanja definirana na kartici proizvoda ili WAP-u ako cijena koštanja nije definirana, ili najbolja cijena dobavljača ako WAP još nije definiran
+CostPrice=Cijena troška
+UnitCharges=Troškovi jedinice
+Charges=Troškovi
+AgentContactType=Vrsta kontakta komercijalnog agenta
+AgentContactTypeDetails=Definirajte koja će se vrsta kontakta (povezano na fakturama) koristiti za izvješće o marži po kontaktu/adresi. Imajte na umu da čitanje statistike o kontaktu nije pouzdano jer u većini slučajeva kontakt možda nije eksplicitno definiran na fakturama.
+rateMustBeNumeric=Stopa mora biti brojčana vrijednost
+markRateShouldBeLesserThan100=Marža bi trebala biti niža od 100
+ShowMarginInfos=Prikaži infomacije o marži
+CheckMargins=Detalji marže
+MarginPerSaleRepresentativeWarning=Izvješće o marži po korisniku koristi vezu između trećih strana i prodajnih predstavnika za izračun marže svakog prodajnog predstavnika. Budući da neke treće strane možda nemaju posebnog prodajnog predstavnika, a neke treće strane mogu biti povezane s nekoliko, neki iznosi možda neće biti uključeni u ovo izvješće (ako nema prodajnog predstavnika), a neki se mogu pojaviti u različitim redcima (za svakog prodajnog predstavnika) .

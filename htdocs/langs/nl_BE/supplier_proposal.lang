@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+CommRequests=Prijsaanvragen
+SupplierProposalStatusDraft=Conceptfactuur (moet worden gevalideerd)
+SupplierProposalStatusClosed=Afgesloten
+SupplierProposalStatusDraftShort=Concept
+SupplierProposalStatusClosedShort=Afgesloten

@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Configuração do módulo de boleto
+StripeOrCBDoPayment=Pagar com cartão de crédito ou boleto
+YouWillBeRedirectedOnStripe=Você será redirecionado na página de boleto protegida para inserir as informações do cartão de crédito
+ToOfferALinkForOnlinePayment=URL para %s pagamento
+ToOfferALinkForOnlinePaymentOnOrder=URL para oferecer uma página de pagamentos on-line de %s para pedidos de vendas
+ToOfferALinkForOnlinePaymentOnInvoice=URL para oferecer uma página de pagamentos on-line de %s para faturas de clientes
+ToOfferALinkForOnlinePaymentOnContractLine=URL para oferecer uma página de pagamentos on-line de %s para linha de contratos
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL para oferecer uma página de pagamentos on-line de %s de qualquer valor sem objeto específico
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma página de pagamentos online de %s para assinaturas de membros
+ToOfferALinkForOnlinePaymentOnDonation=URL para oferecer %s página de pagamentos online para pagamentos de doação
+SetupStripeToHavePaymentCreatedAutomatically=Configure seu boleto com url <b> %s </b> para que o pagamento seja criado automaticamente quando validado por boleto
+STRIPE_CGI_URL_V2=Url de boleto CGI módulo para pagamento
+NewStripePaymentReceived=Pagamento de novo boleto recebido
+NewStripePaymentFailed=O pagamento do novo boleto tentou, mas falhou
+FailedToChargeCard=Falha ao carregar o cartão
+STRIPE_TEST_SECRET_KEY=Senha
+STRIPE_TEST_PUBLISHABLE_KEY=Senha editável
+STRIPE_LIVE_SECRET_KEY=Chave ao vivo secreta
+STRIPE_LIVE_PUBLISHABLE_KEY=Chave editável
+StripeLiveEnabled=Boleto ativado (caso contrário teste / modo cx)
+StripeImportPayment=Importação de pagamentos de franquia
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+StripeAccount=Conta Stripe
+StripeTransactionList=Lista de transações Stripe
+LocalID=ID local
+CardNumber=Número do cartão
+ExpiryDate=Data de validade
+CreateCustomerOnStripe=Crie um cliente na Stripe
+CreateCardOnStripe=Criar cartão no Stripe
+ShowInStripe=Mostrar na Stripe
+StripeUserAccountForActions=Conta de usuário a ser usada para notificação por e-mail de alguns eventos do Stripe (pagamentos Stripe)
+StripePayoutList=Lista de pagamentos do Stripe
+ToOfferALinkForTestWebhook=Link para configurar o Stripe WebHook para chamar o IPN (modo de teste)
+ToOfferALinkForLiveWebhook=Link para configurar Stripe WebHook para chamar o IPN (modo ao vivo)
+ClickHereToTryAgain=<a href="%s"> Clique aqui para tentar novamente ... </a>
