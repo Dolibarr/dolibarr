@@ -1576,6 +1576,7 @@ class BOM extends CommonObject
 						//$TNetNeeds[$childBom->id]['fk_unit'] = $line->fk_unit;
 						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
+						$TNetNeeds[$childBom->id]['position'] = $line->position;
 						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty / $childBom->qty, $level + 1);
 					}
 				} else {
@@ -1593,6 +1594,7 @@ class BOM extends CommonObject
 					}
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['position'] = $line->position;
 				}
 			}
 		}
