@@ -192,7 +192,7 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 30; // id de la permission
-		$this->rights[$r][1] = 'Delete draft commercial proposals'; // Delete proposal draft
+		$this->rights[$r][1] = 'Delete draft commercial proposals (temporary reference only)'; // Delete proposal draft
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'propal_advance';

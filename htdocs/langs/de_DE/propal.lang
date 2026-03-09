@@ -128,3 +128,4 @@ ExpeditionSigned=Sendung unterzeichnet
 SignExpedition=Sendung unterzeichnen
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Lieferadresse anzeigen
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Obligatorische Angabe für manche Länder (Frankreich, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Mit diesem Recht können nur temporäre Entwurfsangebote (PROV* oder leere Referenz) gelöscht werden. Für endgültige Referenzen ist das Löschrecht erforderlich.
