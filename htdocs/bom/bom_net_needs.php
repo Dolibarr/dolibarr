@@ -321,7 +321,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 			// Sort the rows by position
-			ksort($tablerows);
+			ksort($tablerows, SORT_NUMERIC);
 			// Print the rows
 			foreach ($tablerows as $position => $row) {
 				print $row;
