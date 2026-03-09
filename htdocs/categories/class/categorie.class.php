@@ -2045,7 +2045,7 @@ class Categorie extends CommonObject
 	 *    Return an array with all photos inside the directory
 	 *
 	 *    @param	string	$dir        Dir to scan
-	 *    @param	int		$nbmax      Nombre maximum de photos (0=pas de max)
+	 *    @param	int		$nbmax      Maximum number of photos (0=no max)
 	 *    @return	array<int,array{photo:string,photo_vignette:string}>	Table with images
 	 */
 	public function liste_photos($dir, $nbmax = 0)

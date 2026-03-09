@@ -313,10 +313,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 $arrayofjs = array(
-	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
-	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js'
+	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js'
 );
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 $help_url = '';
 
@@ -1358,7 +1358,7 @@ if ($type == Categorie::TYPE_TICKET) {
 					print '<td class="nowrap tdtop">';
 					print $ticket->getNomUrl(1);
 					print "</td>\n";
-					print '<td class="tdtop">'.$ticket->label."</td>\n";
+					print '<td class="tdtop">'.$ticket->track_id."</td>\n";
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {

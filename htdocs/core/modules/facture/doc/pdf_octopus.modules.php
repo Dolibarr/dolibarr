@@ -8,12 +8,13 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos Garcia			<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024	Eric Seigne				<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
+ * Copyright (C) 2026		Vincent Maury			<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -455,15 +456,9 @@ class pdf_octopus extends ModelePDFFactures
 				}
 
 				// Set certificate
-				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
-				$certprivate = empty($user->conf->CERTIFICATE_CRT_PRIVATE) ? '' : $user->conf->CERTIFICATE_CRT_PRIVATE;
-				// If user has no certificate, we try to take the company one
-				if (!$cert) {
-					$cert = getDolGlobalString('CERTIFICATE_CRT');
-				}
-				if (!$certprivate) {
-					$certprivate = getDolGlobalString('CERTIFICATE_CRT_PRIVATE');
-				}
+				$cert = getDolUserString('CERTIFICATE_CRT', getDolGlobalString('CERTIFICATE_CRT'));
+				$certprivate = getDolUserString('CERTIFICATE_CRT_PRIVATE', getDolGlobalString('CERTIFICATE_CRT_PRIVATE'));
+
 				// If a certificate is found
 				if ($cert) {
 					$info = array(
@@ -633,169 +628,7 @@ class pdf_octopus extends ModelePDFFactures
 				$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 				$pdf->setTopMargin($this->tab_top_newpage);
 
-				// Incoterm
-				$height_incoterms = 0;
-				if (isModEnabled('incoterm')) {
-					$desc_incoterms = $object->getIncotermsForPDF();
-					if ($desc_incoterms) {
-						$this->tab_top -= 2;
-
-						$pdf->SetFont('', '', $default_font_size - 1);
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
-						$nexY = max($pdf->GetY(), $nexY);
-						$height_incoterms = $nexY - $this->tab_top;
-
-						// Rect takes a length in 3rd parameter
-						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
-
-						$this->tab_top = $nexY + 6;
-						$height_incoterms += 4;
-					}
-				}
-
-				// Displays notes. Here we are still on code executed only for the first page.
-				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
-					// Get first sale rep
-					if (is_object($object->thirdparty)) {
-						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
-						$salerepobj = new User($this->db);
-						$salerepobj->fetch($salereparray[0]['id']);
-						if (!empty($salerepobj->signature)) {
-							$notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
-						}
-					}
-				}
-
-				// Extrafields in note
-				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
-				if (!empty($extranote)) {
-					$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
-				}
-
-				$pagenb = $pdf->getPage();
-				if ($notetoshow) {
-					$this->tab_top -= 2;
-
-					$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
-					$pageposbeforenote = $pagenb;
-
-					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-
-					$pdf->startTransaction();
-
-					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
-					// Description
-					$pageposafternote = $pdf->getPage();
-					$posyafter = $pdf->GetY();
-
-					if ($pageposafternote > $pageposbeforenote) {
-						$pdf->rollbackTransaction(true);
-
-						// prepare pages to receive notes
-						while ($pagenb < $pageposafternote) {
-							$pdf->AddPage();
-							$pagenb++;
-							if (!empty($this->tplidx)) {
-								$pdf->useTemplate($this->tplidx);
-							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-							}
-							$pdf->setTopMargin($this->tab_top_newpage);
-							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
-						}
-
-						// back to start
-						$pdf->setPage($pageposbeforenote);
-						$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
-						$pdf->SetFont('', '', $default_font_size - 1);
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
-						$pageposafternote = $pdf->getPage();
-
-						$posyafter = $pdf->GetY();
-
-						if ($posyafter > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + 20))) {	// There is no space left for total+free text
-							$pdf->AddPage('', '', true);
-							$pagenb++;
-							$pageposafternote++;
-							$pdf->setPage($pageposafternote);
-							$pdf->setTopMargin($this->tab_top_newpage);
-							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
-							//$posyafter = $this->tab_top_newpage;
-						}
-
-
-						// apply note frame to previous pages
-						$i = $pageposbeforenote;
-						while ($i < $pageposafternote) {
-							$pdf->setPage($i);
-
-
-							$pdf->SetDrawColor(128, 128, 128);
-							// Draw note frame
-							if ($i > $pageposbeforenote) {
-								$height_note = $this->page_hauteur - ($this->tab_top_newpage + $this->heightforfooter);
-								$pdf->RoundedRect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-							} else {
-								$height_note = $this->page_hauteur - ($this->tab_top + $this->heightforfooter);
-								$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-							}
-
-							// Add footer
-							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-							$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($i, $object, $outputlangs));
-
-							$i++;
-						}
-
-						// apply note frame to last page
-						$pdf->setPage($pageposafternote);
-						if (!empty($this->tplidx)) {
-							$pdf->useTemplate($this->tplidx);
-						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-						}
-						$height_note = $posyafter - $this->tab_top_newpage;
-						$pdf->RoundedRect($this->marge_gauche, $this->tab_top_newpage - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-					} else {
-						// No pagebreak
-						$pdf->commitTransaction();
-						$posyafter = $pdf->GetY();
-						$height_note = $posyafter - $this->tab_top;
-						$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $tab_width, $height_note + 1, $this->corner_radius, '1234', 'D');
-
-
-						if ($posyafter > ($this->page_hauteur - ($this->heightforfooter + $this->heightforfreetext + 20))) {
-							// not enough space, need to add page
-							$pdf->AddPage('', '', true);
-							$pagenb++;
-							$pageposafternote++;
-							$pdf->setPage($pageposafternote);
-							if (!empty($this->tplidx)) {
-								$pdf->useTemplate($this->tplidx);
-							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-							}
-
-							$posyafter = $this->tab_top_newpage;
-						}
-					}
-
-					$tab_height -= $height_note;
-					$this->tab_top = $posyafter + 6;
-				} else {
-					$height_note = 0;
-				}
+				// Incoterms, sale rep signature, extrafields, and public note are now processed in tableFirstPage method
 
 				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1025,8 +858,8 @@ class pdf_octopus extends ModelePDFFactures
 					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					// Collect total by value of vat rate into $this->tva_array
+					$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
@@ -1079,10 +912,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Fill $this->tva and $this->tva_array
-					if (!isset($this->tva[$vatrate])) {
-						$this->tva[$vatrate] = 0;
-					}
-					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
+					// $this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
@@ -1190,8 +1020,8 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 				// Add terms to sale
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1220,8 +1050,8 @@ class pdf_octopus extends ModelePDFFactures
 				}
 
 				// Add terms to sale
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
+				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1895,7 +1725,11 @@ class pdf_octopus extends ModelePDFFactures
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-			$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
+			$tvaisnull = false;
+			if (!empty($this->tva_array) && count($this->tva_array) == 1 ) {
+				$tva_el = reset($this->tva_array);
+				if ($tva_el['vatrate'] == '0.000' && is_float($tva_el['amount'])) $tvaisnull = true;
+			}
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
@@ -1906,7 +1740,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1944,7 +1778,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1977,23 +1811,8 @@ class pdf_octopus extends ModelePDFFactures
 
 				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
-					$tvas = array();
-					$nblines = count($object->lines);
-					for ($i = 0; $i < $nblines; $i++) {
-						$tvaligne = $object->lines[$i]->total_tva;
-						$vatrate = (string) $object->lines[$i]->tva_tx;
-
-						if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
-							$vatrate .= '*';
-						}
-						if (! isset($tvas[$vatrate])) {
-							$tvas[$vatrate] = 0;
-						}
-						$tvas[$vatrate] += $tvaligne;
-					}
-
-					foreach ($tvas as $tvakey => $tvaval) {
-						if ($tvakey != 0) {	// On affiche pas taux 0
+					foreach ($this->tva_array as $tvakey => $tvaval) {
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {	// On affiche pas taux 0
 							$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2030,7 +1849,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2068,7 +1887,7 @@ class pdf_octopus extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						// retrieve global local tax
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -2172,7 +1991,7 @@ class pdf_octopus extends ModelePDFFactures
 		if (! empty($object->paye)) $resteapayer=0;
 		*/
 
-		if ($deja_regle > 0) {
+		if ($deja_regle > 0 || isALNERunningVersion()) {
 			// Already paid + Deposits
 			$index++;
 
@@ -2552,14 +2371,14 @@ class pdf_octopus extends ModelePDFFactures
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact
@@ -2918,12 +2737,6 @@ class pdf_octopus extends ModelePDFFactures
 			$this->cols['btpsomme']['status'] = true;
 		}
 
-		$derniere_situation = $this->TDataSituation['derniere_situation'];
-
-		if (empty($derniere_situation)) {
-			$derniere_situation = 0;
-		}
-
 		// Column 'Previous progression'
 		$rank += 10;
 		$this->cols['prev_progress'] = array(
@@ -2935,13 +2748,14 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => 'S'.$derniere_situation->situation_counter . ' - ' . dol_print_date($derniere_situation->date, "%d/%m/%Y"),
+				// @phan-suppress-next-line PhanTypeMismatchProperty
+				'textkey' => 'S'.(!empty($this->TDataSituation['derniere_situation']) ? $this->TDataSituation['derniere_situation']->situation_counter . ' - ' . dol_print_date($this->TDataSituation['derniere_situation']->date, "%d/%m/%Y") : ''),
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
 				'width' => 10 + 18 //current width + amount cell width
 			),
 		);
-		if ($this->situationinvoice && ! empty($this->TDataSituation['date_derniere_situation'])) {
+		if ($this->situationinvoice && !empty($this->TDataSituation['date_derniere_situation'])) {
 			$this->cols['prev_progress']['status'] = true;
 		}
 
@@ -3053,7 +2867,7 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public function tableFirstPage(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
-		global $conf, $object, $db;
+		global $user, $conf, $object, $db;
 
 		$form = new Form($db);
 
@@ -3094,6 +2908,53 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', '', $default_font_size - 1);
+
+		$height_incoterms = 0;
+		if (isModEnabled('incoterm')) {
+			$desc_incoterms = $object->getIncotermsForPDF();
+			if ($desc_incoterms) {
+				$this->tab_top -= 2;
+				$posybefore = $pdf->GetY();
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+
+				// Rect takes a length in 3rd parameter
+				$pdf->SetDrawColor(192, 192, 192);
+				$pdf->RoundedRect($this->marge_gauche, $this->tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
+				$posyafter = $pdf->GetY();
+				$tab_top += $posyafter - $posybefore + 2;
+			}
+		}
+		// Displays notes. Here we are still on code executed only for the first page.
+		$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+		if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
+			// Get first sale rep
+			if (is_object($object->thirdparty)) {
+				$salereparray = $object->thirdparty->getSalesRepresentatives($user);
+				$salerepobj = new User($this->db);
+				$salerepobj->fetch($salereparray[0]['id']);
+				if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
+			}
+		}
+
+		// Extrafields in note
+		$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+		if (!empty($extranote)) $notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
+
+		if ($notetoshow) {
+			$tab_top -= 2;
+			$posybefore = $pdf->GetY();
+			$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+			$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+			$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+
+			$pdf->SetFont('', '', $default_font_size - 1);
+			$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+			// Description
+			$posyafter = $pdf->GetY();
+			$tab_top += $posyafter - $posybefore + 2;
+		}
 
 		// Output Rect
 		// KEEPTHIS => Affiche les bords extérieurs
@@ -3287,11 +3148,10 @@ class pdf_octopus extends ModelePDFFactures
 		$TPreviousInvoices = $object->tab_previous_situation_invoice;
 		unset($object->tab_previous_situation_invoice);
 
-		// liste de toutes les factures précédentes
-		// print json_encode($TPreviousInvoices); exit;
+		// list all previous invoice
 
 		$TPreviousInvoices = array_reverse($TPreviousInvoices);
-		$facDerniereSituation = $TPreviousInvoices[0];
+		$facDerniereSituation = reset($TPreviousInvoices);
 
 		$TDataSituation = array();
 
@@ -3310,28 +3170,28 @@ class pdf_octopus extends ModelePDFFactures
 			'retenue_garantie' => 0,
 			'travaux_sup' => 0,
 			'HTnet' => 0, //montant HT
-			'total_a_payer' => 0 //montant "a payer" sur la facture
+			'total_a_payer' => 0 //amount "a payer" on the invoice
 		);
 
-		//S'il y a des factures de situations précédentes
+		// If there is previous situation invoices
 		if (!empty($TPreviousInvoices)) {
-			//calcul des cumuls -- plus necessaire ?
+			// Cumulate -- not necessary ?
 			foreach ($TPreviousInvoices as $i => $previousInvoice) {
 				$TDataSituation['cumul_anterieur']['HT'] += $previousInvoice->total_ht;
 				// $TDataSituation['cumul_anterieur']['TTC'] += $previousInvoice->total_ttc;
 				$TDataSituation['cumul_anterieur']['TVA'] += $previousInvoice->total_tva;
 
-				//lecture de chaque ligne pour
+				// Read each line to
 				// 1. recalculer le total_ht pour chaque taux de TVA
 				// 2. recalculer la TVA associée à ce montant HT
-				// 3. le cas échéant stocker cette information comme travaux_sup si cette ligne n'est pas liée à une ligne de la situation précédente
+				// 3. If applicable, store this information as "travaux_sup" (additional work) if this line is not linked to a line from the previous situation.
 				foreach ($previousInvoice->lines as $k => $l) {
 					$total_ht = (float) $l->total_ht;
 					if (empty($total_ht)) {
 						continue;
 					}
 
-					// Si $prevSituationPercent vaut 0 c'est que la ligne $l est un travail supplémentaire
+					// If $prevSituationPercent is 0, it means that line $l is an additional work
 					$prevSituationPercent = 0;
 					$isFirstSituation = false;
 					if (!empty($l->fk_prev_id)) {
@@ -3341,25 +3201,25 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					$calc_ht = $l->total_ht;
-					//modification du format de TVA, cas particulier des imports ou autres qui peuvent avoir des 20.0000
+					// Modification of the VAT format, special case for imports or others that may have 20.0000
 					$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
 
-					//1ere ligne
+					// 1st line
 					$amounttva = $calc_ht * ($ltvatx / 100);
 					if (! isset($TDataSituation['cumul_anterieur'][$ltvatx])) {
 						$TDataSituation['cumul_anterieur'][$ltvatx]['HT'] = $calc_ht;
 						$TDataSituation['cumul_anterieur'][$ltvatx]['TVA'] = $amounttva;
 					} else {
-						//lignes suivantes
+						// next lines
 						$TDataSituation['cumul_anterieur'][$ltvatx]['HT'] += ($calc_ht);
 						$TDataSituation['cumul_anterieur'][$ltvatx]['TVA'] += $amounttva;
 					}
 
-					//le grand total de TVA
+					// the grand total of VAT
 					// $TDataSituation['cumul_anterieur']['TVA'] += $amounttva;
 
 					if (empty($l->fk_prev_id) && ! $isFirstSituation) {
-						// TODO: à clarifier, mais pour moi, un facture de situation précédente qui a des progressions à 0% c'est pas logique
+						// TODO: to clarify, an situation invoice previous to another one with a progress at 0 is not normal
 						$TDataSituation['cumul_anterieur']['travaux_sup'] += $calc_ht;
 					}
 				}
@@ -3369,7 +3229,7 @@ class pdf_octopus extends ModelePDFFactures
 				$retenue_garantie_anterieure += $previousInvoice->getRetainedWarrantyAmount();
 			}
 
-			//les cumuls
+			// grand total
 			$TDataSituation['cumul_anterieur']['HT'] -= $TDataSituation['cumul_anterieur']['travaux_sup'];
 			$TDataSituation['cumul_anterieur']['retenue_garantie'] = $retenue_garantie_anterieure;
 			$TDataSituation['cumul_anterieur']['TTC'] = $TDataSituation['cumul_anterieur']['HT'] + $TDataSituation['cumul_anterieur']['TVA'];
@@ -3415,7 +3275,11 @@ class pdf_octopus extends ModelePDFFactures
 		if (is_array($a)) {
 			foreach ($a as $k => $v) {
 				if (is_array($v)) {
-					$ret[$k] = $this->sumSituation($v, $b[$k]);
+					if (isset($b[$k])) {
+						$ret[$k] = $this->sumSituation($v, $b[$k]);
+					} else {
+						$ret[$k] = $v;
+					}
 				} else {
 					$ret[$k] = $a[$k];
 					if (isset($b[$k])) {
@@ -3586,7 +3450,7 @@ class pdf_octopus extends ModelePDFFactures
 		unset($object->tab_previous_situation_invoice);
 
 		$TPreviousInvoices = array_reverse($TPreviousInvoices);
-		$facDerniereSituation = $TPreviousInvoices[0];
+		$facDerniereSituation = reset($TPreviousInvoices);
 
 		$ret = array(
 			'HT' => 0,	//montant HT normal
@@ -3611,10 +3475,16 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Modification of VAT format, special case of imports or others which may have 20.0000
-			$ltvatx = (float) sprintf("%01.3f", $l->tva_tx);
-
-			$ret[$ltvatx]['TVA'] += $l->total_tva;
-			$ret[$ltvatx]['HT'] += $l->total_ht;
+			$ltvatx = price2num($l->tva_tx, '', 1);	   // ltvatx is used as key or array so must be a string or int
+			if (isset($ret[$ltvatx])) {
+				// @phan-suppress-next-line PhanTypeArraySuspicious
+				$ret[$ltvatx]['TVA'] += $l->total_tva;
+				// @phan-suppress-next-line PhanTypeArraySuspicious
+				$ret[$ltvatx]['HT'] += $l->total_ht;
+			} else {
+				$ret[$ltvatx]['TVA'] = $l->total_tva;
+				$ret[$ltvatx]['HT'] = $l->total_ht;
+			}
 		}
 
 		// Retained warranty
@@ -3623,14 +3493,14 @@ class pdf_octopus extends ModelePDFFactures
 			$retenue_garantie = 0;
 		}
 
-		//les cumuls
+		// Aggregate
 		$ret['TTC'] = $object->total_ttc;
 		$ret['TVA'] = $object->total_tva;
 		$ret['HT'] = $object->total_ht - $ret['travaux_sup'];
 		$ret['total_a_payer'] = $ret['TTC'] - $retenue_garantie;
 		$ret['retenue_garantie'] = $retenue_garantie;
 
-		//Clean up before keep in "cache"
+		// Clean up before keep in "cache"
 		if (array_key_exists('derniere_situation', $ret)) {
 			unset($ret['derniere_situation']->db);
 			unset($ret['derniere_situation']->fields);

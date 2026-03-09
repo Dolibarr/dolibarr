@@ -25,7 +25,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
-
 /**
  *  Class of triggered functions for agenda module
  */
@@ -85,12 +84,15 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$b = new BlockedLog($this->db);
 		$b->loadTrackedEvents();			// Get the list of tracked events into $b->trackedevents
 
-		// Tracked events
+		// Tracked or controlled events
 		if (!in_array($action, array_keys($b->trackedevents)) && !in_array($action, array_keys($b->controlledevents))) {
 			return 0;
 		}
 
+		// If we are here, we are on an action code that will have a control or will generate a record in blockedlog database.
+
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
+			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 				if (empty($object->paiementcode) && !empty($object->paiementid)) {
 					$object->paiementcode = dol_getIdFromCode($this->db, $object->paiementid, 'c_paiement', 'id', 'code', 1);
@@ -98,8 +100,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
 					// Check that invoice of payment is not from a POS module. Refuse if yes
+					$invoiceids = array();
 					if (is_array($object->amounts)) {
-						$invoiceids = array();
 						foreach ($object->amounts as $objid => $amount) {
 							$invoiceids[] = $objid;
 						}
@@ -107,8 +109,9 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 					// Test there is not invoices with id in $invoiceids and with a module_source that is not empty
 					$tmpinvoice = new Facture($this->db);
 					foreach ($invoiceids as $invoiceid) {
+						$tmpinvoice->id = 0;
 						$tmpinvoice->fetch($invoiceid);
-						if ($tmpinvoice->module_source == 'takepos') {
+						if ($tmpinvoice->id > 0 && $tmpinvoice->module_source == 'takepos') {		// @phpstan-ignore-line PHP think tmpinvoice->id is always 0
 							$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version for payment of invoices generated from '.$tmpinvoice->module_source;
 							return -1;
 						}
@@ -170,12 +173,6 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				}
 			}
 		}
-		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
-		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
-		{
-			$qualified++;
-			$amounts=  (double) $object->total_ttc;
-		}*/
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE' || $action === 'DONATION_PAYMENT_CREATE'
 			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE') {
 			$qualified++;
@@ -205,7 +202,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return -1;
 		}
 
-		$res = $b->create($user);		// Insert event in unalterable log. We are in a trigger so inside a global db transaction.
+		// Insert event in unalterable log. We are in a trigger so inside a global db transaction.
+		$res = $b->create($user);
 
 		if ($res < 0) {
 			$this->setErrorsFromObject($b);

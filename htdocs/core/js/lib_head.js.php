@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,7 +319,7 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	format=format+"";
 
 	var result="";
@@ -387,7 +387,7 @@ function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	val = val+"";
 	format = format+"";
 
@@ -580,7 +580,7 @@ function cleanSerialize(expr) {
  */
 function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
 	let alink = document.getElementById(id);
-	let title = '<?php echo dol_escape_js($langs->trans("Note")); ?>';
+	let title = '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Note")); ?>';
 
 	if (alink.getAttribute("data-alreadyclicked") === "1") {
 		return true;
@@ -590,11 +590,11 @@ function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCa
 
 	let buttons = {};
 	if (disableCancelButton === 0) {
-		buttons['<?php echo dol_escape_js($langs->trans("Cancel")); ?>'] = function () {
+		buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>'] = function () {
 		   $(this).dialog("close");
 		};
 	}
-	buttons['<?php echo dol_escape_js($langs->trans("OK")); ?>'] = function () {
+	buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Confirm")); ?>'] = function () {
 		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
 	};
 
@@ -1464,6 +1464,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
  */
 function price2numjs(amount) {
 	if (amount == '') return '';
+	if (amount == null) return '';	/* null or undefined */
 
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;

@@ -47,7 +47,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

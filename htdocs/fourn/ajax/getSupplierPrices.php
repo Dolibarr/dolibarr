@@ -47,6 +47,9 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  * @var User $user
  */
 
+// init getSupplierPrices hook
+$hookmanager->initHooks(array('ajaxGetSupplierPrices'));
+
 $idprod = GETPOSTINT('idprod');
 
 $prices = array();
@@ -59,7 +62,7 @@ $langs->loadLangs(array("stocks", "margins", "products"));
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
@@ -82,7 +85,7 @@ if ($idprod > 0) {
 			$price = $productSupplier->fourn_price * (1 - $productSupplier->fourn_remise_percent / 100);
 			$unitprice = $productSupplier->fourn_unitprice * (1 - $productSupplier->fourn_remise_percent / 100);
 
-			$title = $productSupplier->fourn_name.' - '.$productSupplier->fourn_ref.' - ';
+			$title = $productSupplier->fourn_name.' - '.$productSupplier->ref_supplier.' - ';
 
 			if ($productSupplier->fourn_qty == 1) {
 				$title .= price($price, 0, $langs, 0, 0, -1, $conf->currency)."/";
@@ -96,11 +99,31 @@ if ($idprod > 0) {
 			}
 
 			$label = price($price, 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
-			if ($productSupplier->fourn_ref) {
-				$label .= ' ('.$productSupplier->fourn_ref.')';
+			if ($productSupplier->ref_supplier) {
+				$label .= ' ('.$productSupplier->ref_supplier.')';
 			}
 
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
+			$prices[] = array(
+				"id" => $productSupplier->product_fourn_price_id,
+				"price" => price2num($price, '', 0),
+				"label" => $label,
+				"title" => $title,
+
+				// New data to allow js UX to build more interesting stuff
+				"supplierData" => [
+					'price' => (float) $productSupplier->fourn_price,
+					'unitPrice' => (float) $productSupplier->fourn_price,
+					'discountPercent' => (float) $productSupplier->fourn_remise_percent,
+					'qty' => (float) $productSupplier->fourn_qty,
+					'finalUnitPrice' => (float) $unitprice,
+					'finalPrice' => (float) $price,
+					'socName' => $productSupplier->fourn_name,
+					'ref' => $productSupplier->ref_supplier,
+					'reputation' => $productSupplier->supplier_reputation,
+					'dateCreation' => $productSupplier->fourn_date_creation,
+					'deliveryTimeDays' => $productSupplier->delivery_time_days,
+				]
+			); // For price field, we must use price2num(), for label or title, price()
 		}
 	}
 
@@ -142,6 +165,14 @@ if ($idprod > 0) {
 	}
 
 	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency)); // For price field, we must use price2num(), for label or title, price()
+
+	$parameters = array(
+		'prices' => &$prices,
+		'idprod' => $idprod,
+		'bestpricefirst' => GETPOST('bestpricefirst')
+	);
+
+	$hookmanager->executeHooks('afterGetSupplierPrices', $parameters, $producttmp);
 }
 
 echo json_encode($prices);

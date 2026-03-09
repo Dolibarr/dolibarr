@@ -318,10 +318,16 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (5, '5
 ALTER TABLE llx_oauth_token ADD COLUMN tokenstring_refresh text NULL AFTER tokenstring;
 ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
-ALTER TABLE llx_blockedlog ADD COLUMN linktoref varchar(255);
+ALTER TABLE llx_blockedlog ADD COLUMN linktoref text;
+ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX idx_linktoref;
+ALTER TABLE llx_blockedlog MODIFY COLUMN linktoref text;
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
 ALTER TABLE llx_blockedlog ADD COLUMN module_source varchar(32) DEFAULT '' AFTER action;
 ALTER TABLE llx_blockedlog ADD COLUMN amounts_taxexcl double(24,8) DEFAULT NULL AFTER amounts;
+
+-- VMYSQL4.3 ALTER TABLE llx_blockedlog ADD INDEX idx_linktoref (linktoref(255));
 
 
 -- Incoterms 2025 and specific terms
@@ -367,15 +373,17 @@ ALTER TABLE llx_blockedlog DROP INDEX entity;
 ALTER TABLE llx_blockedlog DROP INDEX entity_action_certified;
 ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action (entity,action);
 
+ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
+ALTER TABLE llx_blockedlog ADD COLUMN actionrefisunique varchar(16) DEFAULT NULL;
+
+ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN matching_general tinyint DEFAULT 0 NOT NULL AFTER multicurrency_code;
 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CDF', '[70,67]', 1, 'Congolese Franc');
 
 ALTER TABLE llx_societe MODIFY COLUMN mode_reglement integer;
-
-ALTER TABLE llx_blockedlog DROP COLUMN signature_line;
-ALTER TABLE llx_blockedlog ADD COLUMN actionrefisunique varchar(16) DEFAULT NULL;
 
 
 ALTER TABLE llx_ecm_files ADD COLUMN geolat double(24,8) DEFAULT NULL;
@@ -392,10 +400,6 @@ CREATE TABLE llx_expensereport_det_extrafields
 	import_key                varchar(14)
 ) ENGINE=innodb;
 
-
-ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
---ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);
-ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
 
 ALTER TABLE llx_fichinterdet ADD COLUMN special_code integer DEFAULT 0 AFTER fk_parent_line;
 ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 0 AFTER special_code;
@@ -414,10 +418,15 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT n
 
 ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
 
-UPDATE llx_cronjob set test = 'getDolDBType() == \'mysqli\'' WHERE label = 'MakeLocalDatabaseDumpShort';
-UPDATE llx_cronjob set test = 'getDolGlobalString(\'MAIN_ALLOW_BACKUP_BY_EMAIL\') && getDolDBType() == \'mysqli\'' WHERE label = 'MakeSendLocalDatabaseDumpShort';
+UPDATE llx_cronjob set test = 'getDolDBType() == ''mysqli''' WHERE label = 'MakeLocalDatabaseDumpShort';
+UPDATE llx_cronjob set test = 'getDolGlobalString(''MAIN_ALLOW_BACKUP_BY_EMAIL'') && getDolDBType() == ''mysqli''' WHERE label = 'MakeSendLocalDatabaseDumpShort';
 
 UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PGK', '[75]', 1,			'Papua New Guinea Kina');
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG25-DEV', 'The developed accountancy french plan 2025', 1);
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
 -- end of migration

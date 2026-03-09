@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2001       Eric Seigne         <erics@rycks.com>
+ * Copyright (C) 2004-2015  Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -733,11 +733,11 @@ class Translate
 	 *               Parameters of this method must not contain any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
 	public function transnoentities($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -754,11 +754,11 @@ class Translate
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string
 	 */
 	public function tr($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -774,11 +774,11 @@ class Translate
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string
 	 */
 	public function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -862,13 +862,15 @@ class Translate
 	/**
 	 *  Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
 	 *
-	 *  @param	string	$str            String to convert
-	 *  @param	string	$pagecodefrom	Page code of src string
-	 *  @param	string	$pagecodeto		Expected page code of returned string
-	 *  @return string         			Converted string
+	 *  @param	string|null	$str            String to convert
+	 *  @param	string		$pagecodefrom	Page code of src string
+	 *  @param	string		$pagecodeto		Expected page code of returned string
+	 *  @return string      	   			Converted string
 	 */
 	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8', $pagecodeto = '')
 	{
+		$str = (string) $str;
+
 		if (empty($pagecodeto)) {
 			$pagecodeto = $this->charset_output;
 		}
@@ -982,7 +984,7 @@ class Translate
 
 			if ($searchalt) {
 				$filenamealt = null;
-				// Test si fichier dans repertoire de la langue alternative
+				// Test if file is in directory of alternate language
 				if ($this->defaultlang != "en_US") {
 					$filenamealt = $searchdir . "/langs/en_US/" . $filename;
 				}
@@ -1170,6 +1172,8 @@ class Translate
 			return 0; // Cache already loaded for the currency
 		}
 
+		dol_syslog(get_class($this) . '::loadCacheCurrencies', LOG_DEBUG);
+
 		$sql = "SELECT code_iso, label, unicode";
 		$sql .= " FROM " . $db->prefix() . "c_currencies";
 		$sql .= " WHERE active = 1";
@@ -1178,7 +1182,6 @@ class Translate
 		}
 		//$sql.= " ORDER BY code_iso ASC"; // Not required, a sort is done later
 
-		dol_syslog(get_class($this) . '::loadCacheCurrencies', LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$this->load("dict");
@@ -1195,7 +1198,13 @@ class Translate
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
-					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency" . $obj->code_iso) != "Currency" . $obj->code_iso ? $this->trans("Currency" . $obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+					if ($obj->code_iso && !empty($this->tab_translate["Currency" . $obj->code_iso])) {	// Test on tab_translate is faster (possible because we knowhere the "dict" language file has been previously loaded).
+						$tmplabel = $this->trans("Currency" . $obj->code_iso);
+					} else {
+						$tmplabel = ($obj->label != '-' ? $obj->label : '');
+					}
+
+					$this->cache_currencies[$obj->code_iso]['label'] = $tmplabel;
 					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);  // @phan-suppress-current-line PhanTypeMismatchProperty
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
@@ -1208,6 +1217,7 @@ class Translate
 
 			// Resort cache
 			array_multisort($label, SORT_ASC, $this->cache_currencies);
+
 			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
 		} else {

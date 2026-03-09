@@ -6,7 +6,7 @@
  * Copyright (C) 2015      	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016      	Marcos García        	<marcosgdf@gmail.com>
  * Copyright (C) 2018      	Andreu Bisquerra		<jove@bisquerra.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,10 +40,11 @@ require '../../main.inc.php';
  * @var Societe $mysoc
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks", "blockedlog"));
 
@@ -112,6 +113,11 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 
 $permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
 $permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $sqlfilteronopdate = '';
 
@@ -127,14 +133,16 @@ $smin = 0;
 $ssec = 0;
 
 if ($object->id > 0) {
-	// When object is know, we must define first the end date (stored in database with different components) and deduct the start date
-	if (empty($object->day_close) && !empty($object->month_close)) {
-		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
-		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
-	} elseif (empty($object->day_close) && empty($object->month_close)) {
+	// When object is known, we must define first the end date (stored in database with different components) and deduct the start date
+	if (empty($object->day_close) && !empty($object->month_close)) {		// Full day
+		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, 1, $object->year_close, 'gmt');
+		$dateend = dol_time_plus_duree($dateend, +1, 'm', 0);
+		$dateend = dol_time_plus_duree($dateend, -1, 'd', 0);
+
+		$datestart = dol_time_plus_duree($dateend, -1, 'm', 0);
+	} elseif (empty($object->day_close) && empty($object->month_close)) {	// Full year
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 1, $object->year_close, 'gmt');
-		$datestart = dol_time_plus_duree($datestart, -1, 'm', 0);
+		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
 	} else {
 		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
 		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
@@ -208,16 +216,14 @@ if (GETPOST('cancel', 'alpha')) {
 	}
 }
 
-/*
 if ($action == "reopen" && $permissiontoadd) {
-	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
+	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_MODIFY');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = 'view';
 }
-*/
 
 if ($action == "start" && $permissiontoadd) {
 	if (!GETPOST('posmodule', 'alpha') || GETPOST('posmodule', 'alpha') == '-1') {
@@ -456,6 +462,31 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	}
 }
 
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+
+	if (!$error) {
+		// Actions on extra fields
+		$result = $object->updateExtraField($attribute_name, 'CASHCONTROL_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
+
 
 /*
  * View
@@ -658,6 +689,7 @@ if ($action == "create" || $action == "start") {
 	print $form->selectarray('posnumber', $arrayofpos, GETPOSTISSET('posnumber') ? GETPOSTINT('posnumber') : $selectedposnumber, $showempty);
 	//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
 	print '</td>';
+
 	// Year
 	print '<td>';
 	$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
@@ -667,6 +699,7 @@ if ($action == "create" || $action == "start") {
 	$retstring .= "</select>\n";
 	print $retstring;
 	print '</td>';
+
 	// Month
 	print '<td>';
 	$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'month" name="'.$prefix.'month">';
@@ -678,7 +711,9 @@ if ($action == "create" || $action == "start") {
 	}
 	$retstring .= "</select>";
 	print $retstring;
+	print ' '.$form->textwithpicto('', $langs->trans("KeepEmptyForAYearlyControl"));
 	print '</td>';
+
 	// Day
 	print '<td>';
 	$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
@@ -688,7 +723,9 @@ if ($action == "create" || $action == "start") {
 	}
 	$retstring .= "</select>";
 	print $retstring;
+	print ' '.$form->textwithpicto('', $langs->trans("KeepEmptyForAMonthlyControl"));
 	print '</td>';
+
 	// Button Start
 	print '<td>';
 	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
@@ -765,7 +802,9 @@ if ($action == "create" || $action == "start") {
 
 		print '<tr>';
 		// Initial amount
-		print '<td>'.$langs->trans("TheoricalAmount").'</td>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans("TheoricalAmount"), $langs->trans("TheoricalAmountAtOpening"));
+		print '</td>';
 		print '<td class="center">';
 		print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 		print '</td>';
@@ -795,7 +834,7 @@ if ($action == "create" || $action == "start") {
 			$object->fetch($id);
 			print $object->opening;
 		} else {
-			print (GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+			print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 		}
 		print '">';
 		print '</td>';
@@ -878,9 +917,10 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '<tr><td class="nowrap">';
 		print $langs->trans("Period");
 		print '</td><td>';
-		print $object->year_close;
-		print($object->month_close ? "-".sprintf("%02d", $object->month_close) : "");
-		print($object->day_close ? "-".sprintf("%02d", $object->day_close) : "");
+		$period = $object->year_close;
+		$period .= ($object->month_close ? "-".sprintf("%02d", $object->month_close) : "");
+		$period .= ($object->day_close ? "-".sprintf("%02d", $object->day_close) : "");
+		print $period;
 
 		//print ' &nbsp;  &nbsp; ';
 		$htmltooltip = '';
@@ -893,9 +933,17 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print $form->textwithpicto('', $htmltooltip);
 		print '</td></tr>';
 
+		// Other attributes
+		$parameters = array('colspan' => ' colspan="2"', 'cols' => '2');
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook)) {
+			print $object->showOptionals($extrafields, 'create', $parameters);
+		}
+
 		if ($object->lifetime_start) {
 			print '<tr><td class="titlefield nowrap">';
-			print $langs->trans("LifetimeAmount");
+			print $langs->trans("LifetimeAmount", $langs->transnoentities("AllPaymentModes"));
 			print '</td><td colspan="3">';
 			print '<span class="amount">'.price($object->card_lifetime + $object->cheque_lifetime + $object->cash_lifetime, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("since").' '.dol_print_date($object->lifetime_start, 'dayhour').' ('.$langs->trans("AllTerminals").')</span>';
@@ -939,12 +987,17 @@ if (empty($action) || $action == "view" || $action == "close") {
 				}
 				print '</td>';
 				print '<td class="right">';
-				print '<span class="amount';
-				if ((($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode) != $declaredamountforpaymentmode) {
-					print ' error';
+				$calcamount = (($key == 'cash' ? $object->opening : 0) + $realamountforpaymentmode);
+				print '<span class="amount">'.price($calcamount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '</span>';
+				//print '<span class="amount';
+				if ($calcamount != $declaredamountforpaymentmode) {
+					//print ' error';
+					print img_picto($langs->trans("Declared").': '.$declaredamountforpaymentmode, 'warning');
 				}
-				print '">';
-				print price($declaredamountforpaymentmode, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+				//print '">';
+
+
 				print '</td>';
 				print '</tr>';
 			}
@@ -972,13 +1025,14 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 			} else {
-				//print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 			}
 
 			print '</div>';
 
 			if ($contextpage != 'takepos') {
-				print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
+				// Add ifram of report
+				print '<center><iframe src="'.DOL_URL_ROOT.'/compta/cashcontrol/report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
 			}
 		} else {
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formclose">';
@@ -1028,7 +1082,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				print '</td>';
 				$i = 0;
 				foreach ($arrayofpaymentmode as $key => $val) {
-					print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>'.$langs->trans($val);
+					print '<td class="center'.($i == 0 ? ' hide0' : '').'">'.$langs->trans($val);
 					//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 					print '</td>';
 					$i++;
@@ -1044,7 +1098,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				// Amount per payment type
 				$i = 0;
 				foreach ($arrayofpaymentmode as $key => $val) {
-					print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
+					print '<td class="center'.($i == 0 ? ' hide0' : '').'">';
 					print $theoricalnbofinvoiceforterminal[$terminalid][$key];
 					print '</td>';
 					$i++;

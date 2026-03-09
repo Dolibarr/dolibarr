@@ -512,7 +512,7 @@ foreach ($object->fields as $key => $val) {
 			if (empty($val['searchmulti'])) {
 				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 1, 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 			} else {
-				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 0, 0, 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : array()), 0, 0, 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 			}
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth125', 1);
@@ -788,7 +788,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_IMAP_USE_PHPIMAP');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, $conf->global->MAIN_IMAP_USE_PHPIMAP);
+	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, getDolGlobalString("MAIN_IMAP_USE_PHPIMAP"));
 }
 print '</td>';
 print '</tr>';
@@ -801,6 +801,18 @@ if ($conf->use_javascript_ajax) {
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER", $arrval, getDolGlobalString('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND'));
+}
+print '</td>';
+print '</tr>';
+
+// EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES: Consider generic References as answer for "isnotanswer" filter.
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorIsNotAnswerUseReferences"), $langs->transnoentitiesnoconv("EmailCollectorIsNotAnswerUseReferencesHelp")).'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES", $arrval, getDolGlobalInt('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES', 0));
 }
 print '</td>';
 print '</tr>';

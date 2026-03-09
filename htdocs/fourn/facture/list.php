@@ -12,7 +12,7 @@
  * Copyright (C) 2017		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2018-2022	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter				<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -93,7 +93,18 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
+$search_status = GETPOST('search_status', 'array:intcomma');
+if (empty($search_status) && GETPOSTISSET('search_status')) {
+	// The parameter exists in the URL but was not recognized as an array.
+	$search_status = GETPOST('search_status', 'intcomma');
+	if ($search_status !== '' && $search_status !== '-1') {
+		$search_status = array($search_status);
+	} else {
+		$search_status = '';
+	}
+} elseif (is_array($search_status) && count($search_status) == 0) {
+	$search_status = '';
+}
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentcond = GETPOST('search_paymentcond') ? GETPOSTINT('search_paymentcond') : '';
 $search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
@@ -197,7 +208,7 @@ $arrayfields = array(
 	'f.label' => array('label' => "Label", 'checked' => '0', 'position' => 20),
 	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 25),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 27),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => '0', 'position' => 30),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 30, 'enabled' => (isModEnabled('project') ? '1' : '0')),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'position' => 42),
 	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 43),
@@ -206,8 +217,8 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 46),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 48),
 	'f.vat_reverse_charge' => array('label' => "VATReverseCharge", 'checked' => '0', 'position' => 49, 'enabled' => (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE') ? '1' : '0')),
-	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 52),
-	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 50),
+	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '0', 'position' => 52),
+	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '0', 'position' => 50),
 	'ba.label' => array('label' => "BankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('bank')), 'position' => 192),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 105),
 	'f.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 110),
@@ -409,9 +420,39 @@ if (empty($reshook)) {
 						$numprlv = $db->num_rows($result_sql);
 					}
 
-					if ($numprlv > 0) {
+					// Calculate pending amount to check if more requests can be made
+					$pending = 0;
+					// Get pending requests open with no transfer receipt yet
+					$sqlPending1 = "SELECT SUM(pfd.amount) as amount";
+					$sqlPending1 .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+					$sqlPending1 .= " WHERE pfd.fk_facture_fourn = ".((int) $objecttmp->id);
+					$sqlPending1 .= " AND pfd.traite = 0";
+					$resPending1 = $db->query($sqlPending1);
+					if ($resPending1) {
+						$objPending1 = $db->fetch_object($resPending1);
+						if ($objPending1) {
+							$pending += (float) $objPending1->amount;
+						}
+					}
+					$db->free($resPending1);
+					// Get pending request with a transfer receipt generated but not yet processed
+					$sqlPending2 = "SELECT SUM(pl.amount) as amount";
+					$sqlPending2 .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+					$sqlPending2 .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+					$sqlPending2 .= " WHERE p.fk_facture_fourn = ".((int) $objecttmp->id);
+					$sqlPending2 .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+					$resPending2 = $db->query($sqlPending2);
+					if ($resPending2) {
+						if ($objPending2 = $db->fetch_object($resPending2)) {
+							$pending += (float) $objPending2->amount;
+						}
+					}
+					$db->free($resPending2);
+					$remaintopaylesspendingdebit = $objecttmp->resteapayer - $pending;
+					// Check remaining amount (allows multiple partial requests as long as total doesn't exceed invoice amount)
+					if ($remaintopaylesspendingdebit <= 0) {
 						$error++;
-						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+						setEventMessages($objecttmp->ref.' '.$langs->trans("AmountRequestedAlreadyReachesTotal"), $objecttmp->errors, 'warnings');
 					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
 						$langs->load("errors");
 						$error++;
@@ -684,8 +725,9 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_login) {
 	$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_login);
 }
-if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND f.fk_statut = ".((int) $search_status);
+if (is_array($search_status) && count($search_status) > 0) {
+	$search_statusArray = $search_status;
+	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
 }
 if ($search_paymentmode > 0) {
 	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
@@ -696,7 +738,7 @@ if ($search_paymentcond > 0) {
 if ($search_bankaccount > 0) {
 	$sql .= " AND ba.rowid = ".((int) $search_bankaccount);
 }
-if ($search_vat_reverse_charge != '') {
+if ($search_vat_reverse_charge !== '' && $search_vat_reverse_charge !== '-1') {
 	$sql .= " AND f.vat_reverse_charge = ".((int) $search_vat_reverse_charge);
 }
 if ($search_date_start) {
@@ -1038,8 +1080,14 @@ if ($search_amount_no_tax) {
 if ($search_amount_all_tax) {
 	$param .= '&search_amount_all_tax='.urlencode($search_amount_all_tax);
 }
-if ($search_status >= 0) {
-	$param .= "&search_status=".urlencode($search_status);
+if ($search_status != '') {
+	if (is_array($search_status)) {
+		foreach ($search_status as $key => $val) {
+			$param .= '&search_status[]='.urlencode($val);
+		}
+	} else {
+		$param .= '&search_status='.urlencode($search_status);
+	}
 }
 if ($search_paymentmode) {
 	$param .= '&search_paymentmode='.urlencode((string) ($search_paymentmode));
@@ -1050,8 +1098,8 @@ if ($search_paymentcond) {
 if ($search_bankaccount > 0) {
 	$param .= '&search_bankaccount='.urlencode((string) ($search_bankaccount));
 }
-if ($search_vat_reverse_charge != '') {
-	$param .= '&search_vat_reverse_charge='.urlencode((string) ($search_vat_reverse_charge));
+if ($search_vat_reverse_charge !== '' && $search_vat_reverse_charge !== '-1') {
+	$param .= '&search_vat_reverse_charge='.urlencode($search_vat_reverse_charge);
 }
 if ($show_files) {
 	$param .= '&show_files='.urlencode((string) ($show_files));
@@ -1462,7 +1510,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
 	$liststatus = array('0' => $langs->trans("Draft"), '1' => $langs->trans("Unpaid"), '2' => $langs->trans("Paid"));
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'center search_status width100 onrightofpage', 1);
+	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'center search_status width125 onrightofpage', 1, 0);
 	print '</td>';
 }
 // Action column

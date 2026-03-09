@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -429,25 +429,25 @@ class DoliDBSqlite3 extends DoliDB
 
 			$descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='".$this->escape($tablename)."'");
 
-			// 1- Renommer la table avec un nom temporaire
+			// 1- Rename the table to a temporary name
 			$this->query("ALTER TABLE ".$tablename." RENAME TO tmp_".$tablename);
 
-			// 2- Recréer la table avec la contrainte ajoutée
+			// 2- Recreate the table with the new constraint
 
-			// on bricole la requete pour ajouter la contrainte
+			// Adjust the SQL request to add the constraint
 			$descTable = substr($descTable, 0, strlen($descTable) - 1);
 			$descTable .= ", CONSTRAINT ".$constraintname." FOREIGN KEY (".$localfields.") REFERENCES ".$foreignTable."(".$foreignFields.")";
 
-			// fermeture de l'instruction
+			// Add closing parenthesis for SQL query
 			$descTable .= ')';
 
-			// Création proprement dite de la table
+			// Perform query to create the table
 			$this->query($descTable);
 
-			// 3- Transférer les données
+			// 3- Copy the data from the temporary table (before adding constraint)
 			$this->query("INSERT INTO ".$tablename." SELECT * FROM tmp_".$tablename);
 
-			// 4- Supprimer la table temporaire
+			// 4- Delete the original (now temporary) table
 			$this->query("DROP TABLE tmp_".$tablename);
 
 			// dummy statement
@@ -571,7 +571,7 @@ class DoliDBSqlite3 extends DoliDB
 			}
 			return $resultset->fetchArray(SQLITE3_NUM);
 		} else {
-			// si le curseur est un boolean on retourne la valeur 0
+			// If the cursor is a boolean, return 0
 			return 0;
 		}
 	}
@@ -753,7 +753,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param   string	$tab    	Table name concerned by insert. Not used for mysql, but required for Postgresql
 	 * @param	string	$fieldid	Field name
 	 * @return  int     			Id of row
 	 */

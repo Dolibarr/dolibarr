@@ -272,7 +272,7 @@ a.top-menu-dropdown-link {
 .dropdown-menu > .user-footer {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
-	padding: 10px;
+	padding: 20px;
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
@@ -290,7 +290,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu > .user-body, .dropdown-body {
-	padding: 15px;
+	padding: 20px;
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #f0f0f0;
 	white-space: normal;
