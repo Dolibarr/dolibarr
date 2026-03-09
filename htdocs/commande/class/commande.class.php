@@ -4463,7 +4463,6 @@ class Commande extends CommonOrder
 				$texticon = img_picto('', 'statut5', '', 0, 0, 0, '', 'paddingleft');
 				$textinfo = $texticon . ' ' . $langs->trans("Shipped");
 				$result['shippable'] = true;
-
 			} elseif ($notshippable) {
 				$texticon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
 				$textinfo = $texticon . ' ' . $langs->trans("NonShippable") . '<br>' . $textinfo;
