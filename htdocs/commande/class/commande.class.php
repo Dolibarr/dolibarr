@@ -4451,7 +4451,6 @@ class Commande extends CommonOrder
 
 		if ($nbprod) {
 			if (!$has_reliquat) {
-
 				$texticon = img_picto('', 'statut5', '', 0, 0, 0, '', 'paddingleft');
 				$textinfo = $texticon . ' ' . $langs->trans("Shipped");
 				$result['shippable'] = true;
@@ -4465,7 +4464,6 @@ class Commande extends CommonOrder
 				$textinfo = $texticon . ' ' . $langs->trans("Shippable") . '<br>' . $textinfo;
 				$result['shippable'] = true;
 			}
-
 			$result['has_product'] = true;
 			$result['texticon'] = $texticon;
 			$result['textinfo'] = $textinfo;
