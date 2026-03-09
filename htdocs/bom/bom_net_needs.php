@@ -259,17 +259,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</thead>';
 	print '<tbody>';
 	$tablerows = array();
-	$position = 0;
+	$position = '';
+	$levelposition = '';
+	$lineposition = 0;
+	$bomlevel = 0;
 	if (count($TChildBom) > 0) {
 		if ($action == 'treeview') {
 			foreach ($TChildBom as $fk_bom => $TProduct) {
 				$repeatChar = '&emsp;';
 				if (!empty($TProduct['bom'])) {
-					if (!empty($TProduct['position'])) {
-						$position = $TProduct['position'];
+					// we make position string in format 'lineposition.bomlevel.childposition'
+					if (!empty($TProduct['position']) && !empty($TProduct['parentid']) && $TProduct['parentid'] == $object->id) {
+						// define lineposition
+						$lineposition = $TProduct['position'];
 					}
-					if (!empty($TProduct['level'])) {
-						$position = sprintf('%d.%d', $position, $TProduct['level']);
+					if (isset($TProduct['level'])) {
+						$bomlevel = $TProduct['level'];
+					}
+					// define lineposition.bomlevel
+					$position = sprintf('%d.%d', $lineposition, $bomlevel);
+					// memorize level position for products in bom
+					$levelposition = $position;
+					if (!empty($TProduct['parentid']) && $TProduct['parentid'] != $object->id && empty($TProduct['product'])) {
+						// define lineposition.bomlevel.childposition
+						$position = sprintf('%s.%d', $position, $TProduct['position']);
 					}
 					$prod = new Product($db);
 					$prod->fetch($TProduct['bom']->fk_product);
@@ -293,8 +306,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				if (!empty($TProduct['product'])) {
 					foreach ($TProduct['product'] as $fk_product => $TInfos) {
-						if (!empty($TInfos['position']) && $fk_bom == $object->id) { // no new position for sub bom lines
+						if (!empty($TInfos['position']) && $fk_bom == $object->id) {
+							// top level position
 							$position = $TInfos['position'];
+						} else {
+							// sublevel position
+							$position = sprintf('%s.%d', $levelposition, $TInfos['position']);
 						}
 						$prod = new Product($db);
 						$prod->fetch($fk_product);
@@ -308,9 +325,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$tablerows[$position] = '<tr class="oddeven">';
 						}
 						$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
-						if ($action == 'treeview') {
-							$tablerows[$position] .= '<td></td>';
-						}
+						$tablerows[$position] .= '<td></td>';
 						$tablerows[$position] .= '<td class="linecolqty right">'.price(price2num($TInfos['qty'], 'MS')).'</td>';
 						$tablerows[$position] .= '<td>';
 						$tablerows[$position] .= '</td>';
@@ -320,7 +335,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 			}
-			// Sort the rows by position
+			// Sort the rows numeric by position string
 			ksort($tablerows, SORT_NUMERIC);
 			// Print the rows
 			foreach ($tablerows as $position => $row) {
