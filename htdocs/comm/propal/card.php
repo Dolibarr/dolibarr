@@ -3719,7 +3719,7 @@ if ($action == 'create') {
 				} else {
 					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandelete);
 				}
-				
+
 			}
 		}
 
