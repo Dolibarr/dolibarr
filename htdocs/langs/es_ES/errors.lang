@@ -469,5 +469,5 @@ SomeShipmentExists=Error, hay un envío vinculado al pedido. Eliminación rechaz
 WarningEvaluationEmptyValidate=No se puede validar la evaluación, niveles de habilidades no definidos
 ErrorBadParametersForDirectDebitFileCreate=No se puede crear un archivo de transferencia bancaria: no se proporciona el parámetro de formato esperado.
 ErrorBadParametersForDirectDebitFileCreateDids=No se puede crear el archivo de transferencia bancaria: no se proporcionan los ID de las solicitudes de pago existentes.
-UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password
+UserDoesNotHaveRightsToChangeHisPassword=Este usuario no tiene permisos para cambiar su propia contraseña
 ErrorFailedToGetTokenFromClientIdAndSecret=No se pudo obtener un token de %s con el ID de cliente y el secreto de cliente
