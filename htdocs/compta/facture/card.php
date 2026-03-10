@@ -41,7 +41,7 @@
  * \brief 	Page to create/see an invoice
  */
 
-// Libraries
+// Load Dolibarr environment
 require '../../main.inc.php';
 /**
  * @var Conf $conf
@@ -91,14 +91,15 @@ if (isModEnabled('margin')) {
 }
 
 // General $Variables
-$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));    // For backward compatibility
-$ref = GETPOST('ref', 'alpha');
-$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
+
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));    // For backward compatibility
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOSTINT('socid');
 $lineid = GETPOSTINT('lineid');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
@@ -2634,11 +2635,17 @@ if (empty($reshook)) {
 					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif (!empty($price_ht_devise) || $price_ht_devise === '0') {
 					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ttc_devise = (float) price2num((float) $pu_ht_devise * (1 + ((float) $tmpvat / 100)), 'MU');
 					$pu_ht = '';
 					$pu_ttc = '';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
 					$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ttc_devise) || (string) $price_ttc_devise === '0') {
+					$pu_ttc_devise = (float) price2num($price_ttc_devise, 'MU');
+					$pu_ht_devise = (float) price2num((float) $pu_ttc_devise / (1 + ((float) $tmpvat / 100)), 'MU');
+					$pu_ht = '';
+					$pu_ttc = '';
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {

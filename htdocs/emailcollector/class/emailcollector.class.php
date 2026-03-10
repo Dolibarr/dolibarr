@@ -2065,20 +2065,28 @@ class EmailCollector extends CommonObject
 					}
 				}
 				if ($searchfilterisnotanswer > 0) {
-					if (!empty($headers['In-Reply-To'])) {
-						// Note: we can have
-						// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewritten)
-						$isanswer = 0;
-						if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
+					// Note: "In-Reply-To" to detect if mail is an answer is not reliable because we can have:
+					// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (for example a transfer rewritten)
+					$isanswer = 0;
+					if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
+						$isanswer = 1;
+					}
+					// By default, ignore generic non-empty References to avoid false positives from
+					// automated platform notifications. This option restores legacy behavior.
+					if (!$isanswer && getDolGlobalInt('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES') && !empty($headers['References'])) {
+						$isanswer = 1;
+					}
+					if (!$isanswer && getDolGlobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
+						if (!empty($headers['In-Reply-To'])) {
 							$isanswer = 1;
 						}
-						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
-						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
-						if ($isanswer) {
-							$nbemailprocessed++;
-							dol_syslog(" Discarded - Email is an answer");
-							continue; // Exclude email
-						}
+					}
+					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
+					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
+					if ($isanswer) {
+						$nbemailprocessed++;
+						dol_syslog(" Discarded - Email is an answer");
+						continue; // Exclude email
 					}
 				}
 				if ($searchfilterreplyto > 0) {
