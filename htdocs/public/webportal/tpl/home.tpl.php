@@ -142,10 +142,10 @@ if (empty($reshook)) {
 			foreach ($navGroupMenu as $groupId => $groupItem) {
 				// If group have more than 1 item, group is valid
 				if (!empty($groupItem['children']) && count($groupItem['children']) > 1) {
-					// ajout du group au menu
+					// add group to menu
 					$navMenu[$groupId] = $groupItem;
 
-					// suppression des items enfant du group du menu
+					// suppress childs items of menu group 
 					foreach ($groupItem['children'] as $menuId => $menuItem) {
 						if (isset($navMenu[$menuId])) {
 							unset($navMenu[$menuId]);
