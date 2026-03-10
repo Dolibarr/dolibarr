@@ -474,7 +474,7 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 		if (empty($productstatcache[$line->fk_product])) {
 			$prod = new Product($this->db);
 			$prod->fetch($line->fk_product);
-			$prod->load_stock('nobatch', 'warehouseopen');
+			$prod->load_stock('nobatch,warehouseopen');
 			$productstatcache[$line->fk_product]['stockreel'] = $prod->stock_reel;
 		}
 
