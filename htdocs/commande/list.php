@@ -3012,7 +3012,7 @@ while ($i < $imaxinloop) {
 
 					if (!empty($shippableInfos['warning'])) {
 						// On ne remonte plus le détail textwarning, mais on garde l’icône d’avertissement
-						print $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', 2), '', 2);
+						print $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', '2'), '', 2);
 					}
 				}
 			}
