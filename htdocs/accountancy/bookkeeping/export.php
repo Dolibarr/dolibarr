@@ -767,7 +767,6 @@ if ($action == 'export_file') {
 	$exportTypesWithDocs = array(
 		AccountancyExport::$EXPORT_TYPE_QUADRATUS,
 	);
-	$isExportTypeWithDocs = in_array((int) $formatexportset, $exportTypesWithDocs);
 	$form_question['notifiedexportfull'] = array(
 		'name' => 'notifiedexportfull',
 		'type' => 'checkbox',
