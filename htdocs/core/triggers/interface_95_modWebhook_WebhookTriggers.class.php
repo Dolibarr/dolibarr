@@ -173,7 +173,8 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 			}
 		}
 
-		if ($dbhistory) {
+		// Test if dbhistory exist and IS different to main db used. Else postgres will crash because there is no db left for end of pages
+		if ($dbhistory && $dbhistory !== $this->db) {
 			$dbhistory->close();
 		}
 
