@@ -1857,7 +1857,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			print '<input type="text" name="capital" id="capital" class="maxwidth100" value="'.((string) $object->capital).'"> ';
-			// 独立的资本币种：如果为空，则回退到第三方常用币种，再回退到全局货币
 			$capitalcurrencycode = '';
 			if (GETPOSTISSET('capital_currency')) {
 				$capitalcurrencycode = GETPOST('capital_currency', 'alpha');
@@ -2701,7 +2700,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone"><input type="text" name="capital" id="capital" size="10" value="';
 				print $object->capital != '' && $object->capital != 0 ? dol_escape_htmltag(price($object->capital)) : '';
-				// 独立的资本币种：如果为空，则回退到第三方常用币种，再回退到全局货币
 				$capitalcurrencycode = '';
 				if (GETPOSTISSET('capital_currency')) {
 					$capitalcurrencycode = GETPOST('capital_currency', 'alpha');
@@ -3222,7 +3220,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
 			if ($object->capital) {
-				// 查看页：Capital 仍按“金额 + 币种”，币种按 capital_currency → multicurrency_code → 全局货币的顺序
 				$capitalcurrencycode = !empty($object->capital_currency) ? $object->capital_currency : (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency);
 				print price($object->capital, 0, $langs, 0, -1, -1, $capitalcurrencycode);
 			} else {
