@@ -117,7 +117,7 @@ $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo($i + 1); ?></td>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php /* @phan-suppress-next-line PhanUndeclaredGlobalVariable */ echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -421,7 +421,9 @@ $coldisplay++;
 	$prefillDates = false;
 	$date_start_prefill = 0;
 	$date_end_prefill = 0;
+	// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 	if (getDolGlobalString('MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE') && !empty($object->lines) && $i > 0) {
+		// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 		for ($j = $i - 1; $j >= 0; $j--) {
 			$lastline = $object->lines[$j];
 			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end))) {
