@@ -2586,12 +2586,14 @@ class QuickMemo {
 					/>
 				</div>
 
+				${this.param.elementId > 0 ? `
 				<div class="quickmemo-modal-input-group">
 					<label class="quickmemo-modal-label">
-						<input type="checkbox" name="commonElementType" />
+						<input type="checkbox" name="commonElementType" value="1"  />
 						${Dolibarr.tools.langs.trans('QuickMemoAskLabelModelMemoIsCommon')}
 					</label>
 				</div>
+				` : `<input type="hidden" name="commonElementType" value="0" />` }
 
 				<div class="quickmemo-modal-input-group">
 					<label class="quickmemo-modal-label">
@@ -2636,7 +2638,10 @@ class QuickMemo {
 		dialog.querySelector('.quickmemo-modal-actions-confirm-btn')
 			.addEventListener('click', async () => {
 
-				const TplCommon = dialog.querySelector('[name=commonElementType]').checked;
+				const commonInput = dialog.querySelector('[name=commonElementType]');
+				const TplCommon = commonInput
+					? (commonInput.type === 'checkbox' ? commonInput.checked : commonInput.value === '1')
+					: false;
 				const TplPrivate = dialog.querySelector('[name=privateModel]').checked;
 				const TplModelName = dialog.querySelector('[name=modelName]').value || '';
 				const elementType = TplCommon ? '' : this.param.elementType || '';
