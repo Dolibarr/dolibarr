@@ -269,7 +269,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$repeatChar = '&emsp;';
 				if (!empty($TProduct['bom'])) {
 					// we make position string in format 'lineposition.bomlevel.childposition'
-					if (!empty($TProduct['position']) && !empty($TProduct['parentid']) && $TProduct['parentid'] == $object->id) {
+					if (!empty($TProduct['position']) && $TProduct['parentid'] == $object->id) {
 						// define lineposition
 						$lineposition = $TProduct['position'];
 					}
@@ -324,9 +324,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						} else {
 							$tablerows[$position] = '<tr class="oddeven">';
 						}
-						$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
+						$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, (int) $TInfos['level']).$prod->getNomUrl(1).'</td>';
 						$tablerows[$position] .= '<td></td>';
-						$tablerows[$position] .= '<td class="linecolqty right">'.price(price2num($TInfos['qty'], 'MS')).'</td>';
+						$tablerows[$position] .= '<td class="linecolqty right">'.price(price2num((float) $TInfos['qty'], 'MS')).'</td>';
 						$tablerows[$position] .= '<td>';
 						$tablerows[$position] .= '</td>';
 						$tablerows[$position] .= '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
