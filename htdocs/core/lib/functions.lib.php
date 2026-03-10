@@ -7135,7 +7135,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$liste_titre = 'liste_titre_sel';
 	}
 
-	$tagstart = '<' . $tag . (!empty($field) ? ' id="'.$field.'"' : '') .' class="' . $prefix . $liste_titre . '" ' . $moreattrib;
+	$tagstart = '<' . $tag . (!empty($field) ? ' id="'.$field.'"' : '') .' class="'. (!empty($contextpagedraganddrop) ? 'fieldsortable' : '').' '. $prefix . $liste_titre . '" ' . $moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && $wrapcolumntitle && !dol_textishtml($name)) ? ' title="' . dolPrintHTMLForAttribute($langs->trans($name)) . '"' : '';
 	$tagstart .= '>';
@@ -7197,7 +7197,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			}
 		}
 		if (!empty($contextpagedraganddrop)) {
-			$out .= img_picto($langs->trans("MoveTitle".$name), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
+			$out .= img_picto($langs->trans("MoveField", $name), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 		}
 	}
 
@@ -7221,7 +7221,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			$( ".sortable" ).sortable({
 				handle: \'.boxhandle\',
 				revert: \'invalid\',
-				items: \'.boxsortable\',
+				items: \'.fieldsortable\',
 				stop: function(event, ui) {
 					console.log("We moved box so we call updateBoxOrder with ajax actions");
 					updateFieldOrder();  /* 1 to avoid message after a move */
