@@ -137,7 +137,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		async function deleteAllDolibarrLangsDbs() {
 			if (!indexedDB.databases) {
-				console.warn("Votre navigateur ne supporte pas indexedDB.databases(), suppression impossible en masse.");
+				console.warn("Your browser does not support indexedDB.databases(), bulk deletion is not possible.");
 				return;
 			}
 
