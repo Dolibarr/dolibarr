@@ -50,7 +50,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		// Create a secure DB name
 		async function getSafeDbName() {
-			const path = window.location.pathname;
+			const path = Dolibarr.getContextVar('DOL_URL_ROOT', Dolibarr.getContextVar('DOL_LANG_INTERFACE_URL', window.location.hostname));
 			const hashedPath = await hashString(path);
 			return `DolibarrLangs_${hashedPath}`;
 		}
