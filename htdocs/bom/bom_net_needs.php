@@ -320,7 +320,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$prod->stock_reel = 0;
 						}
 						if ($fk_bom != $object->id) {
-							$tablerows[$position] .= '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">'; // sub bom on same position
+							$tablerows[$position] = '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">'; // sub bom on same position
 						} else {
 							$tablerows[$position] = '<tr class="oddeven">';
 						}
