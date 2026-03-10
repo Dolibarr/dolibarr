@@ -316,7 +316,7 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
-				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_sending);
+				$res = $objecttmp->add_object_linked($objecttmp->origin_type, $id_sending);
 
 				if ($res == 0) {
 					$errors[] = $expd->ref.' : '.$langs->trans($objecttmp->errors[0]);
@@ -555,6 +555,11 @@ if (empty($reshook)) {
 			}
 			if ($search_company) {
 				$param .= "&search_company=".urlencode($search_company);
+			}
+			if ($search_shipping_method_ids) {
+				foreach ($search_shipping_method_ids as $value) {
+					$param .= "&search_shipping_method_ids[]=".urlencode($value);
+				}
 			}
 			if ($search_tracking) {
 				$param .= "&search_tracking=".urlencode($search_tracking);
@@ -977,7 +982,7 @@ if ($search_company) {
 }
 if ($search_shipping_method_ids) {
 	foreach ($search_shipping_method_ids as $value) {
-		$param .= "&amp;search_shipping_method_ids[]=".urlencode($value);
+		$param .= "&search_shipping_method_ids[]=".urlencode($value);
 	}
 }
 if ($search_tracking) {

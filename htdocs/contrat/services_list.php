@@ -494,8 +494,12 @@ if ($search_total_ttc) {
 if ($search_service) {
 	$param .= '&amp;search_service='.urlencode($search_service);
 }
-if ($search_status) {
-	$param .= '&amp;search_status='.urlencode($search_status);
+if ($search_status != '') {
+	if ($filter == 'expired' || $filter == 'notexpired') {
+		$param .= '&amp;search_status='.urlencode($search_status.'&filter='.$filter);
+	} else {
+		$param .= '&amp;search_status='.urlencode($search_status);
+	}
 }
 if ($search_option) {
 	$param .= "&amp;search_option=".urlencode($search_option);

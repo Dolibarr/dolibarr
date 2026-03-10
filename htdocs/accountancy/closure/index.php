@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019-2023  Open-DSI    	    		<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,8 +93,9 @@ if (is_array($fiscal_periods)) {
 			if (!isset($next_active_fiscal_period) && empty($fiscal_period['status'])) {
 				$next_active_fiscal_period = $fiscal_period;
 			}
-		} else {								// If we did not found the current fiscal period
-			if ($fiscal_period_id == $fiscal_period['id'] || (empty($fiscal_period_id) && $fiscal_period['date_start'] <= $now && $now <= $fiscal_period['date_end'])) {
+		} else {                        // If we did not found the current fiscal period
+			// Only select by ID, not by date range for closure page
+			if (!empty($fiscal_period_id) && $fiscal_period_id == $fiscal_period['id']) {
 				$current_fiscal_period = $fiscal_period;
 			} else {
 				$last_fiscal_period = $fiscal_period;	// $last_fiscal_period is in fact $previous_fiscal_period
@@ -155,8 +156,8 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
-			$separate_auxiliary_account = GETPOSTINT('separate_auxiliary_account');
-			$generate_bookkeeping_records = GETPOSTINT('generate_bookkeeping_records');
+			$separate_auxiliary_account = (!empty(GETPOST('separate_auxiliary_account')) ? 1 : 0);
+			$generate_bookkeeping_records = (!empty(GETPOST('generate_bookkeeping_records')) ? 1 : 0);
 
 			$error = 0;
 			if ($generate_bookkeeping_records) {
