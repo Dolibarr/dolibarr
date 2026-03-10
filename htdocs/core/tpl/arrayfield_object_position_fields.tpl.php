@@ -7,7 +7,8 @@
 // Used to modify fields positions according to user parameters
 
 /**
- * @var User	$user
+ * @var User		 	$user
+ * @var CommonObject 	$object
  *
  * @var string|array<string|int, mixed>			$contextpage
  * @var array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}>		$arrayfields

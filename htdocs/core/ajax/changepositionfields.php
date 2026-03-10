@@ -74,9 +74,9 @@ if ($userid != $user->id) {
 if (!empty($action) && !empty($contextpage)) {
 	if ($action == "listafterchangingpositionfields") {
 		dol_syslog("Ajax changepositionfields contextpage=".$contextpage." postitionfields=".$postitionfields." userid=".$userid, LOG_DEBUG);
-
+		$tabparam = array();
 		if (!empty($postitionfields)) {
-			$positions = "";
+			$position = "";
 			foreach ($postitionfields as $pos => $field) {
 				$position .= ($pos != 0 ? "," : "").$field.":".$pos;
 			}
