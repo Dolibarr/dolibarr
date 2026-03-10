@@ -115,6 +115,11 @@ function initTooltipDialogs(root, dialogWidth) {
 			$dialog.dialog("destroy");
 		}
 
+		console.log("init .dialog() dialogWidth="+dialogWidth);
+		if (dialogWidth == undefined) {
+			dialogWidth = "auto";
+		}
+
 		$dialog.dialog({
 			closeOnEscape: true,
 			classes: { "ui-dialog": "highlight" },
@@ -136,8 +141,11 @@ function initTooltipDialogs(root, dialogWidth) {
 		$trigger.off("click.tooltipDialog");
 
 		$trigger.on("click.tooltipDialog", function () {
+
 			const dolid = jQuery(this).attr("dolid");
 			if (!dolid) return false;
+
+			console.log("We click on tooltip for element with dolid="+dolid);
 
 			const $dialog = jQuery("#idfortooltiponclick_" + dolid);
 			if ($dialog.length && $dialog.data("ui-dialog")) {
