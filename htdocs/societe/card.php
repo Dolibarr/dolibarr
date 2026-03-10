@@ -374,6 +374,7 @@ if (empty($reshook)) {
 			$object->code_client			= GETPOSTISSET('customer_code') ? GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOSTFLOAT('capital');
+			$object->capital_currency		= GETPOST('capital_currency', 'alpha');
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
@@ -1087,6 +1088,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->email				= GETPOST('email', 'email');
 		$object->url				= GETPOST('url', 'url');
 		$object->capital			= GETPOSTFLOAT('capital');
+		$object->capital_currency	= GETPOST('capital_currency', 'alpha');
 		$paymentTermId = GETPOSTINT('cond_reglement_id'); // can be set by default values on create page and not already in get or post variables
 		if (empty($paymentTermId) && !GETPOSTISSET('cond_reglement_id')) {
 			$paymentTermId = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
@@ -1853,18 +1855,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Capital
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
-			if (isModEnabled("multicurrency")) {
-				print '<span class="hideonsmartphone">';
-				//print $langs->trans("Currency".$object->multicurrency_code);
-				print $langs->getCurrencySymbol($object->multicurrency_code);
-				print '</span></td></tr>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print '<input type="text" name="capital" id="capital" class="maxwidth100" value="'.((string) $object->capital).'"> ';
+			// 独立的资本币种：如果为空，则回退到第三方常用币种，再回退到全局货币
+			$capitalcurrencycode = '';
+			if (GETPOSTISSET('capital_currency')) {
+				$capitalcurrencycode = GETPOST('capital_currency', 'alpha');
 			} else {
-				print '<span class="hideonsmartphone">';
-				print $langs->getCurrencySymbol($conf->currency);
-				//print $langs->trans("Currency".$conf->currency);
-				print '</span></td></tr>';
+				$capitalcurrencycode = (!empty($object->capital_currency) ? $object->capital_currency : (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency));
 			}
+			print img_picto('', 'currency', 'class="pictofixedwidth"');
+			print $form->selectCurrency($capitalcurrencycode, 'capital_currency', 2);
+			print '</td></tr>';
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, array(), 1, 0, 0, 'maxwidth200onsmartphone');
@@ -2086,6 +2088,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$object->no_email				= GETPOSTINT("no_email");
 				$object->url					= GETPOST('url', 'url');
 				$object->capital				= GETPOSTFLOAT('capital');
+				$object->capital_currency		= GETPOST('capital_currency', 'alpha');
 				$object->idprof1				= GETPOST('idprof1', 'alphanohtml');
 				$object->idprof2				= GETPOST('idprof2', 'alphanohtml');
 				$object->idprof3				= GETPOST('idprof3', 'alphanohtml');
@@ -2696,13 +2699,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Capital
 				print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-				print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
+				print '<td colspan="3" class="maxwidthonsmartphone"><input type="text" name="capital" id="capital" size="10" value="';
 				print $object->capital != '' && $object->capital != 0 ? dol_escape_htmltag(price($object->capital)) : '';
-				if (isModEnabled("multicurrency")) {
-					print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+				// 独立的资本币种：如果为空，则回退到第三方常用币种，再回退到全局货币
+				$capitalcurrencycode = '';
+				if (GETPOSTISSET('capital_currency')) {
+					$capitalcurrencycode = GETPOST('capital_currency', 'alpha');
 				} else {
-					print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+					$capitalcurrencycode = (!empty($object->capital_currency) ? $object->capital_currency : (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency));
 				}
+				print '"> ';
+				print img_picto('', 'currency', 'class="pictofixedwidth"');
+				print $form->selectCurrency($capitalcurrencycode, 'capital_currency', 2);
+				print '</td></tr>';
 
 				// Default language
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -3213,11 +3222,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
 			if ($object->capital) {
-				if (isModEnabled("multicurrency") && !empty($object->multicurrency_code)) {
-					print price($object->capital, 0, $langs, 0, -1, -1, $object->multicurrency_code);
-				} else {
-					print price($object->capital, 0, $langs, 0, -1, -1, $conf->currency);
-				}
+				// 查看页：Capital 仍按“金额 + 币种”，币种按 capital_currency → multicurrency_code → 全局货币的顺序
+				$capitalcurrencycode = !empty($object->capital_currency) ? $object->capital_currency : (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency);
+				print price($object->capital, 0, $langs, 0, -1, -1, $capitalcurrencycode);
 			} else {
 				print '&nbsp;';
 			}
