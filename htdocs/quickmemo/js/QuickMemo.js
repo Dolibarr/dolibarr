@@ -2104,8 +2104,7 @@ class QuickMemo {
 
 		// Render le memo
 		const noteEl = await this.renderMemo(memo);
-
-		noteEl.style.zIndex = newZ;
+		this.bringToTop(noteEl);
 
 		// Focus sur le textarea
 		const textarea = noteEl.querySelector('textarea');
@@ -2762,7 +2761,7 @@ class QuickMemo {
                 <header >
                     <h3 class="quickmemo-modal-title">${config.title}</h3>
                     <div class="header-actions noselect">
-                     ${config.btn.confirm ? `
+                     ${config.btn.close ? `
                     	<button type="button" value="cancel" class="dialog-close-icon">
                     		&times;
                     	</button>` : ''}
