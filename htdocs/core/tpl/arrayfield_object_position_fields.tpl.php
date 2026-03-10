@@ -1,10 +1,10 @@
 <?php
-/* 
+/*
  */
 
 // This tpl file is included into the init part of pages, so before action.
 // So no output must be done.
-// Used to modify fields positions according to user parameters 
+// Used to modify fields positions according to user parameters
 
 /**
  * @var User	$user
