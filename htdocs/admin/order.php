@@ -727,6 +727,17 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 }
 
+// Disable shippable icon on card (if Stock and Expedition are enabled)
+if (isModEnabled('stock') && isModEnabled('shipping')) {
+	print '<tr class="oddeven"><td class="titlefield">';
+	print $langs->trans("EnableShippableIconOnCard");
+	print '</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('ORDER_ENABLE_SHIPPABLE_ICON_ON_CARD');
+	print '</td></tr>';
+}
+
+
 // Notifications
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';

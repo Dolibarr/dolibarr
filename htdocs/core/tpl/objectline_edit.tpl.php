@@ -303,7 +303,14 @@ $coldisplay++;
 		&nbsp;
 	<?php } ?>
 	</td>
-
+	<?php
+	// Shippable Status (Empty cell for edit mode to keep column alignment)
+	if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && getDolGlobalString('ORDER_ENABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+		print '<td class="linecolstock center">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	?>
 	<?php
 	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		$unit_type = false;
