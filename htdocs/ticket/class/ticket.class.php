@@ -1766,7 +1766,7 @@ class Ticket extends CommonObject
 	 *
 	 * @param   User    $user       User performing the action
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if error, 0 if nothing done, >0 if success
+	 * @return  int                 Return -1 if error, 0 if nothing done, 1 if success
 	 */
 	public function setReadDate($user, $notrigger = 0)
 	{
