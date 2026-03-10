@@ -1369,6 +1369,7 @@ MAIN_MAX_DECIMALS_SHOWN=Max. decimals for prices <b>shown on screen</b>. Add an 
 MAIN_ROUNDING_RULE_TOT=Step of rounding range (for countries where rounding is done on something other than base 10. For example, put 0.05 if rounding is done by 0.05 steps)
 UnitPriceOfProduct=Net unit price of a product
 TotalPriceAfterRounding=Total price (excl/vat/incl tax) after rounding
+NotSupportedWithRuleForCustomerPrice=Not supported with the selected rule for customer prices
 ParameterActiveForNextInputOnly=Parameter effective for next input only
 NoEventOrNoAuditSetup=No security event has been logged. This is normal if Audit has not been enabled in the "Setup - Security - Events" page.
 NoEventFoundWithCriteria=No security event has been found for this search criteria.

@@ -590,7 +590,7 @@ if ($step == 2 && $datatoexport) {
 	print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
 	print '<div class="valignmiddle marginbottomonly">';
 	print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
-	$htmlother->select_export_model((string) $exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
+	$htmlother->select_export_model((string) $exportmodelid, 'exportmodelid', $datatoexport, 0, $user->id);
 	print ' ';
 	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 	print '</div>';
@@ -609,11 +609,15 @@ if ($step == 2 && $datatoexport) {
 		$morecss = ' disabled';
 		$moretitle = $langs->trans("NotAllowed");
 	}
-	print '<a class="liste_titre commonlink'.$morecss;
-	print '" title="'.$langs->trans("All").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All")."</a>";
-	print ' / ';
-	print '<a class="liste_titre commonlink'.$morecss;
-	print '" title="'.$langs->trans("None").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=unselectfield&field=all&token='.newToken().'">'.$langs->trans("None")."</a>";
+	print '<a class="liste_titre button small nopaddingimp '.$morecss;
+	print '" title="'.$langs->trans("All").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All");
+	print ' '.img_right($moretitle, 0, 'style="max-width: 20px"');
+	print "</a>";
+	//print ' / ';
+	print '<a class="liste_titre button small nopaddingimp'.$morecss;
+	print '" title="'.$langs->trans("None").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=unselectfield&field=all&token='.newToken().'">';
+	print img_left($moretitle, 0, 'style="max-width: 20px"').' ';
+	print $langs->trans("None")."</a>";
 	print '</td>';
 	print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
 	print '</tr>';

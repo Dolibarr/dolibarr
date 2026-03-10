@@ -4261,6 +4261,9 @@ div.tabsActionNoBottom {
 div.tabsAction > a {
 	margin-bottom: 16px !important;
 }
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
+}
 
 a.tabTitle {
 	color: rgba(0,0,0,0.4) !important;
@@ -5150,7 +5153,7 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a, .liste_titre td a span {
+.liste_titre td a:not(.button), .liste_titre td a:not(.button) span {
 	text-shadow: none !important;
 	color: var(--colortexttitle) !important;
 }

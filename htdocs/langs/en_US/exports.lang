@@ -13,6 +13,7 @@ SelectImportFields=Choose the source file fields you want to import and their ta
 NotImportedFields=Fields of source file not imported
 SaveExportModel=Save your selections as an export profile/template (for reuse).
 SaveImportModel=Save this import profile (for reuse) ...
+NoPredefinedProfileYet=No import profile defined yet
 ExportModelName=Export profile name
 ExportModelSaved=Export profile saved as <b>%s</b>.
 ExportableFields=Exportable fields

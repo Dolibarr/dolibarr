@@ -355,7 +355,7 @@ PackagingForThisProduct=Round quantities up to a multiple
 PackagingForThisProductDesc=When adding/updating a line in a documents, the quantity is adjusted to match the nearest higher multiple of the value defined on product.
 UseProductCustomerPackaging=Use the "%s" feature to round the quantities to some given multiples (for Sales)
 PackagingForThisProductSell=Packaging of quantities (sale)
-QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to packaging rule on multiples for quantities
 
 #Attributes
 Attributes=Attributes
