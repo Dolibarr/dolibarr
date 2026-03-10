@@ -262,7 +262,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$position = '';
 	$levelposition = '';
 	$lineposition = 0;
-	$bomlevel = 0;
 	if (count($TChildBom) > 0) {
 		if ($action == 'treeview') {
 			foreach ($TChildBom as $fk_bom => $TProduct) {
@@ -273,11 +272,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// define lineposition
 						$lineposition = $TProduct['position'];
 					}
-					if (isset($TProduct['level'])) {
-						$bomlevel = $TProduct['level'];
-					}
 					// define lineposition.bomlevel
-					$position = sprintf('%d.%d', $lineposition, $bomlevel);
+					$position = sprintf('%d.%d', $lineposition, $TProduct['level']);
 					// memorize level position for products in bom
 					$levelposition = $position;
 					if (!empty($TProduct['parentid']) && $TProduct['parentid'] != $object->id && empty($TProduct['product'])) {
