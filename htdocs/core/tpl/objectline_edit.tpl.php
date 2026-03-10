@@ -58,14 +58,13 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-global $i;
-'
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
-@phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
-@phan-var-force Societe $seller
-@phan-var-force Societe $buyer
-@phan-var-force string $var
-';
+/**
+ * @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
+ * @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
+ * @phan-var-force Societe $seller
+ * @phan-var-force Societe $buyer
+ * @phan-var-force string $var
+ */
 
 // Handle subtotals line edit
 if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
