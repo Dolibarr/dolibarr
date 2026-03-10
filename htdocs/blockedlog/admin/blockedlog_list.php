@@ -157,7 +157,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_array_options = array();
 }
 
-if (getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+if (userIsTaxAuditor()) {
 	// When this hidden option is on, open another tab as the tab by default
 	header("Location: ".DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php");
 	exit;
@@ -199,7 +199,7 @@ if (GETPOST('withtab', 'alpha')) {
 $morehtmlcenter = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-if (!getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+if (userIsTaxAuditor()) {
 	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 	if (!isRegistrationDataSavedAndPushed()) {
 		$texttop = '';

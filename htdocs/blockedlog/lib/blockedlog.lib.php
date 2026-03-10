@@ -58,14 +58,14 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$h = 0;
 	$head = array();
 
-	if (!getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+	if (!userIsTaxAuditor()) {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
 		$head[$h][1] = $langs->trans("UserRegistration");
 		$head[$h][2] = 'registration';
 		$h++;
 	}
 
-	if (!getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+	if (!userIsTaxAuditor()) {
 		$b = new BlockedLog($db);
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
 		$head[$h][1] = $langs->trans("BrowseBlockedLog");
@@ -89,7 +89,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 		$h++;
 	}
 
-	if ($withtabsetup && !getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+	if ($withtabsetup && !userIsTaxAuditor()) {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
 		$head[$h][1] = $langs->trans("TechnicalInformation");
 		$head[$h][2] = 'technicalinfo';
@@ -451,4 +451,16 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 	}
 
 	return 0;
+}
+
+/**
+ * Return if user is a ta auditor
+ *
+ * @return	int		Return > 0 if user is an external user so must be restricted to archive control feature
+ */
+function userIsTaxAuditor()
+{
+	global $user;
+
+	return (getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid);
 }

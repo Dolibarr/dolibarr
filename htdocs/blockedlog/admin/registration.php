@@ -226,7 +226,7 @@ if (GETPOST('withtab', 'alpha')) {
 $morehtmlcenter = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-if (!getDolGlobalString("BLOCKEDLOG_FOR_TAX_AUDITOR")) {
+if (!userIsTaxAuditor()) {
 	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 	if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
 		$texttop = '';
