@@ -9968,21 +9968,24 @@ class Form
 			if (!empty($array)) {
 				foreach ($array as $key => $value) {
 					$tmpkey = $key;
-					$tmpvalue = $value;
+					$tmplabel = $value;
+					$tmplabelhtml = '';
 					$tmpcolor = '';
 					$tmppicto = '';
-					$tmplabelhtml = '';
 					$tmpdisabled = '';
 					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
 						$tmpkey = $value['id'];
-						$tmpvalue = empty($value['label']) ? '' : $value['label'];
+						$tmplabel = empty($value['label']) ? '' : $value['label'];
+						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']) : $value['labelhtml'];
 						$tmpcolor = empty($value['color']) ? '' : $value['color'];
 						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
 						$tmpdisabled = empty($value['disabled']) ? '' : $value['disabled'];
-						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']) : $value['labelhtml'];
 					}
-					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
+					$newval = ($translate ? $langs->trans($tmplabel) : $tmplabel);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);
+
+					$tmplabelhtml = ($translate ? $langs->trans($tmplabelhtml) : $tmplabelhtml);
+					$tmplabelhtml = ($key_in_label ? $tmpkey . ' - ' . $tmplabelhtml : $tmplabelhtml);
 
 					$out .= '<option value="' . $tmpkey . '"';
 					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
@@ -9993,10 +9996,10 @@ class Form
 						$out .= ' disabled="disabled"';
 					}
 					if (!empty($tmplabelhtml)) {
-						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml, 0, 0, '', 0, 1) . '"';
+						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml, 0, 0, '', 0, 1) . '"';
 					} else {
 						$tmplabelhtml = ($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #' . $tmpcolor . '"') : '') . $newval;
-						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml, 0, 0, '', 0, 1) . '"';
+						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml, 0, 0, '', 0, 1) . '"';
 					}
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);

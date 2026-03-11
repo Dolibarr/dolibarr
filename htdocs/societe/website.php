@@ -33,14 +33,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -48,6 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "website"));
@@ -207,6 +205,9 @@ $form = new Form($db);
 $langs->load("companies");
 
 $title = $langs->trans("WebsiteAccounts");
+if ($id > 0) {
+	$title = $object->name.' - '.$langs->trans("WebsiteAccounts");
+}
 $help_url = '';
 
 
@@ -338,7 +339,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -464,7 +465,7 @@ print '<input type="hidden" name="id" value="'.$id.'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
+print_barre_liste($langs->trans("WebsiteAccounts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'website', 0, $newcardbutton, '', $limit);
 
 $topicmail = "Information";
 $modelmail = "societeaccount";
