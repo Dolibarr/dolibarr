@@ -5965,6 +5965,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
 				'webportal' => 'infobox-portal',
+				'website' => 'infobox-portal',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt' => 'imgforviewmode',
 				'calendar' => 'imgforviewmode',
@@ -6032,7 +6033,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'globe-americas' => '#aaa',
 				'region' => '#aaa',
 				'state' => '#aaa',
-				'website' => '#304',
+				//'website' => '#304',
 				'workstation' => '#a69944'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {

@@ -1650,7 +1650,7 @@ span.fa.fa-plus-circle.paddingleft {
 .divfilteralone {
 	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
-	padding-left: 5px;
+	padding: 10px;
 }
 div.divsearchfield {
 	/* float: <?php print $left; ?>; */

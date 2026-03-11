@@ -24,10 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -35,8 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
+
+$action = GETPOST('action');
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -284,7 +285,7 @@ if ($socid > 0) {
 		}
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', 'margin');
 
 		$moreforfilter = '';
 
@@ -428,10 +429,10 @@ if ($socid > 0) {
 				print "<td class=\"right amount\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
 				print "<td class=\"right amount\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : $sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
+					print "<td class=\"right\">".(($marginRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : $sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+					print "<td class=\"right\">".(($markRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
 
@@ -469,10 +470,10 @@ if ($socid > 0) {
 		print "<td class=\"right\">".price(price2num($cumul_achat, 'MT'))."</td>\n";
 		print "<td class=\"right\">".price(price2num($totalMargin, 'MT'))."</td>\n";
 		if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-			print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
+			print "<td class=\"right\">".(($marginRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 		}
 		if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-			print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+			print "<td class=\"right\">".(($markRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 		}
 		print '<td class="right">&nbsp;</td>';
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -498,9 +499,9 @@ if ($socid > 0) {
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT')).'");
-        $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
-        $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
+        $("#totalMargin").html(\''. price(price2num($totalMargin, 'MT')).'\');
+        $("#marginRate").html(\''.(($marginRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($marginRate, 'MT'))."%").'\');
+        $("#markRate").html(\''.(($markRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($markRate, 'MT'))."%").'\');
     });
     </script>
 ';

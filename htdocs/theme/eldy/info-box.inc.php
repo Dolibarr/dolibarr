@@ -44,8 +44,8 @@ if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("payment
 	min-height: <?php echo $heightbox; ?>px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 20px rgba(192, 192, 192, 0.2);
-	border-radius: 2px;
+	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
+	border-radius: 5px;
 	border: 1px solid #e9e9e9;
 	/* border: 1px solid var(--colorbacktitle1); */
 	margin-bottom: 15px;
@@ -275,6 +275,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 .info-box-sm .info-box-content {
 	margin-left: 80px;
 	height: 88px;   /* 96 - margins of .info-box-sm .info-box-content */
+	border-top-right-radius: 6px;
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
