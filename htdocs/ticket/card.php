@@ -71,6 +71,7 @@ $socid     = GETPOSTINT('socid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
+$mine      = GETPOST('mine');
 
 $action    = GETPOST('action', 'aZ09');
 $cancel    = GETPOST('cancel', 'alpha');
@@ -779,7 +780,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print dol_get_fiche_head($head, 'tabTicket', $langs->trans('Ticket'), -1, 'ticket');
 
-	$formticket->trackid = $object->track_id;        // TODO Use a unique key 'tic' to avoid conflict in upload file feature
+	$formticket->trackid = 'tic'.$object->id;
 	$formticket->withfromsocid = $object->socid;
 	$formticket->withtitletopic = 1;
 	//  $formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 1 : 0));
@@ -803,6 +804,8 @@ if ($action == 'create' || $action == 'presend') {
 		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
 			accessforbidden('', 0, 1);
 		}
+
+		$trackid = 'tic'.$object->id;
 
 		$formconfirm = '';
 
@@ -1095,7 +1098,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		print '<table class="border tableforfield centpercent">';
 
-		// Track ID
+		// Track ID (alternative public ref)
 		print '<tr><td class="titlefieldmiddle">'.$langs->trans("TicketTrackId").'</td><td>';
 		if (!empty($object->track_id)) {
 			if (empty($object->ref)) {
