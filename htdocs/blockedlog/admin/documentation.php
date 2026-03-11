@@ -93,6 +93,7 @@ if (GETPOST('withtab', 'alpha')) {
 }
 
 $morehtmlcenter = '';
+$texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
 if (!userIsTaxAuditor()) {

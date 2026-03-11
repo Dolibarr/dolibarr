@@ -265,20 +265,16 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		print '<table class="ticketpublictable centpercent tableforfield">';
 
-		// Ref
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+		// Ref - Tracking ID
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").' / '.$langs->trans("TicketTrackId").'</td><td>';
 		print img_picto('', 'ticket', 'class="pictofixedwidth"');
-		print dol_escape_htmltag($object->dao->ref);
-		print '</td></tr>';
-
-		// Tracking ID
-		print '<tr><td>'.$langs->trans("TicketTrackId").'</td><td>';
-		print dol_escape_htmltag($object->dao->track_id);
+		print dolPrintHTML($object->dao->ref);
+		print '<span class="opacitylow"> &nbsp; / &nbsp; '.dolPrintHTML($object->dao->track_id).'</span>';
 		print '</td></tr>';
 
 		// Subject
 		print '<tr><td>'.$langs->trans("Subject").'</td><td>';
-		print '<span class="bold">';
+		print '<span class="bold large">';
 		print dol_escape_htmltag($object->dao->subject);
 		print '</span>';
 		print '</td></tr>';
@@ -308,6 +304,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
+		print img_picto('', 'calendar', 'class="pictofixedwidth"');
 		print dol_print_date($object->dao->datec, 'dayhour');
 		print '</td></tr>';
 
@@ -445,7 +442,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 
 		// Message list
-		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+		print '<div class="ticketpublicarea ticketlargemargin">';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
 		print '</div>';
 

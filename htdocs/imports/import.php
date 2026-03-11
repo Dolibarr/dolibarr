@@ -1849,6 +1849,7 @@ if ($step == 4 && $datatoimport) {
 
 	if ($action != 'launchsimu') {
 		// Show import id
+		print '<br>';
 		print '<div class="neutral">';
 		print $langs->trans("NowClickToTestTheImport", $langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
 		print '</div>';
@@ -1862,6 +1863,7 @@ if ($step == 4 && $datatoimport) {
 		}
 		print '</div>';
 	} else {
+		print '<br>';
 		print '<div class="warning">';
 		print '<b>'.$langs->trans("ImportTriggerModeSimulationWarningTitle").'</b><br>';
 		print $langs->trans("ImportTriggerModeSimulationWarning");
