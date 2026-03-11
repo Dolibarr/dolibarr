@@ -805,6 +805,18 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '</tr>';
 
+// EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES: Consider generic References as answer for "isnotanswer" filter.
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorIsNotAnswerUseReferences"), $langs->transnoentitiesnoconv("EmailCollectorIsNotAnswerUseReferencesHelp")).'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES", $arrval, getDolGlobalInt('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES', 0));
+}
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 

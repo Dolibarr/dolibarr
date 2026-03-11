@@ -126,7 +126,11 @@ class FormAdmin
 			if ($selected === 'auto') {
 				$out .= ' selected';
 			}
-			$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
+			if ($showcode > 0) {
+				$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
+			} else {
+				$out .= '>'.$langs->trans("AutoDetectLangShort").'</option>';
+			}
 		}
 
 		asort($langs_available);	// array('XX' => 'Language (Country)', ...)

@@ -281,7 +281,7 @@ class FactureRec extends CommonInvoice
 		'nb_gen_max' => array('type' => 'integer', 'label' => 'Nb gen max', 'enabled' => 1, 'visible' => -1, 'position' => 145),
 		'frequency' => array('type' => 'integer', 'label' => 'Frequency', 'enabled' => 1, 'visible' => -1, 'position' => 150),
 		'unit_frequency' => array('type' => 'varchar(2)', 'label' => 'UnitFrequency', 'enabled' => 1, 'visible' => -1, 'position' => 152),
-		'rule_for_lines_dates' => array('type' => 'varchar(255)', 'label' => 'RuleForLinesDates', 'enabled' => 1, 'visible' => 1, 'position' => 153, 'arrayofkeyval' => array('prepaid' => "Prepaid", 'postpaid' => "Postpaid"), 'default' => 'prepaid'),
+		'rule_for_lines_dates' => array('type' => 'varchar(255)', 'label' => 'RuleForLinesDates', 'enabled' => 'getDolGlobalInt("FACTUREREC_SUPPORT_RULE_FOR_LINES")', 'visible' => 1, 'position' => 153, 'arrayofkeyval' => array('prepaid' => "Prepaid", 'postpaid' => "Postpaid"), 'default' => 'prepaid'),
 		'usenewprice' => array('type' => 'integer', 'label' => 'UseNewPrice', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 160, 'isameasure' => 1),
 		'auto_validate' => array('type' => 'integer', 'label' => 'Auto validate', 'enabled' => 1, 'visible' => -1, 'position' => 165),
@@ -1507,7 +1507,16 @@ class FactureRec extends CommonInvoice
 					if (!$errorforinvoice && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
-						$result = $facture->generateDocument($facturerec->model_pdf, $langs);
+						$outputlangs = $langs;
+						if (getDolGlobalInt('MAIN_MULTILANGS')) {
+							$facture->fetch_thirdparty();
+							if (!empty($facture->thirdparty->default_lang)) {
+								$outputlangs = new Translate('', $conf);
+								$outputlangs->setDefaultLang($facture->thirdparty->default_lang);
+								$outputlangs->loadLangs(array('main', 'bills'));
+							}
+						}
+						$result = $facture->generateDocument($facturerec->model_pdf, $outputlangs);
 						if ($result <= 0) {
 							$this->setErrorsFromObject($facture);
 							$error++;

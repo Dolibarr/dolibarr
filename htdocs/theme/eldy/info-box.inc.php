@@ -5,16 +5,23 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+
+// Expected to be defined by including parent
 /**
  * @var Conf $conf
  * @var string $left
  * @var string $right
  */
-// Expected to be defined by including parent
 '
 @phan-var-force string $right
 @phan-var-force string $left
 ';
+
+$heightbox = 94;
+if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("paymentbybanktransfer")) {
+	$heightbox = 110;
+}
+
 ?>
 /* IDE Hack <style type="text/css"> */
 
@@ -34,11 +41,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 94px;	/* must be same height than info-box-icon */
+	min-height: <?php echo $heightbox; ?>px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 20px rgba(192, 192, 192, 0.2);
-	border-radius: 2px;
+	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
+	border-radius: 5px;
 	border: 1px solid #e9e9e9;
 	/* border: 1px solid var(--colorbacktitle1); */
 	margin-bottom: 15px;
@@ -97,8 +104,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	overflow: hidden;
 	float: left;
-	line-height: 94px;	/* must be same height as min-height of .info-box */
-	height: 94px; 	    /* must be same height as min-height of .info-box */
+	line-height: <?php echo $heightbox; ?>px;	/* must be same height as min-height of .info-box */
+	height: <?php echo $heightbox; ?>px; 	    /* must be same height as min-height of .info-box */
 	width: 88px;
 	text-align: center;
 	font-size: 2.8em;
@@ -268,6 +275,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 .info-box-sm .info-box-content {
 	margin-left: 80px;
 	height: 88px;   /* 96 - margins of .info-box-sm .info-box-content */
+	border-top-right-radius: 6px;
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */

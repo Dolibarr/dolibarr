@@ -197,4 +197,4 @@ FieldsEdit=Editar campos
 FieldsInsert=Insertar campos
 FieldsView=Vista de campos
 AIPromptExtrafield=Solicitude de IA
-AIPromptExtrafieldDesc=As constantes empregadas neste campo serán substituídas polo valor correspondente.
+AIPromptExtrafieldDesc=Introduza aquí unha solicitude que devolva un valor e só o valor. As variables de substitución son remplazadas na solicitude antes de chamar á API de IA.

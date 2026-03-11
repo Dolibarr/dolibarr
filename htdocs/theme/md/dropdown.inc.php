@@ -287,7 +287,7 @@ a.top-menu-dropdown-link {
 
 .dropdown-menu > .user-footer {
 	background-color: #f9f9f9;
-	padding: 10px;
+	padding: 20px;
 }
 
 .user-footer:after {
@@ -303,7 +303,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-body {
-	padding: 15px;
+	padding: 20px;
 }
 .dropdown-menu > .user-body, .dropdown-body{
 	border-bottom: 1px solid #f4f4f4;

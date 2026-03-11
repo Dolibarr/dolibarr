@@ -662,8 +662,20 @@ span.userimg.notfirst, div.userimg.notfirst {
 div.userimg.notfirst {
 	display: block-inline;
 }
-.center.inline-block.dateheight {
-	line-height: 1.1em;
+.cell2linesheight {
+	line-height: 1.4em;
+}
+.celldateheight {
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	line-height: 1.2em;
+}
+.dateborderright {
+	padding-right: 4px !important;
+	margin-right: 4px !important;
+	border-right: 1px solid #ddd;
+}
+.dateborderleft {
 }
 .smallheight {
 	line-height: 1em;
@@ -769,7 +781,7 @@ input.pageplusone {
 	color: var(--colortextlink);
 }
 .optiongrey, .opacitymedium {
-	opacity: 0.4;
+	opacity: 0.5;
 }
 .opacitymediumbycolor {
 	color: rgba(0, 0, 0, 0.4);
@@ -818,7 +830,7 @@ input.pageplusone {
 select:invalid, select.--error {
 	color: gray;
 }
-input:disabled, textarea:disabled, select[disabled='disabled']
+input:disabled:not(.colorthumb):not(.colorgrey), textarea:disabled, select[disabled='disabled']
 {
 	/* background: var(--inputbackgroundcolordisabled); */
 	/* color: var(--inputcolordisabled); */
@@ -1376,7 +1388,7 @@ div.urllink input {
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
-	color: #888 !important;
+	/* color: #888 !important; */
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
 }
@@ -1522,7 +1534,7 @@ div.divsearchfield {
 .divfilteralone {
 	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
-	padding-left: 5px;
+	padding: 10px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -1755,7 +1767,7 @@ select.flat.selectlimit {
 	border-right: none !important;
 	outline: none;
 }
-.strikefordisabled {
+.strikefordisabled, .strikefordisabled span, .strikefordisabled div {
 	text-decoration: line-through;
 }
 .widthdate {
@@ -2948,7 +2960,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	color: var(--colortexttitlenotab);
 	opacity: 0.85;
 }
-.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+.table-fiche-title .col-picto, .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;
 	font-size: 0.7em;
 	width: 20px;
@@ -3845,6 +3857,9 @@ img.userphotopublicvcard {
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
+img.gravatar.photouserphoto {
+	filter: grayscale(50%);
+}
 form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
@@ -4236,7 +4251,7 @@ div.popuptab {
 /* ============================================================================== */
 
 div.tabsAction {
-	margin: 20px 0em 30px 0em;
+	margin: 20px 0em 40px 0em;
 	padding: 0em 0em;
 	text-align: right;
 }
@@ -4245,6 +4260,9 @@ div.tabsActionNoBottom {
 }
 div.tabsAction > a {
 	margin-bottom: 16px !important;
+}
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
 }
 
 a.tabTitle {
@@ -4307,7 +4325,7 @@ a.tab:hover
 	background: var(--colorbacktabcard1), 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png', 1); ?>) 50% 0 repeat-x;
 	color: var(--colortextbacktab);
 	*/
-	text-decoration: underline;
+	text-decoration: none;
 }
 a.tabimage {
 	color: #434956;
@@ -5135,7 +5153,7 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a, .liste_titre td a span {
+.liste_titre td a:not(.button), .liste_titre td a:not(.button) span {
 	text-shadow: none !important;
 	color: var(--colortexttitle) !important;
 }
@@ -5367,6 +5385,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 	.clearbothonsmartphone {
 		clear: both;
+	}
+	.clearbothonsmartphone:not(.hideonsmartphone) {
 		display: block !important;
 	}
 
@@ -5698,7 +5718,7 @@ div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
 
 /* Neutral message */
 div.neutral {
-	border-<?php print $left; ?>: solid 5px #aaa;
+	border-<?php print $left; ?>: solid 5px #888;
 	background: #f8f8f8;
 }
 
@@ -5781,6 +5801,15 @@ div.boximport {
 .product_line_stock_too_low { color: var(--productlinestocktoolow); }
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
+#tablesubscribe .fieldrequired {
+	font-weight: inherit !important;
+	color: inherit !important;
+}
+#tablesubscribe .fieldrequired:after {
+	content: " *";
+	color: #660000;
+	font-weight: bold;
+}
 
 td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 34px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.5em; }
@@ -6026,6 +6055,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog.ui-widget.ui-widget-content {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
+	box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 15px;
 }
 .ui-dialog {
 	padding-left: 5px;
@@ -6050,6 +6080,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
 }
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	margin-right: 8px !important;
+}
 /*
 .ui-dialog .ui-dialog-content {
 	text-align: justify;
@@ -6057,7 +6090,40 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 */
 
 
-/* ============================================================================== */
+/* JQuery dialog */
+
+.ui-dialog .ui-widget-header {
+	border: none;
+	border-bottom: 1px solid #dbdbdb;
+	background: none;
+	border-radius: unset;
+}
+
+
+.ui-dialog .ui-dialog-titlebar-close {
+	position: absolute;
+	right: .3em;
+	top: 50%;
+	width: 20px;
+	margin: -10px 0 0 0;
+	padding: 1px;
+	height: 20px;
+	border-radius: 30px;
+	border: 1px solid #ededed;
+}
+
+.ui-dialog-title {
+	font-size: medium;
+}
+
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 0px;
+}
+
+
+	/* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
 
@@ -6756,8 +6822,14 @@ span.jPicker {
 	border-collapse: collapse;
 	border: none;
 }
+.jPicker tr.Hex td.Text input {
+	width: 60px !important;
+}
 .jPicker td.Text input {
-	width: 35px !important;
+	min-width: 40px;
+	padding: 8px;
+	border: 1px solid #bbb !important;
+	border-radius: 4px;
 }
 
 A.color, A.color:active, A.color:visited {
