@@ -793,7 +793,7 @@ $picto = 'ticket';
 	$picto = '';
 }*/
 
-print_barre_liste($langs->trans('Tickets'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans('Tickets'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);   // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 
 if ($mode == 'mine') {
 	print '<div class="opacitymedium">'.$langs->trans('TicketAssignedToMeInfos').'</div><br>';
