@@ -138,7 +138,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
 //ShippableStatus
-if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && getDolGlobalString('ORDER_ENABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
 	print '<th class="linecolstock center" style="width: 30px;">'.$langs->trans("ShippableStatus").'</th>';
 }
 
