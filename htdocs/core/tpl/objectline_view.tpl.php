@@ -486,13 +486,14 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 
 		if ($reliquat > 0) {
 			if ($stock >= $reliquat) {
-				print img_picto($langs->trans("Stock").': '.$stock, 'statut4.png');
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'green');
 			} else {
-				print img_picto($langs->trans("Stock").': '.$stock, 'statut8.png');
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'error');
 			}
 		} else {
-			print img_picto($langs->trans("Shipped"), 'statut5.png');
+			print img_picto($langs->trans("Shipped"), 'statut5');
 		}
+
 	} else {
 		print '&nbsp;';
 	}

@@ -116,7 +116,7 @@ $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php /* @phan-suppress-next-line PhanUndeclaredGlobalVariable */ echo($i + 1); ?></td>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php /* @phan-suppress-current-line  PhanUndeclaredGlobalVariable */ echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
