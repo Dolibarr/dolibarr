@@ -171,6 +171,7 @@ ALTER TABLE llx_accounting_balance_snapshot ADD UNIQUE INDEX uk_accounting_balan
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_account (entity, fk_fiscalyear, account_number, debit, credit);
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_subaccount (entity, fk_fiscalyear, subledger_account, debit, credit);
 
+UPDATE llx_rights_def SET perms = 'manage_advance' WHERE module = 'ticket' AND perms = 'manage';
 
 -- Switch all crabe templates into sponge
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
