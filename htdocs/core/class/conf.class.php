@@ -1388,6 +1388,12 @@ class Conf extends stdClass
 				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
 			}
 
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+				// In on of this customer price modes, option PRODUCT_USE_CUSTOMER_PACKAGING is not implemented/supported, so we disable it
+				$this->global->PRODUCT_USE_CUSTOMER_PACKAGING = 0;
+			}
+
+
 			// For backward compatibility
 			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {
 				if ($this->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {

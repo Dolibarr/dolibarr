@@ -57,7 +57,7 @@ class FormTicket
 	public $track_id;
 
 	/**
-	 * @var string 		Email. Used also for the to name session vars to upload files.
+	 * @var string 		Email. Used also to name session vars to upload files.
 	 */
 	public $trackid;
 

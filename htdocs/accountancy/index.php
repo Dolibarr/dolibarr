@@ -146,12 +146,11 @@ if (isModEnabled('accounting')) {
 
 	print '<div class="'.($helpisexpanded ? '' : 'hideobject').' idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
-	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
+	//print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	if ($user->hasRight('accounting', 'chartofaccount')) {
-		print '<br>';
+		//print '<br>';
+		//print '<br>';
 		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '', 0, '', 'nomarginbottom')."\n";
-		print '<hr>';
-		print "<br>\n";
 
 		print '<div class="info">';
 
@@ -204,8 +203,7 @@ if (isModEnabled('accounting')) {
 
 
 		print "<br>\n";
-		print $langs->trans("AccountancyAreaDescActionOnceBis");
-		print "<br>\n";
+		print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescActionOnceBis").'</span>';
 		print "<br>\n";
 
 		print '<div class="info">';
@@ -260,8 +258,7 @@ if (isModEnabled('accounting')) {
 
 	print "<br>\n";
 	print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '', 0, '', 'nomarginbottom')."\n";
-	print '<hr>';
-	print "<br>\n";
+
 	$step = 0;
 
 	$langs->loadLangs(array('bills', 'trips'));

@@ -326,7 +326,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip,
 $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove this subrequests ?
-if ($arrayfields['loer_planned_end_date']['checked'] || ($search_dfyear > 0 && $search_op2df)) {
+if ($arrayfields['lower_planned_end_date']['checked'] || ($search_dfyear > 0 && $search_op2df)) {
 	$sql .= " (SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as lower_planned_end_date,";	// lowest expiration date among open service lines
 }
 $sql .= " (SELECT SUM(".$db->ifsql("cd.statut=0", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_initial,';
