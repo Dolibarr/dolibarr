@@ -320,6 +320,8 @@ ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 ALTER TABLE llx_blockedlog ADD COLUMN linktoref text;
 ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX idx_linktoref;
 ALTER TABLE llx_blockedlog MODIFY COLUMN linktoref text;
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
 ALTER TABLE llx_blockedlog ADD COLUMN module_source varchar(32) DEFAULT '' AFTER action;
