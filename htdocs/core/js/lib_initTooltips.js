@@ -45,6 +45,10 @@ function initAjaxTooltips(root, baseUrl) {
 	const $storeElem = jQuery("#dialogforpopup");
 	const currentToken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 
+	/* New code for ajax tooltips */
+	/* Commented and restored the old one, because the new one generates 3 troubles:
+	   tooltips flashes when appearing + Double output + the tooltip "tocomplete" also appears and disappears quickly
+	   Pb seems due to the addition of ".ajaxTooltip" after "mouseover" or "mouseout"
 	$elements.each(function () {
 		const $el = jQuery(this);
 
@@ -61,6 +65,8 @@ function initAjaxTooltips(root, baseUrl) {
 		$el.off("mouseover.ajaxTooltip mouseout.ajaxTooltip");
 
 		$el.on("mouseover.ajaxTooltip", function (event) {
+			console.log("on mouseover.ajaxTooltip we will create timer for ajax call");
+
 			event.stopImmediatePropagation();
 			clearTimeout($storeElem.data("openTimeoutId"));
 
@@ -86,10 +92,56 @@ function initAjaxTooltips(root, baseUrl) {
 		});
 
 		$el.on("mouseout.ajaxTooltip", function (event) {
+			console.log("mouse out of a .classforajaxtooltip");
+
 			event.stopImmediatePropagation();
 			clearTimeout($storeElem.data("openTimeoutId"));
 			$elements.tooltip("close");
 		});
+	});
+	*/
+	/* Old code for ajax tooltip */
+	//$elements = jQuery(".classforajaxtooltip");
+	$elements.tooltip({
+		tooltipClass: "mytooltip",
+		show: { collision: "flipfit", effect:"toggle", delay: 0, duration: 20 },
+		hide: { delay: 250, duration: 20 }
+	});
+
+	$elements.off("mouseover mouseout");
+
+	$elements.on("mouseover", function(event) {
+		console.log("we will create timer for ajax call");
+		event.stopImmediatePropagation();
+		clearTimeout($storeElem.data("openTimeoutId"));
+
+		var params = JSON.parse($(this).attr("data-params"));
+		params.token = currentToken;
+		var elemfortooltip = $(this);
+
+		$storeElem.data("openTimeoutId", setTimeout(function() {
+			$elements.tooltip("close");
+			$.ajax({
+				url: baseUrl + "/core/ajax/ajaxtooltip.php",
+				type: "post",
+				async: true,
+				data: params,
+				success: function(response){
+					// Setting content option
+					console.log("ajax success");
+					if (elemfortooltip.is(":hover")) {
+						elemfortooltip.tooltip("option","content",response);
+						elemfortooltip.tooltip("open");
+					}
+				}
+			});
+		}, openDelay));
+	});
+	$elements.on("mouseout", function(event) {
+		console.log("mouse out of a .classforajaxtooltip");
+	    event.stopImmediatePropagation();
+	    clearTimeout($storeElem.data("openTimeoutId"));
+	    $elements.tooltip("close");
 	});
 }
 
@@ -141,7 +193,6 @@ function initTooltipDialogs(root, dialogWidth) {
 		$trigger.off("click.tooltipDialog");
 
 		$trigger.on("click.tooltipDialog", function () {
-
 			const dolid = jQuery(this).attr("dolid");
 			if (!dolid) return false;
 
