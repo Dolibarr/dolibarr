@@ -2127,8 +2127,8 @@ class Product extends CommonObject
 	 *    Delete a language for this product
 	 *
 	 * @param string $langtodelete Language code to delete
-	 * @param int    $notrigger    Do not execute trigger
 	 * @param User   $user         Object user making delete
+	 * @param int    $notrigger    Do not execute trigger
 	 *
 	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
