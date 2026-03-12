@@ -398,7 +398,6 @@ abstract class CommonClassTest extends TestCase
 		'bom' => 'Bom',
 		'bookcal' => 'BookCal',
 		'bookmark' => 'Bookmark',
-		'captureserver' => 'CaptureServer',
 		'cashdesk' => null,
 		'category' => 'Categorie',
 		'clicktodial' => 'ClickToDial',
@@ -499,6 +498,14 @@ abstract class CommonClassTest extends TestCase
 		'zapier' => 'Zapier',
 	);
 
+	/**
+	 * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
+	 * Value is null when the module is not internal to the default
+	 * Dolibarr setup.
+	 */
+	const OTHER_MODULE_MAPPING = array(
+		'captureserver' => 'CaptureServer'
+	);
 
 	/**
 	 * Run php script (file) using the php binary used for running phpunit.
