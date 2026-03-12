@@ -398,6 +398,7 @@ abstract class CommonClassTest extends TestCase
 		'bom' => 'Bom',
 		'bookcal' => 'BookCal',
 		'bookmark' => 'Bookmark',
+		'captureserver' => 'CaptureServer',
 		'cashdesk' => null,
 		'category' => 'Categorie',
 		'clicktodial' => 'ClickToDial',
