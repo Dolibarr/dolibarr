@@ -108,7 +108,7 @@ IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile2=So you can use any f
 DetectionOfSystemRestoration=Detection of database system restoration or deletion of the last line
 FeatureOnlyWhenArchiveAnalyzedFrom=This feature is for the moment available only when archive is controled from %s
 ControlOfauthenticityNeedFullRegistrationNumber=Control of integrity will be complete but the control of authenticity is possible only if you know the full registration number
-PleaseEnterFullRegistrationNumber=Please enter the full reistration number if you know it to also check the authenticity.
+PleaseEnterFullRegistrationNumber=Please enter the full registration number if you know it to also check the authenticity.
 WeFoundThisFullRegistrationNumberForThisKey=We found the following full registration number (in our KYC database) for the instance that had generated this archive file with this secret key:
 
 ## logTypes

@@ -1334,7 +1334,7 @@ while ($i < $imaxinloop) {
 		}
 		// Firstname
 		if (!empty($arrayfields['d.firstname']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->firstname).'">';
+			print '<td class="tdoverflowmax125">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
 			//print $obj->firstname;
 			print "</td>\n";
@@ -1344,7 +1344,7 @@ while ($i < $imaxinloop) {
 		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->lastname).'">';
+			print '<td class="tdoverflowmax125">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
 			print "</td>\n";
@@ -1365,7 +1365,7 @@ while ($i < $imaxinloop) {
 		}
 		// Company
 		if (!empty($arrayfields['d.societe']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute((string) $companyname).'">';
+			print '<td class="tdoverflowmax125">';
 			print $companynametoshow;
 			print "</td>\n";
 		}

@@ -462,5 +462,5 @@ function userIsTaxAuditor()
 {
 	global $user;
 
-	return (getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid);
+	return ((getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid) ? 1 : 0);
 }
