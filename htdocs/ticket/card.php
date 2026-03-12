@@ -268,7 +268,7 @@ if (empty($reshook)) {
 				}
 
 				// Auto mark as read if created from backend
-				if (!empty($conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND) && $user->rights->ticket->write) {
+				if (!empty($conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND) && $permissiontoadd) {
 					if ( ! $object->markAsRead($user) > 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
@@ -515,7 +515,7 @@ if (empty($reshook)) {
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
+	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
 			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
@@ -524,7 +524,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_progression' && $user->rights->ticket->write) {
+	if ($action == 'set_progression' && $permissiontoadd) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setProgression(GETPOST('progress', 'alpha'));
 
@@ -534,7 +534,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_categories' && $user->rights->ticket->write) {
+	if ($action == 'set_categories' && $permissiontoadd) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCategories(GETPOST('categories', 'array'));
 
@@ -544,7 +544,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsubject' && $user->rights->ticket->write) {
+	if ($action == 'setsubject' && $permissiontoadd) {
 		if ($object->fetch(GETPOST('id', 'int'))) {
 			if ($action == 'setsubject') {
 				$object->subject = GETPOST('subject', 'alphanohtml');
@@ -689,7 +689,7 @@ if (empty($reshook)) {
 	}
 
 
-	$permissiondellink = $user->rights->ticket->write;
+	$permissiondellink = $permissiontoadd;
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Actions to build doc
@@ -747,7 +747,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withcancel = 1;
 
 	$formticket->showForm(1, 'create', 0, null, $action);
-	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
+	/*} elseif ($action == 'edit' && $permissiontoadd && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
 	$head = ticket_prepare_head($object);
@@ -956,7 +956,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		}
 
-		$permissiontoedit = $object->status < 8 && !$user->socid && $user->rights->ticket->write;
+		$permissiontoedit = $object->status < 8 && !$user->socid && $permissiontoadd;
 		//$permissiontoedit = 0;
 
 		// Thirdparty
@@ -1019,9 +1019,9 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Subject
 		print '<tr><td>';
-		print $form->editfieldkey("Subject", 'subject', $object->subject, $object, $user->rights->ticket->write && !in_array($object->status, $closeStatuses) && !$user->socid, 'string');
+		print $form->editfieldkey("Subject", 'subject', $object->subject, $object, $permissiontoadd && !in_array($object->status, $closeStatuses) && !$user->socid, 'string');
 		print '</td><td>';
-		print $form->editfieldval("Subject", 'subject', $object->subject, $object, $user->rights->ticket->write && !$user->socid, 'string');
+		print $form->editfieldval("Subject", 'subject', $object->subject, $object, $permissiontoadd && !$user->socid, 'string');
 		print '</td></tr>';
 
 		// Creation date
@@ -1067,7 +1067,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans("AssignedTo");
-		if (isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->write) {
+		if (isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $permissiontoadd) {
 			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.urlencode($object->track_id).'&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a>';
 		}
 		print '</td></tr></table>';
@@ -1078,7 +1078,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// Show user list to assignate one if status is "read"
-		if (GETPOST('set', 'alpha') == "assign_ticket" && $object->status < 8 && !$user->socid && $user->rights->ticket->write) {
+		if (GETPOST('set', 'alpha') == "assign_ticket" && $object->status < 8 && !$user->socid && $permissiontoadd) {
 			print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$url_page_current.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="assign_user">';
@@ -1095,12 +1095,12 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Progression').'</td><td class="left">';
 		print '</td>';
-		if ($user->rights->ticket->write && $action != 'progression' && isset($object->status) && $object->status < $object::STATUS_CLOSED && !$user->socid) {
+		if ($permissiontoadd && $action != 'progression' && isset($object->status) && $object->status < $object::STATUS_CLOSED && !$user->socid) {
 			print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=progression&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($user->rights->ticket->write && $action == 'progression') {
+		if ($permissiontoadd && $action == 'progression') {
 			print '<form action="'.$url_page_current.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="track_id" value="'.$track_id.'">';
@@ -1162,13 +1162,13 @@ if ($action == 'create' || $action == 'presend') {
 			print '<td class="valignmiddle titlefield">';
 			print '<table class="nobordernopadding centpercent"><tr><td class="titlefield">';
 			print $langs->trans("Categories");
-			if ($user->rights->ticket->write && !in_array($object->status, $closeStatuses) && $action != 'categories' && !$user->socid) {
+			if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action != 'categories' && !$user->socid) {
 				print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 			}
 			print '</table>';
 			print '</td>';
 
-			if ($user->rights->ticket->write && $action == 'categories') {
+			if ($permissiontoadd && $action == 'categories') {
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
 				if (is_array($cate_arbo)) {
 					// Categories
@@ -1210,18 +1210,18 @@ if ($action == 'create' || $action == 'presend') {
 		print $langs->trans('TicketProperties');
 		print '</td>';
 		print '<td>';
-		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
+		if (GETPOST('set', 'alpha') == 'properties' && $permissiontoadd) {
 			print '<input type="submit" class="button small" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			//    Button to edit Properties
-			if (isset($object->status) && $object->status < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
+			if (isset($object->status) && $object->status < $object::STATUS_NEED_MORE_INFO && $permissiontoadd) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}
 		print '</td>';
 		print '</tr>';
 
-		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
+		if (GETPOST('set', 'alpha') == 'properties' && $permissiontoadd) {
 			print '<tr>';
 			// Type
 			print '<td class="titlefield">';
