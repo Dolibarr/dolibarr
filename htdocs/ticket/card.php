@@ -71,7 +71,7 @@ $socid     = GETPOSTINT('socid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
-$mine      = GETPOST('mine');
+$mine      = GETPOSTINT('mine');
 
 $action    = GETPOST('action', 'aZ09');
 $cancel    = GETPOST('cancel', 'alpha');
