@@ -310,13 +310,15 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
--- Sequence to removed duplicated values of llx_accounting_account. Run several times if you still have duplicate.
-drop table tmp_accounting_account_double;
---select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
-create table tmp_accounting_account_double as (select account_number, fk_pcg_version, entity, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version, entity having count(rowid) >= 2);
---select * from tmp_accounting_account_double;
-delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
-drop table tmp_accounting_account_double;
+-- Sequence to removed duplicated values of llx_accounting_account
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT aa.rowid, aad.min FROM llx_accounting_account AS aa INNER JOIN (SELECT account_number, entity, fk_pcg_version, MIN(rowid) AS min FROM llx_accounting_account GROUP BY account_number, entity, fk_pcg_version HAVING COUNT(*) >= 2) AS aad ON aa.account_number = aad.account_number AND aa.entity = aad.entity AND aa.fk_pcg_version = aad.fk_pcg_version AND aa.rowid != aad.min;
+-- Fix fk_code_ventilation in lines
+UPDATE llx_facturedet SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facturedet.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facture_fourn_det.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_expensereport_det.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+DELETE FROM llx_accounting_account WHERE rowid IN (SELECT rowid FROM tmp_llx_accouting_account);
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
 
 
 -- Sequence to removed duplicated values of llx_commande_extrafields. Run several times if you still have duplicate.
@@ -435,21 +437,12 @@ create table tmp_bank_url_expense_user as (select e.fk_user_author, bu2.fk_bank 
 update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
-
--- Delete duplicate accounting account, but only if not used
-DROP TABLE tmp_llx_accounting_account;
-CREATE TABLE tmp_llx_accounting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
---SELECT * from tmp_llx_accounting_account;
-DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accounting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
-
+-- Fix accounting account unique index and orphans
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
-
-
 UPDATE llx_facturedet SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
-
 
 -- VMYSQL4.1 update llx_element_time set element_datehour = element_date where element_datehour < element_date or element_datehour > DATE_ADD(element_date, interval 1 day);
 

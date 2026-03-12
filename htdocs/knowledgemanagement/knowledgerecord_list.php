@@ -95,7 +95,7 @@ if (!$sortfield) {
 	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
-	$sortorder = "ASC";
+	$sortorder = "DESC";
 }
 
 // Initialize array of search criteria

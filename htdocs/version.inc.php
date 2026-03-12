@@ -29,7 +29,7 @@
 /**
  *	\file       htdocs/version.inc.php
  * 	\ingroup	core
- *  \brief      File that include the conf.php file and commons lib like functions.lib.php
+ *  \brief      File with the public/commercial version of Dolibarr.
  */
 
 if (!defined('DOL_APPLICATION_TITLE')) {

@@ -1075,7 +1075,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (!empty($conf->use_javascript_ajax)) {
 		// Add code to generate the login when creating a new user.
 		// Best rule to generate would be to use the same rule than dol_buildlogin() but currently it is a PHP function not available in js.
-		// TODO Implement a dol_buildlogin in javascript.
+		// TODO Implement a function dol_buildlogin in javascript like the version in PHP.
 		$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
 		if ($charforseparator == 'none') {
 			$charforseparator = '';
@@ -1087,7 +1087,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 					lastname = $("#lastname").val().toLowerCase();
 			';
-		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
+		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
+			$charforseparator = '';
+		} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
 		} else {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim();';

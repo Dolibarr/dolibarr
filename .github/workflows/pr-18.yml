@@ -1,0 +1,158 @@
+# Action to prepare the GitHub Action
+# Prerequisites (create in the organization / repo):
+# - Secret: PR18_SECRET_KEY (private key generated for the GitHub App)
+# - Variable: PR18_APP_ID (GitHub App ID)
+#
+# Behavior:
+# - On pull_request_target (opened, synchronize, reopened) against branch 18.0:
+#     - Generate a GitHub App token
+#     - Add the label "Issue for v18 maintenance Team" to the PR (error-tolerant)
+#     - Assign the reviewers listed below, excluding the PR author
+#       -> attempt per reviewer (if a reviewer fails, log and continue)
+#       -> the step fails only if no reviewer could be added
+# - On push to 18.0: workflow runs but PR-specific actions are skipped
+#
+name: Set reviewer and label for v18
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "18.0"
+  push:
+    branches:
+      - "18.0"
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  assign-and-label-v18:
+    runs-on: ubuntu-latest
+
+    # Mergeers / reviewers list: edit here as needed (comma-separated)
+    env:
+      REVIEWERS: "lvessiller-opendsi,rycks"
+      # Label name to apply
+      V18_LABEL: "Issue for v18 maintenance Team"
+
+    steps:
+      # 1) Generate a GitHub App token (via actions/create-github-app-token)
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PR18_APP_ID }}
+          private-key: ${{ secrets.PR18_SECRET_KEY }}
+
+      # 2) Checkout repository (useful if repo content is needed later)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Debug information (useful for diagnostics)
+      - name: Debug info
+        run: |
+          echo "Event: $GITHUB_EVENT_NAME"
+          echo "Ref: $GITHUB_REF"
+          echo "Run id: $GITHUB_RUN_ID"
+          echo "Reviewers configured: $REVIEWERS"
+
+      # 3) Add the label to the PR (PR events only)
+      #    -> tolerant to errors: log on failure but do not fail the job
+      - name: Add label to PR (pull_request events only)
+        if: ${{ github.event_name == 'pull_request_target' }}
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          V18_LABEL: ${{ env.V18_LABEL }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          echo "Adding label '$V18_LABEL' to PR #${PR_NUMBER}"
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/labels" \
+            -d "{\"labels\": [\"${V18_LABEL}\"]}")
+
+          if [ "$response" -eq 200 ]; then
+            echo "Label added successfully."
+          else
+            echo "Warning: failed to add label '$V18_LABEL' to PR #${PR_NUMBER} (HTTP $response). Continuing."
+          fi
+
+      # 4) Compute final reviewers list excluding the PR author
+      - name: Compute reviewers (exclude PR author)
+        if: ${{ github.event_name == 'pull_request_target' }}
+        id: set-reviewers
+        run: |
+          set -euo pipefail
+          IFS=',' read -ra ALL_REVIEWERS <<< "${REVIEWERS}"
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          FINAL=()
+          for r in "${ALL_REVIEWERS[@]}"; do
+            r_trimmed="$(echo "$r" | xargs)"
+            if [ -z "$r_trimmed" ]; then
+              continue
+            fi
+            if [ "$r_trimmed" != "$AUTHOR" ]; then
+              FINAL+=("$r_trimmed")
+            fi
+          done
+          if [ ${#FINAL[@]} -eq 0 ]; then
+            echo "reviewers=" >> $GITHUB_OUTPUT
+          else
+            reviewers_csv="$(IFS=, ; echo "${FINAL[*]}")"
+            echo "reviewers=${reviewers_csv}" >> $GITHUB_OUTPUT
+          fi
+          echo "author=$AUTHOR" >> $GITHUB_OUTPUT
+          echo "Computed reviewers: ${reviewers_csv:-<none>}"
+
+      # 5) Assign reviewers one-by-one with fine-grained error handling
+      #    - try each reviewer, track successes and failures
+      #    - fail the step only if none could be added
+      #    - succeed if at least one was added (but log failures)
+      - name: Assign reviewers on PR (per-reviewer, tolerant errors)
+        if: ${{ github.event_name == 'pull_request_target' && steps.set-reviewers.outputs.reviewers != '' }}
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REVIEWERS_CSV: ${{ steps.set-reviewers.outputs.reviewers }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -uo pipefail
+          IFS=',' read -ra TO_ADD <<< "${REVIEWERS_CSV}"
+          SUCCESS=0
+          FAILED=()
+          for r in "${TO_ADD[@]}"; do
+            r_trimmed="$(echo "$r" | xargs)"
+            if [ -z "$r_trimmed" ]; then
+              continue
+            fi
+            echo "Attempting to add reviewer: $r_trimmed"
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/requested_reviewers" \
+              -d "{\"reviewers\": [\"${r_trimmed}\"]}")
+
+            if [ "$response" -eq 201 ] || [ "$response" -eq 200 ]; then
+              echo "Added reviewer: $r_trimmed"
+              SUCCESS=$((SUCCESS+1))
+            else
+              echo "Warning: failed to add reviewer: $r_trimmed (HTTP $response)"
+              FAILED+=("$r_trimmed")
+            fi
+          done
+          if [ $SUCCESS -eq 0 ]; then
+            echo "Error: none of the configured reviewers could be added: ${FAILED[*]:-<none>}"
+            exit 1
+          else
+            echo "Reviewers added: ${SUCCESS}. Failed to add: ${FAILED[*]:-none}"
+          fi
+
+      # 6) Push event notice (no PR-specific actions performed)
+      - name: Push event notice
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "Triggered by push on branch 18.0. No PR-specific actions performed."

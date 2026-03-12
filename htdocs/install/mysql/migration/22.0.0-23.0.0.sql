@@ -320,6 +320,8 @@ ALTER TABLE llx_oauth_token ADD COLUMN expire_at datetime NULL AFTER lastaccess;
 
 ALTER TABLE llx_blockedlog ADD COLUMN linktoref text;
 ALTER TABLE llx_blockedlog DROP FOREIGN KEY fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX fk_linktoref;
+ALTER TABLE llx_blockedlog DROP INDEX idx_linktoref;
 ALTER TABLE llx_blockedlog MODIFY COLUMN linktoref text;
 ALTER TABLE llx_blockedlog ADD COLUMN linktype varchar(16);
 ALTER TABLE llx_blockedlog ADD COLUMN module_source varchar(32) DEFAULT '' AFTER action;
@@ -416,8 +418,8 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT n
 
 ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
 
-UPDATE llx_cronjob set test = 'getDolDBType() == \'mysqli\'' WHERE label = 'MakeLocalDatabaseDumpShort';
-UPDATE llx_cronjob set test = 'getDolGlobalString(\'MAIN_ALLOW_BACKUP_BY_EMAIL\') && getDolDBType() == \'mysqli\'' WHERE label = 'MakeSendLocalDatabaseDumpShort';
+UPDATE llx_cronjob set test = 'getDolDBType() == ''mysqli''' WHERE label = 'MakeLocalDatabaseDumpShort';
+UPDATE llx_cronjob set test = 'getDolGlobalString(''MAIN_ALLOW_BACKUP_BY_EMAIL'') && getDolDBType() == ''mysqli''' WHERE label = 'MakeSendLocalDatabaseDumpShort';
 
 UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
 
