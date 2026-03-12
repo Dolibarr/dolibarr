@@ -6,6 +6,7 @@
  * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Juan Pablo Farber		<jfarber55@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,10 +125,7 @@ foreach ($listofparams as $param) {
 	}
 }
 
-$special_report = false;
-if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
-	$special_report = true;
-}
+$special_report = (GETPOSTINT('extra_report') == 1);
 
 llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
 

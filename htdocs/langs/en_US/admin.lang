@@ -594,7 +594,7 @@ Module2Desc=Commercial management
 Module10Name=Accounting (simplified)
 Module10Desc=Simple accounting reports (journals, turnover) based on database content. Does not use any ledger table.
 Module20Name=Proposals
-Module20Desc=Commercial proposal management
+Module20Desc=Quotes or Commercial proposal management
 Module22Name=Mass Emails
 Module22Desc=Manage mass/bulk email campaign
 Module23Name=Energy
@@ -1551,6 +1551,7 @@ InvoiceOptionCategoryOfOperationsYes1=Yes, below the address block
 InvoiceOptionCategoryOfOperationsYes2=Yes, in the lower left-hand corner
 InvoiceClassifyBilledSupplierOrderWithoutInvoice=Disallow the classification of an order as billed without invoice.
 InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=An order can be classified as billed by default. If this conf is set to true, it will be not.
+EnableShippableIconOnCard=Enable shippable icon on order card
 ##### Supplier Orders #####
 SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a purchase order as billed without invoice.
 SupplierOrderClassifyBilledWithoutInvoiceHelp=A supplier order can be classified as billed by default. If this conf is set to true, it will be not.

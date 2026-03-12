@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -52,14 +59,6 @@ if (isModEnabled('contract')) {
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket"));
 
@@ -71,6 +70,7 @@ $socid     = GETPOSTINT('socid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
+$mine      = GETPOSTINT('mine');
 
 $action    = GETPOST('action', 'aZ09');
 $cancel    = GETPOST('cancel', 'alpha');
@@ -125,6 +125,7 @@ if (GETPOST('modelselected', 'alpha')) {
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
+$res = 0;
 if ($id || $track_id || $ref) {
 	$res = $object->fetch($id, $ref, $track_id);
 	if ($res >= 0) {
@@ -152,6 +153,7 @@ $triggermodname = 'TICKET_MODIFY';
 $permissiontoread   = $user->hasRight('ticket', 'read');
 $permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
@@ -574,7 +576,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_reopen' && $user->hasRight('ticket', 'manage') && !GETPOST('cancel')) {
+	if ($action == 'confirm_reopen' && $permissiontomanage && !GETPOST('cancel')) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
@@ -609,7 +611,7 @@ if (empty($reshook)) {
 			header("Location: " . $url);
 			exit();
 		}
-	} elseif ($action == "set_message" && $user->hasRight('ticket', 'manage')) {
+	} elseif ($action == "set_message" && $permissiontomanage) {
 		if (!GETPOST('cancel')) {
 			$object->fetch(0, '', GETPOST('track_id', 'alpha'));
 			//$oldvalue_message = $object->message;
@@ -637,6 +639,13 @@ if (empty($reshook)) {
 
 			$res = $object->setStatut($new_status, null, '', $triggermodname);
 			if ($res) {
+				if ($new_status != Ticket::STATUS_NOT_READ) {
+					$res = $object->setReadDate($user, 1);	// Update date read if necessary, without trigger because we already run trigger in setStatut()
+					if ($res < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
 				$url = 'card.php?track_id=' . $object->track_id;
 				header("Location: " . $url);
 				exit();
@@ -771,7 +780,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	print dol_get_fiche_head($head, 'tabTicket', $langs->trans('Ticket'), -1, 'ticket');
 
-	$formticket->trackid = $object->track_id;        // TODO Use a unique key 'tic' to avoid conflict in upload file feature
+	$formticket->trackid = 'tic'.$object->id;
 	$formticket->withfromsocid = $object->socid;
 	$formticket->withtitletopic = 1;
 	//  $formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 1 : 0));
@@ -792,9 +801,11 @@ if ($action == 'create' || $action == 'presend') {
 } elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'addlinkbyref', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'clone', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status'])) {
 	if (!empty($res) && $res > 0) {
 		// or for unauthorized internals users
-		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
+		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$permissiontomanage) {
 			accessforbidden('', 0, 1);
 		}
+
+		$trackid = 'tic'.$object->id;
 
 		$formconfirm = '';
 
@@ -1087,7 +1098,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		print '<table class="border tableforfield centpercent">';
 
-		// Track ID
+		// Track ID (alternative public ref)
 		print '<tr><td class="titlefieldmiddle">'.$langs->trans("TicketTrackId").'</td><td>';
 		if (!empty($object->track_id)) {
 			if (empty($object->ref)) {
@@ -1155,7 +1166,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans("AssignedTo");
-		if (isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->hasRight('ticket', 'manage')) {
+		if (isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $permissiontomanage) {
 			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.urlencode($object->track_id).'&set=assign_ticket">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr></table>';
