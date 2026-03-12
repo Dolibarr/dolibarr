@@ -2143,7 +2143,7 @@ class Product extends CommonObject
 			if (empty($notrigger)) {
 				// Call trigger
 				$result = $this->call_trigger('PRODUCT_DEL_MULTILANGS', $user);
-				if ($result < 0)
+				if ($result < 0) {
 					$this->error = $this->db->lasterror();
 					dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
 					return -1;
