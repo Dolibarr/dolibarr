@@ -79,6 +79,8 @@ if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement'
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
+
 
 /*
  * Actions
@@ -182,7 +184,7 @@ if ($user->socid > 0) {
 	$sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
 	// For internals users,
-	if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->hasRight('ticket', 'manage')) {
+	if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$permissiontomanage) {
 		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
@@ -367,7 +369,7 @@ if ($user->hasRight('ticket', 'read')) {
 		$sql .= " AND t.fk_soc= ".((int) $user->socid);
 	} else {
 		// Restricted to assigned user only
-		if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->hasRight('ticket', 'manage')) {
+		if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$permissiontomanage) {
 			$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 		}
 	}

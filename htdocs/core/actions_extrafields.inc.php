@@ -36,6 +36,8 @@
  * @var string $elementtype
  * @var string $value
  */
+'@phan-var-force int $error';
+
 $maxsizestring = 255;
 $maxsizeint = 10;
 $mesg = '';
