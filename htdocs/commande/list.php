@@ -301,6 +301,21 @@ $objectclass = null;
 
 $result = restrictedArea($user, 'commande', $id, '');
 
+$permissiontoread = $user->hasRight("commande", "lire");
+$permissiontoadd = $user->hasRight("commande", "creer");
+$permissiontodelete = $user->hasRight("commande", "supprimer");
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
+	$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
+	$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
+	$permissiontosendbymail = $user->hasRight("commande", "order_advance", "send");
+} else {
+	$permissiontovalidate = $user->hasRight("commande", "creer");
+	$permissiontoclose = $user->hasRight("commande", "creer");
+	$permissiontocancel = $user->hasRight("commande", "creer");
+	$permissiontosendbymail = $user->hasRight("commande", "creer");
+}
+
 $error = 0;
 
 
@@ -389,20 +404,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Commande';
 	$objectlabel = 'Orders';
-	$permissiontoread = $user->hasRight("commande", "lire");
-	$permissiontoadd = $user->hasRight("commande", "creer");
-	$permissiontodelete = $user->hasRight("commande", "supprimer");
-	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-		$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
-		$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
-		$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
-		$permissiontosendbymail = $user->hasRight("commande", "order_advance", "send");
-	} else {
-		$permissiontovalidate = $user->hasRight("commande", "creer");
-		$permissiontoclose = $user->hasRight("commande", "creer");
-		$permissiontocancel = $user->hasRight("commande", "creer");
-		$permissiontosendbymail = $user->hasRight("commande", "creer");
-	}
 	$uploaddir = $conf->order->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	$year = "";
