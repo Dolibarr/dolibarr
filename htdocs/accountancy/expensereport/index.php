@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
@@ -85,6 +84,7 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 /*
  * Actions
  */
+
 $error = 0;
 
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
@@ -197,10 +197,11 @@ $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current +
 
 print load_fiche_titre($langs->trans("ExpenseReportsVentilation")."&nbsp;".$textprevyear."&nbsp;".$langs->trans("Year")."&nbsp;".$year_start."&nbsp;".$textnextyear, '', 'title_accountancy');
 
-print '<span class="opacitymedium">'.$langs->trans("DescVentilExpenseReport").'</span><br>';
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilExpenseReportMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
-print '</span><br>';
-
+print '<div class="info">';
+print '<span class="">'.$langs->trans("DescVentilExpenseReport").'</span><br>';
+print '<span class="hideonsmartphone">'.$langs->trans("DescVentilExpenseReportMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
+print '</span>';
+print '</div>';
 
 $y = $year_current;
 

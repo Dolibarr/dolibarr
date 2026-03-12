@@ -968,7 +968,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		}
 
 		print "\n";
-		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '', 0, '', '', $massactionbutton);
+		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, 'project', 0, '', '', $massactionbutton);
 
 		print '<div class="div-table-responsive">' . "\n";
 		print '<table class="noborder centpercent">';

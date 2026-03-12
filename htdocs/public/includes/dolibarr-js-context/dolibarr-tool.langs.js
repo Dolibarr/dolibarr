@@ -50,7 +50,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		// Create a secure DB name
 		async function getSafeDbName() {
-			const path = window.location.pathname;
+			const path = Dolibarr.getContextVar('DOL_URL_ROOT', Dolibarr.getContextVar('DOL_LANG_INTERFACE_URL', window.location.hostname));
 			const hashedPath = await hashString(path);
 			return `DolibarrLangs_${hashedPath}`;
 		}
@@ -126,9 +126,29 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				deleteRequest.onerror = () => console.error('Dolibarr.tools.langs:Failed to delete DB', deleteRequest.error);
 				deleteRequest.onblocked = () => console.warn('Dolibarr.tools.langs: DB deletion blocked, maybe open connections exist');
 
+				// Try Delete all langs database
+				deleteAllDolibarrLangsDbs();
+
 				Dolibarr.log('Dolibarr.tools.langs: cache cleared');
 			} catch (err) {
 				console.error('Dolibarr.tools.langs: failed to clear cache', err);
+			}
+		}
+
+		async function deleteAllDolibarrLangsDbs() {
+			if (!indexedDB.databases) {
+				console.warn("Your browser does not support indexedDB.databases(), bulk deletion is not possible.");
+				return;
+			}
+
+			const dbs = await indexedDB.databases();
+			const dolibarrDbs = dbs.filter(db => db.name && db.name.startsWith('DolibarrLangs_'));
+
+			for (const dbInfo of dolibarrDbs) {
+				const deleteRequest = indexedDB.deleteDatabase(dbInfo.name);
+				deleteRequest.onsuccess = () => console.log(`Database ${dbInfo.name} deleted`);
+				deleteRequest.onerror = () => console.error(`Failed to delete database ${dbInfo.name}`, deleteRequest.error);
+				deleteRequest.onblocked = () => console.warn(`Deletion of database ${dbInfo.name} blocked, maybe open connections exist`);
 			}
 		}
 
