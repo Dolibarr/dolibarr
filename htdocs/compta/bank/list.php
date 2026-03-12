@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -45,14 +52,6 @@ if (isModEnabled('accounting')) {
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
@@ -733,18 +732,19 @@ foreach ($accounts as $key => $type) {
 
 		// Accountancy journal
 		if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
-			print '<td class="tdoverflowmax125">';
 			if (isModEnabled('accounting')) {
 				if (empty($objecttmp->fk_accountancy_journal)) {
-					print img_warning($langs->trans("Mandatory"));
+					$s = img_warning($langs->trans("Mandatory"));
 				} else {
 					$accountingjournal = new AccountingJournal($db);
 					$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
-					print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+					$s = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 				}
 			} else {
-				print '';
+				$s = '';
 			}
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute(dol_string_nohtmltag($s)).'">';
+			print $s;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -774,13 +774,13 @@ foreach ($accounts as $key => $type) {
 				$labeltoshow = $langs->trans("ConciliationDisabled");
 			}
 
-			print '<td class="center tdoverflowmax125"'.($labeltoshow ? ' title="'.dol_escape_htmltag($labeltoshow).'"' : '').'>';
+			print '<td class="center tdoverflowmax125"'.($labeltoshow ? ' title="'.dolPrintHTML($labeltoshow).'"' : '').'>';
 			if ($conciliate == -2) {
-				print '<span class="opacitymedium">'.$langs->trans("CashAccount").'</span>';
+				print '<span class="opacitymedium" title="'.$langs->trans("CashAccount").'">'.$langs->trans("Never").'</span>';
 			} elseif ($conciliate == -3) {
-				print '<span class="opacitymedium">'.$langs->trans("Closed").'</span>';
+				print '<span class="opacitymedium" title="'.$langs->trans("Closed").'">'.$langs->trans("Never").'</span>';
 			} elseif (empty($objecttmp->rappro)) {
-				print '<span class="opacitymedium">'.$langs->trans("ConciliationDisabled").'</span>';
+				print '<span class="opacitymedium" title="'.$langs->trans("ConciliationDisabled").'">'.$langs->trans("Never").'</span>';
 			} else {
 				$result = $objecttmp->load_board($user, $objecttmp->id);
 				if (is_numeric($result) && $result < 0) {

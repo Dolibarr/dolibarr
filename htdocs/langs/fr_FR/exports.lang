@@ -17,6 +17,7 @@ ExportModelName=Nom du profil d'export
 ExportModelSaved=Profil d'export sauvegardé sous le nom <b>%s</b>.
 ExportableFields=Champs exportables
 ExportedFields=Champs à exporter
+ExportProfile=Profil d'export
 ImportModelName=Nom du profil d'import
 ImportModelSaved=Profil d'export sauvegardé sous le nom <b>%s</b>.
 ImportProfile=Profil d'import
@@ -138,7 +139,7 @@ FilteredFields=Champs filtrés
 FilteredFieldsValues=Valeurs de filtrage
 FormatControlRule=Règle de contrôle de format
 ## imports updates
-KeysToUseForUpdates=Clé (colonne) à utiliser pour la <b>mise à jour</b> de données existantes
+KeysToUseForUpdates=Clé (colonne) pour mise à jour
 NbInsert=Nombre de lignes insérées: %s
 NbInsertSim=Nombre de lignes qui seront insérées : %s
 NbUpdate=Nombre de lignes mises à jour: %s

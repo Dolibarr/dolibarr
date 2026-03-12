@@ -5965,6 +5965,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
 				'webportal' => 'infobox-portal',
+				'website' => 'infobox-portal',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt' => 'imgforviewmode',
 				'calendar' => 'imgforviewmode',
@@ -6032,7 +6033,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'globe-americas' => '#aaa',
 				'region' => '#aaa',
 				'state' => '#aaa',
-				'website' => '#304',
+				//'website' => '#304',
 				'workstation' => '#a69944'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
@@ -7691,7 +7692,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
 	if (preg_match('/\((.*)\)/', $rate, $reg)) {
 		$morelabel = ' (' . $reg[1] . ')';
 		$rate = preg_replace('/\s*' . preg_quote($morelabel, '/') . '/', '', $rate);
-		$morelabel = ' ' . ($html ? '<span class="opacitymedium">' : '') . '(' . $reg[1] . ')' . ($html ? '</span>' : '');
+		$morelabel = ' ' . ($html ? '<span class="opacitymedium small">' : '') . '(' . $reg[1] . ')' . ($html ? '</span>' : '');
 	}
 	if (preg_match('/\*/', $rate)) {
 		$rate = str_replace('*', '', $rate);
@@ -11879,8 +11880,8 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 
-		// On string syntax error, dol_evalmay return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
-
+		// On string syntax error, dol_eval may return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
+		//var_dump($rep);
 		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad call of') === false || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
@@ -11934,8 +11935,11 @@ function dol_eval_new($s)
 	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
 	// Old variables used
-	$object,
-	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	$object;
+
+	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
+		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	}
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -12212,10 +12216,10 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
+	global $object;
 
 	// Old variables (deprecated)
 	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
-		global $object;
 		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
 	}
 
@@ -12342,11 +12346,17 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$scheck = preg_replace('/\$websitepage/', '__VARWEBSITEPAGE__', $scheck);
 			$scheck = preg_replace('/\$website/', '__VARWEBSITE__', $scheck);
 			$scheck = preg_replace('/\$objectoffield/', '__VAROBJECTOFFIELD__', $scheck);
+			$scheck = preg_replace('/\$object/', '__VAROBJECT__', $scheck);
 			$scheck = preg_replace('/\$var/', '__VARVAR__', $scheck);
 
-			// Now test if it remains 1 $
+			// deprecated (now we use $objecf->canvas or $objectoffield->canvas)
+			$scheck = preg_replace('/\$soc->canvas/', '__VARSOCCANVAS__', $scheck);
+			$scheck = preg_replace('/\$obj->canvas/', '__VAROBJCANVAS__', $scheck);
+
+			// Now test if it remains one '$'
 			if (strpos($scheck, '$') !== false) {
-				return 'Bad string syntax to evaluate (found use of $ that does not match one of the following pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s;
+				dol_syslog('Bad string syntax to evaluate (found use of $ not matching pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s, LOG_WARNING);
+				return 'Bad string syntax to evaluate (found use of $ not matching pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s;
 			}
 		}
 
@@ -12816,7 +12826,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
 				if (count($values) !== 6) {
-					dol_syslog('Tabs module_parts entries must be composed of 6 values separated by ":", but got "' . $value . '". Please check your module descriptor classes.', LOG_ERR);
+					dol_syslog('The module_parts["tabs"] entries must be composed of 6 values separated by ":", but got "' . $value . '". Please check your module descriptor classes.', LOG_ERR);
 					continue;
 				}
 
@@ -12842,6 +12852,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						}
 					}
 				}
+
+				global $objectoffield;      // So we can use $objectoffield int verifCond
+				$objectoffield = $object;
 
 				if (!verifCond($values[4], '2')) {
 					continue;
