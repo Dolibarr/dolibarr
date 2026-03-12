@@ -601,7 +601,7 @@ if (empty($reshook)) {
 			header("Location: ".$url);
 			exit();
 		}
-	} elseif ($action == "set_message" && $user->rights->ticket->write) {
+	} elseif ($action == "set_message" && $permissiontoadd) {
 		if (!GETPOST('cancel')) {
 			$object->fetch('', '', GETPOST('track_id', 'alpha'));
 			$oldvalue_message = $object->message;
