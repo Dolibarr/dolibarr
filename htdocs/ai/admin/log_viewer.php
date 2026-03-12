@@ -99,7 +99,7 @@ if ($action == 'purge' && $confirm == 'yes') {
 	$db->begin();
 
 	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
-	$sql .= " WHERE entity IN (" . getEntity('ai') . ")";
+	$sql .= " WHERE entity IN (" . getEntity('airequestlog') . ")";
 
 	$resql = $db->query($sql);
 
@@ -123,7 +123,7 @@ if ($massaction == 'purge' && !empty($toselect) && is_array($toselect)) {
 	foreach ($toselect as $id) {
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
 		$sql .= " WHERE rowid = " . ((int) $id);
-		$sql .= " AND entity IN (" . getEntity('ai') . ")";
+		$sql .= " AND entity IN (" . getEntity('airequestlog') . ")";
 
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -184,7 +184,7 @@ llxHeader('', $langs->trans("AIRequestLogs"), '');
 // Build WHERE clause
 $where = array();
 
-$where[] = "l.entity IN (" . getEntity('ai') . ")";
+$where[] = "l.entity IN (" . getEntity('airequestlog') . ")";
 
 if ($search_date_start) {
 	$where[] = "l.date_request >= '" . $db->escape(date('Y-m-d H:i:s', $search_date_start)) . "'";
