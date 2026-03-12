@@ -2132,7 +2132,7 @@ class Product extends CommonObject
 	 *
 	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
-	public function delMultiLangs($langtodelete, $user, $notrigger)
+	public function delMultiLangs($langtodelete, $user, $notrigger = 0)
 	{
 		$sql = "DELETE FROM ".$this->db->prefix()."product_lang";
 		$sql .= " WHERE fk_product = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
