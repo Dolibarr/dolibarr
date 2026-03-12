@@ -766,7 +766,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		} else {
 			// Here module "captureserver" is on. We can search the full registration number and prefill value
 			$sql = "SELECT registerid from ".MAIN_DB_PREFIX."captureserver_captureserver";
-			$sql .= " WHERE registerid LIKE '".$regnumber."%'";
+			$sql .= " WHERE registerid LIKE '".$db->escape($regnumber)."%'";
 			$sql .= " AND type = 'dolibarrregistration'";
 			$sql .= " LIMIT 1";
 
