@@ -11880,8 +11880,8 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 
-		// On string syntax error, dol_evalmay return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
-
+		// On string syntax error, dol_eval may return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
+		//var_dump($rep);
 		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad call of') === false || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
@@ -12345,9 +12345,15 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$scheck = preg_replace('/\$objectoffield/', '__VAROBJECTOFFIELD__', $scheck);
 			$scheck = preg_replace('/\$var/', '__VARVAR__', $scheck);
 
+			// deprecated (now we use $objecftoffield->canvas)
+			$scheck = preg_replace('/\$object->canvas/', '__VAROBJECTCANVAS__', $scheck);
+			$scheck = preg_replace('/\$soc->canvas/', '__VARSOCCANVAS__', $scheck);
+			$scheck = preg_replace('/\$obj->canvas/', '__VAROBJCANVAS__', $scheck);
+
 			// Now test if it remains 1 $
 			if (strpos($scheck, '$') !== false) {
-				return 'Bad string syntax to evaluate (found use of $ that does not match one of the following pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s;
+				dol_syslog('Bad string syntax to evaluate (found use of $ not matching pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s, LOG_WARNING);
+				return 'Bad string syntax to evaluate (found use of $ not matching pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s;
 			}
 		}
 
@@ -12817,7 +12823,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
 				if (count($values) !== 6) {
-					dol_syslog('Tabs module_parts entries must be composed of 6 values separated by ":", but got "' . $value . '". Please check your module descriptor classes.', LOG_ERR);
+					dol_syslog('The module_parts["tabs"] entries must be composed of 6 values separated by ":", but got "' . $value . '". Please check your module descriptor classes.', LOG_ERR);
 					continue;
 				}
 
@@ -12843,6 +12849,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						}
 					}
 				}
+
+				global $objectoffield;      // So we can use $objectoffield int verifCond
+				$objectoffield = $object;
 
 				if (!verifCond($values[4], '2')) {
 					continue;
