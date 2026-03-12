@@ -163,7 +163,6 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 $upload_dir = $conf->ticket->dir_output;
 
 
-
 /*
  * Actions
  */
@@ -645,6 +644,12 @@ if (empty($reshook)) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
+				} else {
+					$sql = "UPDATE ".MAIN_DB_PREFIX."ticket SET date_read = null WHERE rowid = ".((int) $object->id);
+					$resql = $db->query($sql);
+					if (!$resql) {
+						dol_print_error($db);
+					}
 				}
 				$url = 'card.php?track_id=' . $object->track_id;
 				header("Location: " . $url);
@@ -728,9 +733,6 @@ $userstat = new User($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formticket = new FormTicket($db);
-if (isModEnabled('project')) {
-	$formproject = new FormProjets($db);
-}
 
 $help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
 
@@ -956,7 +958,7 @@ if ($action == 'create' || $action == 'presend') {
 		$morehtmlref = '<div class="refidno">';
 
 		if ($user->hasRight('ticket', 'write') && !$user->socid) {
-			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
 		}
 		if ($action != 'editsubject') {
 			$morehtmlref .= '<span class="smallonsmartphone">'.dolPrintLabel($object->subject).'</span>';
@@ -1033,7 +1035,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 			if (!empty($object->socid)) {
-				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN') ? '&search_fk_statut[]=openall' : '').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
+				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN') ? '&search_fk_statut[]=openall' : '').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth paddingright"').$langs->trans("TicketHistory").'</a>';
 			}
 		}
 

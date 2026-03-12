@@ -1350,6 +1350,8 @@ td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 	overflow-y: auto;
 	word-break: break-word;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 div.urllink {
 	padding: 5px;
@@ -4598,7 +4600,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
-table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td,
+table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -5153,7 +5156,7 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a:not(.button), .liste_titre td a:not(.button) span {
+.liste_titre td a:not(.button):not(.editfielda), .liste_titre td a:not(.button):not(.editfielda) span {
 	text-shadow: none !important;
 	color: var(--colortexttitle) !important;
 }

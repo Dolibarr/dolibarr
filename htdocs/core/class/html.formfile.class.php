@@ -1468,7 +1468,8 @@ class FormFile
 			}
 			// Shared or not - Hash of file
 			if (empty($moreoptions['hideshared'])) {
-				print_liste_field_titre('Shared');
+				//print_liste_field_titre('Shared');
+				print_liste_field_titre('');
 			}
 			// Custom action buttons
 			if (!empty($moreoptions['buttons'])) {
@@ -1662,8 +1663,10 @@ class FormFile
 									$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 									print '<!-- shared link -->';
-									print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-									print '<input type="text" class="centpercentminusx minwidth50imp nopadding small downloadexternallink" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+									print '<a href="'.$fulllink.'" target="_blank" rel="noopener" data-showidonhover="downloadlink'.$filearray[$key]['rowid'].'">';
+									print img_picto($langs->trans("FileSharedViaALink"), 'collab');
+									print '</a> ';
+									print '<input type="text" class="centpercentminusx minwidth50imp nopadding small downloadexternallink showonhover" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 								} else {
 									//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 								}
