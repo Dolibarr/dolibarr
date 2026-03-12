@@ -5324,9 +5324,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 }
-.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
+.noborder > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.liste > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.noborder .tagtr:nth-child(odd):not(:last-child):not(.lastvisible) .oddeven.tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #e8e8e8;
 }
