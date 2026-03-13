@@ -97,6 +97,23 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-center" data-product-id="42" data-product-ref="PROD-ABC" data-product-price="29.90" ><span class="opacitylow">Dialog |</span> Center</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-right" data-product-id="101" data-product-ref="PROD-XYZ" data-product-price="3.20"><span class="opacitylow">Dialog |</span> Right</button>
 			</div>
+			<h5>Right size</h5>
+			<div class="documentation-example">
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xs" ><span class="opacitylow">Dialog |</span>  xs</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-default-size" ><span class="opacitylow">Dialog |</span> default</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-lg" ><span class="opacitylow">Dialog |</span> lg</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xl" ><span class="opacitylow">Dialog |</span> xl</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xxl" ><span class="opacitylow">Dialog |</span> xxl</button>
+			</div>
+
+			<h5>Center size</h5>
+			<div class="documentation-example">
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xs-center" ><span class="opacitylow">Dialog |</span> xs</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-default-size-center" ><span class="opacitylow">Dialog |</span> default</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-lg-center" ><span class="opacitylow">Dialog |</span> lg</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xl-center" ><span class="opacitylow">Dialog |</span> xl</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xxl-center" ><span class="opacitylow">Dialog |</span> xxl</button>
+			</div>
 		</div>
 
 		<!-- HEADER & FOOTER -->
@@ -231,10 +248,89 @@ $documentation->showSidebar(); ?>
 			title: uiDialogTitleCenter,
 			url: modalUrl
 		});
+
 		Dolibarr.tools.uiDialog('#btn-dialog-right',  {
 			dialogId: 'dialog-right',
 			align: 'right',
 			title: uiDialogTitleRight,
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-xs',  {
+			dialogId: 'test-dialog-xs',
+			align: 'right',
+			width: 'xs',
+			title: uiDialogTitleRight + ' xs size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-default-size',  {
+			dialogId: 'test-dialog-default',
+			align: 'right',
+			title: uiDialogTitleRight + ' default size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-lg',  {
+			dialogId: 'test-dialog-lg',
+			align: 'right',
+			width: 'lg',
+			title: uiDialogTitleRight + ' lg size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-xl',  {
+			dialogId: 'test-dialog-xl',
+			align: 'right',
+			width: 'xl',
+			title: uiDialogTitleRight + ' XL size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-xxl',  {
+			dialogId: 'test-dialog-xxl',
+			align: 'right',
+			width: 'xxl',
+			title: uiDialogTitleRight + ' XXL size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-xs-center',  {
+			dialogId: 'test-dialog-xs-center',
+			align: 'center',
+			width: 'xs',
+			title: uiDialogTitleRight + ' xs size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-default-size-center',  {
+			dialogId: 'test-dialog-default-center',
+			align: 'center',
+			title: uiDialogTitleRight + ' default size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-lg-center',  {
+			dialogId: 'test-dialog-lg-center',
+			align: 'center',
+			width: 'lg',
+			title: uiDialogTitleRight + ' lg size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-xl-center',  {
+			dialogId: 'test-dialog-xl-center-center',
+			align: 'center',
+			width: 'xl',
+			title: uiDialogTitleRight + ' XL size',
+			url: modalUrl
+		});
+
+		Dolibarr.tools.uiDialog('#btn-dialog-xxl-center',  {
+			dialogId: 'test-dialog-xxl-center',
+			align: 'center',
+			width: 'xxl',
+			title: uiDialogTitleRight + ' XXL size',
 			url: modalUrl
 		});
 

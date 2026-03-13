@@ -28,6 +28,33 @@ dialog.dol-dialog[open] {
 }
 
 /* ============================================================
+   UI Dialog - Size
+   ============================================================ */
+.dol-dialog {
+	width: clamp(320px, 90vw, 640px);
+}
+
+/* Extra small */
+.dol-dialog.dol-dialog-xs {
+	width: clamp(260px, 25vw, 360px);
+}
+
+/* Large */
+.dol-dialog.dol-dialog-lg {
+	width: clamp(420px, 50vw, 900px);
+}
+
+/* Extra large */
+.dol-dialog.dol-dialog-xl {
+	width: clamp(480px, 75vw, 1200px);
+}
+
+/* Full width */
+.dol-dialog.dol-dialog-xxl {
+	width: min(95vw, 1600px);
+}
+
+/* ============================================================
    Header (optionnel)
    ============================================================ */
 
@@ -172,7 +199,6 @@ dialog.dol-dialog.dol-dialog__center {
 	inset: 0;
 	margin: auto;
 	border-radius: 8px;
-	width: 500px;    /* surchargeable via style inline */
 	max-height: 90dvh;
 	animation: dol-dialog-fade-in 0.2s ease;
 }
@@ -196,7 +222,6 @@ dialog.dol-dialog.dol-dialog__right {
 	height: 100dvh;
 	max-height: 100dvh;
 	border-radius: 0;
-	width: 500px; /* surchargeable via style inline */
 	animation: dol-dialog-slide-in 0.3s ease;
 }
 

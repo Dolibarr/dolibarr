@@ -16,7 +16,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			icon: '',						// FontAwesome Class (e.g 'fas fa-user')
 			iconColor: '',  				// CSS color value (e.g #3b89a8)
 			align: 'center',				// Box alignment
-			width: 0,						// Override CSS
+			width: null,					// 'xs', 'lg', 'xl', 'xxl' or Override CSS by set xxx as interger or css size like 100vw or 500px
 			height: 0,		 				// Box height - Overrride CSS - Do not work on align right
 			closedBy: 'any', 				// 'any' | 'closerequest' | 'none'
 			url: null,       				// Ajax url
@@ -74,7 +74,12 @@ document.addEventListener('Dolibarr:Init', function () {
 
 			let style = '';
 			if (param.width) {
-				style += 'width:' + (Number.isInteger(param.width) ? param.width + 'px' : param.width) + ';';
+				const sizes = ['xs', 'lg', 'xl', 'xxl'];
+				if (sizes.includes(param.width)) {
+					dialogClass += ` dol-dialog-${param.width}`;
+				} else {
+					style += 'width:' + (Number.isInteger(param.width) ? param.width + 'px' : param.width) + ';';
+				}
 			}
 			if (param.height && param.align !== 'right') {
 				style += 'height:' + (Number.isInteger(param.height) ? param.height + 'px' : param.height) + ';';
