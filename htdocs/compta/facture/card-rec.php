@@ -1363,9 +1363,11 @@ if ($action == 'create') {
 		}
 
 		// Rule for lines dates
-		print "<tr><td>".$langs->trans("RuleForLinesDates")."</td><td>";
-		print $form->getSelectRuleForLinesDates(GETPOSTISSET('rule_for_lines_dates') ? GETPOST('rule_for_lines_dates', 'alpha') : $factureRec->rule_for_lines_dates);
-		print "</td></tr>";
+		if (getDolGlobalInt("FACTUREREC_SUPPORT_RULE_FOR_LINES")) {
+			print "<tr><td>".$langs->trans("RuleForLinesDates")."</td><td>";
+			print $form->getSelectRuleForLinesDates(GETPOSTISSET('rule_for_lines_dates') ? GETPOST('rule_for_lines_dates', 'alpha') : $factureRec->rule_for_lines_dates);
+			print "</td></tr>";
+		}
 
 		//extrafields
 		$draft = new Facture($db);
@@ -1733,22 +1735,24 @@ if ($action == 'create') {
 		print "</td>";
 		print '</tr>';
 
-		// Billing Term
-		print '<tr><td>';
-		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('RuleForLinesDates');
-		print '</td>';
-		if ($action != 'editruleforlinesdates' && $user->hasRight('facture', 'creer')) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editruleforlinesdates&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRuleForLinesDates'), 1).'</a></td>';
+		// Rule for line date. Need a hidden const as this generate unexpected dates into substitution variables
+		if (getDolGlobalInt("FACTUREREC_SUPPORT_RULE_FOR_LINES")) {
+			print '<tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans('RuleForLinesDates');
+			print '</td>';
+			if ($action != 'editruleforlinesdates' && $user->hasRight('facture', 'creer')) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editruleforlinesdates&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRuleForLinesDates'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editruleforlinesdates') {
+				$form->form_rule_for_lines_dates($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->rule_for_lines_dates, 'rule_for_lines_dates');
+			} else {
+				$form->form_rule_for_lines_dates($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->rule_for_lines_dates, 'none');
+			}
+			print '</td></tr>';
 		}
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editruleforlinesdates') {
-			$form->form_rule_for_lines_dates($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->rule_for_lines_dates, 'rule_for_lines_dates');
-		} else {
-			$form->form_rule_for_lines_dates($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->rule_for_lines_dates, 'none');
-		}
-		print '</td></tr>';
 
 		// Extrafields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

@@ -75,19 +75,24 @@ if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
 
+$form = new Form($db);
 $formSetup = new FormSetup($db);
 $aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
 // Setup conf for AI model
 $formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
 foreach ($arrayofaifeatures as $featurekey => $feature) {
-	$newkey = $featurekey;
+	$newfeaturekey = $featurekey;
 	if (preg_match('/^text/', $featurekey)) {
-		$newkey = 'textgeneration';
+		$newfeaturekey = 'textgeneration';
 	}
 	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$feature["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
-	if ($arrayofai[$aiservice][$newkey] != 'na') {
-		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
+	if (!empty($arrayofai[$aiservice][$newfeaturekey]['default']) && $arrayofai[$aiservice][$newfeaturekey]['default'] != 'na') {
+		$item->nameText = '<span class="valignmiddle">'.$langs->trans("AI_API_MODEL_".$feature["function"]).' </span><span class="opacitymedium valignmiddle">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newfeaturekey]['default'].')</span>';
+		if (!empty($arrayofai[$aiservice][$newfeaturekey]['examples'])) {
+			$htmltooltip = $langs->trans("Example").': '.$arrayofai[$aiservice][$newfeaturekey]['examples'];
+			$item->nameText .= $form->textwithpicto('', $htmltooltip);
+		}
 	} else {
 		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
 	}
@@ -205,7 +210,6 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  * View
  */
 
-$form = new Form($db);
 $formai = new FormAI($db);
 
 $help_url = '';
@@ -245,10 +249,10 @@ if ($action == 'deleteproperty') {
 	print $formconfirm;
 }
 
-print '<br>';
-
 if ($action == 'create') {
-	$out = '<div class="addcustomprompt">';
+	$out = '<br>';
+
+	$out .= '<div class="addcustomprompt">';
 
 	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -335,17 +339,23 @@ if ($action == 'create') {
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
 
-	$out .= '<br><br><br>';
 	$out .= '</div>';
 
 	print $out;
 }
 
-
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
-	if (!empty($currentConfigurations)) {
+	if (empty($currentConfigurations)) {
+		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+		print '<br>';
+		print '<br>';
+		print '<br>';
+	} else {
+		print '<br>';
+		print '<br>';
+		print '<br>';
 		foreach ($currentConfigurations as $confkey => $config) {
 			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;

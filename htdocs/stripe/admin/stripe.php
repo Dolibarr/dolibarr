@@ -325,21 +325,21 @@ if (empty($conf->stripeconnect->enabled)) {
 if (empty($conf->stripeconnect->enabled)) {
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_PUBLISHABLE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.getDolGlobalString('STRIPE_LIVE_PUBLISHABLE_KEY').'" placeholder="'.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.getDolGlobalString('STRIPE_LIVE_PUBLISHABLE_KEY').'" placeholder="'.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.getDolGlobalString('STRIPE_LIVE_SECRET_KEY').'" placeholder="'.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.getDolGlobalString('STRIPE_LIVE_SECRET_KEY').'" placeholder="'.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID').'" placeholder="'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx">';
+		print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID').'" placeholder="'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
 		print '<br>';
 	}
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY').'" placeholder="'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false">';
 	$out = img_picto('', 'globe', 'class="pictofixedwidth"').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForLiveWebhook").'</span> ';
 	$url = dol_buildpath('/public/stripe/ipn.php', 3);
 	//global $dolibarr_main_instance_unique_id;
@@ -574,7 +574,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input class="width500" type="text" name="ONLINE_PAYMENT_CSS_URL" value="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
+print '<input class="width500" type="text" name="ONLINE_PAYMENT_CSS_URL" value="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'" spellcheck="false">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 

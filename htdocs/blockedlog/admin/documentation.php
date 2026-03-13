@@ -54,7 +54,7 @@ $origin     = GETPOST('origin');
 $mode       = GETPOST('mode');
 
 // Access Control
-if (!$user->admin) {
+if (!$user->admin && !userIsTaxAuditor()) {
 	accessforbidden();
 }
 
@@ -93,11 +93,14 @@ if (GETPOST('withtab', 'alpha')) {
 }
 
 $morehtmlcenter = '';
+$texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
-	$texttop = '';
+if (!userIsTaxAuditor()) {
+	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+	if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
+		$texttop = '';
+	}
 }
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
@@ -109,8 +112,9 @@ if ($withtab) {
 	print '<br>';
 }
 
-print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
-
+if (!userIsTaxAuditor()) {
+	print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
+}
 
 // Version
 $versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
@@ -133,7 +137,7 @@ if ($mysoc->country_code == 'FR') {
 }
 
 // Show generic message (for countries that need registration) to explain we need registration to collect data and why
-if (in_array($mysoc->country_code, array('FR'))) {
+if (in_array($mysoc->country_code, array('FR')) && !userIsTaxAuditor()) {
 	$organization_for_ping = getDolGlobalString('MAIN_ORGANIZATION_FOR_PING', "Association Dolibarr");
 	$dataprivacy_url = getDolGlobalString('MAIN_ORGANIZATION_URL_PRIVACY', "https://www.dolibarr.org/legal-privacy-gdpr.php");
 
