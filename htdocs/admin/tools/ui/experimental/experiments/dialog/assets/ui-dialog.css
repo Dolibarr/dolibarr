@@ -256,3 +256,106 @@ dialog.dol-dialog.no-animation,
 dialog.dol-dialog.no-animation.is-closing {
 	animation: none;
 }
+
+
+
+/* ============================================================
+   No animation override — doit être en dernier
+   ============================================================ */
+/* Base button */
+.dialog-btn {
+	--color-btn-text: #1f2433;
+	--color-btn-bg: #ffffff;
+
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+
+	height: 36px;
+	padding: 0 16px;
+
+	font-family: InterVariable, system-ui, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+
+	border-radius: 6px;
+	border: 0;
+
+	background: var(--color-btn-bg);
+	color:  var(--color-btn-text);
+	box-shadow:
+			inset 0 0 0 1px #d9dee6,
+			0 1px 2px rgba(0, 0, 0, 0.05);
+
+	cursor: pointer;
+	transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dialog-btn:hover {
+	--color-btn-bg: #f5f7fa;
+}
+
+/* PRIMARY */
+.dialog-btn.dialog-btn-primary {
+	--color-btn-text: var(--textbutaction);
+	--color-btn-bg: var(--butactionbg);
+
+	position: relative;
+	box-shadow: none;
+}
+
+.dialog-btn.dialog-btn-primary::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgba(0,0,0,0);
+	transition: background 0.15s;
+}
+
+.dialog-btn.dialog-btn-primary:hover::after {
+	background: rgba(0,0,0,0.1);
+}
+
+/* DANGER / DESTRUCTIVE */
+.dialog-btn.dialog-btn-destructive {
+	--color-btn-text: #ffffff;
+	--color-btn-bg: #b91c1c;
+	box-shadow: none;
+}
+
+.dialog-btn.dialog-btn-destructive:hover {
+	--color-btn-bg: #a11818;
+}
+
+/** For color blind */
+[class*="colorblind-"] .dialog-btn.dialog-btn-destructive  {
+	outline: 2px dashed #fff;
+	outline-offset: -4px;
+}
+
+	/* WARNING */
+.dialog-btn.dialog-btn-warning {
+	--color-btn-text: #ffffff;
+	--color-btn-bg: #b9851c;
+	box-shadow: none;
+}
+.dialog-btn.dialog-btn-warning:hover {
+	--color-btn-bg: #936913;
+}
+
+/** For color blind */
+[class*="colorblind-"] .dialog-btn.dialog-btn-warning {
+	outline: 2px dashed #fff;
+	outline-offset: -4px;
+}
+
+/* SUCCESS */
+.dialog-btn.dialog-btn-success {
+	--color-btn-text: #ffffff;
+	--color-btn-bg: #468b18;
+	box-shadow: none;
+}
+.dialog-btn.dialog-btn-success:hover {
+	--color-btn-bg: #386f13;
+}

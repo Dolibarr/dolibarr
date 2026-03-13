@@ -115,12 +115,12 @@ document.addEventListener('Dolibarr:Init', function () {
 				if (f.align && f.align !== 'right') footerClass += ' dol-dialog-footer--' + f.align;
 				dialogHTML += '<div class="' + footerClass + '">';
 				if (f.showCancel) {
-					const cancelClass = 'butActionDelete' + (f.moreCancelClass ? ' ' + f.moreCancelClass : '');
+					const cancelClass = 'dialog-btn ' + (f.moreCancelClass ? ' ' + f.moreCancelClass : '');
 					dialogHTML += '<button type="button" class="' + cancelClass + '" data-dol-dialog-close>' + f.cancelLabel + '</button>';
 				}
 				if (f.showSubmit) {
 					const formAttr = f.submitFormId ? ' form="' + f.submitFormId + '"' : '';
-					const submitClass = 'butAction' + (f.moreSubmitClass ? ' ' + f.moreSubmitClass : '');
+					const submitClass = 'dialog-btn dialog-btn-primary ' + (f.moreSubmitClass ? ' ' + f.moreSubmitClass : '');
 					dialogHTML += '<button type="submit"' + formAttr + ' class="' + submitClass + '">' + f.submitLabel + '</button>';
 				}
 				dialogHTML += '</div>';

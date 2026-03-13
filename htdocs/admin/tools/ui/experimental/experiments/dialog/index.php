@@ -97,23 +97,7 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-center" data-product-id="42" data-product-ref="PROD-ABC" data-product-price="29.90" ><span class="opacitylow">Dialog |</span> Center</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-right" data-product-id="101" data-product-ref="PROD-XYZ" data-product-price="3.20"><span class="opacitylow">Dialog |</span> Right</button>
 			</div>
-			<h5>Right size</h5>
-			<div class="documentation-example">
-				<button class="butAction" style="margin:4px;" id="btn-dialog-xs" ><span class="opacitylow">Dialog |</span>  xs</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-default-size" ><span class="opacitylow">Dialog |</span> default</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-lg" ><span class="opacitylow">Dialog |</span> lg</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-xl" ><span class="opacitylow">Dialog |</span> xl</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-xxl" ><span class="opacitylow">Dialog |</span> xxl</button>
-			</div>
 
-			<h5>Center size</h5>
-			<div class="documentation-example">
-				<button class="butAction" style="margin:4px;" id="btn-dialog-xs-center" ><span class="opacitylow">Dialog |</span> xs</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-default-size-center" ><span class="opacitylow">Dialog |</span> default</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-lg-center" ><span class="opacitylow">Dialog |</span> lg</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-xl-center" ><span class="opacitylow">Dialog |</span> xl</button>
-				<button class="butAction" style="margin:4px;" id="btn-dialog-xxl-center" ><span class="opacitylow">Dialog |</span> xxl</button>
-			</div>
 		</div>
 
 		<!-- HEADER & FOOTER -->
@@ -165,6 +149,26 @@ $documentation->showSidebar(); ?>
 			</div>
 		</div>
 
+		<!-- BUTTONS -->
+		<div id="dialogsection-data" class="documentation-section">
+			<h2 class="documentation-title">Footer dialog button class</h2>
+			<div class="documentation-example">
+				<button class="dialog-btn dialog-btn-primary classfortooltip" title=".dialog-btn .dialog-btn-primary"  >Primary button</button>
+				<button class="dialog-btn classfortooltip"  title=".dialog-btn"  >Secondary button</button>
+				<button class="dialog-btn dialog-btn-destructive classfortooltip"  title=".dialog-btn .dialog-btn-destructive"  >Destructive button</button>
+				<button class="dialog-btn dialog-btn-warning classfortooltip"  title=".dialog-btn .dialog-btn-warning"  >Warning button</button>
+				<button class="dialog-btn dialog-btn-success classfortooltip"  title=".dialog-btn .dialog-btn-success"  >Success button</button>
+			</div>
+			<h4 class="documentation-title">Colorblind user : dialog button variant</h4>
+			<div class="documentation-example colorblind-protanopia">
+				<button class="dialog-btn dialog-btn-primary classfortooltip" title=".dialog-btn .dialog-btn-primary"  >Primary button</button>
+				<button class="dialog-btn classfortooltip"  title=".dialog-btn"  >Secondary button</button>
+				<button class="dialog-btn dialog-btn-destructive classfortooltip"  title=".dialog-btn .dialog-btn-destructive"  >Destructive button</button>
+				<button class="dialog-btn dialog-btn-warning classfortooltip"  title=".dialog-btn .dialog-btn-warning"  >Warning button</button>
+				<button class="dialog-btn dialog-btn-success classfortooltip"  title=".dialog-btn .dialog-btn-success"  >Success button</button>
+			</div>
+		</div>
+
 		<!-- FORMS -->
 		<div id="dialogsection-forms" class="documentation-section">
 			<h2 class="documentation-title"><?php echo $langs->trans('DocDialogForms'); ?></h2>
@@ -197,8 +201,10 @@ $documentation->showSidebar(); ?>
 		<!-- SIZE -->
 		<div id="dialogsection-size" class="documentation-section">
 			<h2 class="documentation-title"><?php echo $langs->trans('DocDialogSize'); ?></h2>
+
 			<p class="documentation-text">You can override the size of the dialog with parameters. If they are not specified, the default parameters will be applied.</p>
 			<p class="documentation-text">
+				<b>Responsive size:</b> xs, lg, xl, xxl<br/>
 				<b>Centered mode:</b> By default, the width is set to 500px and the height automatically adjusts to fit the content. You can override these values by using the `width` and `height` parameters.<br>
 				<b>Right mode:</b> In this mode, the only parameter that can be overridden is the width. Height is always 100%.
 			</p>
@@ -208,6 +214,25 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-params-size-center"><span class="opacitylow">Dialog |</span> Center: 50vw & 50vh</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-params-size-right"><span class="opacitylow">Dialog |</span> Right: 800px</button>
 			</div>
+
+			<h5>Right size</h5>
+			<div class="documentation-example">
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xs" ><span class="opacitylow">Dialog |</span>  xs</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-default-size" ><span class="opacitylow">Dialog |</span> default</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-lg" ><span class="opacitylow">Dialog |</span> lg</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xl" ><span class="opacitylow">Dialog |</span> xl</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xxl" ><span class="opacitylow">Dialog |</span> xxl</button>
+			</div>
+
+			<h5>Center size</h5>
+			<div class="documentation-example">
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xs-center" ><span class="opacitylow">Dialog |</span> xs</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-default-size-center" ><span class="opacitylow">Dialog |</span> default</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-lg-center" ><span class="opacitylow">Dialog |</span> lg</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xl-center" ><span class="opacitylow">Dialog |</span> xl</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-xxl-center" ><span class="opacitylow">Dialog |</span> xxl</button>
+			</div>
+
 		</div>
 
 		<!-- OTHERS -->

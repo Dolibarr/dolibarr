@@ -61,12 +61,10 @@ print '<form class="'.$formClass.'" id="'.$formID.'" action="'.$formAction.'" me
 		print '<textarea name="description" id="description" class="centpercent" style="resize:vertical;max-height:200px;"></textarea>';
 	print '</div>';
 
-print '</form>';
+	print '</form>';
 
 
-print '<div class="dol-dialog-footer">';
-print '<button type="button" class="butActionDelete" data-dol-dialog-close>Annuler</button>';
-print '<button type="submit" form="'.$formID.'" class="butAction">Valider</button>';
-print '</div>';
-
-  ?>
+	print '<div class="dol-dialog-footer">';
+	print '<button type="button" class="dialog-btn dialog-btn-destructive" data-dol-dialog-close>Annuler</button>';
+	print '<button type="submit" form="'.$formID.'" class="dialog-btn dialog-btn-primary">Valider</button>';
+	print '</div>';

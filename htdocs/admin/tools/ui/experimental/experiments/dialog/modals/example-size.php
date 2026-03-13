@@ -16,5 +16,5 @@ $langs->load('uxdocumentation'); ?>
 <?php print Documentation::generateLoremIpsum(10, 70, true); ?>
 
 <div class="dol-dialog-footer">
-	<button class="butAction" style="margin:0;" data-dol-dialog-close>OK</button>
+	<button class="dialog-btn dialog-btn-primary" style="margin:0;" data-dol-dialog-close>OK</button>
 </div>

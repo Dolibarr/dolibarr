@@ -27,6 +27,5 @@ print '<div class="modal-example">';
 print '</div>';
 
 print '<div class="dol-dialog-footer">';
-	print '<button class="butAction" style="margin:0;" data-dol-dialog-close>OK</button>';
+	print '<button class="dialog-btn dialog-btn-primary" style="margin:0;" data-dol-dialog-close>OK</button>';
 print '</div>';
-?>

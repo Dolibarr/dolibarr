@@ -12,5 +12,5 @@ $langs->load('uxdocumentation'); ?>
 <p class="nomargintop">I am a dialog that opens instantly without any opening animation, meaning I appear immediately in the DOM with no transition effects or visual delays.</p>
 
 <div class="dol-dialog-footer">
-	<button class="butAction" style="margin:0;" data-dol-dialog-close>OK</button>
+	<button class="dialog-btn dialog-btn-primary" style="margin:0;" data-dol-dialog-close>OK</button>
 </div>
