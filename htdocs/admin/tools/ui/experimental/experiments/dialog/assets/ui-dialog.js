@@ -273,9 +273,12 @@ document.addEventListener('Dolibarr:Init', function () {
 			});
 
 			// Backdrop click
-			dialogEl.addEventListener('click', function (e) {
-				if (e.target === dialogEl) closeDialog();
-			});
+			if (param.backdrop) {
+				dialogEl.addEventListener('click', function (e) {
+					if (e.target === dialogEl) closeDialog();
+				});
+			}
+
 		});
 	});
 }); // end event listener
