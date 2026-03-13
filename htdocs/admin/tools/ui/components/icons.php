@@ -84,7 +84,6 @@ if (!GETPOST('hidenavmenu')) {
 			<div class="documentation-section" id="img-picto-section-list">
 
 				<?php
-
 				$iconFileName = 'shims.json';
 				$iconFilePath = DOL_DOCUMENT_ROOT . '/theme/common/fontawesome-5/metadata';
 
@@ -169,18 +168,27 @@ if (!GETPOST('hidenavmenu')) {
 			<div class="documentation-section" id="icon-section-list">
 
 				<?php
-
-				$iconFileName = 'shims.json';
+				$iconFileFa   = 'icons.json';
 				$iconFilePath = DOL_DOCUMENT_ROOT . '/theme/common/fontawesome-5/metadata';
 
-				$fontAwesomeIconRaw = file_get_contents($iconFilePath. '/' .$iconFileName);
-				if ($fontAwesomeIconRaw === false) {
-					dol_print_error($db, 'Error missing file  '. $iconFilePath . '/' . $iconFileName);
-				}
+				// Load the full FontAwesome 5 icons JSON
+				$allIconsRaw = file_get_contents($iconFilePath . '/' . $iconFileFa);
+				$fontAwesomeIcons = []; // This will be the output array in shims.json format
 
-				$fontAwesomeIcons = json_decode($fontAwesomeIconRaw);
-				if ($fontAwesomeIcons === null) {
-					dol_print_error($db, 'Error decoding '. $iconFilePath . '/' . $iconFileName);
+				if ($allIconsRaw === false) {
+					dol_print_error($db, 'Error: missing file ' . $iconFilePath . '/' . $iconFileFa);
+				} else {
+					$allIcons = json_decode($allIconsRaw, true);
+					if ($allIcons === null) {
+						dol_print_error($db, 'Error: cannot decode JSON from ' . $iconFilePath . '/' . $iconFileFa);
+					} else {
+						foreach ($allIcons as $iconName => $iconData) {
+							// Determine prefix: 'fab' for brands, 'fas' or 'far' can be added later if needed
+							$prefix = in_array('brands', $iconData['styles']) ? 'fab' : null;
+							// Format: [ "icon-name", "prefix if any", null ]
+							$fontAwesomeIcons[] = [$iconName, $prefix, null]; // null reserved for future alias
+						}
+					}
 				}
 				?>
 
