@@ -12,7 +12,8 @@ if (!defined('DOL_VERSION')) {die();}
 
 global $documentation, $setEventMessageJsContextTitle;
 
-if ($documentation === null) { return; }
+if ($documentation === null || !($documentation instanceof Documentation)) { return; }
+
 
 ?>
 
