@@ -165,3 +165,6 @@ HolidayMailSenderAdress=E-mailadres voor vakantieaanvragen
 HolidayMailSenderAdressHelp=Als u dit veld leeg laat, wordt het standaard e-mailadres gebruikt.
 WrongAmount=Onjuist aantal dagen
 ErrorUpdatingUsersCP=Fout bij het bijwerken van de betaalde verlofdagen van gebruikers
+LeaveBalance=Laat saldo achter
+ListeLB=Overzicht van verlofsaldo
+LeaveType = Soort verlofsaldo

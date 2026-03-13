@@ -52,7 +52,7 @@ function getListOfAIFeatures()
 		'transcription' => array('label' => 'AudioTranscription', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSCRIPT'),
 		'translation' => array('label' => 'AudioTranslation', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSLATE'),
 
-		'docparsing' => array('label' => 'DocumentPArsing', 'picto' => '', 'status' => 'experimental', 'function' => 'DOCPARSING')
+		'docparsing' => array('label' => 'DocumentParsing', 'picto' => '', 'status' => 'experimental', 'function' => 'DOCPARSING')
 	);
 
 	return $arrayofaifeatures;
@@ -73,49 +73,49 @@ function getListOfAIServices()
 			'label' => 'ChatGPT',
 			'url' => 'https://api.openai.com/v1/',
 			'setup' => 'https://platform.openai.com/account/api-keys',
-			'textgeneration' => 'gpt-4.1-turbo',		// a lot of text transformation like: 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
-			'imagegeneration' => 'dall-e-3',
-			'audiogeneration' => 'tts-1',
-			'videogeneration' => 'na',
-			'transcription' => 'whisper-1',				// audio to text
-			'translation' => 'whisper-1',				// audio to text into another language
-			'docparsing' => 'na',
+			'textgeneration' => array('default' => 'gpt-4.1-turbo'),		// a lot of text transformation like: 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
+			'imagegeneration' => array('default' => 'dall-e-3'),
+			'audiogeneration' => array('default' => 'tts-1'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'whisper-1'),				// audio to text
+			'translation' => array('default' => 'whisper-1'),				// audio to text into another language
+			'docparsing' => array('default' => 'na'),
 		),
 		'groq' => array(
 			'label' => 'Groq',
 			'url' => 'https://api.groq.com/openai/',
 			'setup' => 'https://platform.groq.com/signup',
-			'textgeneration' => 'mixtral-8x7b-32768',	// 'llama3-8b-8192', 'gemma-7b-it'
-			'imagegeneration' => 'na',
-			'audiogeneration' => 'na',
-			'videogeneration' => 'na',
-			'transcription' => 'na',
-			'translation' => 'na',
-			'docparsing' => 'na',
+			'textgeneration' => array('default' => 'mixtral-8x7b-32768'),	// 'llama3-8b-8192', 'gemma-7b-it'
+			'imagegeneration' => array('default' => 'na'),
+			'audiogeneration' => array('default' => 'na'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'na'),
+			'translation' => array('default' => 'na'),
+			'docparsing' => array('default' => 'na'),
 		),
 		'mistral' => array(
 			'label' => 'Mistral',
 			'url' => 'https://api.mistral.ai/v1/',
 			'setup' => 'https://console.mistral.ai/',
-			'textgeneration' => 'open-mistral-7b',
-			'imagegeneration' => 'na',
-			'audiogeneration' => 'na',
-			'videogeneration' => 'na',
-			'transcription' => 'na',
-			'translation' => 'na',
-			'docparsing' => 'open-mistral-7b',
+			'textgeneration' => array('default' => 'open-mistral-7b', 'examples' => 'mistral-tiny-latest, mistral-medium-latest, mistral-large-latest'),
+			'imagegeneration' => array('default' => 'na'),
+			'audiogeneration' => array('default' => 'na'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'na'),
+			'translation' => array('default' => 'na'),
+			'docparsing' => array('default' => 'open-mistral-7b', 'examples' => 'mistral-tiny-latest, mistral-medium-latest, mistral-large-latest'),
 		),
 		'custom' => array(
 			'label' => 'Custom',
 			'url' => 'https://domainofapi.com/v1/',
 			'setup' => 'Ask your AI provider how to get your API key',
-			'textgeneration' => 'tinyllama-1.1b',
-			'imagegeneration' => 'mixtral-8x7b-32768',
-			'audiogeneration' => 'mixtral-8x7b-32768',
-			'videogeneration' => 'na',
-			'transcription' => 'mixtral-8x7b-32768',
-			'translation' => 'mixtral-8x7b-32768',
-			'docparsing' => 'na',
+			'textgeneration' => array('default' => 'tinyllama-1.1b'),
+			'imagegeneration' => array('default' => 'mixtral-8x7b-32768'),
+			'audiogeneration' => array('default' => 'mixtral-8x7b-32768'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'mixtral-8x7b-32768'),
+			'translation' => array('default' => 'mixtral-8x7b-32768'),
+			'docparsing' => array('default' => 'na'),
 		)
 		//'gemini' => array(
 		//	'label' => 'Gemini',

@@ -118,7 +118,8 @@ ThisPageHasTranslationPages=Aquesta pàgina/contenidor té traducció
 NoWebSiteCreateOneFirst=Encara no s'ha creat cap lloc web. Creeu-ne un primer.
 GoTo=Aneu a
 DynamicPHPCodeContainsAForbiddenInstruction=Afegiu codi PHP dinàmic que conté la instrucció PHP ' <strong> %s </strong> ' que està prohibida per defecte com a contingut dinàmic (vegeu les opcions ocultes WEBSITE_PHP_ALLOW_xxx per a augmentar la llista d'ordres permeses).
-NotAllowedToAddDynamicContent=No teniu permís per a afegir o editar contingut dinàmic de PHP als llocs web. Demana permís o simplement guarda el codi en etiquetes php sense modificar.
+NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
 ReplaceWebsiteContent=Cerqueu o substitueixi el contingut del lloc web
 DeleteAlsoJs=Vols suprimir també tots els fitxers JavaScript específics d'aquest lloc web?
 DeleteAlsoMedias=Vols suprimir també tots els fitxers multimèdia específics d'aquest lloc web?

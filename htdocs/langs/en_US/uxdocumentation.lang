@@ -196,6 +196,8 @@ ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.
 CacheCleared = Cache cleared
 
+JSDolibarrhooksAjaxSpecial = Dom reloaded Hook
+
 # Dialog
 DocUiDialogDescription=Replaced legacy jQuery UI modals with native HTML <dialog> elements for improved performance and reduced dependencies.
 UiDolibarrDialog=Native modals

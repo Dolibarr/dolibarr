@@ -1606,6 +1606,19 @@ if ($action == 'create' && $permissiontoadd) {
 				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('receptiondet_batch', '_' . $suffix, '');
 			}
 
+			$reshook = $hookmanager->executeHooks('dataProcessing', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} elseif (empty($reshook)) {
+				$dispatchLines = array_merge($dispatchLines, $hookmanager->resArray);
+			} elseif ($reshook > 0) {
+				// $resArray starts from [0], we need $dispatchLines to start from [1], so we shift it
+				$dispatchLines = $hookmanager->resArray;
+				array_unshift($dispatchLines, null);
+				unset($dispatchLines[0]);
+				$numAsked = count($dispatchLines);
+			}
+
 			print '<script type="text/javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function(event) {
@@ -1660,6 +1673,14 @@ if ($action == 'create' && $permissiontoadd) {
 					if (!getDolGlobalInt('PRODUCT_DISABLE_EATBY')) {
 						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
 					}
+				}
+
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				} else {
+					print $hookmanager->resPrint;
 				}
 				print "</tr>\n";
 			}
@@ -1851,6 +1872,16 @@ if ($action == 'create' && $permissiontoadd) {
 						} else {
 							print '<td colspan="3"></td>';
 						}
+					}
+
+					$parameters = array();
+					$parameters['dispatchLine'] = $dispatchLines[$indiceAsked];
+					$parameters['indiceAsked'] = $indiceAsked;
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					} else {
+						print $hookmanager->resPrint;
 					}
 				}
 
@@ -2425,6 +2456,14 @@ if ($action == 'create' && $permissiontoadd) {
 				print $langs->trans("Batch");
 			}
 			print '</td>';
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				print $hookmanager->resPrint;
+			}
 		} else {
 			$statusreceived = $object::STATUS_CLOSED;
 			if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
@@ -2444,6 +2483,14 @@ if ($action == 'create' && $permissiontoadd) {
 
 			if (isModEnabled('productbatch')) {
 				print '<td class="left">'.$langs->trans("Batch").'</td>';
+			}
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				print $hookmanager->resPrint;
 			}
 		}
 		print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
@@ -2666,6 +2713,15 @@ if ($action == 'create' && $permissiontoadd) {
 					}
 				}
 				print '</table></td>';
+
+				$parameters = array();
+				$parameters['line'] = $lines[$i];
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				} else {
+					print $hookmanager->resPrint;
+				}
 			} else {
 				// Qty to receive or received
 				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
@@ -2713,6 +2769,15 @@ if ($action == 'create' && $permissiontoadd) {
 						print '<td></td>';
 					}
 				}
+
+				$parameters = array();
+				$parameters['line'] = $lines[$i];
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				} else {
+					print $hookmanager->resPrint;
+				}
 			}
 
 			// Weight
@@ -2758,6 +2823,13 @@ if ($action == 'create' && $permissiontoadd) {
 			print "</tr>";
 
 			$arrayofpurchaselinealreadyoutput[$lines[$i]->fk_commandefourndet] = $lines[$i]->fk_commandefourndet;
+
+			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				print $hookmanager->resPrint;
+			}
 
 			// Display lines extrafields
 			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];

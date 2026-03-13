@@ -165,3 +165,6 @@ HolidayMailSenderAdress=Epost adresse for ferieforespørsler
 HolidayMailSenderAdressHelp=Hvis du lar dette feltet stå tomt, vil standard epostadresse bli brukt.
 WrongAmount=Feil antall dager
 ErrorUpdatingUsersCP=Feil ved oppdatering av brukernes betalte permisjoner
+LeaveBalance=Feriebalanse
+ListeLB=Liste over feriebalanse
+LeaveType = Type feriebalanse

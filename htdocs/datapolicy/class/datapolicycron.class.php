@@ -352,7 +352,7 @@ class DataPolicyCron
 			'__DELAY__' => (string) $delay,
 			'__NOW__' => "'" . $this->db->idate(dol_now()) . "'"
 		);
-		$sql = str_replace(array_keys($sqlPlaceholders), array_values($sqlPlaceholders), $policy['sql_template']);
+		$sql = str_replace(array_keys($sqlPlaceholders), array_values($sqlPlaceholders), $policy['sql_template'.($action == 'delete' ? '_delete' : '')]);
 
 		$resql = $this->db->query($sql);
 

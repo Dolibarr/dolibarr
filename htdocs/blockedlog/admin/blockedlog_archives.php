@@ -115,7 +115,7 @@ $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
 // Access Control
-if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || !isModEnabled('blockedlog')) {
+if (((!$user->admin && !$user->hasRight('blockedlog', 'read')) || !isModEnabled('blockedlog')) && !userIsTaxAuditor()) {
 	accessforbidden();
 }
 
@@ -415,6 +415,10 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$i++;
 			}
+
+			if ($i == 0) {
+				fwrite($fh, ";\n");
+			}
 		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
@@ -524,159 +528,57 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			.csvClean($statusofrecord).';'."\n");
 
 
+		// Get lifetime amount of all invoices validated and payments created/deleted.
+		// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
 		$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 		$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-
-		// Calculate lifetime totals (with date of first record)
-		$sql = "SELECT action, module_source, object_format, MIN(date_creation) as datemin, SUM(amounts_taxexcl) as sumamounts_taxexcl, SUM(amounts) as sumamounts";
-		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
-		//$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_CLOSE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
-		$sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE')";	// Only event into lifetime total
-		$sql .= " AND date_creation < '".$db->idate(dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12))."'";
-		$sql .= " GROUP BY action, module_source, object_format";
-
 		$foundoldformat = 0;
-		$firstrecorddatearray = array();
 		$firstrecorddate = 0;
-		$resql = $db->query($sql);
-		if ($resql) {
-			while ($obj = $db->fetch_object($resql)) {
-				// First record date per action code and module
-				if (!empty($firstrecorddatearray[$obj->action][$obj->module_source])) {
-					$firstrecorddatearray[$obj->action] = min($firstrecorddatearray[$obj->action][$obj->module_source], $db->jdate($obj->datemin, 'gmt'));
-				} else {
-					$firstrecorddatearray[$obj->action] = $db->jdate($obj->datemin, 'gmt');
-				}
-				// First record for all actions code
-				if (!empty($firstrecorddate)) {
-					$firstrecorddate = min($firstrecorddate, $db->jdate($obj->datemin, 'gmt'));
-				} else {
-					$firstrecorddate = $obj->datemin;
-				}
-
-				if (!isset($totalamountlifetime[$obj->action])) {
-					$totalamountlifetime[$obj->action] = 0;
-				}
-
-				// Total per action code and module
-				$totalamountlifetime[$obj->action] += $obj->sumamounts;
-
-				// If format of line is old, the sumamounts_taxexcl was not recorded. So we flag this case.
-				if (empty($obj->object_format) || $obj->object_format == 'V1') {
-					$foundoldformat = 1;
-				} else {
-					$totalhtamountlifetime[$obj->action] += $obj->sumamounts_taxexcl;
-				}
-			}
-		} else {
-			$error++;
-			setEventMessages($db->lasterror, null, 'errors');
-		}
-
-		// Now calculate cumulative total of all invoices validated
-		if (array_key_exists('BILL_VALIDATE', $totalhtamount)) {
-			foreach ($totalhtamount['BILL_VALIDATE'] as $val) {	// Loop on each module
-				$totalhtamountalllines['BILL_VALIDATE'] += $val;
-			}
-			foreach ($totalvatamount['BILL_VALIDATE'] as $val) {
-				$totalvatamountalllines['BILL_VALIDATE'] += $val;
-			}
-			foreach ($totalamount['BILL_VALIDATE'] as $val) {
-				$totalamountalllines['BILL_VALIDATE'] += $val;
-			}
-		}
-		if (array_key_exists('PAYMENT_CUSTOMER', $totalhtamount)) {
-			foreach ($totalhtamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalhtamountalllines['PAYMENT_CUSTOMER'] += $val;
-			}
-			foreach ($totalvatamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalvatamountalllines['PAYMENT_CUSTOMER'] += $val;
-			}
-			foreach ($totalamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalamountalllines['PAYMENT_CUSTOMER'] += $val;
-			}
-		}
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 
 		// Add a final line with perpetual total for invoice validations
-		$block_static->id = 0;
-		$block_static->date_creation = '';
-		$block_static->action = '';
-		$block_static->module_source = '*';
-		$block_static->pos_source = '*';
-		$block_static->amounts_taxexcl = '';
-		$block_static->amounts = '';
-		$block_static->ref_object = '';
-		$block_static->date_object = 0;
-		$block_static->user_fullname = '';
-		$block_static->linktoref = '';
-		$block_static->linktype = '';
-		$block_static->object_version = '';
-		$block_static->object_format = '';
-		$block_static->signature = '';
-
-		$statusofrecord = '';
-
-		fwrite($fh, 'SUMMARY LIFETIME BILLED - '.$langs->transnoentitiesnoconv("Invoices").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountalllines['BILL_VALIDATE'] - $totalhtamountalllines['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("TTC").";"
+		fwrite($fh, 'SUMMARY LIFETIME BILLED - '.$langs->transnoentitiesnoconv("Invoices").' : '.$totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("TTC").";"
 			.csvClean('').';'
-			.csvClean($block_static->date_creation).';'
-			.csvClean($block_static->action).';'
-			.csvClean($block_static->module_source).';'
-			.csvClean($block_static->pos_source).';'
-			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->ref_object).';'
 			.csvClean('').';'
-			.csvClean($block_static->user_fullname).';'
-			.csvClean($block_static->linktoref).';'
-			.csvClean($block_static->linktype).';'
-			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
-			.csvClean($block_static->object_version).';'
-			.csvClean($block_static->object_format).';'
-			.csvClean($block_static->signature).';'
-			.csvClean($statusofrecord).';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
 			.csvClean('>= '.dol_print_date($firstrecorddate, 'standard')).";\n");
-
 
 		// Add a final line with perpetual total for customer payments
-		$block_static->id = 0;
-		$block_static->date_creation = '';
-		$block_static->action = '';
-		$block_static->module_source = '*';
-		$block_static->pos_source = '*';
-		$block_static->amounts_taxexcl = '';
-		$block_static->amounts = '';
-		$block_static->ref_object = '';
-		$block_static->date_object = 0;
-		$block_static->user_fullname = '';
-		$block_static->linktoref = '';
-		$block_static->linktype = '';
-		$block_static->object_version = '';
-		$block_static->object_format = '';
-		$block_static->signature = '';
-
-		$statusofrecord = '';
-
 		fwrite($fh, 'SUMMARY LIFETIME PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']).";"
 			.csvClean('').';'
-			.csvClean($block_static->date_creation).';'
-			.csvClean($block_static->action).';'
-			.csvClean($block_static->module_source).';'
-			.csvClean($block_static->pos_source).';'
-			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->ref_object).';'
 			.csvClean('').';'
-			.csvClean($block_static->user_fullname).';'
-			.csvClean($block_static->linktoref).';'
-			.csvClean($block_static->linktype).';'
-			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
-			.csvClean($block_static->object_version).';'
-			.csvClean($block_static->object_format).';'
-			.csvClean($block_static->signature).';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
+			.csvClean('').';'
 			.csvClean('>= '.dol_print_date($firstrecorddate, 'standard')).";\n");
 
+		// End of file, we will calculate global signature on it now, before adding last line.
 		fclose($fh);
 
 		// Calculate the signature of the file (the last line has a return line)
@@ -687,43 +589,50 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		// Now add a signature to check integrity at end of file
 		file_put_contents($tmpfile, 'END - sha256='.$sha256.' - hmac_sha256='.$hmacsha256, FILE_APPEND);
 		dolChmod($tmpfile);
-	}
 
-	if (!$error) {
-		if ($periodnotcomplete) {
-			setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "warnings");
-		} else {
-			// We record the export as a new line into the unalterable logs
-			require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-			$b = new BlockedLog($db);
 
-			$object = new stdClass();
-			$object->id = 0;
-			$object->element = 'module';
-			$object->ref = 'systemevent';
-			$object->entity = $conf->entity;
-			$object->date = dol_now();
-			$object->fullname = $user->getFullName($langs);
+		if (!$error) {
+			if ($periodnotcomplete) {
+				setEventMessages($langs->trans("ErrorPeriodMustBePastToAllowExport"), null, "warnings");
+			} else {
+				// We record the export as a new line into the unalterable logs
+				require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+				$b = new BlockedLog($db);
 
-			$object->label = 'Export unalterable logs';
-			$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
+				$object = new stdClass();
+				$object->id = 0;
+				$object->element = 'module';
+				$object->ref = 'systemevent';
+				$object->entity = $conf->entity;
+				$object->date = dol_now();
+				$object->fullname = $user->getFullName($langs);
 
-			$action = 'BLOCKEDLOG_EXPORT';
+				$object->label = 'Export unalterable logs';
 
-			$result = $b->setObjectData($object, $action, 0, $user, 0);
+				$object->total_billed = $totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT");
+				$object->total_collected = $totalamountalllines['PAYMENT_CUSTOMER'];
+				$object->totallifetime_billed = $totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT");
+				$object->totallifetime_collected = ($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
 
-			if ($result < 0) {
-				setEventMessages('Failed to insert the export into the unalterable log. Export canceled: '.$b->error, null, 'errors');
-				dol_delete_file($tmpfile);
-				$error++;
-			}
+				$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
-			$res = $b->create($user);
+				$action = 'BLOCKEDLOG_EXPORT';
 
-			if ($res < 0) {
-				setEventMessages('Failed to insert the export into the unalterable log. Export canceled: '.$b->error, null, 'errors');
-				dol_delete_file($tmpfile);
-				$error++;
+				$result = $b->setObjectData($object, $action, 0, $user, 0);
+
+				if ($result < 0) {
+					setEventMessages('Failed to insert the export into the unalterable log. Export canceled: '.$b->error, null, 'errors');
+					dol_delete_file($tmpfile);
+					$error++;
+				}
+
+				$res = $b->create($user);
+
+				if ($res < 0) {
+					setEventMessages('Failed to insert the export into the unalterable log. Export canceled: '.$b->error, null, 'errors');
+					dol_delete_file($tmpfile);
+					$error++;
+				}
 			}
 		}
 	}
@@ -768,11 +677,14 @@ if ($withtab) {
 }
 
 $morehtmlcenter = '';
+$texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if (!isRegistrationDataSavedAndPushed()) {
-	$texttop = '';
+if (!userIsTaxAuditor()) {
+	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+	if (!isRegistrationDataSavedAndPushed()) {
+		$texttop = '';
+	}
 }
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
@@ -785,9 +697,11 @@ print dol_get_fiche_head($head, 'archives', '', -1);
 //print '<br><br>';
 
 print '<div class="opacitymedium hideonsmartphone justify">';
-
-print $langs->trans("ArchivesDesc")."<br>";
-
+if (!userIsTaxAuditor()) {
+	print $langs->trans("ArchivesDesc")."<br>";
+} else {
+	print $langs->trans("ArchivesAuditorDesc")."<br>";
+}
 print "</div>\n";
 
 
@@ -827,6 +741,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 	$registrationnumber = getHashUniqueIdOfRegistration();
 	$secretkey = $registrationnumber;
+	$inputregistrationnumber = '';
 
 	// Prepare to create a temporary file
 	$fullpathtmp = $upload_dir.'/temp/'.GETPOST('urlfile').'.tmp';
@@ -838,14 +753,38 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	removeLastLine($fullpathtmp);
 
 	print $langs->trans("FileHasBeenEncodedWithASecretKeyStartingWith").' : '.$regnumber.'...<br>';
-	if (preg_match('/^'.$regnumber.'/', $secretkey)) {
+
+	if (preg_match('/^'.$regnumber.'/', $secretkey) && !userIsTaxAuditor()) {
 		print 'As this matches the 10 first characters of the full registration number of this instance, we will use the full registration number to control the archive file...';
 	} else {
-		print 'This archive file was not generated by this instance. The control of authenticity is possible only if you know the full registration number.';
-		print '<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("FullRegistrationNumber").'">';
+		if (!userIsTaxAuditor() || !isModEnabled('captureserver')) {   // @phan-suppress-current-line UnknownModuleName
+			print 'This archive file was not generated by this instance.';
+			print 'The control of authenticity is possible only if you know the full registration number.';
+			$inputregistrationnumber = '';
+
+			print $langs->trans("PleaseEnterFullRegistrationNumber").' ';
+		} else {
+			// Here module "captureserver" is on. We can search the full registration number and prefill value
+			$sql = "SELECT registerid from ".MAIN_DB_PREFIX."captureserver_captureserver";
+			$sql .= " WHERE registerid LIKE '".$db->escape($regnumber)."%'";
+			$sql .= " AND type = 'dolibarrregistration'";
+			$sql .= " LIMIT 1";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$inputregistrationnumber = $obj->registerid;
+				}
+			}
+
+			print $langs->trans("WeFoundThisFullRegistrationNumberForThisKey").' ';
+		}
+		print '<input type="text" name="inputregistrationnumber" class="width300" placeholder="'.$langs->trans("FullRegistrationNumber").'"value="'.$inputregistrationnumber.'">';
 	}
 	print '<br><br>';
 	print '<center><a class="button small nomarginleft" href="'.$_SERVER["PHP_SELF"].'?action=checkconfirmed&urlfile='.urlencode(GETPOST('urlfile')).'">'.$langs->trans("ControlFile").'</a></center>';
+
 
 	//<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("RegistrationNumber").'">';
 
@@ -867,6 +806,13 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$previoushash = '';
 		$nbLinesModifiedInExportButKo = 0;
 		$nbLinesModifiedBeforeExport = 0;
+
+		$amounthtlifetime = array();
+		$amountvatlifetime = array();
+		$amountttclifetime = array();
+		$amounthtlifetime['BILL_VALIDATE'] = $amounthtlifetime['PAYMENT_CUSTOMER'] = null;
+		$amountvatlifetime['BILL_VALIDATE'] = $amountvatlifetime['PAYMENT_CUSTOMER'] = null;
+		$amountttclifetime['BILL_VALIDATE'] = $amountttclifetime['PAYMENT_CUSTOMER'] = null;
 
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
@@ -926,7 +872,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$block_static->action = $lineactioncode = (string) $line[3];
 					$block_static->module_source = (string) $line[4];
 					$block_static->pos_source = (string) $line[5];
-					$block_static->amounts_taxexcl = $lineamountht = ($line[6] === '' ? null : (float) $line[5]);
+					$block_static->amounts_taxexcl = $lineamountht = ($line[6] === '' ? null : (float) $line[6]);
 					$block_static->amounts = $lineamountttc = (float) $line[7];
 					$block_static->ref_object = $lineref = (string) $line[8];
 					$block_static->date_object = (int) $line[9];
@@ -1006,10 +952,35 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					}
 				}
 
-
+				// Test if line is a summary line
 				if (preg_match('/^SUMMARY /', (string) $line[0])) {
 					// We are on a line for summary information
 					$lineanalyzed = 1;
+					/*
+					if (preg_match('/^SUMMARY TURNOVER BILLED/', (string) $line[0])) {
+						// Do nothing, we recalculate amount from previous lines
+					}
+					if (preg_match('/^SUMMARY TURNOVER PAID/', (string) $line[0])) {
+						// Do nothing, we recalculate amount from previous lines
+					}
+					*/
+					if (preg_match('/^SUMMARY LIFETIME BILLED/', (string) $line[0])) {
+						// We load data from line
+						$amountstring = (string) $line[0];
+						if (preg_match('/^SUMMARY LIFETIME BILLED[^\d]*\s:\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+/', $amountstring, $reg)) {
+							$amounthtlifetime['BILL_VALIDATE'] = (float) $reg[1];
+							$amountvatlifetime['BILL_VALIDATE'] = (float) $reg[2];
+							$amountttclifetime['BILL_VALIDATE'] = (float) $reg[3];
+						}
+					}
+					if (preg_match('/^SUMMARY LIFETIME PAID/', (string) $line[0])) {
+						$amountstring = (string) $line[0];
+						if (preg_match('/^SUMMARY LIFETIME PAID[^\d]*\s:\s([\d\.]+)/', $amountstring, $reg)) {
+							$amounthtlifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
+							$amountvatlifetime['PAYMENT_CUSTOMER'] = 0.0;
+							$amountttclifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
+						}
+					}
 				}
 
 				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', (string) $line[0], $reg)) {
@@ -1040,7 +1011,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		print '<br><br>';
 
-		if ($recalculatedhashsign && $recalculatedhashsign == $hashsign) {
+		if ($recalculatedhashsign && hash_equals($recalculatedhashsign, $hashsign)) {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
 			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algosign.' = '.$recalculatedhashsign);
@@ -1051,12 +1022,12 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		}
 		print '<br><br>';
 
-		if ($recalculatedhashauth && $recalculatedhashauth == $hashauth) {
+		if ($recalculatedhashauth && hash_equals($recalculatedhashauth, $hashauth)) {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
 			print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
 			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algoauth.' = '.$recalculatedhashauth);
-		} elseif ($recalculatedhashsign == $hashsign) {
+		} elseif ($recalculatedhashsign && hash_equals($recalculatedhashsign, $hashsign)) {
 			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
 			print ' '.$form->textwithpicto('', $langs->trans("FileNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
@@ -1067,17 +1038,19 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		}
 		print '<br><br>';
 
-		if ($nbLinesModifiedInExportButKo) {
-			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
-			print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
-			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
-			print '<br><br>';
+		/*
+		if (!userIsTaxAuditor()) {
+			if ($nbLinesModifiedInExportButKo) {
+				print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+				print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
+				print '<br><br>';
+			}
 		}
+		*/
 
 		if ($nbLinesModifiedBeforeExport) {
 			print img_picto('', 'warning', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("nbLinesModifiedBeforeExport").'</b>';
-			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
 			print '<br><br>';
 		}
 
@@ -1092,7 +1065,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		print '<hr>';
 
-		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE');
+		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
 		foreach ($arraykeys as $key) {
 			$totalhttoshow = $totalhtamountforaction[$key];
 			$totalvattoshow = $totalvatamountforaction[$key];
@@ -1101,12 +1074,12 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
 			if ($key == 'BILL_VALIDATE') {
 				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
-			} elseif ($key == 'PAYMENT_CUSTOMER_CREATE') {
+			} elseif ($key == 'PAYMENT_CUSTOMER') {
 				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
 			}
 			print ': ';
 
-			if ($key == 'PAYMENT_CUSTOMER_CREATE') {
+			if ($key == 'PAYMENT_CUSTOMER') {
 				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
 			} else {
 				print $langs->trans("HT").': ';
@@ -1125,6 +1098,44 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print '<br>';
 		}
 
+		// Now print the value for lifetime amounts.
+		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
+		foreach ($arraykeys as $key) {
+			if (is_null($amounthtlifetime[$key])) {		// If not entry found, we discard
+				continue;
+			}
+			$totalhttoshow = $amounthtlifetime[$key];
+			$totalvattoshow = $amountvatlifetime[$key];
+			$totaltoshow = $amountttclifetime[$key];
+
+			print '<b>'.dolPrintHTML($langs->trans("LifetimeAmountShort").' '.$langs->trans('log'.$key)).'</b>';
+			if ($key == 'BILL_VALIDATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+			} elseif ($key == 'PAYMENT_CUSTOMER') {
+				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+			}
+			print ': ';
+
+			if ($key == 'PAYMENT_CUSTOMER') {
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			} else {
+				print $langs->trans("HT").': ';
+				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("VAT").': ';
+				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("TTC").': ';
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			}
+			print '<br>';
+		}
+
+
 		print '<br>';
 
 		$text = $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile");
@@ -1142,17 +1153,20 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 if ($action != 'check' && $action != 'checkconfirmed') {
 	$htmltext = '';
 
-	$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
-	if ($mysoc->country_code == 'FR') {
-		$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+	if (!userIsTaxAuditor()) {
+		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
+		if ($mysoc->country_code == 'FR') {
+			$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+		}
+		//$htmltext .= $langs->trans("UnalterableLogTool1");
+		//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+
+		print info_admin($htmltext, 0, 0, 'warning');
+
+		print '<br>';
+	} else {
+		print '<br>';
 	}
-	//$htmltext .= $langs->trans("UnalterableLogTool1");
-	//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
-
-	print info_admin($htmltext, 0, 0, 'warning');
-
-
-	print '<br>';
 
 	$param = '';
 	if ($contextpage != getDolDefaultContextPage(__FILE__)) {
@@ -1218,33 +1232,34 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 	}
 
 
-	print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="export">';
+	if (!userIsTaxAuditor()) {
+		print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="export">';
 
-	print '<div class="right">';
+		print '<div class="right">';
 
-	print '<span class="hideonsmartphone">'.$langs->trans("RestrictYearToExport").': </span>';
-	// Month
-	print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', $langs->trans("Month"), 0, 'minwidth50 maxwidth75imp valignmiddle', true);
-	print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
+		print '<span class="hideonsmartphone">'.$langs->trans("RestrictYearToExport").': </span>';
+		// Month
+		print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', $langs->trans("Month"), 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+		print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
 
-	print ' ';
+		print ' ';
 
-	// Disabled, we will use the getHashUniqueIdOfRegistration() as secret HMAC
-	//print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
+		// Disabled, we will use the getHashUniqueIdOfRegistration() as secret HMAC
+		//print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
 
-	print ' ';
+		print ' ';
 
-	print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
-	print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-	/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-		print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
-	}*/
-	print ' </div><br>';
+		print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+		print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
+		/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
+			print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
+		}*/
+		print ' </div><br>';
 
-	print '</form>';
-
+		print '</form>';
+	}
 
 	/*
 	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
