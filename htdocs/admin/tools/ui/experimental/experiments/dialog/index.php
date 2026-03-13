@@ -61,9 +61,6 @@ $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
-	$experimentAssetsPath2 . '/dolibarr-context.umd.js',
-	$experimentAssetsPath2 . '/dolibarr-tool.seteventmessage.js',
-	$experimentAssetsPath2 . '/dolibarr-tool.langs.js',
 	$experimentAssetsPath . '/ui-dialog.js',
 ];
 $css = [
