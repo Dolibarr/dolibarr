@@ -11727,7 +11727,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
-		//var_dump($rep);
+		//var_dump($strToEvaluate, $rep);
 		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
@@ -12172,6 +12172,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		while ($scheck && $savescheck != $scheck) {
 			$savescheck = $scheck;
 			$scheck = preg_replace('/\$conf->[a-z\_]+->enabled/', '__VARCONFENABLED__', $scheck);		// Remove this once $user->module->enabled has been replaced everywhere with isModEnabled.
+			$scheck = preg_replace('/\$user->id/', '__VARUSERID__', $scheck);
 			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
 			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is replaced everywhere with $user->hasRight()
 			$scheck = preg_replace('/\$user->admin/', '__VARUSERISADMIN__', $scheck);		// Remove this once $user->admin is replaced everywhere with $user->isAdmin()
