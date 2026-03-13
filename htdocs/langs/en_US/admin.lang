@@ -2851,3 +2851,5 @@ AIMCPConfig=AI & MCP Configuration
 LogRetention=Log Retention (Days)
 AI_API_MODEL=AI API model
 AI_API_MODEL_HELP=The AI model to use
+DisplayExtraOnTooltip = Display on Tooltips
+DisplayExtraOnTooltipDesc = This field will be displayed on dynamically loaded tooltips.
