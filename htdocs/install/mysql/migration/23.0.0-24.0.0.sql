@@ -171,12 +171,16 @@ ALTER TABLE llx_accounting_balance_snapshot ADD UNIQUE INDEX uk_accounting_balan
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_account (entity, fk_fiscalyear, account_number, debit, credit);
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_subaccount (entity, fk_fiscalyear, subledger_account, debit, credit);
 
+UPDATE llx_rights_def SET perms = 'manage_advance' WHERE module = 'ticket' AND perms = 'manage';
 
 -- Switch all crabe templates into sponge
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
 UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
 UPDATE llx_document_model as dm SET nom = 'sponge' WHERE nom = 'crabe' AND type ='invoice' AND NOT EXISTS (SELECT nom FROM llx_document_model AS dm2 WHERE nom = 'sponge' AND type = 'invoice' and dm2.entity = dm.entity);
+
+
+ALTER TABLE llx_extrafields ADD COLUMN showintooltip integer DEFAULT 0;
 
 ALTER TABLE llx_societe_remise_except ADD COLUMN amount_localtax1 double(24,8) DEFAULT 0 NOT NULL AFTER amount_tva;
 ALTER TABLE llx_societe_remise_except ADD COLUMN amount_localtax2 double(24,8) DEFAULT 0 NOT NULL AFTER amount_localtax1;

@@ -279,7 +279,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
-	background: var(--infoboxmoduleenabledbgcolor);
+	/* background: var(--infoboxmoduleenabledbgcolor); */
 }
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
@@ -309,6 +309,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 .info-box-text {
 	font-size: 0.92em;
 }
+.info-box-desc {
+	font-size: 0.92em;
+}
+
 /* Force values for small screen 480 */
 @media only screen and (max-width: 480px)
 {

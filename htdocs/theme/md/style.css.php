@@ -422,7 +422,7 @@ $leftmenuwidth = 254;
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
-	--colorbackgrey: #f0f0f0;
+	--colorbackgrey: #f6f6f6;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
@@ -705,7 +705,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 }
 
 section.setupsection {
-	padding: 20px;
+	padding: 20px !important;
 	background-color: var(--colorbacktitle1);
 	border-radius: 5px;
 }
@@ -5324,9 +5324,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 }
-.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
+.noborder > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.liste > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.noborder .tagtr:nth-child(odd):not(:last-child):not(.lastvisible) .oddeven.tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #e8e8e8;
 }
@@ -5633,10 +5633,10 @@ div.ok {
   color: #114466;
 }
 
-div.info, div.warning, div.error, div.green, div.neutral {
+div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	padding-top: 16px;
-	padding-left: 10px;
-	padding-right: 4px;
+	padding-left: 20px;
+	padding-right: 10px;
 	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 4px;
@@ -5648,14 +5648,17 @@ div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
 }
 
 /* Neutral message */
-div.neutral {
-	border-<?php print $left; ?>: solid 5px #aaa;
+div.neutral, section.neutral {
 	background: #f8f8f8;
 }
+div.neutral {
+	border-<?php print $left; ?>: solid 5px #aaa;
+}
+
 
 /* Info message */
 div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+	border-<?php print $left; ?>: solid 5px #87bfc2;
 	background: #eff8fc;
 	color: #558;
 }
