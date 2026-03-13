@@ -37,3 +37,6 @@ CurrentMonthShort=Current month
 PreviousWeekShort=Previous week
 CurrentWeekShort=Current week
 UserPaySlip=Pay Slip
+SalariesRhInformationsPreviousMonth=Hr information for previous month
+SalariesRhInformationsPreviousMonthTopic=HR informations for the month of __PREVIOUS_MONTH_TEXT__
+SalariesRhInformationsPreviousMonthContent=Please find attached the HR information for the month of __PREVIOUS_MONTH_TEXT__ for the company __MYCOMPANY_NAME__
