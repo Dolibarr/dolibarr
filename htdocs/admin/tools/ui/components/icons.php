@@ -216,7 +216,7 @@ if (!GETPOST('hidenavmenu')) {
 					<div class="documentation-fontawesome-icon-list">
 					<?php
 					$alreadyDisplay = [];
-					if ($fontAwesomeIcons && is_array($fontAwesomeIcons)) {
+					if ($fontAwesomeIcons) {
 						foreach ($fontAwesomeIcons as $iconData) {
 							$class= $iconData[1]??'fa';
 							if (!empty($iconData[2])) {
