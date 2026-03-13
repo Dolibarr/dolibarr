@@ -988,7 +988,7 @@ class Holiday extends CommonObject
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
 
-		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
+		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT && $this->statut != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 
 			if ($balance < 0) {
