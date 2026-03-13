@@ -95,3 +95,4 @@ QuickMemoConfirmDeleteModel = Souhaitez-vous vraiment supprimer ce modèle de m�
 DialogAskConfirm = Confirmation
 QuickMemoDeleteModel = Supprimer le modèle
 CloseDialog = Fermer
+ShowMemo = Consulter le mémo
