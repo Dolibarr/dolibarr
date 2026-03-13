@@ -26,6 +26,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			footer: null,    				// Footer config: { showCancel, cancelLabel, showSubmit, submitLabel, submitFormId, borderTop }
 			onSuccess: null, 				// Callback fired after dialog closes on AJAX form success
 			onLoad: null,    				// Callback fired after dialog content is injected (url or content)
+			backdrop : true					// Add backdrop
 		};
 
 		// --- Default footer params ---
@@ -83,6 +84,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			const dialogEl = document.createElement('dialog');
 			dialogEl.id = param.dialogId;
 			dialogEl.classList.add(...dialogClass.split(' '));
+			if (!param.backdrop) dialogEl.classList.add('no-backdrop');
 			dialogEl.cssText = style;
 
 			let dialogHTML = '';

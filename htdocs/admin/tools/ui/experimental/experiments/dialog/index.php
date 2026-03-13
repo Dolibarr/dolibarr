@@ -79,14 +79,6 @@ $documentation->view = [$group, $experimentName];
 // Output sidebar
 $documentation->showSidebar(); ?>
 
-<script nonce="<?php echo getNonce(); ?>">
-//
-Dolibarr.setContextVars(<?php print json_encode([
-	'DOL_VERSION' => DOL_VERSION,
-	'MAIN_LANG_DEFAULT'  => 'en_US',
-	'DOL_LANG_INTERFACE_URL' =>  dol_buildpath('admin/tools/ui/experimental/experiments/dolibarr-context/langs-tool-interface.php', 1),
-]) ?>);
-</script>
 
 <div class="doc-wrapper">
 

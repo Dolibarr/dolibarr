@@ -280,6 +280,7 @@ class Documentation
 						'ExperimentalUxIntroductionTitle' => '#experimental-ux-introduction',
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
+				),
 				'UiDolibarrDialog' => array(
 					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dialog/index.php', 1),
 					'icon' => 'fas fa-flask',
