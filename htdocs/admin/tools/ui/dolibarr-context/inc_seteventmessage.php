@@ -5,7 +5,7 @@
  * @var Documentation $documentation
  *
  * @phan-var string|null $setEventMessageJsContextTitle
- * @phan-var Documentation|null $documentation
+ * @phan-var Documentation $documentation
  */
 
 if (!defined('DOL_VERSION')) {die();}
