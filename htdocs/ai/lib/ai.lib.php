@@ -52,7 +52,7 @@ function getListOfAIFeatures()
 		'audiogeneration' => array('label' => 'AudioGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'AUDIO'),
 		'transcription' => array('label' => 'AudioTranscription', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSCRIPT'),
 		'translation' => array('label' => 'AudioTranslation', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSLATE'),
-		'docparsing' => array('label' => 'DocumentPArsing', 'picto' => '', 'status' => 'experimental', 'function' => 'DOCPARSING')
+		'docparsing' => array('label' => 'DocumentParsing', 'picto' => '', 'status' => 'experimental', 'function' => 'DOCPARSING')
 	);
 
 	return $arrayofaifeatures;
@@ -73,91 +73,91 @@ function getListOfAIServices()
 			'label'           => 'ChatGPT (OpenAI)',
 			'url'             => 'https://api.openai.com/v1/',
 			'setup'           => 'https://platform.openai.com/account/api-keys',
-			'textgeneration'  => 'gpt-5.2',             // Flagship model released late 2025, updated Feb 2026
-			'imagegeneration' => 'gpt-image-1.5',       // Replaced DALL-E 3; 4x faster and native to GPT-5
-			'audiogeneration' => 'gpt-audio-1.5',       // New Feb 23, 2026 release for high-fidelity audio out
-			'videogeneration' => 'sora-2',              // OpenAI's standard API video model
-			'transcription'   => 'whisper-large-v3-turbo', // The current speed/accuracy benchmark for ASR
-			'translation'     => 'whisper-large-v3-turbo', // Still the best for multi-language audio translation
-			'docparsing'      => 'gpt-5.2',             // Uses the new Responses API / Vision capabilities
+			'textgeneration'  => array('default' => 'gpt-5.2'),             // Flagship model released late 2025, updated Feb 2026
+			'imagegeneration' => array('default' => 'gpt-image-1.5'),       // Replaced DALL-E 3; 4x faster and native to GPT-5
+			'audiogeneration' => array('default' => 'gpt-audio-1.5'),       // New Feb 23, 2026 release for high-fidelity audio out
+			'videogeneration' => array('default' => 'sora-2'),              // OpenAI's standard API video model
+			'transcription'   => array('default' => 'whisper-large-v3-turbo'), // The current speed/accuracy benchmark for ASR
+			'translation'     => array('default' => 'whisper-large-v3-turbo'), // Still the best for multi-language audio translation
+			'docparsing'      => array('default' => 'gpt-5.2'),             // Uses the new Responses API / Vision capabilities
 			'adapter_type'    => 'openai'
 		),
 		'groq' => array(
 			'label'           => 'Groq (LPU Inference)',
 			'url'             => 'https://api.groq.com/openai/v1/',
 			'setup'           => 'https://console.groq.com/keys',
-			'textgeneration'  => 'llama-4-8b-instant',    // February 2026 flagship for extreme speed (1,000+ t/s)
-			'imagegeneration' => 'na',
-			'audiogeneration' => 'na',
-			'videogeneration' => 'na',
-			'transcription'   => 'whisper-large-v3-turbo', // Groq's specialized high-speed Whisper implementation
-			'translation'     => 'whisper-large-v3-turbo', // High-speed audio translation to English
-			'docparsing'      => 'llama-4-70b-versatile',  // Best for structured data extraction from text
+			'textgeneration'  => array('default' => 'llama-4-8b-instant'),    // February 2026 flagship for extreme speed (1,000+ t/s)
+			'imagegeneration' => array('default' => 'na'),
+			'audiogeneration' => array('default' => 'na'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription'   => array('default' => 'whisper-large-v3-turbo'), // Groq's specialized high-speed Whisper implementation
+			'translation'     => array('default' => 'whisper-large-v3-turbo'), // High-speed audio translation to English
+			'docparsing'      => array('default' => 'llama-4-70b-versatile'),  // Best for structured data extraction from text
 			'adapter_type'    => 'openai'
 		),
 		'mistral' => array(
 			'label' => 'Mistral AI',
 			'url' => 'https://api.mistral.ai/v1/',
 			'setup' => 'https://console.mistral.ai/api-keys/',
-			'textgeneration' => 'mistral-small-latest',    // Points to Mistral Small 3 (updated Feb 2026)
-			'imagegeneration' => 'na',
-			'audiogeneration' => 'na',
-			'videogeneration' => 'na',
-			'transcription' => 'na',
-			'translation' => 'na',
-			'docparsing' => 'pixtral-12b-latest',         // Mistral's native vision/doc model
+			'textgeneration' => array('default' => 'mistral-small-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
+			'imagegeneration' => array('default' => 'na'),
+			'audiogeneration' => array('default' => 'na'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'na'),
+			'translation' => array('default' => 'na'),
+			'docparsing' => array('default' => 'pixtral-12b-latest'),         // Mistral's native vision/doc model
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
 			'label' => 'DeepSeek',
 			'url' => 'https://api.deepseek.com',
 			'setup' => 'https://platform.deepseek.com/api_keys',
-			'textgeneration' => 'deepseek-v4',             // Released Feb 2026, flagship MoE model
-			'imagegeneration' => 'deepseek-janus-2',       // DeepSeek's latest multimodal vision/gen model
-			'audiogeneration' => 'na',
-			'videogeneration' => 'na',
-			'transcription' => 'na',
-			'translation' => 'na',
-			'docparsing' => 'deepseek-v4',                 // Massive 1M context support for parsing
+			'textgeneration' => array('default' => 'deepseek-v4'),             // Released Feb 2026, flagship MoE model
+			'imagegeneration' => array('default' => 'deepseek-janus-2'),       // DeepSeek's latest multimodal vision/gen model
+			'audiogeneration' => array('default' => 'na'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'na'),
+			'translation' => array('default' => 'na'),
+			'docparsing' => array('default' => 'deepseek-v4'),                 // Massive 1M context support for parsing
 			'adapter_type' => 'openai'
 		),
 		'perplexity' => array(
 			'label' => 'Perplexity (Sonar)',
 			'url' => 'https://api.perplexity.ai',
 			'setup' => 'https://www.perplexity.ai/settings/api',
-			'textgeneration' => 'sonar-pro',               // Flagship search model as of Feb 2026
-			'imagegeneration' => 'na',
-			'audiogeneration' => 'na',
-			'videogeneration' => 'na',
-			'transcription' => 'na',
-			'translation' => 'na',
-			'docparsing' => 'sonar-reasoning',             // Best for analyzing search-grounded docs
+			'textgeneration' => array('default' => 'sonar-pro'),               // Flagship search model as of Feb 2026
+			'imagegeneration' => array('default' => 'na'),
+			'audiogeneration' => array('default' => 'na'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'na'),
+			'translation' => array('default' => 'na'),
+			'docparsing' => array('default' => 'sonar-reasoning'),             // Best for analyzing search-grounded docs
 			'adapter_type' => 'openai'
 		),
 		'zai' => array(
 			'label' => 'Zhipu AI (GLM)',
 			'url' => 'https://api.z.ai/api/paas/v4',
 			'setup' => 'https://docs.z.ai/guides/overview/quick-start',
-			'textgeneration' => 'glm-5',                  // Flagship released February 11, 2026
-			'imagegeneration' => 'cogview-4',              // Zhipu's latest SOTA image generator
-			'audiogeneration' => 'cogvlm2-audio',          // High-fidelity conversational audio
-			'videogeneration' => 'cogvideox-2',            // Flagship API video model
-			'transcription' => 'na',
-			'translation' => 'na',
-			'docparsing' => 'glm-5',                      // Top-tier agentic document processing
+			'textgeneration' => array('default' => 'glm-5'),                  // Flagship released February 11, 2026
+			'imagegeneration' => array('default' => 'cogview-4'),              // Zhipu's latest SOTA image generator
+			'audiogeneration' => array('default' => 'cogvlm2-audio'),          // High-fidelity conversational audio
+			'videogeneration' => array('default' => 'cogvideox-2'),            // Flagship API video model
+			'transcription' => array('default' => 'na'),
+			'translation' => array('default' => 'na'),
+			'docparsing' => array('default' => 'glm-5'),                      // Top-tier agentic document processing
 			'adapter_type' => 'openai'
 		),
 		'custom' => array(
 			'label' => 'Custom',
 			'url' => 'https://domainofapi.com/v1/',
 			'setup' => 'Ask your AI provider how to get your API key',
-			'textgeneration' => 'tinyllama-1.1b',
-			'imagegeneration' => 'mixtral-8x7b-32768',
-			'audiogeneration' => 'mixtral-8x7b-32768',
-			'videogeneration' => 'na',
-			'transcription' => 'mixtral-8x7b-32768',
-			'translation' => 'mixtral-8x7b-32768',
-			'docparsing' => 'na',
+			'textgeneration' => array('default' => 'tinyllama-1.1b'),
+			'imagegeneration' => array('default' => 'mixtral-8x7b-32768'),
+			'audiogeneration' => array('default' => 'mixtral-8x7b-32768'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'mixtral-8x7b-32768'),
+			'translation' => array('default' => 'mixtral-8x7b-32768'),
+			'docparsing' => array('default' => 'na'),
 			'adapter_type' => 'openai'
 		),
 		// --- SPECIALIZED ADAPTERS ---
@@ -165,26 +165,26 @@ function getListOfAIServices()
 			'label' => 'Anthropic (Claude)',
 			'url' => 'https://api.anthropic.com/v1/',
 			'setup' => 'https://console.anthropic.com/',
-			'textgeneration' => 'claude-opus-4-6',    // Released Feb 2026; features a 1M context window
-			'imagegeneration' => 'na',              // Anthropic remains focused on text/code logic
-			'audiogeneration' => 'na',
-			'videogeneration' => 'na',
-			'transcription' => 'na',
-			'translation' => 'na',
-			'docparsing' => 'claude-opus-4-6',      // Leading model for "Computer Use" and PDF analysis
+			'textgeneration' => array('default' => 'claude-opus-4-6'),    // Released Feb 2026; features a 1M context window
+			'imagegeneration' => array('default' => 'na'),              // Anthropic remains focused on text/code logic
+			'audiogeneration' => array('default' => 'na'),
+			'videogeneration' => array('default' => 'na'),
+			'transcription' => array('default' => 'na'),
+			'translation' => array('default' => 'na'),
+			'docparsing' => array('default' => 'claude-opus-4-6'),      // Leading model for "Computer Use" and PDF analysis
 			'adapter_type' => 'anthropic'
 		),
 		'google' => array(
 			'label' => 'Google Gemini',
 			'url' => 'https://generativelanguage.googleapis.com/v1beta/',
 			'setup' => 'https://aistudio.google.com/',
-			'textgeneration' => 'gemini-3.1-pro-preview', // Flagship reasoning model released Feb 19, 2026
-			'imagegeneration' => 'nano-banana-pro',       // Latest SOTA image model (Gemini 3 Pro Image)
-			'audiogeneration' => 'gemini-2.5-pro-tts',    // High-fidelity native speech synthesis
-			'videogeneration' => 'veo-3.1',              // Google's flagship cinematic video API
-			'transcription' => 'gemini-3.1-pro-preview',  // Native multi-modal audio reasoning
-			'translation' => 'gemini-3.1-pro-preview',    // Native audio-to-text translation
-			'docparsing' => 'gemini-3.1-pro-preview',     // Massive 2M+ context window for full repo parsing
+			'textgeneration' => array('default' => 'gemini-3.1-pro-preview'), // Flagship reasoning model released Feb 19, 2026
+			'imagegeneration' => array('default' => 'nano-banana-pro'),       // Latest SOTA image model (Gemini 3 Pro Image)
+			'audiogeneration' => array('default' => 'gemini-2.5-pro-tts'),    // High-fidelity native speech synthesis
+			'videogeneration' => array('default' => 'veo-3.1'),              // Google's flagship cinematic video API
+			'transcription' => array('default' => 'gemini-3.1-pro-preview'),  // Native multi-modal audio reasoning
+			'translation' => array('default' => 'gemini-3.1-pro-preview'),    // Native audio-to-text translation
+			'docparsing' => array('default' => 'gemini-3.1-pro-preview'),     // Massive 2M+ context window for full repo parsing
 			'adapter_type' => 'google'
 		)
 	);
