@@ -231,6 +231,7 @@ if (!GETPOST('hidenavmenu')) {
 
 							$alreadyDisplay[] = $class;
 							$iconCode =  '<span class="'.$class.'" ></span>';
+							$iconLabel = !empty($iconData[2]) ? $iconData[2] : $iconData[0];
 
 							if ($displayMode == 'kanban') {
 								print '<div class="info-box ">
@@ -238,7 +239,7 @@ if (!GETPOST('hidenavmenu')) {
 											' . $iconCode . '
 										</span>
 										<div class="info-box-content">
-											<div class="info-box-title" >' . ($iconData[2] ?? ($iconData[0] ?? '')) . '</div>
+											<div class="info-box-title" >' . $iconLabel . '</div>
 											<div class="info-box-lines">
 												<div class="info-box-line spanoverflow nowrap">
 													<div class="inline-block nowraponall">
