@@ -1,4 +1,13 @@
-<?php if (!isset($documentation)) {die();} ?>
+<?php
+
+/**
+ * @var string $setEventMessageJsContextTitle
+ * @var Documentation $documentation
+ */
+
+if (!defined('DOL_VERSION')) {die();}
+
+?>
 
 <div class="documentation-section">
 	<h2 id="titlesection-tool-seteventmessage" class="documentation-title"><?php print $setEventMessageJsContextTitle ?? 'Set event message tool'; ?></h2>

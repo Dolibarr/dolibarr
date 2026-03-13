@@ -127,7 +127,7 @@ $documentation->showSidebar(); ?>
 					'setEventMessages("message", null);',
 					'setEventMessages(null, messages[]);',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Contextual variations -->
@@ -136,6 +136,10 @@ $documentation->showSidebar(); ?>
 			<p class="documentation-text"><?php echo $langs->trans('DocSetEventMessageContextualVariationsDescription'); ?></p>
 			<div class="documentation-example">
 				<?php
+				$params = [
+					'attr' => []
+				];
+
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
 				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayOKMessage');
@@ -167,7 +171,7 @@ $documentation->showSidebar(); ?>
 				'setEventMessages("message", null, "warnings");',
 				'setEventMessages("message", null, "errors");'
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 
