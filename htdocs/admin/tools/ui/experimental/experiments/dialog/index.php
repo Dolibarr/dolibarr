@@ -207,6 +207,7 @@ $documentation->showSidebar(); ?>
 			<div class="documentation-example">
 				<button class="butAction" style="margin:4px;" id="btn-dialog-params-persist" data-persist="1"><span class="opacitylow">Dialog |</span> Persistent</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-params-notpersist" data-persist="0"><span class="opacitylow">Dialog |</span> Non-persistent</button>
+				<button class="butAction" style="margin:4px;" id="btn-dialog-params-nobackdrop" data-persist="0"><span class="opacitylow">Dialog |</span> No backdrop</button>
 			</div>
 		</div>
 
@@ -412,6 +413,16 @@ $documentation->showSidebar(); ?>
 			url: modalUrl,
 			animation: false,
 			persist: false
+		});
+		Dolibarr.tools.uiDialog('#btn-dialog-params-nobackdrop', {
+			dialogId: 'dialog-notpersist',
+			title: uiDialogTitlePersistNo,
+			icon: 'fas fa-bars',
+			align: 'right',
+			url: modalUrl,
+			animation: false,
+			persist: false,
+			isModal: false
 		});
 	});
 </script>

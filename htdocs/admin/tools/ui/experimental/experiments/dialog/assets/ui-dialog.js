@@ -26,7 +26,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			footer: null,    				// Footer config: { showCancel, cancelLabel, showSubmit, submitLabel, submitFormId, borderTop }
 			onSuccess: null, 				// Callback fired after dialog closes on AJAX form success
 			onLoad: null,    				// Callback fired after dialog content is injected (url or content)
-			backdrop : true					// Add backdrop
+			isModal : true					// Add backdrop
 		};
 
 		// --- Default footer params ---
@@ -84,7 +84,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			const dialogEl = document.createElement('dialog');
 			dialogEl.id = param.dialogId;
 			dialogEl.classList.add(...dialogClass.split(' '));
-			if (!param.backdrop) dialogEl.classList.add('no-backdrop');
+			if (!param.isModal) dialogEl.classList.add('no-backdrop');
 			dialogEl.cssText = style;
 
 			let dialogHTML = '';
@@ -207,19 +207,24 @@ document.addEventListener('Dolibarr:Init', function () {
 			}
 
 			// --- Show modal ---
-			dialogEl.showModal();
+			if (param.isModal) {
+				dialogEl.showModal();
+			} else {
+				dialogEl.show();
+			}
+
 
 			// --- Close with or without animation, optional callback fired after close ---
 			function closeDialog(callback) {
 				if (!param.animation) {
 					param.persist ? dialogEl.close() : dialogEl.remove();
-					if (callback) callback();
+					if (typeof callback === "function") callback();
 					return;
 				}
 				dialogEl.classList.add('is-closing');
 				dialogEl.addEventListener('animationend', function () {
 					param.persist ? dialogEl.close() : dialogEl.remove();
-					if (callback) callback();
+					if (typeof callback === "function") callback();
 				}, { once: true });
 			}
 
@@ -273,7 +278,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			});
 
 			// Backdrop click
-			if (param.backdrop) {
+			if (param.isModal) {
 				dialogEl.addEventListener('click', function (e) {
 					if (e.target === dialogEl) closeDialog();
 				});

@@ -13,8 +13,8 @@ dialog.dol-dialog {
 
 /* remove backdrop and click events */
 dialog.dol-dialog.no-backdrop::backdrop{
-	background: transparent;
-	pointer-events: none;
+	background: transparent !important;
+	pointer-events: none !important;
 }
 
 /* Disable page scrollbar when dialog (with backdrop) is open */
