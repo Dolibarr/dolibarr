@@ -10,6 +10,8 @@
 
 if (!defined('DOL_VERSION')) {die();}
 
+global $documentation, $setEventMessageJsContextTitle;
+
 ?>
 
 <div class="documentation-section">
