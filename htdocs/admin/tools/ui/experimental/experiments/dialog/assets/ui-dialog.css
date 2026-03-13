@@ -11,6 +11,17 @@ dialog.dol-dialog {
 	overflow: visible;
 }
 
+/* remove backdrop and click events */
+dialog.dol-dialog.no-backdrop::backdrop{
+	background: transparent;
+	pointer-events: none;
+}
+
+/* Disable page scrollbar when dialog (with backdrop) is open */
+body:has(dialog.dol-dialog[open]:not(.no-backdrop)) {
+	overflow: hidden;
+}
+
 dialog.dol-dialog[open] {
 	display: flex;
 	flex-direction: column;

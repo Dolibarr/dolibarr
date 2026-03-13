@@ -342,4 +342,4 @@ RuleForLinesDates=Règle pour les lignes dates
 Prepaid=Prépayé
 Postpaid=Port payé
 SetRuleForLinesDates=Définir une règle pour les dates des lignes
-SomeNotConvertedCreditNoteExists=Il y a des avoirs <b>%s</b> non encore converties pour la consommation
+SomeNotConvertedCreditNoteExists=Il y a <b>%s</b> avoir(s) non encore converti(s) pour consommation

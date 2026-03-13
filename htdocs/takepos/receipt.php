@@ -110,8 +110,8 @@ if ($facid > 0 && !GETPOST('specimen')) {
 } else {
 	$object->initAsSpecimen('takepos');
 }
-print '<body>';
 
+print '<body>';
 
 // Record entry in blocked logs each time we print a receipt
 //
@@ -122,21 +122,17 @@ if (!GETPOST('specimen') && empty($nojs)) {
 	print "
 	<script>
 		console.log('Call /blockedlog/ajax/block-add from Ajax call on receipt.php.');
-		$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
-				, {
-					id: ".((int) $object->id)."
-										, element: '".dol_escape_js($object->element)."'
-										, action: 'DOC_PREVIEW'
-										, token: '".currentToken()."'
-				   }
+		$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php',
+			{
+					id: ".((int) $object->id).",
+					element: '".dol_escape_js($object->element)."',
+					action: 'DOC_PREVIEW',
+					lang: '".dol_escape_js($langs->defaultlang)."',
+					token: '".currentToken()."'
+			}
 		);
 	</script>";
 }
-
-/*
- * jQuery(document).ready(function () {
-});
- */
 
 // Call to external receipt modules factory if it exists and if we can (not allowed in some cases)
 if (isALNERunningVersion()) {
@@ -285,9 +281,13 @@ if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 	}
 }
 
-// $object->pos_print_counter is current value. It is increased by a parallel process when calling ajax block-add.php that
-// may have finished before or after this page start, so $object->pos_print_counter may be already up to date, but we use the value at begin
-// of this page start and we increase 1 to have correct value we want to show.
+// $object->pos_print_counter is current value. We increase it here.
+
+// Increase counter by 1
+$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+$sql .= " WHERE rowid = ".((int) $object->id);
+$db->query($sql);
+
 $object->pos_print_counter += 1;
 
 // Show if it is a duplicata

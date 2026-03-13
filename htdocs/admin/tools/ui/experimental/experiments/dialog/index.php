@@ -46,7 +46,6 @@ $experimentName = 'UiDolibarrDialog';
 //
 $action = GETPOST('action', 'aZ09');
 if ($action == 'addticketexample') {
-
 	$ticketMsg = 'You have submitted a form to create a new ticket<br><br>';
 	$ticketMsg .= '<b>Ref:</b> '.GETPOST('ref').'<br>';
 	$ticketMsg .= '<b>Request type:</b> '.ucfirst(GETPOST('type_code')).'<br>';
@@ -62,9 +61,6 @@ $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
-	$experimentAssetsPath2 . '/dolibarr-context.umd.js',
-	$experimentAssetsPath2 . '/dolibarr-tool.seteventmessage.js',
-	$experimentAssetsPath2 . '/dolibarr-tool.langs.js',
 	$experimentAssetsPath . '/ui-dialog.js',
 ];
 $css = [
@@ -80,14 +76,6 @@ $documentation->view = [$group, $experimentName];
 // Output sidebar
 $documentation->showSidebar(); ?>
 
-<script nonce="<?php echo getNonce(); ?>">
-//
-Dolibarr.setContextVars(<?php print json_encode([
-	'DOL_VERSION' => DOL_VERSION,
-	'MAIN_LANG_DEFAULT'  => 'en_US',
-	'DOL_LANG_INTERFACE_URL' =>  dol_buildpath('admin/tools/ui/experimental/experiments/dolibarr-context/langs-tool-interface.php',1),
-]) ?>);
-</script>
 
 <div class="doc-wrapper">
 
@@ -116,7 +104,7 @@ Dolibarr.setContextVars(<?php print json_encode([
 			<h2 class="documentation-title"><?php echo $langs->trans('DocDialogHeaderAndFooter'); ?></h2>
 
 			<h3 class="nomarginbottom">Header</h3>
-			<p class="documentation-text">Allow customization of the header content to fit specific needs, or remove it entirely when not required. The <code>title</code> param controls the header text. Add an optional <code>icon</code> (FontAwesome class) and <code>icon_color</code> (CSS color value) to prefix the title with an icon.</p>
+			<p class="documentation-text">Allow customization of the header content to fit specific needs, or remove it entirely when not required. The <code>title</code> param controls the header text. Add an optional <code>icon</code> (FontAwesome class) and <code>iconColor</code> (CSS color value) to prefix the title with an icon.</p>
 			<div class="documentation-example">
 				<button class="butAction" style="margin:4px;" id="btn-dialog-without-title" data-dialog-header="no"><span class="opacitylow">Dialog |</span> Without header</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-with-icon" data-dialog-header="icon"><span class="opacitylow">Dialog |</span> Custom Icon</button>
@@ -268,7 +256,7 @@ Dolibarr.setContextVars(<?php print json_encode([
 			dialogId: 'dialog-with-color-icon',
 			title: uiDialogTitleWithIcon,
 			icon: 'fas fa-landmark',
-			icon_color: '#b0bb39',
+			iconColor: '#b0bb39',
 			align: 'center',
 			url: modalUrl
 		});
@@ -342,7 +330,7 @@ Dolibarr.setContextVars(<?php print json_encode([
 			dialogId: 'dialog-with-form',
 			title: uiDialogTitleForm,
 			icon: 'fas fa-ticket-alt',
-			icon_color: '#3bbfa8',
+			iconColor: '#3bbfa8',
 			align: 'right',
 			url: modalUrl,
 			footer: {
@@ -353,7 +341,7 @@ Dolibarr.setContextVars(<?php print json_encode([
 			dialogId: 'dialog-with-ajaxform',
 			title: uiDialogTitleForm,
 			icon: 'fas fa-ticket-alt',
-			icon_color: '#3bbfa8',
+			iconColor: '#3bbfa8',
 			align: 'right',
 			url: modalUrl,
 			footer: {submitFormId: 'dol-dialog-ajaxform-example'},

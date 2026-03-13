@@ -41,7 +41,7 @@
  * \brief 	Page to create/see an invoice
  */
 
-// Libraries
+// Load Dolibarr environment
 require '../../main.inc.php';
 /**
  * @var Conf $conf
@@ -91,14 +91,15 @@ if (isModEnabled('margin')) {
 }
 
 // General $Variables
-$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));    // For backward compatibility
-$ref = GETPOST('ref', 'alpha');
-$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
+
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));    // For backward compatibility
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOSTINT('socid');
 $lineid = GETPOSTINT('lineid');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
@@ -2286,6 +2287,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					if (empty($object->thirdparty)) {
+						$object->fetch_thirdparty();
+					}
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -2631,11 +2635,17 @@ if (empty($reshook)) {
 					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif (!empty($price_ht_devise) || $price_ht_devise === '0') {
 					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ttc_devise = (float) price2num((float) $pu_ht_devise * (1 + ((float) $tmpvat / 100)), 'MU');
 					$pu_ht = '';
 					$pu_ttc = '';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
 					$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ttc_devise) || (string) $price_ttc_devise === '0') {
+					$pu_ttc_devise = (float) price2num($price_ttc_devise, 'MU');
+					$pu_ht_devise = (float) price2num((float) $pu_ttc_devise / (1 + ((float) $tmpvat / 100)), 'MU');
+					$pu_ht = '';
+					$pu_ttc = '';
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
@@ -2825,6 +2835,7 @@ if (empty($reshook)) {
 				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $situation_percent, 0, $fk_unit, (float) $pu_ht_devise);
 
 				if ($result > 0) {
+					$ret = $object->fetch($id); // Reload to get new records
 					// Define output language and generate document
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
@@ -2841,8 +2852,6 @@ if (empty($reshook)) {
 							$outputlangs->load('products');
 						}
 						$model = $object->model_pdf;
-						$ret = $object->fetch($id); // Reload to get new records
-
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -3268,6 +3277,7 @@ if (empty($reshook)) {
 			);
 
 			if ($result >= 0) {
+				$ret = $object->fetch($id); // Reload to get new records
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
@@ -3283,8 +3293,6 @@ if (empty($reshook)) {
 						$outputlangs->setDefaultLang($newlang);
 						$outputlangs->load('products');
 					}
-
-					$ret = $object->fetch($id); // Reload to get new records
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 

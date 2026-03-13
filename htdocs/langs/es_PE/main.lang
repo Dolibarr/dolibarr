@@ -86,6 +86,7 @@ Select2MoreCharactersMore=<strong>Sintaxis de búsqueda:</strong><br><kbd><stron
 SearchIntoMO=Órdenes de Fabricación
 SearchIntoCustomerInvoices=Facturas de Clientes
 SearchIntoExpenseReports=Gastos
+SearchIntoMiscPayments=Manual Journal Entries
 ContactDefault_invoice_supplier=Factura de Proveedor
 ContactDefault_order_supplier=Orden de Compra
 ContactDefault_propal=Cotización

@@ -14,11 +14,11 @@ document.addEventListener('Dolibarr:Init', function () {
 			dialogId: 'dol-dialog-id',		// Dialog ID, should be unique
 			title: '',						// Title of dialog
 			icon: '',						// FontAwesome Class (e.g 'fas fa-user')
-			icon_color: '',  				// CSS color value (e.g #3b89a8)
+			iconColor: '',  				// CSS color value (e.g #3b89a8)
 			align: 'center',				// Box alignment
 			width: 0,						// Override CSS
 			height: 0,		 				// Box height - Overrride CSS - Do not work on align right
-			closedby: 'any', 				// 'any' | 'closerequest' | 'none'
+			closedBy: 'any', 				// 'any' | 'closerequest' | 'none'
 			url: null,       				// Ajax url
 			content: null,   				// Static HTML content (alternative to url)
 			animation: true, 				// Enable open/close animations
@@ -26,6 +26,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			footer: null,    				// Footer config: { showCancel, cancelLabel, showSubmit, submitLabel, submitFormId, borderTop }
 			onSuccess: null, 				// Callback fired after dialog closes on AJAX form success
 			onLoad: null,    				// Callback fired after dialog content is injected (url or content)
+			backdrop : true					// Add backdrop
 		};
 
 		// --- Default footer params ---
@@ -78,20 +79,28 @@ document.addEventListener('Dolibarr:Init', function () {
 			if (param.height && param.align !== 'right') {
 				style += 'height:' + (Number.isInteger(param.height) ? param.height + 'px' : param.height) + ';';
 			}
-			if (style) {
-				style = ' style="' + style + '"';
-			}
 
-			let innerHTML = '<dialog id="' + param.dialogId + '" class="' + dialogClass + '"' + style + '>';
+
+			const dialogEl = document.createElement('dialog');
+			dialogEl.id = param.dialogId;
+			dialogEl.classList.add(...dialogClass.split(' '));
+			if (!param.backdrop) dialogEl.classList.add('no-backdrop');
+			dialogEl.cssText = style;
+
+			let dialogHTML = '';
 			if (param.title) {
-				innerHTML += '<div class="dol-dialog-header">';
-				innerHTML += '<h2 class="dol-dialog-title">' + (param.icon ? '<i class="dol-dialog-icon ' + param.icon + '"' + (param.icon_color ? ' style="color:' + param.icon_color + '"' : '') + '></i>' : '') + param.title + '</h2>';
-				innerHTML += '<button class="dol-dialog-close">&times;</button>';
-				innerHTML += '</div>';
+				dialogHTML += `
+                    <div class="dol-dialog-header">
+                        <h2 class="dol-dialog-title">
+                            ${param.icon ? `<i class="dol-dialog-icon ${param.icon}" ${param.iconColor ? ' style="color:' + param.iconColor + '"' : ''} ></i>` : ''}
+							${param.title}
+                        </h2>
+                        <button class="dol-dialog-close">&times;</button>
+                    </div>`;
 			} else {
-				innerHTML += '<button class="dol-dialog-close">&times;</button>';
+				dialogHTML += '<button class="dol-dialog-close">&times;</button>';
 			}
-			innerHTML += '<div class="dol-dialog-content"></div>';
+			dialogHTML += '<div class="dol-dialog-content"></div>';
 
 			// --- Footer from JS params ---
 			if (param.footer !== null) {
@@ -99,24 +108,24 @@ document.addEventListener('Dolibarr:Init', function () {
 				let footerClass = 'dol-dialog-footer';
 				if (!f.borderTop) footerClass += ' dol-dialog-footer--borderless';
 				if (f.align && f.align !== 'right') footerClass += ' dol-dialog-footer--' + f.align;
-				innerHTML += '<div class="' + footerClass + '">';
+				dialogHTML += '<div class="' + footerClass + '">';
 				if (f.showCancel) {
 					const cancelClass = 'butActionDelete' + (f.moreCancelClass ? ' ' + f.moreCancelClass : '');
-					innerHTML += '<button type="button" class="' + cancelClass + '" data-dol-dialog-close>' + f.cancelLabel + '</button>';
+					dialogHTML += '<button type="button" class="' + cancelClass + '" data-dol-dialog-close>' + f.cancelLabel + '</button>';
 				}
 				if (f.showSubmit) {
 					const formAttr = f.submitFormId ? ' form="' + f.submitFormId + '"' : '';
 					const submitClass = 'butAction' + (f.moreSubmitClass ? ' ' + f.moreSubmitClass : '');
-					innerHTML += '<button type="submit"' + formAttr + ' class="' + submitClass + '">' + f.submitLabel + '</button>';
+					dialogHTML += '<button type="submit"' + formAttr + ' class="' + submitClass + '">' + f.submitLabel + '</button>';
 				}
-				innerHTML += '</div>';
+				dialogHTML += '</div>';
 			}
 
-			innerHTML += '</dialog>';
+			dialogEl.innerHTML = dialogHTML;
+
 
 			// --- Insert HTML ---
-			document.body.insertAdjacentHTML('beforeend', innerHTML);
-			const dialogEl = document.getElementById(param.dialogId);
+			document.body.appendChild(dialogEl);
 
 			// --- Static HTML content ---
 			if (param.content) {
@@ -264,9 +273,12 @@ document.addEventListener('Dolibarr:Init', function () {
 			});
 
 			// Backdrop click
-			dialogEl.addEventListener('click', function (e) {
-				if (e.target === dialogEl) closeDialog();
-			});
+			if (param.backdrop) {
+				dialogEl.addEventListener('click', function (e) {
+					if (e.target === dialogEl) closeDialog();
+				});
+			}
+
 		});
 	});
 }); // end event listener

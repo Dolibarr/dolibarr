@@ -80,8 +80,8 @@ class FormContract
 		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut, s.nom,";
 		$sql .= " c.ref_customer, c.ref_supplier";
 		$sql .= " FROM ".$this->db->prefix()."contrat as c";
-		$sql .= " INNER JOIN".$this->db->prefix()."societe as s ON s.rowid = c.fk_soc";
-		$sql .= " WHERE c.entity = ".$conf->entity;
+		$sql .= " INNER JOIN ".$this->db->prefix()."societe as s ON s.rowid = c.fk_soc";
+		$sql .= " WHERE c.entity = ".((int) $conf->entity);
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
