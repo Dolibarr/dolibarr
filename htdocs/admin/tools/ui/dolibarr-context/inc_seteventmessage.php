@@ -3,6 +3,9 @@
 /**
  * @var string $setEventMessageJsContextTitle
  * @var Documentation $documentation
+ *
+ * @phan-var string|null $setEventMessageJsContextTitle
+ * @phan-var Documentation|null $documentation
  */
 
 if (!defined('DOL_VERSION')) {die();}
