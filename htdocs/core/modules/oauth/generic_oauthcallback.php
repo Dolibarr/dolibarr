@@ -136,7 +136,7 @@ if ($action != 'delete' && !GETPOST('afteroauthloginreturn') && (empty($statewit
 $storage = new DoliStorage($db, $conf, $keyforprovider);
 
 $keyforurl = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_URL';
-if ($keyforprovider) {
+if (getDolGlobalString($keyforurl)) {
 	$baseApiUriInt = new Uri(getDolGlobalString($keyforurl));
 } else {
 	print 'Error, failed to get value for constant '.$keyforurl;
