@@ -259,7 +259,7 @@ class FormTicket
 	{
 		global $conf, $langs, $user, $hookmanager;
 
-		$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));
+		$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails', 'ticket'));
