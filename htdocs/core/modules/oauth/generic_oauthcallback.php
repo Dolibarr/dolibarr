@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2022-2026	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2024	Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state, create record or just update column state of table llx_oauth_token (and create/update entry in llx_oauth_state) depending on the Provider used (see its constructor).
 	//if ($state && $state != 'none') {
-		$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code', 'state' => $state));
+	$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code', 'state' => $state));
 	//} else {
 	//	$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code')); // Parameter state will be randomly generated
 	//}
@@ -310,7 +310,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 				'@phan-var-force OAuth\Common\Token\AbstractToken $token';
 
 				$storage = $apiService->getStorage();
-				/** @var DoliStorage $storage */
+				/** @var OAuth\Common\Storage\DoliStorage $storage */
 				if (property_exists($storage, 'last_insert_id')) {		// @phan-suppress-current-line PhanUndeclaredProperty
 					$last_insert_id = $storage->last_insert_id;			// @phan-suppress-current-line PhanUndeclaredProperty
 				}
@@ -330,7 +330,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 			//var_dump($refreshtoken);
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
-			if ($token)	{
+			if ($token) {
 				$extraparams = $token->getExtraParams();
 
 				$scope = empty($extraparams['scope']) ? '' : $extraparams['scope'];
