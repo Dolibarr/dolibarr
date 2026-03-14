@@ -432,6 +432,8 @@ class Expedition extends CommonObject
 
 		// Clean parameters
 		$this->tracking_number = dol_sanitizeFileName((string) $this->tracking_number);
+		$this->tracking_number = preg_replace('/\s+/', '', $this->tracking_number);
+
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}

@@ -769,6 +769,7 @@ if (empty($reshook)) {
 
 		if ($action == 'settracking_number') {	// Test on permission not required
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
+			$object->tracking_number = preg_replace('/\s+/', '', $object->tracking_number);
 		}
 		if ($action == 'settracking_url') {		// Test on permission not required
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
