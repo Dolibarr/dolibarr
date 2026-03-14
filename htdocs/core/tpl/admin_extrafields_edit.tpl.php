@@ -198,6 +198,7 @@ $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help = $extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall = $extrafields->attributes[$elementtype]['entityid'][$attrname];
 $printable = $extrafields->attributes[$elementtype]['printable'][$attrname];
+$showITooltip = $extrafields->attributes[$elementtype]['showintooltip'][$attrname];
 $enabled = $extrafields->attributes[$elementtype]['enabled'][$attrname];
 $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
@@ -357,6 +358,11 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dol_escape_htmltag((string) $printable); ?>"></td></tr>
+
+
+<!-- Visibility for getNomUrl -->
+<tr><td class="extra_showintooltip"><?php echo $form->textwithpicto($langs->trans("DisplayExtraOnTooltip"), $langs->trans("DisplayExtraOnTooltipDesc")); ?>
+</td><td class="valeur"><input id="showintooltip" type="checkbox" name="showintooltip" value="1" <?php echo($showITooltip ? ' checked' : ''); ?> ></td></tr>
 
 <!-- Can be summed -->
 <tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo($totalizable ? ' checked' : ''); ?>></td></tr>

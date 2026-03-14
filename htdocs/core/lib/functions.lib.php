@@ -7823,10 +7823,12 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$cursymbolafter .= ($tmpcur == $currency_code ? ' ' . $tmpcur : $tmpcur);
 		}
 	}
-	$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' ' : '') . $cursymbolafter;
 	if ($form) {
 		$output = preg_replace('/\s/', '&nbsp;', $output);
+		$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' <span class="small">'.$cursymbolafter.'</span>' : '');
 		$output = preg_replace('/\'/', '&#039;', $output);
+	} else {
+		$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' '.$cursymbolafter : '');
 	}
 
 	return $output;

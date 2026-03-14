@@ -933,23 +933,68 @@ class AdherentType extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *  @param	int<0,2>	$addbadge	Add badge (1=Full label, 2=First letters only)
 	 *	@return	string					Label
 	 */
-	public function getmorphylib($morphy = '')
+	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+
+		$s = '';
+
 		if ($morphy == 'phy') {
-			return $langs->trans("Physical");
+			$s = $langs->trans("Physical");
 		} elseif ($morphy == 'mor') {
-			return $langs->trans("Moral");
+			$s = $langs->trans("Moral");
 		} else {
-			return $langs->trans("MorAndPhy");
+			$s = $langs->trans("MorAndPhy");
 		}
-		//return $morphy;
+
+		if ($addbadge) {
+			$labeltoshowm = $langs->trans("Moral");
+			$labeltoshowp = $langs->trans("Physical");
+
+			$labeltoshow = $s;
+			if ($morphy === 'phy') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshow))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshow, 2));
+					}
+				}
+				$s = '<span class="member-individual-back paddingleftimp paddingrightimp" title="'.$langs->trans("Physical").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy === 'mor') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshow))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshow, 2));
+					}
+				}
+				$s = '<span class="member-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("Moral").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy === '') {
+				if ($addbadge == 2) {
+					$labeltoshow1 = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow1 == dol_strtoupper(dolGetFirstLetters($labeltoshow1))) {
+						$labeltoshow1 = dol_strtoupper(dolGetFirstLetters($labeltoshow1, 2));
+					}
+					$labeltoshow2 = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow2 == dol_strtoupper(dolGetFirstLetters($labeltoshow2))) {
+						$labeltoshow2 = dol_strtoupper(dolGetFirstLetters($labeltoshow2, 2));
+					}
+					$labeltoshow = $labeltoshow1.' '.$langs->trans("or").' '.$labeltoshow2;
+				}
+				$s = '<span class="member-individual-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("MorAndPhy").'">'.$labeltoshow.'</span>';
+			}
+		}
+
+		return $s;
 	}
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
 	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
