@@ -245,7 +245,7 @@ if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 <div class="login_vertical_align">
 
 
-<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+<form id="login" name="login" method="post" action="<?php echo DOL_URL_ROOT.$php_self; ?>">
 
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" id="actionlogin" value="login">
