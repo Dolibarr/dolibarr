@@ -2,8 +2,9 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,6 +281,11 @@ class FormListWebPortal
 		$this->arrayfields['download_link'] = array('type' => '', 'label' => 'File', 'checked' => 1, 'enabled' => ($this->element == 'propal' && isModEnabled('propal')) || ($this->element == 'order' && isModEnabled('order')) || ($this->element == 'invoice' && isModEnabled('invoice')), 'visible' => 1, 'position' => 10001, 'help' => '',);
 		$this->arrayfields['signature_link'] = array('type' => '', 'label' => 'Signature', 'checked' => 1, 'enabled' => $this->element == 'propal' && isModEnabled('propal') && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0, 'visible' => 1, 'position' => 10002, 'help' => '',);
 
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('arrayfieldslist', $parameters, $context);
+		$this->arrayfields = array_merge($this->arrayfields, $hookmanager->resArray);
+		
 		$this->controller->listSetArrayFields();
 	}
 
