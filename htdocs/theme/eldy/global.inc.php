@@ -4707,11 +4707,6 @@ table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice t
 }
 
 
-/*
-div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
-	border-bottom: 1px solid var(--colortopbordertitle1);
-}
-*/
 div.tabBar .lastrecordtable {
 	margin-bottom: 15px;
 }
@@ -5167,7 +5162,7 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a:not(.button):not(.editfielda), .liste_titre td a:not(.button):not(.editfielda) span {
+.liste_titre td a:not(.button):not(.editfielda), .liste_titre td a:not(.button):not(.editfielda) span:not(.badge) {
 	text-shadow: none !important;
 	color: var(--colortexttitle) !important;
 }

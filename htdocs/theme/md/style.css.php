@@ -4261,6 +4261,9 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px !important;
+}
 div.tabBar tr.titre td {
 	padding-top: 20px;
 }
