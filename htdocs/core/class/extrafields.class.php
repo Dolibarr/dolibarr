@@ -1789,15 +1789,22 @@ class ExtraFields
 				$tmpparamoptions = array_keys($param['options']);
 				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
 
-				$InfoFieldList = explode(":", $paramoptions[0], 5);
+				$InfoFieldList = explode(":", $paramoptions[0], 5);		// We will extract field at position 6,7... later from the 5th one.
 				// 0 : tableName
 				// 1 : label field name
-				// 2 : key fields name (if different of rowid)
-				// optional parameters...
+				// 2 : rowid field name (if different of rowid)
+				// Optional parameters...
 				// 3 : key field parent (for dependent lists). How this is used ?
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on the second line.
-				// 5 : string category type. This replace the filter.
-				// 6 : ids categories list separated by comma for category root. This replace the filter.
+
+				// To add a filter on category (not possible with USF restricted to table)
+				// 5 : string category type ('product', 'customer', ...). This is added to the filter.
+				// 6 : list of parent categories ids. This replace the filter.
+				// 7 : sort field (not used here but used into format for commobject)
+
+				// For backward compatibility when tableName = 'category', so when we want a list of categories
+				// 5 : string category type ('product', 'customer', ...). This replace the filter.
+				// 6 : list of parent categories ids. This replace the filter.
 				// 7 : sort field (not used here but used into format for commobject)
 
 				// Example with extrafield value = "societe:nom:rowid" or "categorie:label:rowid:::product"
@@ -1834,6 +1841,7 @@ class ExtraFields
 
 				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
 
+
 				$parentName = '';
 				$parentField = '';
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
@@ -1850,12 +1858,17 @@ class ExtraFields
 					}
 				}
 
+				$InfoFieldList[5] = (string) $InfoFieldList[5];
+
 				$filter_categorie = false;
-				if (count($InfoFieldList) > 5 && ((string) $InfoFieldList[5] != '')) {
+				if (count($InfoFieldList) > 5 && ($InfoFieldList[5] != '')) {
 					if ($InfoFieldList[0] == 'categorie') {
-						$filter_categorie = true;
+						$filter_categorie = true;	// The combo list is a list of categories
+					} else {
+						$filter_categorie = false;	// We have a filter on category for another table
 					}
 				}
+
 
 				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
@@ -1906,6 +1919,20 @@ class ExtraFields
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
+					}
+
+
+					if ($InfoFieldList[5] != '') {
+						// We have a filter on category for another table
+						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+						$tmpcategory = new Categorie($this->db);
+						$tablesuffixcategory = empty($tmpcategory->MAP_CAT_TABLE[$InfoFieldList[5]]) ? $InfoFieldList[5] : $tmpcategory->MAP_CAT_TABLE[$InfoFieldList[5]];
+						$fksuffixcategory = empty($tmpcategory->MAP_CAT_FK[$InfoFieldList[5]]) ? $InfoFieldList[5] : $tmpcategory->MAP_CAT_FK[$InfoFieldList[5]];
+
+						$sqlwhere .= ' AND EXISTS (SELECT fk_categorie as categid FROM '.MAIN_DB_PREFIX.'categorie_'.$this->db->sanitize($tablesuffixcategory);
+						$sqlwhere .= ' WHERE fk_categorie IN ('.$this->db->sanitize($InfoFieldList[6]).')';
+						$sqlwhere .= ' AND fk_'.$this->db->sanitize($fksuffixcategory).' = rowid)';
+						//var_dump($sqlwhere);exit;
 					}
 
 					// Add Usf filter on second line

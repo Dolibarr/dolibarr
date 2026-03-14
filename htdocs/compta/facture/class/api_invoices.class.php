@@ -148,8 +148,8 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
 		}
-		if ($id == 0) {
-			throw new RestException(400, 'No invoice with id=0 can exist');
+		if (empty($id) && empty($ref)&& empty($ref_ext)) {
+			throw new RestException(400, 'No invoice can be found with no criteria');
 		}
 		$result = $this->invoice->fetch($id, $ref, $ref_ext);
 		if (!$result) {
