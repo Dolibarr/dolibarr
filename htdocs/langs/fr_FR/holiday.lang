@@ -168,6 +168,3 @@ ErrorUpdatingUsersCP=Erreur lors de la mise à jour des congés payés des utili
 LeaveBalance=Laissez balance
 ListeLB=Liste des congés balance
 LeaveType = Type de congé balance
-HolidayHrInformationsPreviousMonth=Données RH du mois précédent
-HolidayHrInformationsPreviousMonthTopic=Informations RH pour le mois de __PREVIOUS_MONTH_TEXT__
-HolidayHrInformationsPreviousMonthContent=Vous trouverez ci-joint les informations relatives aux ressources humaines pour le mois de __PREVIOUS_MONTH_TEXT__ pour l'entreprise __MYCOMPANY_NAME__
