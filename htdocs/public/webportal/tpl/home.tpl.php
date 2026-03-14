@@ -145,7 +145,7 @@ if (empty($reshook)) {
 					// add group to menu
 					$navMenu[$groupId] = $groupItem;
 
-					// suppress childs items of menu group 
+					// suppress childs items of menu group
 					foreach ($groupItem['children'] as $menuId => $menuItem) {
 						if (isset($navMenu[$menuId])) {
 							unset($navMenu[$menuId]);
