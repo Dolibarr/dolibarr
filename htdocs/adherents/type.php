@@ -473,13 +473,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 				if (!empty($arrayfields['t.morphy']['checked'])) {
 					print '<td class="center">';
-					if ($objp->morphy == 'phy') {
-						print $langs->trans("Physical");
-					} elseif ($objp->morphy == 'mor') {
-						print $langs->trans("Moral");
-					} else {
-						print $langs->trans("MorAndPhy");
-					}
+					print $membertype->getmorphylib($objp->morphy, 1);
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.duration']['checked'])) {
@@ -680,7 +674,9 @@ if ($rowid > 0) {
 		print '<table class="tableforfield border centpercent">';
 
 		// Morphy
-		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
+		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >';
+		print $object->getmorphylib($object->morphy, 1);
+		print '</td>';
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';

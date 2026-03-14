@@ -35,6 +35,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -70,15 +78,6 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks', 'commercial'));
@@ -831,17 +830,17 @@ if ($object->id > 0) {
 			$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 		}
 		$text = $langs->trans("CurrentOutstandingBill");
+
 		$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon = 'bill';
+			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+			$boxstattmp .= '</div>';
 		if ($link) {
-			$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		}
-		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
-		$boxstat .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-		$boxstat .= '</div>';
-		if ($link) {
-			$boxstat .= '</a>';
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+		} else {
+			$boxstat .= $boxstattmp;
 		}
 
 		$tmp = $object->getOutstandingBills('customer', 1);
@@ -852,20 +851,66 @@ if ($object->id > 0) {
 				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 			}
 			$text = $langs->trans("CurrentOutstandingBillLate");
+
 			$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 			$icon = 'bill';
+			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-			}
-			$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-			$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
-			$boxstat .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-			$boxstat .= '</div>';
-			if ($link) {
-				$boxstat .= '</a>';
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+			} else {
+				$boxstat .= $boxstattmp;
 			}
 		}
 	}
+
+	// Margins
+	if (isModEnabled('margin') && $user->hasRight('margin', 'liretous')) {
+		// Box margin
+		$sql = "SELECT ";
+		$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
+		$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
+		$sql .= " sum(d.total_ht - (".$db->ifsql('f.type = '.Facture::TYPE_CREDIT_NOTE, '-1', '1')." * (d.buy_price_ht * d.qty * (d.situation_percent / 100)))) as marge";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+		$sql .= " ".MAIN_DB_PREFIX."facturedet as d";
+		$sql .= " WHERE f.fk_soc = ".((int) $id);
+		$sql .= " AND f.fk_statut > 0";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		$sql .= " AND d.fk_facture = f.rowid";
+		$sql .= " AND d.buy_price_ht IS NOT NULL";
+		// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+		// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
+		if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
+			$sql .= " AND d.buy_price_ht <> 0";
+		}
+
+		$marginTotal = 0;
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$marginTotal = $obj->marge;
+			}
+		}
+
+		$text = $langs->transnoentitiesnoconv("Margins");
+
+		$link = DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$object->id;
+		$icon = 'margin';
+		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstattmp .= '<span class="boxstatsindicator">'.price($marginTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+		$boxstattmp .= '</div>';
+		if ($link) {
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupmargin', $text, $boxstattmp, '/margin/tabs/thirdpartyMargins.php?socid='.$object->id, '', '');
+		} else {
+			$boxstat .= $boxstattmp;
+		}
+	}
+
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreBoxStatsCustomer', $parameters, $object, $action);
@@ -878,6 +923,7 @@ if ($object->id > 0) {
 	$boxstat .= '</div>';
 
 	print $boxstat;
+
 
 
 	/*

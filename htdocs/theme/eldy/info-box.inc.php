@@ -395,11 +395,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .spannature {
+/*
 	padding-top: 6px !important;
 	padding-bottom: 6px !important;
 	vertical-align: middle;
 	white-space: nowrap;
 	display: inline-block;
+*/
 }
 
 .nonature-back {
@@ -431,7 +433,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #fff;
 	white-space: nowrap;
 }
-.nonature-back, .prospect-back, .customer-back, .vendor-back, .user-back, .member-company-back, .member-individual-back {
+.member-individual-company-back {
+	background-color: #40859d;
+	color: #fff;
+	white-space: nowrap;
+}
+.nonature-back, .prospect-back, .customer-back, .vendor-back, .user-back, .member-company-back, .member-individual-company-back, .member-individual-back {
 	padding: 2px;
 	margin: 2px;
 	border-radius: 5px;
