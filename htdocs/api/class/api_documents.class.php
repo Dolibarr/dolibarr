@@ -965,7 +965,12 @@ class Documents extends DolibarrApi
 			$tmpreldir = '';
 			$fetchbyid = false;
 
-			if ($modulepart == 'facture' || $modulepart == 'invoice') {
+			if ($modulepart == 'ticket') {
+				$modulepart = 'ticket';
+				require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+				$object = new Ticket($this->db);
+				$fetchbyid = true;
+			} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {
 				$modulepart = 'facture';
 
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1047,11 +1052,6 @@ class Documents extends DolibarrApi
 				$modulepart = 'knowledgemanagement';
 				require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 				$object = new KnowledgeRecord($this->db);
-				$fetchbyid = true;
-			} elseif ($modulepart == 'ticket' ) {
-				$modulepart = 'ticket';
-				require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-				$object = new Ticket($this->db);
 				$fetchbyid = true;
 			} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
 				$modulepart = 'contrat';
