@@ -100,11 +100,9 @@ abstract class CommonClassTest extends TestCase
 	 * @param string       $name       Name
 	 * @param array<mixed> $data      Test data
 	 * @param string       $dataName   Test data name.
-	 * @phpstan-ignore-next-line
 	 */
-	public function __construct($name = null, array $data = array(), string $dataName = '')
+	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
-		/** @phpstan-ignore method.notFound */
 		parent::__construct($name, $data, $dataName);
 
 		//$this->sharedFixture
@@ -331,7 +329,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param   array<int|string> $fieldstoignorearray      Array of fields to ignore in diff
 	 * @return  array<mixed>                    Array with differences
 	 */
-	public function objCompare(object $oA, object $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
+	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
 	{
 		$retAr = array();
 
