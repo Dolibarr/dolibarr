@@ -682,14 +682,21 @@ class FormListWebPortal
 				} elseif ($field_key == 'download_link') {
 					$element = $this->element;
 					$filename = dol_sanitizeFileName($this->object->ref);
-					if ($element == 'expedition')
+					if ($element == 'expedition') {
 						$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/sending/' . dol_sanitizeFileName($this->object->ref);
-					else
+					} else {
 						$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
+					}
 					$out = $this->form->getDocumentsLink($element, $filename, $filedir);
 				} elseif ($field_key == 'signature_link') {
-					if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
-						$out = $this->form->getSignatureLink('proposal', $this->object);
+					if ($this->element == 'propal') {
+						if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
+							$out = $this->form->getSignatureLink('proposal', $this->object);
+						}
+					} elseif ($this->element == 'ficheinter') {
+						if ($this->object->fk_statut == Fichinter::STATUS_VALIDATED) {
+							$out = $this->form->getSignatureLink('fichinter', $this->object);
+						}
 					}
 				} else {
 					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');
