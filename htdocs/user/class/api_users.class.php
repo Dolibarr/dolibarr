@@ -306,7 +306,7 @@ class Users extends DolibarrApi
 	public function post($request_data = null)
 	{
 		// Check user authorization
-		if (!DolibarrApiAccess::$user->hasRight('user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "User creation not allowed for login ".DolibarrApiAccess::$user->login);
 		}
 
