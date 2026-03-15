@@ -149,7 +149,7 @@ class Expedition extends CommonObject
 	/**
 	 * @var int<0,1>
 	 */
-	public $billed;
+	public $billed = 0;
 
 	/**
 	 * @var null|int|float|''
@@ -472,6 +472,7 @@ class Expedition extends CommonObject
 		$sql .= ", model_pdf";
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ", signed_status";
+		$sql .= ", billed";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", ".((int) $this->entity);
@@ -498,6 +499,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".($this->signed_status);
+		$sql .= ", ".((int) ($this->billed ?? 0));
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
