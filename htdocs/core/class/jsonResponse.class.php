@@ -19,8 +19,6 @@
 /**
  * Class JsonResponse
  * used for ajax responses in Dolibarr
- *
- * @package QuickMemo
  */
 class JsonResponse
 {
