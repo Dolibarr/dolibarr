@@ -71,7 +71,7 @@ require_once '../lib/quickmemo.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('quickmemo@quickmemo', 'admin'));
+$langs->loadLangs(array('quickmemo', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);

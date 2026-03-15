@@ -70,7 +70,7 @@ require_once __DIR__ . '/../class/memo.class.php';
  */
 
 // Translations
-$langs->loadLangs(array("admin", "quickmemo@quickmemo"));
+$langs->loadLangs(array("admin", "quickmemo"));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 /** @var HookManager $hookmanager */

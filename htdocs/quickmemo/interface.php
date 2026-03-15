@@ -64,7 +64,7 @@ global $langs, $db, $hookmanager, $user, $mysoc;
 $hookmanager->initHooks('quickmemoInterface');
 
 // Load translation files required by the page
-$langs->loadLangs(["quickmemo@quickmemo", "other", 'main']);
+$langs->loadLangs(["quickmemo", "other", 'main']);
 
 $action = GETPOST('action');
 

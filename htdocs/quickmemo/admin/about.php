@@ -69,7 +69,7 @@ require_once '../lib/quickmemo.lib.php';
  */
 
 // Translations
-$langs->loadLangs(array("errors", "admin", "quickmemo@quickmemo"));
+$langs->loadLangs(array("errors", "admin", "quickmemo"));
 
 // Access control
 if (!$user->admin) {

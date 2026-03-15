@@ -66,8 +66,9 @@ class QuickMemo {
 	 */
 	async init() {
 		// Load translation files via Dolibarr tools
-		await Dolibarr.tools.langs.load('quickmemo@quickmemo');
+		await Dolibarr.tools.langs.load('quickmemo');
 		await Dolibarr.tools.langs.load('main');
+		await Dolibarr.tools.langs.load('other');
 
 		// Load existing memos from server
 		this.loadMemos();
@@ -1582,12 +1583,12 @@ class QuickMemo {
 			let hoverTimer = null;
 
 			btn.addEventListener('mouseenter', (e) => {
-				// Si Ctrl est enfoncé, affichage direct
-				if (e.ctrlKey) {
-					clearTimeout(hoverTimer); // au cas où un timer était actif
+				// If shiftKey is pressed, direct show
+				if (e.shiftKey) {
+					clearTimeout(hoverTimer); // In case of a timer already active
 					deleteBtn.classList.add('--show');
 				} else {
-					// Sinon, lance le timer normal
+					// instead run timer
 					hoverTimer = setTimeout(() => {
 						deleteBtn.classList.add('--show');
 					}, 800);
@@ -1599,13 +1600,13 @@ class QuickMemo {
 				deleteBtn.classList.remove('--show');
 			});
 
-			// ===== suppression modèle =====
+			// Delete model
 			deleteBtn.addEventListener('click', async (e) => {
 				e.stopPropagation();
 				e.preventDefault();
 
-				// Fast delete if Ctrl is pressed, otherwise ask for confirmation
-				if (!e.ctrlKey) {
+				// Fast delete if shiftKey is pressed, otherwise ask for confirmation
+				if (!e.shiftKey) {
 					const confirm = await this.openConfirmDialog(
 						await Dolibarr.tools.langs.trans('QuickMemoConfirmDeleteModel') + (model.name ? ' <br/> <strong>' + this.escapeHTML(model.name) + '</strong>' : ''),
 						{
@@ -2498,7 +2499,7 @@ class QuickMemo {
             <h4><i class="far fa-copy"></i> ${Dolibarr.tools.langs.trans('QuickMemoHelp_Management')}</h4>
             <ul>
                <li>${Dolibarr.tools.langs.trans('QuickMemoHelp_DeleteHover')}</li>
-               <li>${Dolibarr.tools.langs.trans('QuickMemoHelp_CtrlDelete')}</li>
+               <li>${Dolibarr.tools.langs.trans('QuickMemoHelp_ShiftKeyDelete')}</li>
             </ul>
          </div>
 
