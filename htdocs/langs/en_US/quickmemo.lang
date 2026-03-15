@@ -97,3 +97,4 @@ CloseDialog = Close
 ShowMemo = Show memo
 NotEnoughRights = Not enough rights
 Memo = Memo
+UpdateError = Update error
