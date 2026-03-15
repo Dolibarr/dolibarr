@@ -202,10 +202,12 @@ class ActionsTicket extends CommonHookActions
 	{
 		global $langs;
 
-		$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
+		$closeStatuses = [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED];
+
+		$permissiontoadd = $user->hasRight('ticket', 'write');
 
 		print '<!-- initial message of ticket -->'."\n";
-		if ($permissiontomanage && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -219,7 +221,7 @@ class ActionsTicket extends CommonHookActions
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
-		if ($permissiontomanage) {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses)) {
 			if ($action != 'edit_message_init') {
 				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 			} else {
@@ -231,7 +233,7 @@ class ActionsTicket extends CommonHookActions
 
 		print '<tr>';
 		print '<td colspan="2">';
-		if ($permissiontomanage && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -257,7 +259,7 @@ class ActionsTicket extends CommonHookActions
 		print '</table>';
 		print '</div>';
 
-		if ($permissiontomanage && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 			print '</form>';
 		}
