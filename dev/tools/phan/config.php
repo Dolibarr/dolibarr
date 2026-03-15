@@ -274,7 +274,6 @@ return [
 		'disableremove' => 'int<0,1>',
 		'dolibarr_main_authentication' => 'string',
 		'dolibarr_main_data_root' => 'string',
-		'dolibarr_main_data_root' => 'string',
 		'dolibarr_main_db_encrypted_pass' => 'string',
 		'dolibarr_main_db_host' => 'string',
 		'dolibarr_main_db_pass' => 'string',
@@ -346,6 +345,7 @@ return [
 		'htdocs/includes/',
 		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
+		'htdocs/admin/tools/ui/',
 		PHAN_DIR . '/stubs/',
 	],
 	//'exclude_file_regex' => '@^vendor/.*/(tests?|Tests?)/@',
