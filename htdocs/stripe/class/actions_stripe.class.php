@@ -112,7 +112,7 @@ class ActionsStripeconnect extends CommonHookActions
 			if ($stripe->getStripeAccount($service) && $object->fk_soc > 0) {
 				$object->fetch_thirdparty();
 				if ($object->thirdparty instanceOf Societe) {
-					$customer = $stripe->customerStripe($object->thirdparty, $stripe->getStripeAccount($service));
+					$customer = $stripe->customerStripe($object->thirdparty, $stripe->getStripeAccount($service));	// @phan-suppress-current-line PhanTypeMismatchArgumentNullable
 					$this->resprints .= $customer->id;
 				}
 			} else {
