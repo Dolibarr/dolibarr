@@ -92,6 +92,7 @@ install:
   composer -n init
   composer -n config vendor-dir htdocs/includes
   composer -n config -g vendor-dir htdocs/includes
+  composer -n config audit.block-insecure false
   echo
 
 - |
