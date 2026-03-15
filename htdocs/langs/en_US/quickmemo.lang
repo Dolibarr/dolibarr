@@ -97,4 +97,7 @@ CloseDialog = Close
 ShowMemo = Show memo
 NotEnoughRights = Not enough rights
 Memo = Memo
+Memos = Memos
 UpdateError = Update error
+QuickMemoCantDeleteThisPrivateModel = Can't delete this private model
+PleaseSelectAtLeastOneRow = Please select at least one row
