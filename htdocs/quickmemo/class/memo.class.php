@@ -1606,11 +1606,6 @@ class Memo extends CommonObject
 			return false;
 		}
 
-		// TODO REMOVE THIS TEST WHEN MODULE IS IN DOLIBARR V24
-		if (INTVAL(DOL_VERSION) < 24 && !isModEnabled('backportdolcontext')) {
-			return false;
-		}
-
 		if (!$user->hasRight('quickmemo', 'memo', 'read')) {
 			return false;
 		}

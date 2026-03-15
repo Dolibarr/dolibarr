@@ -2,7 +2,6 @@
 ModuleQuickMemoName = Mémo rapide
 ModuleQuickMemoDesc = Permettre l'ajout de notes rapides sur les documents
 QuickMemoSetup = Configuration du QuickMemo
-QUICKMEMO_COLORS_PRESET = Définissez ici vos couleurs de mémo personnalisées
 QuickMemoSetupPage = Page de configuration de QuickMemo
 QuickMemoAbout = A propos de QuickMemo
 QuickMemoAboutPage = Page d'accueil de QuickMemo
@@ -93,3 +92,4 @@ QuickMemoConfirmDeleteModel = Souhaitez-vous vraiment supprimer ce modèle de m�
 DialogAskConfirm = Confirmation
 QuickMemoDeleteModel = Supprimer le modèle
 ShowMemo = Consulter le mémo
+QUICKMEMO_COLORS_PRESET=Définissez ici vos couleurs de mémo personnalisées

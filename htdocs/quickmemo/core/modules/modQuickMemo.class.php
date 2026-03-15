@@ -311,9 +311,6 @@ class modQuickMemo extends DolibarrModules
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->hasRight('quickmemo', 'memo', 'delete'))
 		$r++;
 
-		/* BEGIN MODULEBUILDER PERMISSIONS */
-		/* END MODULEBUILDER PERMISSIONS */
-
 
 		// Main menu entries to add
 		$this->menu = array();
@@ -328,7 +325,7 @@ class modQuickMemo extends DolibarrModules
 			'mainmenu' => 'tools',
 			'leftmenu' => 'memo',
 			'url' => '/quickmemo/memo_list.php',
-			'langs' => 'quickmemo@quickmemo',
+			'langs' => 'quickmemo',
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("quickmemo")',
 			'perms' => '1',
@@ -343,7 +340,7 @@ class modQuickMemo extends DolibarrModules
 			'mainmenu' => 'tools',
 			'leftmenu' => 'quickmemo_memo_list',
 			'url' => '/quickmemo/memo_list.php',
-			'langs' => 'quickmemo@quickmemo',
+			'langs' => 'quickmemo',
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("quickmemo")',
 			'perms' => '1',
@@ -363,9 +360,6 @@ class modQuickMemo extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
-		$langs->load('backportdolcontext@backportdolcontext');
-
 
 		// Create tables of module at module activation
 		$result = $this->_load_tables('/install/mysql/', 'quickmemo');

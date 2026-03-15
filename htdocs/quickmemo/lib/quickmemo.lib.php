@@ -45,16 +45,17 @@ function quickmemoAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	/*
-	$head[$h][0] = dolBuildUrl(dol_buildpath("/quickmemo/admin/myobject_extrafields.php", 1));
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = (isset($extrafields->attributes['myobject']['label']) && is_countable($extrafields->attributes['myobject']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
-	}
-	$head[$h][2] = 'myobject_extrafields';
-	$h++;
 
+	//  $head[$h][0] = dolBuildUrl(dol_buildpath("/quickmemo/admin/memo_extrafields.php", 1));
+	//  $head[$h][1] = $langs->trans("ExtraFields");
+	//  $nbExtrafields = (isset($extrafields->attributes['memo']['label']) && is_countable($extrafields->attributes['memo']['label'])) ? count($extrafields->attributes['memo']['label']) : 0;
+	//  if ($nbExtrafields > 0) {
+	//      $head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	//  }
+	//  $head[$h][2] = 'memo_extrafields';
+	//  $h++;
+
+	/*
 	$head[$h][0] = dolBuildUrl(dol_buildpath("/quickmemo/admin/myobjectline_extrafields.php", 1));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = (isset($extrafields->attributes['myobjectline']['label']) && is_countable($extrafields->attributes['myobjectline']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
@@ -65,10 +66,6 @@ function quickmemoAdminPrepareHead()
 	$h++;
 	*/
 
-	$head[$h][0] = dolBuildUrl(dol_buildpath("/quickmemo/admin/about.php", 1));
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
