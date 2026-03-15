@@ -372,6 +372,9 @@ if (empty($reshook)) {
 		if ($result > 0 && getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE')) {
 			$result = $object->closeProposal($user, $object::STATUS_SIGNED);
 		}
+
+		$ret = $object->fetch($id); // Reload to get new records
+
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
@@ -387,15 +390,12 @@ if (empty($reshook)) {
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
 				if ($ret > 0) {
 					$object->fetch_thirdparty();
 				}
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-			exit();
 		} else {
 			$langs->load("errors");
 			if (count($object->errors) > 0) {
