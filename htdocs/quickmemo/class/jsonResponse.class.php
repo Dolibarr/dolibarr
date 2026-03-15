@@ -67,7 +67,7 @@ class JsonResponse
 	 */
 	public function __construct()
 	{
-		$this->newToken = newToken();
+		$this->newToken = \newToken();
 	}
 
 	/**
@@ -78,8 +78,8 @@ class JsonResponse
 	public function getResponse()
 	{
 
-		if (!$this->result && !headers_sent()) {
-			http_response_code(400);
+		if (!$this->result && !\headers_sent()) {
+			\http_response_code(400);
 		}
 
 		$jsonResponse = new \stdClass();
@@ -89,6 +89,6 @@ class JsonResponse
 		$jsonResponse->data = $this->data;
 		$jsonResponse->debug = $this->debug;
 
-		return json_encode($jsonResponse, JSON_PRETTY_PRINT);
+		return \json_encode($jsonResponse, JSON_PRETTY_PRINT);
 	}
 }

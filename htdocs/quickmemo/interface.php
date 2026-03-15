@@ -36,17 +36,9 @@ if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 //if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
 
-$sapi_type = php_sapi_name();
-$script_file = basename(__FILE__);
-$path = dirname(__FILE__) . '/';
 
-// Include and load Dolibarr environment variables
-$res = 0;
-if (!$res && file_exists($path . "main.inc.php")) $res = @include $path . "main.inc.php";
-if (!$res && file_exists($path . "../main.inc.php")) $res = @include $path . "../main.inc.php";
-if (!$res && file_exists($path . "../../main.inc.php")) $res = @include $path . "../../main.inc.php";
-if (!$res && file_exists($path . "../../../main.inc.php")) $res = @include $path . "../../../main.inc.php";
-if (!$res) die("Include of master fails");
+// Load Dolibarr environment
+require '../main.inc.php';
 
 // Load required classes
 require_once __DIR__ . '/class/jsonResponse.class.php';

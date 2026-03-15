@@ -155,67 +155,126 @@ class Memo extends CommonObject
 		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 1000, 'notnull' => -1, "visible" => "-2",),
 		"status" => array("type" => "integer", "label" => "Status", "enabled" => "1", 'position' => 2000, 'notnull' => 1, "visible" => "1", "index" => "1", "arrayofkeyval" => array("1" => "Active","2" => "Template",  "9" => "Archived"), "validate" => "1",),
 	);
+
+	/**
+	 * @var int
+	 */
 	public $rowid;
+
+	/**
+	 * @var int
+	 */
 	public $date_archived;
+
+	/**
+	 * @var int
+	 */
 	public $fk_user_archived;
+
+	/**
+	 * @var string
+	 */
 	public $quick_note;
+
+	/**
+	 * @var int
+	 */
 	public $date_creat;
+
+	/**
+	 * @var int
+	 */
 	public $tms;
+
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var int
+	 */
 	public $fk_element;
+
+	/**
+	 * @var string
+	 */
 	public $element_type;
+
+
+	/**
+	 * @var int
+	 */
 	public $pos_z;
+
+	/**
+	 * @var int
+	 */
 	public $pos_y;
+
+	/**
+	 * @var int
+	 */
 	public $pos_x;
+
+	/**
+	 * @var int
+	 */
 	public $pos_w;
+
+	/**
+	 * @var int
+	 */
 	public $pos_h;
+
+	/**
+	 * @var int
+	 */
 	public $color;
+
+	/**
+	 * @var string
+	 */
 	public $context_tab;
+
+	/**
+	 * @var string
+	 */
 	public $import_key;
+
+	/**
+	 * @var int
+	 */
 	public $status;
+
+	/**
+	 * @var int
+	 */
 	public $private;
+
+	/**
+	 * @var int
+	 */
 	public $private_tpl;
+
+	/**
+	 * @var string
+	 */
 	public $name_tpl;
+
+	/**
+	 * @var int
+	 */
 	public $shared_on_element;
-	// END MODULEBUILDER PROPERTIES
 
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'quickmemo_memoline';
-
-	// /**
-	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
-	//  */
-	// public $fk_element = 'fk_memo';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'Memoline';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array('mychildtable' => array('name'=>'Memo', 'fk_element'=>'fk_memo'));
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
-	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
-	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
-	//  */
-	// protected $childtablesoncascade = array('quickmemo_memodet');
-
-	// /**
-	//  * @var MemoLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
-
+	/**
+	 * @var int
+	 */
 
 
 	/**
@@ -235,12 +294,6 @@ class Memo extends CommonObject
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('quickmemo', 'memo', 'read')) {
-			$this->fields['myfield']['visible'] = 1;
-			$this->fields['myfield']['noteditable'] = 0;
-		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -272,13 +325,6 @@ class Memo extends CommonObject
 	{
 		$result = $this->createCommon($user, $notrigger);
 
-		// uncomment lines below if you want to validate object after creation
-		// if ($result > 0) {
-		// $this->fetch($this->id); // needed to retrieve some fields (ie date_creation for masked ref)
-		// $resultupdate = $this->validate($user, $notrigger);
-		// if ($resultupdate < 0) { return $resultupdate; }
-		// }
-
 		return $result;
 	}
 
@@ -305,10 +351,6 @@ class Memo extends CommonObject
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
 		}
-
-		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
 
 		// Reset some properties
 		unset($object->id);
