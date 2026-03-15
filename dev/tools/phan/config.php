@@ -274,7 +274,6 @@ return [
 		'disableremove' => 'int<0,1>',
 		'dolibarr_main_authentication' => 'string',
 		'dolibarr_main_data_root' => 'string',
-		'dolibarr_main_data_root' => 'string',
 		'dolibarr_main_db_encrypted_pass' => 'string',
 		'dolibarr_main_db_host' => 'string',
 		'dolibarr_main_db_pass' => 'string',
