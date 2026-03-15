@@ -75,11 +75,6 @@ if (!class_exists('FormSetup')) {
 }
 $formSetup = new FormSetup($db);
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $item = $formSetup->newItem('QUICKMEMO_COLORS_PRESET');
 $item->fieldInputOverride = '
 <div class="color-manager">
@@ -120,7 +115,9 @@ if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'upda
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
-$action = 'edit';
+if(empty($action)) {
+	$action = 'edit';
+}
 
 
 /*
