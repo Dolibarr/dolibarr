@@ -15,8 +15,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace quickMemo;
-//
 
 /**
  * Class JsonResponse
@@ -30,7 +28,7 @@ class JsonResponse
 	/**
 	 * the call status to determine if success or fail
 	 *
-	 * @var int $result
+	 * @var int $result 0|1
 	 */
 	public $result = 0;
 
@@ -67,7 +65,7 @@ class JsonResponse
 	 */
 	public function __construct()
 	{
-		$this->newToken = \newToken();
+		$this->newToken = newToken();
 	}
 
 	/**
@@ -78,17 +76,17 @@ class JsonResponse
 	public function getResponse()
 	{
 
-		if (!$this->result && !\headers_sent()) {
-			\http_response_code(400);
+		if (!$this->result && !headers_sent()) {
+			http_response_code(400);
 		}
 
-		$jsonResponse = new \stdClass();
+		$jsonResponse = new stdClass();
 		$jsonResponse->result = $this->result;
 		$jsonResponse->msg = $this->msg;
 		$jsonResponse->newToken = $this->newToken;
 		$jsonResponse->data = $this->data;
 		$jsonResponse->debug = $this->debug;
 
-		return \json_encode($jsonResponse, JSON_PRETTY_PRINT);
+		return json_encode($jsonResponse, JSON_PRETTY_PRINT);
 	}
 }

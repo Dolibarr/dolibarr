@@ -41,7 +41,7 @@ if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);
 require '../main.inc.php';
 
 // Load required classes
-require_once __DIR__ . '/class/jsonResponse.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/jsonResponse.class.php';
 require_once __DIR__ . '/class/memo.class.php';
 if (!class_exists('Validate')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
@@ -63,7 +63,7 @@ $action = GETPOST('action');
 // Security check: check if the module is enabled
 if (!isModEnabled('quickmemo')) accessforbidden('Module not enabled');
 
-$jsonResponse = new quickMemo\JsonResponse();
+$jsonResponse = new JsonResponse();
 
 // Security check: basic read permission
 if (!$user || !$user->hasRight('quickmemo', 'memo', 'read')) {
