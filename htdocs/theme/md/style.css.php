@@ -1277,6 +1277,9 @@ textarea.centpercent {
 .centerimp {
 	text-align: center !important;
 }
+.centeronsmartphone {
+	text-align: center;
+}
 .centergrid {
 	display: grid;
 	text-align: center;
@@ -4258,6 +4261,9 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px !important;
+}
 div.tabBar tr.titre td {
 	padding-top: 20px;
 }
@@ -5324,9 +5330,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 }
-.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
+.noborder > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.liste > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.noborder .tagtr:nth-child(odd):not(:last-child):not(.lastvisible) .oddeven.tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #e8e8e8;
 }
@@ -5428,10 +5434,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
+	opacity: 0.9;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: #000;
 	font-size: 0.8em;
+}
+span.boxstatstext span.fas {
+	filter: grayscale(100%);
 }
 .boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
 	display: inline-flex;

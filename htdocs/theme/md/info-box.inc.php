@@ -93,22 +93,31 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-.member-company-back {
-	padding: 2px;
-	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
-	border-radius: 3px;
-	white-space: nowrap;
-}
 .member-individual-back {
 	padding: 2px;
 	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
+	background-color: #258fa5;
+	color: #fff;
 	border-radius: 3px;
 	white-space: nowrap;
 }
+.member-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #557b95;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+.member-individual-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #40859d;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;

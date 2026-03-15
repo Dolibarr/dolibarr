@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 $action = GETPOST('action');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -131,6 +132,7 @@ if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GET
 	}
 }
 
+
 /*
  * View
  */
@@ -149,6 +151,9 @@ $param = "&socid=".$socid;
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($dol_openinpopup) {
+	$param .= '&dol_openinpopup='.urlencode($dol_openinpopup);
+}
 if ($search_invoice_date_start) {
 	$param .= '&search_invoice_date_start_day='.dol_print_date($search_invoice_date_start, '%d').'&search_invoice_date_start_month='.dol_print_date($search_invoice_date_start, '%m').'&search_invoice_date_start_year='.dol_print_date($search_invoice_date_start, '%Y');
 }
@@ -164,78 +169,79 @@ if ($socid > 0) {
 	$object = new Societe($db);
 	$object->fetch($socid);
 
-	// Show tabs
+	if (empty($dol_openinpopup)) {
+		// Show tabs
 
-	$head = societe_prepare_head($object);
+		$head = societe_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'margin', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+		dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-	print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield centpercent">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield centpercent">';
 
-	// Type Prospect/Customer/Supplier
-	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
-	print $object->getTypeUrl(1);
-	print '</td></tr>';
+		// Type Prospect/Customer/Supplier
+		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+		print $object->getTypeUrl(1);
+		print '</td></tr>';
 
-	if ($object->client) {
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
-		$tmpcheck = $object->check_codeclient();
-		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+		if ($object->client) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('CustomerCode').'</td><td colspan="3">';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+			$tmpcheck = $object->check_codeclient();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
-	}
 
-	if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
-		$tmpcheck = $object->check_codefournisseur();
-		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+		if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('SupplierCode').'</td><td colspan="3">';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+			$tmpcheck = $object->check_codefournisseur();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+			}
+			print '</td></tr>';
 		}
+
+		// Total Margin
+		print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+		print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
 		print '</td></tr>';
+
+		// Margin Rate
+		if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
+			print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
+			print '<span id="marginRate"></span>'; // set by jquery (see below)
+			print '</td></tr>';
+		}
+
+		// Mark Rate
+		if (getDolGlobalString('DISPLAY_MARK_RATES')) {
+			print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
+			print '<span id="markRate"></span>'; // set by jquery (see below)
+			print '</td></tr>';
+		}
+
+		print "</table>";
+
+		print '</div>';
+		print '<div class="clearboth"></div>';
+
+		print dol_get_fiche_end();
+
+		print '<br>';
 	}
 
-	// Total Margin
-	print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
-	print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
-	print '</td></tr>';
-
-	// Margin Rate
-	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-		print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
-		print '<span id="marginRate"></span>'; // set by jquery (see below)
-		print '</td></tr>';
-	}
-
-	// Mark Rate
-	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-		print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
-		print '<span id="markRate"></span>'; // set by jquery (see below)
-		print '</td></tr>';
-	}
-
-	print "</table>";
-
-	print '</div>';
-	print '<div class="clearboth"></div>';
-
-	print dol_get_fiche_end();
-
-	print '<br>';
-
-	// TODO Remove the DISTINCT
-	$sql = "SELECT DISTINCT s.nom, s.rowid as socid, s.code_client,";
+	$sql = "SELECT s.nom, s.rowid as socid, s.code_client,";
 	$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 	$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 	$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
@@ -263,6 +269,7 @@ if ($socid > 0) {
 	}
 	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 
+
 	// TODO: calculate total to display then restore pagination
 
 	$sql .= $db->order($sortfield, $sortorder);
@@ -277,6 +284,7 @@ if ($socid > 0) {
 
 		print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?socid='.$socid.'" name="search_form">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 		if (!empty($sortfield)) {
 			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 		}
@@ -421,6 +429,7 @@ if ($socid > 0) {
 				print '<td>';
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
+				$invoicestatic->type = $objp->type;
 				print $invoicestatic->getNomUrl(1);
 				print "</td>\n";
 				print "<td class=\"center\">";
@@ -463,7 +472,7 @@ if ($socid > 0) {
 		print '<tr class="liste_total">';
 		$colspan = 2;
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			$colspan++; // add action column
+			print '<td></td>';
 		}
 		print '<td colspan="'.$colspan.'">'.$langs->trans('TotalMargin')."</td>";
 		print "<td class=\"right\">".price(price2num($cumul_vente, 'MT'))."</td>\n";
@@ -478,8 +487,7 @@ if ($socid > 0) {
 		print '<td class="right">&nbsp;</td>';
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			// add action column
-			print '<td class="center">';
-			print '</td>';
+			print '<td></td>';
 		}
 		print "</tr>\n";
 	} else {

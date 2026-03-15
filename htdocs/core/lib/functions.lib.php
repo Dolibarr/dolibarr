@@ -7823,10 +7823,12 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$cursymbolafter .= ($tmpcur == $currency_code ? ' ' . $tmpcur : $tmpcur);
 		}
 	}
-	$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' ' : '') . $cursymbolafter;
 	if ($form) {
 		$output = preg_replace('/\s/', '&nbsp;', $output);
+		$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' <span class="small">'.$cursymbolafter.'</span>' : '');
 		$output = preg_replace('/\'/', '&#039;', $output);
+	} else {
+		$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' '.$cursymbolafter : '');
 	}
 
 	return $output;
@@ -11881,7 +11883,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 
 		// On string syntax error, dol_eval may return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
-		//var_dump($rep);
+		//var_dump($strToEvaluate, $rep);
 		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad call of') === false || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
@@ -12331,6 +12333,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		while ($scheck && $savescheck != $scheck) {
 			$savescheck = $scheck;
 			$scheck = preg_replace('/\$conf->[a-z\_]+->enabled/', '__VARCONFENABLED__', $scheck);		// Remove this once $user->module->enabled has been replaced everywhere with isModEnabled.
+			$scheck = preg_replace('/\$user->id/', '__VARUSERID__', $scheck);
 			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
 			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is replaced everywhere with $user->hasRight()
 			$scheck = preg_replace('/\$user->isAdmin/', '__VARUSERHASRIGHT__', $scheck);
@@ -13067,21 +13070,20 @@ function printCommonFooter($zone = 'private')
 
 							foreach ($defval as $paramkey => $paramval) {
 								// Solution 1: Add handler on submit to check if mandatory fields are empty
-								print 'var form = $(\'#' . dol_escape_js($paramkey) . '\').closest("form");' . "\n";
+								print 'var form = $(\'[name="'.dol_escape_js($paramkey).'"]\').closest("form");'."\n";
 								print "form.on('submit', function(event) {
-										var submitter = $(this).find(':submit:focus').get(0);
-										if (submitter) {
-											var buttonName = $(submitter).attr('name');
-											if (buttonName == 'cancel') {
-												console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
-												return true;
-											}
+										var submitter = \$(this).find(':submit:focus').get(0);
+										var buttonName = submitter ? \$(submitter).attr('name') : 'save';
+
+										if (buttonName == 'cancel') {
+											console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
+											return true;
 										}
 
-										console.log('We did not click on cancel button but on something else, we check that field #" . dol_escape_js($paramkey) . " is not empty');
+										console.log('We did not click on cancel button but on something else, we check that field [name=".dol_escape_js($paramkey)."] is not empty');
 
-										var tmpvalue = jQuery('#" . dol_escape_js($paramkey) . "').val();
-										let tmptypefield = jQuery('#" . dol_escape_js($paramkey) . "').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
+										var tmpvalue = jQuery('[name=\"".dol_escape_js($paramkey)."\"]').val();
+										let tmptypefield = jQuery('[name=\"".dol_escape_js($paramkey)."\"]').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
 
 										if (tmptypefield == 'textarea') {
 											// We must instead check the content of ckeditor
@@ -13099,11 +13101,13 @@ function printCommonFooter($zone = 'private')
 										if (tmpvalue === '0' && (tmptypefield == 'select' || tmptypefield == 'input')) {
 											tmpvalueisempty = true;
 										}
-										if (tmpvalueisempty && (buttonName == 'save')) {
+										if (tmpvalueisempty && buttonName !== 'cancel') {
 											console.log('field has type '+tmptypefield+' and is empty, we cancel the submit');
 											event.preventDefault(); // Stop submission of form to allow custom code to decide.
 											event.stopPropagation(); // Stop other handlers.
-											alert('" . dol_escape_js($langs->trans("ErrorFieldRequired", $paramkey) . ' (' . $langs->trans("CustomMandatoryFieldRule") . ')') . "');
+
+											alert('".dol_escape_js($langs->transnoentitiesnoconv("ErrorFieldRequired", $paramkey).' ('.$langs->transnoentitiesnoconv("CustomMandatoryFieldRule").')')."');
+
 											return false;
 										}
 										console.log('field has type '+tmptypefield+' and is defined to '+tmpvalue);
@@ -13126,7 +13130,6 @@ function printCommonFooter($zone = 'private')
 								// Now set the class "fieldrequired"
 								print 'jQuery(\':input[name="' . dol_escape_js($paramkey) . '"]\').closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
 							}
-
 
 							// If we submit using the cancel button, we remove the required attributes
 							print 'jQuery("input[name=\'cancel\']").click(function() {

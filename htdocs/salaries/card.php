@@ -66,6 +66,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $confirm = GETPOST('confirm');
+$backurlforlist = GETPOST('backtopage', 'alpha');
 
 $label = GETPOST('label', 'alphanohtml');
 $projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
@@ -115,7 +116,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-restrictedArea($user, 'salaries', $object->id, 'salary', '');
+restrictedArea($user, 'salaries', $id, 'salary', '');
 
 $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -129,13 +130,13 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 $upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
 $error = 0;
+$resteapayer = 0;
 
 /*
  * Actions
  */
 
 $parameters = array();
-// Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -144,39 +145,20 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php');
+	// Actions to build the document
+	$upload_dir = $conf->salaries->dir_output;
+	$permissiontoadd = $user->hasRight('salaries', 'write');
 
-	if (empty($backtopage) || ($cancel && empty($id))) {
-		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
-				$backtopage = $backurlforlist;
-			} else {
-				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/salaries/card.php', ['id' => ($id > 0 ? $id : '__ID__')]);
-			}
-		}
+	// $object->element = 'salary';
+	if (empty($object->ref) && !empty($object->id)) {
+		$object->ref = (string) $object->id;
 	}
 
-	if ($cancel) {
-		if (!empty($backtopageforcancel)) {
-			header("Location: ".$backtopageforcancel);
-			exit;
-		} elseif (!empty($backtopage)) {
-			header("Location: ".$backtopage);
-			exit;
-		}
-		$action = '';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$triggersendname = 'COMPANY_SENTBYMAIL';
-	$paramname = 'id';
-	$mode = 'emailfromthirdparty';
 	$trackid = 'sal'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
-	//var_dump($upload_dir);var_dump($permissiontoadd);var_dump($action);exit;
-	// Actions to build doc
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 // Link to a project
@@ -491,7 +473,6 @@ if ($action == 'update_extras' && $permissiontoeditextra) {
 		$action = 'edit_extras';
 	}
 }
-
 
 /*
  *	View
@@ -1090,6 +1071,7 @@ if ($id > 0) {
 
 		if ($num > 0) {
 			$bankaccountstatic = new Account($db);
+			$objp = $objp ?? null;
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -1239,14 +1221,28 @@ if ($id > 0) {
 
 		// Documents
 		if ($includedocgeneration) {
+			// Force values if object properties are missing
+			$object->element = 'salary';
+			if (empty($object->ref)) $object->ref = (string) $object->id;
+
 			$objref = dol_sanitizeFileName($object->ref);
-			$relativepath = $objref.'/'.$objref.'.pdf';
-			$filedir = $conf->salaries->dir_output.'/'.$objref;
-			$urlsource = dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]);
-			//$genallowed = $permissiontoread; // If you can read, you can build the PDF to read content
-			$genallowed = 0; // If you can read, you can build the PDF to read content
-			$delallowed = $permissiontoadd; // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments('salaries', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+			$filedir = $conf->salaries->dir_output.'/'.$object->element.'/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+
+			$genallowed = 1;
+			$genallowed = ($user->hasRight('salaries', 'read') || $user->hasRight('salaries', 'readall'));
+			$delallowed = $user->hasRight('salaries', 'write');
+
+			print $formfile->showdocuments(
+				'salaries:Salary',
+				$object->element.'/'.$objref,
+				$filedir,
+				$urlsource,
+				(int) $genallowed,
+				$delallowed,
+				$object->model_pdf,
+				1, 0, 0, 28, 0, '', '', '', $langs->defaultlang
+			);
 		}
 
 		// Show links to link elements

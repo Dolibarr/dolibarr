@@ -1124,6 +1124,9 @@ textarea.centpercent {
 .centerimp {
 	text-align: center !important;
 }
+.centeronsmartphone {
+	text-align: center;
+}
 .centergrid {
 	display: grid;
 	text-align: center;
@@ -1350,6 +1353,8 @@ td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 	overflow-y: auto;
 	word-break: break-word;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 div.urllink {
 	padding: 5px;
@@ -2990,8 +2995,16 @@ span.widthpictotitle.pictotitle {
 	width: 14px;
 }
 .pictosubstatus {
-	padding-left: 2px;
-	padding-right: 2px;
+	padding: 4px;
+	border: 1px solid #ccc;
+	vertical-align: middle;
+	margin-right: 3px;
+	margin-left: 3px;
+	border-radius: 5px;
+}
+.pictosubstatus img {
+	vertical-align: text-bottom;
+	display: inline-block;
 }
 .pictostatus {
 	width: 15px;
@@ -4179,7 +4192,7 @@ div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 */
 div.tabBar {
 	color: var(--colortextbacktab);
-	padding-top: 16px;
+	padding-top: 20px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
 	margin: 0px 0px 30px 0px;
@@ -4598,7 +4611,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
-table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td,
+table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -4693,11 +4707,6 @@ table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice t
 }
 
 
-/*
-div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
-	border-bottom: 1px solid var(--colortopbordertitle1);
-}
-*/
 div.tabBar .lastrecordtable {
 	margin-bottom: 15px;
 }
@@ -5153,7 +5162,7 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a:not(.button), .liste_titre td a:not(.button) span {
+.liste_titre td a:not(.button):not(.editfielda), .liste_titre td a:not(.button):not(.editfielda) span:not(.badge) {
 	text-shadow: none !important;
 	color: var(--colortexttitle) !important;
 }
@@ -5344,13 +5353,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-bottom: 2px;
 }
 .boxstats, .boxstatsempty {
-	padding-left: 6px;
-	padding-right: 6px;
+	padding-left: 5px;
+	padding-right: 3px;
 	width: 118px;
 }
 
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+	border-radius: 6px;
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5451,8 +5461,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 /*span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
 }*/
+span.boxstatstext span.fas {
+	filter: grayscale(100%);
+}
 span.boxstatstext {
-	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
+	opacity: 0.9;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: var(--colortext);
 	font-size: 0.8em;

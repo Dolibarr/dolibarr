@@ -55,13 +55,21 @@ use PHPUnit\Framework\TestCase;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
  */
+/** @phpstan-ignore class.notFound */
 abstract class CommonClassTest extends TestCase
 {
+	/** @var \Conf */
 	protected $savconf;
+	/** @var \User */
 	protected $savuser;
+	/** @var \Translate */
 	protected $savlangs;
+	/** @var \DoliDB */
 	protected $savdb;
 
 	/**
@@ -73,11 +81,15 @@ abstract class CommonClassTest extends TestCase
 
 	/**
 	 * Log file from which to extract lines in case of failing test
+	 *
+	 * @var string
 	 */
 	public $logfile = DOL_DATA_ROOT.'/dolibarr.log';
 
 	/**
 	 * Log file size before a test started (=in setUp() call)
+	 *
+	 * @var int
 	 */
 	public $logSizeAtSetup = 0;
 
@@ -86,7 +98,7 @@ abstract class CommonClassTest extends TestCase
 	 * We save global variables into local variables
 	 *
 	 * @param string       $name       Name
-	 * @param array        $data       Test data
+	 * @param array<mixed> $data      Test data
 	 * @param string       $dataName   Test data name.
 	 */
 	public function __construct($name = null, array $data = array(), $dataName = '')
@@ -148,12 +160,16 @@ abstract class CommonClassTest extends TestCase
 		// Determine the number of lines to show
 
 		$nbLinesToShow = $this->nbLinesToShow;
-		if ($t instanceof PHPUnit\Framework\Error\Notice) {
+		// @phan-suppress-next-line PhanUndeclaredClass
+		/** @phpstan-ignore comparison.alwaysFalse */
+		if (get_class($t) === 'PHPUnit\Framework\Error\Notice') {
 			$nbLinesToShow = 3;
 		}
 
 		// Determine test information to show
 
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		// @phpstan-ignore method.notFound
 		$failedTestMethod = $this->getName(false);
 		$className = get_called_class();
 
@@ -161,6 +177,8 @@ abstract class CommonClassTest extends TestCase
 		$reflectionMethod = new ReflectionMethod($className, $failedTestMethod);
 
 		// Get the test method's data set
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		// @phpstan-ignore method.notFound
 		$argsText = $this->getDataSetAsString(true);
 
 		$totalLines = count($lines);
@@ -174,9 +192,11 @@ abstract class CommonClassTest extends TestCase
 		print PHP_EOL;
 		// Use GitHub Action compatible group output (:warning: arguments not encoded)
 		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
+		// @phan-suppress-next-line PhanUndeclaredClassMethod
 		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
 
 		// Show some information about where it happened
+		// @phan-suppress-next-line PhanUndeclaredClassMethod
 		foreach ($t->getTrace() as $idx => $trace) {
 			if (isset($trace['file'], $trace['line'])  // Only if we have a file name
 				&& !preg_match('/(?:\bphar\b|Framework)/', $trace['file']) // Only if it's not in phpunit
@@ -203,28 +223,24 @@ abstract class CommonClassTest extends TestCase
 		}
 		print "##[endgroup]".PHP_EOL;
 
-		// Print last line of file /var/log/apache2/travis_error_log
-		$logFile = '/var/log/apache2/travis_error_log';
+		// Print last line of file /var/log/apache2/travis_error_log (Unix only)
+		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+			$logFile = '/var/log/apache2/travis_error_log';
 
-		// Check if the file exists and is readable
-		if (@file_exists($logFile) && is_readable($logFile)) {
-			// Read the file into an array
-			$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-			// Get the last 5 lines
-			$lastFiveLines = array_slice($lines, -10);
-
-			// Print the last 5 lines
-			print "Content of ".$logFile."\n";
-			echo "Last 5 lines of $logFile:\n";
-			foreach ($lastFiveLines as $line) {
-				echo $line . "\n";
+			if (file_exists($logFile) && is_readable($logFile)) {
+				$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+				$lastFiveLines = array_slice($lines, -10);
+				print "\n";
+				echo "Last 10 lines of $logFile:\n";
+				foreach ($lastFiveLines as $line) {
+					echo $line . "\n";
+				}
+			} else {
+				echo "Error: File $logFile does not exist or is not readable.\n";
 			}
-		} else {
-			//echo "File $logFile does not exist or is not readable so we can't show more information.\n";
 		}
 
-
+		/** @phpstan-ignore method.notFound */
 		parent::onNotSuccessfulTest($t);
 	}
 
@@ -250,6 +266,7 @@ abstract class CommonClassTest extends TestCase
 		}
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			// @phpstan-ignore method.notFound
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
 		//print $db->getVersion()."\n";
@@ -263,6 +280,7 @@ abstract class CommonClassTest extends TestCase
 	protected function tearDown(): void
 	{
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			// @phpstan-ignore method.notFound
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
 	}
@@ -287,7 +305,7 @@ abstract class CommonClassTest extends TestCase
 	 *
 	 * @param object $obj  Object on which to call method
 	 * @param string $name Method to call
-	 * @param array  $args Arguments to provide in method call
+	 * @param array<mixed>  $args Arguments to provide in method call
 	 * @return mixed Return value
 	 */
 	public static function callMethod($obj, $name, array $args = [])
@@ -308,8 +326,8 @@ abstract class CommonClassTest extends TestCase
 	 * @param   Object $oA                      Object operand 1
 	 * @param   Object $oB                      Object operand 2
 	 * @param   boolean $ignoretype             False will not report diff if type of value differs
-	 * @param   array $fieldstoignorearray      Array of fields to ignore in diff
-	 * @return  array                           Array with differences
+	 * @param   array<int|string> $fieldstoignorearray      Array of fields to ignore in diff
+	 * @return  array<mixed>                    Array with differences
 	 */
 	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
 	{
@@ -515,11 +533,11 @@ abstract class CommonClassTest extends TestCase
 	 * This ensures that the php script is properly run on multiple platforms.
 	 *
 	 * @param string $phpScriptCommand The command and arguments are run by the php binary.
-	 * @param array  $output           The output returned by the command
+	 * @param array<string>  $output           The output returned by the command
 	 * @param int   $exitCode The exit code returned for the execution.
 	 * @return false|string  False on failure, else last line if the output from the command
 	 */
-	protected function runPhpScript($phpScriptCommand, &$output, &$exitCode)
+	protected function runPhpScript(string $phpScriptCommand, &$output, &$exitCode)
 	{
 		$phpExecutable = PHP_BINARY;
 
@@ -540,12 +558,17 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function assertDirectoryNotExistsCompat($directory, $message = '')
 	{
-		$phpunitVersion = \PHPUnit\Runner\Version::id();
+		// @phan-suppress-next-line PhanUndeclaredClassReference, PhanUndeclaredClassMethod
+		$phpunitVersion = class_exists('\PHPUnit\Runner\Version') ? \PHPUnit\Runner\Version::id() : '9.0.0';
 
 		// Check if PHPUnit version is less than 9.0.0
 		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			/** @phpstan-ignore method.notFound */
 			$this->assertDirectoryNotExists($directory, $message);
 		} else {
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			/** @phpstan-ignore method.notFound */
 			$this->assertDirectoryDoesNotExist($directory, $message);
 		}
 	}
@@ -560,12 +583,15 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function assertFileNotExistsCompat($file, $message = '')
 	{
-		$phpunitVersion = \PHPUnit\Runner\Version::id();
+		// @phan-suppress-next-line PhanUndeclaredClassReference, PhanUndeclaredClassMethod
+		$phpunitVersion = class_exists('\PHPUnit\Runner\Version') ? \PHPUnit\Runner\Version::id() : '9.0.0';
 
 		// Check if PHPUnit version is less than 9.0.0
 		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->assertFileNotExists($file, $message);
 		} else {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->assertFileDoesNotExist($file, $message);
 		}
 	}
@@ -581,6 +607,8 @@ abstract class CommonClassTest extends TestCase
 	protected function fakeAssertIfNotUnix($message)
 	{
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			// @phpstan-ignore method.notFound
 			$this->assertTrue(true, "Dummy test to not mark the test as risky");
 			// $this->markTestSkipped("PHPUNIT is running on windows.  $message");
 			return true;

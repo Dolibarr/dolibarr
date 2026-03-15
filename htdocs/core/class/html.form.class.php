@@ -319,7 +319,7 @@ class Form
 				}
 				if (preg_match('/^(string|safehtmlstring|email|phone|url)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
-					$ret .= '<input type="text" id="' . $htmlname . '" name="' . $htmlname . '" value="' . ($editvalue ? $editvalue : $value) . '"' . (empty($tmp[1]) ? '' : ' size="' . $tmp[1] . '"') . ' autofocus>';
+					$ret .= '<input type="text" id="' . $htmlname . '" name="' . $htmlname . '" value="' . ($editvalue ? $editvalue : $value) . '"' . (empty($tmp[1]) ? '' : ' size="' . $tmp[1] . '"') . ' autofocus spellcheck="false">';
 				} elseif (preg_match('/^(integer)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value, 0);
@@ -9043,7 +9043,7 @@ class Form
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
-		global $conf, $extrafields, $user;
+		global $conf, $extrafields, $user, $hookmanager, $action;
 
 		// Example of common usage for a link to a thirdparty
 
@@ -9199,6 +9199,19 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 			//$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1'.(is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
+
+			// Hook 'selectForFormsListUrl' - Added to allow modules to modify the AJAX URL
+			$parameters = array(
+				'urloption' => $urloption,
+				'object'    => $objecttmp,
+				'htmlname'  => $htmlname,
+				'filter'    => $filter,
+				'searchkey' => $searchkey,
+			);
+			$reshook = $hookmanager->executeHooks('selectForFormsListUrl', $parameters, $objecttmp, $action);
+			if (!empty($reshook)) {
+				$urloption = $hookmanager->resPrint;
+			}
 
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter((string) $preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
@@ -10629,9 +10642,11 @@ class Form
 					$htmltoenteralink .= '<table class="noborder">';
 					$htmltoenteralink .= '<tr class="liste_titre">';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
-					$htmltoenteralink .= '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
+					$htmltoenteralink .= '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">';
+					$htmltoenteralink .= '<br>';
 					$htmltoenteralink .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
-					$htmltoenteralink .= '<input type="submit" class="button smallpaddingimp" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					$htmltoenteralink .= '<input type="submit" class="button smallpaddingimp" name="cancel" value="' . $langs->trans('Cancel') . '">';
+					$htmltoenteralink .= '</td>';
 					$htmltoenteralink .= '</tr>';
 					$htmltoenteralink .= '</table>';
 					$htmltoenteralink .= '</form>';
