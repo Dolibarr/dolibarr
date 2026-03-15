@@ -354,7 +354,7 @@ return [
 		// mymodule seen in cti, but not in git.
 		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
-		.'|htdocs/admin/tools/ui/.*'  // @phpstan-ignore-line
+		.'|htdocs/admin/tools/ui/(?!class/documentation\.class\.php).*'  // @phpstan-ignore-line
 		//.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
 		.'|htdocs/includes/nusoap/.*'  // @phpstan-ignore-line
