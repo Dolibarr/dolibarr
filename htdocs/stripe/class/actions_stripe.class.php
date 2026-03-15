@@ -84,7 +84,7 @@ class ActionsStripeconnect extends CommonHookActions
 		if (is_object($object) && $object->element == 'societe') {
 			'@phan-var-force Societe $object';
 			$this->resprints .= '<tr><td>';
-			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
+			$this->resprints .= '<table class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
 			$this->resprints .= '<td><td class="right">';
 			//				$this->resprints.= '<a class="editfielda" href="'.$dolibarr_main_url_root.dol_buildpath('/dolipress/card.php?socid='.$object->id, 1).'">'.img_edit().'</a>';
@@ -102,7 +102,7 @@ class ActionsStripeconnect extends CommonHookActions
 		} elseif ($object instanceof CommonObject && $object->element == 'member') {
 			'@phan-var-force Adherent $object';
 			$this->resprints .= '<tr><td>';
-			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
+			$this->resprints .= '<table class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
 			$this->resprints .= '<td><td class="right">';
 			$this->resprints .= '</td></tr></table>';
@@ -111,36 +111,19 @@ class ActionsStripeconnect extends CommonHookActions
 			$stripe = new Stripe($this->db);
 			if ($stripe->getStripeAccount($service) && $object->fk_soc > 0) {
 				$object->fetch_thirdparty();
-				$customer = $stripe->customerStripe($object->thirdparty, $stripe->getStripeAccount($service));
-				$this->resprints .= $customer->id;
+				if ($object->thirdparty instanceOf Societe) {
+					$customer = $stripe->customerStripe($object->thirdparty, $stripe->getStripeAccount($service));
+					$this->resprints .= $customer->id;
+				}
 			} else {
 				$this->resprints .= $langs->trans("NoStripe");
 			}
 			$this->resprints .= '</td></tr>';
 
 			$this->resprints .= '<tr><td>';
-			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
+			$this->resprints .= '<table class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('SubscriptionStripe');
 			$this->resprints .= '<td><td class="right">';
-			$this->resprints .= '</td></tr></table>';
-			$this->resprints .= '</td>';
-			$this->resprints .= '<td colspan="3">';
-			$stripe = new Stripe($this->db);
-			if (7 == 4) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
-				$object->fetch_thirdparty();
-				$customer = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
-				$this->resprints .= $customer->id;
-			} else {
-				$this->resprints .= $langs->trans("NoStripe");
-			}
-			$this->resprints .= '</td></tr>';
-		} elseif ($object instanceof CommonObject && $object->element == 'adherent_type') {
-			'@phan-var-force Adherent $object';
-			$this->resprints .= '<tr><td>';
-			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
-			$this->resprints .= $langs->trans('PlanStripe');
-			$this->resprints .= '<td><td class="right">';
-			//				$this->resprints.= '<a class="editfielda" href="'.$dolibarr_main_url_root.dol_buildpath('/dolipress/card.php?socid='.$object->id, 1).'">'.img_edit().'</a>';
 			$this->resprints .= '</td></tr></table>';
 			$this->resprints .= '</td>';
 			$this->resprints .= '<td colspan="3">';
