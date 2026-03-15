@@ -2134,10 +2134,11 @@ if (empty($reshook)) {
 		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
-		if ($ret < 0) {
+		$result = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($result < 0) {
 			$error++;
 		}
+
 		if (!$error) {
 			$result = $object->updateExtraField($attribute_name, 'PROPAL_MODIFY');
 			if ($result < 0) {
