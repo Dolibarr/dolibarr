@@ -95,3 +95,5 @@ QuickMemoHelp_DragDrop = Templates can be reordered. Click and drag to organize 
 QuickMemoHelp_Footer = These functionalities respect ergonomic standards to offer you a fluid and productive interface.
 CloseDialog = Close
 ShowMemo = Show memo
+NotEnoughRights = Not enough rights
+Memo = Memo
