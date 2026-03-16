@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  dolibarr:
+    build: .
+    container_name: dolibarr_app
+    ports:
+      - "8080:80"
+    environment:
+      - DOLI_DB_HOST=db
+      - DOLI_DB_NAME=dolibarr
+      - DOLI_DB_USER=dolibarr
+      - DOLI_DB_PASSWORD=${DB_PASSWORD}
+      - DOLI_ADMIN_LOGIN=admin
+      - DOLI_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    volumes:
+      - dolibarr_docs:/var/documents
+      - dolibarr_html:/var/www/html/conf
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - dolibarr_net
+
+  db:
+    image: mariadb:10.6
+    container_name: dolibarr_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=dolibarr
+      - MYSQL_USER=dolibarr
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dolibarr_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: dolibarr_pma
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=db
+    depends_on:
+      - db
+    networks:
+      - dolibarr_net
+    profiles:
+      - dev
+
+volumes:
+  db_data:
+  dolibarr_docs:
+  dolibarr_html:
+
+networks:
+  dolibarr_net:
+    driver: bridge
