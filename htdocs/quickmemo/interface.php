@@ -128,7 +128,7 @@ $db->close();    // Close $db database opened handler
 
 /**
  * Update the coordinates (X, Y), dimensions (W, H), and Z-index of a single memo.
- * @param quickmemo\JsonResponse $jsonResponse The response object to populate.
+ * @param JsonResponse $jsonResponse The response object to populate.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionUpdatePosition($jsonResponse)
@@ -180,7 +180,7 @@ function quickMemoIntefaceActionUpdatePosition($jsonResponse)
 
 /**
  * Batch update coordinates and Z-index for multiple memos.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return void
  */
 function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
@@ -229,7 +229,7 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 
 /**
  * Create a new memo linked to an element or context.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionCreate($jsonResponse)
@@ -299,7 +299,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 
 /**
  * Set a memo status to archived.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionArchiveNote($jsonResponse)
@@ -343,7 +343,7 @@ function quickMemoIntefaceActionArchiveNote($jsonResponse)
 
 /**
  * Transform an existing note into a template (model) for future use.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionCreateModel($jsonResponse)
@@ -403,7 +403,7 @@ function quickMemoIntefaceActionCreateModel($jsonResponse)
 
 /**
  * Delete a memo template.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionDeleteModel($jsonResponse)
@@ -478,7 +478,7 @@ function quickMemoIntefaceActionDeleteModel($jsonResponse)
  * A single UPDATE on the moved row would inevitably produce
  * rank collisions or inconsistent ordering over time.
  *
- * @param quickmemo\JsonResponse $jsonResponse The response object
+ * @param JsonResponse $jsonResponse The response object
  *
  * @return bool|void
  */
@@ -584,7 +584,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 }
 /**
  * Permanently delete a note record from the database.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionDeleteNote($jsonResponse)
@@ -634,7 +634,7 @@ function quickMemoIntefaceActionDeleteNote($jsonResponse)
 
 /**
  * Update the text content of an existing note.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionUpdateNote($jsonResponse)
@@ -680,7 +680,7 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 
 /**
  * Update the background color of a memo.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionUpdateColor($jsonResponse)
@@ -735,7 +735,7 @@ function quickMemoIntefaceActionUpdateColor($jsonResponse)
 
 /**
  * Toggle visibility: Shared globally on the context or restricted to current element.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
@@ -788,7 +788,7 @@ function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
 
 /**
  * Toggle private status (visible only to creator vs shared).
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool Returns false on failure, true on success.
  */
 function quickMemoIntefaceActionUpdatePrivate($jsonResponse)
@@ -839,7 +839,7 @@ function quickMemoIntefaceActionUpdatePrivate($jsonResponse)
 
 /**
  * List available template models and standard color presets.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return bool|void Returns false on failure.
  */
 function quickMemoIntefaceActionListModels($jsonResponse)
@@ -901,7 +901,7 @@ function quickMemoIntefaceActionListModels($jsonResponse)
 
 /**
  * List active notes for a specific object (element_id) or global context.
- * @param quickmemo\JsonResponse $jsonResponse The response object.
+ * @param JsonResponse $jsonResponse The response object.
  * @return void
  */
 function quickMemoIntefaceActionList($jsonResponse)
