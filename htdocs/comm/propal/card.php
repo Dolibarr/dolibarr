@@ -135,17 +135,12 @@ $hookmanager->initHooks(array('propalcard', 'globalcard'));
 $usercanread = $user->hasRight("propal", "lire");
 $usercancreate = $user->hasRight("propal", "creer");
 $usercandelete = $user->hasRight("propal", "supprimer");
-var_dump('$usercandelete = '.$usercandelete.'<br>');
 $usercandeletedraft = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'deletedraft')));
-var_dump('$usercandeletedraft = '.$usercandeletedraft.'<br>');
 
 // Allow draft deletion with advanced permission only if reference is temporary (PROV*) or empty.
 $isdraftwithtemporaryref = (!empty($object->id) && $object->status == Propal::STATUS_DRAFT && preg_match('/^\(?PROV/i', $object->ref));
-var_dump('$isdraftwithtemporaryref = '.$isdraftwithtemporaryref.'<br>');
 $usercandeletedraftwithtmpref = ($usercandeletedraft && $isdraftwithtemporaryref);
-var_dump('$usercandeletedraftwithtmpref = '.$usercandeletedraftwithtmpref.'<br>');
 $usercandeletecurrentpropal = ($usercandelete || $usercandeletedraftwithtmpref);
-var_dump('$usercandeletecurrentpropal = '.$usercandeletecurrentpropal.'<br>');
 
 $usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'close')));
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'validate')));
@@ -3751,9 +3746,9 @@ if ($action == 'create') {
 				// Delete
 				if ($usercandelete || $usercandeletecurrentpropal ) {
 					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandeletecurrentpropal);
-				else {
-						print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans('Validate') . '</a>';
-					}
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans('Validate') . '</a>';
+				}
 
 			}
 		}
