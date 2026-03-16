@@ -39,7 +39,6 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
-
 /**
  * @var string	$conffile
  * @var string	$conffiletoshow
@@ -64,6 +63,8 @@ if (file_exists($conffile)) {
  * @var string	$dolibarr_main_db_cryptkey
  * @var string	$dolibarr_main_url_root
  * @var string	$modulesdir
+ * @var int		$force_install_noedit
+ * @var string	$force_install_dolibarrpassword
  */
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
@@ -144,6 +145,14 @@ if (@file_exists($forcedfile)) {
 
 $force_install_lockinstall = (int) (!empty($force_install_lockinstall) ? $force_install_lockinstall : (GETPOST('installlock', 'aZ09') ? GETPOST('installlock', 'aZ09') : (empty($argv[8]) ? '' : $argv[8])));
 
+
+// Case the password was in forced mode
+if (@$force_install_noedit == 2 && isset($force_install_dolibarrpassword)) {
+	$pass = $force_install_dolibarrpassword;
+	$pass_verif = $force_install_dolibarrpassword;
+}
+
+
 dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$versionto);
 
 $error = 0;
@@ -167,6 +176,10 @@ if ($action == "set") {		// Test on permissions not required here
 
 	if (dol_strlen(trim($login)) == 0) {
 		header("Location: step4.php?error=3&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
+		exit;
+	}
+	if ($pass === '**********' || $pass_verif == '**********') {
+		header("Location: step4.php?error=2&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
 	}
 }

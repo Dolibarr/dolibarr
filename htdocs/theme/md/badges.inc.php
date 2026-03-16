@@ -276,10 +276,12 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 
 		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7', '10');
-		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix.'badgeStatus'.$statusName}) ? '#212529' : '#ffffff';
+		$varname = $statusVarNamePrefix.'badgeStatus'.$statusName;
+		$thisBadgeTextColor = colorIsLight(${$varname}) ? '#212529' : '#ffffff';
 
 		if (!empty(${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName})) {
-			$thisBadgeTextColor = ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
+			$varname = $statusVarNamePrefix.'badgeStatus_textColor'.$statusName;
+			$thisBadgeTextColor = ${$varname};
 		}
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {

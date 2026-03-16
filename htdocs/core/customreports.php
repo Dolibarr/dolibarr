@@ -237,7 +237,7 @@ if ($objecttype) {
 '@phan-var-force CommonObject $object';
 
 // Security check
-$socid = 0;
+//$socid = 0;
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden('Access forbidden to external users');
@@ -360,6 +360,7 @@ $arrayofgroupby = array();
 $arrayofyaxis = array();
 $arrayofvaluesforgroupby = array();
 
+$features = '';
 if (!empty($object->element)) {
 	$features = $object->element;
 } else {
@@ -371,8 +372,11 @@ if (!empty($object->element_for_permission)) {
 	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
-// Security check
-restrictedArea($user, $features, 0, '');
+// $arrayoftype contains several features
+// Test on permission can be done on a given selected feature only
+
+// Security check (do not stop here, get only result to show message later)
+$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
 
 
 /*
@@ -611,6 +615,14 @@ if (count($search_groupby)) {
 	}
 }
 //var_dump($arrayofvaluesforgroupby);exit;
+
+
+if (!$resultcheck) {
+	print '<div class="error">';
+	print $langs->trans("NotEnoughPermissions");
+	print '</div>';
+}
+
 
 
 //$tmparray = dol_getdate(dol_now());

@@ -886,6 +886,16 @@ class User extends CommonObject
 		return $this->admin;
 	}
 
+	/**
+	 *  Return if a user is an external user
+	 *  It replaces old syntax: if ($user->socid)
+	 *
+	 *  @return int						Return integer if user is an dexternal user, 0 if not.
+	 */
+	public function isExternalUser()
+	{
+		return $this->socid;
+	}
 
 	/**
 	 *  Return if a user has a permission.
