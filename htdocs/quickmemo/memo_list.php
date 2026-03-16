@@ -350,6 +350,7 @@ if (!empty($object->ismultientitymanaged) && (int) $object->ismultientitymanaged
 }
 
 $sql .= ' AND ('.implode(' OR ', [
+		'( t.status = '.Memo::STATUS_ARCHIVED.' AND t.private = 0 OR t.fk_user_creat = '.(int) $user->id.' )',
 		'( t.status = '.Memo::STATUS_VALIDATED.' AND t.private = 0 OR t.fk_user_creat = '.(int) $user->id.' )',
 		'( t.status = '.Memo::STATUS_TPL.' AND t.private_tpl = 0 OR t.fk_user_creat = '.(int) $user->id.' )',
 ]).') ';
