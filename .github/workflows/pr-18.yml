@@ -40,7 +40,7 @@ jobs:
       # 1) Generate a GitHub App token (via actions/create-github-app-token)
       - name: Generate GitHub App token
         id: generate-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.PR18_APP_ID }}
           private-key: ${{ secrets.PR18_SECRET_KEY }}
