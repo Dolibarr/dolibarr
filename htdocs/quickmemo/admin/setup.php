@@ -115,7 +115,7 @@ if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'upda
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
-if(empty($action)) {
+if (empty($action)) {
 	$action = 'edit';
 }
 

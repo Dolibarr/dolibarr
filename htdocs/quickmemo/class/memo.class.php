@@ -352,11 +352,6 @@ class Memo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
-		// Clear fields
-//		if (property_exists($object, 'ref')) {
-//			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-//		}
-
 
 		$object->status = self::STATUS_VALIDATED;
 
