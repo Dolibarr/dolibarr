@@ -1521,9 +1521,9 @@ class Memo extends CommonObject
 
 		$tmpMemo = new self($db);
 
-		$sql = 'SELECT m.rowid, m.quick_note, m.pos_x, m.pos_y, m.pos_w, m.pos_h, m.color,
+		$sql = 'SELECT m.rowid, m.quick_note, m.pos_x, m.pos_y, m.pos_w, m.pos_h, m.color, m.pos_z,
        			m.fk_user_creat, m.fk_user_modif, m.shared_on_element, m.date_creation, m.tms, m.private, m.name_tpl,m.rank_tpl,
-               	mu.pos_x as user_pos_x, mu.pos_y as user_pos_y, mu.pos_w as user_pos_w, mu.pos_h as user_pos_h
+               	mu.pos_x as user_pos_x, mu.pos_y as user_pos_y, mu.pos_w as user_pos_w, mu.pos_h as user_pos_h, mu.pos_z as user_pos_z
         FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.' m
         LEFT JOIN '.MAIN_DB_PREFIX.$tmpMemo->table_element.'_user mu
             ON mu.fk_memo = m.rowid
