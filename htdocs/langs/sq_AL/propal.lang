@@ -125,3 +125,4 @@ Signed=nënshkruar
 SignedOnly=E nënshkruar vetëm
 ExpeditionSigned=Dërgesa e nënshkruar
 SignExpedition=Nënshkruaj dërgesën
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Vetëm draft propozimet e përkohshme (PROV* ose referencë boshe) mund të fshihen me këtë leje. Përdorni lejen e fshirjes për referenca përfundimtare.

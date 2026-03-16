@@ -68,3 +68,4 @@ DocModelAzurDescription=Un modelo de propuesta completo (implementación anterio
 DocModelCyanDescription=Un modelo de propuesta completo
 NoSign=Desperdicios
 ProposalsStatisticsSuppliers=Estadísticas de propuestas de proveedores
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Con este permiso solo se pueden eliminar borradores de propuestas temporales (PROV* o referencia vacía). Utilice el permiso de eliminación para referencias definitivas.

@@ -122,3 +122,4 @@ SignSociete_rib=Sign mandate
 SignPropal=Accept proposal
 Signed=signed
 SignedOnly=Signed only
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=ಈ ಅನುಮತಿಯೊಂದಿಗೆ ತಾತ್ಕಾಲಿಕ ಡ್ರಾಫ್ಟ್ ಪ್ರಸ್ತಾವನೆಗಳನ್ನು (PROV* ಅಥವಾ ಖಾಲಿ ಉಲ್ಲೇಖ) ಮಾತ್ರ ಅಳಿಸಬಹುದು. ಖಚಿತವಾದ ಉಲ್ಲೇಖಗಳಿಗಾಗಿ ಅಳಿಸಲು ಅನುಮತಿಯನ್ನು ಬಳಸಿ.

@@ -125,3 +125,4 @@ Signed=sinatua
 SignedOnly=Sinadura bakarrik
 ExpeditionSigned=Bidalketa sinatuta
 SignExpedition=Sinatu bidalketa
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Baimen honekin aldi baterako zirriborro-proposamenak (PROV* edo erreferentzia hutsa) soilik ezaba daitezke. Erabili ezabatzeko baimena behin betiko erreferentziak egiteko.

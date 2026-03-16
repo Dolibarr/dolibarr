@@ -122,3 +122,4 @@ SignSociete_rib=Sign mandate
 SignPropal=Kubali pendekezo
 Signed=saini
 SignedOnly=Imesainiwa pekee
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Mapendekezo ya rasimu ya muda pekee (PROV* au rejeleo tupu) yanaweza kufutwa kwa ruhusa hii. Tumia ruhusa ya kufuta kwa marejeleo mahususi.

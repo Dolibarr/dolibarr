@@ -90,3 +90,4 @@ SignFichinter=Señal de intervención
 SignSociete_rib=Firmar mandato
 SignPropal=Aceptar propuesta
 SignExpedition=Envío de señal
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Con este permiso solo se pueden eliminar borradores de propuestas temporales (PROV* o referencia vacía). Utilice el permiso de eliminación para referencias definitivas.

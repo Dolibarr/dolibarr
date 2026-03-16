@@ -11,3 +11,4 @@ TypeContact_propal_internal_SALESREPFOLL=Vertegenwoordiger die de offerte opvolg
 TypeContact_propal_external_BILLING=Contactpersoon afnemersfactuur
 TypeContact_propal_external_SHIPPING=Klantcontact voor leveringen
 ProposalCustomerSignature=Stempel, datum en handtekening met vermelding "Voor Akkoord"
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Alleen tijdelijke conceptvoorstellen (PROV* of lege referentie) kunnen met deze toestemming worden verwijderd. Gebruik verwijderrechten voor definitieve referenties.

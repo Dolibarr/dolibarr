@@ -125,3 +125,4 @@ Signed=assinado
 SignedOnly=Somente assinado
 ExpeditionSigned=Expedição assinado
 SignExpedition=Assine Expedição
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Somente rascunhos de propostas temporárias (PROV* ou referência vazia) podem ser excluídos com esta permissão. Use a permissão de exclusão para referências definitivas.

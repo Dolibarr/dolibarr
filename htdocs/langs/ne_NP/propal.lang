@@ -97,3 +97,4 @@ PropalAlreadyRefused=Proposal already refused
 PropalSigned=Proposal accepted
 PropalRefused=Proposal refused
 ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=केवल अस्थायी मस्यौदा प्रस्तावहरू (PROV* वा खाली सन्दर्भ) यो अनुमति संग मेटाउन सकिन्छ। निश्चित सन्दर्भहरूको लागि मेटाउने अनुमति प्रयोग गर्नुहोस्।

@@ -125,3 +125,4 @@ Signed=ondertekend
 SignedOnly=Alleen gesigneerd
 ExpeditionSigned=Verzending ondertekend
 SignExpedition=Verzending ondertekenen
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Alleen tijdelijke conceptvoorstellen (PROV* of lege referentie) kunnen met deze toestemming worden verwijderd. Gebruik verwijderrechten voor definitieve referenties.

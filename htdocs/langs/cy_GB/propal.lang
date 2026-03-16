@@ -122,3 +122,4 @@ Signed=Llofnodwyd
 SignedOnly=Wedi'i lofnodi yn unig
 ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Dim ond cynigion drafft dros dro (PROV* neu gyfeirnod gwag) y gellir eu dileu gyda'r caniatâd hwn. Defnyddiwch ganiatâd dileu ar gyfer cyfeiriadau diffiniol.

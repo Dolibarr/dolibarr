@@ -125,3 +125,4 @@ Signed=podpisan
 SignedOnly=Samo podpisano
 ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=S tem dovoljenjem je mogoče izbrisati samo začasne osnutke predlogov (PROV* ali prazen sklic). Za dokončne reference uporabite dovoljenje za brisanje.

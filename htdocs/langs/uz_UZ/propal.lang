@@ -125,3 +125,4 @@ Signed=imzolangan
 SignedOnly=Faqat imzolangan
 ExpeditionSigned=Yetkazib berish imzolangan
 SignExpedition=Yetkazib berishni imzolash
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Ushbu ruxsatnoma bilan faqat vaqtinchalik qoralama takliflarni (PROV* yoki boʻsh maʼlumotnoma) oʻchirib tashlash mumkin. Aniq havolalar uchun oʻchirish ruxsatidan foydalaning.

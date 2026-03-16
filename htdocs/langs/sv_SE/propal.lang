@@ -127,3 +127,4 @@ ExpeditionSigned=Leverans undertecknad
 SignExpedition=Signera leverans
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Visa leveransadress
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Obligatorisk indikation i vissa länder (Frankrike, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Endast tillfälliga utkast till förslag (PROV* eller tom referens) kan raderas med detta tillstånd. Använd raderingstillstånd för definitiva referenser.

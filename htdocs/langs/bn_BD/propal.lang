@@ -125,3 +125,4 @@ Signed=স্বাক্ষরিত
 SignedOnly=শুধুমাত্র স্বাক্ষরিত
 ExpeditionSigned=চালান স্বাক্ষরিত
 SignExpedition=চালানের স্বাক্ষর করুন
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=এই অনুমতি দিয়ে শুধুমাত্র অস্থায়ী খসড়া প্রস্তাব (PROV* বা খালি রেফারেন্স) মুছে ফেলা যাবে। নির্দিষ্ট রেফারেন্সের জন্য মুছে ফেলার অনুমতি ব্যবহার করুন।
