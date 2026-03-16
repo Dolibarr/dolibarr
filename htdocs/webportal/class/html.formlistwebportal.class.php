@@ -259,10 +259,6 @@ class FormListWebPortal
 	 */
 	public function setArrayFields()
 	{
-		global $hookmanager;
-
-		$context = Context::getInstance();
-
 		// Definition of array of fields for columns
 		$this->arrayfields = array();
 		if (is_object($this->object)) {
@@ -284,11 +280,6 @@ class FormListWebPortal
 		$this->arrayfields['remain_to_pay'] = array('type' => 'price', 'label' => 'RemainderToPay', 'checked' => 1, 'enabled' => $this->element == 'invoice' && isModEnabled('invoice'), 'visible' => 1, 'position' => 10000, 'help' => '',);
 		$this->arrayfields['download_link'] = array('type' => '', 'label' => 'File', 'checked' => 1, 'enabled' => ($this->element == 'propal' && isModEnabled('propal')) || ($this->element == 'order' && isModEnabled('order')) || ($this->element == 'invoice' && isModEnabled('invoice')), 'visible' => 1, 'position' => 10001, 'help' => '',);
 		$this->arrayfields['signature_link'] = array('type' => '', 'label' => 'Signature', 'checked' => 1, 'enabled' => $this->element == 'propal' && isModEnabled('propal') && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0, 'visible' => 1, 'position' => 10002, 'help' => '',);
-
-		// Add fields from hooks
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('arrayfieldslist', $parameters, $context);
-		$this->arrayfields = array_merge($this->arrayfields, $hookmanager->resArray);
 
 		$this->controller->listSetArrayFields();
 	}
