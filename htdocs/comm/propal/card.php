@@ -137,6 +137,11 @@ $usercancreate = $user->hasRight("propal", "creer");
 $usercandelete = $user->hasRight("propal", "supprimer");
 $usercandeletedraft = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'deletedraft')));
 
+// Allow draft deletion with advanced permission only if reference is temporary (PROV*) or empty.
+$isdraftwithtemporaryref = (!empty($object->id) && $object->status == Propal::STATUS_DRAFT && ($object->ref === '' || preg_match('/^\(?PROV/i', $object->ref)));
+$usercandeletedraftwithtmpref = ($usercandeletedraft && $isdraftwithtemporaryref);
+$usercandeletecurrentpropal = ($usercandelete || $usercandeletedraftwithtmpref);
+
 $usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'close')));
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'validate')));
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'send')));
@@ -293,7 +298,7 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandeletecurrentpropal) {
 		// Delete proposal
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -2937,7 +2942,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans("CancelPropal"), $langs->trans('ConfirmCancelPropal', $object->ref), 'confirm_cancel', '', 0, 1);
 	} elseif ($action == 'delete') {
 		// Confirm delete
-		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
+		if ($usercandeletecurrentpropal) {
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
+		} else {
+			setEventMessages($langs->trans('ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm'), null, 'errors');
+			$action = '';
+		}
 	} elseif ($action == 'reopen') {
 		// Confirm reopen
 		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp', $object->ref), 'confirm_reopen', '', 0, 1);
@@ -3734,12 +3744,8 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				if ($object->status > Propal::STATUS_DRAFT && getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$usercandelete) {
-					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandeletedraft);
-				} else {
-					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandelete);
-				}
-				
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandeletecurrentpropal);
+
 			}
 		}
 
