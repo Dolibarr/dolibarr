@@ -261,6 +261,8 @@ class FormListWebPortal
 	{
 		global $hookmanager;
 
+		$context = Context::getInstance();
+
 		// Definition of array of fields for columns
 		$this->arrayfields = array();
 		if (is_object($this->object)) {
