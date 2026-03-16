@@ -3747,7 +3747,7 @@ if ($action == 'create') {
 				if ($usercandelete || $usercandeletecurrentpropal ) {
 					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandeletecurrentpropal);
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans('Validate') . '</a>';
+					print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans('Delete') . '</a>';
 				}
 
 			}
