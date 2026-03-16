@@ -47,7 +47,7 @@ jobs:
 
       # 2) Checkout repository (useful if repo content is needed later)
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Debug information (useful for diagnostics)
       - name: Debug info
