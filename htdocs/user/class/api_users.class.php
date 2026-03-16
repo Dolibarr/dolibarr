@@ -373,7 +373,9 @@ class Users extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		// Check user authorization
-		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+		$selfUpdateAllowed = ($id == DolibarrApiAccess::$user->id)
+			&& (DolibarrApiAccess::$user->hasRight('user', 'self', 'creer') || DolibarrApiAccess::$user->hasRight('user', 'self', 'write'));
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin) && !$selfUpdateAllowed) {
 			throw new RestException(403, "User update not allowed");
 		}
 

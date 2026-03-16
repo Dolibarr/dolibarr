@@ -121,7 +121,7 @@ class SupplierInvoices extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) {
+		if (empty(DolibarrApiAccess::$user->socid) && !DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 

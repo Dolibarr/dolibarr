@@ -156,9 +156,12 @@ class Tickets extends DolibarrApi
 		$messages = array();
 		$this->ticket->loadCacheMsgsTicket();
 		if (is_array($this->ticket->cache_msgs_ticket) && count($this->ticket->cache_msgs_ticket) > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 			$num = count($this->ticket->cache_msgs_ticket);
 			$i = 0;
 			while ($i < $num) {
+				$actioncomm = new ActionComm($this->db);
+				$actioncomm->fetch($this->ticket->cache_msgs_ticket[$i]['id']);
 				if ($this->ticket->cache_msgs_ticket[$i]['fk_user_author'] > 0) {
 					$user_action = new User($this->db);
 					$user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_author']);
@@ -174,7 +177,12 @@ class Tickets extends DolibarrApi
 					'fk_user_action_string' => $user_action === null ? '' : dolGetFirstLastname($user_action->firstname, $user_action->lastname),
 					'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
 					'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
-					'private' => $this->ticket->cache_msgs_ticket[$i]['private']
+					'private' => $this->ticket->cache_msgs_ticket[$i]['private'],
+					'code' => $actioncomm->code,
+					'percentage' => $actioncomm->percentage,
+					'type_code' => $actioncomm->type_code,
+					'type_picto' => $actioncomm->type_picto,
+					'userownerid' => $actioncomm->userownerid
 				);
 				$i++;
 			}
@@ -358,6 +366,12 @@ class Tickets extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validateMessage($request_data);
 
+		$return_action_id = false;
+		if (isset($request_data['return_action_id'])) {
+			$return_action_id = !empty($request_data['return_action_id']);
+			unset($request_data['return_action_id']);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -373,8 +387,12 @@ class Tickets extends DolibarrApi
 			throw new RestException(404, 'Ticket not found');
 		}
 		$this->ticket->message = $ticketMessageText;
-		if (!$this->ticket->createTicketMessage(DolibarrApiAccess::$user)) {
+		$actionid = $this->ticket->createTicketMessage(DolibarrApiAccess::$user);
+		if (!$actionid) {
 			throw new RestException(500, 'Error when creating ticket');
+		}
+		if ($return_action_id) {
+			return array('ticket_id' => $this->ticket->id, 'action_id' => $actionid);
 		}
 		return $this->ticket->id;
 	}
