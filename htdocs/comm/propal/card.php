@@ -139,6 +139,7 @@ $usercandeletedraft = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDol
 
 // Allow draft deletion with advanced permission only if reference is temporary (PROV*) or empty.
 $isdraftwithtemporaryref = (!empty($object->id) && $object->status == Propal::STATUS_DRAFT && ($object->ref === '' || preg_match('/^\(?PROV/i', $object->ref)));
+var_dump(preg_match('/^\(?PROV/i', $object->ref));
 $usercandeletedraftwithtmpref = ($usercandeletedraft && $isdraftwithtemporaryref);
 $usercandeletecurrentpropal = ($usercandelete || $usercandeletedraftwithtmpref);
 
