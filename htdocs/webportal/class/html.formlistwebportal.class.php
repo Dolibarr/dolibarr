@@ -678,7 +678,7 @@ class FormListWebPortal
 					$documentmodulepart = $element;
 					if ($element == 'contract') {
 						$element = 'contrat';
-						$documentmodulepart = 'contrat';
+						$documentmodulepart = 'contract';
 					}
 					$filename = dol_sanitizeFileName($this->object->ref);
 					$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
