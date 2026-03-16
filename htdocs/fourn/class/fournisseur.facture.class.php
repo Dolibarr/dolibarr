@@ -2084,7 +2084,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      int         $notrigger              Disable triggers
 	 *	@param      array       $array_options          extrafields array
 	 *	@param      int|null    $fk_unit                Code of the unit to use. Null to use the default one
-	 *	@param      int         $origin_id              id origin document
+	 *	@param      int         $origin_id              id of origin object for the line (document or source line depending on caller context)
 	 *	@param      double      $pu_devise              Amount in currency
 	 *	@param      string      $ref_supplier           Supplier ref
 	 *	@param      int         $special_code           Special code
