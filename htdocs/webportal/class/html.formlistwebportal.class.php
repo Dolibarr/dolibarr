@@ -259,6 +259,8 @@ class FormListWebPortal
 	 */
 	public function setArrayFields()
 	{
+		global $hookmanager;
+
 		// Definition of array of fields for columns
 		$this->arrayfields = array();
 		if (is_object($this->object)) {
@@ -696,6 +698,10 @@ class FormListWebPortal
 					} elseif ($this->element == 'ficheinter') {
 						if ($this->object->fk_statut == Fichinter::STATUS_VALIDATED) {
 							$out = $this->form->getSignatureLink('fichinter', $this->object);
+						}
+					} elseif ($this->element == 'expedition') {
+						if ($this->object->fk_statut == Expedition::STATUS_VALIDATED) {
+							$out = $this->form->getSignatureLink('expedition', $this->object);
 						}
 					}
 				} else {
