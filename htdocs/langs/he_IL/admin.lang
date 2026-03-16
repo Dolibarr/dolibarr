@@ -776,6 +776,7 @@ Permission25=שלח הצעות מסחריות
 Permission26=סגור את ההצעות המסחריות
 Permission27=מחק הצעות מסחריות
 Permission28=ייצוא הצעות מסחריות
+Permission30=מחק טיוטת הצעות מסחריות (הפניה זמנית בלבד)
 Permission31=קראו מוצרים
 Permission32=צור / לשנות מוצרים
 Permission33=קרא מחירי מוצרים

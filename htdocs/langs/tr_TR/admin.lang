@@ -776,6 +776,7 @@ Permission25=Teklif gönder
 Permission26=Teklif kapat
 Permission27=Teklif sil
 Permission28=Teklifleri dışa aktar
+Permission30=Taslak ticari teklifleri silin (yalnızca geçici referans)
 Permission31=Ürün oku
 Permission32=Ürün oluştur/düzenle
 Permission33=Ürünlerin fiyatlarını okuyun

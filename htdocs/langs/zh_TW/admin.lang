@@ -776,6 +776,7 @@ Permission25=發送商業報價
 Permission26=關閉商業報價
 Permission27=刪除商業報價
 Permission28=匯出商業報價
+Permission30=刪除商業提案草稿（僅供臨時參考）
 Permission31=讀取產品
 Permission32=建立/修改產品
 Permission33=讀取產品價格

@@ -776,6 +776,7 @@ Permission25=Enviar los presupuestos
 Permission26=Cerrar presupuestos
 Permission27=Eliminar presupuestos
 Permission28=Exportar los presupuestos
+Permission30=Eliminar presupuestos en borrador (solo referencia temporal)
 Permission31=Consultar productos
 Permission32=Crear/modificar productos
 Permission33=Leer precios de productos

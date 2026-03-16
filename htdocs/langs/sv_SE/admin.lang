@@ -776,6 +776,7 @@ Permission25=Skicka offert
 Permission26=Stäng offert
 Permission27=Radera offert
 Permission28=Exportera offert
+Permission30=Ta bort utkast till kommersiella förslag (endast tillfällig referens)
 Permission31=Se produkter
 Permission32=Skapa/ändra produkter
 Permission33=Se produktpriser

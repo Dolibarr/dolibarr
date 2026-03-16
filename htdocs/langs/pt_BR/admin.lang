@@ -480,6 +480,7 @@ Permission25=Enviar os Orçamentos
 Permission26=Fechar Orçamentos
 Permission27=Eliminar Orçamentos
 Permission28=Exportar Orçamentos
+Permission30=Excluir rascunhos de propostas comerciais (apenas referência temporária)
 Permission31=Ler Produtos
 Permission32=Criar/Modificar Produtos
 Permission34=Deletar Produtos
