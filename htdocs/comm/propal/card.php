@@ -135,7 +135,9 @@ $hookmanager->initHooks(array('propalcard', 'globalcard'));
 $usercanread = $user->hasRight("propal", "lire");
 $usercancreate = $user->hasRight("propal", "creer");
 $usercandelete = $user->hasRight("propal", "supprimer");
+var_dump('$usercandelete = '.$usercandelete.'<br>');
 $usercandeletedraft = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'deletedraft')));
+var_dump('$usercandeletedraft = '.$usercandeletedraft.'<br>');
 
 // Allow draft deletion with advanced permission only if reference is temporary (PROV*) or empty.
 $isdraftwithtemporaryref = (!empty($object->id) && $object->status == Propal::STATUS_DRAFT && preg_match('/^\(?PROV/i', $object->ref));
