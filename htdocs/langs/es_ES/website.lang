@@ -191,6 +191,7 @@ WebPortalPartnerShipCardAccessHelp=Habilitar el acceso al registro de sociedad (
 WEBPORTAL_PROPAL_LIST_ACCESS=Habilitar el acceso a los presupuestos
 WEBPORTAL_ORDER_LIST_ACCESS=Habilitar el acceso a los pedidos
 WEBPORTAL_INVOICE_LIST_ACCESS=Habilitar el acceso a las facturas
+WEBPORTAL_CONTRACT_LIST_ACCESS=Habilitar el acceso a los contratos de cliente
 WEBPORTAL_USER_LOGGED=Seleccione un usuario anónimo
 WebPortalUserLoggedHelp=Este usuario se utiliza para actualizar tarjetas.
 WebPortalHomeTitle=Bienvenido
@@ -479,3 +480,7 @@ WebPortalSharedDocsDirHelp=Ingrese el nombre del directorio, ubicado en la carpe
 DateM=Fecha de modificación
 ThisDirectoryIsEmpty=Este directorio está vacío
 WrittenBy=Escrito por %s
+
+WebPortalContractListMenu=Contratos
+WebPortalContractListTitle=Contratos de clientes
+WebPortalContractListDesc=Lista de mis contratos de clientes

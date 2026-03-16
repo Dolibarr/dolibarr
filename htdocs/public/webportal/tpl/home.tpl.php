@@ -37,5 +37,11 @@ if (empty($context) || !is_object($context)) {
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('invoicelist') . '" title="' . $langs->trans('WebPortalInvoiceListDesc') . '">' . $langs->trans('WebPortalInvoiceListTitle') . '</a>'; ?>
 			</article>
 			<?php endif; ?>
+			<?php if (isModEnabled('contract') && getDolGlobalInt('WEBPORTAL_CONTRACT_LIST_ACCESS')) : ?>
+			<article class="home-links-card --contract-list">
+				<div class="home-links-card__icon" ></div>
+				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('contractlist') . '" title="' . $langs->trans('WebPortalContractListDesc') . '">' . $langs->trans('WebPortalContractListTitle') . '</a>'; ?>
+			</article>
+			<?php endif; ?>
 		</div>
 </main>

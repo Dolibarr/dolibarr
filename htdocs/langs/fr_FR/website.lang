@@ -191,6 +191,7 @@ WebPortalPartnerShipCardAccessHelp=Autoriser l'accès à l'enregistrement des pa
 WEBPORTAL_PROPAL_LIST_ACCESS=Autoriser l'accès aux devis
 WEBPORTAL_ORDER_LIST_ACCESS=Autoriser l'accès aux commandes
 WEBPORTAL_INVOICE_LIST_ACCESS=Autoriser l'accès aux factures
+WEBPORTAL_CONTRACT_LIST_ACCESS=Activer l'accès aux contrats clients
 WEBPORTAL_USER_LOGGED=Sélectionnez un utilisateur anonyme
 WebPortalUserLoggedHelp=Cet utilisateur est utilisé pour mettre à jour les fiches.
 WebPortalHomeTitle=Bienvenue
@@ -479,3 +480,7 @@ WebPortalSharedDocsDirHelp=Saisissez le nom du répertoire, situé dans le dossi
 DateM=Date de modification
 ThisDirectoryIsEmpty=Ce répertoire est vide.
 WrittenBy=Écrit par %s
+
+WebPortalContractListMenu=Contrats
+WebPortalContractListTitle=Contrats clients
+WebPortalContractListDesc=Liste de mes contrats clients
