@@ -162,12 +162,12 @@ class Memo extends CommonObject
 	public $rowid;
 
 	/**
-	 * @var int
+	 * @var int|null
 	 */
 	public $date_archived;
 
 	/**
-	 * @var int
+	 * @var int|null
 	 */
 	public $fk_user_archived;
 
