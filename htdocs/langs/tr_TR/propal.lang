@@ -127,3 +127,4 @@ ExpeditionSigned=Gönderi imzalandı
 SignExpedition=Gönderiyi imzala
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Teslimat adresini göster
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Bazı ülkelerde zorunlu gösterge (Fransa, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Bu izinle yalnızca geçici taslak teklifler (PROV* veya boş referans) silinebilir. Kesin referanslar için silme iznini kullanın.

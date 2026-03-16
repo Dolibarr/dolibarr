@@ -66,3 +66,4 @@ DefaultModelPropalCreate=Creación de modelo por defecto
 DefaultModelPropalToBill=Modelo por defecto al cerrar una cotización (a facturar)
 ProposalCustomerSignature=Aprobación, timbre, fecha y firma
 ProposalsStatisticsSuppliers=Estadísticas de propuestas de proveedores.
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Con este permiso solo se pueden eliminar borradores de propuestas temporales (PROV* o referencia vacía). Utilice el permiso de eliminación para referencias definitivas.

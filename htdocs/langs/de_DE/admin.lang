@@ -776,6 +776,7 @@ Permission25=Angebote per E-Mail versenden
 Permission26=Angebote schließen
 Permission27=Angebote löschen
 Permission28=Angebote exportieren
+Permission30=Entwurfsangebote löschen (nur temporäre Referenz)
 Permission31=Produkte/Leistungen einsehen
 Permission32=Produkte/Leistungen erstellen/bearbeiten
 Permission33=Preise für Produkte einsehen

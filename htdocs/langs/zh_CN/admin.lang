@@ -776,6 +776,7 @@ Permission25=发送报价单
 Permission26=关闭报价单
 Permission27=删除报价单
 Permission28=导出报价单
+Permission30=删除商业提案草案（仅供临时参考）
 Permission31=查看产品信息
 Permission32=创建/变更产品信息
 Permission33=读取产品价格

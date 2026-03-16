@@ -125,3 +125,4 @@ Signed=دستخط شدہ
 SignedOnly=صرف دستخط شدہ
 ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=اس اجازت سے صرف عارضی مسودے کی تجاویز (PROV* یا خالی حوالہ) حذف کی جا سکتی ہیں۔ حتمی حوالہ جات کے لیے حذف کی اجازت استعمال کریں۔

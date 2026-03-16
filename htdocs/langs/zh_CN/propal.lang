@@ -127,3 +127,4 @@ ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
 PROPOSAL_SHOW_SHIPPING_ADDRESS=显示货运目的地址
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=某些国家/地区的强制指示（法国、...）
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=使用此权限只能删除临时提案草案（PROV* 或空参考）。使用删除权限来获取明确的参考。

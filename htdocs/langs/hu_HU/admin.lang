@@ -776,6 +776,7 @@ Permission25=Üzleti ajánlatok küldése
 Permission26=Szoros kereskedelmi javaslatok
 Permission27=Törlés kereskedelmi javaslatok
 Permission28=Export üzleti ajánlatot
+Permission30=Kereskedelmi ajánlattervezetek törlése (csak ideiglenes hivatkozás)
 Permission31=Olvassa termékek
 Permission32=Létrehozza / módosítja termékek
 Permission33=Olvassa el a termékek árait

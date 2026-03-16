@@ -127,3 +127,4 @@ ExpeditionSigned=発送署名済み
 SignExpedition=出荷に署名する
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=一部の国では表示が義務付けられていマスる (フランス, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=この権限で削除できるのは、一時的なドラフト提案 (PROV* または空の参照) のみです。最終的な参照には削除権限を使用してください。

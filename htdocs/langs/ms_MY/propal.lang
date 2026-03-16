@@ -111,3 +111,4 @@ PropalAlreadyRefused=Proposal already refused
 PropalSigned=Proposal accepted
 PropalRefused=Proposal refused
 ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Hanya draf cadangan sementara (PROV* atau rujukan kosong) boleh dipadamkan dengan kebenaran ini. Gunakan kebenaran padam untuk rujukan muktamad.

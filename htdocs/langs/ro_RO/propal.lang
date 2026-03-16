@@ -128,3 +128,4 @@ ExpeditionSigned=Livrare semnată
 SignExpedition=Semnare livrare
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Afișează adresa de livrare
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Mențiune obligatorie în unele țări (Franța, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Doar proiectele temporare de propuneri (PROV* sau referință goală) pot fi șterse cu această permisiune. Utilizați permisiunea de ștergere pentru referințe definitive.

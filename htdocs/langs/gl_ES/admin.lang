@@ -776,6 +776,7 @@ Permission25=Enviar orzamentos comerciais
 Permission26=Pechar orzamentos comerciais
 Permission27=Eliminar orzamentos comerciais
 Permission28=Exportar orzamentos comerciais
+Permission30=Eliminar borradores de propostas comerciais (só referencia temporal)
 Permission31=Consultar produtos
 Permission32=Crear/modificar produtos
 Permission33=Ler prezos dos produtos

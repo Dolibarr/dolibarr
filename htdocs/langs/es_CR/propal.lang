@@ -66,3 +66,4 @@ DefaultModelPropalToBill=Plantilla predeterminada al cerrar una propuesta empres
 NoSigned=Establecer no firmado
 PassedInOpenStatus=Ha sido validado
 Signed=Firmado
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Con este permiso solo se pueden eliminar borradores de propuestas temporales (PROV* o referencia vacía). Utilice el permiso de eliminación para referencias definitivas.

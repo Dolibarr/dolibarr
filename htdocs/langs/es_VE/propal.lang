@@ -2,3 +2,4 @@
 PropalsOpened=Abierta
 PropalStatusValidatedShort=Abierta
 CreateEmptyPropal=Crear propuesta comercial vacía o desde la lista de productos/servicios\n
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Con este permiso solo se pueden eliminar borradores de propuestas temporales (PROV* o referencia vacía). Utilice el permiso de eliminación para referencias definitivas.

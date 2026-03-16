@@ -125,3 +125,4 @@ Signed=đã ký
 SignedOnly=Chỉ có chữ ký
 ExpeditionSigned=Đã ký lô hàng
 SignExpedition=Ký hiệu lô hàng
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Chỉ những đề xuất dự thảo tạm thời (PROV* hoặc tham chiếu trống) mới có thể bị xóa bằng quyền này. Sử dụng quyền xóa đối với các tài liệu tham khảo dứt khoát.

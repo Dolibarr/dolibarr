@@ -776,6 +776,7 @@ Permission25=Mengirim Proposal Komersil
 Permission26=Menutup Proposal Komersil
 Permission27=Menghapus Proposal Komersil
 Permission28=Ekspor proposal komersial
+Permission30=Hapus draf proposal komersial (hanya referensi sementara)
 Permission31=Membaca Produk
 Permission32=Membuat/Merubah produk
 Permission33=Baca harga produk

@@ -127,3 +127,4 @@ ExpeditionSigned=Lähetys allekirjoitettu
 SignExpedition=Allekirjoita lähetys
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Näytä toimitusosoite
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Vain väliaikaiset ehdotusluonnokset (PROV* tai tyhjä viite) voidaan poistaa tällä luvalla. Käytä poisto-oikeutta lopullisiin viittauksiin.

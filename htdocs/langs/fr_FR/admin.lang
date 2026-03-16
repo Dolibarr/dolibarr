@@ -777,6 +777,7 @@ Permission25=Envoyer les propositions commerciales
 Permission26=Clôturer les propositions commerciales
 Permission27=Supprimer les propositions commerciales
 Permission28=Exporter les propositions commerciales
+Permission30=Supprimer les propositions commerciales brouillon (référence temporaire uniquement)
 Permission31=Consulter les produits
 Permission32=Créer/modifier les produits
 Permission33=Lire les prix des produits

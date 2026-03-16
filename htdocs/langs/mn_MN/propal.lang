@@ -97,3 +97,4 @@ PropalAlreadyRefused=Proposal already refused
 PropalSigned=Proposal accepted
 PropalRefused=Proposal refused
 ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Энэ зөвшөөрөлтэйгээр зөвхөн түр зуурын ноорог саналуудыг (PROV* эсвэл хоосон лавлагаа) устгах боломжтой. Тодорхой лавлагааны хувьд устгах зөвшөөрлийг ашиглана уу.

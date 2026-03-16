@@ -776,6 +776,7 @@ Permission25=Envia pressupostos
 Permission26=Tancar pressupostos
 Permission27=Elimina pressupostos
 Permission28=Exportar els pressupostos
+Permission30=Suprimeix esborranys de propostes comercials (només referència temporal)
 Permission31=Consulta productes
 Permission32=Crear/modificar productes
 Permission33=Consulta preus de productes

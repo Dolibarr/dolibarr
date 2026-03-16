@@ -127,3 +127,4 @@ ExpeditionSigned=Przesyłka podpisana
 SignExpedition=Znak wysyłki
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Pokaż adres wysyłki
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Za pomocą tego uprawnienia można usunąć tylko tymczasowe wersje robocze propozycji (PROV* lub puste odniesienie). Użyj uprawnienia do usuwania w przypadku ostatecznych odniesień.

@@ -776,6 +776,7 @@ Permission25=Pošiljanje komercialnih ponudb
 Permission26=Zaključevanje komercialnih ponudb
 Permission27=Brisanje komercialnih ponudb
 Permission28=Izvoz komercialnih ponudb
+Permission30=Izbriši osnutke komercialnih predlogov (samo začasna referenca)
 Permission31=Branje proizvodov
 Permission32=Kreiranje/spreminjanje proizvodov
 Permission33=Preberite cene izdelkov

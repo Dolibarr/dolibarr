@@ -125,3 +125,4 @@ Signed=ተፈራረመ
 SignedOnly=ብቻ የተፈረመ
 ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=በዚህ ፈቃድ ጊዜያዊ ረቂቅ ሀሳቦች (PROV* ወይም ባዶ ማጣቀሻ) ብቻ ሊሰረዙ ይችላሉ። ለትክክለኛ ማጣቀሻዎች የመሰረዝ ፍቃድን ተጠቀም።

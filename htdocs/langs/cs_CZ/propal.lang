@@ -125,3 +125,4 @@ Signed=podepsaný
 SignedOnly=Podepsáno pouze
 ExpeditionSigned=Zásilka podepsána
 SignExpedition=Podepsat zásilku
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=S tímto oprávněním lze smazat pouze dočasné koncepty návrhů (PROV* nebo prázdný odkaz). Pro definitivní odkazy použijte oprávnění k odstranění.
