@@ -277,7 +277,7 @@ class FormListWebPortal
 			}
 		}
 		$this->arrayfields['remain_to_pay'] = array('type' => 'price', 'label' => 'RemainderToPay', 'checked' => 1, 'enabled' => $this->element == 'invoice' && isModEnabled('invoice'), 'visible' => 1, 'position' => 10000, 'help' => '',);
-		$this->arrayfields['download_link'] = array('type' => '', 'label' => 'File', 'checked' => 1, 'enabled' => ($this->element == 'propal' && isModEnabled('propal')) || ($this->element == 'order' && isModEnabled('order')) || ($this->element == 'invoice' && isModEnabled('invoice')), 'visible' => 1, 'position' => 10001, 'help' => '',);
+		$this->arrayfields['download_link'] = array('type' => '', 'label' => 'File', 'checked' => 1, 'enabled' => ($this->element == 'propal' && isModEnabled('propal')) || ($this->element == 'order' && isModEnabled('order')) || ($this->element == 'invoice' && isModEnabled('invoice')) || ($this->element == 'contract' && isModEnabled('contract')), 'visible' => 1, 'position' => 10001, 'help' => '',);
 		$this->arrayfields['signature_link'] = array('type' => '', 'label' => 'Signature', 'checked' => 1, 'enabled' => $this->element == 'propal' && isModEnabled('propal') && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0, 'visible' => 1, 'position' => 10002, 'help' => '',);
 
 		$this->controller->listSetArrayFields();
@@ -660,7 +660,7 @@ class FormListWebPortal
 		if (is_object($this->object)) {
 			$out = $this->controller->listPrintValueBefore($field_key, $field_spec, $record);
 			if (empty($out)) {
-				if ($field_key == 'status' || $field_key == 'fk_statut') {
+				if ($field_key == 'status' || $field_key == 'fk_statut' || $field_key == 'statut') {
 					if ($this->element == 'invoice') {
 						// specific to get invoice status (depends on payment)
 						$out = $this->object->getLibStatut(5, $record->invoice_payment);
@@ -675,9 +675,14 @@ class FormListWebPortal
 					}
 				} elseif ($field_key == 'download_link') {
 					$element = $this->element;
+					$documentmodulepart = $element;
+					if ($element == 'contract') {
+						$element = 'contrat';
+						$documentmodulepart = 'contrat';
+					}
 					$filename = dol_sanitizeFileName($this->object->ref);
 					$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
-					$out = $this->form->getDocumentsLink($element, $filename, $filedir);
+					$out = $this->form->getDocumentsLink($documentmodulepart, $filename, $filedir);
 				} elseif ($field_key == 'signature_link') {
 					if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
 						$out = $this->form->getSignatureLink('proposal', $this->object);

@@ -191,6 +191,7 @@ WebPortalPartnerShipCardAccessHelp=Abilita l'accesso al record della partnership
 WEBPORTAL_PROPAL_LIST_ACCESS=Abilita l'accesso a Proposte
 WEBPORTAL_ORDER_LIST_ACCESS=Abilita l'accesso agli ordini
 WEBPORTAL_INVOICE_LIST_ACCESS=Abilita l'accesso a fatture
+WEBPORTAL_CONTRACT_LIST_ACCESS=Abilita l'accesso ai contratti cliente
 WEBPORTAL_USER_LOGGED=Seleziona un utente anonimo
 WebPortalUserLoggedHelp=Questo utente viene utilizzato per aggiornare le carte
 WebPortalHomeTitle=Benvenuto
@@ -479,3 +480,7 @@ WebPortalSharedDocsDirHelp=Enter the name of the directory, located in the ECM/G
 DateM=Modification Date
 ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
+
+WebPortalContractListMenu=Contratti
+WebPortalContractListTitle=Contratti clienti
+WebPortalContractListDesc=Elenco dei miei contratti clienti
