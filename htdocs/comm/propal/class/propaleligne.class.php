@@ -373,6 +373,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,p.barcode as product_barcode,';
+		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
@@ -427,7 +428,12 @@ class PropaleLigne extends CommonObjectLine
 				$this->product_custom_code = $objp->customcode;
 				$this->product_custom_country_id = $objp->country_id;
 				$this->product_custom_country_code = $objp->country_code;
+
 				$this->fk_unit          = $objp->fk_unit;
+				$this->weight = $objp->weight;
+				$this->weight_units = $objp->weight_units;
+				$this->volume = $objp->volume;
+				$this->volume_units = $objp->volume_units;
 
 				$this->packaging      	= $objp->packaging;
 
@@ -465,7 +471,7 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0)
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 

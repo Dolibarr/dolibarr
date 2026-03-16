@@ -482,12 +482,25 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$postactionmessages = array();
 
 		if ($paymentTypeCode == "CB" && ($paymentTypeCodeInDolibarr == 'card' || empty($paymentTypeCodeInDolibarr))) {
-			// Case payment type in Stripe and into prelevement_demande are both CARD.
+			// Case payment type at Stripe side and into prelevement_demande are both CARD.
 			// For this case, payment should already have been recorded so we just update flag of payment request if not yet 1
 
-			// TODO Set traite to 1
-			dol_syslog("TODO update flag traite to 1");
-			dol_syslog("TODO update flag traite to 1", LOG_DEBUG, 0, '_payment');
+			// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+			$paiement_ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+			$paiement_ext_payment_idold = $TRANSACTIONID;
+			$paiement_ext_payment_site = $service;
+
+			// Update the payment request to pay by credit card
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET traite = 1 WHERE traite = 0";
+			$sql .= " AND (type = '' OR type = 'card')";
+			$sql .= " AND (ext_payment_id = '".$db->escape($paiement_ext_payment_id)."' OR ext_payment_id = '".$db->escape($paiement_ext_payment_idold)."')";
+			$sql .= " AND ext_payment_site = '".$db->escape($paiement_ext_payment_site)."'";
+			$sql .= " AND fk_facture = ".((int) $invoice_id);
+			$sql .= " AND sourcetype = 'facture'";
+
+			dol_syslog("TODO update flag traite to 1 sql=".$sql);
+			dol_syslog("TODO update flag traite to 1 sql=".$sql, LOG_DEBUG, 0, '_payment');
+			//$db->query($sql);
 		} elseif ($paymentTypeCode == "PRE" && $paymentTypeCodeInDolibarr == 'ban') {
 			// Case payment type is Direct Debit and into prelevement_demande is also BAN.
 			// For this case, payment on invoice (not yet recorded) must be recorded and direct debit order must be closed.

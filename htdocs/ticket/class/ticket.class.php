@@ -1762,6 +1762,64 @@ class Ticket extends CommonObject
 	}
 
 	/**
+	 *   Set read date if not already set.
+	 *
+	 * @param   User    $user       User performing the action
+	 * @param   int     $notrigger  Disable triggers
+	 * @return  int                 Return -1 if error, 0 if nothing done, 1 if success
+	 */
+	public function setReadDate($user, $notrigger = 0)
+	{
+		global $langs;
+
+		if (!empty($this->date_read)) {
+			return 0;
+		}
+
+		$this->oldcopy = dol_clone($this, 2);
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+		$sql .= " SET date_read = '".$this->db->idate(dol_now())."'";
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::setReadDate");
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->db->rollback();
+			$this->date_read = $this->oldcopy->date_read;
+			$this->error = $this->db->lasterror();
+
+			dol_syslog(get_class($this)."::setReadDate ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		if (!$notrigger) {
+			$result = $this->call_trigger('TICKET_MODIFY', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				$this->date_read = $this->oldcopy->date_read;
+				$this->error = implode(',', $this->errors);
+
+				dol_syslog(get_class($this)."::setReadDate ".$this->error, LOG_ERR);
+				return -1;
+			}
+		}
+
+		$this->db->commit();
+
+		$this->date_read = dol_now();
+		$this->fk_user_modif = $user->id;
+		$this->user_modification_id = $user->id;
+
+		return 1;
+	}
+
+	/**
 	 *    Set an assigned user to a ticket.
 	 *
 	 *    @param    User		$user				Object user

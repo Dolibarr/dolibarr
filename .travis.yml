@@ -157,6 +157,7 @@ install:
   #sudo apt install composer
   composer -V
   sudo composer -n config -g vendor-dir htdocs/includes
+  sudo composer -n config audit.block-insecure false
   sudo chmod -R a+rwx /home/travis/.config/composer
   echo
 

@@ -421,7 +421,7 @@ if (empty($dolibarr_main_restrict_eval_methods)) {
 } else {
 	print $dolibarr_main_restrict_eval_methods;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
 print '<br>';
 
 

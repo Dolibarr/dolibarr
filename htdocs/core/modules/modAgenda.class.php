@@ -584,7 +584,14 @@ class modAgenda extends DolibarrModules
 				'class' => 'CActionComm',
 				'method' => 'fetch',
 				'dict' => 'DictionaryActions'
-			)
+			),
+			'ac.fk_project' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/projet/class/project.class.php',
+				'class'   => 'Project',
+				'method'  => 'fetch',
+				'element' => 'Project'
+			),
 		);
 
 		// Import Event Extra Fields
