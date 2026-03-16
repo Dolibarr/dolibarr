@@ -451,6 +451,8 @@ if ($resql) {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+	print '<div class="neutral">';
+
 	// Box to select active chart of account
 	print $langs->trans("Selectchartofaccounts")." : ";
 	print '<select class="flat minwidth200" name="chartofaccounts" id="chartofaccounts">';
@@ -485,7 +487,7 @@ if ($resql) {
 	print ajax_combobox("chartofaccounts");
 	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button button-edit small" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
-	print '<br>';
+	print '</div>';
 
 	$parameters = array('chartofaccounts' => $chartofaccounts, 'permissiontoadd' => $permissiontoadd, 'permissiontodelete' => $permissiontodelete);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $accounting, $action); // Note that $action and $object may have been modified by hook

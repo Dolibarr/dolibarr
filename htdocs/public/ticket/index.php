@@ -108,7 +108,7 @@ print '<a href="list.php'.(!empty($entity) && isModEnabled('multicompany') ? '?e
 print '<a href="view.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
 print '<div class="clearboth"></div>';
 print '</div>';  // ends '<div class="ticketform">';
-print '</div>';  // ends '<div class="ticketpublicarea ticketlargemargin centpercent">';
+print '</div>';  // ends '<div class="ticketpublicarea ticketlargemargin">';
 
 if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
 	// End of page
