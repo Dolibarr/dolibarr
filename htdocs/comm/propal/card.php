@@ -139,9 +139,11 @@ $usercandeletedraft = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDol
 
 // Allow draft deletion with advanced permission only if reference is temporary (PROV*) or empty.
 $isdraftwithtemporaryref = (!empty($object->id) && $object->status == Propal::STATUS_DRAFT && preg_match('/^\(?PROV/i', $object->ref));
-var_dump(preg_match('/^\(?PROV/i', $object->ref));
+var_dump('$isdraftwithtemporaryref = '.$isdraftwithtemporaryref.'<br>');
 $usercandeletedraftwithtmpref = ($usercandeletedraft && $isdraftwithtemporaryref);
+var_dump('$usercandeletedraftwithtmpref = '.$usercandeletedraftwithtmpref.'<br>');
 $usercandeletecurrentpropal = ($usercandelete || $usercandeletedraftwithtmpref);
+var_dump('$usercandeletecurrentpropal = '.$usercandeletecurrentpropal.'<br>');
 
 $usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'close')));
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'validate')));
