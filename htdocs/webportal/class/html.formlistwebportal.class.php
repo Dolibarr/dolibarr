@@ -688,10 +688,6 @@ class FormListWebPortal
 						if ($this->object->fk_statut == Fichinter::STATUS_VALIDATED) {
 							$out = $this->form->getSignatureLink('fichinter', $this->object);
 						}
-					} elseif ($this->element == 'expedition') {
-						if ($this->object->fk_statut == Expedition::STATUS_VALIDATED) {
-							$out = $this->form->getSignatureLink('expedition', $this->object);
-						}
 					}
 				} else {
 					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');
