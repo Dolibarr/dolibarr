@@ -3749,7 +3749,6 @@ if ($action == 'create') {
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans('Delete') . '</a>';
 				}
-
 			}
 		}
 
