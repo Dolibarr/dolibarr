@@ -52,7 +52,7 @@ class WebPortalContract extends Contrat
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1,),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 25,),
 		'date_contrat' => array('type' => 'date', 'label' => 'DateContract', 'enabled' => 1, 'visible' => 2, 'position' => 60,),
-		'date_fin_validite' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 2, 'position' => 70,),
+		'denormalized_lower_planned_end_date' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 2, 'position' => 70,),
 		'total_ht' => array('type' => 'price', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => 2, 'position' => 125, 'isameasure' => 1,),
 		'total_tva' => array('type' => 'price', 'label' => 'VAT', 'enabled' => 1, 'visible' => 2, 'position' => 130, 'isameasure' => 1,),
 		'total_ttc' => array('type' => 'price', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => 2, 'position' => 145, 'isameasure' => 1,),
