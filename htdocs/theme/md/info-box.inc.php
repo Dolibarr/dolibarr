@@ -93,22 +93,31 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-.member-company-back {
-	padding: 2px;
-	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
-	border-radius: 3px;
-	white-space: nowrap;
-}
 .member-individual-back {
 	padding: 2px;
 	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
+	background-color: #258fa5;
+	color: #fff;
 	border-radius: 3px;
 	white-space: nowrap;
 }
+.member-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #557b95;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+.member-individual-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #40859d;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -415,7 +424,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
-	background: var(--infoboxmoduleenabledbgcolor);
+	/* background: var(--infoboxmoduleenabledbgcolor); */
 	border-radius: 6px;
 }
 .info-box-content-warning span.font-status4 {
@@ -446,6 +455,9 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-text{
 	font-size: 0.90em;
+}
+.info-box-desc {
+	font-size: 0.92em;
 }
 /* Force values for small screen 480 */
 /*

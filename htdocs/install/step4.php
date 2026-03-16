@@ -28,7 +28,6 @@
 
 
 include_once 'inc.php';
-
 /**
  * @var string	$conffile
  * @var string	$conffiletoshow
@@ -37,6 +36,9 @@ include_once 'inc.php';
  * @var Translate $langs
  *
  * @var string	$dolibarr_main_document_root
+ * @var int		$force_install_noedit
+ * @var string	$force_install_dolibarrlogin
+ * @var string	$force_install_dolibarrpassword
  */
 
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
@@ -56,7 +58,7 @@ if ($conffile == "/etc/dolibarr/conf.php") {
 	$forcedfile = "/etc/dolibarr/install.forced.php";
 }
 if (@file_exists($forcedfile)) {
-	$useforcedwizard = true;
+	$useforcedwizard = true;	// used into install.forced.php
 	include_once $forcedfile;
 }
 
@@ -90,13 +92,14 @@ print '<table cellspacing="0" cellpadding="2">';
 
 $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
+
 if ($db->ok) {
 	print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
-	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').' spellcheck="false" autofocus></td></tr>';
+	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (!empty($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && !empty($force_install_dolibarrlogin) ? ' disabled' : '').' spellcheck="false" autofocus></td></tr>';
 	print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
-	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8" value="'. (isset($force_install_dolibarrpassword) ? $force_install_dolibarrpassword : '').'"'.(@$force_install_noedit == 2 && $force_install_dolibarrpassword !== null ? ' disabled' : '').'></td></tr>';
+	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8" value="'. (!empty($force_install_dolibarrpassword) ? '**********' : '').'"'.(@$force_install_noedit == 2 && !empty($force_install_dolibarrpassword) ? ' disabled' : '').'></td></tr>';
 	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordRetype").' :</label></td><td>';
-	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8" value="'.(isset($force_install_dolibarrpassword) ? $force_install_dolibarrpassword : '').'"'.(@$force_install_noedit == 2 && $force_install_dolibarrpassword !== null ? ' disabled' : '').'></td></tr>';
+	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8" value="'.(!empty($force_install_dolibarrpassword) ? '**********' : '').'"'.(@$force_install_noedit == 2 && !empty($force_install_dolibarrpassword) ? ' disabled' : '').'></td></tr>';
 	print '</table>';
 
 	if (GETPOSTINT("error") == 1) {
