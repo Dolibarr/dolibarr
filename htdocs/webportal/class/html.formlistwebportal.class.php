@@ -655,9 +655,7 @@ class FormListWebPortal
 	 */
 	public function printValue($field_key, $field_spec, &$record, $i, &$totalarray)
 	{
-		global $conf, $hookmanager;
-
-		$context = Context::getInstance();
+		global $conf;
 
 		$out = '';
 		if (is_object($this->object)) {
@@ -700,15 +698,7 @@ class FormListWebPortal
 						}
 					}
 				} else {
-					// Add fields from hooks
-					$parameters = array();
-					$reshook = $hookmanager->executeHooks('printvaluelist', $parameters, $context);
-					if (empty($hookmanager->resPrint)) {
-						$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');
-					} else {
-						$out = $hookmanager->resPrint;
-						$hookmanager->resPrint = '';
-					}
+					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');
 				}
 			}
 
