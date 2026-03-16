@@ -681,7 +681,9 @@ class FormListWebPortal
 						$documentmodulepart = 'contract';
 					}
 					$filename = dol_sanitizeFileName($this->object->ref);
-					$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
+					$entity = (!empty($this->object->entity) ? (int) $this->object->entity : (int) $conf->entity);
+					$diroutput = (!empty($conf->{$element}->multidir_output[$entity]) ? $conf->{$element}->multidir_output[$entity] : $conf->{$element}->dir_output);
+					$filedir = $diroutput . '/' . dol_sanitizeFileName($this->object->ref);
 					$out = $this->form->getDocumentsLink($documentmodulepart, $filename, $filedir);
 				} elseif ($field_key == 'signature_link') {
 					if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
