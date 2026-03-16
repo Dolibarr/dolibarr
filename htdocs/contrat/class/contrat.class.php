@@ -1825,9 +1825,9 @@ class Contrat extends CommonObject
 			}
 
 			// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-			$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->id)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-			$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->id);
+			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+			$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->id)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+			$sqltoupdatecontract .= " WHERE rowid = ".((int) $this->id);
 			$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 			if (!$resqltoupdatecontract) {
 				$this->error = $this->db->lasterror();
@@ -2842,9 +2842,9 @@ class Contrat extends CommonObject
 								$contractlineprocessed[$obj->lid] = $object->ref;
 
 								// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-								$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-								$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $object->id)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-								$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $object->id);
+								$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+								$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $object->id)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+								$sqltoupdatecontract .= " WHERE rowid = ".((int) $object->id);
 								$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 								if (!$resqltoupdatecontract) {
 									$this->error = $this->db->lasterror();
