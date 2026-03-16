@@ -623,7 +623,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 
 					$product_thumbnail_html = '';
 					if (!empty($prod->entity)) {
-						$product_thumbnail = $prod->show_photos('product', $conf->product->multidir_output[(int) ($prod->entity ?: $conf->entity)], 1, 1, 0, 0, 0, 80);
+						$product_thumbnail = $prod->show_photos('product', $conf->product->multidir_output[(int) $prod->entity], 1, 1, 0, 0, 0, 80);
 						if ($prod->nbphoto > 0) {
 							$product_thumbnail_html = $product_thumbnail;
 						}
