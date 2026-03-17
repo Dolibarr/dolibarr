@@ -151,7 +151,7 @@ class TicketListController extends AbstractListController
 				return '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$langs->trans('WebPortalTicketConsultationLink').'</a>';
 			}
 
-			return '<span class="classfortooltip" title="'.dol_escape_htmltag($langs->trans('WebPortalTicketConsultationTooltipNotPublic')).'">'.img_picto($langs->trans('WebPortalTicketConsultationTooltipNotPublic'), 'info').'</span>';
+			return img_picto('', 'info', 'class="classfortooltip" title="'.dol_escape_htmltag($langs->trans('WebPortalTicketConsultationTooltipNotPublic')).'"');
 		}
 
 		return '';
