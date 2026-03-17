@@ -43,6 +43,7 @@ class WebPortalFicheinter extends Fichinter
 	const STATUS_SIGN_SIGNED_ALL_PARTIES = 15;
 
 	const ARRAY_STATUS_LABEL = array(
+		'-1' => '',
 		self::STATUS_DRAFT => 'StatusInterInDraft',
 		self::STATUS_VALIDATED => 'StatusInterInValidated',
 		self::STATUS_BILLED => 'StatusInterInvoiced',
@@ -63,6 +64,9 @@ class WebPortalFicheinter extends Fichinter
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 25),
 		'fk_soc' => array('type' => 'integer', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => -2, 'position' => 40),
 		'datei' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 2, 'position' => 60),
+		'dateo' => array('type' => 'date', 'label' => 'Dateo', 'enabled' => 1, 'visible' => 2, 'position' => 61),
+		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => 2, 'position' => 62),
+		'datet' => array('type' => 'date', 'label' => 'Datet', 'enabled' => 1, 'visible' => 2, 'position' => 63),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 2, 'position' => 80),
 		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL),
 	);
