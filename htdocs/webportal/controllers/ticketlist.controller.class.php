@@ -148,6 +148,9 @@ class TicketListController extends AbstractListController
 			$baseurl = rtrim($baseurl, '/').'/';
 			if ((int) ($record->fk_user_create ?? 0) <= 0 && !empty($record->track_id)) {
 				$url = $baseurl.'view.php?track_id='.urlencode((string) $record->track_id);
+				if (!empty($record->origin_email)) {
+					$url .= '&email='.urlencode((string) $record->origin_email);
+				}
 				return '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$langs->trans('WebPortalTicketConsultationLink').'</a>';
 			}
 
