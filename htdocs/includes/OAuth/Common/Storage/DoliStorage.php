@@ -66,6 +66,7 @@ class DoliStorage implements TokenStorageInterface
 	public $date_modification;
 
 	public $userid;		// ID of user for user specific OAuth entries
+	public $last_insert_id;		// The ID of last inserted record
 
 
 	/**
@@ -82,6 +83,7 @@ class DoliStorage implements TokenStorageInterface
 		$this->tokens = array();
 		$this->states = array();
 		$this->tenant = $tenant;
+		$this->last_insert_id = 0;
 		//$this->key = $key;
 		//$this->stateKey = $stateKey;
 	}
@@ -144,7 +146,9 @@ class DoliStorage implements TokenStorageInterface
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				dol_print_error($this->db);
-			}
+			} else {
+                $this->last_insert_id = ((int) $obj['rowid']);
+            }
 		} else {
 			// save
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, entity, datec)";
@@ -154,7 +158,9 @@ class DoliStorage implements TokenStorageInterface
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				dol_print_error($this->db);
-			}
+			} else {
+                $this->last_insert_id = $this->db->last_insert_id(MAIN_DB_PREFIX."oauth_token");
+            }
 		}
 		//print $sql;
 

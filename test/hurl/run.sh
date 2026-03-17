@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright (C) 2025		Jon Bendtsen	<jon.bendtsen.github@jonb.dk>
-# Copyright (C) 2025		MDW		<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2025-2026	MDW		<mdeweerd@users.noreply.github.com>
 
 # Script to run unit tests on API with hurl
 #
@@ -23,8 +23,9 @@ Options:
   --apikey=APIKEY      Specify the API key for API tests.
   --suburl=SUBURL      Specify the suburl of the Dolibarr server.
   --exclude=PATTERN    Exclude tests that match the specified pattern.
-  --verbose            Verbose hurl output
+  --verbose | -v       Verbose hurl output
   --very-verbose       Very verbose hurl output
+  --quiet | -q         Disable info output
   --help               Display this help message and exit.
 
 Test Filters:
@@ -42,15 +43,21 @@ Examples:
 EOHELP
 }
 
-# Github compatible messages
-print_error() { printf "::error::%s\n" "$*" >&2 ; }
-print_warning() { printf "::warning::%s\n" "$*" >&2 ; }
-print_info() { printf "::notice::%s\n" "$*" ; }
-
+if [[ -n "${GITHUB_WORKSPACE}" ]]; then
+	# Github compatible messages
+	print_error() { printf "::error::%s\n" "$*" >&2; }
+	print_warning() { if [[ "${QUIET}" = false ]]; then printf "::warning::%s\n" "$*" >&2 ; fi; }
+	print_info() { if [[ "${QUIET}" = false ]]; then printf "::notice::%s\n" "$*" >&2 ; fi; }
+else
+	print_error() { printf "ERROR: %s\n" "$*" >&2; }
+	print_warning() { if [[ "${QUIET}" = false ]]; then printf "WARNING: %s\n" "$*" >&2 ; fi; }
+	print_info() { if [[ "${QUIET}" = false ]]; then printf "INFO: %s\n" "$*" >&2 ; fi; }
+fi
 
 # Parse command-line arguments as test filters
 test_filters=()
 exclude_patterns=()
+QUIET=false
 
 for arg in "$@"; do
 	case "$arg" in
@@ -83,6 +90,9 @@ for arg in "$@"; do
 			;;
 		--very-verbose|--verbose|-v)
 			VERBOSE=${arg}
+			;;
+		--quiet|-q)
+			QUIET=true
 			;;
 		--help)
 			display_help
@@ -135,31 +145,31 @@ if ! command -v hurl &> /dev/null; then
 			fi
 			case "${ID}" in
 				ubuntu)
-					echo "For Ubuntu >=18.04, Hurl can be installed from ppa:lepapareil/hurl"
-					echo "    VERSION=7.0.0"
-					echo "    sudo apt-add-repository -y ppa:lepapareil/hurl"
-					echo "    sudo apt install hurl=\"${VERSION}*\""
+					echo 'For Ubuntu >=18.04, Hurl can be installed from ppa:lepapareil/hurl'
+					echo '    VERSION=7.0.0'
+					echo '    sudo apt-add-repository -y ppa:lepapareil/hurl'
+					echo '    sudo apt install hurl="${VERSION}*"'
 					;;
 				debian)
-					echo "For Debian >=12, Hurl can be installed using a binary .deb file provided in each Hurl release."
-					echo "    VERSION=7.0.0"
-					echo "    curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl_${VERSION}_amd64.deb"
-					echo "    sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb"
+					echo 'For Debian >=12, Hurl can be installed using a binary .deb file provided in each Hurl release.'
+					echo '    VERSION=7.0.0'
+					echo '    curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl_${VERSION}_amd64.deb'
+					echo '    sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb'
 					;;
 				alpine)
-					echo "For Alpine, Hurl is available on testing channel."
-					echo "    apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl"
+					echo 'For Alpine, Hurl is available on testing channel.'
+					echo '    apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl'
 					;;
 				arch)
-					echo "For Arch Linux / Manjaro, Hurl is available on extra channel."
-					echo "    pacman -Sy hurl"
+					echo 'For Arch Linux / Manjaro, Hurl is available on extra channel.'
+					echo '    pacman -Sy hurl'
 					;;
 				*)
-					echo "On Linux, try:"
-					echo "    INSTALL_DIR=/tmp"
-					echo "    VERSION=7.0.0"
-					echo "    curl --silent --location https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xvz -C ${INSTALL_DIR}"
-					echo "    export PATH=${INSTALL_DIR}/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin:$PATH"
+					echo 'On Linux, try:'
+					echo '    INSTALL_DIR=/tmp'
+					echo '    VERSION=7.0.0'
+					echo '    curl --silent --location https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xvz -C ${INSTALL_DIR}'
+					echo '    export PATH=${INSTALL_DIR}/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin:$PATH'
 					;;
 			esac
 			;;
@@ -223,9 +233,14 @@ get_dolibarr_api_key() {
 
 	# If key is already set, return it
 	if [ -n "${current_key}" ]; then
-		print_info "Using existing DOLAPIKEY."
-		echo "${current_key}"
-		return 0
+		if [[ "${DOLAPIKEY}" != *": "* ]]; then
+			print_error "Environment variable DOLAPIKEY has the wrong format: '${DOLAPIKEY}'"
+			print_error "should perhaps be: 'DOLAPIKEY: ${DOLAPIKEY}'"
+		else
+			print_info "Using existing DOLAPIKEY."
+			echo "${current_key}"
+			return 0
+		fi
 	fi
 
 	# Check if credentials are available
@@ -272,8 +287,8 @@ API_URL=${hostnport}/api/index.php
 
 DOLAPIKEY=$(get_dolibarr_api_key "${API_URL}" "${DOLAPIKEY}" "${DOLIUSERNAME}" "${DOLIPASSWORD}")
 
-if [[ -z ${DOLAPIKEY+x} ]]; then
-	print_info "DOLAPIKEY bash variable is unset, no API tests that require authentication"
+if [[ -z "${DOLAPIKEY}" ]]; then
+	print_info "DOLAPIKEY bash variable is unset/empty, no API tests that require authentication"
 else
 	# Build the find command for the API tests that do require authentication
 	find_args=("api/" "-type" "f" "-iwholename" "*/10*.hurl" "-not" "-iwholename" "*/00*.hurl")

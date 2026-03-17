@@ -69,6 +69,15 @@ $error = 0;
  */
 
 $parameters = array('socid' => $socid);
+$dateo = array();
+$label = array();
+$amount = array();
+$amountto = array();
+$accountfrom = array();
+$accountto = array();
+$type = array();
+$number = array();
+$tabnum = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -76,17 +85,6 @@ if ($reshook < 0) {
 if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$langs->load('errors');
 	$i = 1;
-
-	$dateo = array();
-	$label = array();
-	$amount = array();
-	$amountto = array();
-	$accountfrom = array();
-	$accountto = array();
-	$type = array();
-	$number = array();
-	$tabnum = array();
-	$maxtab = 1;
 
 	while ($i < $MAXLINESFORTRANSFERT) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOSTINT($i.'_month'), GETPOSTINT($i.'_day'), GETPOSTINT($i.'_year'));
@@ -101,7 +99,6 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 		$tabnum[$i] = 0;
 		if (!empty($label[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
 			$tabnum[$i] = 1;
-			$maxtab = $i;
 		}
 		$i++;
 	}
@@ -143,6 +140,9 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 			$tmpaccountto = new Account($db);
 			$tmpaccountto->fetch(GETPOSTINT($n.'_account_to'));
 
+			$amount_main_currency_from = null;
+			$amount_main_currency_to = null;
+
 			if ($tmpaccountto->currency_code == $tmpaccountfrom->currency_code) {
 				$amountto[$n] = $amount[$n];
 			} else {
@@ -151,6 +151,15 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 					setEventMessages($langs->trans("ErrorFieldRequired", '#'.$n.' '.$langs->transnoentities("AmountToOthercurrency")), null, 'errors');
 				}
 			}
+
+			if ($tmpaccountfrom->currency_code != $conf->currency && $tmpaccountto->currency_code == $conf->currency) {
+				$amount_main_currency_from = (float) price2num(-1 * (float) $amountto[$n]);
+			}
+
+			if ($tmpaccountto->currency_code != $conf->currency && $tmpaccountfrom->currency_code == $conf->currency) {
+				$amount_main_currency_to = (float) price2num((float) $amount[$n]);
+			}
+
 			if ($amountto[$n] < 0) {
 				$error++;
 				setEventMessages($langs->trans("AmountMustBePositive").' #'.$n, null, 'errors');
@@ -176,13 +185,13 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				}
 
 				if (!$error) {
-					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], (float) price2num(-1 * (float) $amount[$n]), $number[$n], 0, $user);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], (float) price2num(-1 * (float) $amount[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_from);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$error++;
 				}
 				if (!$error) {
-					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], (float) $amountto[$n], $number[$n], 0, $user);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], (float) price2num((float) $amountto[$n]), '', 0, $user, '', '', '', null, '', $amount_main_currency_to);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$error++;
@@ -306,7 +315,9 @@ print '<th>'.$langs->trans("TransferFrom").'</th>';
 print '<th>'.$langs->trans("TransferTo").'</th>';
 print '<th>'.$langs->trans("Type").'</th>';
 print '<th>'.$langs->trans("Date").'</th>';
-print '<th>'.$langs->trans("Number").'</th>';
+if (getDolGlobalString('BANK_TRANSFER_ASK_CHQ_NUMBER_OF_SRC_ACCOUNT')) {
+	print '<th>'.$langs->trans("ChequeNumber").'</th>';
+}
 print '<th>'.$langs->trans("Description").'</th>';
 print '<th class="right">'.$langs->trans("Amount").'</th>';
 print '<td class="hideobject multicurrency right">'.$langs->trans("AmountToOthercurrency").'</td>';
@@ -351,11 +362,13 @@ for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 
 	// Date
 	print '<td class="nowraponall">';
-	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
+	print $form->selectDate((!empty($dateo[$i] ?? null) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
 	print "</td>\n";
 
-	// Number
-	print '<td><input name="'.$i.'_num_chq" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($number).'"></td>';
+	// Cheque Number
+	if (getDolGlobalString('BANK_TRANSFER_ASK_CHQ_NUMBER_OF_SRC_ACCOUNT')) {
+		print '<td><input name="'.$i.'_num_chq" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($number).'"></td>';
+	}
 
 	// Description
 	print '<td><input name="'.$i.'_label" class="flat quatrevingtpercent selectjs" type="text" value="'.dol_escape_htmltag($label).'"></td>';

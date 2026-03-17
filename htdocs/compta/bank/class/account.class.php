@@ -56,6 +56,13 @@ class Account extends CommonObject
 	public $picto = 'account';
 
 	/**
+	 * Ref
+	 *
+	 * @var string
+	 */
+	public $ref;
+
+	/**
 	 * @var	int
 	 * @deprecated	Use $id instead of $rowid
 	 * @see $id
@@ -712,9 +719,9 @@ class Account extends CommonObject
 	/**
 	 *  Create bank account into database
 	 *
-	 *  @param	User	$user		Object user making creation
-	 *  @param  int     $notrigger  1=Disable triggers
-	 *  @return int        			Return integer < 0 if KO, > 0 if OK
+	 *  @param	User		$user		Object user making creation
+	 *  @param  int<0,1>    $notrigger  1=Disable triggers
+	 *  @return int        				Return integer < 0 if KO, > 0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -1389,7 +1396,7 @@ class Account extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
@@ -1403,7 +1410,6 @@ class Account extends CommonObject
 		if ($filteraccountid) {
 			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
-
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
@@ -1424,7 +1430,6 @@ class Account extends CommonObject
 					$response->nbtodolate++;
 				}
 			}
-
 			return $response;
 		} else {
 			dol_print_error($this->db);
@@ -1444,7 +1449,7 @@ class Account extends CommonObject
 		global $user;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT count(b.rowid) as nb";
@@ -1562,7 +1567,7 @@ class Account extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	int  	$notooltip		 			1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $mode = '', $option = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = '')
 	{
@@ -2772,7 +2777,7 @@ class AccountLine extends CommonObjectLine
 	 *		@param	int		$maxlen			Longueur max libelle
 	 *		@param	string	$option			Option ('', 'showall', 'showconciliated', 'showconciliatedandaccounted'). Options may be slow.
 	 * 		@param	int     $notooltip		1=Disable tooltip
-	 *		@return	string					Chaine avec URL
+	 *		@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0)
 	{

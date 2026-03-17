@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /**
  *	\file       htdocs/product/canvas/product/actions_card_product.class.php
- *	\ingroup    produit
+ *	\ingroup    product
  *	\brief      File with class of actions for canvas product
  */
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -267,8 +267,8 @@ class ActionsCardProduct
 		if ($action == 'view') {
 			// Photo
 			$this->tpl['nblines'] = 4;
-			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity ?? 1])) {
-				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity ?? 1], 1, 1, 0, 0, 0, 80);
+			if ($this->object->is_photo_available($conf->product->multidir_output[(int) $this->object->entity])) {
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[(int) $this->object->entity], 1, 1, 0, 0, 0, 80);
 			}
 
 			// Nature

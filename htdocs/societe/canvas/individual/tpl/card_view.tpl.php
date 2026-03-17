@@ -237,6 +237,6 @@ $result = show_subsidiaries($conf, $langs, $db, $object);
 $result = show_contacts($conf, $langs, $db, $object);
 
 // Projects list
-$result = show_projects($conf, $langs, $db, $object);
+$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, '', '');
 
 print "<!-- END PHP TEMPLATE -->\n";

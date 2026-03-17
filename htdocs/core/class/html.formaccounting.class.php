@@ -4,8 +4,8 @@
  * Copyright (C) 2015		Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -357,12 +357,12 @@ class FormAccounting extends Form
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
-	 * @param string   		$selectid          	Preselected id of accounting accounts (depends on $select_in)
+	 * @param int|string 	$selectid          	Preselected id of accounting accounts (depends on $select_in)
 	 * @param string   		$htmlname          	Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
 	 * @param int|string    $showempty         	1=Add an empty field, 2=Add an empty field+'None' field
 	 * @param array<array<string,mixed>> $event Event options
-	 * @param int      		$select_in         	0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
-	 * @param int      		$select_out        	Set value returned by select. 0=rowid (default), 1=account_number
+	 * @param int|string	$select_in         	0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
+	 * @param int|string	$select_out        	Set value returned by select. 0=rowid (default), 1=account_number
 	 * @param string   		$morecss           	More css non HTML object
 	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param '1'|'0'|''	$active				Filter on status active or not: '0', '1' or '' for no filter
@@ -378,13 +378,15 @@ class FormAccounting extends Form
 		$selected = '';
 		$options = [];
 
+		$selectid = (string) $selectid;
+
 		if ($showempty == 2) {
 			$options['0'] = '--- '.$langs->trans("None").' ---';
 		}
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
 			$options += $this->options_cache[$usecache];
-			$selected = $selectid;
+			$selected = (string) $selectid;
 		} else {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', 50);
 
@@ -427,6 +429,9 @@ class FormAccounting extends Form
 			if ($num_rows == 0 && getDolGlobalInt('CHARTOFACCOUNTS') <= 0) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
+			} elseif ($num_rows == 0) {
+				$langs->load("errors");
+				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {
 				$selected = $selectid;
 				$lastCentralized = null;
@@ -453,8 +458,8 @@ class FormAccounting extends Form
 						$select_value_out = $obj->account_number;
 					}
 
-					if ($selectid != '' && $selectid == $select_value_in) {
-						$selected = $select_value_out;
+					if ($selectid != '' && $selectid == (string) $select_value_in) {
+						$selected = (string) $select_value_out;
 					}
 
 					$options[$select_value_out] = array(
@@ -579,7 +584,7 @@ class FormAccounting extends Form
 	 *
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$htmlname 		Name of HTML select object
-	 * @param int 		$useempty 		Affiche valeur vide dans liste
+	 * @param int 		$useempty 		Display empty value in list
 	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
 	 * @return string|array<string,string>|int<-1,-1>	HTML select component || array of select options || - 1 if error
 	 */
@@ -622,7 +627,7 @@ class FormAccounting extends Form
 	 * 	@param	string	$htmlname				Name of HTML select object
 	 *  @param  int		$option					option (0: aggregate by general account or 1: aggregate by subaccount)
 	 *  @param  int		$useempty				Show empty value in list
-	 *  @param  string	$filter         		optional filters criteria
+	 *  @param  string	$filter         		Optional filter criteria
 	 *  @param  int		$nooutput       		No print output. Return it only.
 	 *  @return	void|string
 	 */

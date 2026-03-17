@@ -40,5 +40,6 @@ create table llx_prelevement_bons
   fk_user_trans   integer,            -- user qui a effectue la transmission
   date_credit     datetime,           -- date de credit sur le compte
   fk_user_credit  integer,            -- user qui a remonte l'info de credit
-  fk_bank_account integer DEFAULT NULL
+  fk_bank_account integer DEFAULT NULL,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

@@ -163,7 +163,7 @@ class Stripe extends CommonObject
 	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
-	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
+	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for Adherent and Societe.
 	 * @param	string		$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int<0,1>	$status							Status (0=test, 1=live)
 	 * @param	int<0,1>	$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
@@ -342,14 +342,14 @@ class Stripe extends CommonObject
 	 * @param 	int|float	$amount				Amount in Stripe format (For example 1234 for 12.34 euros)
 	 * @param	string		$currency_code		Currency code (Example 'EUR')
 	 * @param	int			$direction			0=From standard to Stripe amount, 1=From Stripe to standard amount
-	 * @return	float							Standard float amount (For example 12.34)
+	 * @return	int|float						Standard float amount (For example 12.34)
 	 */
 	public function convertAmount($amount, $currency_code, $direction = 0)
 	{
 		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 		if (!in_array($currency_code, $arrayzerounitcurrency)) {
 			if (empty($direction)) {
-				$newamount = (int) ($amount * 100);
+				$newamount = (int) round($amount * 100);		// If $amount is 79.99, doing 79.99 * 100 returns float 7998.999999999999, and "int" do a truncation into 7998 so we must first use round to get nearest integer value
 			} else {
 				$newamount = (float) ($amount / 100);
 			}
@@ -389,7 +389,7 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $servicestatus = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
-		global $conf, $user;
+		global $conf, $user, $hookmanager;
 
 		dol_syslog(get_class($this)."::getPaymentIntent description=".$description, LOG_INFO, 1);
 
@@ -484,10 +484,8 @@ class Stripe extends CommonObject
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
-			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-				//$descriptor = preg_replace('/ref=[^:=]+/', '', $descriptor);	// Clean ref
 			}
 			if (getDolGlobalInt('STRIPE_KLARNA')) {
 				$paymentmethodtypes[] = "klarna";
@@ -533,9 +531,9 @@ class Stripe extends CommonObject
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
 			);
-			if ($descriptor) {
-				$dataforintent["statement_descriptor_suffix"] = $descriptor; // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
-				$dataforintent["statement_descriptor"] = $descriptor; 	// For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
+			if ($tag) {
+				$dataforintent["statement_descriptor_suffix"] = dol_trunc($tag, 12, 'right', 'UTF-8', 1); 	// For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
+				$dataforintent["statement_descriptor"] = dol_trunc($tag, 22, 'right', 'UTF-8', 1); 			// For SEPA, 22 chars, it will take only statement_descriptor, not statement_descriptor_suffix
 			}
 			if (!is_null($customer)) {
 				$dataforintent["customer"] = $customer;
@@ -587,8 +585,26 @@ class Stripe extends CommonObject
 					$arrayofoptions["stripe_account"] = $key;
 				}
 
+				// Hook to allow external modules to modify Stripe PaymentIntent data before API call.
+				// Can be used to customize statement_descriptor (e.g. structured communication for SEPA),
+				// add metadata, modify description, etc.
+				// Note: $arrayofoptions is not passed for security reasons (contains stripe_account and idempotency_key).
+				$parameters = array(
+					'dataforintent' => $dataforintent,
+					'object' => $object,
+					'tag' => $tag,
+					'amount' => $amount,
+					'currency_code' => $currency_code,
+					'customer' => $customer,
+					'servicestatus' => $servicestatus,
+				);
+				$reshook = $hookmanager->executeHooks('beforeCreateStripePaymentIntent', $parameters, $this);
+				if (!empty($hookmanager->resArray['dataforintent'])) {
+					$dataforintent = $hookmanager->resArray['dataforintent'];
+				}
+
 				dol_syslog(get_class($this)."::getPaymentIntent ".$stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_DEBUG);
-				dol_syslog(get_class($this)."::getPaymentIntent dataforintent to create paymentintent = ".var_export($dataforintent, true));
+				dol_syslog(get_class($this)."::getPaymentIntent dataforintent to create paymentintent = ".formatLogObject($dataforintent));
 
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
@@ -721,7 +737,7 @@ class Stripe extends CommonObject
 
 		$noidempotency_key = 1;
 
-		dol_syslog("getSetupIntent description=".$description.' confirmnow='.json_encode($confirmnow), LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.formatLogObject($confirmnow), LOG_INFO, 1);
 
 		$error = 0;
 
@@ -797,7 +813,7 @@ class Stripe extends CommonObject
 				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
 				dol_syslog(get_class($this)."::getSetupIntent ".$stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_DEBUG);
-				dol_syslog(get_class($this)."::getSetupIntent dataforintent to create setupintent = ".var_export($dataforintent, true));
+				dol_syslog(get_class($this)."::getSetupIntent dataforintent to create setupintent = ".formatLogObject($dataforintent));
 
 				// Note: If all data for payment intent are same than a previous one, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
@@ -956,7 +972,7 @@ class Stripe extends CommonObject
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							if (!getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
+								dol_syslog("Try to create card with dataforcard = ".formatLogObject($dataforcard));
 								$card = $cu->sources->create($dataforcard);
 								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
@@ -977,7 +993,7 @@ class Stripe extends CommonObject
 							}
 						} else {
 							if (!getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
+								dol_syslog("Try to create card with dataforcard = ".formatLogObject($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
 								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
@@ -1131,7 +1147,7 @@ class Stripe extends CommonObject
 						global $stripearrayofkeysbyenv;
 						$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
-						dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
+						dol_syslog("Try to create sepa_debit with data = ".formatLogObject($dataforcard));
 
 						$s = new \Stripe\StripeClient($stripeacc);
 

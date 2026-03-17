@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/margin/tabs/productMargins.php
  *	\ingroup    product margins
- *	\brief      Page des marges des factures clients pour un produit
+ *	\brief      Page for Product Margins on Customer Invoices
  */
 
 // Load Dolibarr environment

@@ -45,7 +45,10 @@ HTTP 400
 POST http://{{hostnport}}/api/index.php/users
 {}
 HTTP 500
-{"error":{"code":500,"message":"Internal Server Error: Error creating","0":"Email address  is incorrect"}}
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 500
+jsonpath "$.error.message" == "Internal Server Error: login field missing"
 
 # DELETE
 DELETE http://{{hostnport}}/api/index.php/users/
@@ -76,4 +79,8 @@ HTTP 200
 GET http://{{hostnport}}/api/index.php/users
 DOLAPIENTITY: 2
 HTTP 401
-{"error":{"code":401,"message":"Unauthorized: Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity=2)"}}
+[Asserts]
+jsonpath "$.error" exists
+jsonpath "$.error.code" == 401
+jsonpath "$.error.message" contains "Unauthorized"
+jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong entity)"

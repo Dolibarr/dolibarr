@@ -118,12 +118,12 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 *	Fonction to generate document on disk
 	 *
 	 *	@param	RemiseCheque	$object			Object RemiseCheque
+	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
-	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@return	int<-1,1>  						1=ok, 0=ko
 	 */
-	abstract public function write_file($object, $_dir, $number, $outputlangs);
+	abstract public function write_file($object, $outputlangs, $_dir, $number);
 	// phpcs:enable
 }
 

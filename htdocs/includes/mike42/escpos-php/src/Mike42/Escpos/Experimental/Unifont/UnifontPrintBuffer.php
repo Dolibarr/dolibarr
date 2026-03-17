@@ -38,7 +38,7 @@ class UnifontPrintBuffer implements PrintBuffer
             $this -> fontMap -> writeChar($codePoint);
         }
     }
-    
+
     public function writeText(string $text)
     {
         if (!$this -> started) {
@@ -59,26 +59,26 @@ class UnifontPrintBuffer implements PrintBuffer
             $this->writeChar($codePoint);
         }
     }
-    
+
     public function flush()
     {
     }
-    
+
     public function setPrinter(Printer $printer = null)
     {
         $this -> printer = $printer;
         $this -> fontMap = new FontMap($this -> unifont, $this -> printer);
     }
-    
+
     public function writeTextRaw(string $text)
     {
     }
-    
+
     public function getPrinter()
     {
         return $this -> printer;
     }
-    
+
     /**
      * Write data to the underlying connector.
      *

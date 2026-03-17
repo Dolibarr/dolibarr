@@ -22,6 +22,13 @@
  */
 
 /**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $action
  * @var string $trackid
  * @var string $modelmail
  * @var string $defaulttopic
@@ -29,12 +36,7 @@
  * @var int<0,1> $diroutput
  * @var string[] $arrayoffamiliestoexclude	Example: array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  * @var string $file
- * @var string $action
- * @var CommonObject $object
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
+ * @var ?string $inreplyto
  */
 '
 @phan-var-force int<0,1> $diroutput
@@ -219,6 +221,7 @@ if ($action == 'presend') {
 	$formmail->withlayout = 'email';
 	$formmail->withaiprompt = 'html';
 
+
 	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport') {
@@ -333,6 +336,13 @@ if ($action == 'presend') {
 
 		if (!empty($origin) && !empty($origin_id)) {
 			$element = $subelement = $origin;
+
+			if ($element == 'order_supplier') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.commande';
+				$origin = 'CommandeFournisseur';
+			}
+
 			$regs = array();
 			if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 				$element = $regs[1];
@@ -354,10 +364,6 @@ if ($action == 'presend') {
 			}
 			if ($element == 'shipping') {
 				$element = $subelement = 'expedition';
-			}
-			if ($element == 'order_supplier') {
-				$element = 'fourn';
-				$subelement = 'fournisseur.commande';
 			}
 			if ($element == 'project') {
 				$element = 'projet';

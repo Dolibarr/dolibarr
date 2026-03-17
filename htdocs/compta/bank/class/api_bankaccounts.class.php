@@ -428,9 +428,12 @@ class BankAccounts extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -592,6 +595,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$url = sanitizeVal($url);
 		$label = sanitizeVal($label);
 		$type = sanitizeVal($type);
@@ -688,6 +695,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$accountLine->label = sanitizeVal($label);
 
 		$result = $accountLine->updateLabel();
@@ -724,6 +735,10 @@ class BankAccounts extends DolibarrApi
 		$result = $accountLine->fetch($line_id);
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
+		}
+
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
 		}
 
 		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {

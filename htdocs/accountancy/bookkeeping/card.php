@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -34,9 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
 
 /**
  * @var Conf $conf
@@ -50,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 $type = GETPOST('type', 'alpha');
@@ -312,14 +315,79 @@ if (empty($reshook)) {
 
 				$action = 'create';
 			} else {
-				$reshook = $hookmanager->executeHooks('afterCreateBookkeeping', $parameters, $object, $action);
+				// Transaction created successfully
+				$piece_num = $object->piece_num;
 
-				if ($mode != '_tmp') {
-					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				// Check if a template was selected
+				$template_id = GETPOSTINT('template_id');
+
+				if ($template_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
+
+					$template = new BookkeepingTemplate($db);
+					$result_template = $template->fetch($template_id);
+
+					if ($result_template > 0 && !empty($template->lines)) {
+						$db->begin();
+						$error_template = 0;
+
+						foreach ($template->lines as $templateline) {
+							$bookkeeping = new BookKeeping($db);
+
+							// Set common fields from the form
+							$bookkeeping->doc_date = $date_start;
+							$bookkeeping->doc_type = GETPOST('doctype', 'alpha');
+							$bookkeeping->piece_num = $piece_num;
+							$bookkeeping->doc_ref = GETPOST('docref', 'alpha');
+							$bookkeeping->code_journal = $journal_code;
+							$bookkeeping->journal_label = $journal_label;
+							$bookkeeping->fk_doc = 0;
+							$bookkeeping->fk_docdet = 0;
+							$bookkeeping->ref = GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : $object->ref;
+
+							// Set fields from template line
+							$bookkeeping->numero_compte = $templateline->general_account;
+							$bookkeeping->label_compte = $templateline->general_label;
+							$bookkeeping->subledger_account = $templateline->subledger_account;
+							$bookkeeping->subledger_label = $templateline->subledger_label;
+							$bookkeeping->label_operation = $templateline->operation_label;
+							$bookkeeping->debit = (float) $templateline->debit;
+							$bookkeeping->credit = (float) $templateline->credit;
+
+							// Backward compatibility
+							if ((float) $bookkeeping->debit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->debit;
+								$bookkeeping->amount = $bookkeeping->debit;
+								$bookkeeping->sens = 'D';
+							}
+							if ((float) $bookkeeping->credit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->credit;
+								$bookkeeping->amount = $bookkeeping->credit;
+								$bookkeeping->sens = 'C';
+							}
+
+							$result_line = $bookkeeping->createStd($user, 0, '_tmp');
+
+							if ($result_line < 0) {
+								$error_template++;
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+								break;
+							}
+						}
+
+						if (!$error_template) {
+							$db->commit();
+							setEventMessages($langs->trans('TemplateLinesLoaded', count($template->lines)), null, 'mesgs');
+						} else {
+							$db->rollback();
+						}
+					}
 				}
-				$action = '';
-				$id = $object->id;
-				$piece_num = (int) $object->piece_num;
+
+				// Redirect to the transaction
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".$piece_num."&mode=_tmp");
+				exit;
 			}
 		}
 	}
@@ -382,7 +450,19 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			header("Location: " . $backtopage . "?sortfield=t.piece_num&sortorder=asc" . ($type ? '&type='.$type : ''));
+			// Retrieve the actual final part number (not the temporary number)
+			$piece_num = $object->piece_num;
+
+			$linkEntry = '<a href="'.$_SERVER["PHP_SELF"].'?piece_num='.(int) $piece_num.'">'.$langs->trans('NumMvts').': '.(int) $piece_num.'</a>';
+			setEventMessages($langs->trans('RecordSaved').' - '.$linkEntry, null, 'mesgs', '', 1);
+
+			if (getDolGlobalInt('ACCOUNTANCY_VALID_REDIRECT_TO_CARD')) {
+				// Redirection to the validated entry record
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".(int) $piece_num);
+			} else {
+				// Default behavior: return on journal view
+				header("Location: ".$backtopage."?sortfield=t.piece_num&sortorder=asc".($type ? '&type='.$type : ''));
+			}
 			exit;
 		}
 	}
@@ -570,14 +650,46 @@ if ($action == 'create') {
 		print '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>';
 	}
 	print '</td>';
+
+	// Template
+	print '<tr>';
+	print '<td>'.$langs->trans("BookkeepingTemplate").'</td>';
+	print '<td>';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+
+	$sql = "SELECT rowid, code, label";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_transaction_template";
+	$sql .= " WHERE entity IN (".getEntity('accounting').")";
+	$sql .= " ORDER BY code ASC";
+
+	$resql = $db->query($sql);
+	$templates = array();
+
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			$templates[$obj->rowid] = $obj->code.' - '.$obj->label;
+			$i++;
+		}
+		$db->free($resql);
+	}
+
+	if (count($templates) > 0) {
+		print '<select class="flat minwidth300" name="template_id" id="template_id">';
+		print '<option value=""></option>';
+		foreach ($templates as $key => $label) {
+			print '<option value="'.$key.'">'.dol_escape_htmltag($label).'</option>';
+		}
+		print '</select>';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("NoTemplateAvailable").'</span>';
+	}
+
+	print '</td>';
 	print '</tr>';
 
-	/*
-	print '<tr>';
-	print '<td>' . $langs->trans("Doctype") . '</td>';
-	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
-	print '</tr>';
-	*/
 	$reshookAddLine = $hookmanager->executeHooks('bookkeepingAddLine', $parameters, $object, $action);
 
 	print '</table>';
@@ -682,7 +794,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Ref');
 		print '</td>';
-		if ($action != 'editref') {
+		if ($action != 'editref' && empty($object->date_validation)) {
 			print '<td class="right">';
 			if ($permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
@@ -691,7 +803,7 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editref') {
+		if ($action == 'editref' && empty($object->date_validation)) {
 			print '<form name="setref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -717,14 +829,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editdocref') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editdocref') {
+		if ($action == 'editdocref' && empty($object->date_validation)) {
 			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -738,7 +850,38 @@ if ($action == 'create') {
 			print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->doc_ref;
+			// Get information of an element
+			if ($object->doc_type === 'customer_invoice' && !empty($object->fk_doc)) {
+				$invoicestatic = new Facture($db);
+				$result = $invoicestatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $invoicestatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} elseif ($object->doc_type === 'supplier_invoice' && !empty($object->fk_doc)) {
+				$supplierinvoicestatic = new FactureFournisseur($db);
+				$result = $supplierinvoicestatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $supplierinvoicestatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} elseif ($object->doc_type === 'expense_report' && !empty($object->fk_doc)) {
+				$expensereportstatic = new ExpenseReport($db);
+				$result = $expensereportstatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $expensereportstatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} else {
+				$label_element = $object->doc_ref;
+			}
+			print $label_element;
 		}
 		print '</td>';
 		print '</tr>';
@@ -750,14 +893,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editdate') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		if ($action == 'editdate') {
+		if ($action == 'editdate' && empty($object->date_validation)) {
 			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -783,14 +926,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editjournal') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editjournal') {
+		if ($action == 'editjournal' && empty($object->date_validation)) {
 			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -804,7 +947,13 @@ if ($action == 'create') {
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->code_journal;
+			// Get information of a journal
+			$accountingjournalstatic = new AccountingJournal($db);
+			$accountingjournalstatic->fetch(0, $object->code_journal);
+			$journal = $accountingjournalstatic->code;
+			$journal_label = $accountingjournalstatic->label;
+
+			print $accountingjournalstatic->getNomUrl(1, 1, 1);
 		}
 		print '</td>';
 		print '</tr>';
@@ -851,7 +1000,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
 			print '<td>';
-			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print $object->date_export ? img_picto($langs->trans("TransactionExportDesc"), 'fa-file-export', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -859,7 +1008,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
 			print '<td>';
-			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print $object->date_validation ? img_picto($langs->trans("TransactionBlockedLockedDesc"), 'fa-lock', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -966,21 +1115,23 @@ if ($action == 'create') {
 			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
-			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			if (empty($object->date_validation)) {
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . ((int) $object->piece_num) . '" method="POST">';
+				if ($optioncss != '') {
+					print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
+				}
+				print '<input type="hidden" name="token" value="' . newToken() . '">';
+				print '<input type="hidden" name="doc_date" value="' . $object->doc_date . '">' . "\n";
+				print '<input type="hidden" name="doc_type" value="' . $object->doc_type . '">' . "\n";
+				print '<input type="hidden" name="doc_ref" value="' . $object->doc_ref . '">' . "\n";
+				print '<input type="hidden" name="ref" value="' . $object->ref . '">' . "\n";
+				print '<input type="hidden" name="code_journal" value="' . $object->code_journal . '">' . "\n";
+				print '<input type="hidden" name="fk_doc" value="' . $object->fk_doc . '">' . "\n";
+				print '<input type="hidden" name="fk_docdet" value="' . $object->fk_docdet . '">' . "\n";
+				print '<input type="hidden" name="mode" value="' . $mode . '">' . "\n";
+				print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+				print '<input type="hidden" name="type" value="' . $type . '">';
 			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
-			print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
-			print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
-			print '<input type="hidden" name="ref" value="'.$object->ref.'">'."\n";
-			print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
-			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
-			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
-			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
-			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print '<input type="hidden" name="type" value="'.$type.'">';
 
 			if (count($object->linesmvt) > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -1005,7 +1156,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				// Add an empty line if there is not yet
-				if (!empty($object->linesmvt[0])) {
+				if (!empty($object->linesmvt[0]) && empty($object->date_validation)) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
 						$line = new BookKeepingLine($db);
@@ -1017,7 +1168,7 @@ if ($action == 'create') {
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
-					if ($action == 'update' && $line->id == $id) {
+					if ($action == 'update' && $line->id == $id && empty($object->date_validation)) {
 						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
@@ -1044,7 +1195,7 @@ if ($action == 'create') {
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
 						print "</tr>\n";
-					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+					} elseif ((empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) && empty($object->date_validation)) {
 						if (($action == "" || $action == 'add') && $permissiontoadd) {
 							print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 							print '<!-- td columns in add mode -->';

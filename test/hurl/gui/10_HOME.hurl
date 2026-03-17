@@ -3,4 +3,4 @@ GET http://{{hostnport}}/
 HTTP 200
 [Asserts]
 body not contains "Enter login details"
-body contains "<!-- Show logo on menu -->"
+body contains "titleforhome"

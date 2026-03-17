@@ -301,7 +301,7 @@ class Calendar extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (!empty($object->socid) && $this->fk_soc == $object->socid) {
+			if (!empty($object->fk_soc) && $this->fk_soc == $object->fk_soc) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -948,54 +948,8 @@ class Calendar extends CommonObject
 	 */
 	public function getNextNumRef()
 	{
-		global $langs, $conf;
-		$langs->load("agenda");
-
-		if (getDolGlobalString('BOOKCAL_CALENDAR_ADDON')) {
-			$conf->global->BOOKCAL_CALENDAR_ADDON = 'mod_calendar_standard';
-		}
-
-		if (getDolGlobalString('BOOKCAL_CALENDAR_ADDON')) {
-			$mybool = false;
-
-			$file = getDolGlobalString('BOOKCAL_CALENDAR_ADDON').".php";
-			$classname = getDolGlobalString('BOOKCAL_CALENDAR_ADDON');
-
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/bookcal/");
-
-				// Load file with numbering class (if found)
-				$mybool = ((bool) @include_once $dir.$file) || $mybool;
-			}
-
-			if (!$mybool) {
-				dol_print_error(null, "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				'@phan-var-force CommonNumRefGenerator $obj';
-
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
-			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
-				return "";
-			}
-		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
-			return "";
-		}
+		// Not used
+		return '';
 	}
 
 	/**

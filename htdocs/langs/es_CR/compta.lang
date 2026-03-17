@@ -100,7 +100,6 @@ CheckReceiptShort=Comprobante de depósito
 LastCheckReceiptShort=Últimos recibos de depósito %s
 LastPaymentForDepositShort=Últimos recibos de depósito %s %s
 NewCheckReceipt=Nuevo descuento
-NewCheckDepositOn=Crear recibo para depósito en cuenta:%s
 NoWaitingChecks=No hay cheques a la espera de depósito.
 NbOfCheques=No. de cheques
 PaySocialContribution=Pagar un impuesto social/fiscal

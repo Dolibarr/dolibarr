@@ -14,7 +14,7 @@
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
@@ -96,7 +96,7 @@ if (empty($origin_id) && !empty($origin)) {
 if (empty($origin_id) && !empty($origin)) {
 	$origin_id  = GETPOSTINT('object_id'); // Id of order or propal
 }
-$socid  =  GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOSTINT('lineid');
 $facid = GETPOSTINT('facid');
@@ -105,8 +105,8 @@ $projectid = GETPOSTINT('projectid');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$rank      = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
-$lineid    =  GETPOSTINT('lineid');
+$rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
+$lineid = GETPOSTINT('lineid');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 //PDF
@@ -294,7 +294,16 @@ if (empty($reshook)) {
 	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
-		if (GETPOSTINT('socid') < 1) {
+		if ($origin && $origin_id > 0) {
+			// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
+			$classname = ucfirst($origin);
+			$objectsrc = new $classname($db);
+			'@phan-var-force Facture|Commande $objectsrc';
+			$objectsrc->fetch($origin_id);
+			$object->socid = $objectsrc->socid;
+		}
+
+		if (GETPOSTINT('socid') < 1 && $object->socid < 1) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action = 'create';
@@ -308,10 +317,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
-			$object->sizeH = GETPOSTINT('sizeH') == '' ? "NULL" : GETPOSTINT('sizeH');
-			$object->sizeW = GETPOSTINT('sizeW') == '' ? "NULL" : GETPOSTINT('sizeW');
-			$object->sizeS = GETPOSTINT('sizeS') == '' ? "NULL" : GETPOSTINT('sizeS');
+			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
+			$object->sizeH = GETPOST('sizeH') == '' ? '' : GETPOSTFLOAT('sizeH');
+			$object->sizeW = GETPOST('sizeW') == '' ? '' : GETPOSTFLOAT('sizeW');
+			$object->sizeS = GETPOST('sizeS') == '' ? '' : GETPOSTFLOAT('sizeS');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -320,15 +329,13 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 			$product = new Product($db);
-
-
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -350,10 +357,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
-			$object->sizeH = GETPOSTINT('sizeH') == '' ? "NULL" : GETPOSTINT('sizeH');
-			$object->sizeW = GETPOSTINT('sizeW') == '' ? "NULL" : GETPOSTINT('sizeW');
-			$object->sizeS = GETPOSTINT('sizeS') == '' ? "NULL" : GETPOSTINT('sizeS');
+			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
+			$object->sizeH = GETPOST('sizeH') == '' ? '' : GETPOSTFLOAT('sizeH');
+			$object->sizeW = GETPOST('sizeW') == '' ? '' : GETPOSTFLOAT('sizeW');
+			$object->sizeS = GETPOST('sizeS') == '' ? '' : GETPOSTFLOAT('sizeS');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -362,7 +369,7 @@ if (empty($reshook)) {
 			$object->date_shipping = $date_shipping; // Sending date
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 			$object->tracking_number = GETPOST('tracking_number', 'alpha');
-			$object->note = GETPOST('note', 'restricthtml'); // deprecated
+			$object->note = GETPOST('note_private', 'restricthtml'); // deprecated
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
@@ -641,11 +648,11 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
 		$result = $object->cancel($user, 0, (bool) $also_update_stock);
 		if ($result > 0) {
-			$result = $object->setStatut(-1);
+			$result = $object->setStatut(Expedition::STATUS_CANCELED);
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -661,7 +668,7 @@ if (empty($reshook)) {
 		// TODO add alternative status
 		//} elseif ($action == 'reopen' && ($user->hasRight('expedition', 'creer') || $user->hasRight('expedition', 'shipping_advance', 'validate')))
 		//{
-		//	$result = $object->setStatut(0);
+		//	$result = $object->setStatut(Expedition::STATUS_DRAFT);
 		//	if ($result < 0)
 		//	{
 		//		setEventMessages($object->error, $object->errors, 'errors');
@@ -762,23 +769,24 @@ if (empty($reshook)) {
 
 		if ($action == 'settracking_number') {	// Test on permission not required
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
+			$object->tracking_number = preg_replace('/\s+/', '', $object->tracking_number);
 		}
 		if ($action == 'settracking_url') {		// Test on permission not required
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {		// Test on permission not required
-			$object->trueWeight = GETPOSTINT('trueWeight');
+			$object->trueWeight = GETPOSTFLOAT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {		// Test on permission not required
-			$object->trueWidth = GETPOSTINT('trueWidth');
+			$object->trueWidth = GETPOSTFLOAT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {		// Test on permission not required
-			$object->trueHeight = GETPOSTINT('trueHeight');
+			$object->trueHeight = GETPOSTFLOAT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {		// Test on permission not required
-			$object->trueDepth = GETPOSTINT('trueDepth');
+			$object->trueDepth = GETPOSTFLOAT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {	// Test on permission not required
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
@@ -1418,7 +1426,7 @@ $product_static = new Product($db);
 $shipment_static = new Expedition($db);
 $warehousestatic = new Entrepot($db);
 
-if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
+if (!$origin && $action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
 	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
@@ -1525,22 +1533,22 @@ if ($action == 'create' && $usercancreate) {
 		print $langs->trans("Weight");
 		print '</td><td colspan="3">';
 		print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-		print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
-		$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
+		print '<input name="weight" size="4" value="' . GETPOST('weight') . '"> ';		// Do not use GETPOSTINT here, we must accept '' also.
+		$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units'), 0, 2);
 		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 		print $form->textwithpicto($text, $htmltext);
 		print '</td></tr>';
 
-		// Dim
+		// Dim width x height x depth
 		print '<tr><td>';
 		print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
 		print ' </td><td colspan="3">';
 		print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-		print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
-		print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
-		print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
+		print '<input name="sizeW" size="4" value="' . GETPOST('sizeW') . '">';
+		print ' x <input name="sizeH" size="4" value="' . GETPOST('sizeH') . '">';
+		print ' x <input name="sizeS" size="4" value="' . GETPOST('sizeS') . '">';
 		print ' ';
-		$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
+		$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units'), 0, 2);
 		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 		print $form->textwithpicto($text, $htmltext);
 		print '</td></tr>';
@@ -1688,6 +1696,7 @@ if ($action == 'create' && $usercancreate) {
 			// Thirdparty
 			print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Company') . '</td>';
 			print '<td colspan="3">' . $soc->getNomUrl(1) . '</td>';
+			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 			print '</tr>';
 
 			// Project
@@ -1748,22 +1757,22 @@ if ($action == 'create' && $usercancreate) {
 			print $langs->trans("Weight");
 			print '</td><td colspan="3">';
 			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-			print '<input name="weight" size="4" value="' . GETPOSTINT('weight') . '"> ';
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
+			print '<input name="weight" size="4" value="' . GETPOST('weight') . '"> ';	// Do not use GETPOSTINT here, we must accept '' also.
+			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
 
-			// Dim
+			// Dim Width x Height x Depth
 			print '<tr><td>';
 			print $langs->trans("Width") . ' x ' . $langs->trans("Height") . ' x ' . $langs->trans("Depth");
 			print ' </td><td colspan="3">';
 			print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-			print '<input name="sizeW" size="4" value="' . GETPOSTINT('sizeW') . '">';
-			print ' x <input name="sizeH" size="4" value="' . GETPOSTINT('sizeH') . '">';
-			print ' x <input name="sizeS" size="4" value="' . GETPOSTINT('sizeS') . '">';
+			print '<input name="sizeW" size="4" value="' . GETPOST('sizeW') . '">';
+			print ' x <input name="sizeH" size="4" value="' . GETPOST('sizeH') . '">';
+			print ' x <input name="sizeS" size="4" value="' . GETPOST('sizeS') . '">';
 			print ' ';
-			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
+			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -1951,7 +1960,7 @@ if ($action == 'create' && $usercancreate) {
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
 							$productChildrenNb = $product->hasFatherOrChild(1);
 						}
 						if ($productChildrenNb > 0) {
@@ -1962,7 +1971,7 @@ if ($action == 'create' && $usercancreate) {
 						//var_dump($product->stock_warehouse[1]);
 
 						print '<td>';
-						print '<a name="' . $line->id . '"></a>'; // ancre pour retourner sur la ligne
+						print '<a name="' . $line->id . '"></a>'; // Anchor to retor to the line
 
 						// Show product and description
 						$product_static->type = $line->fk_product_type;
@@ -2018,14 +2027,18 @@ if ($action == 'create' && $usercancreate) {
 					// Qty
 					print '<td class="center">' . $line->qty;
 					print '<input name="qtyasked' . $indiceAsked . '" id="qtyasked' . $indiceAsked . '" type="hidden" value="' . $line->qty . '">';
-					print '' . $unit_order . '</td>';
+					if ($line->qty) {
+						print ' ' . $unit_order . '</td>';
+					}
 
 					// Qty already shipped
 					print '<td class="center">';
 					$quantityDelivered = isset($object->expeditions[$line->id]) ? $object->expeditions[$line->id] : '';
 					print $quantityDelivered;
 					print '<input name="qtydelivered' . $indiceAsked . '" id="qtydelivered' . $indiceAsked . '" type="hidden" value="' . $quantityDelivered . '">';
-					print '' . $unit_order . '</td>';
+					if ($quantityDelivered) {
+						print ' ' . $unit_order . '</td>';
+					}
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
@@ -2044,7 +2057,7 @@ if ($action == 'create' && $usercancreate) {
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
-						if ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+						if (($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) || $product->stockable_product == Product::DISABLED_STOCK) {
 							$deliverableQty = $quantityToBeDelivered;
 						} else {
 							$deliverableQty = min($quantityToBeDelivered, $stock);
@@ -2156,13 +2169,13 @@ if ($action == 'create' && $usercancreate) {
 							$subj = 0;
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							if (is_object($product->stock_warehouse[$warehouse_id]) && !empty($product->stock_warehouse[$warehouse_id]->detail_batch)) {
 								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {
 									$nbofsuggested++;
 								}
 							}
-							print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+							if (is_object($product->stock_warehouse[$warehouse_id]) && !empty($product->stock_warehouse[$warehouse_id]->detail_batch)) {
 								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
 									//var_dump($dbatch);
 									$batchStock = +$dbatch->qty; // To get a numeric
@@ -2257,7 +2270,7 @@ if ($action == 'create' && $usercancreate) {
 						}
 					} else {
 						// ship from multiple locations
-						if (isModEnabled('productbatch') || !$product->hasbatch()) {
+						if (!isModEnabled('productbatch') || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
 							print '<td></td><td></td>';
 							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
@@ -2402,7 +2415,7 @@ if ($action == 'create' && $usercancreate) {
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (!empty($stock_warehouse->detail_batch))) {
 									$nbofsuggested += count($stock_warehouse->detail_batch);
 								}
 							}
@@ -2415,7 +2428,7 @@ if ($action == 'create' && $usercancreate) {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (!empty($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
 										$batchStock = +$dbatch->qty; // To get a numeric
 										if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
@@ -2464,6 +2477,7 @@ if ($action == 'create' && $usercancreate) {
 
 										print '<!-- Show details of lot -->';
 										print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
+										print '<input name="entl' . $indiceAsked . '_'.$subj.'" type="hidden" value="' . $tmpwarehouseObject->id . '">';
 
 										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 										print $langs->trans("Batch") . ': ';
@@ -2503,17 +2517,19 @@ if ($action == 'create' && $usercancreate) {
 
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 								$disabled = '';
+								$alt = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
+									$alt = 'Product need serial or batch number';
 								}
 								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
 									$disabled = 'disabled="disabled"';
 								}
 								// finally we overwrite the input with the product status stockable_product if it's disabled
-								if ($product->stockable_product == Product::DISABLED_STOCK) {
+								if ($product->stockable_product == Product::ENABLED_STOCK) {
 									$disabled = '';
 								}
-								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
+								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').($alt ? ' title="'.dolPrintHTMLForAttribute($alt).'"' : '').'> ';
 								if (empty($disabled) && (!getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') || $product->stockable_product == Product::DISABLED_STOCK)) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
@@ -2536,16 +2552,17 @@ if ($action == 'create' && $usercancreate) {
 
 							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-								if ($warehouse_selected_id > 0 && $product->stockable_product == Product::ENABLED_STOCK) {
+								// product may use stock management
+								if (($warehouse_selected_id > 0 && $product->stockable_product == Product::ENABLED_STOCK)) {
 									$warehouseObject = new Entrepot($db);
 									$warehouseObject->fetch($warehouse_selected_id);
 									print img_warning() . ' ' . $langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
 								} else {
 									if ($line->fk_product) {
-										if ($product->stockable_product == Product::ENABLED_STOCK) {
-											print img_warning() . ' ' . $langs->trans('StockTooLow');
-										} else {
+										if ($product->stockable_product != Product::ENABLED_STOCK) {
 											print img_warning() . ' ' . $langs->trans('StockDisabled');
+										} else {
+											print img_warning() . ' ' . $langs->trans('StockTooLow');
 										}
 									} else {
 										print '';
@@ -3698,13 +3715,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td colspan="8"><span class="opacitymedium">' . $langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")) . '</span></td></tr>';
 		}
 
-		print "</table>\n";
 		print '</tbody>';
+		print "</table>\n";
 		print '</div>';
-
-
-		print dol_get_fiche_end();
-
 
 		$object->fetchObjectLinked($object->id, $object->element);
 	}
@@ -3746,9 +3759,9 @@ if ($action == 'create' && $usercancreate) {
 			if (empty($user->socid)) {
 				if ($object->status > 0) {
 					if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('expedition', 'shipping_advance', 'send')) {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?action=presend&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
 					} else {
-						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'] . '#', '', false);
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER['PHP_SELF'] . '#', '', false);
 					}
 				}
 			}
@@ -3811,7 +3824,7 @@ if ($action == 'create' && $usercancreate) {
 	if ($action != 'presend' && $action != 'editline') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-		$objectref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName((string) $object->ref);
 		$filedir = $conf->expedition->dir_output . "/sending/" . $objectref;
 
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;

@@ -6,17 +6,23 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
+// Expected to be defined by including parent
 /**
  * @var Conf $conf
+ * @var string $left
+ * @var string $right
  */
-
-// Expected to be defined by including parent
 '
 @phan-var-force string $right
 @phan-var-force string $left
 ';
 
 $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
+$heightbox = 94;
+if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("paymentbybanktransfer")) {
+	$heightbox = 110;
+}
 
 ?>
 
@@ -49,6 +55,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	padding-top: 5px !important;
 	padding-bottom: 6px !important;
 	vertical-align: middle;
+	white-space: nowrap;
+	display: inline-block;
 }
 
 .nonature-back {
@@ -85,22 +93,31 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-.member-company-back {
-	padding: 2px;
-	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
-	border-radius: 3px;
-	white-space: nowrap;
-}
 .member-individual-back {
 	padding: 2px;
 	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
+	background-color: #258fa5;
+	color: #fff;
 	border-radius: 3px;
 	white-space: nowrap;
 }
+.member-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #557b95;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+.member-individual-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #40859d;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -190,7 +207,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 94px;
+	min-height: <?php echo $heightbox; ?>px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
@@ -243,8 +260,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	float: left;
 	text-align: center;
 	font-size: 45px;
-	line-height: 94px;	/* must be same height as min-height of .info-box */
-	height: 94px;		/* must be same height as min-height of .info-box */
+	line-height: <?php echo $heightbox; ?>px;	/* must be same height as min-height of .info-box */
+	height: <?php echo $heightbox; ?>px;		/* must be same height as min-height of .info-box */
 	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	border-top-left-radius: <?php print $borderradius; ?>px;
@@ -301,7 +318,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-line-text {
 	overflow: hidden;
-	width: calc(100% - 76px);
+	width: calc(100% - 92px);
+	max-width: calc(100% - 82px);
 	text-overflow: ellipsis;
 }
 
@@ -406,7 +424,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
-	background: var(--infoboxmoduleenabledbgcolor);
+	/* background: var(--infoboxmoduleenabledbgcolor); */
 	border-radius: 6px;
 }
 .info-box-content-warning span.font-status4 {
@@ -437,6 +455,9 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 }
 .info-box-text{
 	font-size: 0.90em;
+}
+.info-box-desc {
+	font-size: 0.92em;
 }
 /* Force values for small screen 480 */
 /*
@@ -746,4 +767,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .infobox-haslink .info-box-icon .info-box-createlink span.fas {
 	margin:auto;
+}
+.infobox-haslink i.fa.fa-exclamation-triangle.hideonsmartphone {
+	display: none;
 }

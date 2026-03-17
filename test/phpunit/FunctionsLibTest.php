@@ -271,9 +271,19 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
 
+		// If MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is unset
+		$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;
+
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
+
+		// If MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is set (default)
+		$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+
+		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (SELECTrowidFROMllx_societeWHEREfournisseur1)))", $sql);
 
 		return true;
 	}
@@ -289,6 +299,7 @@ class FunctionsLibTest extends CommonClassTest
 		global $db;
 
 		$newproduct1 = new Product($db);
+		$newproduct1->initAsSpecimen();
 
 		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
@@ -301,11 +312,25 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
 		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
+	}
 
-		//$newproductcloned2 = dol_clone($newproduct1, 2);
-		//var_dump($newproductcloned2);
-		//print __METHOD__." newproductcloned1->db must be null\n";
-		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
+	/**
+	 * testDolCloneInArray
+	 *
+	 * @return void
+	 */
+	public function testDolCloneInArray()
+	{
+		global $db;
+
+		$newproduct1 = new Product($db);
+		$newproduct1->initAsSpecimen();
+
+		$newproductclonedinarray1 = dol_clone_in_array($newproduct1);
+
+		print __METHOD__." newproductclonedinarray1[db] must be null\n";
+		$this->assertNull((empty($newproductclonedinarray1['db']) ? null : 'defined'), 'newproductclonedinarray1[db] is null');
+		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 	}
 
 	/**
@@ -1115,12 +1140,15 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		$input = "x&<b>#</b>,\"'";    // " will be converted into '
 		$result = dol_escape_js($input);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\'\'", $result, "Test mode=0");
 
 		$result = dol_escape_js($input, 1);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\"\'", $result, "Test mode=1");
 
 		$result = dol_escape_js($input, 2);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
 	}
 
@@ -1132,6 +1160,8 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testDolEscapeHtmlTag()
 	{
+		print __METHOD__."\n";
+
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
 		$result = dol_escape_htmltag($input);
 		$this->assertEquals('x&amp;#,&quot;', $result);
@@ -1164,8 +1194,19 @@ class FunctionsLibTest extends CommonClassTest
 		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
 		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
 		</div>';
-
 		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals($input, $result);
+
+		// The same plus the tag 'code'
+		$input = '<div style="float:left; margin-left:0px; margin-right:5px">
+		<img id="sigPhoto" src="https://www.domain.com/aaa.png" style="height:65px; width:65px" />
+		</div>
+		<div style="margin-left:74px"><strong>A text here</strong> and more<br>
+		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
+		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
+		<code>abc</code>
+		</div>';
+		$result = dol_escape_htmltag($input, 1, 1, 'common,code');
 		$this->assertEquals($input, $result);
 	}
 
@@ -1178,10 +1219,13 @@ class FunctionsLibTest extends CommonClassTest
 	public function testDolFormatAddress()
 	{
 		global $conf,$user,$langs,$db;
+
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		print __METHOD__."\n";
 
 		$object = new Societe($db);
 		$object->initAsSpecimen();
@@ -1220,6 +1264,8 @@ class FunctionsLibTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		print __METHOD__."\n";
 
 		$object = new Societe($db);
 		$object->initAsSpecimen();
@@ -2030,5 +2076,45 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dolExplodeKeepIfQuotes("1 0");
 		$this->assertEquals("1", $result[0]);
 		$this->assertEquals("0", $result[1]);
+	}
+
+
+
+	/**
+	 * testDolSanitizePathName
+	 *
+	 * @return void
+	 */
+	public function testDolSanitizePathName()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$s = '../aéa/bbb ccc/ddd';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('_/aéa/bbb ccc/ddd', $result);
+
+		$s = '../aéa/bbb ccc/ddd';
+		$result = dol_sanitizePathName($s, '_', 1);
+		$this->assertEquals('_/aea/bbb ccc/ddd', $result);
+
+		$s = 'C:\ccc/d\'d"d$';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('C:\ccc/d\'d_d_', $result);
+
+		$s = 'C:\ccc/d\'d"d$';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('C:\ccc/d\'d_d_', $result);
+
+		$s = '/aaa/bbb -a -b';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('/aaa/bbb _a _b', $result);
+
+		$s = '/aaa/bbb -a -b';
+		$result = dol_sanitizePathName($s, '_', 0, 1);
+		$this->assertEquals('/aaa/bbb -a -b', $result);
 	}
 }

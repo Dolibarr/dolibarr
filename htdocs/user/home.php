@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,9 +189,9 @@ if ($resql) {
 		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
 		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'admin');
 		}
 		$lastcreatedbox .= "</td>";
 		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';
@@ -207,7 +207,7 @@ if ($resql) {
 		$entity = $obj->entity;
 		$entitystring = '';
 		// TODO Set of entitystring should be done with a hook
-		if (isModEnabled('multicompany') && is_object($mc)) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -287,10 +287,10 @@ if ($permissiontoreadgroup) {
 			$lastgroupbox .= '<td>';
 			$lastgroupbox .= $grouptemp->getNomUrl(1);
 			if (!$obj->entity) {
-				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'redstar');
+				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'superadmin');
 			}
 			$lastgroupbox .= "</td>";
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				$mc->getInfo($obj->entity);
 				$lastgroupbox .= '<td>';
 				$lastgroupbox .= $mc->label;

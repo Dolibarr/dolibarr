@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
 $action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartyagenda';
 
 if (GETPOSTISARRAY('actioncode')) {
@@ -61,6 +62,7 @@ if (GETPOSTISARRAY('actioncode')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 $search_complete = GETPOST('search_complete');
+$search_filtert = GETPOSTINT('search_filtert');
 $search_dateevent_start = GETPOSTDATE('dateevent_start');
 $search_dateevent_end = GETPOSTDATE('dateevent_end');
 
@@ -95,7 +97,7 @@ if (GETPOST('actioncode', 'array')) {
 $object = new Societe($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartyagenda', 'agendathirdparty', 'globalcard'));
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -135,6 +137,7 @@ if (empty($reshook)) {
 		$search_rowid = '';
 		$search_agenda_label = '';
 		$search_complete = '';
+		$search_filtert = '';
 	}
 }
 
@@ -143,8 +146,6 @@ if (empty($reshook)) {
 /*
  *	View
  */
-
-$form = new Form($db);
 
 $title = $langs->trans("Agenda");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
@@ -239,6 +240,9 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	if ($search_complete != '') {
 		$param .= '&search_complete='.urlencode($search_complete);
 	}
+	if ($search_filtert != '') {
+		$param .= '&search_filtert='.urlencode((string) $search_filtert);
+	}
 	if ($search_dateevent_start != '') {
 		$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
 		$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
@@ -267,12 +271,14 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	$filters['search_agenda_label'] = $search_agenda_label;
 	$filters['search_rowid'] = $search_rowid;
 	$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
+	$filters['search_filtert'] = $search_filtert;
 
-	// TODO Replace this with same code than into list.php
+	// TODO Replace this with the same code than into list.php
 	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
 }
 
 
 // End of page
 llxFooter();
+
 $db->close();

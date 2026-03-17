@@ -2,8 +2,8 @@
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,27 +57,28 @@ class FormActions
 	/**
 	 *  Show list of action status
 	 *
-	 * 	@param	string	$formname		Name of form where select is included
-	 * 	@param	string	$selected		Preselected value (-1..100)
-	 * 	@param	int		$canedit		1=can edit, 0=read only
-	 *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
-	 *  @param	integer	$showempty		Show an empty line if select is used
-	 *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
-	 *  @param  string  $morecss        More css on select field
-	 *  @param	int		$nooutput		1=No output, return string. 0=Print on output
-	 * 	@return	string|void
+	 * 	@param	string		$formname		Name of form where select is included
+	 * 	@param	string		$selected		Preselected value (-1..100)
+	 * 	@param	int<0,1>	$canedit		1=can edit, 0=read only
+	 *  @param  string		$htmlname   	Name of html prefix for html fields (selectX and valX)
+	 *  @param	integer		$showempty		Show an empty line if select is used
+	 *  @param	integer		$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+	 *  @param  string  	$morecss        More css on select field
+	 *  @param	int<0,1>	$nooutput		1=No output, return string. 0=Print on output
+	 * 	@return	void|string
+	 *  @phpstan-return ($nooutput is 1 ? void : string)
 	 */
 	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
 
-		$listofstatus = array(
+		$listofstatus = [
 			'na' => $langs->trans("ActionNotApplicable"),
 			'0' => $langs->trans("ActionsToDoShort"),
 			'50' => $langs->trans("ActionRunningShort"),
 			'100' => $langs->trans("ActionDoneShort")
-		);
+		];
 		// +ActionUncomplete
 
 		$out = '';
@@ -260,7 +261,6 @@ class FormActions
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
 
-			$error = 0;
 			if (empty($reshook)) {
 				print '<!-- formactions->showactions -->' . "\n";
 				print load_fiche_titre($title, $morehtmlright, '', 0, '', '', $morehtmlcenter);
@@ -275,7 +275,7 @@ class FormActions
 			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
@@ -296,18 +296,8 @@ class FormActions
 					print '<td class="nowraponall nopaddingrightimp">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhourreduceformat', 'tzuserrel');
-					if ($actioncomm->datef) {
-						$tmpa = dol_getdate($actioncomm->datep);
-						$tmpb = dol_getdate($actioncomm->datef);
-						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
-							}
-						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhourreduceformat', 'tzuserrel');
-						}
-					}
+					print '<td class="center nowraponall celldateheight">';
+					print dolOutputDates($actioncomm->datep, $actioncomm->datef, $actioncomm->fulldayevent, 0, '', 'tzuserrel', 1);
 					print '</td>';
 
 					// Owner
@@ -331,10 +321,11 @@ class FormActions
 					//$actionstatic->type_code = 'AC_OTHER_AUTO'
 
 					// Type
-					$labeltype = $actioncomm->getTypeLabel(0);
-					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
-					print $actioncomm->getTypePicto();
-					print $labeltype;
+					$labeltypelong = $actioncomm->getTypeLabel(2);
+					print '<td class="tdoverflowmax100 center" title="'.dolPrintHTML($labeltypelong).'">';
+					print $actioncomm->getTypePicto('valignmiddle');
+					//$labeltype = $actioncomm->getTypeLabel(0);
+					//print $labeltype;
 					print '</td>';
 
 					// Label / Title
@@ -370,7 +361,7 @@ class FormActions
 	/**
 	 *  Output html select list of type of event
 	 *
-	 *  @param	string[]|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
+	 *  @param	string[]|string	$selected       Type preselected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
 	 *  @param  string		    $htmlname       Name of select field
 	 *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
 	 *  @param	int<-2,1>	    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)
