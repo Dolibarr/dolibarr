@@ -116,7 +116,7 @@ if (isModEnabled('invoice')) {
 
 // Enable access for the intervention
 if (isModEnabled('ficheinter')) {
-	$formSetup->newItem('WEBPORTAL_FICHINTER_LIST_ACCESS')->setAsYesNo();
+	$formSetup->newItem('WEBPORTAL_FICHEINTER_LIST_ACCESS')->setAsYesNo();
 }
 
 // Enable access for the partnership record
