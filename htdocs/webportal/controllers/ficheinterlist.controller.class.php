@@ -171,12 +171,13 @@ class FicheinterListController extends AbstractListController
 		if ($field_key === 'download_link') {
 			$filename = dol_sanitizeFileName($this->formList->object->ref);
 			$filedir = $conf->ficheinter->multidir_output[$this->formList->object->entity] . '/' . dol_sanitizeFileName($this->formList->object->ref);
-			return $this->formList->form->getDocumentsLink('fichinter', $filename, $filedir);
+			return $this->formList->form->getDocumentsLink('ficheinter', $filename, $filedir);
 		}
 
 		if ($field_key === 'signature_link') {
+			$status = (int) ($record->fk_statut ?? 0);
 			$signedStatus = (int) ($record->signed_status ?? 0);
-			if (in_array($signedStatus, array(2, 3, 9), true)) {
+			if ($status === WebPortalFicheinter::STATUS_CLOSED || in_array($signedStatus, array(2, 3, 9), true)) {
 				return $langs->trans('WebPortalInterSignedDone');
 			}
 			return $this->formList->form->getSignatureLink('fichinter', $this->formList->object);
