@@ -23,12 +23,18 @@
 
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formlistwebportal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/webportal/controllers/abstractlist.controller.class.php';
+require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 
 /**
  * Class for TicketListController
  */
 class TicketListController extends AbstractListController
 {
+	/**
+	 * @var array<int,User>
+	 */
+	public $userStaticCache = array();
+
 	/**
 	 * Check current access to controller
 	 *
@@ -116,6 +122,25 @@ class TicketListController extends AbstractListController
 			$this->formList->object->status = (int) ($record->fk_statut ?? 0);
 			$this->formList->object->fk_statut = (int) ($record->fk_statut ?? 0);
 			return $this->formList->object->getLibStatut(5);
+		}
+
+		if ($field_key === 'fk_user_assign') {
+			$idUserAssign = (int) ($record->fk_user_assign ?? 0);
+			if ($idUserAssign <= 0) {
+				return $langs->trans('NotAssigned');
+			}
+
+			if (!isset($this->userStaticCache[$idUserAssign])) {
+				$userStatic = new User($this->db);
+				$userStatic->fetch($idUserAssign);
+				$this->userStaticCache[$idUserAssign] = $userStatic;
+			}
+
+			if (!empty($this->userStaticCache[$idUserAssign]->id)) {
+				return $this->userStaticCache[$idUserAssign]->getFullName($langs);
+			}
+
+			return $langs->trans('Unknown');
 		}
 
 		if ($field_key === 'consultation_link') {
