@@ -963,10 +963,6 @@ class Notify
 						$labeltouse = getDolGlobalString($template);
 						if (!empty($labeltouse)) {
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $labeltouse);
-							if ((!is_object($arraydefaultmessage) || empty($arraydefaultmessage->id)) && ($object_type === 'contract' || $object_type === 'contrat')) {
-								$alternatetype = ($object_type === 'contract' ? 'contrat' : 'contract');
-								$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $alternatetype, $user, $outputlangs, 0, 1, $labeltouse);
-							}
 						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 							if (method_exists($object, 'fetch_thirdparty') && empty($object->thirdparty)) {
@@ -1262,7 +1258,7 @@ class Notify
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = (is_array($object->context) && array_key_exists('signature', $object->context) && getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contrat';
+						$object_type = 'contract';
 						$mesg = $langs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$link.(!empty($context_info) ? ' '.$context_info : '');
 						break;
 					default:
@@ -1294,17 +1290,6 @@ class Notify
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
 					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
-					if ((!is_object($emailTemplate) || empty($emailTemplate->id)) && ($object_type === 'contract' || $object_type === 'contrat')) {
-						$alternatetype = ($object_type === 'contract' ? 'contrat' : 'contract');
-						$emailTemplate = $formmail->getEMailTemplate($this->db, $alternatetype.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
-					}
-					if (!is_object($emailTemplate) || empty($emailTemplate->id)) {
-						$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $mailTemplateLabel);
-						if ((!is_object($emailTemplate) || empty($emailTemplate->id)) && ($object_type === 'contract' || $object_type === 'contrat')) {
-							$alternatetype = ($object_type === 'contract' ? 'contrat' : 'contract');
-							$emailTemplate = $formmail->getEMailTemplate($this->db, $alternatetype, $user, $outputlangs, 0, 1, $mailTemplateLabel);
-						}
-					}
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {
