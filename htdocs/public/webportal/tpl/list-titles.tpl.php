@@ -46,8 +46,8 @@ $formList->nbColumn = 0;
 			<th <?php print empty($cssforfield) ? '' : 'class="' . dolPrintHTMLForAttribute($cssforfield) . '" ' ?>data-col="<?php print dolPrintHTMLForAttribute((string) $key) ?>" scope="col"<?php print (!empty($order) ? ' table-order="' . dolPrintHTMLForAttribute($order) . '"' : '') ?>>
 				<a href="<?php print dolPrintHTMLForAttribute($link_url) ?>"><?php print $langs->trans((string) $formList->arrayfields[$alias . $key]['label']) ?></a>
 			</th>
-		<?php $formList->nbColumn++;
-		}
+			<?php $formList->nbColumn++;
+			}
 	}
 
 	// Hook fields
