@@ -209,6 +209,7 @@ WebPortalInterSignedStatusSignedInternal=Signed internally
 WebPortalInterSignedStatusSignedThirdParty=Signed by third party
 WebPortalInterSignedStatusSignedThirdPartyOnline=Signed by third party online
 WebPortalInterSignedStatusSignedAllParties=Signed by all parties
+WebPortalInterSignedDone=Signed
 WEBPORTAL_USER_LOGGED=Select an anonymous user
 WebPortalUserLoggedHelp=This user is used to update cards
 WebPortalHomeTitle=Welcome

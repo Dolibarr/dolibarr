@@ -209,6 +209,7 @@ WebPortalInterSignedStatusSignedInternal=Intern unterzeichnet
 WebPortalInterSignedStatusSignedThirdParty=Vom Dritten unterzeichnet
 WebPortalInterSignedStatusSignedThirdPartyOnline=Vom Dritten online unterzeichnet
 WebPortalInterSignedStatusSignedAllParties=Von allen Parteien unterzeichnet
+WebPortalInterSignedDone=Unterzeichnet
 WEBPORTAL_USER_LOGGED=Einen anonymen Benutzer wählen
 WebPortalUserLoggedHelp=Dieser Benutzer wird verwendet, um Daten in Karten zu aktualisieren.
 WebPortalHomeTitle=Willkommen

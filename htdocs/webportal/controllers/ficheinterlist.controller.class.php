@@ -75,10 +75,6 @@ class FicheinterListController extends AbstractListController
 
 		$searchStatus = (string) ($this->formList->search['fk_statut'] ?? '');
 		if ($searchStatus !== '') {
-			if ((int) $searchStatus === WebPortalFicheinter::STATUS_VALIDATED) {
-				$sqlBody .= " AND (t.fk_statut = ".((int) WebPortalFicheinter::STATUS_VALIDATED)." OR (t.fk_statut = ".((int) WebPortalFicheinter::STATUS_VALIDATED)." AND t.signed_status IN (1, 2, 3, 9)))";
-			}
-
 			$searchSignedStatus = 0;
 			if ((int) $searchStatus === WebPortalFicheinter::STATUS_SIGN_NOT_SIGNED) {
 				$searchSignedStatus = 0;
@@ -114,6 +110,79 @@ class FicheinterListController extends AbstractListController
 		$this->formList->setColumnsVisibility();
 
 		return 1;
+	}
+
+
+	/**
+	 * Set array fields for intervention list
+	 *
+	 * @return	void
+	 */
+	public function listSetArrayFields()
+	{
+		$this->formList->arrayfields['download_link']['label'] = 'PDF';
+		$this->formList->arrayfields['download_link']['enabled'] = isModEnabled('ficheinter');
+		$this->formList->arrayfields['download_link']['checked'] = 1;
+		$this->formList->arrayfields['signature_link']['enabled'] = isModEnabled('ficheinter');
+		$this->formList->arrayfields['signature_link']['checked'] = 1;
+	}
+
+	/**
+	 * Called before print value for list
+	 *
+	 * @param	string				$field_key		Field key
+	 * @param	array<string,mixed>	$field_spec		Field specification
+	 * @param	stdClass			$record			Contain data of object from database
+	 * @return	string						HTML input
+	 */
+	public function listPrintValueBefore($field_key, $field_spec, &$record)
+	{
+		global $conf, $langs;
+
+		if ($field_key === 'fk_statut') {
+			$status = (int) ($record->fk_statut ?? 0);
+			$signedStatus = (int) ($record->signed_status ?? 0);
+			if ($status === WebPortalFicheinter::STATUS_VALIDATED) {
+				if ($signedStatus === 1) {
+					return $langs->trans('WebPortalInterSignedStatusSignedInternal');
+				}
+				if ($signedStatus === 2) {
+					return $langs->trans('WebPortalInterSignedStatusSignedThirdParty');
+				}
+				if ($signedStatus === 3) {
+					return $langs->trans('WebPortalInterSignedStatusSignedThirdPartyOnline');
+				}
+				if ($signedStatus === 9) {
+					return $langs->trans('WebPortalInterSignedStatusSignedAllParties');
+				}
+				return $langs->trans('StatusInterInValidated');
+			}
+			if ($status === WebPortalFicheinter::STATUS_DRAFT) {
+				return $langs->trans('StatusInterInDraft');
+			}
+			if ($status === WebPortalFicheinter::STATUS_BILLED) {
+				return $langs->trans('StatusInterInvoiced');
+			}
+			if ($status === WebPortalFicheinter::STATUS_CLOSED) {
+				return $langs->trans('StatusInterInClosed');
+			}
+		}
+
+		if ($field_key === 'download_link') {
+			$filename = dol_sanitizeFileName($this->formList->object->ref);
+			$filedir = $conf->ficheinter->multidir_output[$this->formList->object->entity] . '/' . dol_sanitizeFileName($this->formList->object->ref);
+			return $this->formList->form->getDocumentsLink('fichinter', $filename, $filedir);
+		}
+
+		if ($field_key === 'signature_link') {
+			$signedStatus = (int) ($record->signed_status ?? 0);
+			if (in_array($signedStatus, array(2, 3, 9), true)) {
+				return $langs->trans('WebPortalInterSignedDone');
+			}
+			return $this->formList->form->getSignatureLink('fichinter', $this->formList->object);
+		}
+
+		return '';
 	}
 
 	/**
