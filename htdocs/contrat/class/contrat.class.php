@@ -444,6 +444,13 @@ class Contrat extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			$result = $this->call_trigger('CONTRACT_ACTIVATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -499,6 +506,13 @@ class Contrat extends CommonObject
 
 		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error && !$notrigger) {
+			$result = $this->call_trigger('CONTRACT_CLOSE', $user);
 			if ($result < 0) {
 				$error++;
 			}
