@@ -186,6 +186,57 @@ class Notify
 		$this->db = $db;
 	}
 
+	/**
+	 * Get email template and support both contract and contrat object types.
+	 *
+	 * @param FormMail	$formmail		FormMail object
+	 * @param string		$objecttype	Object type
+	 * @param User		$user			Current user
+	 * @param Translate	$outputlangs	Output langs
+	 * @param string		$labeltouse	Template label
+	 * @param int		$usesendsuffix	1=Try with _send first, 0=Try without _send first
+	 * @return CEmailTemplates|null
+	 */
+	private function getEmailTemplateForObjectType(FormMail $formmail, $objecttype, User $user, Translate $outputlangs, $labeltouse, $usesendsuffix = 0)
+	{
+		$candidates = array();
+		$alternateobjecttype = '';
+		if ($objecttype === 'contract') {
+			$alternateobjecttype = 'contrat';
+		} elseif ($objecttype === 'contrat') {
+			$alternateobjecttype = 'contract';
+		}
+
+		if ($usesendsuffix) {
+			$candidates[] = $objecttype.'_send';
+			if (!empty($alternateobjecttype)) {
+				$candidates[] = $alternateobjecttype.'_send';
+			}
+			$candidates[] = $objecttype;
+			if (!empty($alternateobjecttype)) {
+				$candidates[] = $alternateobjecttype;
+			}
+		} else {
+			$candidates[] = $objecttype;
+			if (!empty($alternateobjecttype)) {
+				$candidates[] = $alternateobjecttype;
+			}
+			$candidates[] = $objecttype.'_send';
+			if (!empty($alternateobjecttype)) {
+				$candidates[] = $alternateobjecttype.'_send';
+			}
+		}
+
+		foreach (array_unique($candidates) as $candidate) {
+			$emailtemplate = $formmail->getEMailTemplate($this->db, $candidate, $user, $outputlangs, 0, 1, $labeltouse);
+			if (is_object($emailtemplate) && !empty($emailtemplate->id)) {
+				return $emailtemplate;
+			}
+		}
+
+		return null;
+	}
+
 
 	/**
 	 *  Return message that say how many notification (and to which email) will occurs on requested event.
@@ -961,7 +1012,7 @@ class Notify
 						$template = $notifcode.'_TEMPLATE';
 						$labeltouse = getDolGlobalString($template);
 						if (!empty($labeltouse)) {
-							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $labeltouse);
+							$arraydefaultmessage = $this->getEmailTemplateForObjectType($formmail, $object_type, $user, $outputlangs, $labeltouse, 0);
 						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 							if (method_exists($object, 'fetch_thirdparty') && empty($object->thirdparty)) {
@@ -1288,7 +1339,7 @@ class Notify
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
-					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					$emailTemplate = $this->getEmailTemplateForObjectType($formmail, $object_type, $user, $outputlangs, $mailTemplateLabel, 1);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {
