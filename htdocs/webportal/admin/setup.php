@@ -115,8 +115,13 @@ if (isModEnabled('invoice')) {
 }
 
 // Enable access for the intervention
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$formSetup->newItem('WEBPORTAL_FICHEINTER_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the tickets
+if (isModEnabled('ticket')) {
+	$formSetup->newItem('WEBPORTAL_TICKET_LIST_ACCESS')->setAsYesNo();
 }
 
 // Enable access for the partnership record

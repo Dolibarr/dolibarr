@@ -47,7 +47,7 @@ $formList->nbColumn = 0;
 				<a href="<?php print dolPrintHTMLForAttribute($link_url) ?>"><?php print $langs->trans((string) $formList->arrayfields[$alias . $key]['label']) ?></a>
 			</th>
 			<?php $formList->nbColumn++;
-		}
+			}
 	}
 
 	// Hook fields
@@ -72,4 +72,12 @@ $formList->nbColumn = 0;
 		<th scope="col"><?php print  $langs->trans((string) $formList->arrayfields['signature_link']['label']) ?></th>
 		<?php $formList->nbColumn++;
 	} ?>
+
+	<?php
+	// Consultation link
+	if (array_key_exists('consultation_link', $formList->arrayfields) && !empty($formList->arrayfields['consultation_link']['checked'])) { ?>
+		<th scope="col"><?php print  $langs->trans((string) $formList->arrayfields['consultation_link']['label']) ?></th>
+		<?php $formList->nbColumn++;
+	} ?>
+
 </tr>
