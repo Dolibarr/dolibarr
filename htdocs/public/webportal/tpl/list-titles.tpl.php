@@ -47,7 +47,7 @@ $formList->nbColumn = 0;
 				<a href="<?php print dolPrintHTMLForAttribute($link_url) ?>"><?php print $langs->trans((string) $formList->arrayfields[$alias . $key]['label']) ?></a>
 			</th>
 			<?php $formList->nbColumn++;
-			}
+		}
 	}
 
 	// Hook fields
