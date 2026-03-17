@@ -259,6 +259,8 @@ class FormTicket
 	{
 		global $conf, $langs, $user, $hookmanager;
 
+		$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
+
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails', 'ticket'));
 
@@ -742,8 +744,14 @@ class FormTicket
 			print '<tr><td>';
 			print $langs->trans("AssignedTo");
 			print '</td><td>';
-			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $form->select_dolusers($user_assign, 'fk_user_assign', 1);
+			if ($permissiontomanage) {
+				print img_picto('', 'user', 'class="pictofixedwidth"');
+				print $form->select_dolusers($user_assign, 'fk_user_assign', 1);
+			} else {
+				$userstat = new User($this->db);
+				$userstat->fetch($user_assign);
+				print $userstat->getNomUrl(-1);
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -861,8 +869,8 @@ class FormTicket
 	 *      Return html list of tickets type
 	 *
 	 *      @param  string|int[]	$selected		Id of preselected field or array of Ids
-	 *      @param  string			$htmlname		Nom de la zone select
-	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+	 *      @param  string			$htmlname		Name of select component
+	 *      @param  string			$filtertype		To filter on some codes in llx_c_ticket_type ('code1,code2...')
 	 *      @param  int				$format			0=id+label, 1=code+code, 2=code+label, 3=id+code
 	 *      @param  int|string		$empty      	1 = can be empty or 'string' to show the string as the empty value, 0 = can't be empty, 'ifone' = can be empty but autoselected if there is one only
 	 *      @param  int				$noadmininfo	0=Add admin info, 1=Disable admin info
@@ -895,8 +903,8 @@ class FormTicket
 
 		if (is_array($ticketstat->cache_types_tickets) && count($ticketstat->cache_types_tickets)) {
 			foreach ($ticketstat->cache_types_tickets as $id => $arraytypes) {
-				// On passe si on a demande de filtrer sur des modes de paiments particuliers
-				if (count($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
+				// We stop if we astto filter on some ticket type and code is not one requested.
+				if (count($filterarray) && !in_array($arraytypes['code'], $filterarray)) {
 					continue;
 				}
 
@@ -1718,9 +1726,9 @@ class FormTicket
 				}
 
 				if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 
 				if ($ticketstat->fk_soc > 0) {

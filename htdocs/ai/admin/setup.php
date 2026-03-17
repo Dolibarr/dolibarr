@@ -2,8 +2,9 @@
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Lamrani Abdel
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,7 +12,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY, without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -65,23 +66,29 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
-// List all available IA
+// List all available AI
 $arrayofai = getListOfAIServices();
 
 // List all available features
 $arrayofaifeatures = getListOfAIFeatures();
 
+// Main Service Selection
 $item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 $item->setAsSelect($arrayofai);
 $item->cssClass = 'minwidth150';
 
+// Loop for Provider Configs
 foreach ($arrayofai as $ia => $iarecord) {
+	if ($ia == '-1') {
+		continue;
+	}
 	$ialabel = $iarecord['label'];
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
 	$item->cssClass = 'minwidth500';*/
 
+	// API Key
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
@@ -90,14 +97,23 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->cssClass = 'minwidth500 text-security input'.$ia;
 	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
 
+	// API URL
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
-	$item->defaultFieldValue = '';
+	$item->defaultFieldValue =  $iarecord['url'];
 	$item->fieldParams['trClass'] = 'iaservice iaurl '.$ia;
 	$item->cssClass = 'minwidth500 input'.$ia;
 	if ($ia == 'custom') {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
 	}
+
+	// Generic Model Field
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MODEL');
+	$item->nameText = $langs->trans("AI_API_MODEL").' ('.$ialabel.')';
+	$item->defaultFieldValue = $iarecord['textgeneration'];
+	$item->fieldParams['trClass'] = 'iaservice '.$ia;
+	$item->cssClass = 'minwidth500 input'.$ia;
+	$item->helpText = $langs->trans("AI_API_MODEL_HELP");
 }
 
 $setupnotempty = + count($formSetup->items);

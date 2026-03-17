@@ -1481,6 +1481,11 @@ class Product extends CommonObject
 			$this->stockable_product = 0;
 		}
 
+		// For automatic creation during update action (not used by Dolibarr GUI, can be used by scripts)
+		if ($this->barcode == '-1' || $this->barcode == 'auto') {
+			$this->barcode = $this->get_barcode($this, $this->barcode_type_code);
+		}
+
 		// Barcode value
 		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
@@ -1563,11 +1568,6 @@ class Product extends CommonObject
 						}
 					}
 				}
-			}
-
-			// For automatic creation
-			if ($this->barcode == -1) {
-				$this->barcode = $this->get_barcode($this, $this->barcode_type_code);
 			}
 
 			$sql = "UPDATE ".$this->db->prefix()."product";
