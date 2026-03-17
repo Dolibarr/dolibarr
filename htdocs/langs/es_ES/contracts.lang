@@ -114,3 +114,4 @@ ShowClosedServices=Mostrar servicios cerrados
 HideClosedServices=Ocultar servicios cerrados
 UserStartingService=Usuario inicio del servicio
 UserClosingService=Usuario cierre del servicio
+ContractShowSignatureStatus=Mostrar estado de firma con el estado de los servicios
