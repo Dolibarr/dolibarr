@@ -55,9 +55,6 @@ class WebPortalFicheinter extends Fichinter
 		self::STATUS_SIGN_SIGNED_ALL_PARTIES => 'WebPortalInterSignedStatusSignedAllParties',
 	);
 
-	/**
-	 * @var array<string,array<string,mixed>>
-	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20),

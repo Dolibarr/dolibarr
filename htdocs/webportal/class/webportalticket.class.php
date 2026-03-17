@@ -33,9 +33,6 @@ class WebPortalTicket extends Ticket
 	 */
 	public $module = 'webportal';
 
-	/**
-	 * @var array<string,array<string,mixed>>
-	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'position' => 1, 'notnull' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'visible' => -2, 'enabled' => 1, 'position' => 5, 'notnull' => 1),
