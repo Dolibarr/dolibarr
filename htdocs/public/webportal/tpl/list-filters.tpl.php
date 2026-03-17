@@ -64,10 +64,10 @@ $formList = &$this->formList;
 	<?php } ?>
 
 	<?php
-		// Consultation link
-		if (array_key_exists('consultation_link', $formList->arrayfields) && !empty($formList->arrayfields['consultation_link']['checked'])) { ?>
-			<td data-label="<?php print dolPrintHTMLForAttribute((string) $formList->arrayfields['consultation_link']['label']) ?>">
-			</td>
+	// Consultation link
+	if (array_key_exists('consultation_link', $formList->arrayfields) && !empty($formList->arrayfields['consultation_link']['checked'])) { ?>
+		<td data-label="<?php print dolPrintHTMLForAttribute((string) $formList->arrayfields['consultation_link']['label']) ?>">
+		</td>
 		<?php } ?>
 
 </tr>

@@ -46,7 +46,7 @@ $formList->nbColumn = 0;
 			<th <?php print empty($cssforfield) ? '' : 'class="' . dolPrintHTMLForAttribute($cssforfield) . '" ' ?>data-col="<?php print dolPrintHTMLForAttribute((string) $key) ?>" scope="col"<?php print (!empty($order) ? ' table-order="' . dolPrintHTMLForAttribute($order) . '"' : '') ?>>
 				<a href="<?php print dolPrintHTMLForAttribute($link_url) ?>"><?php print $langs->trans((string) $formList->arrayfields[$alias . $key]['label']) ?></a>
 			</th>
-			<?php $formList->nbColumn++;
+		<?php $formList->nbColumn++;
 		}
 	}
 
@@ -74,10 +74,10 @@ $formList->nbColumn = 0;
 	} ?>
 
 	<?php
-		// Consultation link
-		if (array_key_exists('consultation_link', $formList->arrayfields) && !empty($formList->arrayfields['consultation_link']['checked'])) { ?>
-			<th scope="col"><?php print  $langs->trans((string) $formList->arrayfields['consultation_link']['label']) ?></th>
-			<?php $formList->nbColumn++;
-		} ?>
+	// Consultation link
+	if (array_key_exists('consultation_link', $formList->arrayfields) && !empty($formList->arrayfields['consultation_link']['checked'])) { ?>
+		<th scope="col"><?php print  $langs->trans((string) $formList->arrayfields['consultation_link']['label']) ?></th>
+		<?php $formList->nbColumn++;
+	} ?>
 
 </tr>

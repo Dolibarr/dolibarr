@@ -115,7 +115,7 @@ if (isModEnabled('invoice')) {
 }
 
 // Enable access for the intervention
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$formSetup->newItem('WEBPORTAL_FICHEINTER_LIST_ACCESS')->setAsYesNo();
 }
 

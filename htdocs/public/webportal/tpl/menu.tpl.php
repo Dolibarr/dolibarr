@@ -63,7 +63,7 @@ if ($context->userIsLog()) {
 		);
 	}
 	// menu interventions
-	if (isModEnabled('ficheinter') && getDolGlobalInt('WEBPORTAL_FICHEINTER_LIST_ACCESS')) {
+	if (isModEnabled('intervention') && getDolGlobalInt('WEBPORTAL_FICHEINTER_LIST_ACCESS')) {
 		$navMenu['ficheinter_list'] = array(
 			'id' => 'ficheinter_list',
 			'rank' => 35,

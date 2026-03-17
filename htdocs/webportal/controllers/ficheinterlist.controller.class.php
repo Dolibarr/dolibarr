@@ -36,7 +36,7 @@ class FicheinterListController extends AbstractListController
 	 */
 	public function checkAccess()
 	{
-		$this->accessRight = isModEnabled('ficheinter') && getDolGlobalInt('WEBPORTAL_FICHEINTER_LIST_ACCESS');
+		$this->accessRight = isModEnabled('intervention') && getDolGlobalInt('WEBPORTAL_FICHEINTER_LIST_ACCESS');
 
 		return parent::checkAccess();
 	}
@@ -121,9 +121,9 @@ class FicheinterListController extends AbstractListController
 	public function listSetArrayFields()
 	{
 		$this->formList->arrayfields['download_link']['label'] = 'PDF';
-		$this->formList->arrayfields['download_link']['enabled'] = isModEnabled('ficheinter');
+		$this->formList->arrayfields['download_link']['enabled'] = isModEnabled('intervention');
 		$this->formList->arrayfields['download_link']['checked'] = 1;
-		$this->formList->arrayfields['signature_link']['enabled'] = isModEnabled('ficheinter');
+		$this->formList->arrayfields['signature_link']['enabled'] = isModEnabled('intervention');
 		$this->formList->arrayfields['signature_link']['checked'] = 1;
 	}
 

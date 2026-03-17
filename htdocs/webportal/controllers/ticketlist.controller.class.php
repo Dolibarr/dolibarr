@@ -127,7 +127,7 @@ class TicketListController extends AbstractListController
 		if ($field_key === 'fk_user_assign') {
 			$idUserAssign = (int) ($record->fk_user_assign ?? 0);
 			if ($idUserAssign <= 0) {
-				return $langs->trans('NotAssigned');
+				return $langs->trans('WebPortalTicketNotAssigned');
 			}
 
 			if (!isset($this->userStaticCache[$idUserAssign])) {

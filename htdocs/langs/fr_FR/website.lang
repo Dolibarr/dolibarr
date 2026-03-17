@@ -204,6 +204,7 @@ WebPortalTicketListNothing=Aucun ticket trouvé
 WebPortalTicketConsultation=Consultation
 WebPortalTicketConsultationLink=Consulter
 WebPortalTicketConsultationTooltipNotPublic=Le ticket n’a pas été créé à partir de l'interface publique.
+WebPortalTicketNotAssigned=Non assigné
 StatusInterInDraft=Brouillon
 StatusInterInValidated=Validée
 StatusInterInClosed=Clôturée
