@@ -125,4 +125,3 @@ Signed=पर हस्ताक्षर किए
 SignedOnly=केवल हस्ताक्षरित
 ExpeditionSigned=शिपमेंट पर हस्ताक्षर
 SignExpedition=शिपमेंट पर हस्ताक्षर करें
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=इस अनुमति से केवल अस्थायी मसौदा प्रस्ताव (PROV* या खाली संदर्भ) को हटाया जा सकता है। निश्चित संदर्भों के लिए डिलीट अनुमति का उपयोग करें।

@@ -80,4 +80,3 @@ Sign=Assinar
 SignFichinter=Assinar intervenção
 SignPropal=Aceitar proposta
 SignedOnly=Apenas assinado
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Somente rascunhos de propostas temporárias (PROV* ou referência vazia) podem ser excluídos com esta permissão. Use a permissão de exclusão para referências definitivas.

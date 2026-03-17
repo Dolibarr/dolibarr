@@ -122,4 +122,3 @@ Signed=қол қойды
 SignedOnly=Тек қол қойылған
 ExpeditionSigned=Жөнелтуге қол қойылды
 SignExpedition=Жеткізуге қол қою
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Осы рұқсатпен тек уақытша жобалық ұсыныстарды (PROV* немесе бос сілтеме) жоюға болады. Нақты сілтемелер үшін жою рұқсатын пайдаланыңыз.

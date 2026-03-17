@@ -125,4 +125,3 @@ Signed=potpisan
 SignedOnly=Samo potpisano
 ExpeditionSigned=Pošiljka potpisana
 SignExpedition=Potpišite pošiljku
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Samo privremeni prijedlozi nacrta (PROV* ili prazna referenca) mogu se izbrisati s ovom dozvolom. Koristite dopuštenje za brisanje za konačne reference.

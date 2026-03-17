@@ -97,4 +97,3 @@ PropalAlreadyRefused=Proposal already refused
 PropalSigned=Proposal accepted
 PropalRefused=Proposal refused
 ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=მხოლოდ დროებითი წინადადებების პროექტი (PROV* ან ცარიელი მითითება) შეიძლება წაიშალოს ამ ნებართვით. გამოიყენეთ წაშლის ნებართვა საბოლოო მითითებისთვის.

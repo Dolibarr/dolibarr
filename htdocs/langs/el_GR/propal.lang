@@ -128,4 +128,3 @@ ExpeditionSigned=Η αποστολή υπογράφηκε
 SignExpedition=Υπογραφή αποστολής
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Εμφάνιση διεύθυνσης αποστολής
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Υποχρεωτική αναφορά για κάποιες χώρες (Γαλλία, ...)
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Μόνο προσωρινές προτάσεις προτάσεων (PROV* ή κενή αναφορά) μπορούν να διαγραφούν με αυτήν την άδεια. Χρησιμοποιήστε το δικαίωμα διαγραφής για οριστικές αναφορές.

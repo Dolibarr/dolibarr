@@ -10,4 +10,3 @@ AvailabilityTypeAV_NOW=Prompt nach Rechnungserhalt
 TypeContact_propal_internal_SALESREPFOLL=Angebotsnachverfolgung durch Vertreter
 TypeContact_propal_external_BILLING=Debitorenrechnung Kontakt
 TypeContact_propal_external_CUSTOMER=Angebots-Nachverfolgung durch Partnerkontakt
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Mit dieser Berechtigung können nur temporäre Vorschlagsentwürfe (PROV* oder leere Referenz) gelöscht werden. Verwenden Sie die Löschberechtigung für definitive Referenzen.

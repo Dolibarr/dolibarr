@@ -122,4 +122,3 @@ SignSociete_rib=לחתום על מנדט
 SignPropal=קבל את ההצעה
 Signed=חתם
 SignedOnly=חתום בלבד
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=ניתן למחוק רק טיוטת הצעות זמניות (PROV* או הפניה ריקה) בהרשאה זו. השתמש בהרשאת מחיקה להפניות סופיות.

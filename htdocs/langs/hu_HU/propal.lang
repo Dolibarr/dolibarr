@@ -125,4 +125,3 @@ Signed=aláírva
 SignedOnly=Csak aláírva
 ExpeditionSigned=A szállítmány aláírva
 SignExpedition=Szállítás aláírása
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Ezzel az engedéllyel csak az ideiglenes javaslattervezetek (PROV* vagy üres hivatkozás) törölhetők. Használjon törlési engedélyt a végleges hivatkozásokhoz.

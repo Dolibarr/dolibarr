@@ -97,4 +97,3 @@ PropalAlreadyRefused=Proposal already refused
 PropalSigned=Proposal accepted
 PropalRefused=Proposal refused
 ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=ဤခွင့်ပြုချက်ဖြင့် ယာယီ အဆိုပြုချက်များ (PROV* သို့မဟုတ် ဗလာကျင်းထားသော အကိုးအကား) များကိုသာ ဖျက်နိုင်ပါသည်။ တိကျသော ကိုးကားချက်များအတွက် ဖျက်ရန်ခွင့်ပြုချက်ကို အသုံးပြုပါ။

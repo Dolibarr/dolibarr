@@ -122,4 +122,3 @@ Signed=signed
 SignedOnly=Signed only
 ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=이 권한이 있으면 임시 초안 제안(PROV* 또는 빈 참조)만 삭제할 수 있습니다. 최종 참조에 대해서는 삭제 권한을 사용하십시오.

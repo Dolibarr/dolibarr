@@ -125,4 +125,3 @@ Signed=imzaladı
 SignedOnly=Yalnız imzalanmışdır
 ExpeditionSigned=Göndərmə imzalanıb
 SignExpedition=Göndərməni imzalayın
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Bu icazə ilə yalnız müvəqqəti layihə təklifləri (PROV* və ya boş arayış) silinə bilər. Qəti istinadlar üçün silmə icazəsindən istifadə edin.

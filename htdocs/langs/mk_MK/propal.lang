@@ -122,4 +122,3 @@ Signed=потпишан
 SignedOnly=Само потпишан
 ExpeditionSigned=Пратката е потпишана
 SignExpedition=Потпишете ја пратката
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Со оваа дозвола може да се избришат само привремени нацрт-предлози (ПРОВ* или празна референца). Користете дозвола за бришење за дефинитивни референци.

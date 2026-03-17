@@ -128,4 +128,3 @@ ExpeditionSigned=Envío asinado
 SignExpedition=Asinar o envío
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Mostrar o enderezo de envío
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Indicación obrigatoria nalgúns países (Franza,...)
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Só se poden eliminar con este permiso as propostas de borradores temporais (PROV* ou referencia baleira). Use o permiso de eliminación para referencias definitivas.

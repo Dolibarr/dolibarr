@@ -1,4 +1,3 @@
 # Dolibarr language file - Source file is en_US - propal
 PropalsOpened=Ouverte
 PropalStatusValidatedShort=Ouverte
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Seuls les projets de propositions temporaires (PROV* ou référence vide) peuvent être supprimés avec cette autorisation. Utilisez l’autorisation de suppression pour les références définitives.

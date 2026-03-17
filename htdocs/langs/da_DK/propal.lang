@@ -127,4 +127,3 @@ ExpeditionSigned=Forsendelse underskrevet
 SignExpedition=Skilt forsendelse
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Vis leveringsadresse
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Obligatorisk angivelse i nogle lande (Frankrig, ...)
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Kun midlertidige udkast til forslag (PROV* eller tom reference) kan slettes med denne tilladelse. Brug slettetilladelse til endelige referencer.

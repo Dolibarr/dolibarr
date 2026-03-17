@@ -128,4 +128,3 @@ ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
 PROPOSAL_SHOW_SHIPPING_ADDRESS=إظهار عنوان الشحن
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=إشارة إلزامية في بعض الدول (فرنسا، …)
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=يمكن حذف مسودات المقترحات المؤقتة فقط (PROV* أو مرجع فارغ) بهذا الإذن. استخدم إذن الحذف للمراجع النهائية.

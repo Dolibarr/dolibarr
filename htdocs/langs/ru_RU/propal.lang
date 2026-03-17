@@ -125,4 +125,3 @@ Signed=подписал
 SignedOnly=Только подписано
 ExpeditionSigned=Отгрузка подписана
 SignExpedition=Подписать отгрузку
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=С этим разрешением можно удалить только временные проекты предложений (PROV* или пустую ссылку). Используйте разрешение на удаление для окончательных ссылок.

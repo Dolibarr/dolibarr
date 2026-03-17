@@ -125,4 +125,3 @@ Signed=allkirjastatud
 SignedOnly=Allkirjastatud ainult
 ExpeditionSigned=Saadetis allkirjastatud
 SignExpedition=Saadetise allkirjastamine
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Selle loaga saab kustutada ainult ajutisi ettepanekute kavandeid (PROV* või tühi viide). Kasutage lõplike viidete jaoks kustutamisluba.
