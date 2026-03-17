@@ -1289,6 +1289,7 @@ class Notify
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
+					var_dump($object_type);
 					if ($object_type == 'contract') {
 						$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $mailTemplateLabel);
 					} else {
