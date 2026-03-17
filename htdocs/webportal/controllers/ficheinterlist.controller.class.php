@@ -72,6 +72,41 @@ class FicheinterListController extends AbstractListController
 
 		$sqlBody = " AND t.fk_soc = ".((int) $context->logged_thirdparty->id);
 		$sqlBody .= " AND t.fk_statut <> 0";
+
+		$searchStatus = (string) ($this->formList->search['fk_statut'] ?? '');
+		if ($searchStatus !== '') {
+			if ((int) $searchStatus === WebPortalFicheinter::STATUS_VALIDATED) {
+				$sqlBody .= " AND (t.fk_statut = ".((int) WebPortalFicheinter::STATUS_VALIDATED)." OR (t.fk_statut = ".((int) WebPortalFicheinter::STATUS_VALIDATED)." AND t.signed_status IN (1, 2, 3, 9)))";
+			}
+
+			$searchSignedStatus = 0;
+			if ((int) $searchStatus === WebPortalFicheinter::STATUS_SIGN_NOT_SIGNED) {
+				$searchSignedStatus = 0;
+			}
+			if ((int) $searchStatus === WebPortalFicheinter::STATUS_SIGN_SIGNED_INTERNAL) {
+				$searchSignedStatus = 1;
+			}
+			if ((int) $searchStatus === WebPortalFicheinter::STATUS_SIGN_SIGNED_THIRDPARTY) {
+				$searchSignedStatus = 2;
+			}
+			if ((int) $searchStatus === WebPortalFicheinter::STATUS_SIGN_SIGNED_THIRDPARTY_ONLINE) {
+				$searchSignedStatus = 3;
+			}
+			if ((int) $searchStatus === WebPortalFicheinter::STATUS_SIGN_SIGNED_ALL_PARTIES) {
+				$searchSignedStatus = 9;
+			}
+
+			if ((int) $searchStatus >= WebPortalFicheinter::STATUS_SIGN_NOT_SIGNED && (int) $searchStatus <= WebPortalFicheinter::STATUS_SIGN_SIGNED_ALL_PARTIES) {
+				$this->formList->search['fk_statut'] = '';
+				$sqlBody .= " AND t.fk_statut = ".((int) WebPortalFicheinter::STATUS_VALIDATED);
+				if ($searchSignedStatus === 0) {
+					$sqlBody .= " AND (t.signed_status IS NULL OR t.signed_status = 0)";
+				} else {
+					$sqlBody .= " AND t.signed_status = ".((int) $searchSignedStatus);
+				}
+			}
+		}
+
 		$this->formList->setSqlRequest('', $sqlBody);
 
 		$this->formList->loadRecords();

@@ -36,11 +36,22 @@ class WebPortalFicheinter extends Fichinter
 	/**
 	 * Status list (short label)
 	 */
+	const STATUS_SIGN_NOT_SIGNED = 11;
+	const STATUS_SIGN_SIGNED_INTERNAL = 12;
+	const STATUS_SIGN_SIGNED_THIRDPARTY = 13;
+	const STATUS_SIGN_SIGNED_THIRDPARTY_ONLINE = 14;
+	const STATUS_SIGN_SIGNED_ALL_PARTIES = 15;
+
 	const ARRAY_STATUS_LABEL = array(
 		self::STATUS_DRAFT => 'StatusInterInDraft',
-		self::STATUS_VALIDATED => 'StatusInterValidated',
+		self::STATUS_VALIDATED => 'StatusInterInValidated',
 		self::STATUS_BILLED => 'StatusInterInvoiced',
-		self::STATUS_CLOSED => 'StatusInterClosed',
+		self::STATUS_CLOSED => 'StatusInterInClosed',
+		self::STATUS_SIGN_NOT_SIGNED => 'WebPortalInterSignedStatusNotSigned',
+		self::STATUS_SIGN_SIGNED_INTERNAL => 'WebPortalInterSignedStatusSignedInternal',
+		self::STATUS_SIGN_SIGNED_THIRDPARTY => 'WebPortalInterSignedStatusSignedThirdParty',
+		self::STATUS_SIGN_SIGNED_THIRDPARTY_ONLINE => 'WebPortalInterSignedStatusSignedThirdPartyOnline',
+		self::STATUS_SIGN_SIGNED_ALL_PARTIES => 'WebPortalInterSignedStatusSignedAllParties',
 	);
 
 	/**
