@@ -3,7 +3,7 @@
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2026		Frédéric France             <developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Pierre Ardoin             <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
