@@ -189,6 +189,14 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN localtax1_type varchar(10)  NUL
 ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_tx double(7,4)  DEFAULT 0 NOT NULL AFTER localtax1_type;
 ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_type varchar(10)  NULL AFTER localtax2_tx;
 
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(HolidayHrInformationsPreviousMonthContent)__:<br>__ARRAY_EMPLOYEE_STARTDAY_ENDDAY_DAYS__', null, 0)
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(HolidayHrInformationsPreviousMonthContent)__:<br>__ARRAY_EMPLOYEE_STARTDAY_ENDDAY_DAYS__', null, 0);
+
+
+-- Contract notification events for status changes
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_REOPEN','Contract reopened','Executed when a contract is reopened','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_ACTIVATE','Contract activated','Executed when all contract services are activated','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_CLOSE','Contract closed','Executed when all contract services are closed','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SIGN','Contract signed status changed','Executed when a contract signature status is changed','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_UNSIGN','Contract unsigned','Executed when a contract signature status is reset to no signature','contrat',18);
 
 -- end of migration

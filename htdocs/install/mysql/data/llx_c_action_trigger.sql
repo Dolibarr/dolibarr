@@ -93,6 +93,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_MODIFY','Contract modified','Executed when a contract is modified','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SENTBYMAIL','Contract sent by mail','Executed when a contract is sent by mail','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_DELETE','Contract deleted','Executed when a contract is deleted','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_REOPEN','Contract reopened','Executed when a contract is reopened','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_ACTIVATE','Contract activated','Executed when all contract services are activated','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_CLOSE','Contract closed','Executed when all contract services are closed','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SIGN','Contract signed status changed','Executed when a contract signature status is changed','contrat',18);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_UNSIGN','Contract unsigned','Executed when a contract signature status is reset to no signature','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('SHIPPING_VALIDATE','Shipping validated','Executed when a shipping is validated','shipping',20);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('SHIPPING_MODIFY','Shipping modified','Executed when a shipping is modified','shipping',20);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('SHIPPING_SENTBYMAIL','Shipping sent by mail','Executed when a shipping is sent by mail','shipping',21);

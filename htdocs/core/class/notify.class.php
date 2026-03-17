@@ -167,7 +167,13 @@ class Notify
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
 		'ACTION_CREATE',
-		'CONTRACT_MODIFY'
+		'CONTRACT_MODIFY',
+		'CONTRACT_VALIDATE',
+		'CONTRACT_REOPEN',
+		'CONTRACT_ACTIVATE',
+		'CONTRACT_CLOSE',
+		'CONTRACT_SIGN',
+		'CONTRACT_UNSIGN'
 	);
 
 	/**
@@ -179,6 +185,7 @@ class Notify
 	{
 		$this->db = $db;
 	}
+
 
 
 	/**
@@ -928,11 +935,17 @@ class Notify
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
 							case 'CONTRACT_MODIFY':
+							case 'CONTRACT_VALIDATE':
+							case 'CONTRACT_REOPEN':
+							case 'CONTRACT_ACTIVATE':
+							case 'CONTRACT_CLOSE':
+							case 'CONTRACT_SIGN':
+							case 'CONTRACT_UNSIGN':
 								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$context_info = (is_array($object->context) && array_key_exists('signature', $object->context) && getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->contract->multidir_output;
 								$object_type = 'contract';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
+								$mesg = $outputlangs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$link.(!empty($context_info) ? ' '.$context_info : '');
 								break;
 							default:
 								$object_type = $object->element;
@@ -1236,11 +1249,17 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 						break;
 					case 'CONTRACT_MODIFY':
+					case 'CONTRACT_VALIDATE':
+					case 'CONTRACT_REOPEN':
+					case 'CONTRACT_ACTIVATE':
+					case 'CONTRACT_CLOSE':
+					case 'CONTRACT_SIGN':
+					case 'CONTRACT_UNSIGN':
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$context_info = (is_array($object->context) && array_key_exists('signature', $object->context) && getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contrat';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
+						$object_type = 'contract';
+						$mesg = $langs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$link.(!empty($context_info) ? ' '.$context_info : '');
 						break;
 					default:
 						$object_type = $object->element;
@@ -1270,7 +1289,11 @@ class Notify
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
-					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					if ($object_type == 'contract') {
+						$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					} else {
+						$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					}
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {

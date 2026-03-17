@@ -206,7 +206,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
-		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'CONTRACT_MODIFY');
+		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'CONTRACT_SIGN');
 		if ($result >= 0) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
@@ -214,7 +214,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
-		$result = $object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'CONTRACT_MODIFY');
+		$result = $object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'CONTRACT_UNSIGN');
 		if ($result >= 0) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
@@ -1423,7 +1423,7 @@ if ($action == 'create') {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
-				$text .= $notify->confirmMessage('CONTRACT_MODIFY', $object->socid, $object);
+				$text .= $notify->confirmMessage(getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS') ? 'CONTRACT_SIGN' : 'CONTRACT_MODIFY', $object->socid, $object);
 			}
 			$formquestion = [];
 			$formquestion[] = [
@@ -1439,7 +1439,7 @@ if ($action == 'create') {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
-				$text .= $notify->confirmMessage('CONTRACT_MODIFY', $object->socid, $object);
+				$text .= $notify->confirmMessage(getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS') ? 'CONTRACT_UNSIGN' : 'CONTRACT_MODIFY', $object->socid, $object);
 			}
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignContract'), $text, 'confirm_unsign', '', 0, 1);
 		}
