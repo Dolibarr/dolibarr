@@ -114,6 +114,11 @@ if (isModEnabled('invoice')) {
 	$formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
 }
 
+// Enable access for the intervention
+if (isModEnabled('ficheinter')) {
+	$formSetup->newItem('WEBPORTAL_FICHINTER_LIST_ACCESS')->setAsYesNo();
+}
+
 // Enable access for the partnership record
 if (isModEnabled('partnership')) {
 	$access_list = array(
