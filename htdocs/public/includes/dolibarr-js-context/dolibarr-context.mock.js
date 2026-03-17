@@ -60,6 +60,15 @@ var Dolibarr = {
 			 * @returns {string}
 			 */
 			trans(key, ...args) {},
+
+			/**
+			 * Translate a key using current locale
+			 * Supports placeholders like %s, %d, %f (simple sprintf)
+			 * @param {string} key
+			 * @param  {...any} args
+			 * @returns {string}
+			 */
+			transNoEntities(key, ...args) {},
 		},
 
 		// You can add more standard Dolibarr tools here for IDE autocompletion.
@@ -137,6 +146,22 @@ var Dolibarr = {
 	 * @param {object} data Extra information passed to listeners
 	 */
 	executeHook(hookName, data = {}) {},
+
+	/**
+	 * Trigger a standardized Dolibarr DOM reload hook.
+	 * Useful for re-initializing UX components (tooltips, selects, modals, etc.)
+	 * on dynamically injected or updated DOM portions.
+	 *
+	 * @param {HTMLElement|NodeList|Array<HTMLElement>|jQuery|string} targetEl
+	 *   - A single DOM element
+	 *   - A CSS selector string
+	 *   - A NodeList or array of DOM elements
+	 *   - A jQuery object (can contain multiple elements)
+	 * @param {boolean} applyToChildrenOnly
+	 *   - true: include only the children of each target element
+	 *   - false: include the target elements themselves
+	 */
+	initNewContent(targetEl, applyToChildrenOnly = true) {},
 
 	/**
 	 * Registers an event listener.

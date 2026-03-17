@@ -1760,7 +1760,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
-					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (empty($conf->global->$idprof_mandatory) ? 0 : 1)).'</td><td>';
+					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (getDolGlobalString($idprof_mandatory) ? 1 : 0)).'</td><td>';
 
 					print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
 					print '</td>';
@@ -1834,21 +1834,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX1') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
 				print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX2') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			} elseif ($mysoc->localtax1_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX1') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			} elseif ($mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (getDolGlobalString('THIRDPARTY_DEFAULT_USELOCALTAX2') ? 'checked="checked"' : '') . ' value="1">';
 				print '</td></tr>';
 			}
 
@@ -2384,17 +2384,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
 				if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-					print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
+					print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 				}
 
 				if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
-					print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
+					print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
 				}
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 					|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 					// Supplier
 					$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
-					print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
+					print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
 				}
 
 				// Add js to manage the background of nature
@@ -3049,7 +3049,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 				$tmpcheck = $object->check_codeclient();
 				if ($tmpcheck != 0 && $tmpcheck != -5) {
-					print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+					print img_warning($langs->trans("WrongCustomerCode"));
 				}
 				print '</td>';
 				print '</tr>';
@@ -3062,7 +3062,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 				$tmpcheck = $object->check_codefournisseur();
 				if ($tmpcheck != 0 && $tmpcheck != -5) {
-					print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+					print img_warning($langs->trans("WrongSupplierCode"));
 				}
 				print '</td>';
 				print '</tr>';
@@ -3093,11 +3093,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
 					if ($object->$key) {
 						if ($object->id_prof_check($i, $object) > 0) {
-							if (!empty($object->id_prof_url($i, $object))) {
-								print ' &nbsp; '.$object->id_prof_url($i, $object);
+							$profidurl = $object->id_prof_url($i, $object);
+							if (!empty($profidurl)) {
+								print ' &nbsp; '.$profidurl;
 							}
 						} else {
-							print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
+							print img_warning($langs->trans("ErrorWrongValue"));
 						}
 					}
 					print '</td>';

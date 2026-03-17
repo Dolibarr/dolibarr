@@ -46,7 +46,6 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -62,6 +61,7 @@ $discard_closed = GETPOSTINT('discardclosed');
 
 // Security check
 restrictedArea($user, 'projet', 0, 'projet&project');
+
 
 /*
  * View
@@ -94,7 +94,7 @@ if ($mode == 'gettasks') {
 	top_httphead();
 
 	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', (string) GETPOSTINT('projectid'), '');
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 64, 1, '1', 1, 0, 0, 'maxwidth500', (string) GETPOSTINT('projectid'), '');
 
 	$db->close();
 

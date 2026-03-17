@@ -101,7 +101,9 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_URL')) {
-				if (!dolibarr_set_const($db, $newconstvalue.'_URL', GETPOST($constvalue.'_URL'), 'chaine', 0, '', $conf->entity)) {
+				$cleanurl = GETPOST($constvalue.'_URL');
+				$cleanurl = preg_replace('/\/$/', '', $cleanurl);
+				if (!dolibarr_set_const($db, $newconstvalue.'_URL', $cleanurl, 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
 			}

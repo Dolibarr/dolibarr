@@ -576,19 +576,13 @@ class Facture extends CommonInvoice
 			$previousdaynextdatewhen = null;
 
 			if ($originaldatewhen) {
-				if ($_facrec->rule_for_lines_dates == 'prepaid') {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
-				}
-
-				if ($_facrec->rule_for_lines_dates == 'postpaid') {
+				if ($_facrec->rule_for_lines_dates == 'postpaid') {		// Bugged feature, should use different variable nameas we store something different.
 					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
-				} elseif ($nextdatewhen) {
+					$originaldatewhen = dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency);
+				} else {
+					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
 					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
 				}
-
-				$originaldatewhen = $_facrec->rule_for_lines_dates == 'postpaid'
-					? dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency)
-					: $originaldatewhen;
 			}
 
 			// Define thirdparty
@@ -4273,7 +4267,9 @@ class Facture extends CommonInvoice
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
 			$pu_ttc = (float) price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
-
+			if (strpos((string) $txtva, '*') !== false) {
+				$info_bits |= 1;
+			}
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
@@ -4593,6 +4589,9 @@ class Facture extends CommonInvoice
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
 			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 
+			if (strpos((string) $txtva, '*') !== false) {
+				$info_bits |= 1;
+			}
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}

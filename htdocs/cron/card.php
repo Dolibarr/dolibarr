@@ -439,6 +439,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
+	print img_picto('', 'recurring', 'class="pictofixedwidth"');
 	print '<select name="nbfrequency" id="nbfrequency" class="width50 maxwidth50imp">';
 	for ($i = 1; $i <= 60; $i++) {
 		if ($object->frequency == $i) {
@@ -672,6 +673,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="titlefieldmiddle">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
+	print img_picto('', 'recurring', 'class="pictofixedwidth"');
 	if ($object->unitfrequency == "60") {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Minutes');
 	}

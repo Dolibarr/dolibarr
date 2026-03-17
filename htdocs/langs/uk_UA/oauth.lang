@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Перейдіть на <a class="notasortlink" href="%
 OAUTH_STRIPE_TEST_NAME=Тест на смужки
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=Ідентифікатор клієнта OAuth
-OAUTH_SECRET=Секрет OAuth
-OAUTH_TENANT=Орендар OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Додано постачальника OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Запис OAuth для цього постачальника та мітка вже існує
 URLOfOAuthServiceEndpoints=Базова URL-адреса для кінцевих точок служби OAuth
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL-адреса, надана службою OAuth для автентифікації
 Scopes=Дозволи (області)
 ScopeUndefined=Дозволи (області) не визначено (див. попередню вкладку)
-ScopesDesc=Приклад: читати, писати за допомогою Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Повний токен (об'єкт)
 AccessToken=Маркер доступу
 TokenExpired=Термін дії минув
@@ -50,3 +50,4 @@ RefreshToken=Оновити токен
 RefreshTokenHelp=Використайте токен оновлення, щоб отримати новий токен доступу
 OldTokenWasExpiredItHasBeenRefresh=Термін дії старого токена закінчився, його було оновлено
 OldTokenWasNotExpiredButItHasBeenRefresh=Термін дії старого токена не минув, але його було оновлено
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
