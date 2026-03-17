@@ -69,4 +69,3 @@ SignFichinter=Intervention de signalisation
 SignSociete_rib=Mandat de signature
 SignedOnly=Signé uniquement
 SignExpedition=Envoi de panneaux
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Seuls les projets de propositions temporaires (PROV* ou référence vide) peuvent être supprimés avec cette autorisation. Utilisez l’autorisation de suppression pour les références définitives.

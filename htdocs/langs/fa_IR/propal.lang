@@ -122,4 +122,3 @@ SignSociete_rib=Sign mandate
 SignPropal=Accept proposal
 Signed=signed
 SignedOnly=Signed only
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=فقط پیشنهادهای پیش نویس موقت (PROV* یا مرجع خالی) را می توان با این مجوز حذف کرد. از مجوز حذف برای مراجع قطعی استفاده کنید.

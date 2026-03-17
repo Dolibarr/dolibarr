@@ -6,4 +6,3 @@ LastModifiedProposals=Últimas %s propostas modificadas
 PropalStatusDraft=Rascunho (precisa ser validada)
 PropalStatusDraftShort=Minuta
 TypeContact_propal_external_BILLING=Contato de fatura de cliente
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Somente rascunhos de propostas temporárias (PROV* ou referência vazia) podem ser excluídos com esta permissão. Use a permissão de exclusão para referências definitivas.

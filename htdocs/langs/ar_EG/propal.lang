@@ -60,4 +60,3 @@ DefaultModelPropalToBill=النموذج الافتراضي عند إغلاق ع�
 DocModelCyanDescription=نموذج عرض كامل
 ProposalCustomerSignature=قبول خطي وختم الشركة والتاريخ والتوقيع
 ProposalsStatisticsSuppliers=إحصاءات مقترحات البائعين
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=يمكن حذف مسودات المقترحات المؤقتة فقط (PROV* أو مرجع فارغ) بهذا الإذن. استخدم إذن الحذف للمراجع النهائية.

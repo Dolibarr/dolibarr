@@ -125,4 +125,3 @@ Signed=подписан
 SignedOnly=Само подписани
 ExpeditionSigned=Пратката е подписана
 SignExpedition=Подписване на пратка
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Само временни чернови на предложения (PROV* или празна препратка) могат да бъдат изтрити с това разрешение. Използвайте разрешение за изтриване за окончателни справки.

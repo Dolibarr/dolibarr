@@ -125,4 +125,3 @@ Signed=parakstīts
 SignedOnly=Tikai parakstīts
 ExpeditionSigned=Sūtījums parakstīts
 SignExpedition=Parakstīt sūtījumu
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Ar šo atļauju var dzēst tikai pagaidu projektu projektus (PROV* vai tukšu atsauci). Izmantojiet dzēšanas atļauju galīgām atsaucēm.

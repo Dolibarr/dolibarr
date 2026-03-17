@@ -125,4 +125,3 @@ Signed=podpísané
 SignedOnly=Iba podpísané
 ExpeditionSigned=Zásielka podpísaná
 SignExpedition=Podpísať zásielku
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=S týmto povolením možno odstrániť iba dočasné koncepty návrhov (PROV* alebo prázdny odkaz). Pre definitívne referencie použite povolenie na odstránenie.

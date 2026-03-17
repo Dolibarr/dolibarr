@@ -122,4 +122,3 @@ SignSociete_rib=ເຊັນມອບໝາຍ
 SignPropal=ຍອມຮັບຂໍ້ສະເໜີ
 Signed=ເຊັນ
 SignedOnly=ເຊັນເທົ່ານັ້ນ
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=ມີພຽງແຕ່ການສະເໜີຮ່າງຊົ່ວຄາວ (PROV* ຫຼືການອ້າງອີງຫວ່າງເປົ່າ) ທີ່ສາມາດລຶບໄດ້ດ້ວຍການອະນຸຍາດນີ້. ໃຊ້ການອະນຸຍາດລຶບສໍາລັບການອ້າງອີງທີ່ແນ່ນອນ.

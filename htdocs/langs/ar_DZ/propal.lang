@@ -125,4 +125,3 @@ Signed=signed
 SignedOnly=Signed only
 ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=يمكن حذف مسودات المقترحات المؤقتة فقط (PROV* أو مرجع فارغ) بهذا الإذن. استخدم إذن الحذف للمراجع النهائية.

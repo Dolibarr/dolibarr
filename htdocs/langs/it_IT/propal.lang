@@ -127,4 +127,3 @@ ExpeditionSigned=Spedizione firmata
 SignExpedition=Firma la spedizione
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Mostra l'indirizzo di spedizione
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Con questo permesso è possibile eliminare solo proposte bozza temporanee (PROV* o riferimento vuoto). Per i riferimenti definitivi usare il permesso di eliminazione.

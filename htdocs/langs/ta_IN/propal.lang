@@ -122,4 +122,3 @@ SignSociete_rib=Sign mandate
 SignPropal=முன்மொழிவை ஏற்கவும்
 Signed=signed
 SignedOnly=கையெழுத்து மட்டுமே
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=இந்த அனுமதியுடன் தற்காலிக வரைவு முன்மொழிவுகள் (PROV* அல்லது வெற்று குறிப்பு) மட்டுமே நீக்கப்படும். உறுதியான குறிப்புகளுக்கு நீக்கு அனுமதியைப் பயன்படுத்தவும்.

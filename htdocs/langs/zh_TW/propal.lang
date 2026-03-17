@@ -127,4 +127,3 @@ ExpeditionSigned=出貨已簽署
 SignExpedition=簽署出貨單
 PROPOSAL_SHOW_SHIPPING_ADDRESS=顯示送貨地址
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=某些國家(如法國)規定需顯示
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=使用此權限只能刪除臨時提案草案（PROV* 或空參考）。使用刪除權限來取得明確的參考。

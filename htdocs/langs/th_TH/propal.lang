@@ -125,4 +125,3 @@ Signed=ลงนาม
 SignedOnly=ลงนามเท่านั้น
 ExpeditionSigned=การจัดส่งลงนามแล้ว
 SignExpedition=การจัดส่งป้าย
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=เฉพาะข้อเสนอร่างชั่วคราว (PROV* หรือการอ้างอิงที่ว่างเปล่า) เท่านั้นที่สามารถลบได้ด้วยการอนุญาตนี้ ใช้สิทธิ์ลบสำหรับการอ้างอิงขั้นสุดท้าย

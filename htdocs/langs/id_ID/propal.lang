@@ -125,4 +125,3 @@ Signed=tertanda
 SignedOnly=Hanya yang ditandatangani
 ExpeditionSigned=Pengiriman ditandatangani
 SignExpedition=Tanda tangani pengiriman
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Hanya draf proposal sementara (PROV* atau referensi kosong) yang dapat dihapus dengan izin ini. Gunakan izin hapus untuk referensi pasti.

@@ -125,4 +125,3 @@ Signed=підписаний
 SignedOnly=Тільки підписано
 ExpeditionSigned=Підписано відправлення
 SignExpedition=Підписати відправлення
-ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=З цим дозволом можна видалити лише тимчасові чернетки пропозицій (PROV* або порожнє посилання). Використовуйте дозвіл на видалення для остаточних посилань.
