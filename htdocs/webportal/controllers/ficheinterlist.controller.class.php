@@ -140,32 +140,10 @@ class FicheinterListController extends AbstractListController
 		global $conf, $langs;
 
 		if ($field_key === 'fk_statut') {
-			$status = (int) ($record->fk_statut ?? 0);
-			$signedStatus = (int) ($record->signed_status ?? 0);
-			if ($status === WebPortalFicheinter::STATUS_VALIDATED) {
-				if ($signedStatus === 1) {
-					return $langs->trans('WebPortalInterSignedStatusSignedInternal');
-				}
-				if ($signedStatus === 2) {
-					return $langs->trans('WebPortalInterSignedStatusSignedThirdParty');
-				}
-				if ($signedStatus === 3) {
-					return $langs->trans('WebPortalInterSignedStatusSignedThirdPartyOnline');
-				}
-				if ($signedStatus === 9) {
-					return $langs->trans('WebPortalInterSignedStatusSignedAllParties');
-				}
-				return $langs->trans('StatusInterInValidated');
-			}
-			if ($status === WebPortalFicheinter::STATUS_DRAFT) {
-				return $langs->trans('StatusInterInDraft');
-			}
-			if ($status === WebPortalFicheinter::STATUS_BILLED) {
-				return $langs->trans('StatusInterInvoiced');
-			}
-			if ($status === WebPortalFicheinter::STATUS_CLOSED) {
-				return $langs->trans('StatusInterInClosed');
-			}
+			$this->formList->object->status = (int) ($record->fk_statut ?? 0);
+			$this->formList->object->statut = (int) ($record->fk_statut ?? 0);
+			$this->formList->object->signed_status = (int) ($record->signed_status ?? 0);
+			return $this->formList->object->getLibStatut(5);
 		}
 
 		if ($field_key === 'download_link') {
