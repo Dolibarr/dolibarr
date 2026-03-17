@@ -570,7 +570,7 @@ print '<td>'.$langs->trans("ContractShowSignatureStatus").'</td>';
 print '<td class="right">';
 print ajax_constantonoff('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
-print '</tr>'; 
+print '</tr>';
 print '</table>';
 print '</div>';
 
