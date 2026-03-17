@@ -81,6 +81,57 @@ class TicketListController extends AbstractListController
 		return 1;
 	}
 
+
+	/**
+	 * Set array fields for ticket list
+	 *
+	 * @return	void
+	 */
+	public function listSetArrayFields()
+	{
+		$this->formList->arrayfields['consultation_link'] = array(
+			'type' => '',
+			'label' => 'WebPortalTicketConsultation',
+			'checked' => 1,
+			'enabled' => isModEnabled('ticket'),
+			'visible' => 1,
+			'position' => 10003,
+			'help' => '',
+		);
+	}
+
+	/**
+	 * Called before print value for list
+	 *
+	 * @param	string				$field_key		Field key
+	 * @param	array<string,mixed>	$field_spec		Field specification
+	 * @param	stdClass			$record			Contain data of object from database
+	 * @return	string						HTML input
+	 */
+	public function listPrintValueBefore($field_key, $field_spec, &$record)
+	{
+		global $langs;
+
+		if ($field_key === 'fk_statut') {
+			$this->formList->object->status = (int) ($record->fk_statut ?? 0);
+			$this->formList->object->fk_statut = (int) ($record->fk_statut ?? 0);
+			return $this->formList->object->getLibStatut(5);
+		}
+
+		if ($field_key === 'consultation_link') {
+			$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
+			$baseurl = rtrim($baseurl, '/').'/';
+			if ((int) ($record->fk_user_create ?? 0) <= 0 && !empty($record->track_id)) {
+				$url = $baseurl.'view.php?track_id='.urlencode((string) $record->track_id);
+				return '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$langs->trans('WebPortalTicketConsultationLink').'</a>';
+			}
+
+			return '<span class="classfortooltip" title="'.dol_escape_htmltag($langs->trans('WebPortalTicketConsultationTooltipNotPublic')).'">'.img_picto($langs->trans('WebPortalTicketConsultationTooltipNotPublic'), 'info').'</span>';
+		}
+
+		return '';
+	}
+
 	/**
 	 * Display
 	 *
