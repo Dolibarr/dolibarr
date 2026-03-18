@@ -314,7 +314,7 @@ function quickMemoIntefaceActionArchiveNote($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';
@@ -358,7 +358,7 @@ function quickMemoIntefaceActionCreateModel($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';
@@ -418,7 +418,7 @@ function quickMemoIntefaceActionDeleteModel($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need model Id';
@@ -599,7 +599,7 @@ function quickMemoIntefaceActionDeleteNote($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';
@@ -649,7 +649,7 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';
@@ -695,7 +695,7 @@ function quickMemoIntefaceActionUpdateColor($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';
@@ -750,7 +750,7 @@ function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';
@@ -803,7 +803,7 @@ function quickMemoIntefaceActionUpdatePrivate($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';
