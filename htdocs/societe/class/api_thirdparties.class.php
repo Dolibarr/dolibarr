@@ -147,7 +147,10 @@ class Thirdparties extends DolibarrApi
 	 * @phan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
-	 * @throws RestException
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -187,7 +190,7 @@ class Thirdparties extends DolibarrApi
 		} elseif ($mode == 4) {
 			$sql .= " AND t.fournisseur IN (1)";
 		}
-		// Select thirdparties of given category
+		// Select third parties of a given category
 		if ($category > 0) {
 			if (!empty($mode) && $mode != 4) {
 				$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid";
@@ -247,7 +250,7 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve thirdparties : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieve third parties : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			$message = '';
@@ -270,7 +273,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, $message);
 		}
 
-		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		//if $pagination_data is true, the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
