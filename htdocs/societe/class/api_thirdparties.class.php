@@ -132,17 +132,18 @@ class Thirdparties extends DolibarrApi
 	 * Get a list of third parties
 	 *
 	 * @since	3.8.0	Initial implementation
+	 * @since	21.0.0	Data pagination
 	 *
-	 * @param	string	$sortfield		S	ort field
+	 * @param	string	$sortfield			Sort field
 	 * @param	string	$sortorder			Sort order
 	 * @param	int		$limit				List limit
 	 * @param	int		$page				Page number
-	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers
+	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer nor prospect, 4 for suppliers
 	 * @param	int		$category			Use this param to filter the list by category
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return	array						Array of thirdparty objects
+	 * @param	bool	$pagination_data	If this parameter is set to true, the response will include pagination data. The default value is false. Page starts from 0*
+	 * @return	array						Array of third party objects
 	 * @phan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
