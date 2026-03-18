@@ -155,121 +155,73 @@ class Memo extends CommonObject
 		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", 'enabled' => 1, 'position' => 1000, 'notnull' => -1, "visible" => -2,),
 		"status" => array("type" => "integer", "label" => "Status", 'enabled' => 1, 'position' => 2000, 'notnull' => 1, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(1 => "Active",2 => "Template",  9 => "Archived"), "validate" => 1,),
 	);
-
-	/**
-	 * @var int
-	 */
+	/** @var int|null */
 	public $rowid;
 
-	/**
-	 * @var int|null
-	 */
+	/** @var int|null */
 	public $date_archived;
 
-	/**
-	 * @var int|null
-	 */
+	/** @var int|null */
 	public $fk_user_archived;
 
-	/**
-	 * @var string
-	 */
+	/** @var string|null */
 	public $quick_note;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $date_creat;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $tms;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $fk_user_creat;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $fk_user_modif;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $fk_element;
 
-	/**
-	 * @var string
-	 */
+	/** @var string|null */
 	public $element_type;
 
-
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $pos_z;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $pos_y;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $pos_x;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $pos_w;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $pos_h;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $color;
 
-	/**
-	 * @var string
-	 */
+	/** @var string|null */
 	public $context_tab;
 
-	/**
-	 * @var string
-	 */
+	/** @var string|null */
 	public $import_key;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $status;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $private;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $private_tpl;
 
-	/**
-	 * @var string
-	 */
+	/** @var string|null */
 	public $name_tpl;
 
-	/**
-	 * @var int
-	 */
+	/** @var int|string|null */
 	public $shared_on_element;
 
 	/**
@@ -1423,7 +1375,7 @@ class Memo extends CommonObject
 	 * @param     string $context       Context
 	 * @param     int    $id            Id
 	 *
-	 * @return string
+	 * @return int|false
 	 */
 	static public function countArchivedMemoQuery($element_type, $element_id, $context, $id = 0)
 	{
@@ -1449,7 +1401,7 @@ class Memo extends CommonObject
 			return false;
 		}
 
-		return $obj->nb;
+		return (int) $obj->nb;
 	}
 
 	/**
