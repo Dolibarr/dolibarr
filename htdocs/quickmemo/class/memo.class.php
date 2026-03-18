@@ -1229,28 +1229,7 @@ class Memo extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $langs;
-
-		$result = 0;
-		$includedocgeneration = 0;
-
-		$langs->load("quickmemo@quickmemo");
-
-		if (!dol_strlen($modele)) {
-			if (!empty($this->model_pdf)) {
-				$modele = $this->model_pdf;
-			} else {
-				$modele = getDolGlobalString('MEMO_ADDON_PDF', 'standard_memo');
-			}
-		}
-
-		$modelpath = "core/modules/quickmemo/doc/";
-
-		if ($includedocgeneration && !empty($modele)) {
-			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
-
-		return $result;
+		return 0;
 	}
 
 	/**
@@ -1505,7 +1484,7 @@ class Memo extends CommonObject
 	/**
 	 * Load the Javascript interface for QuickMemo
 	 *
-	 * @param  array<string|array> $jsConfVars  Configuration variables
+	 * @param  array<string|mixed> $jsConfVars  Configuration variables
 	 * @return bool
 	 */
 	public static function loadQuickMemoJsInterface($jsConfVars)
