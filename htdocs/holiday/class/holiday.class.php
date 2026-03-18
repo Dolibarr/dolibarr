@@ -2690,7 +2690,7 @@ class Holiday extends CommonObject
 		$sql .= $db->order("cp.fk_user, cp.date_debut", "ASC");
 		$resql = $db->query($sql);
 		if (empty($resql)) {
-			$this->errors = $db->lasterror();
+			$this->errors[] = $db->lasterror();
 			return 1;
 		}
 		$num = $db->num_rows($resql);
@@ -2802,10 +2802,9 @@ class Holiday extends CommonObject
 		$cmail = new CMailFile($subject, $mailto, $from, $msg, array(), array(), array(), '', '', 0, 1);
 		$result = $cmail->sendfile();
 		if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
-			$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
 			$this->errors[] = $cmail->error;
 			if (is_array($cmail->errors) && count($cmail->errors) > 0) {
-				$this->errors += $cmail->errors;
+				$this->errors = array_merge($this->errors, $cmail->errors);
 				$error++;
 			}
 		}
