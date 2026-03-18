@@ -134,6 +134,7 @@ if (empty($origin) && !empty($object->origin_type)) {
 if (empty($origin_id) && !empty($object->origin_id)) {
 	$origin_id = $object->origin_id;
 }
+$origin_type = is_string($origin) ? $origin : '';
 
 // Permissions / Rights
 $usercanread    =  $user->hasRight("expedition", "lire");
@@ -322,7 +323,7 @@ if (empty($reshook)) {
 			$object->fetch_thirdparty();
 
 			$object->origin = $origin; // deprecated
-			$object->origin_type = $origin;
+			$object->origin_type = $origin_type;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
@@ -362,7 +363,7 @@ if (empty($reshook)) {
 
 		if ($origin && $origin_id > 0) {
 			$object->origin = $origin; // deprecated
-			$object->origin_type = $origin;
+			$object->origin_type = $origin_type;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->weight = GETPOST('weight') == '' ? '' : GETPOSTFLOAT('weight');
