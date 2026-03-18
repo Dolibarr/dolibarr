@@ -310,6 +310,11 @@ if (empty($reshook)) {
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_depart = dol_now();
 			$object->update($user);
+			$result = $object->call_trigger('STOCKTRANSFER_DESTOCK', $user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 			setEventMessage('StockStransferDecremented');
 		}
 	}
@@ -337,6 +342,11 @@ if (empty($reshook)) {
 			$object->status = $object::STATUS_VALIDATED;
 			$object->date_reelle_depart = null;
 			$object->update($user);
+			$result = $object->call_trigger('STOCKTRANSFER_DESTOCK_CANCEL', $user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 			setEventMessage('StockStransferDecrementedCancel', 'warnings');
 		}
 	}
@@ -364,6 +374,16 @@ if (empty($reshook)) {
 			$object->status = $object::STATUS_CLOSED;
 			$object->date_reelle_arrivee = dol_now();
 			$object->update($user);
+			$result = $object->call_trigger('STOCKTRANSFER_CLOSE', $user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			$result = $object->call_trigger('STOCKTRANSFER_ADDSTOCK', $user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 			setEventMessage('StockStransferIncrementedShort');
 		}
 	}
@@ -391,6 +411,11 @@ if (empty($reshook)) {
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_arrivee = null;
 			$object->update($user);
+			$result = $object->call_trigger('STOCKTRANSFER_ADDSTOCK_CANCEL', $user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 			setEventMessage('StockStransferIncrementedShortCancel', 'warnings');
 		}
 	}
