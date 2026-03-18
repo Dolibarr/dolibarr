@@ -181,7 +181,7 @@ function quickMemoIntefaceActionUpdatePosition($jsonResponse)
 /**
  * Batch update coordinates and Z-index for multiple memos.
  * @param JsonResponse $jsonResponse The response object.
- * @return void
+ * @return bool
  */
 function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 {
@@ -225,6 +225,8 @@ function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 
 	$db->commit();
 	$jsonResponse->result = 1;
+
+	return true;
 }
 
 /**
@@ -480,7 +482,7 @@ function quickMemoIntefaceActionDeleteModel($jsonResponse)
  *
  * @param JsonResponse $jsonResponse The response object
  *
- * @return bool|void
+ * @return bool
  */
 function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 {
@@ -914,7 +916,7 @@ function quickMemoIntefaceActionList($jsonResponse)
 		return;
 	}
 
-	$element_id = GETPOST('element_id', 'int');
+	$element_id = GETPOSTINT('element_id');
 	$element_type = GETPOST('element_type', 'alpha');
 	$context = GETPOST('context', 'alpha');
 	$jsonResponse->data = new stdClass();

@@ -170,16 +170,10 @@ class Memo extends CommonObject
 	/** @var int|string|null */
 	public $date_creat;
 
-	/** @var int|string|null */
-	public $tms;
-
-	/** @var int|string|null */
-	public $fk_user_creat;
-
-	/** @var int|string|null */
-	public $fk_user_modif;
-
-	/** @var int|string|null */
+	/**
+	 * @var string|int	Field with ID of parent key if this field has a parent (a string). For example 'fk_product'.
+	 *					ID of parent key itself (an int). For example in few classes like 'Comment', 'ActionComm' or 'AdvanceTargetingMailing'.
+	 */
 	public $fk_element;
 
 	/** @var string|null */
@@ -209,7 +203,14 @@ class Memo extends CommonObject
 	/** @var string|null */
 	public $import_key;
 
-	/** @var int|string|null */
+	/**
+	 * @var null|int|array<int, string>   The object's status (an int).
+	 *                 						Or an array listing all the potential status of the object:
+	 *                                    	array: int of the status => translated label of the status
+	 *                                    	In some classes status must be able to be null.
+	 *                                    	See for example the Account class.
+	 * @see setStatut()
+	 */
 	public $status;
 
 	/** @var int|string|null */
@@ -861,12 +862,6 @@ class Memo extends CommonObject
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		if (property_exists($this, 'ref')) {
-			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		}
-		if (property_exists($this, 'label')) {
-			$datas['label'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
-		}
 
 		return $datas;
 	}
@@ -1307,7 +1302,7 @@ class Memo extends CommonObject
 	/**
 	 * Get memo context
 	 *
-	 * @param string|array $context Context
+	 * @param string|array<string> $context Context
 	 * @return mixed|string
 	 */
 	public static function getMemoContext($context)
@@ -1512,7 +1507,7 @@ class Memo extends CommonObject
 	/**
 	 * Load the Javascript interface for QuickMemo
 	 *
-	 * @param  array $jsConfVars  Configuration variables
+	 * @param  array<string|array> $jsConfVars  Configuration variables
 	 * @return bool
 	 */
 	public static function loadQuickMemoJsInterface($jsConfVars)
