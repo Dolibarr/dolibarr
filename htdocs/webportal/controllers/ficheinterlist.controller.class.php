@@ -148,7 +148,8 @@ class FicheinterListController extends AbstractListController
 
 		if ($field_key === 'download_link') {
 			$filename = dol_sanitizeFileName($this->formList->object->ref);
-			$filedir = $conf->ficheinter->multidir_output[$this->formList->object->entity] . '/' . dol_sanitizeFileName($this->formList->object->ref);
+			$entity = (int) ($this->formList->object->entity ?? 1);
+			$filedir = $conf->ficheinter->multidir_output[$entity] . '/' . dol_sanitizeFileName($this->formList->object->ref);
 			return $this->formList->form->getDocumentsLink('ficheinter', $filename, $filedir);
 		}
 
