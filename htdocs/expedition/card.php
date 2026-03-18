@@ -86,7 +86,7 @@ if (isModEnabled('productbatch')) {
 
 
 $origin = GETPOST('origin', 'alpha'); // Example: commande, propal
-$origin_id = GETPOSTINT('origin_id') ? GETPOSTINT('id') : '';
+$origin_id = GETPOSTINT('origin_id');
 $id = GETPOSTINT('id');
 
 
@@ -126,6 +126,15 @@ $extrafields->fetch_name_optionals_label($objectorder->table_element_line);
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
+if (empty($origin) && !empty($object->origin_type)) {
+	$origin = $object->origin_type;
+} elseif (empty($origin) && !empty($object->origin)) {
+	$origin = $object->origin;
+}
+if (empty($origin_id) && !empty($object->origin_id)) {
+	$origin_id = $object->origin_id;
+}
+
 // Permissions / Rights
 $usercanread    =  $user->hasRight("expedition", "lire");
 $usercancreate  =  $user->hasRight("expedition", "creer");
@@ -137,7 +146,6 @@ $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 $date_delivery = dol_mktime(GETPOSTINT('date_deliveryhour'), GETPOSTINT('date_deliverymin'), 0, GETPOSTINT('date_deliverymonth'), GETPOSTINT('date_deliveryday'), GETPOSTINT('date_deliveryyear'));
 
 $date_shipping = dol_mktime(GETPOSTINT('date_shippinghour'), GETPOSTINT('date_shippingmin'), 0, GETPOSTINT('date_shippingmonth'), GETPOSTINT('date_shippingday'), GETPOSTINT('date_shippingyear'));
-
 
 
 // Security check
@@ -849,7 +857,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save')) {
+	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') != $langs->trans("Cancel")) {
 		if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
 			// Update a line
 			// Clean parameters
@@ -1048,6 +1056,8 @@ if (empty($reshook)) {
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
+								} else {
+									$update_done = true;
 								}
 								unset($_POST[$stockLocation]);
 								unset($_POST[$qty]);
@@ -1061,6 +1071,8 @@ if (empty($reshook)) {
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
+								} else {
+									$update_done = true;
 								}
 								unset($_POST[$stockLocation]);
 								unset($_POST[$qty]);
@@ -1117,7 +1129,17 @@ if (empty($reshook)) {
 
 					if (empty($update_done)) {
 						$line->id = $lines[$i]->id;
-						$line->insertExtraFields();
+						$resultInsertExtraFields = $line->insertExtraFields();
+						if ($resultInsertExtraFields < 0) {
+							setEventMessages($line->error, $line->errors, 'errors');
+							$error++;
+						} elseif ($resultInsertExtraFields > 0) {
+							$update_done = true;
+						}
+					}
+
+					if (empty($update_done) && !$error) {
+						setEventMessages($langs->trans('NoShipmentLineChangeDetected'), null, 'warnings');
 					}
 				}
 			}
@@ -1997,6 +2019,18 @@ if ($action == 'create' && $usercancreate) {
 							print ($line->desc && $line->desc != $line->product_label) ? '<br>' . dol_htmlentitiesbr($line->desc) : '';
 						}
 
+						$expLine = new ExpeditionLigne($db);
+						$srcLine = new OrderLine($db);
+						$srcLine->id = $line->id;
+						$srcLine->fetch_optionals(); // Fetch source line extrafields so shipment line creation matches order UI.
+						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
+						$lineExtrafieldsHtml = $expLine->showOptionals($extrafields, 'edit', array(), (string) $indiceAsked, '', '1', 'line');
+						if (!empty($lineExtrafieldsHtml)) {
+							print '<div style="padding-top: 10px" id="extrafield_lines_area_create_' . $indiceAsked . '" name="extrafield_lines_area_create_' . $indiceAsked . '">';
+							print $lineExtrafieldsHtml;
+							print '</div>';
+						}
+
 						print '</td>';
 					} else {
 						print "<td>";
@@ -2015,6 +2049,18 @@ if ($action == 'create' && $usercancreate) {
 
 						// Show range
 						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+
+						$expLine = new ExpeditionLigne($db);
+						$srcLine = new OrderLine($db);
+						$srcLine->id = $line->id;
+						$srcLine->fetch_optionals(); // Fetch source line extrafields so shipment line creation matches order UI.
+						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
+						$lineExtrafieldsHtml = $expLine->showOptionals($extrafields, 'edit', array(), (string) $indiceAsked, '', '1', 'line');
+						if (!empty($lineExtrafieldsHtml)) {
+							print '<div style="padding-top: 10px" id="extrafield_lines_area_create_' . $indiceAsked . '" name="extrafield_lines_area_create_' . $indiceAsked . '">';
+							print $lineExtrafieldsHtml;
+							print '</div>';
+						}
 						print "</td>\n";
 					}
 
@@ -2578,19 +2624,6 @@ if ($action == 'create' && $usercancreate) {
 							print '</tr>';
 						}
 					}
-
-					// Display lines for extrafields of the Shipment line
-					// $line is a 'Order line'
-					$colspan = 5;
-					$expLine = new ExpeditionLigne($db);
-
-					$srcLine = new OrderLine($db);
-					$srcLine->id = $line->id;
-					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
-
-					$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
-
-					print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
 				} elseif (empty($reshook) && $line->special_code == SUBTOTALS_SPECIAL_CODE && !in_array($line->id, $title_lines_to_disable)) {
 					require dol_buildpath('/core/tpl/subtotalline_select.tpl.php');
 				}
@@ -3292,6 +3325,8 @@ if ($action == 'create' && $usercancreate) {
 			if (empty($reshook) && $lines[$i]->product_type != "9") {
 				print '<!-- origin line id = ' . $lines[$i]->origin_line_id . ' -->'; // id of order line
 				print '<tr class="oddeven" id="row-' . $lines[$i]->id . '" data-id="' . $lines[$i]->id . '" data-element="' . $lines[$i]->element . '" >';
+				$line = $lines[$i];
+				$line->fetch_optionals();
 
 				// #
 				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
@@ -3347,6 +3382,12 @@ if ($action == 'create' && $usercancreate) {
 					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 						print (!empty($lines[$i]->description) && $lines[$i]->description != $lines[$i]->product) ? '<br>' . dol_htmlentitiesbr($lines[$i]->description) : '';
 					}
+					$lineExtrafieldsHtml = $line->showOptionals($extrafields, ($action == 'editline' && $line->id == $line_id) ? 'edit' : 'view', array(), '', '', '1', 'line');
+					if (!empty($lineExtrafieldsHtml)) {
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_' . $line->id . '" name="extrafield_lines_area_' . $line->id . '">';
+						print $lineExtrafieldsHtml;
+						print '</div>';
+					}
 					print "</td>\n";
 				} else {
 					print '<td class="linecoldescription" >';
@@ -3364,6 +3405,12 @@ if ($action == 'create' && $usercancreate) {
 					}
 
 					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
+					$lineExtrafieldsHtml = $line->showOptionals($extrafields, ($action == 'editline' && $line->id == $line_id) ? 'edit' : 'view', array(), '', '', '1', 'line');
+					if (!empty($lineExtrafieldsHtml)) {
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_' . $line->id . '" name="extrafield_lines_area_' . $line->id . '">';
+						print $lineExtrafieldsHtml;
+						print '</div>';
+					}
 					print "</td>\n";
 				}
 
@@ -3675,32 +3722,6 @@ if ($action == 'create' && $usercancreate) {
 					}
 				}
 				print "</tr>";
-
-				// Display lines extrafields.
-				// $line is a line of shipment
-				$colspan = 6;
-				if ($origin_id > 0) {
-					$colspan++;
-				}
-				if (isModEnabled('productbatch')) {
-					$colspan++;
-				}
-				if (isModEnabled('stock')) {
-					$colspan++;
-				}
-				if ($object->status == Expedition::STATUS_DRAFT) {
-					$colspan ++;
-				}
-
-				$line = $lines[$i];
-				$line->fetch_optionals();
-
-				// TODO Show all in same line by setting $display_type = 'line'
-				if ($action == 'editline' && $line->id == $line_id) {
-					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
-				} else {
-					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
-				}
 			} elseif (empty($reshook) && $lines[$i]->product_type == "9") {
 				$objectsrc = new OrderLine($db);
 				$objectsrc->fetch($lines[$i]->origin_line_id);
@@ -3718,6 +3739,9 @@ if ($action == 'create' && $usercancreate) {
 		print '</tbody>';
 		print "</table>\n";
 		print '</div>';
+		if ($action == 'editline') {
+			print "</form>\n";
+		}
 
 		$object->fetchObjectLinked($object->id, $object->element);
 	}
