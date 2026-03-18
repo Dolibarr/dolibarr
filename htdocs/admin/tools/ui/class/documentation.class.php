@@ -155,6 +155,7 @@ class Documentation
 					'summary' => array(
 						'DocBasicUsage' => '#seteventmessagesection-basicusage',
 						'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
+						'DocSetEventMessageJsContext' => '#titlesection-tool-seteventmessage',
 					)
 				),
 				'Inputs' => array(

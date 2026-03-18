@@ -570,6 +570,7 @@ input.downloadexternallink {
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
+	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
 	padding: 3px !important;
@@ -3388,6 +3389,11 @@ div.tmenucenter
 {
 	padding-left: 0px;
 	padding-right: 0px;
+	max-width: 95px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--colortextbackhmenu);
 	<?php if ($disableimages) { ?>
 	padding-top: 10px;
 	height: 26px;
@@ -3395,7 +3401,6 @@ div.tmenucenter
 	padding-top: 2px;
 	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
-	width: 100%;
 }
 div.menu_titre {
 	padding-bottom: 5px;
@@ -4260,6 +4265,9 @@ div.tabBar {
 	border-bottom: 1px solid #CCC;
 	width: auto;
 	background: var(--colorbacktabcard1);
+}
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px !important;
 }
 div.tabBar tr.titre td {
 	padding-top: 20px;

@@ -78,6 +78,7 @@ ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type def
 ErrorFailedToSaveFile=Error, failed to save file.
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
 ErrorInvalidSubtype=Selected Subtype is not allowed
+ErrorDirIsNotWritable=Directory %s is not writable
 FieldCannotBeNegative=Field "%s" cannot be negative
 MaxNbOfRecordPerPage=Max. number of records per page
 NotAuthorized=You are not authorized to do that.

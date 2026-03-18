@@ -108,7 +108,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 		$societe_acheteuse = strpos($object->element, 'supplier') === false ? $object->thirdparty : $mysoc;
 		$vat_mode = strpos($object->element, 'supplier') === false ? 1 : 2;
 		print $form->load_tva('vatforalllines', '', $societe_vendeuse, $societe_acheteuse, 0, 0, '', false, 1, $vat_mode);
-		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		print '<input class="inline-block button smallpaddingimp valignmiddle" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
 		print '</div>';
 	}
 }

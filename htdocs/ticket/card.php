@@ -153,7 +153,8 @@ $triggermodname = 'TICKET_MODIFY';
 $permissiontoread   = $user->hasRight('ticket', 'read');
 $permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
-$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
+// Permission allowing the management of all ticket status modifications (status change buttons, Close/Resolve, Cancel, the assignee selection menu, and re-open)
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage')));
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
@@ -323,7 +324,7 @@ if (empty($reshook)) {
 					}
 
 					// Auto mark as read if created from backend
-					if (getDolGlobalString('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND') && $user->hasRight('ticket', 'write')) {
+					if (getDolGlobalString('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND') && $permissiontomanage) {
 						if (!$object->markAsRead($user) > 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
@@ -366,7 +367,7 @@ if (empty($reshook)) {
 	}
 
 	// Mark as Read
-	if ($action == "set_read" && $permissiontoadd) {
+	if ($action == "set_read" && $permissiontomanage) {
 		$object->fetch(0, '', GETPOST("track_id", 'alpha'));
 
 		if ($object->markAsRead($user) > 0) {
@@ -381,7 +382,7 @@ if (empty($reshook)) {
 	}
 
 	// Assign to someone
-	if ($action == "assign_user" && GETPOST('btn_assign_user', 'alpha') && $permissiontoadd) {
+	if ($action == "assign_user" && GETPOST('btn_assign_user', 'alpha') && $permissiontomanage) {
 		$object->fetch(0, '', GETPOST("track_id", 'alpha'));
 		$useroriginassign = $object->fk_user_assign;
 		$usertoassign = GETPOSTINT('fk_user_assign');
@@ -456,7 +457,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
+	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontomanage) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 		if (GETPOSTISSET('contactid')) {
 			$object->context['contact_id'] = GETPOSTINT('contactid');
@@ -492,7 +493,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_clone' && GETPOST('confirm', 'alpha') == "yes" && $permissiontoadd) {
+	if ($action == 'confirm_clone' && GETPOST('confirm', 'alpha') == "yes" && $permissiontomanage) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$newid = $object->createFromClone($user, $object->id);
 			if ($newid > 0) {
@@ -520,7 +521,7 @@ if (empty($reshook)) {
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
+	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOSTINT('editcustomer'));
 			$url = $_SERVER["PHP_SELF"] . '?track_id=' . GETPOST('track_id', 'alpha');
@@ -530,7 +531,7 @@ if (empty($reshook)) {
 	}
 
 	// Set progress status
-	if ($action == 'set_progression' && $user->hasRight('ticket', 'write')) {
+	if ($action == 'set_progression' && $permissiontoadd) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setProgression(GETPOSTINT('progress'));
 
@@ -541,7 +542,7 @@ if (empty($reshook)) {
 	}
 
 	// Set categories
-	if ($action == 'set_categories' && $user->hasRight('ticket', 'write')) {
+	if ($action == 'set_categories' && $permissiontoadd) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCategories(GETPOST('categories', 'array'));
 
@@ -552,7 +553,7 @@ if (empty($reshook)) {
 	}
 
 	// Set Subject
-	if ($action == 'setsubject' && $user->hasRight('ticket', 'write')) {
+	if ($action == 'setsubject' && $permissiontoadd) {
 		if ($object->fetch(GETPOSTINT('id'))) {
 			if ($action == 'setsubject') {		// Test on permission already done
 				$object->subject = GETPOST('subject', 'alphanohtml');
@@ -610,7 +611,7 @@ if (empty($reshook)) {
 			header("Location: " . $url);
 			exit();
 		}
-	} elseif ($action == "set_message" && $permissiontomanage) {
+	} elseif ($action == "set_message" && $permissiontoadd) {
 		if (!GETPOST('cancel')) {
 			$object->fetch(0, '', GETPOST('track_id', 'alpha'));
 			//$oldvalue_message = $object->message;
@@ -631,7 +632,7 @@ if (empty($reshook)) {
 		}
 
 		$action = 'view';
-	} elseif ($action == 'confirm_set_status' && $permissiontoadd && !GETPOST('cancel')) {
+	} elseif ($action == 'confirm_set_status' && $permissiontomanage && !GETPOST('cancel')) {
 		// Reopen ticket
 		if ($object->fetch(GETPOSTINT('id'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOSTINT('new_status');
@@ -705,7 +706,7 @@ if (empty($reshook)) {
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-	$permissiondellink = $user->hasRight('ticket', 'write');
+	$permissiondellink = $permissiontoadd;
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Actions to build doc
@@ -771,7 +772,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $permissiontoadd && $object->status < Ticket::STATUS_CLOSED) {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}
@@ -812,7 +813,7 @@ if ($action == 'create' || $action == 'presend') {
 		$formconfirm = '';
 
 		// Confirmation close
-		if ($action == 'close') {
+		if ($action == 'close' && $permissiontomanage) {
 			$thirdparty_contacts = $object->getInfosTicketExternalContact(1);
 			$contacts_select = array(
 				'-2' => $langs->trans('TicketNotifyAllTiersAtClose'),
@@ -837,19 +838,19 @@ if ($action == 'create' || $action == 'presend') {
 			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", $formquestion, '', 1);
 		}
 		// Confirmation abandon
-		if ($action == 'abandon') {
+		if ($action == 'abandon' && $permissiontomanage) {
 			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("AbandonTicket"), $langs->trans("ConfirmAbandonTicket"), "confirm_abandon", '', '', 1);
 		}
 		// Confirmation delete
-		if ($action == 'delete') {
+		if ($action == 'delete' && $permissiontodelete) {
 			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("Delete"), $langs->trans("ConfirmDeleteTicket"), "confirm_delete_ticket", '', '', 1);
 		}
 		// Confirm reopen
-		if ($action == 'reopen') {
+		if ($action == 'reopen' && $permissiontomanage) {
 			$formconfirm = $form->formconfirm($url_page_current.'?track_id='.$object->track_id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenTicket'), 'confirm_reopen', '', '', 1);
 		}
 		// Confirmation status change
-		if ($action == 'set_status') {
+		if ($action == 'set_status' && $permissiontomanage) {
 			$new_status = GETPOSTINT('new_status');
 			//var_dump($url_page_current . "?track_id=" . $object->track_id);
 			$formconfirm = $form->formconfirm($url_page_current."?track_id=".$object->track_id."&new_status=".$new_status, $langs->trans("TicketChangeStatus"), $langs->trans("TicketConfirmChangeStatus", $langs->transnoentities($object->labelStatusShort[$new_status])), "confirm_set_status", '', '', 1);
@@ -957,7 +958,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		$morehtmlref = '<div class="refidno">';
 
-		if ($user->hasRight('ticket', 'write') && !$user->socid) {
+		if ($permissiontoadd && !$user->socid) {
 			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
 		}
 		if ($action != 'editsubject') {
@@ -1023,7 +1024,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltipcreatedbyemailcollector').'</small>';
 		}
 
-		$permissiontoedit = $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write');
+		$permissiontoedit = $object->status < 8 && !$user->socid && $permissiontoadd;
 		//$permissiontoedit = 0;
 
 		// Thirdparty
@@ -1117,9 +1118,9 @@ if ($action == 'create' || $action == 'presend') {
 		// Subject
 		/*
 		print '<tr><td>';
-		print $form->editfieldkey("Subject", 'subject', $object->subject, $object, $user->hasRight('ticket', 'write') && !$user->socid, 'string');
+		print $form->editfieldkey("Subject", 'subject', $object->subject, $object, $permissiontoadd && !$user->socid, 'string');
 		print '</td><td>';
-		print $form->editfieldval("Subject", 'subject', $object->subject, $object, $user->hasRight('ticket', 'write') && !$user->socid, 'string');
+		print $form->editfieldval("Subject", 'subject', $object->subject, $object, $permissiontoadd && !$user->socid, 'string');
 		print '</td></tr>';
 		*/
 
@@ -1179,7 +1180,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// Show user list to assignate one if status is "read"
-		if (GETPOST('set', 'alpha') == "assign_ticket" && $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write')) {
+		if (GETPOST('set', 'alpha') == "assign_ticket" && $object->status < 8 && !$user->socid && $permissiontomanage) {
 			print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$url_page_current.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="assign_user">';
@@ -1196,12 +1197,12 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Progression').'</td><td class="left">';
 		print '</td>';
-		if ($action != 'progression' && isset($object->status) && $object->status < $object::STATUS_CLOSED && !$user->socid) {
+		if ($permissiontoadd && $action != 'progression' && isset($object->status) && $object->status < $object::STATUS_CLOSED && !$user->socid) {
 			print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=progression&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($user->hasRight('ticket', 'write') && $action == 'progression') {
+		if ($permissiontoadd && $action == 'progression') {
 			print '<form action="'.$url_page_current.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="track_id" value="'.$track_id.'">';
@@ -1264,18 +1265,18 @@ if ($action == 'create' || $action == 'presend') {
 		print $langs->trans('TicketProperties');
 		print '</td>';
 		print '<td>';
-		if (GETPOST('set', 'alpha') == 'properties' && $user->hasRight('ticket', 'write')) {
+		if (GETPOST('set', 'alpha') == 'properties' && $permissiontoadd) {
 			print '<input type="submit" class="button smallpaddingimp" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			// Button to edit Properties
-			if (isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || !getDolGlobalInt('TICKET_DISALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED')) && $user->hasRight('ticket', 'write')) {
+			if (isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || !getDolGlobalInt('TICKET_DISALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED')) && $permissiontoadd) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}
 		print '</td>';
 		print '</tr>';
 
-		if (GETPOST('set', 'alpha') == 'properties' && $user->hasRight('ticket', 'write')) {
+		if (GETPOST('set', 'alpha') == 'properties' && $permissiontoadd) {
 			print '<tr>';
 			// Type
 			print '<td class="titlefield">';
@@ -1335,14 +1336,14 @@ if ($action == 'create' || $action == 'presend') {
 			print '<td class="valignmiddle titlefield">';
 			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
-			if ($action != 'categories' && !$user->socid) {
+			if ($permissiontoadd && !in_array($object->status, [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED]) && $action != 'categories' && !$user->socid) {
 				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 			print '</td>';
 			print '</table>';
 			print '</td>';
 
-			if ($user->hasRight('ticket', 'write') && $action == 'categories') {
+			if ($permissiontoadd && $action == 'categories') {
 				print '<td colspan="3">';
 				print '<form action="'.$url_page_current.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1367,7 +1368,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Display navbar with links to change ticket status
 		print '<!-- navbar with status -->';
-		if (!$user->socid && $user->hasRight('ticket', 'write') && isset($object->status) && $object->status < $object::STATUS_CLOSED) {
+		if (!$user->socid && $permissiontomanage && isset($object->status) && $object->status < $object::STATUS_CLOSED) {
 			$actionobject->viewStatusActions($object);
 		}
 
@@ -1524,17 +1525,17 @@ if ($action == 'create' || $action == 'presend') {
 				}
 
 				// Close ticket if status is read
-				if (isset($object->status) && $object->status >= 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
+				if (isset($object->status) && $object->status >= 0 && $object->status < Ticket::STATUS_CLOSED && $permissiontomanage) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Abandon ticket if status is read
-				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->hasRight('ticket', 'write')) {
+				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $permissiontomanage) {
 					print dolGetButtonAction('', $langs->trans('AbandonTicket'), 'default', $_SERVER["PHP_SELF"].'?action=abandon&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Re-open ticket
-				if (!$user->socid && (isset($object->status) && ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED)) && !$user->socid) {
+				if ($permissiontomanage && !$user->socid && (isset($object->status) && ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED)) && !$user->socid) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
@@ -1549,7 +1550,7 @@ if ($action == 'create' || $action == 'presend') {
 				}
 
 				// Delete ticket
-				if ($user->hasRight('ticket', 'delete') && !$user->socid) {
+				if ($permissiontodelete && !$user->socid) {
 					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 			}
