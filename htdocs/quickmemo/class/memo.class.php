@@ -82,12 +82,79 @@ class Memo extends CommonObject
 	const STATUS_CANCELED = 9; // fall back in case of
 	const STATUS_ARCHIVED = 9;
 
+	/**
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'email', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'length' the length of field. Example: 255, '24,8'
+	 *  'label' the translation key.
+	 *  'langfile' the key of the language file for translation.
+	 *  'alias' the alias used into some old hard coded SQL requests
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'placeholder' to set the placeholder of a varchar field.
+	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code like the constructor of the class.
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
 
 	/**
 	 * @inheritdoc
 	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields = array();
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, 'noteditable' => 1, 'index' => 1, "css" => "left", "comment" => "Id"),
+		"quick_note" => array("type" => "text", "label" => "Note", 'enabled' => 1, 'position' => 61, 'notnull' => 0, "visible" => -1, "cssview" => "wordbreak", "validate" => 1,),
+		"date_creation" => array("type" => "datetime", "label" => "DateCreation", 'enabled' => 1, 'position' => 500, 'notnull' => 1, "visible" => -2,),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", 'enabled' => 1, 'position' => 501, 'notnull' => 0, "visible" => -2,),
+		"date_archived" => array("type" => "timestamp", "label" => "DateArchived", 'enabled' => 1, 'position' => 502, 'notnull' => 0, "visible" => -2,),
+		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", 'enabled' => 1, 'position' => 510, 'notnull' => 1, "visible" => -2, "csslist" => "tdoverflowmax150",),
+		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "picto" => "user", 'enabled' => 1, 'position' => 511, 'notnull' => -1, "visible" => -2, "csslist" => "tdoverflowmax150",),
+		"fk_user_archived" => array("type" => "integer:User:user/class/user.class.php", "label" => "ArchivedBy", "picto" => "user", 'enabled' => 1, 'position' => 511, 'notnull' => -1, "visible" => -2, "csslist" => "tdoverflowmax150",),
+		"fk_element" => array('type' => 'integer','label' => 'MemoLinkedTo','help' => 'MemoLinkedToHelp','enabled' => 1,'visible' => 5,'notnull' => 0,'default' => 0,'index' => 1,'position' => 0),
+		"element_type" => array('type' => 'varchar(64)','label' => 'QuickMemoElementType','enabled' => 1,'visible' => 5,'position' => 10,'required' => 0),
+		"pos_z" => array("type" => "integer", "label" => "PosZ", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
+		"pos_y" => array("type" => "integer", "label" => "PosY", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
+		"pos_x" => array("type" => "integer", "label" => "PosX", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
+		"pos_w" => array("type" => "integer", "label" => "PosW", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
+		"pos_h" => array("type" => "integer", "label" => "PosH", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
+		"color" => array('type' => 'varchar(10)', 'label' => 'Color','enabled' => 1,'visible' => 1,'position' => 10,'required' => 0),
+		"context_tab" => array('type' => 'varchar(64)', 'label' => 'ContextTab','enabled' => 1,'visible' => 1,'position' => 10,'required' => 0),
+		"private" => array("type" => "integer", "label" => "Private", 'enabled' => 1, 'position' => 1990, 'notnull' => 1, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(0 => "No", 1 => "Yes"),'default' => 1, "validate" => 1,),
+		"private_tpl" => array("type" => "integer", "label" => "PrivateTemplate", 'enabled' => 1, 'position' => 1990, 'notnull' => 0, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(0 => "No", 1 => "Yes"),'default' => 0, "validate" => 1,),
+		"rank_tpl" => array("type" => "integer", "label" => "TemplateRank", 'enabled' => 1, 'position' => 1990, 'notnull' => 0, "visible" => 0, 'index' => 1,'default' => 0, "validate" => 1,),
+		"name_tpl" => array('type' => 'varchar(256)','label' => 'QuickMemoTemplateName','enabled' => 1,'visible' => -1,'position' => 1,'required' => 0),
+		"shared_on_element" => array("type" => "integer", "label" => "SharedBetweenElement", 'enabled' => 1, 'position' => 1991, 'notnull' => 1, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(0 => "No", 1 => "Yes"), "validate" => 1,),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", 'enabled' => 1, 'position' => 1000, 'notnull' => -1, "visible" => -2,),
+		"status" => array("type" => "integer", "label" => "Status", 'enabled' => 1, 'position' => 2000, 'notnull' => 1, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(1 => "Active",2 => "Template",  9 => "Archived"), "validate" => 1,),
+	);
 
 	/** @var int|null */
 	public $rowid;
@@ -169,78 +236,6 @@ class Memo extends CommonObject
 		global $langs;
 
 		$this->db = $db;
-
-
-		/**
-		 *  'type' field format:
-		 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
-		 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
-		 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
-		 *  	'chkbxlst:...',
-		 *  	'varchar(x)',
-		 *  	'text', 'text:none', 'html',
-		 *   	'double(24,8)', 'real', 'price', 'stock',
-		 *  	'date', 'datetime', 'timestamp', 'duration',
-		 *  	'boolean', 'checkbox', 'radio', 'array',
-		 *  	'email', 'phone', 'url', 'password', 'ip'
-		 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
-		 *  'length' the length of field. Example: 255, '24,8'
-		 *  'label' the translation key.
-		 *  'langfile' the key of the language file for translation.
-		 *  'alias' the alias used into some old hard coded SQL requests
-		 *  'picto' is code of a picto to show before value in forms
-		 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
-		 *  'position' is the sort order of field.
-		 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-		 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
-		 *  'noteditable' says if field is not editable (1 or 0)
-		 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-		 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
-		 *  'index' if we want an index in database.
-		 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
-		 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-		 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
-		 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
-		 *  'placeholder' to set the placeholder of a varchar field.
-		 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
-		 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-		 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code like the constructor of the class.
-		 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
-		 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
-		 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-		 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
-		 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
-		 *
-		 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
-		 */
-
-		$this->fields = array(
-			"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, 'noteditable' => 1, 'index' => 1, "css" => "left", "comment" => "Id"),
-			"quick_note" => array("type" => "text", "label" => "Note", 'enabled' => 1, 'position' => 61, 'notnull' => 0, "visible" => -1, "cssview" => "wordbreak", "validate" => 1,),
-			"date_creation" => array("type" => "datetime", "label" => "DateCreation", 'enabled' => 1, 'position' => 500, 'notnull' => 1, "visible" => -2,),
-			"tms" => array("type" => "timestamp", "label" => "DateModification", 'enabled' => 1, 'position' => 501, 'notnull' => 0, "visible" => -2,),
-			"date_archived" => array("type" => "timestamp", "label" => "DateArchived", 'enabled' => 1, 'position' => 502, 'notnull' => 0, "visible" => -2,),
-			"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", 'enabled' => 1, 'position' => 510, 'notnull' => 1, "visible" => -2, "csslist" => "tdoverflowmax150",),
-			"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "picto" => "user", 'enabled' => 1, 'position' => 511, 'notnull' => -1, "visible" => -2, "csslist" => "tdoverflowmax150",),
-			"fk_user_archived" => array("type" => "integer:User:user/class/user.class.php", "label" => "ArchivedBy", "picto" => "user", 'enabled' => 1, 'position' => 511, 'notnull' => -1, "visible" => -2, "csslist" => "tdoverflowmax150",),
-			"fk_element" => array('type' => 'integer','label' => 'MemoLinkedTo','help' => 'MemoLinkedToHelp','enabled' => 1,'visible' => 5,'notnull' => 0,'default' => 0,'index' => 1,'position' => 0),
-			"element_type" => array('type' => 'varchar(64)','label' => 'QuickMemoElementType','enabled' => 1,'visible' => 5,'position' => 10,'required' => 0),
-			"pos_z" => array("type" => "integer", "label" => "PosZ", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
-			"pos_y" => array("type" => "integer", "label" => "PosY", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
-			"pos_x" => array("type" => "integer", "label" => "PosX", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
-			"pos_w" => array("type" => "integer", "label" => "PosW", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
-			"pos_h" => array("type" => "integer", "label" => "PosH", 'enabled' => 1, 'position' => 1000, 'notnull' => 1, "visible" => 0, "default" => 0, "validate" => 1),
-			"color" => array('type' => 'varchar(10)', 'label' => 'Color','enabled' => 1,'visible' => 1,'position' => 10,'required' => 0),
-			"context_tab" => array('type' => 'varchar(64)', 'label' => 'ContextTab','enabled' => 1,'visible' => 1,'position' => 10,'required' => 0),
-			"private" => array("type" => "integer", "label" => "Private", 'enabled' => 1, 'position' => 1990, 'notnull' => 1, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(0 => "No", 1 => "Yes"),'default' => 1, "validate" => 1,),
-			"private_tpl" => array("type" => "integer", "label" => "PrivateTemplate", 'enabled' => 1, 'position' => 1990, 'notnull' => 0, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(0 => "No", 1 => "Yes"),'default' => 0, "validate" => 1,),
-			"rank_tpl" => array("type" => "integer", "label" => "TemplateRank", 'enabled' => 1, 'position' => 1990, 'notnull' => 0, "visible" => 0, 'index' => 1,'default' => 0, "validate" => 1,),
-			"name_tpl" => array('type' => 'varchar(256)','label' => 'QuickMemoTemplateName','enabled' => 1,'visible' => -1,'position' => 1,'required' => 0),
-			"shared_on_element" => array("type" => "integer", "label" => "SharedBetweenElement", 'enabled' => 1, 'position' => 1991, 'notnull' => 1, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(0 => "No", 1 => "Yes"), "validate" => 1,),
-			"import_key" => array("type" => "varchar(14)", "label" => "ImportId", 'enabled' => 1, 'position' => 1000, 'notnull' => -1, "visible" => -2,),
-			"status" => array("type" => "integer", "label" => "Status", 'enabled' => 1, 'position' => 2000, 'notnull' => 1, "visible" => 1, 'index' => 1, "arrayofkeyval" => array(1 => "Active",2 => "Template",  9 => "Archived"), "validate" => 1,),
-		);
-
 
 		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1029,7 +1024,7 @@ class Memo extends CommonObject
 
 		$return .= '<div class="quickmemo-info" >';
 		$return .= '	<div class="quickmemo-info__create" >';
-		$return .= '		<span class="quickmemo-info__user-create-name">'.$this->showOutputField($this->fields['fk_user_creat'], 'fk_user_creat', $this->fk_user_creat).'</span>';
+		$return .= '		<span class="quickmemo-info__user-create-name">'.$this->showOutputField($this->fields['fk_user_creat'], 'fk_user_creat', $this->user_creation_id).'</span>';
 		$return .= ' 		<span class="quickmemo-info__date_create">'.dol_print_date($this->date_creation, '%d/%m/%Y %H:%M').'</span>';
 		$return .= '	</div>';
 
@@ -1037,9 +1032,9 @@ class Memo extends CommonObject
 		if (!empty($this->tms) && $this->tms != $this->date_creation) {
 			$return .= '	<div class="quickmemo-info__update" >';
 
-			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->tms, '%d/%m/%Y %H:%M').'</span>';
-			if ($this->fk_user_modif != $this->fk_user_creat) {
-				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_modif'], 'fk_user_modif', $this->fk_user_modif).'</span>';
+			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->date_modification, '%d/%m/%Y %H:%M').'</span>';
+			if ($this->user_modification_id != $this->user_creation_id) {
+				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_modif'], 'fk_user_modif', $this->user_modification_id).'</span>';
 			}
 
 			$return .= '	</div>';
