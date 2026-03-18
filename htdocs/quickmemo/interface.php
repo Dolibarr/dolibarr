@@ -53,7 +53,7 @@ global $langs, $db, $hookmanager, $user, $mysoc;
  */
 
 // Initialize hooks for the interface
-$hookmanager->initHooks('quickmemoInterface');
+$hookmanager->initHooks(['quickmemoInterface']);
 
 // Load translation files required by the page
 $langs->loadLangs(["quickmemo", "other", 'main']);
@@ -142,7 +142,7 @@ function quickMemoIntefaceActionUpdatePosition($jsonResponse)
 		return false;
 	}
 
-	$id = GETPOST("id", "int");
+	$id = GETPOSTINT("id");
 
 	if (empty($id) && !is_numeric($id)) {
 		$jsonResponse->msg = 'Need memo Id';

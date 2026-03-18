@@ -151,6 +151,7 @@ $VALID_MODULE_MAPPING = array(
 	'productsupplierprice' => null,
 	'project' => 'Projet',
 	'propal' => 'Propale',
+	'quickmemo' => null,
 	'receiptprinter' => 'ReceiptPrinter',
 	'reception' => 'Reception',
 	'recruitment' => 'Recruitment',

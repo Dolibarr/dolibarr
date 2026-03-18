@@ -174,17 +174,10 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // There is several ways to check permission.
-// Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 1;
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('quickmemo', 'memo', 'read');
-	$permissiontoadd = $user->hasRight('quickmemo', 'memo', 'write');
-	$permissiontodelete = $user->hasRight('quickmemo', 'memo', 'delete');
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1;
-	$permissiontodelete = 1;
-}
+$permissiontoread = $user->hasRight('quickmemo', 'memo', 'read');
+$permissiontoadd = $user->hasRight('quickmemo', 'memo', 'write');
+$permissiontodelete = $user->hasRight('quickmemo', 'memo', 'delete');
+
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) {
@@ -363,10 +356,12 @@ foreach ($search as $key => $val) {
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
-		$field_spec = $object->fields[$key];
-		if ($field_spec === null) {
+
+		if (empty($object->fields[$key])) {
 			continue;
 		}
+
+		$field_spec = $object->fields[$key];
 		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);
 		if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
 			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval'])))) {
