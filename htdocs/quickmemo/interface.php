@@ -181,7 +181,7 @@ function quickMemoIntefaceActionUpdatePosition($jsonResponse)
 /**
  * Batch update coordinates and Z-index for multiple memos.
  * @param JsonResponse $jsonResponse The response object.
- * @return bool
+ * @return bool|void
  */
 function quickMemoIntefaceActionUpdateAllPositions($jsonResponse)
 {

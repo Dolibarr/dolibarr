@@ -1008,9 +1008,7 @@ class Memo extends CommonObject
 		$return .= '<div class="info-box-quickmemo '.$isDarkMode.'" '.$style.' >';
 		$return .= '<div class="info-box-content-quickmemo">';
 
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<span class="info-box-status">'.$this->getLibStatut(4).'</span>';
-		}
+		$return .= '<span class="info-box-status">'.$this->getLibStatut(4).'</span>';
 
 		//      $return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if ($selected >= 0) {
@@ -1053,7 +1051,7 @@ class Memo extends CommonObject
 		}
 
 		$this->date_archived = dol_now();
-		$this->fk_user_archived = $this->user;
+		$this->fk_user_archived = (int) $this->user->id;
 
 
 		$return .= '</div>';
