@@ -176,9 +176,7 @@ class Thirdparties extends DolibarrApi
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
 			}
 		}
-		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
-		$sql .= " AND t.fk_stcomm = st.id";
 		if ($mode == 1) {
 			$sql .= " AND t.client IN (1, 3)";
 		} elseif ($mode == 2) {
