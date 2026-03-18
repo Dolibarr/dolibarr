@@ -1143,8 +1143,74 @@ class Expedition extends CommonObject
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Override to keep every expeditiondet row that belongs to the displayed line in sync when drag & drop reorders rows.
+	 *
+	 * @param int[] $rows Array of row ids received from ajax
+	 * @return void
+	 */
+	public function line_ajaxorder($rows)
+	{
+		if (empty($rows) || !is_array($rows)) {
+			return;
+		}
+
+		$rowToOrigin = array();
+		$originToRows = array();
+
+		$sql = "SELECT rowid, fk_elementdet";
+		$sql .= " FROM ".$this->db->prefix()."expeditiondet";
+		$sql .= " WHERE fk_expedition = ".((int) $this->id);
+		$sql .= " ORDER BY rang ASC, rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$rowid = (int) $obj->rowid;
+				$originLine = (int) $obj->fk_elementdet;
+				$rowToOrigin[$rowid] = $originLine;
+
+				if (!isset($originToRows[$originLine])) {
+					$originToRows[$originLine] = array();
+				}
+				$originToRows[$originLine][] = $rowid;
+			}
+			$this->db->free($resql);
+		} else {
+			parent::line_ajaxorder($rows);
+			return;
+		}
+
+		$processedOrigins = array();
+		$position = 1;
+
+		foreach ($rows as $rowid) {
+			$rowid = (int) $rowid;
+			if (empty($rowid)) {
+				continue;
+			}
+
+			$originLine = isset($rowToOrigin[$rowid]) ? $rowToOrigin[$rowid] : 0;
+			if ($originLine > 0 && !empty($processedOrigins[$originLine])) {
+				continue;
+			}
+
+			$rowidsToUpdate = array($rowid);
+			if ($originLine > 0 && !empty($originToRows[$originLine])) {
+				$rowidsToUpdate = $originToRows[$originLine];
+				$processedOrigins[$originLine] = 1;
+			}
+
+			foreach ($rowidsToUpdate as $childRowId) {
+				$this->updateRangOfLine($childRowId, $position);
+				$position++;
+			}
+		}
+	}
+	// phpcs:enable
+
+	// phpcs:disable
 	/**
 	 *	Create a delivery receipt from a shipment
 	 *
@@ -2129,7 +2195,7 @@ class Expedition extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 		$sql .= " AND ed.fk_elementdet = cd.rowid";
-		$sql .= " ORDER BY cd.rang, ed.fk_elementdet";		// We need after a break on fk_elementdet but when there is no break on fk_elementdet, cd.rang is same so we can add it as first order criteria.
+		$sql .= " ORDER BY CASE WHEN ed.rang IS NULL OR ed.rang = 0 THEN cd.rang ELSE ed.rang END, ed.rowid";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
