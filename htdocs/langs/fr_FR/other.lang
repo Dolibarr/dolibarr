@@ -407,3 +407,12 @@ ShowBookmark = Afficher marque-page
 UrlOrLink = URL
 UseAnExternalHttpLinkOrRelativeDolibarrLink = Utilisez un lien externe/absolu (https://externalurl.com) ou un lien interne/relatif (/mapage.php). Vous pouvez également utiliser un lien de téléphone comme tel:0123456.
 SubscribeToFoundation=Aidez le projet Dolibarr, adhérez à l'association Dolibarr
+
+Notify_STOCKTRANSFER_CREATE=Transfert de stock créé
+Notify_STOCKTRANSFER_VALIDATE=Transfert de stock validé
+Notify_STOCKTRANSFER_UNVALIDATE=Transfert de stock repassé en brouillon
+Notify_STOCKTRANSFER_DESTOCK=Diminution du stock source du transfert de stock
+Notify_STOCKTRANSFER_DESTOCK_CANCEL=Annulation de la diminution du stock source du transfert de stock
+Notify_STOCKTRANSFER_CLOSE=Transfert de stock clôturé
+Notify_STOCKTRANSFER_ADDSTOCK=Augmentation du stock destination du transfert de stock
+Notify_STOCKTRANSFER_ADDSTOCK_CANCEL=Annulation de l'augmentation du stock destination du transfert de stock

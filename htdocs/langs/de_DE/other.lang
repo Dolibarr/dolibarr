@@ -407,3 +407,12 @@ ShowBookmark = Zeige Lesezeichen
 UrlOrLink = URL
 UseAnExternalHttpLinkOrRelativeDolibarrLink = Verwenden Sie einen externen/absoluten Link (https://externalurl.com) oder einen internen/relativen Link (/mypage.php). Sie können auch eine Telefonnummer wie tel:0123456 verwenden.
 SubscribeToFoundation=Helfen auch Sie dem Dolibarr-Projekt und unterstützen uns mit einer Spende.
+
+Notify_STOCKTRANSFER_CREATE=Lagertransfer erstellt
+Notify_STOCKTRANSFER_VALIDATE=Lagertransfer validiert
+Notify_STOCKTRANSFER_UNVALIDATE=Lagertransfer auf Entwurf zurückgesetzt
+Notify_STOCKTRANSFER_DESTOCK=Quellbestand für Lagertransfer reduziert
+Notify_STOCKTRANSFER_DESTOCK_CANCEL=Reduzierung des Quellbestands für Lagertransfer storniert
+Notify_STOCKTRANSFER_CLOSE=Lagertransfer geschlossen
+Notify_STOCKTRANSFER_ADDSTOCK=Zielbestand für Lagertransfer erhöht
+Notify_STOCKTRANSFER_ADDSTOCK_CANCEL=Erhöhung des Zielbestands für Lagertransfer storniert
