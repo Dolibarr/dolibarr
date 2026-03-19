@@ -12,12 +12,10 @@ document.addEventListener('Dolibarr:Init', function () {
 		const defaultParams = {
 			dialogClass: 'dol-dialog',		// Dialog Class
 			dialogId: 'dol-dialog-id',		// Dialog ID, should be unique
-			title: '',						// Title of dialog
-			icon: '',						// FontAwesome Class (e.g 'fas fa-user')
-			iconColor: '',  				// CSS color value (e.g #3b89a8)
+			header: null,    				// Header config: { title, icon, iconColor } — null = no header
 			align: 'center',				// Box alignment
-			width: null,					// 'xs', 'lg', 'xl', 'xxl' or Override CSS by set xxx as interger or css size like 100vw or 500px
-			height: 0,		 				// Box height - Overrride CSS - Do not work on align right
+			width: null,					// 'xs', 'lg', 'xl', 'xxl' or Override CSS by set xxx as integer or css size like 100vw or 500px
+			height: 0,		 				// Box height - Override CSS - Does not work on align right
 			closedBy: 'any', 				// 'any' | 'closerequest' | 'none'
 			url: null,       				// Ajax url
 			content: null,   				// Static HTML content (alternative to url)
@@ -26,7 +24,15 @@ document.addEventListener('Dolibarr:Init', function () {
 			footer: null,    				// Footer config: { showCancel, cancelLabel, showSubmit, submitLabel, submitFormId, borderTop }
 			onSuccess: null, 				// Callback fired after dialog closes on AJAX form success
 			onLoad: null,    				// Callback fired after dialog content is injected (url or content)
-			isModal : true					// Add backdrop
+			isModal : true,					// Add backdrop
+			confirmAction: false,			// Intercept trigger action (href/form) and execute it on confirm
+		};
+
+		// --- Default header params ---
+		const defaultHeader = {
+			title    : '',		// Header title text
+			icon     : '',		// FontAwesome class (e.g. 'fas fa-user')
+			iconColor: '',		// CSS color value (e.g. '#3b89a8')
 		};
 
 		// --- Default footer params ---
@@ -93,15 +99,15 @@ document.addEventListener('Dolibarr:Init', function () {
 			dialogEl.cssText = style;
 
 			let dialogHTML = '';
-			if (param.title) {
-				dialogHTML += `
-                    <div class="dol-dialog-header">
-                        <h2 class="dol-dialog-title">
-                            ${param.icon ? `<i class="dol-dialog-icon ${param.icon}" ${param.iconColor ? ' style="color:' + param.iconColor + '"' : ''} ></i>` : ''}
-							${param.title}
-                        </h2>
-                        <button class="dol-dialog-close">&times;</button>
-                    </div>`;
+			if (param.header !== null) {
+				const h = {...defaultHeader, ...param.header};
+				dialogHTML += '<div class="dol-dialog-header">';
+				dialogHTML += '<h2 class="dol-dialog-title">';
+				if (h.icon) dialogHTML += `<i class="dol-dialog-icon ${h.icon}"${h.iconColor ? ' style="color:' + h.iconColor + '"' : ''}></i>`;
+				dialogHTML += h.title;
+				dialogHTML += '</h2>';
+				dialogHTML += '<button class="dol-dialog-close">&times;</button>';
+				dialogHTML += '</div>';
 			} else {
 				dialogHTML += '<button class="dol-dialog-close">&times;</button>';
 			}

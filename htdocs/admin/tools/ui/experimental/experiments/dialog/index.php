@@ -270,14 +270,14 @@ $documentation->showSidebar(); ?>
 		Dolibarr.tools.uiDialog('#btn-dialog-center', {
 			dialogId: 'dialog-center',
 			align: 'center',
-			title: uiDialogTitleCenter,
+			header: { title: uiDialogTitleCenter },
 			url: modalUrl
 		});
 
 		Dolibarr.tools.uiDialog('#btn-dialog-right',  {
 			dialogId: 'dialog-right',
 			align: 'right',
-			title: uiDialogTitleRight,
+			header: { title: uiDialogTitleRight },
 			url: modalUrl
 		});
 
@@ -285,14 +285,14 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-xs',
 			align: 'right',
 			width: 'xs',
-			title: uiDialogTitleRight + ' xs size',
+			header: { title: uiDialogTitleRight + ' xs size' },
 			url: modalUrl
 		});
 
 		Dolibarr.tools.uiDialog('#btn-dialog-default-size',  {
 			dialogId: 'test-dialog-default',
 			align: 'right',
-			title: uiDialogTitleRight + ' default size',
+			header: { title: uiDialogTitleRight + ' default size' },
 			url: modalUrl
 		});
 
@@ -300,7 +300,7 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-lg',
 			align: 'right',
 			width: 'lg',
-			title: uiDialogTitleRight + ' lg size',
+			header: { title: uiDialogTitleRight + ' lg size' },
 			url: modalUrl
 		});
 
@@ -308,7 +308,7 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-xl',
 			align: 'right',
 			width: 'xl',
-			title: uiDialogTitleRight + ' XL size',
+			header: { title: uiDialogTitleRight + ' XL size' },
 			url: modalUrl
 		});
 
@@ -316,7 +316,7 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-xxl',
 			align: 'right',
 			width: 'xxl',
-			title: uiDialogTitleRight + ' XXL size',
+			header: { title: uiDialogTitleRight + ' XXL size' },
 			url: modalUrl
 		});
 
@@ -324,14 +324,14 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-xs-center',
 			align: 'center',
 			width: 'xs',
-			title: uiDialogTitleRight + ' xs size',
+			header: { title: uiDialogTitleRight + ' xs size' },
 			url: modalUrl
 		});
 
 		Dolibarr.tools.uiDialog('#btn-dialog-default-size-center',  {
 			dialogId: 'test-dialog-default-center',
 			align: 'center',
-			title: uiDialogTitleRight + ' default size',
+			header: { title: uiDialogTitleRight + ' default size' },
 			url: modalUrl
 		});
 
@@ -339,7 +339,7 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-lg-center',
 			align: 'center',
 			width: 'lg',
-			title: uiDialogTitleRight + ' lg size',
+			header: { title: uiDialogTitleRight + ' lg size' },
 			url: modalUrl
 		});
 
@@ -347,7 +347,7 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-xl-center-center',
 			align: 'center',
 			width: 'xl',
-			title: uiDialogTitleRight + ' XL size',
+			header: { title: uiDialogTitleRight + ' XL size' },
 			url: modalUrl
 		});
 
@@ -355,7 +355,7 @@ $documentation->showSidebar(); ?>
 			dialogId: 'test-dialog-xxl-center',
 			align: 'center',
 			width: 'xxl',
-			title: uiDialogTitleRight + ' XXL size',
+			header: { title: uiDialogTitleRight + ' XXL size' },
 			url: modalUrl
 		});
 
@@ -369,17 +369,14 @@ $documentation->showSidebar(); ?>
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-with-icon', {
 			dialogId: 'dialog-with-icon',
-			title: uiDialogTitleWithIcon,
-			icon: 'fas fa-flask',
 			align: 'center',
+			header: { title: uiDialogTitleWithIcon, icon: 'fas fa-flask' },
 			url: modalUrl
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-with-color-icon', {
 			dialogId: 'dialog-with-color-icon',
-			title: uiDialogTitleWithIcon,
-			icon: 'fas fa-landmark',
-			iconColor: '#b0bb39',
 			align: 'center',
+			header: { title: uiDialogTitleWithIcon, icon: 'fas fa-landmark', iconColor: '#b0bb39' },
 			url: modalUrl
 		});
 
@@ -388,41 +385,36 @@ $documentation->showSidebar(); ?>
 		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-simple.php', 1); ?>';
 		Dolibarr.tools.uiDialog('#btn-dialog-footer-default', {
 			dialogId: 'dialog-footer-default',
-			title: uiDialogTitleFooter,
-			icon: 'fas fa-stream',
 			align: 'center',
+			header: { title: uiDialogTitleFooter, icon: 'fas fa-stream' },
 			url: modalUrl,
 			footer: {}
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-footer-left', {
 			dialogId: 'dialog-footer-left',
-			title: uiDialogTitleFooter,
-			icon: 'fas fa-align-left',
 			align: 'center',
+			header: { title: uiDialogTitleFooter, icon: 'fas fa-align-left' },
 			url: modalUrl,
 			footer: { align: 'left' }
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-footer-center', {
 			dialogId: 'dialog-footer-center',
-			title: uiDialogTitleFooter,
-			icon: 'fas fa-align-center',
 			align: 'center',
+			header: { title: uiDialogTitleFooter, icon: 'fas fa-align-center' },
 			url: modalUrl,
 			footer: { align: 'center' }
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-footer-borderless', {
 			dialogId: 'dialog-footer-borderless',
-			title: uiDialogTitleFooter,
-			icon: 'fas fa-minus',
 			align: 'center',
+			header: { title: uiDialogTitleFooter, icon: 'fas fa-minus' },
 			url: modalUrl,
 			footer: { borderTop: false }
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-footer-cancelonly', {
 			dialogId: 'dialog-footer-cancelonly',
-			title: uiDialogTitleFooter,
-			icon: 'fas fa-times',
 			align: 'center',
+			header: { title: uiDialogTitleFooter, icon: 'fas fa-times' },
 			url: modalUrl,
 			footer: { showSubmit: false, cancelLabel: 'Close' }
 		});
@@ -432,16 +424,14 @@ $documentation->showSidebar(); ?>
 		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-data.php', 1); ?>';
 		Dolibarr.tools.uiDialog('#btn-dialog-with-data-a', {
 			dialogId: 'dialog-with-data-a',
-			title: uiDialogTitleWithData,
-			icon: 'fas fa-code',
 			align: 'center',
+			header: { title: uiDialogTitleWithData, icon: 'fas fa-code' },
 			url: modalUrl
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-with-data-b', {
 			dialogId: 'dialog-with-data-b',
-			title: uiDialogTitleWithData,
-			icon: 'fas fa-code',
 			align: 'center',
+			header: { title: uiDialogTitleWithData, icon: 'fas fa-code' },
 			url: modalUrl
 		});
 
@@ -450,23 +440,17 @@ $documentation->showSidebar(); ?>
 		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-form.php', 1); ?>';
 		Dolibarr.tools.uiDialog('#btn-dialog-with-form', {
 			dialogId: 'dialog-with-form',
-			title: uiDialogTitleForm,
-			icon: 'fas fa-ticket-alt',
-			iconColor: '#3bbfa8',
 			align: 'right',
+			header: { title: uiDialogTitleForm, icon: 'fas fa-ticket-alt', iconColor: '#3bbfa8' },
 			url: modalUrl,
-			footer: {
-				submitFormId: 'dol-dialog-form-example'
-			}
+			footer: { submitFormId: 'dol-dialog-form-example' }
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-with-ajaxform', {
 			dialogId: 'dialog-with-ajaxform',
-			title: uiDialogTitleForm,
-			icon: 'fas fa-ticket-alt',
-			iconColor: '#3bbfa8',
 			align: 'right',
+			header: { title: uiDialogTitleForm, icon: 'fas fa-ticket-alt', iconColor: '#3bbfa8' },
 			url: modalUrl,
-			footer: {submitFormId: 'dol-dialog-ajaxform-example'},
+			footer: { submitFormId: 'dol-dialog-ajaxform-example' },
 			onSuccess: function(data) {
 				Dolibarr.tools.setEventMessage(data.message);
 			}
@@ -477,18 +461,16 @@ $documentation->showSidebar(); ?>
 		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-size.php', 1); ?>';
 		Dolibarr.tools.uiDialog('#btn-dialog-params-size-center', {
 			dialogId: 'dialog-size-c',
-			title: uiDialogTitleSizeControl,
-			icon: 'fas fa-arrows-alt-h',
 			align: 'center',
+			header: { title: uiDialogTitleSizeControl, icon: 'fas fa-arrows-alt-h' },
 			url: modalUrl,
 			width: '50vw',
 			height: '50vh'
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-params-size-right', {
 			dialogId: 'dialog-size-r',
-			title: uiDialogTitleSizeControl,
-			icon: 'fas fa-arrows-alt-h',
 			align: 'right',
+			header: { title: uiDialogTitleSizeControl, icon: 'fas fa-arrows-alt-h' },
 			url: modalUrl,
 			width: 800,
 		});
@@ -498,17 +480,15 @@ $documentation->showSidebar(); ?>
 		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-no-animation.php', 1); ?>';
 		Dolibarr.tools.uiDialog('#btn-dialog-params-animation-center', {
 			dialogId: 'dialog-noanim-c',
-			title: uiDialogTitleNoAnimation,
-			icon: 'fas fa-eye-slash',
 			align: 'center',
+			header: { title: uiDialogTitleNoAnimation, icon: 'fas fa-eye-slash' },
 			url: modalUrl,
 			animation: false,
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-params-animation-right', {
 			dialogId: 'dialog-noanim-r',
-			title: uiDialogTitleNoAnimation,
-			icon: 'fas fa-eye-slash',
 			align: 'right',
+			header: { title: uiDialogTitleNoAnimation, icon: 'fas fa-eye-slash' },
 			url: modalUrl,
 			animation: false,
 		});
@@ -519,27 +499,24 @@ $documentation->showSidebar(); ?>
 		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-persist.php', 1); ?>';
 		Dolibarr.tools.uiDialog('#btn-dialog-params-persist', {
 			dialogId: 'dialog-persist',
-			title: uiDialogTitlePersistYes,
-			icon: 'fas fa-bars',
 			align: 'right',
+			header: { title: uiDialogTitlePersistYes, icon: 'fas fa-bars' },
 			url: modalUrl,
 			animation: false,
 			persist: true
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-params-notpersist', {
 			dialogId: 'dialog-notpersist',
-			title: uiDialogTitlePersistNo,
-			icon: 'fas fa-bars',
 			align: 'right',
+			header: { title: uiDialogTitlePersistNo, icon: 'fas fa-bars' },
 			url: modalUrl,
 			animation: false,
 			persist: false
 		});
 		Dolibarr.tools.uiDialog('#btn-dialog-params-nobackdrop', {
-			dialogId: 'dialog-notpersist',
-			title: uiDialogTitlePersistNo,
-			icon: 'fas fa-bars',
+			dialogId: 'dialog-nobackdrop',
 			align: 'right',
+			header: { title: uiDialogTitlePersistNo, icon: 'fas fa-bars' },
 			url: modalUrl,
 			animation: false,
 			persist: false,
