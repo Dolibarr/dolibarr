@@ -46,6 +46,7 @@ Unit=Unité
 StockCorrection=Correction de stock
 CorrectStock=Corriger le stock
 StockTransfer=Transfert de stock
+Stocktransfer=Transfert de stock
 TransferStock=Transférer stock
 MassStockTransferShort=Transfert de stock en masse
 StockMovement=Mouvement de stock
