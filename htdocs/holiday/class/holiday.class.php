@@ -2683,24 +2683,24 @@ class Holiday extends CommonObject
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').") AND cp.rowid > 0";
 		$sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
 		$sql .= " AND (";
-		$sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
+		$sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$this->db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$this->db->escape($year_month)."')";
 		$sql .= " OR";	// For leave over several months
-		$sql .= " (date_format(cp.date_debut, '%Y-%m') < '".$db->escape($year_month)."' AND date_format(cp.date_fin, '%Y-%m') > '".$db->escape($year_month)."') ";
+		$sql .= " (date_format(cp.date_debut, '%Y-%m') < '".$this->db->escape($year_month)."' AND date_format(cp.date_fin, '%Y-%m') > '".$this->db->escape($year_month)."') ";
 		$sql .= " )";
-		$sql .= $db->order("cp.fk_user, cp.date_debut", "ASC");
-		$resql = $db->query($sql);
+		$sql .= $this->db->order("cp.fk_user, cp.date_debut", "ASC");
+		$resql = $this->db->query($sql);
 		if (empty($resql)) {
-			$this->errors[] = $db->lasterror();
+			$this->errors[] = $this->db->lasterror();
 			return 1;
 		}
-		$num = $db->num_rows($resql);
+		$num = $this->db->num_rows($resql);
 		if ($num > 0) {
-			$tmpuser = new User($db);
-			while ($obj = $db->fetch_object($resql)) {
+			$tmpuser = new User($this->db);
+			while ($obj = $this->db->fetch_object($resql)) {
 				$tmpuser->fetch($obj->fk_user);
 
-				$date_start = $db->jdate($obj->date_debut, true);
-				$date_end = $db->jdate($obj->date_fin, true);
+				$date_start = $this->db->jdate($obj->date_debut, true);
+				$date_end = $this->db->jdate($obj->date_fin, true);
 
 				$tmpstart = dol_getdate($date_start);
 				$tmpend = dol_getdate($date_end);
@@ -2715,8 +2715,8 @@ class Holiday extends CommonObject
 				//0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 
 				// Set date_start_gmt and date_end_gmt that are date to show for the selected month
-				$date_start_inmonth = $db->jdate($obj->date_debut, true);
-				$date_end_inmonth = $db->jdate($obj->date_fin, true);
+				$date_start_inmonth = $this->db->jdate($obj->date_debut, true);
+				$date_end_inmonth = $this->db->jdate($obj->date_fin, true);
 				if ($tmpstart['year'] < $prev_month["year"] || $tmpstart['mon'] < $prev_month["month"]) {
 					$date_start_inmonth = dol_get_first_day($prev_month["year"], $prev_month["month"], true);
 					$starthalfdayinmonth = 'morning';
@@ -2759,8 +2759,8 @@ class Holiday extends CommonObject
 		if (!empty($arrayleaves)) {
 			foreach ($arrayleaves as $key => $fields) {
 				$outputarrayleaves .= '<tr>';
-				foreach ($fields as $key => $value) {
-					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$key.'">';
+				foreach ($fields as $field => $value) {
+					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$field.'">';
 					$outputarrayleaves .= $value;
 					$outputarrayleaves .= '</td>';
 				}
@@ -2778,7 +2778,7 @@ class Holiday extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
-		$formmail = new FormMail($db);
+		$formmail = new FormMail($this->db);
 		$templateId = 0;
 		$templateLabel = '';
 		if (empty($template) || $template == 'EmailTemplateCode') {
@@ -2790,7 +2790,7 @@ class Holiday extends CommonObject
 				$templateLabel = $template;
 			}
 		}
-		$mailtemplate = $formmail->getEMailTemplate($db, "holiday", $user, $outputlangs, $templateId, 1, $templateLabel);
+		$mailtemplate = $formmail->getEMailTemplate($this->db, "holiday", $user, $outputlangs, $templateId, 1, $templateLabel);
 		$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
 		complete_substitutions_array($substitutionarray, $outputlangs, $this);
 
