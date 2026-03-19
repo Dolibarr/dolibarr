@@ -2908,6 +2908,14 @@ function printDropdownQuickadd($mode = 0)
 				"position" => 410,
 			),
 			array(
+				"url" => "/product/stock/stocktransfer/stocktransfer_card.php?action=create&amp;mainmenu=products",
+				"title" => "StockTransferNew@stocks",
+				"name" => "StockTransfer@stocks",
+				"picto" => "stock",
+				"activation" => isModEnabled("stocktransfer") && $user->hasRight("stocktransfer", "stocktransfer", "write"), // vs hooking
+				"position" => 415,
+			),
+			array(
 				"url" => "/user/card.php?action=create&amp;type=1&amp;mainmenu=home",
 				"title" => "AddUser@users",
 				"name" => "User@users",

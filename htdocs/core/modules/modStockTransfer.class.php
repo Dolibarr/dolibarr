@@ -102,9 +102,11 @@ class modStockTransfer extends DolibarrModules
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array(
-				'data' => array(
-					'stocktransfercard',
-				),
+				//   'data' => array(
+				//       'hookcontext1',
+				//       'hookcontext2',
+				//   ),
+				//   'entity' => '0',
 			),
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
