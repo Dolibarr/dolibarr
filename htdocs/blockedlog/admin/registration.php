@@ -224,11 +224,14 @@ if (GETPOST('withtab', 'alpha')) {
 }
 
 $morehtmlcenter = '';
+$texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
-	$texttop = '';
+if (!userIsTaxAuditor()) {
+	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+	if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
+		$texttop = '';
+	}
 }
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);

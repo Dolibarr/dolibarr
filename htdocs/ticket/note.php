@@ -29,12 +29,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +36,11 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));

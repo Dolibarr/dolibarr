@@ -2,6 +2,28 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 23.0.1 compared to 23.0.0 *****
+
+FIX: Removed SQL error on install process.
+FIX: #37412 Better fix
+FIX: Added user filtering for displaying leave in the calendar (#37385)
+FIX: Bad value when entering price with multicurrency included tax.
+FIX: Better compatibility for module using condition object-> in tabs
+FIX: CSS
+FIX: Fetch of lead status
+FIX: Fix doc preview in comm card
+FIX: height of confirm popup
+FIX: option MAIN_USE_TITLE_FOR_USER was on update and not on create
+FIX: Order API: delete order returns wrong http response in case order could not be deleted (#37472)
+FIX: Pb with import of agendaevents. Date and import id not visible.
+FIX: read_supplier_price filter for stock complement (#37417)
+FIX: Reload page after check holiday for save param (#37410)
+FIX: Several trouble with demo docker packages. More secured way to use install.force.php file
+FIX: translation on multiselect with rich label - Fix CSS public ticket
+FIX: update COPYRIGHT file to reflect removed libraries in v23.0.0
+
+
 ***** ChangeLog for 23.0.0 compared to 22.0 *****
 
 For users:

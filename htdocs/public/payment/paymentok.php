@@ -2104,7 +2104,7 @@ if (empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
 		if ($TRANSACTIONID) {
-			print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
+			print $langs->trans("ThisIsTransactionId")." : ".$TRANSACTIONID."<br><br>\n";
 		}
 
 		print '<center>';

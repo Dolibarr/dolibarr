@@ -18,7 +18,7 @@
  */
 
 /**
- *    \file       htdocs/admint/tools/ui/class/uidoc.class.php
+ *    \file       htdocs/admint/tools/ui/class/documentation.class.php
  *    \ingroup    ui
  *    \brief      File of class to manage UI documentation
  */
@@ -155,6 +155,7 @@ class Documentation
 					'summary' => array(
 						'DocBasicUsage' => '#seteventmessagesection-basicusage',
 						'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
+						'DocSetEventMessageJsContext' => '#titlesection-tool-seteventmessage',
 					)
 				),
 				'Inputs' => array(

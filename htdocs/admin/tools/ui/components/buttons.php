@@ -135,7 +135,7 @@ $documentation->showSidebar(); ?>
 				' */',
 				'print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Example of modal usage -->
@@ -202,7 +202,7 @@ $documentation->showSidebar(); ?>
 				'',
 				'print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Example of subbutton usage -->
@@ -259,7 +259,7 @@ $documentation->showSidebar(); ?>
 				');',
 				'print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);'
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 
@@ -286,7 +286,7 @@ $documentation->showSidebar(); ?>
 				'print \' <button class="btn-low-emphasis --btn-icon" title="\'.dol_escape_htmltag($btnLabel).\'" aria-label="\'.dol_escape_htmltag($btnLabel).\'" >\'.img_picto($btnLabel, \'eraser\', \'aria-hidden="true"\', 0, 0, 1).\'</button>\';',
 
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Example of subbutton usage -->
@@ -322,7 +322,7 @@ $documentation->showSidebar(); ?>
 				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-file\', \'#\', \'\', $status);',
 			);
 
-			echo $documentation->showCode($lines, 'php'); ?><div class="documentation-example">
+			$documentation->showCode($lines, 'php'); ?><div class="documentation-example">
 				<?php
 
 				$btnLabel = $langs->trans('Label', 'php');
@@ -350,7 +350,7 @@ $documentation->showSidebar(); ?>
 				'$status = -2; // Disabled without info',
 				'print dolGetButtonTitle($btnLabel, \'\', \'fa fa-download\', \'#\', \'\', $status, [\'forcenohideoftext\'=>1]);',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 	</div>

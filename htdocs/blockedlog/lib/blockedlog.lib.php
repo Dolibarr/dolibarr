@@ -58,19 +58,23 @@ function blockedlogadmin_prepare_head($withtabsetup)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
-	$head[$h][1] = $langs->trans("UserRegistration");
-	$head[$h][2] = 'registration';
-	$h++;
-
-	$b = new BlockedLog($db);
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
-	$head[$h][1] = $langs->trans("BrowseBlockedLog");
-	if ($b->alreadyUsed()) {
-		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
+	if (!userIsTaxAuditor()) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/registration.php".$param;
+		$head[$h][1] = $langs->trans("UserRegistration");
+		$head[$h][2] = 'registration';
+		$h++;
 	}
-	$head[$h][2] = 'fingerprints';
-	$h++;
+
+	if (!userIsTaxAuditor()) {
+		$b = new BlockedLog($db);
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php".$param;
+		$head[$h][1] = $langs->trans("BrowseBlockedLog");
+		if ($b->alreadyUsed()) {
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">...</span>' : '');
+		}
+		$head[$h][2] = 'fingerprints';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
@@ -85,7 +89,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 		$h++;
 	}
 
-	if ($withtabsetup) {
+	if ($withtabsetup && !userIsTaxAuditor()) {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
 		$head[$h][1] = $langs->trans("TechnicalInformation");
 		$head[$h][2] = 'technicalinfo';
@@ -447,4 +451,16 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 	}
 
 	return 0;
+}
+
+/**
+ * Return if user is a ta auditor
+ *
+ * @return	int		Return > 0 if user is an external user so must be restricted to archive control feature
+ */
+function userIsTaxAuditor()
+{
+	global $user;
+
+	return ((getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid) ? 1 : 0);
 }

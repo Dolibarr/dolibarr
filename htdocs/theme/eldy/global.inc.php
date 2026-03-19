@@ -180,7 +180,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
-	--colorbackgrey: #f0f0f0;
+	--colorbackgrey: #f6f6f6;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -204,7 +204,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #400030;
+	--fieldrequiredcolor: #000;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -262,7 +262,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	            --oddevencolor: rgb(220,220,220);
 	            --colorboxstatsborder: rgb(65,100,138);
 	            --dolgraphbg: #1d1e20;
-	            --fieldrequiredcolor: rgb(250,183,59);
+	            --fieldrequiredcolor: #fff;
 	            --colortextbacktab: rgb(220,220,220);
 	            --colorboxiconbg: rgb(36,38,39);
 	            --refidnocolor: rgb(220,220,220);
@@ -466,9 +466,12 @@ input {
 	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
-	padding: 3px !important;
+	padding: 4px !important;
 	padding-left: 6px !important;
 	padding-right: 6px !important;
+}
+.refid input[type="text"] {
+	height:22px;
 }
 
 select {
@@ -511,7 +514,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 }
 
 section.setupsection {
-	padding: 20px;
+	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
@@ -1029,7 +1032,7 @@ button:focus {
 
 th .button {
 	box-shadow: none !important;
-	border-radius:0px !important;
+	border-radius: 0px;
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
@@ -1123,6 +1126,9 @@ textarea.centpercent {
 }
 .centerimp {
 	text-align: center !important;
+}
+.centeronsmartphone {
+	text-align: center;
 }
 .centergrid {
 	display: grid;
@@ -1350,6 +1356,8 @@ td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 	overflow-y: auto;
 	word-break: break-word;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 div.urllink {
 	padding: 5px;
@@ -1534,7 +1542,7 @@ div.divsearchfield {
 .divfilteralone {
 	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
-	padding-left: 5px;
+	padding: 10px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -2960,7 +2968,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	color: var(--colortexttitlenotab);
 	opacity: 0.85;
 }
-.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+.table-fiche-title .col-picto, .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;
 	font-size: 0.7em;
 	width: 20px;
@@ -2990,8 +2998,16 @@ span.widthpictotitle.pictotitle {
 	width: 14px;
 }
 .pictosubstatus {
-	padding-left: 2px;
-	padding-right: 2px;
+	padding: 4px;
+	border: 1px solid #ccc;
+	vertical-align: middle;
+	margin-right: 3px;
+	margin-left: 3px;
+	border-radius: 5px;
+}
+.pictosubstatus img {
+	vertical-align: text-bottom;
+	display: inline-block;
 }
 .pictostatus {
 	width: 15px;
@@ -3304,6 +3320,9 @@ div.tmenucenter
 	padding-left: 2px;
 	padding-right: 2px;
 	color: var(--colortextbackhmenu);
+	max-width: 85px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	<?php if ($disableimages) { ?>
 	padding-top: 8px;
 	height: 26px;
@@ -3311,7 +3330,6 @@ div.tmenucenter
 	padding-top: 2px;
 	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
-	/* width: 100%; */
 }
 #menu_titre_logo {
 	padding-top: 0;
@@ -4179,7 +4197,7 @@ div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 */
 div.tabBar {
 	color: var(--colortextbacktab);
-	padding-top: 16px;
+	padding-top: 20px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
 	margin: 0px 0px 30px 0px;
@@ -4261,6 +4279,9 @@ div.tabsActionNoBottom {
 div.tabsAction > a {
 	margin-bottom: 16px !important;
 }
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
+}
 
 a.tabTitle {
 	color: rgba(0,0,0,0.4) !important;
@@ -4322,7 +4343,7 @@ a.tab:hover
 	background: var(--colorbacktabcard1), 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png', 1); ?>) 50% 0 repeat-x;
 	color: var(--colortextbacktab);
 	*/
-	text-decoration: underline;
+	text-decoration: none;
 }
 a.tabimage {
 	color: #434956;
@@ -4391,9 +4412,11 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 .smallpaddingimp {
-	padding: 4px !important;
+	padding: 7px !important;
 	padding-left: 7px !important;
 	padding-right: 7px !important;
+	line-height: 1em !important;
+	border-radius: 3px !important;
 }
 input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
@@ -4595,7 +4618,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
-table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td,
+table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -4690,11 +4714,6 @@ table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice t
 }
 
 
-/*
-div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
-	border-bottom: 1px solid var(--colortopbordertitle1);
-}
-*/
 div.tabBar .lastrecordtable {
 	margin-bottom: 15px;
 }
@@ -5150,7 +5169,7 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a, .liste_titre td a span {
+.liste_titre td a:not(.button):not(.editfielda), .liste_titre td a:not(.button):not(.editfielda) span:not(.badge) {
 	text-shadow: none !important;
 	color: var(--colortexttitle) !important;
 }
@@ -5341,13 +5360,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-bottom: 2px;
 }
 .boxstats, .boxstatsempty {
-	padding-left: 6px;
-	padding-right: 6px;
+	padding-left: 5px;
+	padding-right: 3px;
 	width: 118px;
 }
 
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+	border-radius: 6px;
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5448,8 +5468,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 /*span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
 }*/
+span.boxstatstext span.fas {
+	filter: grayscale(100%);
+}
 span.boxstatstext {
-	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
+	opacity: 0.9;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: var(--colortext);
 	font-size: 0.8em;
@@ -5699,10 +5722,10 @@ div.ok {
 	color: #114466;
 }
 
-div.info, div.warning, div.error, div.green, div.neutral {
+div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	padding-top: 16px;
-	padding-left: 10px;
-	padding-right: 4px;
+	padding-left: 20px;
+	padding-right: 10px;
 	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 5px;
@@ -5714,14 +5737,16 @@ div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
 }
 
 /* Neutral message */
-div.neutral {
-	border-<?php print $left; ?>: solid 5px #aaa;
+div.neutral, section.neutral {
 	background: #f8f8f8;
+}
+div.neutral {
+	border-<?php print $left; ?>: solid 5px #888;
 }
 
 /* Info message */
 div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+	border-<?php print $left; ?>: solid 5px #87bfc2;
 	background: #eff8fc;
 	color: #558;
 }

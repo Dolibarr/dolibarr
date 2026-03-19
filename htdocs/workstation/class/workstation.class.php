@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2020       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -617,7 +617,8 @@ class Workstation extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/workstation/workstation_card.php', 1).'?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/workstation/workstation_card.php';
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -626,9 +627,10 @@ class Workstation extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
