@@ -7170,7 +7170,7 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $p
  *  @param	int<0,1>	$disablesortlink			1=Disable sort link
  *  @param	?string		$tooltip 					Text of tooltip with syntax 'Tooltip' or 'Tooltip:[keytoenabledtheonclicktooltip]:[tooltipdirection]'
  *  @param	int<0,1> 	$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
- *  @param	string		$draganddrop				Enable drag and drop feature (0 by default and drag and drop disabled), !=0 drag and drop enabled
+ *  @param	int<0,1>		$draganddrop				Enable drag and drop feature (0 by default and drag and drop disabled), !=0 drag and drop enabled
  *	@return	string
  */
 function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0, $draganddrop = 0)
