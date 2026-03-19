@@ -3918,11 +3918,13 @@ if ($action == 'create') {
 		}
 
 		// Ref
+		/*
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="2">';
 		print $langs->trans("Draft");
 		print '</td>';
 		print '</tr>'."\n";
+		*/
 
 		// Thirdparty
 		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
