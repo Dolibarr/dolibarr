@@ -747,7 +747,7 @@ $listofreferent = array(
 		'class' => 'StockTransfer',
 		'table' => 'stocktransfer_stocktransfer',
 		'datefieldname' => 'datem',
-		'margin' => 'minus',
+		'margin' => '',
 		'project_field' => 'fk_project',
 		'disableamount' => 1,
 		'urlnew' => DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
