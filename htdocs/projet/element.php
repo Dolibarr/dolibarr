@@ -741,6 +741,21 @@ $listofreferent = array(
 		'testnew' => $user->hasRight('project', 'creer'),
 		'test' => isModEnabled('project') && $user->hasRight('projet', 'lire') && !getDolGlobalString('PROJECT_HIDE_TASKS')
 	),
+	'stocktransfer' => array(
+		'name' => "StockTransfer",
+		'title' => "ListMouvementStockProject",
+		'class' => 'StockTransfer',
+		'table' => 'stocktransfer_stocktransfer',
+		'datefieldname' => 'datem',
+		'margin' => 'minus',
+		'project_field' => 'fk_project',
+		'disableamount' => 0,
+		'urlnew' => DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang' => 'stocks',
+		'buttonnew' => 'StockTransferNew',
+		'testnew' => $user->hasRight('stocktransfer', 'stocktransfer', 'write'),
+		'test' => isModEnabled('stocktransfer') && $user->hasRight('stocktransfer', 'stocktransfer', 'read') && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW')
+	),
 	'stock_mouvement' => array(
 		'name' => "MouvementStockAssociated",
 		'title' => "ListMouvementStockProject",
@@ -881,7 +896,7 @@ if (!$showdatefilter) {
 
 $langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
 
-if (isModEnabled('stock')) {
+if (isModEnabled('stock') || isModEnabled('stocktransfer')) {
 	$langs->load('stocks');
 }
 
