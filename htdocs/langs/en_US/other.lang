@@ -425,3 +425,12 @@ ToggleMicrophone=Toggle Microphone
 TypeYourQuestion=Type your question...
 SendPrompt=Send
 ConfirmAiAction=Are you sure you want to %1$s using the %2$s tool?
+
+Notify_STOCKTRANSFER_CREATE=Stock transfer created
+Notify_STOCKTRANSFER_VALIDATE=Stock transfer validated
+Notify_STOCKTRANSFER_UNVALIDATE=Stock transfer set back to draft
+Notify_STOCKTRANSFER_DESTOCK=Source stock decreased for stock transfer
+Notify_STOCKTRANSFER_DESTOCK_CANCEL=Source stock decrease cancelled for stock transfer
+Notify_STOCKTRANSFER_CLOSE=Stock transfer closed
+Notify_STOCKTRANSFER_ADDSTOCK=Destination stock increased for stock transfer
+Notify_STOCKTRANSFER_ADDSTOCK_CANCEL=Destination stock increase cancelled for stock transfer

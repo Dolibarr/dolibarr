@@ -46,6 +46,7 @@ Unit=Einheit
 StockCorrection=Lagerkorrektur
 CorrectStock=Lagerbestandskorrektur
 StockTransfer=Lagerbewegung
+Stocktransfer=Lagerbewegung
 TransferStock=Bestand umbuchen
 MassStockTransferShort=Massen-Lagerveränderung
 StockMovement=Lagerbewegung

@@ -215,3 +215,15 @@ EventPartOfARecurringSerie=Das Ereignis ist Teil einer wiederkehrenden Serie mit
 BookCalSystem=Online-Buchung
 BookCalInitHelp=Gehen Sie zunächst ins Menü, um einen neuen Kalender mit Verfügbarkeiten zu erstellen...
 PublicLinkForBooking=Öffentlicher Buchungs-Link
+
+ADDSTOCKInDolibarr=Lagertransfer %s: Erhöhung des Zielbestands durchgeführt.
+CLOSEInDolibarr=Lagertransfer %s abgeschlossen.
+DESTOCKInDolibarr=Lagertransfer %s: Verringerung des Quellbestands durchgeführt.
+ADDSTOCK_CANCELInDolibarr=Lagertransfer %s: Erhöhung des Zielbestands storniert.
+DESTOCK_CANCELInDolibarr=Lagertransfer %s: Verringerung des Quellbestands storniert.
+VALIDATEInDolibarr=Lagertransfer %s validiert.
+UNVALIDATEInDolibarr=Lagertransfer %s in den Entwurf zurückgesetzt.
+MODIFYInDolibarr=Lagertransfer %s geändert.
+
+STOCKTRANSFER_ADDSTOCK_CANCELInDolibarr=Lagertransfer %s: Erhöhung des Zielbestands storniert.
+STOCKTRANSFER_DESTOCK_CANCELInDolibarr=Lagertransfer %s: Verringerung des Quellbestands storniert.

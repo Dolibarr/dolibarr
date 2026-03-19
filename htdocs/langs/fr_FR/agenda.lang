@@ -216,3 +216,15 @@ EventPartOfARecurringSerie=L'événement fait partie d'une série récurrente av
 BookCalSystem=Réservation en ligne
 BookCalInitHelp=Pour commencer, accédez au menu pour créer un nouveau calendrier avec les disponibilités...
 PublicLinkForBooking=Lien public pour la réservation
+
+ADDSTOCKInDolibarr=Transfert de stock %s : Augmentation du stock de destination effectuée.
+CLOSEInDolibarr=Transfert de stock %s terminé.
+DESTOCKInDolibarr=Transfert de stock %s : Diminution du stock source effectuée.
+ADDSTOCK_CANCELInDolibarr=Transfert de stock %s : Augmentation du stock de destination annulée.
+DESTOCK_CANCELInDolibarr=Transfert de stock %s : Diminution du stock source annulée.
+VALIDATEInDolibarr=Transfert de stock %s validé.
+UNVALIDATEInDolibarr=Retour en brouillon du transfert de stock %s.
+MODIFYInDolibarr=Transfert de stock %s modifié.
+
+STOCKTRANSFER_ADDSTOCK_CANCELInDolibarr=Transfert de stock %s : Augmentation du stock de destination annulée.
+STOCKTRANSFER_DESTOCK_CANCELInDolibarr=Transfert de stock %s : Diminution du stock source annulée.

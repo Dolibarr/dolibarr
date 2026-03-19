@@ -46,6 +46,7 @@ Unit=Unità
 StockCorrection=Variazioni scorte
 CorrectStock=Variazione scorte
 StockTransfer=Movimento scorte
+Stocktransfer=Movimento scorte
 TransferStock=Trasferimento scorte
 MassStockTransferShort=Aggiornamento scorte massivo
 StockMovement=Movimento scorte

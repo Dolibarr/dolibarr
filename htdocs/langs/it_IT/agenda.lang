@@ -206,3 +206,15 @@ BookcalBookingTitle=Appuntamento in linea
 Transparency = Trasparenza
 ReadMore = leggere altro
 ReadLess = leggere meno
+
+ADDSTOCKInDolibarr=Trasferimento di magazzino %s: Aumento dello stock di destinazione eseguito.
+CLOSEInDolibarr=Trasferimento di magazzino %s completato.
+DESTOCKInDolibarr=Trasferimento di magazzino %s: Riduzione dello stock di origine eseguita.
+ADDSTOCK_CANCELInDolibarr=Trasferimento di magazzino %s: Aumento dello stock di destinazione annullato.
+DESTOCK_CANCELInDolibarr=Trasferimento di magazzino %s: Riduzione dello stock di origine annullata.
+VALIDATEInDolibarr=Trasferimento di magazzino %s validato.
+UNVALIDATEInDolibarr=Trasferimento di magazzino %s riportato in bozza.
+MODIFYInDolibarr=Trasferimento di magazzino %s modificato.
+
+STOCKTRANSFER_ADDSTOCK_CANCELInDolibarr=Trasferimento di magazzino %s: Aumento dello stock di destinazione annullato.
+STOCKTRANSFER_DESTOCK_CANCELInDolibarr=Trasferimento di magazzino %s: Riduzione dello stock di origine annullata.
