@@ -31,6 +31,7 @@ ErrorWarehouseRefRequired=Warenlager-Referenz erforderlich
 MovementId=Bewegungs ID
 StockMovementForId=Lagerbewegung Nr. %d
 ListMouvementStockProject=Liste der mit dem Projekt verbundenen Lagerbewegungen
+ListStockTransferProject=Liste der mit dem Projekt verknüpften Lagertransfers
 StocksArea=Warenlager – Übersicht
 AllWarehouses=Alle Warenlager
 IncludeEmptyDesiredStock=Schließe auch negative Bestände mit undefinierten gewünschten Beständen ein

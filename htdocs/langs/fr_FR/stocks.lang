@@ -31,6 +31,7 @@ ErrorWarehouseRefRequired=Le nom de référence de l'entrepôt est obligatoire
 MovementId=Id du mouvement
 StockMovementForId=ID mouvement %d
 ListMouvementStockProject=Liste des mouvements de stocks associés au projet
+ListStockTransferProject=Liste des transferts de stock associés au projet
 StocksArea=Espace entrepôts
 AllWarehouses=Tous les entrepôts
 IncludeEmptyDesiredStock=Inclure aussi les stocks négatifs quand le stock désiré optimal n'est pas défini

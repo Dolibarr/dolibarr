@@ -31,6 +31,7 @@ ErrorWarehouseRefRequired=El nombre de referencia del almacén es obligatorio
 MovementId=ID movimiento
 StockMovementForId=ID movimiento %d
 ListMouvementStockProject=Listado de movimientos de stock asociados al proyecto
+ListStockTransferProject=Listado de transferencias de stock asociadas al proyecto
 StocksArea=Área almacenes
 AllWarehouses=Todos los almacenes
 IncludeEmptyDesiredStock=Incluir también stock negativo con stock deseado indefinido

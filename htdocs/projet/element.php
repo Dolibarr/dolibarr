@@ -743,7 +743,7 @@ $listofreferent = array(
 	),
 	'stocktransfer' => array(
 		'name' => "StockTransfer",
-		'title' => "ListMouvementStockProject",
+		'title' => "ListStockTransferProject",
 		'class' => 'StockTransfer',
 		'table' => 'stocktransfer_stocktransfer',
 		'datefieldname' => 'datem',
