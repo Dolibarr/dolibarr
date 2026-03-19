@@ -427,8 +427,6 @@ if ($order_id > 0 || !empty($ref)) {
 
 		// Warehouse
 		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('Warehouse');

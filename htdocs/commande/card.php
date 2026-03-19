@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
 
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
@@ -2136,6 +2137,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
 $formmargin = new FormMargin($db);
+$formproduct = new FormProduct($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -2437,8 +2439,6 @@ if ($action == 'create' && $usercancreate) {
 
 		// Warehouse
 		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
 			print '<tr><td>' . $langs->trans('Warehouse') . '</td><td>';
 			print img_picto('', 'stock', 'class="pictofixedwidth"') . $formproduct->selectWarehouses((GETPOSTISSET('warehouse_id') ? GETPOST('warehouse_id') : $warehouse_id), 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
 			print '</td></tr>';
@@ -2687,8 +2687,6 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-				$formproduct = new FormProduct($db);
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
 					$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
@@ -2849,8 +2847,6 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-				$formproduct = new FormProduct($db);
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
 					$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
@@ -2889,8 +2885,6 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-				$formproduct = new FormProduct($db);
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
 					$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
@@ -3151,8 +3145,6 @@ if ($action == 'create' && $usercancreate) {
 			// Warehouse
 			if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 				$langs->load('stocks');
-				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-				$formproduct = new FormProduct($db);
 				print '<tr><td>';
 				$editenable = $usercancreate;
 				print $form->editfieldkey("Warehouse", 'warehouse', '', $object, (int) $editenable);
