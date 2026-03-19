@@ -422,7 +422,7 @@ class Recruitments extends DolibarrApi
 				continue;
 			}
 
-			$this->jobposition->$field = $this->_checkValForAPI($field, $value, $this->jobposition);
+			$this->candidature->$field = $this->_checkValForAPI($field, $value, $this->candidature);
 		}
 
 		// Clean data
