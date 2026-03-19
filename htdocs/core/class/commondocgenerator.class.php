@@ -1778,8 +1778,12 @@ abstract class CommonDocGenerator
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 				// Enable extrafield ?
 				$enabled = 0;
+				if (!empty($extrafields->attributes[$object->table_element]['enabled'][$key])) {
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
+				}
+
 				$disableOnEmpty = 0;
-				if (!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
+				if ($enabled && !empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
 					$printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
 					if (in_array($printable, $params['printableEnable']) || in_array($printable, $params['printableEnableNotEmpty'])) {
 						$enabled = 1;

@@ -12036,21 +12036,20 @@ function printCommonFooter($zone = 'private')
 
 							foreach ($defval as $paramkey => $paramval) {
 								// Solution 1: Add handler on submit to check if mandatory fields are empty
-								print 'var form = $(\'#'.dol_escape_js($paramkey).'\').closest("form");'."\n";
+								print 'var form = $(\'[name="'.dol_escape_js($paramkey).'"]\').closest("form");'."\n";
 								print "form.on('submit', function(event) {
-										var submitter = $(this).find(':submit:focus').get(0);
-										if (submitter) {
-											var buttonName = $(submitter).attr('name');
-											if (buttonName == 'cancel') {
-												console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
-												return true;
-											}
+										var submitter = \$(this).find(':submit:focus').get(0);
+										var buttonName = submitter ? \$(submitter).attr('name') : 'save';
+
+										if (buttonName == 'cancel') {
+											console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
+											return true;
 										}
 
-										console.log('We did not click on cancel button but on something else, we check that field #".dol_escape_js($paramkey)." is not empty');
+										console.log('We did not click on cancel button but on something else, we check that field [name=".dol_escape_js($paramkey)."] is not empty');
 
-										var tmpvalue = jQuery('#".dol_escape_js($paramkey)."').val();
-										let tmptypefield = jQuery('#".dol_escape_js($paramkey)."').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
+										var tmpvalue = jQuery('[name=\"".dol_escape_js($paramkey)."\"]').val();
+										let tmptypefield = jQuery('[name=\"".dol_escape_js($paramkey)."\"]').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
 
 										if (tmptypefield == 'textarea') {
 											// We must instead check the content of ckeditor
@@ -12068,11 +12067,13 @@ function printCommonFooter($zone = 'private')
 										if (tmpvalue === '0' && (tmptypefield == 'select' || tmptypefield == 'input')) {
 											tmpvalueisempty = true;
 										}
-										if (tmpvalueisempty && (buttonName == 'save')) {
+										if (tmpvalueisempty && buttonName !== 'cancel') {
 											console.log('field has type '+tmptypefield+' and is empty, we cancel the submit');
 											event.preventDefault(); // Stop submission of form to allow custom code to decide.
 											event.stopPropagation(); // Stop other handlers.
-											alert('".dol_escape_js($langs->trans("ErrorFieldRequired", $paramkey).' ('.$langs->trans("CustomMandatoryFieldRule").')')."');
+
+											alert('".dol_escape_js($langs->transnoentitiesnoconv("ErrorFieldRequired", $paramkey).' ('.$langs->transnoentitiesnoconv("CustomMandatoryFieldRule").')')."');
+
 											return false;
 										}
 										console.log('field has type '+tmptypefield+' and is defined to '+tmpvalue);
@@ -12095,7 +12096,6 @@ function printCommonFooter($zone = 'private')
 								// Now set the class "fieldrequired"
 								print 'jQuery(\':input[name="' . dol_escape_js($paramkey) . '"]\').closest("tr").find("td:first").addClass("fieldrequired");'."\n";
 							}
-
 
 							// If we submit using the cancel button, we remove the required attributes
 							print 'jQuery("input[name=\'cancel\']").click(function() {
