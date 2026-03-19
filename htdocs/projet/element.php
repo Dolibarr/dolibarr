@@ -754,7 +754,7 @@ $listofreferent = array(
 		'lang' => 'stocks',
 		'buttonnew' => 'StockTransferNew',
 		'testnew' => $user->hasRight('stocktransfer', 'stocktransfer', 'write'),
-		'test' => isModEnabled('stocktransfer') && $user->hasRight('stocktransfer', 'stocktransfer', 'read') && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW')
+		'test' => isModEnabled('stocktransfer') && $user->hasRight('stocktransfer', 'stocktransfer', 'read')
 	),
 	'stock_mouvement' => array(
 		'name' => "MouvementStockAssociated",
