@@ -128,6 +128,7 @@ ShipmentDistribution=Répartition de l'expédition
 ErrorTooManyCombinationBatchcode=Pas de répartition pour la ligne %s car trop de combinaisons entrepôt, produit, code de lot ont été trouvées (%s).
 ErrorNoCombinationBatchcode=Impossible d'enregistrer la ligne %s car aucune combinaison entrepôt, produit, code de lot ( %s, %s, %s) n'a pas été trouvé en stock.
 ErrorTooMuchShipped=La quantité expédiée ne doit pas être supérieure à la quantité commandée pour la ligne %s
+NoShipmentLineChangeDetected=Aucune modification n'a été détectée sur la ligne d'expédition.
 SignShipping=Signer l'expédition
 ConfirmSignShipping=Confirmer la signature de l'expédition
 UnsignShipping=Annuler la signature de l'expédition

@@ -25,10 +25,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/asset/class/assetmodel.class.php';
-require_once DOL_DOCUMENT_ROOT . '/asset/class/assetaccountancycodes.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT . '/asset/class/assetaccountancycodes.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/asset/class/assetmodel.class.php';
+require_once DOL_DOCUMENT_ROOT . '/asset/class/assetaccountancycodes.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "companies"));
@@ -46,6 +45,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 // Initialize a technical objects
 $object = new AssetModel($db);

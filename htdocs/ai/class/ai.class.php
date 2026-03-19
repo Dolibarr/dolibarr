@@ -153,18 +153,18 @@ class Ai
 			if (in_array($function, array('file', 'assistant', 'thread'))) {
 				$model = '';
 			} elseif ($function == 'imagegeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'audiogeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'transcription') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'translation') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'docparsing') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]['default']);
 			} else {
 				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
 			}
 		}
 
@@ -297,7 +297,7 @@ class Ai
 						} else {
 							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following message:\n");
 							fwrite($fp, $fullInstructions."\n");
-							fwrite($fp, "Prepompt\n");
+							fwrite($fp, "And prepompt:\n");
 							fwrite($fp, $prePrompt."\n");
 						}
 						fwrite($fp, "HTTP Header\n");

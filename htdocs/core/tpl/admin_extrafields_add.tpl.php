@@ -258,7 +258,7 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 	echo $form->textwithpicto($langs->trans("AIPromptExtrafield"), $texthelp, 1, 'help', 'valignmiddle', 0, 3, 'abc');?></td>
 <td class="valeur"><textarea name="ai_prompt" id="ai_prompt" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo(GETPOSTISSET('ai_prompt') ? GETPOST('ai_prompt', 'restricthtml') : ''); ?></textarea></td></tr>
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo(GETPOST('default_value', 'alpha') ? GETPOST('default_value', 'alpha') : ''); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo(GETPOST('default_value', 'alpha') ? GETPOST('default_value', 'alpha') : ''); ?>" spellcheck="false"></td></tr>
 <!-- Unique -->
 <tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo(GETPOST('unique', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Required -->
@@ -273,8 +273,13 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dolPrintHTMLForAttribute(GETPOSTISSET('printable') ? GETPOST('printable') : '0'); ?>"></td></tr>
+
+<!-- Visibility for getNomUrl -->
+<tr><td class="extra_showintooltip"><?php echo $form->textwithpicto($langs->trans("DisplayExtraOnTooltip"), $langs->trans("DisplayExtraOnTooltipDesc")); ?>
+</td><td class="valeur"><input id="showintooltip" type="checkbox" name="showintooltip" value="1" <?php echo(GETPOST('showintooltip', 'alpha') ? ' checked' : ''); ?>></td></tr>
+
 <!-- Totalizable -->
-<tr class="extra_totalizable"><td><?php echo $langs->trans("Totalizable"); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo(GETPOST('totalizable', 'alpha') ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_totalizable"><td><?php echo $langs->trans("Totalizable"); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable" <?php echo(GETPOST('totalizable', 'alpha') ? ' checked' : ''); ?> ></td></tr>
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag((empty($help) ? '' : $help)); ?>"></td></tr>
 

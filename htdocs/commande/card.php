@@ -928,10 +928,11 @@ if (empty($reshook)) {
 		if (isset($desc) && isset($depth)) {
 			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
 		} else {
+			$result = -1;
 			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
 		}
 
-		if (isset($result) && $result >= 0) {
+		if ($result >= 0) {
 			$ret = $object->fetch($object->id); // Reload to get new records
 			$object->fetch_thirdparty();
 
@@ -2181,10 +2182,6 @@ if ($action == 'create' && $usercancreate) {
 			if (!$remise_percent) {
 				$remise_percent = $soc->remise_percent;
 			}
-			/*if (!$dateorder) {
-				// Do not set 0 here (0 for a date is 1970)
-				$dateorder = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '') : $dateorder);
-			}*/
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -2225,7 +2222,7 @@ if ($action == 'create' && $usercancreate) {
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 			// $remise_percent = (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 			// $remise_absolue = (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-			$dateorder = !getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? -1 : '';
+			$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 
@@ -2255,7 +2252,7 @@ if ($action == 'create' && $usercancreate) {
 		$demand_reason_id   = $soc->demand_reason_id;
 		// $remise_percent = $soc->remise_percent;
 		// $remise_absolue = 0;
-		$dateorder = !getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? -1 : '';
+		$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
@@ -3115,6 +3112,20 @@ if ($action == 'create' && $usercancreate) {
 				print $object->delivery_date ? dol_print_date($object->delivery_date, 'dayhour') : '&nbsp;';
 				if ($object->hasDelay() && !empty($object->delivery_date)) {
 					print ' ' . img_picto($langs->trans("Late") . ' : ' . $object->showDelay(), "warning");
+				}
+			}
+			// --- SHIPPABLE icon ---
+			if (isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && !empty($object->delivery_date)) {
+				$shippableInfos = $object->getShippableInfos();
+
+				if (!empty($shippableInfos['has_product'])) {
+					print ' ';
+					print $form->textwithtooltip('', $shippableInfos['textinfo'], 2, 1, $shippableInfos['texticon'], '', 2);
+
+					if (!empty($shippableInfos['warning'])) {
+						print ' ';
+						print $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', '2'), '', 2);
+					}
 				}
 			}
 			print '</td>';

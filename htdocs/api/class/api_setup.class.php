@@ -1473,6 +1473,7 @@ class Setup extends DolibarrApi
 					$list[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
 					$list[$tab->elementtype][$tab->name]['list'] = $tab->list;
 					$list[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$list[$tab->elementtype][$tab->name]['showintooltip'] = $tab->showintooltip;
 					$list[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
 					$list[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
 					$list[$tab->elementtype][$tab->name]['help'] = $tab->help;
@@ -1558,7 +1559,7 @@ class Setup extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
-		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
+		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable, t.showintooltip,";
 		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
@@ -1585,6 +1586,7 @@ class Setup extends DolibarrApi
 					$answer[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
 					$answer[$tab->elementtype][$tab->name]['list'] = $tab->list;
 					$answer[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$answer[$tab->elementtype][$tab->name]['showintooltip'] = $tab->showintooltip;
 					$answer[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
 					$answer[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
 					$answer[$tab->elementtype][$tab->name]['help'] = $tab->help;
@@ -1658,6 +1660,7 @@ class Setup extends DolibarrApi
 		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
+		$showintooltip = $request_data['showintooltip'];
 		$required = $request_data['required'];
 		$langfile = $request_data['langfile'];
 		$computed = $request_data['computed'];
@@ -1743,6 +1746,7 @@ class Setup extends DolibarrApi
 		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
+		$showintooltip = $request_data['showintooltip'];
 		$required = $request_data['required'];
 		$langfile = $request_data['langfile'];
 		$computed = $request_data['computed'];
