@@ -1785,8 +1785,7 @@ class Project extends CommonObject
 		$clone_project->id = 0;
 		if ($move_date) {
 			$clone_project->date_start = $now;
-			// Only shift date_end when we have a valid original start date to base the delta on.
-			if (!empty($clone_project->date_end) && !empty($orign_dt_start)) {
+			if (!empty($clone_project->date_end)) {
 				$clone_project->date_end += ($now - (int) $orign_dt_start);
 			}
 		}
