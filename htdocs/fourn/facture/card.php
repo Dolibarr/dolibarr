@@ -1287,13 +1287,13 @@ if (empty($reshook)) {
 									0,
 									array(), // array_options
 									null,
-									$object->origin_type,
+									$object->origin_id,
 									0,
 									'',
 									0, // special_code
 									0,
-									0
-									//,$langs->trans('Deposit') //Deprecated
+									0,
+									$object->origin_type
 								);
 							}
 

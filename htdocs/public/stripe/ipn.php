@@ -181,14 +181,15 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
+
+// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions that also trigger a webhook
+sleep(2);
+
+
 top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
-
-
-// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
-sleep(2);
 
 
 // Hook to allow external modules to handle Stripe webhook events

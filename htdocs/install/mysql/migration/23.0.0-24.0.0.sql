@@ -201,4 +201,5 @@ INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_ADDSTOCK','Stock transfer destination stock incremented','Executed when destination warehouses stock is incremented for a stock transfer','stocktransfer',677);
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_ADDSTOCK_CANCEL','Stock transfer destination stock increment canceled','Executed when destination warehouses stock increment is canceled for a stock transfer','stocktransfer',678);
 
+ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 -- end of migration
