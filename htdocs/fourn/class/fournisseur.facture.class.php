@@ -2112,15 +2112,16 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      int         	$notrigger              Disable triggers
 	 *	@param      array<string,mixed>	$array_options		Extrafields array
 	 *	@param      int|null    	$fk_unit                Code of the unit to use. Null to use the default one
-	 *	@param      int         	$origin_id              id origin document
+	 *	@param      int         	$origin_id              Id origin document (see also origin_type)
 	 *	@param      float      		$pu_devise              Amount in currency
 	 *	@param      string      	$ref_supplier           Supplier ref
 	 *	@param      int         	$special_code           Special code
 	 *	@param      int         	$fk_parent_line         Parent line id
 	 *	@param      int         	$fk_remise_except       Id discount used
+	 *	@param      int         	$origin_type            Type of origin document (related to origin_id). Can be 'supplier_order' or 'supplier_orderdet'
 	 *	@return     int             		                Return >0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = 0, $date_end = 0, $fk_code_ventilation = 0, $info_bits = 0, $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = 0, $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = 0, $date_end = 0, $fk_code_ventilation = 0, $info_bits = 0, $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = 0, $fk_parent_line = 0, $fk_remise_except = 0, $origin_type = '')
 	{
 		global $langs, $mysoc;
 
@@ -2308,6 +2309,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->special_code = (int) $special_code;
 			$supplierinvoiceline->fk_parent_line = $fk_parent_line;
 			$supplierinvoiceline->origin = $this->origin;
+			$supplierinvoiceline->origin_type = $origin_type;
 			$supplierinvoiceline->origin_id = $origin_id;
 			$supplierinvoiceline->fk_unit = $fk_unit;
 

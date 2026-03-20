@@ -120,6 +120,16 @@ if (isModEnabled('contract')) {
 	$formSetup->newItem('WEBPORTAL_CONTRACT_LIST_ACCESS')->setAsYesNo();
 }
 
+// Enable access for the intervention
+if (isModEnabled('intervention')) {
+	$formSetup->newItem('WEBPORTAL_FICHEINTER_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the tickets
+if (isModEnabled('ticket')) {
+	$formSetup->newItem('WEBPORTAL_TICKET_LIST_ACCESS')->setAsYesNo();
+}
+
 // Enable access for the partnership record
 if (isModEnabled('partnership')) {
 	$access_list = array(

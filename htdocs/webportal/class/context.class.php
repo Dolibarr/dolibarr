@@ -254,6 +254,8 @@ class Context
 		$this->addControllerDefinition('orderlist', $defaultControllersPath . 'orderlist.controller.class.php', 'OrderListController');
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
 		$this->addControllerDefinition('contractlist', $defaultControllersPath . 'contractlist.controller.class.php', 'ContractListController');
+		$this->addControllerDefinition('ficheinterlist', $defaultControllersPath . 'ficheinterlist.controller.class.php', 'FicheinterListController');
+		$this->addControllerDefinition('ticketlist', $defaultControllersPath . 'ticketlist.controller.class.php', 'TicketListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
 		//** below the addition of DocumentListController adding files by third party attached documents
