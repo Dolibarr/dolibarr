@@ -1161,7 +1161,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Presend form
 	$modelmail = 'stocktransfer_send';
 	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->stocktransfer->dir_output;
+	$diroutput = $conf->stocktransfer->dir_output.'/'.$object->element;
 	$trackid = 'stocktransfer'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

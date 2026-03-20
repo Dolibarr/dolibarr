@@ -282,7 +282,7 @@ if (isModEnabled('product') && $user->hasRight('produit', 'lire')) {
 	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
 }
 if (isModEnabled('stocktransfer')) {
-	$elementList['stocktransfer_send'] = img_picto('', 'fa-box-open', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendStockTransfer'));
+	$elementList['stocktransfer_send'] = '<span class="fas fa-box-open em080 valignmiddle pictomodule paddingrightonly" style="color: #a69944;"></span>'.dol_escape_htmltag($langs->trans('MailToSendStockTransfer'));
 }
 
 $parameters = array('elementList' => $elementList);
