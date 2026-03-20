@@ -7,6 +7,7 @@ NewWarehouse=New warehouse / Stock Location
 WarehouseEdit=Modify warehouse
 MenuNewWarehouse=New warehouse
 WarehouseSource=Source warehouse
+WarehouseDestination=Destination warehouse
 WarehouseSourceNotDefined=No warehouse defined,
 AddWarehouse=Create warehouse
 AddOne=Add one

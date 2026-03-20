@@ -7,6 +7,7 @@ NewWarehouse=Nouvel entrepôt / emplacement
 WarehouseEdit=Édition entrepôt
 MenuNewWarehouse=Nouvel entrepôt
 WarehouseSource=Entrepôt source
+WarehouseDestination=Entrepôt de destination
 WarehouseSourceNotDefined=Aucun entrepôt défini,
 AddWarehouse=Créer entrepôt
 AddOne=En ajouter un

@@ -1362,6 +1362,14 @@ foreach ($listofreferent as $key => $value) {
 			print $langs->trans("Date");
 		}
 		print '</td>';
+		if ($key == 'stocktransfer') {
+			print '<td>'.$langs->trans("WarehouseSource").'</td>';
+			print '<td>'.$langs->trans("WarehouseDestination").'</td>';
+			print '<td class="center">'.$langs->trans("DatePrevueDepart").'</td>';
+			print '<td class="center">'.$langs->trans("DateReelleDepart").'</td>';
+			print '<td class="center">'.$langs->trans("DatePrevueArrivee").'</td>';
+			print '<td class="center">'.$langs->trans("DateReelleArrivee").'</td>';
+		}
 		// Thirdparty or user
 		print '<td>';
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
@@ -1641,6 +1649,25 @@ foreach ($listofreferent as $key => $value) {
 					print dol_print_date($date, 'day');
 				}
 				print '</td>';
+
+				if ($key == 'stocktransfer') {
+					$warehouseSource = new Entrepot($db);
+					$warehouseDestination = new Entrepot($db);
+					print '<td class="tdoverflowmax150">';
+					if (!empty($element->fk_warehouse_source) && $warehouseSource->fetch($element->fk_warehouse_source) > 0) {
+						print $warehouseSource->getNomUrl(1);
+					}
+					print '</td>';
+					print '<td class="tdoverflowmax150">';
+					if (!empty($element->fk_warehouse_destination) && $warehouseDestination->fetch($element->fk_warehouse_destination) > 0) {
+						print $warehouseDestination->getNomUrl(1);
+					}
+					print '</td>';
+					print '<td class="center">'.dol_print_date($element->date_prevue_depart, 'day').'</td>';
+					print '<td class="center">'.dol_print_date($element->date_reelle_depart, 'day').'</td>';
+					print '<td class="center">'.dol_print_date($element->date_prevue_arrivee, 'day').'</td>';
+					print '<td class="center">'.dol_print_date($element->date_reelle_arrivee, 'day').'</td>';
+				}
 
 				// Third party or user
 				print '<td class="tdoverflowmax150">';

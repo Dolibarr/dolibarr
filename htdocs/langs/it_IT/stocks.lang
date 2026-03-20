@@ -7,6 +7,7 @@ NewWarehouse=Nuovo magazzino / deposito
 WarehouseEdit=Modifica magazzino
 MenuNewWarehouse=Nuovo Magazzino
 WarehouseSource=Magazzino di origine
+WarehouseDestination=Magazzino di destinazione
 WarehouseSourceNotDefined=Non è stato definito alcun magazzino.
 AddWarehouse=Crea magazzino
 AddOne=Aggiungi uno
