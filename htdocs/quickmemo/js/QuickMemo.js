@@ -1661,7 +1661,7 @@ class QuickMemo {
 
 		if (!root) return;
 
-		root.classList.add('quickmemo-tooltip');
+		root.classList.add('dol-tooltip', '--dark-mode', '--tooltip-top');
 
 		// Convert title -> data-title au moment de l'init
 		const title = root.getAttribute('title');
@@ -1714,7 +1714,7 @@ class QuickMemo {
 
 		if (!root) return;
 
-		root.classList.remove('quickmemo-tooltip');
+		root.classList.remove('dol-tooltip', '--dark-mode', '--tooltip-top');
 
 		// Restaurer title si data-title existe
 		const dataTitle = root.getAttribute('data-title');
