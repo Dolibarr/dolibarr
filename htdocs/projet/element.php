@@ -1344,10 +1344,15 @@ foreach ($listofreferent as $key => $value) {
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
+		$stocktransfercolstyle = ($key == 'stocktransfer' ? ' style="width: 9%"' : '');
 		// Remove link column
 		print '<td style="width: 24px"></td>';
 		// Ref
-		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').'>'.$langs->trans("Ref").'</td>';
+		if ($key == 'stocktransfer') {
+			print '<td'.$stocktransfercolstyle.'>'.$langs->trans("Ref").'</td>';
+		} else {
+			print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').'>'.$langs->trans("Ref").'</td>';
+		}
 		// Product and qty on stock_movement
 		if ('MouvementStock' == $classname) {
 			print '<td style="width: 200px">'.$langs->trans("Product").'</td>';
@@ -1365,15 +1370,15 @@ foreach ($listofreferent as $key => $value) {
 			print '</td>';
 		}
 		if ($key == 'stocktransfer') {
-			print '<td>'.$langs->trans("WarehouseSource").'</td>';
-			print '<td>'.$langs->trans("WarehouseDestination").'</td>';
-			print '<td class="center">'.$langs->trans("DatePrevueDepart").'</td>';
-			print '<td class="center">'.$langs->trans("DateReelleDepart").'</td>';
-			print '<td class="center">'.$langs->trans("DatePrevueArrivee").'</td>';
-			print '<td class="center">'.$langs->trans("DateReelleArrivee").'</td>';
+			print '<td'.$stocktransfercolstyle.'>'.$langs->trans("WarehouseSource").'</td>';
+			print '<td'.$stocktransfercolstyle.'>'.$langs->trans("WarehouseDestination").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DatePrevueDepart").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DateReelleDepart").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DatePrevueArrivee").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DateReelleArrivee").'</td>';
 		}
 		// Thirdparty or user
-		print '<td>';
+		print '<td'.($key == 'stocktransfer' ? $stocktransfercolstyle : '').'>';
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
@@ -1411,24 +1416,44 @@ foreach ($listofreferent as $key => $value) {
 		if ($key == 'loan') {
 			print '<td class="right" width="120">'.$langs->trans("LoanCapital").'</td>';
 		} elseif (empty($value['disableamount'])) {
-			print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
+			if ($key == 'stocktransfer') {
+				print '<td class="right"'.$stocktransfercolstyle.'>'.$langs->trans("AmountHT").'</td>';
+			} else {
+				print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
+			}
 		} else {
-			print '<td width="120"></td>';
+			if ($key == 'stocktransfer') {
+				print '<td'.$stocktransfercolstyle.'></td>';
+			} else {
+				print '<td width="120"></td>';
+			}
 		}
 		// Amount TTC
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
 		if ($key == 'loan') {
 			print '<td class="right" width="120">'.$langs->trans("RemainderToPay").'</td>';
 		} elseif (empty($value['disableamount'])) {
-			print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+			if ($key == 'stocktransfer') {
+				print '<td class="right"'.$stocktransfercolstyle.'>'.$langs->trans("AmountTTC").'</td>';
+			} else {
+				print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+			}
 		} else {
-			print '<td width="120"></td>';
+			if ($key == 'stocktransfer') {
+				print '<td'.$stocktransfercolstyle.'></td>';
+			} else {
+				print '<td width="120"></td>';
+			}
 		}
 		// Status
 		if (in_array($tablename, array('projet_task'))) {
 			print '<td class="right" width="200">'.$langs->trans("ProgressDeclared").'</td>';
 		} else {
-			print '<td class="right" width="200">'.$langs->trans("Status").'</td>';
+			if ($key == 'stocktransfer') {
+				print '<td class="right"'.$stocktransfercolstyle.'>'.$langs->trans("Status").'</td>';
+			} else {
+				print '<td class="right" width="200">'.$langs->trans("Status").'</td>';
+			}
 		}
 		print '</tr>';
 
