@@ -1129,7 +1129,7 @@ foreach ($listofreferent as $key => $value) {
 			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} elseif ($key == 'stocktransfer') {
-				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("NoAmountforStockTransfer")).'</span>';
 			} else {
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
@@ -1142,7 +1142,7 @@ foreach ($listofreferent as $key => $value) {
 			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			} elseif ($key == 'stocktransfer') {
-				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("NoAmountforStockTransfer")).'</span>';
 			} else {
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';

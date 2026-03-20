@@ -32,6 +32,7 @@ MovementId=ID movimiento
 StockMovementForId=ID movimiento %d
 ListMouvementStockProject=Listado de movimientos de stock asociados al proyecto
 ListStockTransferProject=Listado de transferencias de stock asociadas al proyecto
+NoAmountforStockTransfer=Sin importe para las transferencias de stock en el beneficio por defecto.
 StocksArea=Área almacenes
 AllWarehouses=Todos los almacenes
 IncludeEmptyDesiredStock=Incluir también stock negativo con stock deseado indefinido

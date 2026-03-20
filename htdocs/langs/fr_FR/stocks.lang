@@ -32,6 +32,7 @@ MovementId=Id du mouvement
 StockMovementForId=ID mouvement %d
 ListMouvementStockProject=Liste des mouvements de stocks associés au projet
 ListStockTransferProject=Liste des transferts de stock associés au projet
+NoAmountforStockTransfer=Aucun montant pour les transferts de stock dans le profit par défaut.
 StocksArea=Espace entrepôts
 AllWarehouses=Tous les entrepôts
 IncludeEmptyDesiredStock=Inclure aussi les stocks négatifs quand le stock désiré optimal n'est pas défini
