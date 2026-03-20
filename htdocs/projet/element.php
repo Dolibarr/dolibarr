@@ -1354,14 +1354,16 @@ foreach ($listofreferent as $key => $value) {
 			print '<td style="width: 50px">'.$langs->trans("Qty").'</td>';
 		}
 		// Date
-		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
-		if (in_array($tablename, array('projet_task'))) {
-			print $langs->trans("TimeSpent");
+		if ($key != 'stocktransfer') {
+			print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
+			if (in_array($tablename, array('projet_task'))) {
+				print $langs->trans("TimeSpent");
+			}
+			if (!in_array($tablename, array('projet_task'))) {
+				print $langs->trans("Date");
+			}
+			print '</td>';
 		}
-		if (!in_array($tablename, array('projet_task'))) {
-			print $langs->trans("Date");
-		}
-		print '</td>';
 		if ($key == 'stocktransfer') {
 			print '<td>'.$langs->trans("WarehouseSource").'</td>';
 			print '<td>'.$langs->trans("WarehouseDestination").'</td>';
@@ -1631,24 +1633,26 @@ foreach ($listofreferent as $key => $value) {
 					$date = $element->datestart;
 				}
 
-				print '<td class="center">';
-				if ($tablename == 'actioncomm') {
-					'@phan-var-force ActionComm $element';
-					print dol_print_date($element->datep, 'dayhour');
-					if ($element->datef && $element->datef > $element->datep) {
-						print " - ".dol_print_date($element->datef, 'dayhour');
+				if ($key != 'stocktransfer') {
+					print '<td class="center">';
+					if ($tablename == 'actioncomm') {
+						'@phan-var-force ActionComm $element';
+						print dol_print_date($element->datep, 'dayhour');
+						if ($element->datef && $element->datef > $element->datep) {
+							print " - ".dol_print_date($element->datef, 'dayhour');
+						}
+					} elseif (in_array($tablename, array('projet_task'))) {
+						'@phan-var-force Task $element';
+						$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', (string) $dates, (string) $datee); // $element is a task. $elementuser may be empty
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
+						print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
+						print '</a>';
+						$total_time_by_line = $tmpprojtime['nbseconds'];
+					} else {
+						print dol_print_date($date, 'day');
 					}
-				} elseif (in_array($tablename, array('projet_task'))) {
-					'@phan-var-force Task $element';
-					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', (string) $dates, (string) $datee); // $element is a task. $elementuser may be empty
-					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
-					print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
-					print '</a>';
-					$total_time_by_line = $tmpprojtime['nbseconds'];
-				} else {
-					print dol_print_date($date, 'day');
+					print '</td>';
 				}
-				print '</td>';
 
 				if ($key == 'stocktransfer') {
 					$warehouseSource = new Entrepot($db);
@@ -1927,6 +1931,9 @@ foreach ($listofreferent as $key => $value) {
 				if (in_array($tablename, array('projet_task'))) {
 					$colspan = 2;
 				}
+				if ($key == 'stocktransfer') {
+					$colspan = 9;
+				}
 
 				print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 				if (in_array($tablename, array('projet_task'))) {
@@ -1977,6 +1984,9 @@ foreach ($listofreferent as $key => $value) {
 				$colspan = 7;
 				if ($tablename == 'fichinter') {
 					$colspan++;
+				}
+				if ($key == 'stocktransfer') {
+					$colspan = 12;
 				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
