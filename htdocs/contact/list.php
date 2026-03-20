@@ -966,10 +966,10 @@ if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);
 }
 if ($search_state != '') {
-    $param .= "&search_state=".urlencode($search_state);
+	$param .= "&search_state=".urlencode($search_state);
 }
 if ($search_region != '') {
-    $param .= "&search_region=".urlencode($search_region);
+	$param .= "&search_region=".urlencode($search_region);
 }
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
@@ -1268,18 +1268,16 @@ if (!empty($arrayfields['p.town']['checked'])) {
 	print '</td>';
 }
 // State
-if (!empty($arrayfields['state.nom']['checked']))
-{
-    print '<td class="liste_titre">';
-    print '<input class="flat searchstring maxwidth50imp" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
-    print '</td>';
+if (!empty($arrayfields['state.nom']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+	print '</td>';
 }
 // Region
-if (!empty($arrayfields['region.nom']['checked']))
-{
-    print '<td class="liste_titre">';
-    print '<input class="flat searchstring maxwidth50imp" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
-    print '</td>';
+if (!empty($arrayfields['region.nom']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
+	print '</td>';
 }
 // Country
 if (!empty($arrayfields['country.code_iso']['checked'])) {
