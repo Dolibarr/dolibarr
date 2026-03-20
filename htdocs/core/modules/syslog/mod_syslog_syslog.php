@@ -118,7 +118,7 @@ class mod_syslog_syslog extends LogHandler
 		}
 
 		if (getDolGlobalString('SYSLOG_FACILITY') && defined(getDolGlobalString('SYSLOG_FACILITY'))) {  // Example LOG_USER
-			$facility = constant($conf->global->SYSLOG_FACILITY);
+			$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
 		} else {
 			$facility = constant('LOG_USER');
 		}
