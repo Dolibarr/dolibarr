@@ -2624,4 +2624,195 @@ class Holiday extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 * Send a mail with previous month Hr information
+	 * CAN BE A CRON TASK
+	 *
+	 * @param	string		$mailto				Email address to send to
+	 * @param	string		$template			Id or Label of mail template to use
+	 * @param	string		$newlang			Force a	lang or empty for auto
+	 *
+	 * @return	int								0 if OK, <> 0 if KO (this function is used also by cron so only 0 is OK)
+	*/
+	public function sendPreviousMonthHRInformations($mailto = "", $template = "", $newlang = "")
+	{
+		global $conf, $langs, $user;
+
+		$db = $this->db;
+		$outputlangs = $langs;
+
+		$error = 0;
+		$this->output='';
+		$this->error='';
+		$arrayfields = array(
+			'user' => 'Employee',
+			'type' => 'Type',
+			'date_start' => 'DateDebCP',
+			'date_end' => 'DateFinCP',
+			'used_days' => 'NbUseDaysCPShort',
+		);
+
+		if (!empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$outputlangs->loadLangs(array('main', 'holiday', 'hrm'));
+
+		if (empty($mailto) || !isValidEmail($mailto)) {
+			$this->errors[] = 'Bad value for parameter mailto. Must be a valid email address.';
+			return 1;
+		}
+
+		$typeleaves = $this->getTypes(1, -1);
+		$arraytypeleaves = array();
+		foreach ($typeleaves as $key => $val) {
+			$labeltoshow = ($outputlangs->trans($val['code']) != $val['code'] ? $outputlangs->trans($val['code']) : $val['label']);
+			$arraytypeleaves[$val['rowid']] = $labeltoshow;
+		}
+		$listhalfday = array('morning' => $outputlangs->trans("Morning"), "afternoon" => $outputlangs->trans("Afternoon"));
+
+		$datenow = dol_getdate(dol_now());
+		$prev_month = dol_get_prev_month($datenow["mon"], $datenow["year"]);
+		$year_month = sprintf("%04d", $prev_month["year"]).'-'.sprintf("%02d", $prev_month["month"]);
+		$arrayleaves = array();
+
+		$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
+		$sql .= " WHERE cp.entity IN (".getEntity('holiday').") AND cp.rowid > 0";
+		$sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
+		$sql .= " AND (";
+		$sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$this->db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$this->db->escape($year_month)."')";
+		$sql .= " OR";	// For leave over several months
+		$sql .= " (date_format(cp.date_debut, '%Y-%m') < '".$this->db->escape($year_month)."' AND date_format(cp.date_fin, '%Y-%m') > '".$this->db->escape($year_month)."') ";
+		$sql .= " )";
+		$sql .= $this->db->order("cp.fk_user, cp.date_debut", "ASC");
+		$resql = $this->db->query($sql);
+		if (empty($resql)) {
+			$this->errors[] = $this->db->lasterror();
+			return 1;
+		}
+		$num = $this->db->num_rows($resql);
+		if ($num > 0) {
+			$tmpuser = new User($this->db);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$tmpuser->fetch($obj->fk_user);
+
+				$date_start = $this->db->jdate($obj->date_debut, true);
+				$date_end = $this->db->jdate($obj->date_fin, true);
+
+				$tmpstart = dol_getdate($date_start);
+				$tmpend = dol_getdate($date_end);
+
+				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
+				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
+
+				$halfdayinmonth = $obj->halfday;
+				$starthalfdayinmonth = $starthalfday;
+				$endhalfdayinmonth = $endhalfday;
+
+				//0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+
+				// Set date_start_gmt and date_end_gmt that are date to show for the selected month
+				$date_start_inmonth = $this->db->jdate($obj->date_debut, true);
+				$date_end_inmonth = $this->db->jdate($obj->date_fin, true);
+				if ($tmpstart['year'] < $prev_month["year"] || $tmpstart['mon'] < $prev_month["month"]) {
+					$date_start_inmonth = dol_get_first_day($prev_month["year"], $prev_month["month"], true);
+					$starthalfdayinmonth = 'morning';
+					if ($halfdayinmonth == 2) {
+						$halfdayinmonth = 1;
+					}
+					if ($halfdayinmonth == -1) {
+						$halfdayinmonth = 0;
+					}
+				}
+				if ($tmpend['year'] > $prev_month["year"] || $tmpend['mon'] > $prev_month["month"]) {
+					$date_end_inmonth = dol_get_last_day($prev_month["year"], $prev_month["month"], true) - ((24 * 3600) - 1);
+					$endhalfdayinmonth = 'afternoon';
+					if ($halfdayinmonth == 2) {
+						$halfdayinmonth = -1;
+					}
+					if ($halfdayinmonth == 1) {
+						$halfdayinmonth = 0;
+					}
+				}
+				$arrayleaves[] = array(
+					"user" => $tmpuser->getNomUrl(0, 'nolink', 0, 0, 24, 1),
+					"type" => $arraytypeleaves[$obj->fk_type],
+					"date_start" => dol_print_date($date_start_inmonth, 'day') . '<span class="opacitymedium">('.$outputlangs->trans($listhalfday[$starthalfdayinmonth]).')</span>',
+					"date_end" => dol_print_date($date_end_inmonth, 'day') . '<span class="opacitymedium">('.$outputlangs->trans($listhalfday[$endhalfdayinmonth]).')</span>',
+					"used_days" => num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id)
+				);
+			}
+		}
+
+		$outputarrayleaves = '<br><table style="width: 100%;border-collapse: separate !important;border-spacing: 0px;border-top: 1px solid #b6b6b6;border-left: 1px solid #b6b6b6;border-right: 1px solid #b6b6b6;margin: 0px 0px 20px 0px;">';
+		$outputarrayleaves .= '<tr>';
+		foreach ($arrayfields as $key => $label) {
+			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;">';
+			$outputarrayleaves .= $outputlangs->trans($label);
+			$outputarrayleaves .= '</td>';
+		}
+		$outputarrayleaves .= '</tr>';
+
+		if (!empty($arrayleaves)) {
+			foreach ($arrayleaves as $key => $fields) {
+				$outputarrayleaves .= '<tr>';
+				foreach ($fields as $field => $value) {
+					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$field.'">';
+					$outputarrayleaves .= $value;
+					$outputarrayleaves .= '</td>';
+				}
+				$outputarrayleaves .= '</tr>';
+			}
+		} else {
+			$outputarrayleaves .= '<tr>';
+			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" colspan="5">';
+			$outputarrayleaves .= $outputlangs->trans("None");
+			$outputarrayleaves .= '</td>';
+			$outputarrayleaves .= '</tr>';
+		}
+		$outputarrayleaves .= '</table>';
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+		$formmail = new FormMail($this->db);
+		$templateId = 0;
+		$templateLabel = '';
+		if (empty($template) || $template == 'EmailTemplateCode') {
+			$templateLabel = '(HolidayHrInformationsPreviousMonth)';
+		} else {
+			if (is_numeric($template)) {
+				$templateId = $template;
+			} else {
+				$templateLabel = $template;
+			}
+		}
+		$mailtemplate = $formmail->getEMailTemplate($this->db, "holiday", $user, $outputlangs, $templateId, 1, $templateLabel);
+		$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
+		complete_substitutions_array($substitutionarray, $outputlangs, $this);
+
+		$subject = make_substitutions($mailtemplate->topic, $substitutionarray, $outputlangs);
+		$msg = make_substitutions($mailtemplate->content, $substitutionarray, $outputlangs);
+		$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+
+		$msg = preg_replace('/__ARRAY_EMPLOYEE_STARTDAY_ENDDAY_DAYS__/', $outputarrayleaves, $msg);
+		$cmail = new CMailFile($subject, $mailto, $from, $msg, array(), array(), array(), '', '', 0, 1);
+		$result = $cmail->sendfile();
+		if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
+			$this->errors[] = $cmail->error;
+			if (is_array($cmail->errors) && count($cmail->errors) > 0) {
+				$this->errors = array_merge($this->errors, $cmail->errors);
+				$error++;
+			}
+		}
+
+		if (!empty($this->errors)) {
+			$this->output .= "\n";
+			// The $this->errors will be concatenated to the output by the function that call this method.
+		}
+		return ($error ? 1 : 0);
+	}
 }
