@@ -2130,6 +2130,7 @@ MailToSendOrder=Sales orders
 MailToSendInvoice=Customer invoices
 MailToSendShipment=Shipments
 MailToSendDelivery=Deliveries
+MailToSendStockTransfer=Stock transfers
 MailToSendIntervention=Interventions
 MailToSendSupplierRequestForQuotation=Quotation request
 MailToSendSupplierOrder=Purchase orders
