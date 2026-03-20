@@ -400,7 +400,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	$result = $object->fetch($facid);
 
 	$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-	$dateinvoice = ($datefacture == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datefacture);
+	$dateinvoice = ($datefacture == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datefacture);
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
 	$sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';

@@ -199,4 +199,5 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SIGN','Contract signed status changed','Executed when a contract signature status is changed','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_UNSIGN','Contract unsigned','Executed when a contract signature status is reset to no signature','contrat',18);
 
+ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 -- end of migration
