@@ -242,9 +242,6 @@ if (isModEnabled("shipping")) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
 	$elementList['delivery_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendDelivery'));
 }
-if (isModEnabled('stocktransfer')) {
-	$elementList['stocktransfer_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendStockTransfer'));
-}
 if (isModEnabled("reception")) {
 	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
 }
@@ -283,6 +280,9 @@ if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 }
 if (isModEnabled('product') && $user->hasRight('produit', 'lire')) {
 	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
+}
+if (isModEnabled('stocktransfer')) {
+	$elementList['stocktransfer_send'] = img_picto('', 'fa-box-open', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendStockTransfer'));
 }
 
 $parameters = array('elementList' => $elementList);
