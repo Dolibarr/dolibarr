@@ -5073,12 +5073,14 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 			$clicktodial_poste = (!empty($user->clicktodial_poste) ? urlencode($user->clicktodial_poste) : '');
 			$clicktodial_login = (!empty($user->clicktodial_login) ? urlencode($user->clicktodial_login) : '');
 			$clicktodial_password = (!empty($user->clicktodial_password) ? urlencode($user->clicktodial_password) : '');
+			// Convert leading + to 00 for international dialing
+			$phone_for_dial = preg_replace('/^\+/', '00', $phone);
 			// This line is for backward compatibility  @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-			$url = sprintf($urlmask, urlencode($phone), $clicktodial_poste, $clicktodial_login, $clicktodial_password);
+			$url = sprintf($urlmask, urlencode($phone_for_dial), $clicktodial_poste, $clicktodial_login, $clicktodial_password);
 			// Those lines are for substitution
 			$substitarray = array(
 				'__PHONEFROM__' => $clicktodial_poste,
-				'__PHONETO__' => urlencode($phone),
+				'__PHONETO__' => urlencode($phone_for_dial),
 				'__LOGIN__' => $clicktodial_login,
 				'__PASS__' => $clicktodial_password
 			);
