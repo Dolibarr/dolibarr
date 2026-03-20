@@ -405,12 +405,3 @@ ShowBookmark = Visualizza segnalibro
 UrlOrLink = Collegamento
 UseAnExternalHttpLinkOrRelativeDolibarrLink = Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
 SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-
-Notify_STOCKTRANSFER_CREATE=Trasferimento di magazzino creato
-Notify_STOCKTRANSFER_VALIDATE=Trasferimento di magazzino validato
-Notify_STOCKTRANSFER_UNVALIDATE=Trasferimento di magazzino riportato in bozza
-Notify_STOCKTRANSFER_DESTOCK=Riduzione dello stock di origine del trasferimento di magazzino
-Notify_STOCKTRANSFER_DESTOCK_CANCEL=Annullamento della riduzione dello stock di origine del trasferimento di magazzino
-Notify_STOCKTRANSFER_CLOSE=Trasferimento di magazzino chiuso
-Notify_STOCKTRANSFER_ADDSTOCK=Aumento dello stock di destinazione del trasferimento di magazzino
-Notify_STOCKTRANSFER_ADDSTOCK_CANCEL=Annullamento dell'aumento dello stock di destinazione del trasferimento di magazzino
