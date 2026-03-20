@@ -28,13 +28,13 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
- * @param	string	  $url 				    URL to call.
- * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
- * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with $postorget='PUTALREADYFORMATED'
- * @param	integer   $followlocation		0=Do not follow, 1=Follow location.
- * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
- * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
- * @param	int		  $localurl				0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
+ * @param	string                      $url 				    URL to call.
+ * @param	string                      $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
+ * @param	string|array<mixed,mixed>    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with $postorget='PUTALREADYFORMATED'
+ * @param	integer                      $followlocation		0=Do not follow, 1=Follow location.
+ * @param	string[]                     $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @param	string[]                     $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
+ * @param	int                          $localurl				0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
  * @return	array						    Returns an associative array containing the response from the server array('content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0)
@@ -47,7 +47,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$PROXY_USER = empty($conf->global->MAIN_PROXY_USER) ? 0 : $conf->global->MAIN_PROXY_USER;
 	$PROXY_PASS = empty($conf->global->MAIN_PROXY_PASS) ? 0 : $conf->global->MAIN_PROXY_PASS;
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
+	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param));
 
 	//setting the curl parameters.
 	$ch = curl_init();
