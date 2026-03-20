@@ -780,10 +780,10 @@ if (strlen($search_town)) {
 	$sql .= natural_search("p.town", $search_town);
 }
 if ($search_state) {
-    $sql .= natural_search("state.nom", $search_state);
+	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_region) {
-    $sql .= natural_search("region.nom", $search_region);
+	$sql .= natural_search("region.nom", $search_region);
 }
 if (count($search_roles) > 0) {
 	$sql .= " AND EXISTS (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE p.rowid = sc.fk_socpeople AND sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
@@ -1467,12 +1467,12 @@ if (!empty($arrayfields['p.town']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['state.nom']['checked'])) {
-    print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
-    $totalarray['nbfield']++;
+	print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['region.nom']['checked'])) {
-    print_liste_field_titre($arrayfields['region.nom']['label'], $_SERVER["PHP_SELF"], "region.nom", "", $param, '', $sortfield, $sortorder);
-    $totalarray['nbfield']++;
+	print_liste_field_titre($arrayfields['region.nom']['label'], $_SERVER["PHP_SELF"], "region.nom", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "co.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
