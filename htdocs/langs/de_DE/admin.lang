@@ -2127,6 +2127,7 @@ MailToSendOrder=Kundenaufträge
 MailToSendInvoice=Kundenrechnungen
 MailToSendShipment=Lieferungen
 MailToSendDelivery=Lieferungen
+MailToSendStockTransfer=Lagertransfers
 MailToSendIntervention=Serviceaufträge
 MailToSendSupplierRequestForQuotation=Offertanfrage
 MailToSendSupplierOrder=Lieferantenbestellungen
