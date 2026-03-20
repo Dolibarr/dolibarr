@@ -396,8 +396,8 @@ if ($ok && GETPOST('standard', 'alpha')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
 
 	print '<tr><td colspan="2"><br>*** Update denormalized_lower_planned_end_date.</td></tr>';
-	$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-	$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+	$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+	$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
 	$resqltoupdatecontract = $db->query($sqltoupdatecontract);
 
 	$extrafields = new ExtraFields($db);
