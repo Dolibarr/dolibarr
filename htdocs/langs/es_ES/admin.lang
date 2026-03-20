@@ -2127,7 +2127,6 @@ MailToSendOrder=Pedidos
 MailToSendInvoice=Facturas a clientes
 MailToSendShipment=Envíos
 MailToSendDelivery=Envíos
-MailToSendStockTransfer=Transferencias de stock
 MailToSendIntervention=Intervenciones
 MailToSendSupplierRequestForQuotation=Para enviar solicitud de presupuesto de proveedor
 MailToSendSupplierOrder=Pedidos a proveedor
