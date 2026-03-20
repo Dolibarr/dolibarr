@@ -1159,7 +1159,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Presend form
-	$modelmail = 'stocktransfer';
+	$modelmail = 'stocktransfer_send';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->stocktransfer->dir_output;
 	$trackid = 'stocktransfer'.$object->id;
