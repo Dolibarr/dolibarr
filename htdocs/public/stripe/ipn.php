@@ -192,7 +192,6 @@ dol_syslog("***** Stripe IPN was called with event->type=".$event->type." servic
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
 
 
-
 // Hook to allow external modules to handle Stripe webhook events
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('stripeipn'));
