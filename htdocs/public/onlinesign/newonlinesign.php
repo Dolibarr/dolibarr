@@ -192,7 +192,7 @@ $error = 0;
  * Actions
  */
 
-if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemrission not required here. Public form. Security checked on the securekey and on mitigation
+if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on permission not required here. Public form. Security checked on the securekey and on mitigation
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -211,9 +211,6 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemriss
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
 		if (method_exists($object, 'call_trigger')) {
-			// Online customer is not a user, so we use the use that validates the documents
-			$user = new User($db);
-			$user->fetch($object->user_validation_id);
 			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
 			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
 			if ($result < 0) {
@@ -715,10 +712,10 @@ print '<tr><td class="center">';
 if ($action == "dosign" && empty($cancel)) {
 	// Show the field to sign
 	print '<div class="tablepublicpayment">';
-	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly marginbottomonly borderbottom" id="name"  placeholder="'.$langs->trans("Lastname").'" autofocus>';
+	print '<input type="text" class="paddingleftonly marginleftonly paddingright marginrightonly marginbottomonly borderbottom" id="name"  placeholder="'.$langs->trans("Lastname").'" spellcheck="false" autofocus>';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
-	print '<input type="button" class="small noborderbottom cursorpointer buttonreset" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+	print '<input type="button" class="small noborderall cursorpointer buttonreset" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
 
 	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.
 	print '<div>';
