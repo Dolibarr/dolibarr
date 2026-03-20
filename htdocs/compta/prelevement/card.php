@@ -27,12 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
@@ -164,7 +163,7 @@ if (empty($reshook)) {
 	if ($action == 'setinfocredit' && $permissiontocreditdebit) {
 		$dt = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
-		if (($object->type != 'bank-transfer' && $object->statut == BonPrelevement::STATUS_CREDITED) || ($object->type == 'bank-transfer' && $object->statut == BonPrelevement::STATUS_DEBITED)) {
+		if (($object->type != 'bank-transfer' && $object->status == BonPrelevement::STATUS_CREDITED) || ($object->type == 'bank-transfer' && $object->statut == BonPrelevement::STATUS_DEBITED)) {
 			$error = 1;
 			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
 		} else {
@@ -179,6 +178,14 @@ if (empty($reshook)) {
 	if ($action == 'reopen' && $permissiontocreditdebit) {
 		$savtype = $object->type;
 		$res = $object->setStatut(BonPrelevement::STATUS_TRANSFERED);
+		if ($res <= 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'setcancel' && $permissiontocreditdebit) {
+		$savtype = $object->type;
+		$res = $object->setStatut(BonPrelevement::STATUS_CANCELED);
 		if ($res <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -209,10 +216,11 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
 	$head = prelevement_prepare_head($object);
+
 	print dol_get_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 	if (GETPOST('error', 'alpha') != '') {
-		print '<div class="error">'.$object->getErrorString(GETPOST('error', 'alpha')).'</div>';
+		print '<div class="error">'.$object->getErrorString(GETPOSTINT('error')).'</div>';
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
@@ -437,6 +445,16 @@ if ($id > 0 || $ref) {
 				}
 			}
 
+			if (getDolGlobalString('BANK_CAN_REOPEN_DIRECT_DEBIT_OR_CREDIT_TRANSFER')) {
+				if ($object->status == BonPrelevement::STATUS_DEBITED || $object->status == BonPrelevement::STATUS_CREDITED) {
+					if ($object->type == 'bank-transfer') {
+						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+					} else {
+						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+					}
+				}
+			}
+
 			if ($object->status == BonPrelevement::STATUS_TRANSFERED) {
 				if ($object->type == 'bank-transfer') {
 					print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
@@ -445,13 +463,12 @@ if ($id > 0 || $ref) {
 				}
 			}
 
-			if (getDolGlobalString('BANK_CAN_REOPEN_DIRECT_DEBIT_OR_CREDIT_TRANSFER')) {
-				if ($object->status == BonPrelevement::STATUS_DEBITED || $object->status == BonPrelevement::STATUS_CREDITED) {
-					if ($object->type == 'bank-transfer') {
-						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
-					} else {
-						print dolGetButtonAction($langs->trans("ReOpen"), '', 'default', 'card.php?action=reopen&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
-					}
+			// Cancel
+			if ($object->status == BonPrelevement::STATUS_TRANSFERED) {
+				if ($object->type == 'bank-transfer') {
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+				} else {
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
 				}
 			}
 

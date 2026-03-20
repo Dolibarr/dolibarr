@@ -21,6 +21,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -31,14 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
@@ -64,6 +63,7 @@ $pagenext = $page + 1;
 
 $result = restrictedArea($user, 'banque');
 $optioncss = GETPOST('optioncss', 'alpha');
+
 
 /*
  * View
@@ -116,7 +116,7 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripeChargeList");
-	$title .= ($stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= $form->textwithpicto('', $stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', 'hidepaginationprevious', $limit);
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2017  		Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  		Lenin Rivas		   	<lenin@leninrivas.com>
  * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1329,6 +1329,23 @@ class Mo extends CommonObject
 	}
 
 	/**
+	 * Sets object to given categories.
+	 *
+	 * Adds it to non existing supplied categories.
+	 * Deletes object from existing categories not supplied.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category ID or array of Categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_MO);
+	}
+
+	/**
 	 *	Cancel consumed and produced lines (movement stocks)
 	 *
 	 *	@param	User	$user					Object user that modify
@@ -2016,7 +2033,7 @@ class Mo extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 		if ($user->socid) {
-			return -1; // Protection pour éviter appel par utilisateur externe
+			return -1; // Security to prohibit this function for an external user
 		}
 
 		$now = dol_now();

@@ -5,7 +5,7 @@
  * Copyright (C) 2021       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023-2025  Charlene Benke	        <charlene.r@patas-monkey.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Irvine FLEITH		    <irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ class FormTicket
 	public $track_id;
 
 	/**
-	 * @var string 		Email $trackid. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 * @var string 		Email. Used also to name session vars to upload files.
 	 */
 	public $trackid;
 
@@ -90,7 +90,7 @@ class FormTicket
 	public $withemail;
 
 	/**
-	 * @var int<0,1> $withsubstit Show substitution array
+	 * @var int<0,1> Show substitution array
 	 */
 	public $withsubstit;
 
@@ -180,8 +180,7 @@ class FormTicket
 
 
 	/**
-	 *
-	 * @var array<string,string> $substit Substitutions
+	 * @var array<string,string> Substitutions
 	 */
 	public $substit = array();
 	/**
@@ -227,7 +226,6 @@ class FormTicket
 	}
 
 	/**
-	 *
 	 * Check required fields
 	 *
 	 * @param array<string, array<string, string>> $fields Array of fields to check
@@ -260,6 +258,8 @@ class FormTicket
 	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, $with_contact = null, $action = '', $object = null)
 	{
 		global $conf, $langs, $user, $hookmanager;
+
+		$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails', 'ticket'));
@@ -744,8 +744,14 @@ class FormTicket
 			print '<tr><td>';
 			print $langs->trans("AssignedTo");
 			print '</td><td>';
-			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $form->select_dolusers($user_assign, 'fk_user_assign', 1);
+			if ($permissiontomanage) {
+				print img_picto('', 'user', 'class="pictofixedwidth"');
+				print $form->select_dolusers($user_assign, 'fk_user_assign', 1);
+			} else {
+				$userstat = new User($this->db);
+				$userstat->fetch($user_assign);
+				print $userstat->getNomUrl(-1);
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -962,7 +968,7 @@ class FormTicket
 	/**
 	 *      Return html list of ticket analytic codes
 	 *
-	 *      @param  string 		$selected   		Id pre-selected category
+	 *      @param  string 		$selected   		Id preselected category
 	 *      @param  string 		$htmlname   		Name of select component
 	 *      @param  string 		$filtertype 		To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
 	 *      @param  int    		$format     		0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
@@ -1318,7 +1324,7 @@ class FormTicket
 	/**
 	 *      Return html list of ticket severitys (priorities)
 	 *
-	 *      @param  string  	$selected    	Id severity pre-selected
+	 *      @param  string  	$selected    	Id severity preselected
 	 *      @param  string  	$htmlname    	Name of the select area
 	 *      @param  string  	$filtertype  	To filter on field type in llx_c_ticket_severity (array('code'=>xx,'label'=>zz))
 	 *      @param  int     	$format      	0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
@@ -1720,9 +1726,9 @@ class FormTicket
 				}
 
 				if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 
 				if ($ticketstat->fk_soc > 0) {

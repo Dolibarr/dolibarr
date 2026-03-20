@@ -9,7 +9,7 @@
  * Copyright (C) 2014		Cedric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,10 @@
  */
 
 /**
- *	\defgroup   produit     Module products
+ *	\defgroup   product     Module products
  *	\brief      Module to manage catalog of predefined products
  *	\file       htdocs/core/modules/modProduct.class.php
- *	\ingroup    produit
+ *	\ingroup    product
  *	\brief      Description and activation file for the module to manage catalog of predefined products
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

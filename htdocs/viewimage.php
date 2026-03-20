@@ -62,7 +62,7 @@ if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
 	// For logo of company (by definition, the company logo is public)
-	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
+	if ($_GET["modulepart"] == 'mycompany' && isset($_GET['file']) && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
 	}
 	// For barcode live generation (barcode are just a graph of a value, so can be public)

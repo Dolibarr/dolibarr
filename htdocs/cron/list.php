@@ -789,9 +789,9 @@ if ($num > 0) {
 		}
 
 		// Date start last run
-		print '<td class="center lineheightsmall" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center celldateheight" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
-			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
+			print dolOutputDates($datelastrun, null, 0, 1, '', 'tzserver');
 		}
 		print '</td>';
 		if (!$i) {
@@ -836,20 +836,24 @@ if ($num > 0) {
 		}
 
 		// Next run date
-		print '<td class="center lineheightsmall">';
+		print '<td class="center celldateheight">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {
 				print '<span class="opacitymedium strikefordisabled">';
 			}
-			print dol_print_date($datenextrun, 'dayhoursec');
+
+			$pictotoadd = '';
 			if ($obj->status == Cronjob::STATUS_ENABLED) {
 				if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) {
-					print img_warning($langs->trans("MaxRunReached"));
+					$pictotoadd .= img_warning($langs->trans("MaxRunReached"));
 				} elseif ($datenextrun && $datenextrun < $now) {
-					print img_warning($langs->trans("Late"));
+					$pictotoadd .= img_warning($langs->trans("Late"));
 				}
 			}
+
+			print dolOutputDates($datenextrun, null, 0, 1, $pictotoadd);
+
 			if (empty($obj->status)) {
 				print '</span>';
 			}

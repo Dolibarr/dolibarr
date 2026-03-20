@@ -128,7 +128,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$desc
 	);
 
-	dol_syslog("print_paypal_redirect resArray=".var_export($resArray, true), LOG_DEBUG);
+	dol_syslog("print_paypal_redirect resArray=".formatLogObject($resArray), LOG_DEBUG);
 
 	$ack = strtoupper($resArray["ACK"]);
 	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {

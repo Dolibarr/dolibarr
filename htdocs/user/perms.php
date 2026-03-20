@@ -525,6 +525,10 @@ if ($result) {
 			$obj->family = 'external';
 		}
 
+		// Si la famille n'existe pas dans $familyinfo, on utilise 'other'
+		if (!empty($obj->family) && !isset($familyinfo[$obj->family])) {
+			$obj->family = 'other';
+		}
 		if (empty($obj->family_position)) {
 			$obj->family_position = $familyinfo[$obj->family]['position'];
 			if ($obj->module_position < 100000) {

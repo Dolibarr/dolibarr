@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +246,7 @@ if (empty($reshook) && getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE"
 		}
 	}
 
-	if (!$memberfound && GETPOST("morphy") == 'mor' && GETPOSTISSET("societe") ) {
+	if (!$memberfound && GETPOST("morphy") == 'mor' && GETPOSTISSET("societe")) {
 		$sql = "SELECT a.rowid as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s";
@@ -429,7 +429,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$adh->birth       = $birthday;
 		$adh->phone   = GETPOST('phone');
 		$adh->phone_perso = GETPOST('phone_perso');
-		$adh->phone_mobile= GETPOST('phone_mobile');
+		$adh->phone_mobile = GETPOST('phone_mobile');
 
 		$adh->ip = getUserRemoteIP();
 
@@ -584,7 +584,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						// It is not so important because a test is done on return of payment validation.
 					}
 
-					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, (float) price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
+					$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
+					$minimumamount = empty($minimumamountbytype[$adh->typeid]) ? 0 : $minimumamountbytype[$adh->typeid];
+					$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
+					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, (float) $amount, '', 0);
+					if ($amount < max(getDolGlobalInt("MEMBER_MIN_AMOUNT"), $minimumamount)) {
+						$error++;
+						$errmsg .= $langs->trans("MinimumAmountShort")." : ".price(max(getDolGlobalInt("MEMBER_MIN_AMOUNT"), $minimumamount), 0, $langs, 1, -1, -1, $conf->currency)."<br>\n";
+					}
 
 					if (GETPOST('member_email')) {
 						$urlback .= '&email='.urlencode(GETPOST('member_email'));
@@ -750,6 +757,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		}
 
 		print '<tr><td class="fieldrequired titlefieldmiddle">'.$langs->trans("MemberNature")."</td><td>\n";
+
+		$disabledphy = '';
+		$disabledmor = '';
 		//$disabledphy = ($checkednature == "mor" ? ' disabled="disabled"' : '');
 		//$disabledmor = ($checkednature == "phy" ? ' disabled="disabled"' : '');
 		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').$disabledphy.'></label></span>';
@@ -834,7 +844,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				});
 			</script>';
 		}
-			print '</td></tr>'."\n";
+		print '</td></tr>'."\n";
 	} else {
 		//print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
 		print '<input type="hidden" id="morphy" name="morphy" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY').'">';
@@ -963,17 +973,16 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	$adht->fetch($typeid);
 	$caneditamount = $adht->caneditamount;
 	$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+	$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
 	foreach ($amountbytype as $k => $v) {
-		$amount = max(0, (float) $v, (float) getDolGlobalInt("MEMBER_NEWFORM_AMOUNT"));
+		$amount = max(0, (float) $v, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), (float) getDolGlobalInt("MEMBER_NEWFORM_AMOUNT"), $minimumamountbytype[$k]);
 		$amountbytype[$k] = $amount;
 	}
 
-	$amountbytype_json = json_encode($amountbytype);
 	$caneditamountbytype = $adht->caneditamountByType(1);		// Load the array of caneditamount per type
-	$caneditamountbytype_json = json_encode($caneditamountbytype);
+	$amountformuladescriptionbytype = $adht->amountformuladescriptionbytype(1); // Load the array of amount ormula description per type
 
-
-	// Set amount for the subscription from the the type and options:
+	// Set amount for the subscription from the type and options:
 	// - First check the amount of the member type.
 	$amount = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
 	// - If not found, take the default amount only if the user is authorized to edit it
@@ -985,11 +994,11 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 	}
 	// - If a min is set, we take it into account
-	$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+	$minimumamount = empty($minimumamountbytype[$typeid]) ? 0 : $minimumamountbytype[$typeid];
+	$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), (float) $minimumamount);
 
 	// Clean the amount
 	$amount = price2num($amount);
-
 
 
 	// Add hook to complete the form
@@ -1015,7 +1024,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'" required>';
 		} else {
 			$arraybudget = array('50' => '<= 100 000', '100' => '<= 200 000', '200' => '<= 500 000', '300' => '<= 1 500 000', '600' => '<= 3 000 000', '1000' => '<= 5 000 000', '2000' => '5 000 000+');
-			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, '', 0, 0, 0, '');
+			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, '', 0, 0, 0, '');
 		}
 		print ' € or $';
 
@@ -1136,6 +1145,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 		}
 
+		$amountformuladescription = $amountformuladescriptionbytype[$typeid];
+
 		$showedamount = $amount > 0 ? $amount : 0;
 		if ($caneditamount === "1") {
 			print '<input type="text" name="amount" id="amount" class="flat amount right width75" value="'.$showedamount.'">';
@@ -1143,7 +1154,14 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			print ' '.$langs->getCurrencySymbol($conf->currency).'<span class="opacitymedium hideifautoturnover small">';
 			if (!getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
 				print ' - ';
-				print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+				if (empty($amountformuladescription)) {
+					print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+				} else {
+					print $amountformuladescription;
+				}
+			}
+			if (getDolGlobalInt("MEMBER_MIN_AMOUNT") > 0 || $minimumamount > 0) {
+				print '</span><br><span id="minimumamount" class="opacitymedium small">'.$langs->trans("MinimumAmountShort").' : '.price(max(getDolGlobalInt("MEMBER_MIN_AMOUNT"), $minimumamount), 0, $langs, 1, -1, -1, $conf->currency);
 			}
 			print '</span>';
 		} else {
@@ -1157,40 +1175,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			print '</span>';
 		}
 		print '</td></tr>';
-
-		// Add JS to manage the background of amount depending on type
-		if ($conf->use_javascript_ajax) {
-			print "<script>
-				var amountbytype = $amountbytype_json;
-				var canEditAmount = $caneditamountbytype_json;
-			</script>";
-
-			print '<script>
-			jQuery(function($) {
-				$("#typeid").on("change", function() {
-					console.log("Type of membership changed, we force amount update");
-					let typeId = $(this).val();
-					let amountVal = amountbytype[typeId] || 0;
-					let formattedAmount = parseFloat(amountVal);
-
-					if (canEditAmount[typeId] === "1") {
-						// Editable mode
-						$("#amount").val(formattedAmount).prop("disabled", false).removeClass("hidden");
-						$("#amounthidden").addClass("hidden");
-						$(".hideifautoturnover").removeClass("hidden");
-					} else {
-						// Read-only mode
-						$("#amounthidden").val(formattedAmount).prop("disabled", true).removeClass("hidden");
-						$("#amount").addClass("hidden");
-						$(".hideifautoturnover").addClass("hidden");
-					}
-				});
-
-				// Trigger it once so the amount matches the initial selection
-				$("#typeid").trigger("change");
-			});
-			</script>';
-		}
 	}
 
 	// Display Captcha code if is enabled
@@ -1216,6 +1200,126 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 	print '</div>';
 
+	// Add JS to manage the background of amount depending on type
+	if ($conf->use_javascript_ajax) {
+		$typeid = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', GETPOSTINT('typeid'));
+		$adht = new AdherentType($db);
+		$adht->fetch($typeid);
+		$caneditamountbytype = $adht->caneditamountByType(1);		// Load the array of caneditamount per type
+		$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
+		$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+		$amountformuladescriptionbytype = $adht->amountformuladescriptionbytype(1); // Load the array of amount ormula description per type
+		// Common PHP → JS variables
+		$caneditamountbytype_json = json_encode($caneditamountbytype);
+		$minimumamountbytype_json = json_encode($minimumamountbytype);
+		$amountbytype_json = json_encode($amountbytype);
+		$amountformuladescriptionbytype_json = json_encode($amountformuladescriptionbytype);
+		$currencysymbol = $langs->getCurrencySymbol($conf->currency);
+
+		print '<script>
+		jQuery(function($) {
+				// ----- Shared data -----
+				var amountByType = ' . $amountbytype_json . ';
+				var canEditAmountByType = ' . $caneditamountbytype_json . ';
+				var amountFormulaDescriptionByType = ' . $amountformuladescriptionbytype_json . ';
+				var minimumAmountByType = ' . $minimumamountbytype_json . ';
+				var memberMinAmount = ' . getDolGlobalInt("MEMBER_MIN_AMOUNT") . ';
+				var currencySymbol = ' . json_encode($currencysymbol) . ';
+
+				// Translations prepared by PHP
+				var langs = {
+						AnyAmountWithAdvisedAmount: ' . json_encode($langs->trans("AnyAmountWithAdvisedAmount", "__VAL__")) . ',
+						AnyAmountWithoutAdvisedAmount: ' . json_encode($langs->trans("AnyAmountWithoutAdvisedAmount")) . ',
+						MinimumAmountShort: ' . json_encode($langs->trans("MinimumAmountShort", "__VAL__")) . ',
+						trans: function(key, val) {
+								if (!this[key]) return key;
+								return this[key].replace("__VAL__", val || "");
+						}
+				};
+
+				// ----- Helpers -----
+				function getCurrentMin() {
+						let typeId = $("#typeid").val() || 0;
+						let minimumAmount = minimumAmountByType[typeId] || 0;
+						return Math.max(memberMinAmount, minimumAmount);
+				}
+
+				function checkAmount() {
+						let raw = $("#amount").val() || "";
+						let val = parseFloat(raw.replace(",", ".")) || 0;
+						let minimum = getCurrentMin();
+						if (val < minimum) {
+								$("#submitsave").prop("disabled", true);
+						} else {
+								$("#submitsave").prop("disabled", false);
+						}
+				}
+
+				function updateAmountAndTexts() {
+						let typeId = $("#typeid").val();
+						let amountVal = amountByType[typeId] || 0;
+						let formattedAmount = parseFloat(amountVal);
+						let canEdit = canEditAmountByType[typeId] === "1";
+						let amountFormulaDescription = amountFormulaDescriptionByType[typeId] || "";
+						let minimumAmount = minimumAmountByType[typeId] || 0;
+						let minimum = Math.max(memberMinAmount, minimumAmount);
+
+						if (canEdit) {
+								// Editable mode
+								$("#amount").val(formattedAmount).prop("disabled", false).removeClass("hidden");
+								$("#amounthidden").addClass("hidden");
+								$(".hideifautoturnover").removeClass("hidden");
+
+								// Description formula or default text
+								if (amountFormulaDescription.trim() !== "") {
+										$("#amountdescription").html(" - " + amountFormulaDescription);
+								} else {
+										if (amountVal > 0) {
+												$("#amountdescription").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
+										} else {
+												$("#amountdescription").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
+										}
+								}
+
+								// Minimum amount label
+								if (minimum > 0) {
+										$("#minimumamount")
+												.html(langs.trans("MinimumAmountShort") + " : " + minimum + " " + currencySymbol)
+												.removeClass("hidden");
+								} else {
+										$("#minimumamount").addClass("hidden");
+								}
+						} else {
+								// Read-only mode
+								$("#amounthidden").val(formattedAmount).prop("disabled", true).removeClass("hidden");
+								$("#amount").addClass("hidden");
+								$(".hideifautoturnover").addClass("hidden");
+
+								if (amountVal > 0) {
+										$("#amountdescription").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
+								} else {
+										$("#amountdescription").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
+								}
+
+								$("#minimumamount").addClass("hidden");
+						}
+
+						// After updating fields, re‑check the amount validity
+						checkAmount();
+				}
+
+				// ----- Bind events -----
+				$("#typeid").on("change", function() {
+						console.log("Type of membership changed, update amount, description and minimum");
+						updateAmountAndTexts();
+				});
+
+				$("#amount").on("keyup change", function() {
+						checkAmount();
+				});
+		});
+		</script>';
+	}
 
 	print "</form>\n";
 	print "<br>";
@@ -1252,7 +1356,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Label").'</th>';
 		print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
-		print '<th class="center">'.$langs->trans("Amount").'</th>';
+		print '<th class="center">'.$langs->trans("RecommendedAmount").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		if (empty($hidevoteallowed)) {
 			print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
@@ -1269,6 +1373,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 			$caneditamount = $objp->caneditamount;
 			$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+			$minimumamountbytype = $adht->minimumamountbytype(1);         // Load the array of amount per type
 
 			print '<tr class="oddeven">';
 			// Label
@@ -1284,6 +1389,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			// Set amount for the subscription from the the type and options:
 			// - First check the amount of the member type.
 			$amount = empty($amountbytype[$objp->rowid]) ? 0 : $amountbytype[$objp->rowid];
+			$minimumamount = empty($minimumamountbytype[$objp->rowid]) ? 0 : $minimumamountbytype[$objp->rowid];
 			// - If not found, take the default amount only if the user is authorized to edit it
 			if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
 				$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
@@ -1293,7 +1399,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 			}
 			// - If a min is set, we take it into account
-			$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+			$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), (float) $minimumamount);
 
 			$displayedamount = $amount;
 

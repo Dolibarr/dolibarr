@@ -18,7 +18,7 @@
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -565,11 +565,11 @@ class Propal extends CommonObject
 
 			$line->fk_propal = $this->id;
 			$line->fk_remise_except = $remise->id;
-			$line->desc = $remise->description; // Description ligne
+			$line->desc = $remise->description; // Line Description
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
 			$line->subprice = -(float) $remise->amount_ht;
-			$line->fk_product = 0; // Id produit predefined
+			$line->fk_product = 0; // Product Id predefined
 			$line->qty = 1;
 			$line->remise_percent = 0;
 			$line->rang = -1;
@@ -614,9 +614,9 @@ class Propal extends CommonObject
 	 * 		@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int				$fk_product      	Product/Service ID predefined
-	 * 		@param    	float			$remise_percent  	Pourcentage de remise de la ligne
-	 * 		@param    	string			$price_base_type	HT or TTC
-	 * 		@param    	float			$pu_ttc             Prix unitaire TTC
+	 * 		@param    	float			$remise_percent  	Line discount percentage
+	 * 		@param    	'HT'|'TTC'|''	$price_base_type	HT or TTC or '' for subtotals
+	 * 		@param    	float			$pu_ttc             Unit Price with tax (TTC)
 	 * 		@param    	int				$info_bits			Bits for type of lines
 	 *      @param      int				$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *      @param      int				$rang               Position of line
@@ -734,10 +734,9 @@ class Propal extends CommonObject
 				}
 			}
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
@@ -837,7 +836,7 @@ class Propal extends CommonObject
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
-			// Mise en option de la ligne
+			// Set the line as optional
 			if (empty($qty) && empty($special_code)) {
 				$this->line->special_code = 3;
 			}
@@ -962,10 +961,9 @@ class Propal extends CommonObject
 		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
@@ -1329,7 +1327,6 @@ class Propal extends CommonObject
 				}
 
 				/*
-				 *  Insertion du detail des produits dans la base
 				 *  Insert products detail in database
 				 */
 				if (!$error) {
@@ -1733,7 +1730,7 @@ class Propal extends CommonObject
 				$this->fk_project = $obj->fk_project;
 				$this->project = null; // Clear if another value was already set by fetchProject
 
-				$this->model_pdf            = $obj->model_pdf;
+				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
@@ -1784,9 +1781,9 @@ class Propal extends CommonObject
 				$this->label_incoterms = $obj->label_incoterms;
 
 				// Multicurrency
-				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->multicurrency_code = $obj->multicurrency_code;
-				$this->multicurrency_tx 		= $obj->multicurrency_tx;
+				$this->multicurrency_tx = $obj->multicurrency_tx;
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
@@ -1980,9 +1977,9 @@ class Propal extends CommonObject
 				$line->id = $objp->rowid;
 				$line->fk_propal = $objp->fk_propal;
 				$line->fk_parent_line = $objp->fk_parent_line;
-				$line->label            = $objp->custom_label;
-				$line->desc             = $objp->description; // Description ligne
-				$line->description      = $objp->description; // Description ligne
+				$line->label = $objp->custom_label;
+				$line->desc = $objp->description; // Line description
+				$line->description = $objp->description; // Line description
 				$line->qty              = $objp->qty;
 				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
@@ -2183,7 +2180,8 @@ class Propal extends CommonObject
 			}
 
 			$this->ref = $num;
-			$this->statut = self::STATUS_VALIDATED;
+			$this->statut = self::STATUS_VALIDATED;	// deprecated
+			$this->status = self::STATUS_VALIDATED;
 			$this->user_validation_id = $user->id;
 			$this->datev = $now;
 			$this->date_validation = $now;
@@ -3063,13 +3061,13 @@ class Propal extends CommonObject
 		$this->fetchObjectLinked($id, $this->element);
 		foreach ($this->linkedObjectsIds as $objecttype => $objectid) {
 			// Nouveau système du common object renvoi des rowid et non un id linéaire de 1 à n
-			// On parcourt donc une liste d'objets en tant qu'objet unique
+			//We are therefore traversing a list of objects as a single object
 			foreach ($objectid as $key => $object) {
-				// Cas des factures liees directement
+				// Case of invoices directly linked
 				if ($objecttype == 'facture') {
 					$linkedInvoices[] = $object;
 				} else {
-					// Cas des factures liees par un autre object (ex: commande)
+					// Case of invoices linked by another object (e.g., order)
 					$this->fetchObjectLinked($object, $objecttype);
 					foreach ($this->linkedObjectsIds as $subobjecttype => $subobjectid) {
 						foreach ($subobjectid as $subkey => $subobject) {
@@ -3498,7 +3496,12 @@ class Propal extends CommonObject
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
+		} else {
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		}
 		$sql .= $clause." p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
@@ -3506,6 +3509,14 @@ class Propal extends CommonObject
 		if ($mode == 'signed') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_SIGNED;
 		}
+
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " AND sc.fk_user = ".((int) $user->id);
+		}
+		if ($user->socid) {
+			$sql .= " AND p.fk_soc = ".((int) $user->socid);
+		}
+
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {

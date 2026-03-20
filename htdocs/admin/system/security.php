@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2022	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -421,7 +421,7 @@ if (empty($dolibarr_main_restrict_eval_methods)) {
 } else {
 	print $dolibarr_main_restrict_eval_methods;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
 print '<br>';
 
 

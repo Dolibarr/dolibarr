@@ -414,7 +414,9 @@ if ($action == 'set' && $user->admin) {
 	// We made some check against evil eternal modules that try to low security options.
 	$checkOldValue = getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE');
 	$csrfCheckOldValue = getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN');
-	$resarray = activateModule($value);
+
+	$resarray = activateModule($value, 1, 0, 'acceptredirect');
+
 	if ($checkOldValue != getDolGlobalInt('CHECKLASTVERSION_EXTERNALMODULE')) {
 		setEventMessage($langs->trans('WarningModuleHasChangedLastVersionCheckParameter', $value), 'warnings');
 	}
@@ -458,8 +460,11 @@ if ($action == 'set' && $user->admin) {
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+		exit;
 	}
-	$resarray = activateModule($value, 0, 1);
+
+	$resarray = activateModule($value, 0, 1, 'acceptredirect');
+
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1), 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
@@ -515,6 +520,7 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
+$timestoinit = [];
 //$publisherlogoarray = array();
 
 $i = 0; // is a sequencer of modules found
@@ -528,6 +534,7 @@ foreach ($modulesdir as $dir) {
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
 	$handle = @opendir($dir);
+	$timestart = microtime(true);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
@@ -595,6 +602,7 @@ foreach ($modulesdir as $dir) {
 								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
+								$timestoinit[$modName] = round((microtime(true) - $timestart) * 1000, 3);
 
 								// Gives the possibility to the module, to provide his own family info and position of this family
 								if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
@@ -671,7 +679,7 @@ if ($action == 'reset_confirm' && $user->admin) {
 		}
 
 		$form = new Form($db);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1, 300, 550);
 	}
 }
 
@@ -767,7 +775,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$moreforfilter .= '</li></ul></div>';
 
-	$moreforfilter .= '<div class="divfilteralone colorbacktimesheet float valignmiddle">';
+	$moreforfilter .= '<div class="divfilteralone colorbacktimesheet float valignmiddle nopaddingtopimp nopaddingbottomimp">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" spellcheck="false" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
@@ -1223,6 +1231,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
 			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
 			print '</a>';
+			print ($timestoinit[$modName] > 500 ? img_picto($langs->trans('InitModuleIsSlow'), 'fa-exclamation-circle') : '');
 			print '</td>';
 
 			// Version

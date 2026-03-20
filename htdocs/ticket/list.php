@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -39,14 +46,6 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("ticket", "companies", "other", "projects", "contracts"));
@@ -790,11 +789,11 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
 
 $picto = 'ticket';
-if ($socid > 0) {
+/*if ($socid > 0) {
 	$picto = '';
-}
+}*/
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans('Tickets'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);   // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 
 if ($mode == 'mine') {
 	print '<div class="opacitymedium">'.$langs->trans('TicketAssignedToMeInfos').'</div><br>';

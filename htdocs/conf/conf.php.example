@@ -245,6 +245,15 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 $dolibarr_main_authentication='dolibarr';
 
 
+// dolibarr_main_authentication_autocreateuser
+// ============================================
+// Auto-creation of Dolibarr users on first OIDC login.
+// Set to 1 to allow new user accounts to be created automatically
+// when a user authenticates via OpenID Connect but has no existing account.
+// IMPORTANT: This must be set here in conf.php, not via the database setup.
+$dolibarr_main_authentication_autocreateuser=0;
+
+
 // Parameters used to setup LDAP authentication
 // --------------------------------------------
 // Uncomment them if dolibarr_main_authentication = 'ldap'
@@ -335,11 +344,12 @@ $dolibarr_main_restrict_eval_methods='getDolGlobalString, getDolGlobalInt, getDo
 
 // dolibarr_main_restrict_ip
 // =========================
-// To restrict access to backoffice to some ip addresses only. Use a comma to separate values.
+// To restrict access to backoffice to some ip addresses only. Use a comma to separate values. Possible to use IPv4 and IPv6 addresses.
+// Networks can be covered with CIDR notation.
 // Note: Pages that does not need login (like public pages, web site) are not protected with this.
 // Default value: ''
 // Examples:
-// $dolibarr_main_restrict_ip='127.0.0.1, ::1, 192.168.0.1';
+// $dolibarr_main_restrict_ip='127.0.0.1, ::1, 192.168.0.1, 192.168.0.0/24, 2a01:e0a:123:456::/64';
 //
 $dolibarr_main_restrict_ip='';
 

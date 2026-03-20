@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 5);
+$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 6);
 $DELAYFORCACHE = 300;	// 300 seconds
 
 $action = GETPOST('action', 'aZ09');
@@ -157,19 +157,22 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 if ($mode == 'default') {	// When action is default, we want a calendar view and not the list
 	$mode = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
+// View by month
 if (GETPOST('viewcal') && GETPOST('mode') != 'show_day' && GETPOST('mode') != 'show_week') {
 	$mode = 'show_month';
 	$day = '';
-} // View by month
+}
+// View by week
 if (GETPOST('viewweek') || GETPOST('mode') == 'show_week') {
 	$mode = 'show_week';
 	$week = ($week ? $week : date("W"));
 	$day = ($day ? $day : date("d"));
-} // View by week
+}
+// View by day
 if (GETPOST('viewday') || GETPOST('mode') == 'show_day') {
 	$mode = 'show_day';
 	$day = ($day ? $day : date("d"));
-} // View by day
+}
 
 $object = new ActionComm($db);
 
@@ -269,60 +272,58 @@ $nowday = $nowarray['mday'];
 $listofextcals = array();
 
 // Define list of external calendars (global admin setup)
-if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
-	$i = 0;
-	while ($i < $MAXAGENDA) {
-		$i++;
-		$source = 'AGENDA_EXT_SRC'.$i;
-		$name = 'AGENDA_EXT_NAME'.$i;
-		$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
-		$color = 'AGENDA_EXT_COLOR'.$i;
-		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
-		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
-		if (getDolGlobalString($source) && getDolGlobalString($name)) {
-			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-			$listofextcals[] = array(
-				'type' => 'globalsetup',
-				'src' => getDolGlobalString($source),
-				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
-				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
-				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-				'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
-			);
-		}
+$i = 0;
+while ($i < $MAXAGENDA) {
+	$i++;
+	$source = 'AGENDA_EXT_SRC'.$i;
+	$name = 'AGENDA_EXT_NAME'.$i;
+	$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
+	$color = 'AGENDA_EXT_COLOR'.$i;
+	$enabled = 'AGENDA_EXT_ENABLED'.$i;
+	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
+	$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
+	if (getDolGlobalString($source) && getDolGlobalString($name) && getDolGlobalString($enabled)) {
+		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+		$listofextcals[] = array(
+			'type' => 'globalsetup',
+			'src' => getDolGlobalString($source),
+			'name' => dol_string_nohtmltag(getDolGlobalString($name)),
+			'offsettz' => (int) getDolGlobalInt($offsettz, 0),
+			'color' => dol_string_nohtmltag(getDolGlobalString($color)),
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			'default' => dol_string_nohtmltag(getDolGlobalString($default)),
+			'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
+		);
 	}
 }
 
 // Define list of external calendars (user setup)
-if (!getDolUserString('AGENDA_DISABLE_EXT')) {
-	$i = 0;
-	while ($i < $MAXAGENDA) {
-		$i++;
-		$source = 'AGENDA_EXT_SRC_'.$user->id.'_'.$i;
-		$name = 'AGENDA_EXT_NAME_'.$user->id.'_'.$i;
-		$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
-		$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
-		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
-		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
-		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
+$i = 0;
+while ($i < $MAXAGENDA) {
+	$i++;
+	$source = 'AGENDA_EXT_SRC_'.$user->id.'_'.$i;
+	$name = 'AGENDA_EXT_NAME_'.$user->id.'_'.$i;
+	$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
+	$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
+	$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
+	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
+	$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-		if (getDolUserString($source) && getDolUserString($name)) {
-			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-			$listofextcals[] = array(
-				'type' => 'usersetup',
-				'src' => getDolUserString($source),
-				'name' => dol_string_nohtmltag(getDolUserString($name)),
-				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
-				'color' => dol_string_nohtmltag(getDolUserString($color)),
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				'default' => dol_string_nohtmltag(getDolUserString($default)),
-				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
-			);
-		}
+	if (getDolUserString($source) && getDolUserString($name)) {
+		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+		$listofextcals[] = array(
+			'type' => 'usersetup',
+			'src' => getDolUserString($source),
+			'name' => dol_string_nohtmltag(getDolUserString($name)),
+			'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
+			'color' => dol_string_nohtmltag(getDolUserString($color)),
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			'default' => dol_string_nohtmltag(getDolUserString($default)),
+			'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
+		);
 	}
 }
+
 $firstdaytoshow = 0;
 $max_day_in_month = 0;
 $lastdaytoshow = 0;
@@ -415,10 +416,12 @@ if ($status == 'todo') {
 */
 
 $param = '';
-if ($actioncode || GETPOSTISSET('search_actioncode')) {
+if (($actioncode && $actioncode !== '-1') || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) {
-			$param .= "&search_actioncode[]=".urlencode($str_action);
+			if ($str_action != '-1') {
+				$param .= "&search_actioncode[]=".urlencode($str_action);
+			}
 		}
 	} else {
 		$param .= "&search_actioncode=".urlencode($actioncode);
@@ -662,8 +665,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
 		$s .= '
-            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="marginleftonly check_holiday"' . ($check_holiday
-					? ' checked' : '') . '>
+            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="marginleftonly check_holiday"' . ($check_holiday ? ' checked' : '') . '>
                 <label for="check_holiday" class="labelcalendar">
                     <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
                 </label> &nbsp;
@@ -1621,7 +1623,7 @@ if (is_readable($color_file)) {
 
 $massactionbutton = '';
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, -1, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 if ($nbevents > $MAXONSAMEPAGE) {
 	print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
@@ -1768,7 +1770,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 	echo " </tr>\n";
 
-	echo " <tr>\n";
+	echo ' <tr class="trcalweek">'."\n";
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
@@ -1842,7 +1844,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	 echo " </div>\n";
 	 */
 
-	print '<tr><td>';
+	print '<tr class="trcalday"><td class="tdtop">';
 
 	/* WIP View per hour */
 	$useviewhour = 0;
@@ -1960,7 +1962,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$urltocreate = '';
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 		$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year;
-		$hourminsec = '100000';
+		$hourminsec = getDolGlobalString('AGENDA_DEFAULT_BEGIN_TIME');
+		if (empty($hourminsec) || !preg_match('/^[0-9]{6}$/', $hourminsec)) {
+			$hourminsec = '100000';
+		}
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 	}
 
@@ -1970,7 +1975,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	if ($nonew <= 0) {
 		print '<div class="tagtr cursorpointer" onclick="window.location=\''.$urltocreate.'\';"><div class="nowrap tagtd"><div class="left inline-block">';
 		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
-		print ($datenowint == $dateint ? '<span class="badgeneutral">' : '');
+		print ($datenowint == $dateint ? '<span class="badgeliketopmenu">' : '');
 		if ($showinfo) {
 			print dol_print_date($curtime, 'daytextshort');
 		} else {

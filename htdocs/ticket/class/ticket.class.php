@@ -212,7 +212,7 @@ class Ticket extends CommonObject
 	public $cache_types_tickets;
 
 	/**
-	 * @var array<int,array{private:int,fk_user_author:int,fk_contact_author?:string,message:string}> cache msgs ticket  // fk_contact_author is email, not key in the cache
+	 * @var array<int,array{id:int,private:int,fk_user_author:int,fk_user_action:int,fk_contact_author?:string,datec:int,datep:int,subject:string,message:string}> cache msgs ticket  // fk_contact_author is email, not key in the cache
 	 */
 	public $cache_msgs_ticket;
 
@@ -1762,6 +1762,64 @@ class Ticket extends CommonObject
 	}
 
 	/**
+	 *   Set read date if not already set.
+	 *
+	 * @param   User    $user       User performing the action
+	 * @param   int     $notrigger  Disable triggers
+	 * @return  int                 Return -1 if error, 0 if nothing done, 1 if success
+	 */
+	public function setReadDate($user, $notrigger = 0)
+	{
+		global $langs;
+
+		if (!empty($this->date_read)) {
+			return 0;
+		}
+
+		$this->oldcopy = dol_clone($this, 2);
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+		$sql .= " SET date_read = '".$this->db->idate(dol_now())."'";
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::setReadDate");
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->db->rollback();
+			$this->date_read = $this->oldcopy->date_read;
+			$this->error = $this->db->lasterror();
+
+			dol_syslog(get_class($this)."::setReadDate ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		if (!$notrigger) {
+			$result = $this->call_trigger('TICKET_MODIFY', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				$this->date_read = $this->oldcopy->date_read;
+				$this->error = implode(',', $this->errors);
+
+				dol_syslog(get_class($this)."::setReadDate ".$this->error, LOG_ERR);
+				return -1;
+			}
+		}
+
+		$this->db->commit();
+
+		$this->date_read = dol_now();
+		$this->fk_user_modif = $user->id;
+		$this->user_modification_id = $user->id;
+
+		return 1;
+	}
+
+	/**
 	 *    Set an assigned user to a ticket.
 	 *
 	 *    @param    User		$user				Object user
@@ -1779,7 +1837,11 @@ class Ticket extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 		if ($id_assign_user > 0) {
-			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".Ticket::STATUS_ASSIGNED;
+			$newstatus = Ticket::STATUS_ASSIGNED;
+			if (getDolGlobalString('TICKET_AUTO_READ_WHEN_ASSIGN')) {
+				$newstatus = Ticket::STATUS_READ;
+			}
+			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".$newstatus;
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
@@ -1964,7 +2026,7 @@ class Ticket extends CommonObject
 
 		// Cache already loaded
 
-		$sql = "SELECT id as rowid, fk_user_author, email_from, datec, datep, label, note as message, code";
+		$sql = "SELECT id as rowid, fk_user_author, fk_user_action, email_from, datec, datep, label, note as message, code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 		$sql .= " WHERE fk_element = ".(int) $this->id;
 		$sql .= " AND elementtype = 'ticket'";
@@ -1979,6 +2041,7 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$this->cache_msgs_ticket[$i]['id'] = $obj->rowid;
 				$this->cache_msgs_ticket[$i]['fk_user_author'] = $obj->fk_user_author;
+				$this->cache_msgs_ticket[$i]['fk_user_action'] = $obj->fk_user_action;	// owner of the action
 				if (in_array($obj->code, array('TICKET_MSG', 'AC_TICKET_CREATE')) && empty($obj->fk_user_author)) {
 					$this->cache_msgs_ticket[$i]['fk_contact_author'] = $obj->email_from;
 				}

@@ -99,6 +99,11 @@ class pdf_paiement extends CommonDocGenerator
 	public $month;
 
 	/**
+	 * @var int
+	 */
+	public $day;
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
@@ -157,9 +162,10 @@ class pdf_paiement extends CommonDocGenerator
 	 *	@param	int		$month			mois du rapport
 	 *	@param	int		$year			annee du rapport
 	 *	@param	?Translate	$outputlangs	Lang output object
+	 *  @param  int     $day            jour du rapport
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function write_file($_dir, $month, $year, $outputlangs)
+	public function write_file($_dir, $month, $year, $outputlangs, $day = 0)
 	{
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -181,6 +187,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		$this->month = $month;
 		$this->year = $year;
+		$this->day = $day;
 		$dir = $_dir.'/'.$year;
 
 		if (!is_dir($dir)) {
@@ -193,14 +200,15 @@ class pdf_paiement extends CommonDocGenerator
 
 		$month = sprintf("%02d", $month);
 		$year = sprintf("%04d", $year);
+		$day = sprintf("%02d", $day);
 
-		$file = $dir."/payments-".$year."-".$month.".pdf";
+		$file = $dir."/payments-".$year."-".$month.($this->day ? "-".$day : "").".pdf";
 		switch ($this->doc_type) {
 			case "client":
-				$file = $dir."/payments-".$year."-".$month.".pdf";
+				$file = $dir."/payments-".$year."-".$month.($this->day ? "-".$day : "").".pdf";
 				break;
 			case "fourn":
-				$file = $dir."/supplier_payments-".$year."-".$month.".pdf";
+				$file = $dir."/supplier_payments-".$year."-".$month.($this->day ? "-".$day : "").".pdf";
 				break;
 		}
 
@@ -237,7 +245,11 @@ class pdf_paiement extends CommonDocGenerator
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
 				break;
 		}
-		$sql .= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
+		if ($this->day) {
+			$sql .= " WHERE p.datep BETWEEN '".$this->db->idate(dol_mktime(0, 0, 0, (int) $month, (int) $day, (int) $year))."' AND '".$this->db->idate(dol_mktime(23, 59, 59, (int) $month, (int) $day, (int) $year))."'";
+		} else {
+			$sql .= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
+		}
 		$sql .= " AND p.entity = ".$conf->entity;
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -272,7 +284,11 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
-				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
+				if ($this->day) {
+					$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_mktime(0, 0, 0, (int) $month, (int) $day, (int) $year))."' AND '".$this->db->idate(dol_mktime(23, 59, 59, (int) $month, (int) $day, (int) $year))."'";
+				} else {
+					$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
+				}
 				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
@@ -310,7 +326,11 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
-				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
+				if ($this->day) {
+					$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_mktime(0, 0, 0, (int) $month, (int) $day, (int) $year))."' AND '".$this->db->idate(dol_mktime(23, 59, 59, (int) $month, (int) $day, (int) $year))."'";
+				} else {
+					$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
+				}
 				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}

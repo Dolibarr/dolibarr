@@ -13,7 +13,7 @@
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2024	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2015-2016	Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023		Nick Fragoulis
@@ -1353,7 +1353,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				// NOTE: Pb with situation invoice
+				// NOTE: Pb with situation invoice when INVOICE_USE_SITUATION=1 (legacy mode)
 				// NOTE: fields total on situation invoice are stored as cumulative values on total of lines (bad) but delta on invoice total
 				// NOTE: fields total on credit note are stored as delta both on total of lines and on invoice total (good)
 				// NOTE: fields situation_percent on situation invoice are stored as cumulative values on lines (bad)
@@ -2311,8 +2311,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
-			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
@@ -2425,10 +2425,11 @@ if (empty($reshook)) {
 		if (isset($desc) && isset($depth)) {
 			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
 		} else {
+			$result = -1;
 			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
 		}
 
-		if (isset($result) && $result >= 0) {
+		if ($result >= 0) {
 			$ret = $object->fetch($object->id); // Reload to get new records
 			$object->fetch_thirdparty();
 
@@ -2818,6 +2819,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				/* Disable strange code that use $lines[$i] that is not defined
 				'@phan-var-force CommonObjectLine[] $lines';
 				// Add batchinfo if the detail_batch array is defined
 				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && getDolGlobalString('INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS')) {
@@ -2826,6 +2828,7 @@ if (empty($reshook)) {
 						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
 					}
 				}
+				*/
 
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
@@ -2833,6 +2836,7 @@ if (empty($reshook)) {
 				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $situation_percent, 0, $fk_unit, (float) $pu_ht_devise);
 
 				if ($result > 0) {
+					$ret = $object->fetch($id); // Reload to get new records
 					// Define output language and generate document
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
@@ -2849,8 +2853,6 @@ if (empty($reshook)) {
 							$outputlangs->load('products');
 						}
 						$model = $object->model_pdf;
-						$ret = $object->fetch($id); // Reload to get new records
-
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -3276,6 +3278,7 @@ if (empty($reshook)) {
 			);
 
 			if ($result >= 0) {
+				$ret = $object->fetch($id); // Reload to get new records
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
@@ -3291,8 +3294,6 @@ if (empty($reshook)) {
 						$outputlangs->setDefaultLang($newlang);
 						$outputlangs->load('products');
 					}
-
-					$ret = $object->fetch($id); // Reload to get new records
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
@@ -3338,6 +3339,10 @@ if (empty($reshook)) {
 		}
 		if (GETPOST('all_progress') != "") {
 			$all_progress = GETPOSTFLOAT('all_progress');
+			if ($all_progress > 100) {
+				$all_progress = 100;
+			}
+
 			foreach ($object->lines as $line) {
 				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					$percent = $line->getAllPrevProgress($object->id);
@@ -3353,7 +3358,7 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else {
-					$object->update_percent($line, GETPOSTFLOAT('all_progress'), false);
+					$object->update_percent($line, $all_progress, false);
 				}
 			}
 			$object->update_price(1);
@@ -3913,11 +3918,13 @@ if ($action == 'create') {
 		}
 
 		// Ref
+		/*
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="2">';
 		print $langs->trans("Draft");
 		print '</td>';
 		print '</tr>'."\n";
+		*/
 
 		// Thirdparty
 		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
@@ -4055,9 +4062,11 @@ if ($action == 'create') {
 		// Standard invoice
 		print '<div class="listofinvoicetype"><div class="">';
 		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOSTINT('type') ? '' : ' checked').'> ';
-		$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
+		$tmp .= '<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk");
+		$tmp .= ' <span class="opacitymedium">'.$langs->trans("InvoiceStandardAsk2").'</span>';
+		$tmp .= '</label>';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
+		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc").'<br><br>'.$langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
 		print $desc;
 		if ((($origin == 'propal') || ($origin == 'commande')) && (!empty($originid))) {
 			/*print '<td class="nowrap" style="padding-left: 5px">';
@@ -4370,12 +4379,14 @@ if ($action == 'create') {
 		}
 
 		// Template invoice
+		/*
 		print '<div class="listofinvoicetype"><div class="">';
 		$tmp = '<input type="radio" name="type" id="radio_template" value="0" disabled> ';
 		$text = $tmp.'<label class="opacitymedium" for="radio_template">'.$langs->trans("RepeatableInvoice").'</label> ';
 		$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3, 'templateonsmartphone');
 		print $desc;
 		print '</div></div>'."\n";
+		*/
 
 		print '</div><br>';
 
@@ -5204,12 +5215,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne produit
+	// Confirm deletion of product line
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 	}
 
-	// Confirmation de la suppression d'une ligne subtotal
+	// Confirm deletion of subtotal line
 	if ($action == 'ask_subtotal_deleteline') {
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
@@ -5618,10 +5629,10 @@ if ($action == 'create') {
 		}
 		print '</td></tr></table>';
 		print '</td><td>';
-		$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
+		$liststatus = Facture::ARRAY_OF_DISPUTE_STATUS;
 		if ($action != 'editdispute_status') {
 			if ($object->dispute_status) {
-				print $langs->trans($liststatus[$object->dispute_status]);
+				print $langs->trans($liststatus[$object->dispute_status]['label']);
 			}
 		} else {
 			print '<form enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/compta/facture/card.php" method="POST">';
@@ -6625,7 +6636,7 @@ if ($action == 'create') {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
-						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
+						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&origin=' . $object->element . '&originid=' . $object->id . '&socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
 					}
 				}
 			}
@@ -6684,7 +6695,7 @@ if ($action == 'create') {
 			}
 
 			// Request a direct debit order
-			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0) {
+			if ($object->status > Facture::STATUS_DRAFT && $object->paye == 0) {
 				if ($resteapayer > 0) {
 					if ($usercancreatewithdrarequest) {
 						if (!$objectidnext && $object->close_code != 'replaced') { 				// Not replaced by another invoice
@@ -6795,7 +6806,7 @@ if ($action == 'create') {
 			}
 
 			// Create next situation invoice
-			if ($usercancreate && ($object->type == 5) && ($object->status == 1 || $object->status == 2)) {
+			if ($usercancreate && $object->isSituationInvoice() && ($object->status == 1 || $object->status == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create&type=5&origin=facture&originid='.$object->id.'&socid='.$object->socid.'" >'.$langs->trans('CreateNextSituationInvoice').'</a>';
 				} elseif (!$object->is_last_in_cycle()) {

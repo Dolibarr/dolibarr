@@ -2,6 +2,7 @@
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1152,6 +1153,9 @@ class EmailCollector extends CommonObject
 		$searchfilterreplyto = 0;
 		$searchfilterexcludebodyarray = array();
 		$searchfilterexcludesubjectarray = array();
+		$searchfilterexcludeemailarray = array();
+		$searchfilterexcludedomainarray = array();
+		$searchfilterexcludeemailmap = array();
 		$operationslog = '';
 		$rulesreplyto = array();
 		$connectstringsource = '';
@@ -1185,6 +1189,23 @@ class EmailCollector extends CommonObject
 
 		$sourcedir = $this->source_directory;
 		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
+
+		// Avoid long blocks on IMAP operations (applies to native IMAP and Webklex/php-imap).
+		$timeoutconnect = (int) getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5);
+		if ($timeoutconnect <= 0) {
+			$timeoutconnect = 5;
+		}
+		$timeoutread = (int) getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 20);
+		if ($timeoutread <= 0) {
+			$timeoutread = 20;
+		}
+		if (function_exists('imap_timeout')) {
+			imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect); // timeout seems ignored with ssl connect
+			imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+			imap_timeout(IMAP_WRITETIMEOUT, 5);
+			imap_timeout(IMAP_CLOSETIMEOUT, 5);
+			$this->debuginfo .= 'IMAP timeouts: connect='.$timeoutconnect.'s, read='.$timeoutread.'s<br>';
+		}
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			if ($this->acces_type == 1) {
@@ -1371,6 +1392,63 @@ class EmailCollector extends CommonObject
 					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
+				if ($rule['type'] == 'excludeemail') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[0] as $tmpemail) {
+									$tmpemail = strtolower(trim($tmpemail));
+									if ($tmpemail !== '') {
+										$searchfilterexcludeemailarray[] = $tmpemail;
+									}
+								}
+							}
+						}
+					}
+					continue;
+				}
+				if ($rule['type'] == 'excludedomain') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[1] as $tmpdomain) {
+									$tmpdomain = strtolower(trim($tmpdomain));
+									$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+									if ($tmpdomain !== '') {
+										$searchfilterexcludedomainarray[] = $tmpdomain;
+									}
+								}
+								continue;
+							}
+
+							$tmpdomain = strtolower($tmpvalue);
+							$tmpdomain = preg_replace('/^mailto:/i', '', $tmpdomain);
+							$tmpdomain = trim($tmpdomain);
+							$tmpdomain = trim($tmpdomain, "<> \t\n\r\0\x0B.,;");
+							if (strpos($tmpdomain, '@') === 0) {
+								$tmpdomain = substr($tmpdomain, 1);
+							}
+							$posat = strrpos($tmpdomain, '@');
+							if ($posat !== false) {
+								$tmpdomain = substr($tmpdomain, $posat + 1);
+							}
+							$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+							if ($tmpdomain !== '') {
+								$searchfilterexcludedomainarray[] = $tmpdomain;
+							}
+						}
+					}
+					continue;
+				}
+
 				if ($rule['type'] == 'from') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);
 					if (count($tmprulevaluearray) >= 2) {
@@ -1491,7 +1569,7 @@ class EmailCollector extends CommonObject
 				//$search.=($search?' ':'').'SINCE 8-Apr-2022';
 			}
 
-			dol_syslog("IMAP search string = ".var_export($criteria, true));
+			dol_syslog("IMAP search string = ".formatLogObject($criteria));
 			$search = var_export($criteria, true);
 		} else {
 			// Use native IMAP functions
@@ -1510,6 +1588,63 @@ class EmailCollector extends CommonObject
 					$not = 'NOT ';
 					// Then remove the ! from the string for next filters
 					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
+				}
+
+				if ($rule['type'] == 'excludeemail') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[0] as $tmpemail) {
+									$tmpemail = strtolower(trim($tmpemail));
+									if ($tmpemail !== '') {
+										$searchfilterexcludeemailarray[] = $tmpemail;
+									}
+								}
+							}
+						}
+					}
+					continue;
+				}
+				if ($rule['type'] == 'excludedomain') {
+					$tmpvalues = preg_split('/[\\r\\n,;]+/', (string) $rule['rulevalue']);
+					if (is_array($tmpvalues)) {
+						foreach ($tmpvalues as $tmpvalue) {
+							$tmpvalue = trim((string) $tmpvalue);
+							if ($tmpvalue === '') continue;
+
+							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
+								foreach ($tmpmatches[1] as $tmpdomain) {
+									$tmpdomain = strtolower(trim($tmpdomain));
+									$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+									if ($tmpdomain !== '') {
+										$searchfilterexcludedomainarray[] = $tmpdomain;
+									}
+								}
+								continue;
+							}
+
+							$tmpdomain = strtolower($tmpvalue);
+							$tmpdomain = preg_replace('/^mailto:/i', '', $tmpdomain);
+							$tmpdomain = trim($tmpdomain);
+							$tmpdomain = trim($tmpdomain, "<> \t\n\r\0\x0B.,;");
+							if (strpos($tmpdomain, '@') === 0) {
+								$tmpdomain = substr($tmpdomain, 1);
+							}
+							$posat = strrpos($tmpdomain, '@');
+							if ($posat !== false) {
+								$tmpdomain = substr($tmpdomain, $posat + 1);
+							}
+							$tmpdomain = trim($tmpdomain, ". \t\n\r\0\x0B");
+							if ($tmpdomain !== '') {
+								$searchfilterexcludedomainarray[] = $tmpdomain;
+							}
+						}
+					}
+					continue;
 				}
 
 				if ($rule['type'] == 'from') {
@@ -1636,11 +1771,20 @@ class EmailCollector extends CommonObject
 			dol_syslog("IMAP search string = ".$search);
 		}
 
+		if (!empty($searchfilterexcludeemailarray)) {
+			$searchfilterexcludeemailarray = array_values(array_filter(array_unique($searchfilterexcludeemailarray)));
+			$searchfilterexcludeemailmap = array_fill_keys($searchfilterexcludeemailarray, true);
+		}
+		if (!empty($searchfilterexcludedomainarray)) {
+			$searchfilterexcludedomainarray = array_values(array_filter(array_unique($searchfilterexcludedomainarray)));
+		}
+
 		$nbemailprocessed = 0;
 		$nbemailok = 0;
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 		$arrayofemail = array();
+		$Query = 0;
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP') && is_object($client)) {
 			try {
@@ -1654,10 +1798,13 @@ class EmailCollector extends CommonObject
 
 				$f = $client->getFolders(false, $tmpsourcedir);	// Note the search of directory do a search on sourcedir*
 				if ($f) {
-					$folder = $f[0];
-					if ($folder instanceof Webklex\PHPIMAP\Folder) {
-						$Query = $folder->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
-					} else {
+					foreach ($f as $_f) {
+						if ($_f->path == $this->source_directory && $_f instanceof Webklex\PHPIMAP\Folder) {
+							$Query = $_f->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+						}
+					}
+					// @phpstan-ignore-line
+					if (empty($Query)) {
 						$error++;
 						$this->error = "Source directory ".$sourcedir." not found";
 						$this->errors[] = $this->error;
@@ -1918,20 +2065,28 @@ class EmailCollector extends CommonObject
 					}
 				}
 				if ($searchfilterisnotanswer > 0) {
-					if (!empty($headers['In-Reply-To'])) {
-						// Note: we can have
-						// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewritten)
-						$isanswer = 0;
-						if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
+					// Note: "In-Reply-To" to detect if mail is an answer is not reliable because we can have:
+					// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (for example a transfer rewritten)
+					$isanswer = 0;
+					if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
+						$isanswer = 1;
+					}
+					// By default, ignore generic non-empty References to avoid false positives from
+					// automated platform notifications. This option restores legacy behavior.
+					if (!$isanswer && getDolGlobalInt('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES') && !empty($headers['References'])) {
+						$isanswer = 1;
+					}
+					if (!$isanswer && getDolGlobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
+						if (!empty($headers['In-Reply-To'])) {
 							$isanswer = 1;
 						}
-						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
-						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
-						if ($isanswer) {
-							$nbemailprocessed++;
-							dol_syslog(" Discarded - Email is an answer");
-							continue; // Exclude email
-						}
+					}
+					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
+					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
+					if ($isanswer) {
+						$nbemailprocessed++;
+						dol_syslog(" Discarded - Email is an answer");
+						continue; // Exclude email
 					}
 				}
 				if ($searchfilterreplyto > 0) {
@@ -2101,7 +2256,7 @@ class EmailCollector extends CommonObject
 					}
 					$subject = $this->decodeSMTPSubject((string) ($overview['subject'] ?? ''));
 				} else {
-					$fromstring = $overview[0]->from;
+					$fromstring = (string) $overview[0]->from;
 					$replytostring = (!empty($overview['in_reply-to']) ? $overview['in_reply-to'] : (!empty($headers['Reply-To']) ? $headers['Reply-To'] : "")) ;
 
 					$sender = !empty($overview[0]->sender) ? $overview[0]->sender : '';
@@ -2109,7 +2264,7 @@ class EmailCollector extends CommonObject
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
 					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
-					$subject = $overview[0]->subject;
+					$subject = (string) $overview[0]->subject;
 				}
 
 				if (!empty($searchfilterexcludesubjectarray)) {
@@ -2138,6 +2293,70 @@ class EmailCollector extends CommonObject
 					$replyto = $replytostring;
 					$replytotext = '';
 				}
+
+				if (!empty($searchfilterexcludeemailmap) || !empty($searchfilterexcludedomainarray)) {
+					$emailsToCheck = array();
+					$tmpaddressblob = trim($fromstring.' '.$replytostring);
+					if ($tmpaddressblob !== '' && preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpaddressblob, $tmpmatches)) {
+						foreach ($tmpmatches[0] as $tmpEmail) {
+							$tmpEmail = strtolower(trim($tmpEmail));
+							if ($tmpEmail !== '') {
+								$emailsToCheck[$tmpEmail] = true;
+							}
+						}
+					}
+
+					if (empty($emailsToCheck)) {
+						foreach (array($from, $replyto) as $tmpEmail) {
+							$tmpEmail = strtolower(trim((string) $tmpEmail));
+							if ($tmpEmail !== '' && strpos($tmpEmail, '@') !== false) {
+								$emailsToCheck[$tmpEmail] = true;
+							}
+						}
+					}
+
+					$discardEmail = '';
+					$discardDomain = '';
+					$matchedDomainRule = '';
+
+					foreach (array_keys($emailsToCheck) as $tmpEmail) {
+						if (!empty($searchfilterexcludeemailmap[$tmpEmail])) {
+							$discardEmail = $tmpEmail;
+							break;
+						}
+
+						if (!empty($searchfilterexcludedomainarray)) {
+							$posat = strrpos($tmpEmail, '@');
+							if ($posat === false) {
+								continue;
+							}
+							$tmpDomain = strtolower(substr($tmpEmail, $posat + 1));
+							foreach ($searchfilterexcludedomainarray as $excludedDomain) {
+								if ($excludedDomain === '') {
+									continue;
+								}
+								if ($tmpDomain === $excludedDomain || substr($tmpDomain, -strlen('.'.$excludedDomain)) === '.'.$excludedDomain) {
+									$discardDomain = $tmpDomain;
+									$matchedDomainRule = $excludedDomain;
+									break 2;
+								}
+							}
+						}
+					}
+
+					if ($discardEmail !== '' || $discardDomain !== '') {
+						$nbemailprocessed++;
+						if ($discardEmail !== '') {
+							$operationslog .= '<br>Discarded - Sender email excluded: '.$discardEmail;
+							dol_syslog(" Discarded - Sender email excluded: ".$discardEmail);
+						} else {
+							$operationslog .= '<br>Discarded - Sender domain excluded: '.$discardDomain.($matchedDomainRule !== '' && $matchedDomainRule !== $discardDomain ? ' (matched '.$matchedDomainRule.')' : '');
+							dol_syslog(" Discarded - Sender domain excluded: ".$discardDomain.($matchedDomainRule !== '' && $matchedDomainRule !== $discardDomain ? " (matched ".$matchedDomainRule.")" : ""));
+						}
+						continue;
+					}
+				}
+
 				$fk_element_id = 0;
 				$fk_element_type = '';
 
@@ -2794,6 +3013,7 @@ class EmailCollector extends CommonObject
 									if (!empty($contact_static->email) && $contact_static->email != $from) {
 										$from = $contact_static->email;
 									}
+									$from = (string) $from;
 
 									$from = (string) $from;
 
@@ -3619,7 +3839,7 @@ class EmailCollector extends CommonObject
 
 								'actionparam' =>  $operation['actionparam'],
 
-								'thirdpartyid' => $thirdpartyid,
+								'thirdpartyid' => ($thirdpartyid ? $thirdpartyid : $thirdpartystatic->id),
 								'objectid' => $objectid,
 								'objectemail' => $objectemail,
 
@@ -4055,7 +4275,7 @@ class EmailCollector extends CommonObject
 			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
 		}
 
-		return $subject;
+		return (string) $subject;
 	}
 
 	/**

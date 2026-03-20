@@ -8,12 +8,12 @@ jobs:
     secrets: inherit
     with:
       gh_event: ${{ github.event_name }}
-  #phan:
-  #  uses: ./.github/workflows/phan.yml
-  #  secrets: inherit
-  #  needs: [pre-commit]
-  #  with:
-  #    gh_event: ${{ github.event_name }}
+  phan:
+    uses: ./.github/workflows/phan.yml
+    secrets: inherit
+    needs: [pre-commit]
+    with:
+      gh_event: ${{ github.event_name }}
   phpstan:
     uses: ./.github/workflows/phpstan.yml
     secrets: inherit
