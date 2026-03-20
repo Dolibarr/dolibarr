@@ -143,6 +143,9 @@ document.addEventListener('Dolibarr:Init', function () {
 				const contentEl = dialogEl.querySelector('.dol-dialog-content');
 				contentEl.innerHTML = typeof param.content === 'function' ? param.content(triggerData) : param.content;
 
+				// Trigger initNewContent manually on a jQuery container
+				Dolibarr.initNewContent(contentEl, true);
+
 				const staticFooter = contentEl.querySelector('.dol-dialog-footer');
 				if (staticFooter) {
 					if (param.footer !== null) {
@@ -189,6 +192,9 @@ document.addEventListener('Dolibarr:Init', function () {
 								});
 							});
             			}
+
+						// Trigger initNewContent manually on a jQuery container
+						Dolibarr.initNewContent(contentEl, true);
 
 						// Move the AJAX footer only if no JS footer is defined
 						const ajaxFooter = contentEl.querySelector('.dol-dialog-footer');
