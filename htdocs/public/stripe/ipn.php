@@ -383,6 +383,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$objectType = $object->metadata->dol_type;
 	$TRANSACTIONID = $object->id;	// Example 'pi_123456789...'
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
@@ -535,7 +536,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
@@ -809,6 +810,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 	$object = $event->data->object;
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
@@ -881,7 +883,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$actioncomm->ip = getUserRemoteIP();
 		}
 
-		$actioncomm->note_private = 'Error returned on payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
+		$actioncomm->note_private = 'Stripe Sepa payment error received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '').' - Payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
 		$actioncomm->label = 'Payment error (SEPA Stripe)';
 
 		$result = $actioncomm->create($user);
@@ -1021,6 +1023,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$object = $event->data->object;
 	$TRANSACTIONID = $object->payment_intent;
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
@@ -1205,7 +1208,10 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 		$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = $object->id;	// A string like 'du_...'
-		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
+
+		$paiement->note_private = 'Stripe fund withdrawn message received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '');
+		$paiement->note_private .= ' - Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
+
 		$paiement->fk_account   = $accountfrom->id;
 
 		$paiement->ext_payment_id   = $object->payment_intent;

@@ -303,7 +303,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	if (empty($datepaid)) {
 		if (empty($ts_temppaid)) {
-			$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : dol_now();
+			$datepayment = (getDolGlobalString('MAIN_AUTOFILL_DATE') ? dol_now() : -1);
 		} else {
 			$datepayment = $ts_temppaid;
 		}
