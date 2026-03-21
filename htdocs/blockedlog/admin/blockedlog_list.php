@@ -200,7 +200,7 @@ $morehtmlcenter = '';
 $texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-if (userIsTaxAuditor()) {
+if (!userIsTaxAuditor()) {
 	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 	if (!isRegistrationDataSavedAndPushed()) {
 		$texttop = '';
