@@ -347,6 +347,24 @@ for ($i = 1; $i <= 12; $i++) {
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
+// Situation invoice compensation field (equivalent to get_prev_progress() used in lines.php)
+$total_ht_situation_field = $db->ifsql(
+    "f.situation_cycle_ref IS NOT NULL AND f.situation_cycle_ref > 0 AND fd.situation_percent > 0",
+    "fd.total_ht * (fd.situation_percent - COALESCE((
+		SELECT fdprev.situation_percent
+		FROM ".MAIN_DB_PREFIX."facturedet as fdprev
+		WHERE fdprev.rowid = fd.fk_prev_id
+	), 0) - COALESCE((
+		SELECT SUM(fdcn.situation_percent)
+		FROM ".MAIN_DB_PREFIX."facturedet as fdcn
+		INNER JOIN ".MAIN_DB_PREFIX."facture as fcn ON fcn.rowid = fdcn.fk_facture
+		WHERE fdcn.fk_prev_id = fd.fk_prev_id
+		AND fcn.situation_cycle_ref = f.situation_cycle_ref
+		AND fcn.type = ".Facture::TYPE_CREDIT_NOTE."
+	), 0)) / fd.situation_percent",
+    "fd.total_ht"
+);
+
 $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
@@ -354,10 +372,10 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((string) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((string) $j), $total_ht_situation_field, "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((string) $j), "1", "0").") AS nbmonth".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
-$sql .= "  SUM(fd.total_ht) as total, COUNT(fd.rowid) as nb";
+$sql .= "  SUM(".$total_ht_situation_field.") as total, COUNT(fd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
@@ -384,11 +402,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
-		//$situation_ratio = 1;
-		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-		//}
-
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
@@ -494,9 +507,9 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), $total_ht_situation_field, "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
-$sql .= "  SUM(fd.total_ht) as total";
+$sql .= "  SUM(".$total_ht_situation_field.") as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
@@ -524,11 +537,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		// TODO When INVOICE_USE_SITUATION = 1, values here are wrong. There is no compensation on bad stored amounts
-		//$situation_ratio = 1;
-		//if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-		//}
-
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300"'.(empty($row[1]) ? '' : ' title="'.dol_escape_htmltag($row[1]).'"').'>';
 		if ($row[0] == 'tobind') {
@@ -597,9 +605,9 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), $total_ht_situation_field, "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 	}
-	$sql .= "  SUM(fd.total_ht) as total";
+	$sql .= "  SUM(".$total_ht_situation_field.") as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 	$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
