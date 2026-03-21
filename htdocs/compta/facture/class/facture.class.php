@@ -5548,7 +5548,7 @@ class Facture extends CommonInvoice
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines, 'takepos'=Specimen for takepos module
+	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines, 'nonegativeup'=No negative unit price, 'takepos'=Specimen for takepos module
 	 *  @return	int
 	 */
 	public function initAsSpecimen($option = '')
@@ -5626,7 +5626,7 @@ class Facture extends CommonInvoice
 				$line->localtax1_tx = 0;
 				$line->localtax2_tx = 0;
 				$line->remise_percent = 0;
-				if ($xnbp == 1 && $option != 'takepos') {        // Qty is negative (product line)
+				if ($xnbp == 1 && $option != 'takepos' && $option != 'nonegativeup') {        // Qty is negative (product line)
 					$prodid = mt_rand(1, $num_prods);
 					if (isset($prodids[$prodid])) {
 						$line->fk_product = $prodids[$prodid];
@@ -5638,7 +5638,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ht = -200;
 					$line->multicurrency_total_ttc = -239.2;
 					$line->multicurrency_total_tva = -39.2;
-				} elseif ($xnbp == 2 && $option != 'takepos') {    // UP is negative (free line)
+				} elseif ($xnbp == 2 && $option != 'takepos' && $option != 'nonegativeup') {    // UP is negative (free line)
 					$line->subprice = -100;
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;

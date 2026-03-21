@@ -1,5 +1,5 @@
 BlockedLog=Immutable Logs
-BlockedLogDesc=This module tracks some events into an immutable log (that you can't modify once recorded) into a block chain, in real time. This module provides features for compatibility with legal requirements of some countries (Spain, France - Loi Finance, ...).
+BlockedLogDesc=This module tracks some events into an immutable log (that you can't modify once recorded) into a block chain, in real time. This module also provides features for compatibility with legal requirements of some countries (Spain, France - Loi Finance, ...).
 Fingerprints=Archived events and fingerprints
 FingerprintsDesc=This is the tool to browse or extract the immutable logs. Immutable Logs are generated and store into a dedicated table of the systel, in real time when a business event appears.
 ArchivesDesc=You can use this tool to export immutable logs into archive files. They are kept into the system but you should download and copy them into external supports.

@@ -631,7 +631,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					print '<td class="left">' . $product_thumbnail_html . '</td>';
 					$product_stock_info = "";
 					if (isModEnabled("stock") && ($user->hasRight("stock", "read"))) {
-						$product_stock_info = $langs->trans("Stock") . ": " . $prod->stock_reel;
+						$product_stock_info = "<br>" . $langs->trans("Stock") . ": " . $prod->stock_reel;
 					}
 
 					print '<td class="tdtop">' . dolPrintHTML($prod->label) . "<br>" . dolPrintHTML($prod->description) . $product_stock_info . "</td>\n";
