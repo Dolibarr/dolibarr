@@ -349,8 +349,8 @@ print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>'
 
 // Situation invoice compensation field (equivalent to get_prev_progress() used in lines.php)
 $total_ht_situation_field = $db->ifsql(
-    "f.situation_cycle_ref IS NOT NULL AND f.situation_cycle_ref > 0 AND fd.situation_percent > 0",
-    "fd.total_ht * (fd.situation_percent - COALESCE((
+	"f.situation_cycle_ref IS NOT NULL AND f.situation_cycle_ref > 0 AND fd.situation_percent > 0",
+	"fd.total_ht * (fd.situation_percent - COALESCE((
 		SELECT fdprev.situation_percent
 		FROM ".MAIN_DB_PREFIX."facturedet as fdprev
 		WHERE fdprev.rowid = fd.fk_prev_id
@@ -362,7 +362,7 @@ $total_ht_situation_field = $db->ifsql(
 		AND fcn.situation_cycle_ref = f.situation_cycle_ref
 		AND fcn.type = ".Facture::TYPE_CREDIT_NOTE."
 	), 0)) / fd.situation_percent",
-    "fd.total_ht"
+	"fd.total_ht"
 );
 
 $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
