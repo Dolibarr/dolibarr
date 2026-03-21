@@ -153,7 +153,8 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string, array{
+	 * @var array<string,array<string,mixed>>
+	 * @phpstan-var array<string, array{
 	 * type: string,
 	 * label: string,
 	 * enabled: int<0, 2>|string,
