@@ -7436,7 +7436,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	}
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
-	print '<div class="titre inline-block">';
+	print '<div class="titre inline-block nowrap">';
 	print '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '' && $totalnboflines > 0) {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="' . $langs->trans("NbRecordQualified") . '">(' . $totalnboflines . ')</span>';

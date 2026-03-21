@@ -4665,6 +4665,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	border-radius: 0.1em;
 }
+table.tagtable.liste.listwithfilterbefore {
+	margin-bottom: 8px;
+}
+table.noborder.boxtable {
+	margin-bottom: 2px;
+}
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 

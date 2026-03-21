@@ -4484,7 +4484,7 @@ class Form
 		if (!getDolGlobalString('PRODUCT_BEST_SUPPLIER_PRICE_PRESELECTED')) {
 			$sql .= " ORDER BY s.nom, pfp.ref_fourn DESC";
 		} else {
-			$sql .= " ORDER BY pfp.unitprice ASC";
+			$sql .= " ORDER BY pfp.unitprice - pfp.unitprice * pfp.remise_percent / 100 ASC";
 		}
 
 		dol_syslog(get_class($this) . "::select_product_fourn_price", LOG_DEBUG);

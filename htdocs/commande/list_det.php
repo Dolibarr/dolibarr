@@ -55,6 +55,7 @@ if (isModEnabled('margin')) {
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (isModEnabled('category')) {
@@ -367,6 +368,7 @@ $now = dol_now();
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formproduct = new FormProduct($db);
 $formmargin = null;
 if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
@@ -975,8 +977,6 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
-		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Warehouse');
 		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'minwidth300imp maxwidth300 widthcentpercentminusx');

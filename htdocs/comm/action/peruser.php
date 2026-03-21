@@ -587,7 +587,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" class="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
+	$s .= '<div class="nowrap inline-block minheight30 hideonsmartphone"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" class="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
 
 	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
