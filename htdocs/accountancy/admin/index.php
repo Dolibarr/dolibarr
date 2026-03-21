@@ -68,7 +68,16 @@ $formSetup = new FormSetup($db);
 // Main options
 $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
 
-$formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
+// Auxiliary account select mode
+$arrval = array(
+	'0' => $langs->trans("No"),
+	'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("FreeInput").'</span>',
+	'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+	'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+	'4' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
+);
+$item = $formSetup->newItem('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')->setAsSelect($arrval);
+$item->helpText = $langs->trans('UseSearchToSelectAuxAccountTooltip');
 
 $item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
 $item->helpText = $langs->trans('ACCOUNTING_MANAGE_ZERO2');
