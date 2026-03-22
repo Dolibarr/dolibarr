@@ -169,6 +169,9 @@ UxDolibarrContext = JS Dolibarr context
 UxDolibarrContextHowItWork = How it's work
 UxDolibarrContextLangsTool = Langs tool
 
+UxMenuTooltipTheme = Tooltips & themes
+TooltipThemesAndOrientation = Tooltip Themes and orientation
+
 # Start experiements menu title
 ExperimentalUxInputAjaxFeedback = Input feedback
 # End experiements manu tyile

@@ -1288,13 +1288,13 @@ if (empty($reshook)) {
 									0,
 									array(), // array_options
 									null,
-									$object->origin_type,
+									$object->origin_id,
 									0,
 									'',
 									0, // special_code
 									0,
-									0
-									//,$langs->trans('Deposit') //Deprecated
+									0,
+									$object->origin_type
 								);
 							}
 
@@ -2297,7 +2297,7 @@ if ($action == 'create') {
 		}
 
 		$datetmp = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-		$dateinvoice = ($datetmp == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOSTINT('echmonth'), GETPOSTINT('echday'), GETPOSTINT('echyear'));
 		$datedue = ($datetmp == '' ? -1 : $datetmp);
 
