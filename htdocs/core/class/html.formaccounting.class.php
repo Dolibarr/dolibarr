@@ -512,7 +512,7 @@ class FormAccounting extends Form
 
 		// MODE 0: free text input - no list, no autocomplete
 		if ($auxaccount_mode == 0) {
-			$out .= '<input type="text"'.' class="'.$morecss.'"'.' name="'.$htmlname.'"'.' id="'.$htmlname.'"'.' value="'.$selectid.'" />';
+			$out .= '<input type="text" class="'.$morecss.'" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selectid.'" />';
 			return $out;
 		}
 
