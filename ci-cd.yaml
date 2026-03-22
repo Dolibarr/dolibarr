@@ -1,0 +1,32 @@
+name: CI/CD Pipeline Dolibarr
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: phpstan, phpcs
+      - name: Run PHPStan
+        run: phpstan analyse htdocs --level=3 --no-progress || true
+      - name: Run PHP CodeSniffer
+        run: phpcs --standard=PSR12 htdocs/ || true
+
+  build:
+    name: Build Docker
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t dolibarr:test .
