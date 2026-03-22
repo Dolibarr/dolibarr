@@ -448,7 +448,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($objp->nature == 5 && isModEnabled('expensereport') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 						$nature = "expensereports";
 					}
-					if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
+					if ($objp->nature == 1 && ((isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice')))) {
 						$nature = "various";
 					}
 					if ($objp->nature == 8) {
