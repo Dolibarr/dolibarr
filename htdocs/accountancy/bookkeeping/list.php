@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
@@ -1027,19 +1027,12 @@ if (!empty($arrayfields['t.numero_compte']['checked'])) {
 // Subledger account
 if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	print '<td class="liste_titre">';
-	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-	// use setup of keypress to select thirdparty and this hang browser on large database.
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		print '<div class="nowrap">';
-		//print $langs->trans('From').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
-		print '</div>';
-		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
-		print '</div>';
-	} else {
-		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.dol_escape_htmltag($search_accountancy_aux_code).'">';
-	}
+	print '<div class="nowrap">';
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
+	print '</div>';
 	print '</td>';
 }
 // Label operation

@@ -192,4 +192,6 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_type varchar(10)  NUL
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(HolidayHrInformationsPreviousMonthContent)__:<br>__ARRAY_EMPLOYEE_STARTDAY_ENDDAY_DAYS__', null, 0);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
+
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 -- end of migration

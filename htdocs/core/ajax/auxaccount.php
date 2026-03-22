@@ -16,7 +16,7 @@
  */
 
 /**
- * \file        htdocs/accountancy/ajax/auxaccount.php
+ * \file        htdocs/core/ajax/auxaccount.php
  * \ingroup     Accountancy (Double entries)
  * \brief       Ajax endpoint to search auxiliary accounts (thirdparties + users)
  *              Called by select_auxaccount() when ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT >= 2
@@ -24,7 +24,7 @@
 
 // Minimum ajax defines
 if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
 }
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
@@ -35,8 +35,11 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+if (!defined('NOHEADERNOFOOTER')) {
+	define('NOHEADERNOFOOTER', '1');
+}
 
-require '../../../main.inc.php';
+require '../../main.inc.php';
 
 /**
  * @var Conf $conf
@@ -56,7 +59,7 @@ if (!isModEnabled('accounting')) {
 }
 
 $htmlname  = GETPOST('htmlname', 'aZ09') ?: 'account_num_aux';
-$searchkey = GETPOST($htmlname, 'alpha'); // ajax_autocompleter sends the search term using the htmlname as key
+$searchkey = GETPOST(str_replace('.', '_', $htmlname), 'alpha');
 $outjson   = GETPOSTINT('outjson');
 $limit     = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_SEARCH_LIMIT', 100);
 $minLength = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', 2) - 1;
