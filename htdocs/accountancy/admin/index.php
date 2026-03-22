@@ -70,11 +70,11 @@ $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
 
 // Auxiliary account select mode
 $arrval = array(
-	'0' => $langs->trans("No").' - <span class="opacitymedium">'.$langs->trans("FreeInput").'</span>',
-	'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("DropDownList").'</span>',
-	'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
-	'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
-	'4' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
+	(string) 0 => $langs->trans("No").' - <span class="opacitymedium">'.$langs->trans("FreeInput").'</span>',
+	(string) 1 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("DropDownList").'</span>',
+	(string) 2 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+	(string) 3 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+	(string) 4 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
 );
 $item = $formSetup->newItem('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
 $item->setAsSelect($arrval);
