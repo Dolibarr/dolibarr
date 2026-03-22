@@ -4962,7 +4962,8 @@ class Societe extends CommonObject
 		$this->prospect = 1;
 		$this->fournisseur = 1;
 		$this->tva_assuj = 1;
-		$this->tva_intra = 'EU1234567';
+		//$this->tva_intra = 'EU1234567';
+		$this->tva_intra = 'FR1234567';
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
 

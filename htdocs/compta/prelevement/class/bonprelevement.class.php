@@ -1158,7 +1158,7 @@ class BonPrelevement extends CommonObject
 			if ($obj) {
 				$thirdpartyBANId = $obj->fk_societe_rib;
 
-				dol_syslog(__METHOD__ . " Found an BAN ID to use: ".$thirdpartyBANId);
+				dol_syslog(__METHOD__ . " Found a BAN ID to use: ".$thirdpartyBANId);
 			}
 
 			$this->db->free($resql);
@@ -1285,13 +1285,15 @@ class BonPrelevement extends CommonObject
 
 			if (count($factures) > 0) {
 				foreach ($factures as $key => $fac) {
+					//var_dump($type, $format, $fac[8], $fac[12]);
+
 					// Check if $fac[8] s.nom is null
 					if ($fac[8] != null) {
 						if ($type != 'bank-transfer') {
-							if ($format == 'FRST' && $fac[12] != 'FRST') {
+							if ($format == 'FRST' && $fac[12] && $fac[12] != 'FRST') {
 								continue;
 							}
-							if ($format == 'RCUR' && $fac[12] != 'RCUR') {
+							if ($format == 'RCUR' && $fac[12] && $fac[12] != 'RCUR') {
 								continue;
 							}
 						}
@@ -1373,17 +1375,9 @@ class BonPrelevement extends CommonObject
 
 		// Withdraw invoices in factures_prev array
 		$out = count($factures_prev) . " invoices or salaries will be included.";
-		//print $out."\n";
 		dol_syslog($out);
 
-		// Return warning
-		/*$i=0;
-		 foreach ($this->thirdparty_in_error as $key => $val)
-		 {
-		 if ($i < 10) setEventMessages($val, null, 'warnings');
-		 else setEventMessages('More error were discarded...', null, 'warnings');
-		 $i++;
-		 }*/
+		//var_dump($factures_prev, $this->invoice_in_error, $this->thirdparty_in_error);exit;
 
 		if (count($factures_prev) > 0) {
 			if ($mode == 'real') {
