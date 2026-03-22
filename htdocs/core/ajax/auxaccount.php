@@ -67,7 +67,6 @@ $minLength = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', 2) -
 $results = array();
 
 if (strlen($searchkey) >= $minLength) {
-
 	// Search anywhere by default (use LIKE '%term%')
 	$prefix = getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_DONOTSEARCH_ANYWHERE') ? '' : '%';
 

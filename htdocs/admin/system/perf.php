@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin", "products", "mrp"));
+$langs->loadLangs(array("install", "other", "admin", "products", "mrp", "accountancy"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -656,12 +656,12 @@ if ($resql) {
 
 	if ($nb > $limitforoptim) {
 		if (!getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')) {
-			print img_picto('', 'warning', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("AuxiliaryAccounts"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
+			print img_picto('', 'warning', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
 		} else {
-			print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("AuxiliaryAccounts"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT'));
+			print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT'));
 		}
 	} else {
-		print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("AuxiliaryAccounts"));
+		print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"));
 	}
 	print '<br>';
 	$db->free($resql);

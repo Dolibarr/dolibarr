@@ -512,14 +512,13 @@ class FormAccounting extends Form
 
 		// MODE 0: free text input - no list, no autocomplete
 		if ($auxaccount_mode == 0) {
-			$out .= '<input type="text"'.' class="'.dol_escape_htmltag($morecss).'"'.' name="'.$htmlname.'"'.' id="'.$htmlname.'"'.' value="'.dol_escape_htmltag((string) $selectid).'" />';
+			$out .= '<input type="text"'.' class="'.$morecss.'"'.' name="'.$htmlname.'"'.' id="'.$htmlname.'"'.' value="'.$selectid.'" />';
 			return $out;
 		}
 
 		// MODES 2/3/4: ajax - on-demand loading via endpoint
 		// minLength: mode 2 -> 1 char, mode 3 -> 2 chars, etc
 		if (!empty($conf->use_javascript_ajax) && $auxaccount_mode >= 2) {
-
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 			$minLength = $auxaccount_mode - 1;
@@ -556,7 +555,7 @@ class FormAccounting extends Form
 			// Visible text input — targeted by ajax_autocompleter() JavaScript via "input#search_$htmlname"
 			$placeholder = (!empty($showempty) && !is_numeric($showempty)) ? $showempty : $langs->trans("Search");
 			$out .= '<input type="text"'
-				. ' class="'.dol_escape_htmltag($morecss).'"'
+				. ' class="'.$morecss.'"'
 				. ' name="search_'.$htmlname.'"'
 				. ' id="search_'.$htmlname.'"'
 				. ' value="'.dol_escape_htmltag($selected_input_value).'"'
