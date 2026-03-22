@@ -215,6 +215,7 @@ if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['t.lettering_code']);
 }
 
+/** @var int $error */
 $error = 0;
 
 if (!isModEnabled('accounting')) {

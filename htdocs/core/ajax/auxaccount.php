@@ -53,8 +53,8 @@ if (!$user->id) {
 	accessforbidden();
 }
 
-// Security — module must be enabled
-if (!isModEnabled('accounting')) {
+// Security
+if (!isModEnabled('accounting') || !$user->hasRight('accounting', 'mouvements', 'creer')) {
 	accessforbidden();
 }
 

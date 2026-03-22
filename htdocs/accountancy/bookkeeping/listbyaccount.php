@@ -242,6 +242,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+/** @var int $error */
 $error = 0;
 $result = -1; // For static analysis
 $documentlink = ''; // For static analysis
