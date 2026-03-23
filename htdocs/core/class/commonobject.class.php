@@ -10087,10 +10087,7 @@ abstract class CommonObject
 							$return .= '<div class="inline-block">';
 						}
 
-						$return .= '<img class="photo photowithmargin'.($addphotorefcss?' '.$addphotorefcss:'').'"'.
-							($maxHeight?' height="'.$maxHeight.'"':'').
-							' src="'.$url.'"'.
-							' title="External image">';
+						$return .= '<img class="photo photowithmargin'.($addphotorefcss?' '.$addphotorefcss:'').'"'.($maxHeight?' height="'.$maxHeight.'"':'').' src="'.$url.'" title="External image">';
 
 						if ($nbbyrow > 0) {
 							$return .= '</td>';
