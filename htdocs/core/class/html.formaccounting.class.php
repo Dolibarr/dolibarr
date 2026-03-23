@@ -582,49 +582,49 @@ class FormAccounting extends Form
 		$aux_account = array();
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
-			$aux_account += $this->options_cache[$usecache];
+			$aux_account += $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 		} else {
-			dol_syslog(get_class($this) . "::select_auxaccount", LOG_DEBUG);
+			dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 
-			// Fetch thirdparties accounting codes
+			// Auxiliary thirdparties account
 			$sql = "SELECT code_compta as code_compta_client, code_compta_fournisseur, nom as name";
-			$sql .= " FROM " . $this->db->prefix() . "societe";
-			$sql .= " WHERE entity IN (" . getEntity('societe') . ")";
+			$sql .= " FROM ".$this->db->prefix()."societe";
+			$sql .= " WHERE entity IN (".getEntity('societe').")";
 			$sql .= " AND (client IN (1,3) OR fournisseur = 1)";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					if (!empty($obj->code_compta_client)) {
-						$aux_account[$obj->code_compta_client] = $obj->code_compta_client . ' <span class="opacitymedium">(' . $obj->name . ')</span>';
+						$aux_account[$obj->code_compta_client] = $obj->code_compta_client.' <span class="opacitymedium">('.$obj->name.')</span>';
 					}
 					if (!empty($obj->code_compta_fournisseur)) {
-						$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur . ' <span class="opacitymedium">(' . $obj->name . ')</span>';
+						$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';
 					}
 				}
 			} else {
-				$this->error = "Error " . $this->db->lasterror();
-				dol_syslog(get_class($this) . "::select_auxaccount " . $this->error, LOG_ERR);
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 				return -1;
 			}
 			$this->db->free($resql);
 
-			// Fetch users accountancy codes
+			// Auxiliary user account
 			$sql = "SELECT DISTINCT accountancy_code, lastname, firstname";
-			$sql .= " FROM " . $this->db->prefix() . "user";
-			$sql .= " WHERE entity IN (" . getEntity('user') . ")";
+			$sql .= " FROM ".$this->db->prefix()."user";
+			$sql .= " WHERE entity IN (".getEntity('user').")";
 			$sql .= " ORDER BY accountancy_code";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					if (!empty($obj->accountancy_code)) {
-						$aux_account[$obj->accountancy_code] = $obj->accountancy_code . ' <span class="opacitymedium">(' . dolGetFirstLastname($obj->firstname, $obj->lastname) . ')</span>';
+						$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
 					}
 				}
 			} else {
-				$this->error = "Error " . $this->db->lasterror();
-				dol_syslog(get_class($this) . "::select_auxaccount " . $this->error, LOG_ERR);
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 				return -1;
 			}
 			$this->db->free($resql);
