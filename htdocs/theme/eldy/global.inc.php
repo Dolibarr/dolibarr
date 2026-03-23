@@ -680,6 +680,9 @@ div.userimg.notfirst {
 }
 .dateborderleft {
 }
+.center.inline-block.dateheight {
+	line-height: 1.1em;
+}
 .smallheight {
 	line-height: 1em;
 }

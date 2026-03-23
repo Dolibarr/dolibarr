@@ -1890,6 +1890,10 @@ if ($resql) {
 			if ($obj->warehouse > 0) {
 				print img_picto('', 'stock', 'class="paddingrightonly"');
 			}
+			if (!is_object($formproduct)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+				$formproduct = new FormProduct($db);
+			}
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'], $obj->warehouse, 'none');
 			print "</td>\n";
 			if (!$i) {

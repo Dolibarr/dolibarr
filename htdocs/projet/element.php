@@ -12,6 +12,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
  * Copyright (C) 2026		Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2026  		Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1466,6 +1467,8 @@ foreach ($listofreferent as $key => $value) {
 
 				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
 					print '<tr class="oddeven tr_canceled">';
+				} elseif ($key == "order_supplier" && ($element->billed)) {
+					print '<tr class="oddeven tr_paid">';
 				} else {
 					print '<tr class="oddeven" >';
 				}

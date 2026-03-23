@@ -1220,7 +1220,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 	// Prof Id 1
-	if (!empty($fromcompany->idprof1) && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+	if (!empty($fromcompany->idprof1) && ($fromcompany->country_code != 'FR' || (empty($fromcompany->idprof2) || strpos($fromcompany->idprof2, $fromcompany->idprof1) !== 0))) {
 		$field = $outputlangs->transcountrynoentities("ProfId1", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];

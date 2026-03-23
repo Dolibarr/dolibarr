@@ -770,27 +770,27 @@ class PropaleLigne extends CommonObjectLine
 
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql .= " description='".$this->db->escape($this->desc)."'";
-		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-		$sql .= ", product_type=".$this->product_type;
+		$sql .= " description = '".$this->db->escape($this->desc)."'";
+		$sql .= ", label = ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
+		$sql .= ", product_type = ".((int) $this->product_type);
 		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
 		$sql .= ", tva_tx='".price2num($this->tva_tx)."'";
 		$sql .= ", localtax1_tx=".price2num($this->localtax1_tx);
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-		$sql .= ", qty='".price2num($this->qty)."'";
-		$sql .= ", subprice=".price2num($this->subprice);
-		$sql .= ", remise_percent=".price2num($this->remise_percent);
-		$sql .= ", price=".(float) price2num($this->price); // TODO A virer
-		$sql .= ", remise=".(float) price2num($this->remise); // TODO A virer
-		$sql .= ", info_bits='".$this->db->escape((string) $this->info_bits)."'";
+		$sql .= ", qty = ".((float) price2num($this->qty));
+		$sql .= ", subprice = ".price2num($this->subprice);
+		$sql .= ", remise_percent = ".price2num($this->remise_percent);
+		$sql .= ", price = ".(float) price2num($this->price); // TODO A virer
+		$sql .= ", remise = ".(float) price2num($this->remise); // TODO A virer
+		$sql .= ", info_bits = '".$this->db->escape((string) $this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
-			$sql .= ", total_ht=".price2num($this->total_ht);
-			$sql .= ", total_tva=".price2num($this->total_tva);
-			$sql .= ", total_ttc=".price2num($this->total_ttc);
-			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
-			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
+			$sql .= ", total_ht = ".price2num($this->total_ht);
+			$sql .= ", total_tva = ".price2num($this->total_tva);
+			$sql .= ", total_ttc = ".price2num($this->total_ttc);
+			$sql .= ", total_localtax1 = ".price2num($this->total_localtax1);
+			$sql .= ", total_localtax2 = ".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
