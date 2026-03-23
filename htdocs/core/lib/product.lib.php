@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,6 +387,7 @@ function product_admin_prepare_head()
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
+	$extrafields->fetch_name_optionals_label('product_lang');
 	$extrafields->fetch_name_optionals_label('product_price');
 	$extrafields->fetch_name_optionals_label('product_customer_price');
 	$extrafields->fetch_name_optionals_label('product_fournisseur_price');
@@ -423,6 +424,18 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	// Multilangs Extrafields
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lang_extrafields.php');
+		$head[$h][1] = $langs->trans("TranslationsExtrafields");
+		$nbExtrafields = isset($extrafields->attributes['product_lang']['count']) ? $extrafields->attributes['product_lang']['count'] : 0;
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'translationAttributes';
+		$h++;
+	}
+
 	// Extrafields for price levels
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_price_extrafields.php');
@@ -435,7 +448,7 @@ function product_admin_prepare_head()
 		$h++;
 	}
 
-	//Extrafields for price per customer
+	// Extrafields for price per customer
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php');
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
