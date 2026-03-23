@@ -140,15 +140,13 @@ llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
 $titre = $langs->trans($tablib[$id]);
 print load_fiche_titre($titre, '', 'setup');
 
-// --- CORRECTION TICKET 1 : LIBELLE ---
 print '<div class="info">'.img_info().' '.$langs->trans("AccountingAccountGroupsDesc").'</div>';
-//print '<div class="warning"><span style="color:red; font-weight:bold;">'.img_warning().' Attention :</span> L\'activation de cette configuration va supprimer les groupes et comptes comptables déjà présents. Veuillez faire une sauvegarde de votre base de données.</div><br>';
 
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?rowid='.$rowid.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
-// Liste
+// List
 $sql = "SELECT a.rowid, a.code, a.label, a.range_account, a.category_type, a.formula, a.position, a.active, c.code as country_code";
 $sql .= " FROM ".$db->sanitize($tabname[$id])." as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid";
@@ -175,7 +173,7 @@ print '<td>'.$langs->trans("Position").'</td>';
 print '<td>'.$langs->trans("Country").'</td>';
 print '<td></td><td></td></tr>';
 
-// Ligne ajout
+// Line add
 print '<tr class="oddeven"><td><input type="text" name="code" class="width75"></td>';
 print '<td><input type="text" name="label" class="maxwidth150"></td>';
 print '<td><input type="text" name="range_account" class="maxwidth150"></td>';
