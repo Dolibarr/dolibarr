@@ -54,7 +54,7 @@ if (!$user->id) {
 }
 
 // Security
-if (!isModEnabled('accounting') || !$user->hasRight('accounting', 'mouvements', 'creer')) {
+if (!isModEnabled('accounting') || !$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
