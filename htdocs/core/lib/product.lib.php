@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,14 +172,14 @@ function product_prepare_head($object)
 			$h++;
 		}
 	}
-	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && !getDolGlobalString('MAIN_DISABLE_PRODUCT_CONTACTS_TAB')) {
 		$objectsrc = $object;
 		if ($object->origin == 'product' && $object->origin_id > 0) {
 			$objectsrc = new Product($db);
 			$objectsrc->fetch($object->origin_id);
 		}
 		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT."/product/contact.php?id=".$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
