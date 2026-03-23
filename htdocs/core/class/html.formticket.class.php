@@ -1707,6 +1707,7 @@ class FormTicket
 
 			// Recipients / adressed-to
 			$parameters = array();
+			$action = '';
 			$reshook = $hookmanager->executeHooks('printFieldTicketEmailTo', $parameters, $this, $action);
 			if (empty($reshook)) {
 				print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
