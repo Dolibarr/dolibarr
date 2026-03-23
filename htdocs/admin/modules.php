@@ -875,7 +875,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		});
 	});
 	</script>';
-	
+
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
