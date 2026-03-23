@@ -3101,7 +3101,7 @@ class ActionComm extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
 		if ($usermodid > 0) {
-			$sql .= ", fk_user_mod = ".$usermodid;
+			$sql .= ", fk_user_mod = ".((int) $usermodid);
 		}
 		$sql .= " WHERE id = ".((int) $id);
 
