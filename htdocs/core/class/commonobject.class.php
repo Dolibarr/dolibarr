@@ -7,10 +7,10 @@
  * Copyright (C) 2012-2015  Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2016       Bahfir abbes        <bafbes@gmail.com>
  * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
- * Copyright (C) 2017-2019  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2017-2026  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
@@ -7072,7 +7072,7 @@ abstract class CommonObject
 			// - multipts => "MULTIPOINT(0 0, 20 20, 60 60)"
 			// - linestrg => "LINESTRING(0 0, 10 10, 20 25, 50 60)"
 			// - polygon  => "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-			$sqlColumnValues[$key] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
+			$sqlColumnValues[$attributeKey] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
 		}
 
 		$this->db->begin();
@@ -10006,6 +10006,7 @@ abstract class CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 
 		$sortfield = 'position_name';
 		$sortorder = 'asc';
@@ -10052,6 +10053,64 @@ abstract class CommonObject
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir, $this);
 		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
+
+		$useLinkPathPhoto = false;
+
+		if (getDolGlobalInt('PRODUCT_USE_LINK_PATH_FOR_PHOTO')) {
+			$link = new Link($this->db);
+			$links = array();
+			$link->fetchAll($links, 'product', $this->id);
+
+			if (count($links) > 0)
+				$useLinkPathPhoto = true;
+
+			if ($useLinkPathPhoto) {
+				// Start table or div based on nbbyrow
+				if ($nbbyrow > 0) {
+					$return .= '<table class="valigntop center centpercent" style="border:0; padding:2px; border-spacing:2px; border-collapse: separate;">';
+				}
+
+				$i = 0;
+				foreach ($links as $link) {
+					if (!empty($link->url) && preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $link->url)) {
+						$url = dol_escape_htmltag($link->url);
+						$i++;
+						$nbphoto++;
+
+						if ($nbbyrow > 0 && ($i % $nbbyrow == 1)) {
+							$return .= '<tr class="center valignmiddle">';
+						}
+
+						if ($nbbyrow > 0) {
+							$return .= '<td style="width:'.ceil(100/$nbbyrow).'%" class="photo">';
+						} else {
+							$return .= '<div class="inline-block">';
+						}
+
+						$return .= '<img class="photo photowithmargin'.($addphotorefcss?' '.$addphotorefcss:'').'"'.($maxHeight?' height="'.$maxHeight.'"':'').' src="'.$url.'" title="External image">';
+
+						if ($nbbyrow > 0) {
+							$return .= '</td>';
+							if ($i % $nbbyrow == 0) {
+								$return .= '</tr>';
+							}
+						} else {
+							$return .= '</div>';
+						}
+					}
+				}
+
+				if ($nbbyrow > 0) {
+					while ($i % $nbbyrow) {
+						$return .= '<td style="width:'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$i++;
+					}
+					if ($nbphoto) {
+						$return .= '</table>';
+					}
+				}
+			}
+		}
 
 		if (count($filearray)) {
 			if ($sortfield && $sortorder) {

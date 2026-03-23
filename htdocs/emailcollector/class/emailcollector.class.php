@@ -3684,7 +3684,7 @@ class EmailCollector extends CommonObject
 										$sender_contact = new Contact($this->db);
 										$sender_contact->fetch(0, null, '', $from);
 										if (!empty($sender_contact->id)) {
-											$tickettocreate->context['contactid'] = $sender_contact->id;
+											$tickettocreate->context['contact_id'] = $sender_contact->id;
 										}
 
 										$result = $tickettocreate->create($user);

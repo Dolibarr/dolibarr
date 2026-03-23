@@ -75,10 +75,7 @@ function user_prepare_head(User $object)
 	$h++;
 
 	if (isModEnabled('agenda')) {
-		if (!getDolGlobalString('AGENDA_EXT_NB')) {
-			$conf->global->AGENDA_EXT_NB = 5;
-		}
-		$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
+		$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 6);
 
 		$i = 1;
 		$nbagenda = 0;

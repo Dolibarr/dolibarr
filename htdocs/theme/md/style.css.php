@@ -3389,6 +3389,11 @@ div.tmenucenter
 {
 	padding-left: 0px;
 	padding-right: 0px;
+	max-width: 95px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--colortextbackhmenu);
 	<?php if ($disableimages) { ?>
 	padding-top: 10px;
 	height: 26px;
@@ -3396,7 +3401,6 @@ div.tmenucenter
 	padding-top: 2px;
 	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
-	width: 100%;
 }
 div.menu_titre {
 	padding-bottom: 5px;
@@ -4660,6 +4664,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	margin: 0px 0px 20px 0px;
 
 	border-radius: 0.1em;
+}
+table.tagtable.liste.listwithfilterbefore {
+	margin-bottom: 8px;
+}
+table.noborder.boxtable {
+	margin-bottom: 2px;
 }
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
@@ -6407,11 +6417,11 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_today         { /* background: #FDFDF0; */ border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser { /* background: #FDFDF0; */ border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser_peruserleft { /* background: #FDFDF0; */ border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_impair { /* background: #FDFDF0; */ }
 .cal_past          { }
 .cal_peruser         { padding: 0px; height: 22px !important; }
 .cal_peruserviewname { max-width: 140px; height: 22px !important; }
-.cal_impair        { background: #F8F8F8; }
-.cal_today_peruser_impair { background: #F8F8F0; }
+.cal_impair        { background: #FBFBFB; }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
 div.event { margin-top: 4px; margin-bottom: 4px; margin-left: 2px; margin-right: 2px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
@@ -9286,4 +9296,14 @@ if (is_object($db)) {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
+}
+
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }

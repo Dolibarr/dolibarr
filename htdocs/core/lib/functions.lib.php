@@ -9,7 +9,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
@@ -3428,7 +3428,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if ($conf->browser->layout == 'phone') {
 			$maxvisiblephotos = 1;
 		}
-		if ($showimage) {
+		$useLinkPathPhoto = getDolGlobalInt('PRODUCT_USE_LINK_PATH_FOR_PHOTO');
+		if ($showimage || $useLinkPathPhoto) {
 			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">' . $object->show_photos('product', $conf->product->multidir_output[$entity], 1, $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '') . '</div>';
 		} else {
 			if (getDolGlobalString('PRODUCT_NODISPLAYIFNOPHOTO')) {
@@ -7436,7 +7437,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	}
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
-	print '<div class="titre inline-block">';
+	print '<div class="titre inline-block nowrap">';
 	print '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '' && $totalnboflines > 0) {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="' . $langs->trans("NbRecordQualified") . '">(' . $totalnboflines . ')</span>';
@@ -10631,6 +10632,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
 							}
@@ -10830,6 +10835,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
+
+		$substitutionarray['__DEPOSIT_PERCENT__'] = is_object($object) ? $object->deposit_percent : '';
+		$substitutionarray['__DEPOSIT_AMOUNT__'] = is_object($object) ? price2num($object->total_ttc * ($object->deposit_percent / 100), 'MT') : '';
 
 		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? price2num($object->total_ttc - $already_payed_all, 'MT') : '';
 
