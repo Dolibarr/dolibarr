@@ -1294,8 +1294,8 @@ class Propal extends CommonObject
 		$sql .= ", ".(!isDolTms($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
-		$sql .= ", ".$this->availability_id;
-		$sql .= ", ".$this->demand_reason_id;
+		$sql .= ", ".((int) $this->availability_id);
+		$sql .= ", ".((int) $this->demand_reason_id);
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
@@ -3523,11 +3523,9 @@ class Propal extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		$clause = " WHERE";
-
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		$sql .= $clause." p.entity IN (".getEntity('propal').")";
+		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
 		}
@@ -3707,12 +3705,11 @@ class Propal extends CommonObject
 		global $user;
 
 		$this->nb = array();
-		$clause = "WHERE";
 
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		$sql .= " ".$clause." p.entity IN (".getEntity('propal').")";
+		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
