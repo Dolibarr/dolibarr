@@ -1534,14 +1534,6 @@ if ($action == 'create') {
 		$object->fetch_lines();
 		// Show object lines
 		if (!empty($object->lines)) {
-			$canchangeproduct = 1;
-			// To set ref for getNomURL function
-			foreach ($object->lines as $line) {
-				$line->ref = $line->label;
-				$line->product_label = $line->label;
-				$line->subprice = $line->pu_ht;
-			}
-
 			global $canchangeproduct;
 			$canchangeproduct = 0;
 

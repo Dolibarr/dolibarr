@@ -802,7 +802,7 @@ class FactureFournisseurRec extends CommonInvoice
 		*/
 
 		$sql = 'SELECT l.rowid,';
-		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref, l.label, l.description as line_desc,';
+		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref as ref_supplier, l.label, l.description as line_desc,';
 		$sql .= ' l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except, l.vat_src_code, l.tva_tx,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc, total_localtax1, total_localtax2,';
@@ -831,11 +831,16 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->fk_facture_fourn         = $objp->fk_facture_fourn;
 				$line->fk_parent                = $objp->fk_parent_line;
 				$line->fk_product               = $objp->fk_product;
-				$line->ref_supplier             = $objp->ref;
+				$line->ref                		= $objp->product_ref; // Ref of product
+				$line->product_ref         		= $objp->product_ref; // Ref of product
+				$line->product_label       		= $objp->product_label;
+				$line->product_desc       		= $objp->product_desc;
+				$line->ref_supplier             = $objp->ref_supplier;
 				$line->label                    = $objp->label;
 				$line->description              = $objp->line_desc;
 				$line->desc                     = $objp->line_desc;
 				$line->pu_ht                    = $objp->pu_ht;
+				$line->subprice                 = $objp->pu_ht;
 				$line->pu_ttc                   = $objp->pu_ttc;
 				$line->qty                      = $objp->qty;
 				$line->remise_percent           = $objp->remise_percent;

@@ -221,6 +221,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					} elseif (!empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
 						$sendto = $object->thirdparty->email;
+					} elseif (!empty($object->origin_email)) {
+						$sendto = $object->origin_email;
 					}
 
 					if ($sendto) {

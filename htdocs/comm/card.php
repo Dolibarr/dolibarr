@@ -1112,7 +1112,7 @@ if ($object->id > 0) {
 	 *   Latest shipments
 	 */
 	if (isModEnabled("shipping") && $user->hasRight('expedition', 'lire')) {
-		$param = 'entity=' . ((int) $objp->entity);
+		$param = '';
 
 		$sql = 'SELECT e.rowid as id';
 		$sql .= ', e.ref, e.entity, e.fk_projet';
@@ -1150,6 +1150,8 @@ if ($object->id > 0) {
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
+
+				$param = 'entity=' . ((int) $objp->entity);
 
 				$sendingstatic->id = $objp->id;
 				$sendingstatic->ref = $objp->ref;
