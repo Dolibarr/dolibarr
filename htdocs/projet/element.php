@@ -1464,7 +1464,7 @@ foreach ($listofreferent as $key => $value) {
 
 				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
 					print '<tr class="oddeven tr_canceled">';
-				} else if ($key == "order_supplier" && ($element->billed)) {
+				} elseif ($key == "order_supplier" && ($element->billed)) {
 					print '<tr class="oddeven tr_paid">';
 				} else {
 					print '<tr class="oddeven" >';
