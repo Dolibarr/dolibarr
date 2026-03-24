@@ -858,6 +858,15 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 	}
 
+	/**
+	 * Check that qty to ship does not exceed remaining qty on order line.
+	 * Sets $this->error if check fails.
+	 *
+	 * @param  int   $fk_elementdet   rowid of order line (commandedet)
+	 * @param  float $qty             quantity to check
+	 * @param  int   $exclude_line_id rowid of current expeditiondet to exclude (0 for insert)
+	 * @return bool  true if OK, false if exceeded
+	 */
 	private function checkQtyVsOrderLine(int $fk_elementdet, float $qty, int $exclude_line_id): bool
 	{
 		global $langs;
