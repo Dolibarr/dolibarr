@@ -408,7 +408,6 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (getDolGlobalString('STOCK_EXPEDITION_NO_MORE_THAN_ORDER') && !empty($this->fk_elementdet) && !empty($this->fk_expedition)) {
 			$this->checkQtyVsOrderLine($this->fk_elementdet, $this->qty, 0);
-			// 0 = pas de ligne à exclure (insertion)
 			if (!empty($this->error)) {
 				$this->db->rollback();
 				return -5;
