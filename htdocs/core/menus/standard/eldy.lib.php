@@ -1736,8 +1736,9 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			//$permtoshowmenu = (isModEnabled('accounting') || $user->hasRight('accounting',  'bind', 'write') || $user->hasRight('compta',  'resultat', 'lire'));
 			//$newmenu->add("/accountancy/index.php?leftmenu=accountancy", $langs->trans("MenuAccountancy"), 0, $permtoshowmenu, '', $mainmenu, 'accountancy');
 
-			// Configuration
-			$newmenu->add("/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Setup"), 0, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin', 1, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
+			// Entry to expand/see all configuration menus
+			$newmenu->add("/accountancy/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Setup"), 0, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin', 1, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
+
 			if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/', $leftmenu)) {
 				global $mysoc;
 				$newmenu->add("/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("General"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_general', 10);

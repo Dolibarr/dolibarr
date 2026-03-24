@@ -192,4 +192,14 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_type varchar(10)  NUL
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(HolidayHrInformationsPreviousMonthContent)__:<br>__ARRAY_EMPLOYEE_STARTDAY_ENDDAY_DAYS__', null, 0);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
+
+create table llx_product_lang_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_fk_object(fk_object);
+
 -- end of migration
