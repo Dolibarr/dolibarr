@@ -395,6 +395,7 @@ class modProduct extends DolibarrModules
 			$keyforselect = 'product_price';
 			$keyforelement = 'product';
 			$keyforaliasextra = 'extra';
+			global $keyforselect, $keyforelement, $keyforaliasextra;
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
 
