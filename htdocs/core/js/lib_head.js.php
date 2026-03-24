@@ -924,7 +924,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 				})
 				.addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
-			var widgetInstance = input.data("ui-autocomplete");
+			const widgetInstance = input.data("ui-autocomplete");
 			if (widgetInstance) {
 				widgetInstance._renderItem = function( ul, item ) {
 					return $("<li>")

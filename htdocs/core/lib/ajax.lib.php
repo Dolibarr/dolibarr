@@ -279,7 +279,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     					}
     					,delay: 500
 					});
-					var widgetData = $("input#search_'.$htmlnamejquery.'").data("'.$dataforrenderITem.'");
+					const widgetData = $("input#search_'.$htmlnamejquery.'").data("'.$dataforrenderITem.'");
 					if (widgetData) {
 						widgetData._renderItem = function( ul, item ) {
 							return $("<li>")
