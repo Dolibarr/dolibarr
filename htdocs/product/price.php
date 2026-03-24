@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Mélina Joum				<melina.joum@altairis.fr>
@@ -546,18 +546,19 @@ if (empty($reshook)) {
 						$db->free($resql);
 					}
 					if (!empty($lineid->rowid)) {
+						require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+						$genericObject = new GenericObject($db);
+						// We need to force table to update product_price extrafields
+						$genericObject->id = $lineid->rowid;
+						$genericObject->table_element = 'product_price';
 						foreach ($price_extralabels as $code => $label) {
 							$code_array = GETPOST($code, 'array');
-							$object->array_options['options_'.$code] = $code_array[$key];
+							$genericObject->array_options['options_'.$code] = $code_array[$key];
 						}
-						// We need to force table to update product_price and not product extrafields
-						$object->id = $lineid->rowid;
-						$object->table_element = 'product_price';
-						$result = $object->insertExtraFields();
-						// Back to product table
-						$object->id = $id;
-						$object->table_element = 'product';
+						$result = $genericObject->insertExtraFields();
+
 						if ($result < 0) {
+							setEventMessages($genericObject->error, $genericObject->errors, 'errors');
 							$error++;
 						}
 					}
