@@ -5067,7 +5067,7 @@ if ($action == 'create') {
 					break;
 				default:
 					// Other error
-					setEventMessages($langs->trans("DisabledBecauseNotErasable").(empty($object->error) ? '' : ': '.$object->error), null, 'errors');
+					setEventMessages($langs->trans("DisabledBecauseNotEditable").(empty($object->error) ? ': UnknownReason' : ': '.$object->error), null, 'errors');
 					break;
 			}
 			$oktomodif = 0;
@@ -6886,7 +6886,7 @@ if ($action == 'create') {
 			} elseif ($isErasable == -1) {
 				$htmltooltip = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
 			} elseif ($isErasable <= 0) {	// Any other cases
-				$htmltooltip = $langs->trans('DisabledBecauseNotErasable');
+				$htmltooltip = $langs->trans('DisabledBecauseNotErasable').(empty($object->error) ? ': UnknownReason' : ': '.$object->error);
 			} elseif ($objectidnext) {
 				$htmltooltip = $langs->trans('DisabledBecauseReplacedInvoice');
 			}

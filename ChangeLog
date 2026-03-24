@@ -3,6 +3,25 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 23.0.0 compared to 22.0 *****
+
+For users:
+----------
+NEW: Need PHP 7.2 as minimum version
+NEW: Module "Advanced stock transfer" is moved with status stable.
+
+
+For developers:
+---------------
+
+
+WARNING:
+--------
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* ...
+
+
+
 ***** ChangeLog for 23.0.1 compared to 23.0.0 *****
 
 FIX: Removed SQL error on install process.
