@@ -142,7 +142,11 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+// Permissions
+$permissiontoread = $user->hasRight('accounting', 'mouvements', 'lire');
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$permissiontoexport = $user->hasRight('accounting', 'mouvements', 'export');
 
 
 /*
@@ -352,7 +356,7 @@ if ($action != 'export') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 
-		$newcardbutton .= dolGetButtonTitle($langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')', '', 'fa fa-file-csv paddingleft', $_SERVER['PHP_SELF'], 'exportcsvbutton', 1, array('morecss' => 'marginleftonly'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')', '', 'fa fa-file-csv paddingleft', $_SERVER['PHP_SELF'], 'exportcsvbutton', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -368,7 +372,7 @@ if ($action != 'export') {
 		});
 		</script>';
 
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'], 'exportpdfbutton', 1, array('morecss' => 'marginleftonly'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'], 'exportpdfbutton', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
