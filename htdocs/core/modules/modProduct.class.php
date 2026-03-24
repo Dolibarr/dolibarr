@@ -392,10 +392,10 @@ class modProduct extends DolibarrModules
 			$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
 			$this->export_sql_end[$r] .= ' AND pr.date_price = (SELECT MAX(pr2.date_price) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity IN ('.getEntity('product').'))'; // export only latest prices not full history
 			// $this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
+			global $keyforselect, $keyforelement, $keyforaliasextra;
 			$keyforselect = 'product_price';
 			$keyforelement = 'product';
 			$keyforaliasextra = 'extra';
-			global $keyforselect, $keyforelement, $keyforaliasextra;
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
 
