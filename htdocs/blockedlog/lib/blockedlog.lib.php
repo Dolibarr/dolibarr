@@ -369,14 +369,16 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 /**
  * Call remote API service to push the last counter and signature
  *
- * @param 	int		$id					Last counter ID/value
- * @param 	string	$signature			Signature
- * @param	int		$test				Add property test to 1 if it is for test
- * @param 	int		$previousid			Last counter ID/value
- * @param 	string	$previoussignature	Signature
- * @return	int							Return <0 if KO, 0 if nothing done, >0 if OK
+ * @param 	int		$id						Counter ID/value of ne record
+ * @param 	string	$signature				Signature of new record
+ * @param	int		$datecreation			Date creation of new record
+ * @param	int		$test					Add property test to 1 if it is for test
+ * @param 	int		$previousid				Counter ID/value of previous record
+ * @param 	string	$previoussignature		Signature of previous record
+ * @param	int		$previousdatecreation	Date creation of previous record
+ * @return	int								Return <0 if KO, 0 if nothing done, >0 if OK
  */
-function callApiToPushCounter($id, $signature, $test, $previousid, $previoussignature)
+function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid, $previoussignature, $previousdatecreation)
 {
 	global $mysoc, $conf;
 
@@ -391,7 +393,7 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 		$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
 
 		$t = microtime(true);
-		$micro = sprintf("%06d", (int) ($t - floor($t)) * 1000000);
+		$micro = sprintf("%06d", (int) (($t - floor($t)) * 1000000));
 
 		$data = '';
 		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
@@ -407,8 +409,10 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 
 		$data .= '&lastrowid='.(int) $id;
 		$data .= '&lastsignature='.urlencode($signature);
+		$data .= '&lastdatecreation='.urlencode(dol_print_date($datecreation, 'standard', 'gmt'));
 		$data .= '&previousrowid='.(int) $previousid;
 		$data .= '&previoussignature='.urlencode($previoussignature);
+		$data .= '&previousdatecreation='.urlencode(dol_print_date($previousdatecreation, 'standard', 'gmt'));
 		if ($test) {
 			$data .= '&test=1';
 		}

@@ -872,7 +872,7 @@ if ($id > 0 || $ref) {
 					$sql  = "SELECT";
 					$sql .= " fk_object";
 					foreach ($extralabels as $key => $value) {
-						$sql .= ", ".$key;
+						$sql .= ", ".$db->sanitize($key);
 					}
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
 					$sql .= " WHERE fk_object = ".((int) $rowid);
@@ -1310,7 +1310,7 @@ if ($id > 0 || $ref) {
 						$sql  = "SELECT";
 						$sql .= " fk_object";
 						foreach ($extralabels as $key => $value) {
-							$sql .= ", ".$key;
+							$sql .= ", ".$db->sanitize($key);
 						}
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
 						$sql .= " WHERE fk_object = ".((int) $productfourn->product_fourn_price_id);
