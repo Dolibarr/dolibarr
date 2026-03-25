@@ -110,10 +110,11 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 				$finalAction = 'update_selected_tasks_deadline';
 			}
 			$rowCount = count($tasksById) + 1;
-			$modalBodyHeight = min(620, max(220, 56 + ($rowCount * 34)));
-			$modalHeight = min(760, $modalBodyHeight + 170);
-			$formquestion = array();
-			$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
+				$modalBodyHeight = min(620, max(220, 56 + ($rowCount * 34)));
+				$modalHeight = min(760, $modalBodyHeight + 170);
+				$formquestion = array();
+				$formquestion[] = array('type' => 'hidden', 'name' => 'massaction', 'value' => $finalAction);
+				$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
 
 			if ($finalAction == 'update_selected_tasks_progress') {
 				$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'"><table class="noborder centpercent">';

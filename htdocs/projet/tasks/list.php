@@ -274,6 +274,8 @@ if (empty($reshook)) {
 	$effectiveMassAction = '';
 	if (in_array($action, array('close_selected_tasks', 'update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
 		$effectiveMassAction = $action;
+	} elseif (in_array($massaction, array('update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
+		$effectiveMassAction = $massaction;
 	} elseif ($massaction == 'close_selected_tasks' && GETPOST('confirmmassaction', 'alpha')) {
 		$effectiveMassAction = $massaction;
 	}
