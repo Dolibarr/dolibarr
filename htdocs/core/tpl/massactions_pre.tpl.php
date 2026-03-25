@@ -95,10 +95,12 @@ if ($massaction == 'preclonetasks') {
 }
 
 if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_selected_tasks_start_date', 'preupdate_selected_tasks_deadline'), true) && is_object($objecttmp) && $objecttmp->element == 'project_task') {
+	dol_syslog(__FILE__." render pre-massaction modal for massaction='".$massaction."' selected=".count((array) $toselect), LOG_WARNING);
 	if (!$user->hasRight('projet', 'creer')) {
 		setEventMessages($langs->trans('ErrorNotEnoughPermissions'), null, 'errors');
 	} else {
 		$tasksById = $objecttmp->getAuthorizedTasksForMassAction($user, $toselect);
+		dol_syslog(__FILE__." pre-massaction authorized tasks=".count($tasksById), LOG_WARNING);
 		if (empty($tasksById)) {
 			setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
 		} else {

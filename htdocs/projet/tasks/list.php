@@ -273,7 +273,7 @@ if (empty($reshook)) {
 
 	$effectiveMassAction = '';
 	$massactiontaskfinal = GETPOST('massactiontaskfinal', 'aZ09');
-	dol_syslog(__FILE__." massaction='".$massaction."' action='".$action."' confirm='".$confirm."' massactiontaskfinal='".$massactiontaskfinal."'", LOG_DEBUG);
+	dol_syslog(__FILE__." massaction='".$massaction."' action='".$action."' confirm='".$confirm."' massactiontaskfinal='".$massactiontaskfinal."'", LOG_WARNING);
 	if (in_array($action, array('close_selected_tasks', 'update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
 		$effectiveMassAction = $action;
 	} elseif (in_array($massactiontaskfinal, array('update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
@@ -292,7 +292,7 @@ if (empty($reshook)) {
 			}
 		}
 		$tasksById = $object->getAuthorizedTasksForMassAction($user, $toselectpost);
-		dol_syslog(__FILE__." effectiveMassAction='".$effectiveMassAction."' selected=".count($toselectpost)." authorized=".count($tasksById), LOG_DEBUG);
+		dol_syslog(__FILE__." effectiveMassAction='".$effectiveMassAction."' selected=".count($toselectpost)." authorized=".count($tasksById), LOG_WARNING);
 		if (empty($tasksById)) {
 			setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
 		} else {
@@ -303,6 +303,7 @@ if (empty($reshook)) {
 				$task = new Task($db);
 				if ($task->fetch($taskId) <= 0) {
 					$error++;
+					dol_syslog(__FILE__." fetch failed for taskId=".$taskId, LOG_WARNING);
 					$task->error = empty($task->error) ? $langs->trans('ErrorRecordNotFound') : $task->error;
 					$task->errors[] = $task->error;
 					continue;
@@ -351,6 +352,7 @@ if (empty($reshook)) {
 
 				if ($task->update($user) <= 0) {
 					$error++;
+					dol_syslog(__FILE__." update failed for taskId=".$taskId." error=".$task->error, LOG_WARNING);
 					if (!empty($task->errors)) {
 						setEventMessages('', $task->errors, 'errors');
 					} else {
@@ -358,6 +360,7 @@ if (empty($reshook)) {
 					}
 				} else {
 					$done++;
+					dol_syslog(__FILE__." update success for taskId=".$taskId." action=".$effectiveMassAction, LOG_WARNING);
 				}
 			}
 
@@ -384,6 +387,8 @@ if (empty($reshook)) {
 
 		$action = 'list';
 		$massaction = '';
+	} else {
+		dol_syslog(__FILE__." no effective mass action resolved (massaction='".$massaction."', action='".$action."', confirm='".$confirm."', massactiontaskfinal='".$massactiontaskfinal."')", LOG_WARNING);
 	}
 }
 
