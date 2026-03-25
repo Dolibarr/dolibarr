@@ -111,8 +111,14 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 			} else {
 				$finalAction = 'update_selected_tasks_deadline';
 			}
-			$rowCount = count($tasksById) + 1;
-				$modalBodyHeight = min(620, max(220, 56 + ($rowCount * 34)));
+				$rowCount = count($tasksById);
+				$isDateAction = ($finalAction != 'update_selected_tasks_progress');
+				$taskRowsHeight = $rowCount * 34;
+				$tableHeaderHeight = 34;
+				$updateTasksRowHeight = ($isDateAction ? 36 : 0);
+				$confirmQuestionRowHeight = 34;
+				$computedBodyHeight = $taskRowsHeight + $tableHeaderHeight + $updateTasksRowHeight + $confirmQuestionRowHeight;
+				$modalBodyHeight = min(700, max(220, $computedBodyHeight));
 				$modalHeight = min(760, $modalBodyHeight + 170);
 				$formquestion = array();
 				$currentProjectId = GETPOSTINT('id');
@@ -186,7 +192,7 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 						var targetModalHeight = parseInt(jqWrapper.attr("data-modal-height"), 10) || 520;
 						var maxModalHeight = Math.max(220, jQuery(window).height() - 100);
 						var finalModalHeight = Math.min(targetModalHeight, maxModalHeight);
-							var finalBodyHeight = Math.max(120, Math.min(targetBodyHeight + 10, finalModalHeight - 150));
+							var finalBodyHeight = Math.max(120, Math.min(targetBodyHeight, finalModalHeight - 150));
 						jqDialogContent.css("max-height", finalBodyHeight + "px");
 						jqDialogContent.css("overflow-y", "auto");
 						jqDialogContent.dialog("option", "height", finalModalHeight);
