@@ -109,22 +109,25 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 			} else {
 				$finalAction = 'update_selected_tasks_deadline';
 			}
+			$rowCount = count($tasksById) + 1;
+			$modalBodyHeight = min(620, max(220, 56 + ($rowCount * 34)));
+			$modalHeight = min(760, $modalBodyHeight + 170);
 			$formquestion = array();
 			$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
 
 			if ($finalAction == 'update_selected_tasks_progress') {
-				$tablehtml = '<table class="noborder centpercent">';
+				$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'"><table class="noborder centpercent">';
 				$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="right">'.$langs->trans('Progress').'</th></tr>';
 				foreach ($tasksById as $taskId => $taskDb) {
 					$inputname = 'task_progress_'.$taskId;
 					$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
 					$tablehtml .= '<td class="right"><input type="text" class="flat right width75" maxlength="6" id="'.dol_escape_htmltag($inputname).'" name="'.dol_escape_htmltag($inputname).'" value="'.((string) min(100, max(0, (int) $taskDb->progress))).'"> %</td></tr>';
 				}
-				$tablehtml .= '</table>';
+				$tablehtml .= '</table></div>';
 				$formquestion[] = array('type' => 'other', 'name' => 'task_progress', 'label' => '', 'value' => $tablehtml);
 				$titleform = $langs->trans('MassActionUpdateSelectedTasksProgress');
 			} else {
-				$tablehtml = '<table class="noborder centpercent">';
+				$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'"><table class="noborder centpercent">';
 				$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="center">'.$langs->trans('DateHour').'</th><th class="center">'.$langs->trans('MassActionKeepTaskDuration').'</th></tr>';
 				foreach ($tasksById as $taskId => $taskDb) {
 					$datetimeName = 'task_datetime_'.$taskId;
@@ -139,12 +142,39 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 					$tablehtml .= '<td class="center"><input type="datetime-local" class="flat" id="'.dol_escape_htmltag($datetimeName).'" name="'.dol_escape_htmltag($datetimeName).'" value="'.dol_escape_htmltag($datetimevalue).'"></td>';
 					$tablehtml .= '<td class="center"><input type="checkbox" class="flat" id="'.dol_escape_htmltag($keepdurationname).'" name="'.dol_escape_htmltag($keepdurationname).'" value="1"></td></tr>';
 				}
-				$tablehtml .= '</table>';
+				$tablehtml .= '</table></div>';
 				$formquestion[] = array('type' => 'other', 'name' => 'task_datetime', 'label' => '', 'value' => $tablehtml);
 				$titleform = ($finalAction == 'update_selected_tasks_start_date' ? $langs->trans('MassActionUpdateSelectedTasksStartDate') : $langs->trans('MassActionUpdateSelectedTasksDeadline'));
 			}
 
-			print $form->formconfirm($_SERVER['PHP_SELF'], $titleform, $langs->trans('MassActionTaskPopupDescription'), $finalAction, $formquestion, '', 1, 500, 800, 0, 'Validate', 'Cancel');
+			print $form->formconfirm($_SERVER['PHP_SELF'], $titleform, $langs->trans('MassActionTaskPopupDescription'), $finalAction, $formquestion, '', 1, $modalHeight, 800, 0, 'Validate', 'Cancel');
+			print '<script nonce="'.getNonce().'">
+				(function() {
+					function adjustProjectTaskMassactionModal() {
+						var jqWrapper = jQuery("#project_task_massaction_modal_wrapper");
+						if (!jqWrapper.length) {
+							return;
+						}
+						var jqDialogContent = jqWrapper.closest(".ui-dialog-content");
+						if (!jqDialogContent.length || typeof jqDialogContent.dialog !== "function") {
+							return;
+						}
+						var targetBodyHeight = parseInt(jqWrapper.attr("data-body-height"), 10) || 320;
+						var targetModalHeight = parseInt(jqWrapper.attr("data-modal-height"), 10) || 520;
+						var maxModalHeight = Math.max(220, jQuery(window).height() - 100);
+						var finalModalHeight = Math.min(targetModalHeight, maxModalHeight);
+						var finalBodyHeight = Math.max(120, Math.min(targetBodyHeight, finalModalHeight - 150));
+						jqDialogContent.css("max-height", finalBodyHeight + "px");
+						jqDialogContent.css("overflow-y", "auto");
+						jqDialogContent.dialog("option", "height", finalModalHeight);
+						jqDialogContent.dialog("option", "position", { my: "center", at: "center", of: window });
+					}
+					jQuery(document).ready(function() {
+						adjustProjectTaskMassactionModal();
+						jQuery(window).on("resize", adjustProjectTaskMassactionModal);
+					});
+				})();
+			</script>';
 		}
 	}
 }
