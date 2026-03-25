@@ -71,15 +71,11 @@
 @phan-var-force string $search_all
 ';
 
-if (!isset($taskstatic) || !is_object($taskstatic)) {
+if (!is_object($taskstatic ?? null)) {
 	$taskstatic = null;
 }
-if (!isset($trackid)) {
-	$trackid = '';
-}
-if (!isset($modelmail)) {
-	$modelmail = '';
-}
+$trackid = (string) ($trackid ?? '');
+$modelmail = (string) ($modelmail ?? '');
 
 if (!empty($sall) || !empty($search_all)) {
 	$search_all = empty($sall) ? $search_all : $sall;
