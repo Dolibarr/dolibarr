@@ -98,7 +98,7 @@ if ($massaction == 'preclonetasks') {
 if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_selected_tasks_start_date', 'preupdate_selected_tasks_deadline'), true) && is_object($objecttmp) && $objecttmp->element == 'project_task') {
 	dol_syslog(__FILE__." render pre-massaction modal for massaction='".$massaction."' selected=".count((array) $toselect), LOG_WARNING);
 	if (!$user->hasRight('projet', 'creer')) {
-		setEventMessages($langs->trans('ErrorNotEnoughPermissions'), null, 'errors');
+		setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
 	} else {
 		$tasksById = $objecttmp->getAuthorizedTasksForMassAction($user, $toselect);
 		dol_syslog(__FILE__." pre-massaction authorized tasks=".count($tasksById), LOG_WARNING);
@@ -152,7 +152,7 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 					$tablehtml .= '<input type="button" class="button button-small smallpaddingimp" id="apply_global_task_datetime" value="'.dol_escape_htmltag($langs->trans('Apply')).'">';
 					$tablehtml .= '</div>';
 					$tablehtml .= '<table class="noborder centpercent">';
-					$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="center">'.$langs->trans('DateHour').'</th><th class="center">'.$langs->trans('MassActionKeepTaskDuration').'</th></tr>';
+					$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="center">'.$langs->trans('DateHour').'</th><th class="center">'.$langs->trans('Duration').'</th></tr>';
 					foreach ($tasksById as $taskId => $taskDb) {
 						$datetimeName = 'task_datetime_'.$taskId;
 						$keepdurationname = 'keep_duration_'.$taskId;
@@ -162,11 +162,11 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 							$currenttimestamp = (!empty($taskDb->dateo) ? (int) $db->jdate($taskDb->dateo) : dol_now());
 						} else {
 							$currenttimestamp = (!empty($taskDb->datee) ? (int) $db->jdate($taskDb->datee) : dol_now());
-					}
-					$datetimevalue = dol_print_date($currenttimestamp, '%Y-%m-%dT%H:%M');
-					$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
-					$tablehtml .= '<td class="center"><input type="datetime-local" class="flat" id="'.dol_escape_htmltag($datetimeName).'" name="'.dol_escape_htmltag($datetimeName).'" value="'.dol_escape_htmltag($datetimevalue).'"></td>';
-					$tablehtml .= '<td class="center"><input type="checkbox" class="flat" id="'.dol_escape_htmltag($keepdurationname).'" name="'.dol_escape_htmltag($keepdurationname).'" value="1"></td></tr>';
+						}
+						$datetimevalue = dol_print_date($currenttimestamp, '%Y-%m-%dT%H:%M');
+						$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
+						$tablehtml .= '<td class="center"><input type="datetime-local" class="flat" id="'.dol_escape_htmltag($datetimeName).'" name="'.dol_escape_htmltag($datetimeName).'" value="'.dol_escape_htmltag($datetimevalue).'"></td>';
+						$tablehtml .= '<td class="center"><input type="checkbox" class="flat" id="'.dol_escape_htmltag($keepdurationname).'" name="'.dol_escape_htmltag($keepdurationname).'" value="1"></td></tr>';
 					}
 					$tablehtml .= '</table></div>';
 					$formquestion[] = array('type' => 'other', 'name' => implode(',', array_merge($dateInputNames, $keepDurationNames)), 'label' => '', 'value' => $tablehtml);
