@@ -1264,6 +1264,10 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			}
 			print '</td>';
 			if (!empty($extralabels)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+				$genericObject = new GenericObject($db);
+				// We need to force table to fetch optionals product_price extrafields
+				$genericObject->table_element = 'product_price';
 				$sql1 = "SELECT rowid";
 				$sql1 .= " FROM ".$object->db->prefix()."product_price";
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
@@ -1272,34 +1276,16 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
-				if ($resql1) {
-					$lineid = $object->db->fetch_object($resql1);
+				if ($resql1 && $lineid = $object->db->fetch_object($resql1)) {
+					$genericObject->id = $lineid->rowid;
+					$genericObject->fetch_optionals();
 				}
-				$sql2  = "SELECT fk_object";
 				foreach ($extralabels as $key => $value) {
-					$sql2 .= ", ".$db->sanitize($key);
-				}
-				$sql2 .= " FROM ".MAIN_DB_PREFIX."product_price_extrafields";
-				$sql2 .= " WHERE fk_object = ".((int) $lineid->rowid);
-				$resql2 = $db->query($sql2);
-				if ($resql2) {
-					if ($db->num_rows($resql2) != 1) {
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-								print '<td align="right"></td>';
-							}
-						}
-					} else {
-						$obj = $db->fetch_object($resql2);
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-								print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_price')."</td>";
-							}
-						}
+					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
+						print '<td align="right">'.$extrafields->showOutputField($key, $genericObject->array_options['options_' . $key], '', 'product_price')."</td>";
 					}
-					$db->free($resql1);
-					$db->free($resql2);
 				}
+				$db->free($resql1);
 			}
 			print '</tr>';
 
