@@ -552,8 +552,8 @@ if (empty($reshook)) {
 						$genericObject->id = $lineid->rowid;
 						$genericObject->table_element = 'product_price';
 						foreach ($price_extralabels as $code => $label) {
-							$code_array = GETPOST($code, 'array');
-							$genericObject->array_options['options_'.$code] = $code_array[$key];
+							$extrafield_values = $extrafields->getOptionalsFromPost('product_price', $key);
+							$genericObject->array_options['options_'.$code] = $extrafield_values['options_'.$code];
 						}
 						$result = $genericObject->insertExtraFields();
 
@@ -1881,6 +1881,10 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			print '</td>';
 
 			if (!empty($extralabels)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+				$genericObject = new GenericObject($db);
+				// We need to force table to fetch optionals product_price extrafields
+				$genericObject->table_element = 'product_price';
 				$sql1 = "SELECT rowid";
 				$sql1 .= " FROM ".$object->db->prefix()."product_price";
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
@@ -1889,44 +1893,23 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
-				if ($resql1) {
-					$lineid = $object->db->fetch_object($resql1);
+				if ($resql1 && $lineid = $object->db->fetch_object($resql1)) {
+					$genericObject->id = $lineid->rowid;
+					$genericObject->fetch_optionals();
 				}
-				if (empty($lineid->rowid)) {
-					foreach ($extralabels as $key => $value) {
-						if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
-							if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
-								$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
-							}
-
-							$extravalue = GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key};
-							print '<td align="center"><input name="'.$key.'['.$i.']" size="10" value="'.$extravalue.'"></td>';
+				foreach ($extralabels as $key => $value) {
+					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
+						if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
+							$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
 						}
-					}
-				} else {
-					$sql  = "SELECT";
-					$sql .= " fk_object";
-					foreach ($extralabels as $key => $value) {
-						$sql .= ", ".$db->sanitize($key);
-					}
-					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_extrafields";
-					$sql .= " WHERE fk_object = ".((int) $lineid->rowid);
-					$resql = $db->query($sql);
-					if ($resql) {
-						$obj = $db->fetch_object($resql);
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
-								if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
-									$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
-								}
 
-								$extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key} ?? '');
-								print '<td align="center"><input name="'.$key.'['.$i.']" size="10" value="'.$extravalue.'"></td>';
-							}
-						}
-						$db->free($resql);
+						// $extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $genericObject->array_options['options_' . $key] ?? '');
+						print '<td align="center">';
+						print $extrafields->showInputField($key, $genericObject->array_options['options_' . $key], '', $i, '', '', $genericObject, 'product_price');
+						print '</td>';
 					}
 				}
+				$db->free($resql1);
 			}
 			print '</tr>';
 		}
