@@ -62,10 +62,13 @@
 @phan-var-force string $string
 @phan-var-force CommonObject $objecttmp
 @phan-var-force CommonObject $object
+@phan-var-force string $massaction
+@phan-var-force int[] $arrayofselected
 @phan-var-force int[] $toselect
 @phan-var-force ?string $uploaddir
 @phan-var-force int<0,1> $withmaindocfilemail
 @phan-var-force string $sendto
+@phan-var-force string $search_all
 ';
 
 if (!empty($sall) || !empty($search_all)) {

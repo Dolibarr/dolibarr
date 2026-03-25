@@ -207,7 +207,7 @@ class DocumentController extends Controller
 								$tmpuser = new User($this->db);
 								$tmpuser->socid = $socId;
 
-								include_once DOl_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+								require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 								$ok = checkUserAccessToObject($tmpuser, array($obj->src_object_type), $obj->src_object_id, '', '', 'fk_soc');
 
