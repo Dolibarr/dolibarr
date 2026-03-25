@@ -534,8 +534,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 		$foundoldformat = 0;
 		$firstrecorddate = 0;
-		global $foundoldformat, $firstrecorddate;
-		include_once DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 
 		// Add a final line with perpetual total for invoice validations

@@ -705,11 +705,10 @@ if (is_array($blocks)) {
 			$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 			$foundoldformat = 0;
 			$firstrecorddate = 0;
-			global $foundoldformat, $firstrecorddate;
 			if (empty($search_end) || $search_end == -1) {
 				$search_end = dol_now();
 			}
-			include_once DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 			if (empty($search_code) || in_array('BILL_VALIDATE', $search_code)) {
 				// Total
