@@ -1837,6 +1837,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
 			$jsContextFiles[] = 'dolibarr-tool.langs.js';
 			$jsContextVars['MAIN_LANG_DEFAULT'] = $langs->getDefaultLang();// For langs tool
+			$jsContextVars['DOL_URL_ROOT'] = DOL_URL_ROOT;
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
 		}
 
@@ -3910,7 +3911,8 @@ if (!function_exists("llxFooter")) {
 
 		if (isModEnabled('blockedlog') && ($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') && $forcepushcounter) {
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-			if (!isALNEQualifiedVersion()) {
+			$islne = isALNEQualifiedVersion(1, 1);
+			if (!$islne) {
 				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Not a LNE qualified version -->\n";
 			} elseif (!isRegistrationDataSaved()) {
 				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Registration data not saved -->\n";
@@ -3925,9 +3927,12 @@ if (!function_exists("llxFooter")) {
 
 					if ((int) $tmpresult2['previousid']) {
 						// Call remote API service to record the last counter
-						$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], 1, (int) $tmpresult2['previousid'], $tmpresult2['previoushash']);
+						$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], $tmpresult['previousdatecreation'], 1, (int) $tmpresult2['previousid'], $tmpresult2['previoushash'], $tmpresult2['previousdatecreation']);
 
-						print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log -->\n";
+						$algo = 'sha256';
+						$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
+
+						print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log for hash_unique_id=".dol_trunc($hash_unique_id, 10)." -->\n";
 					}
 				} else {
 					print "\n<!-- NO CALL TO API TO PUSH COUNTER. Last rowid and signature not found -->\n";

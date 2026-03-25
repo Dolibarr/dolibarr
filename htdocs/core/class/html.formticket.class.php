@@ -57,7 +57,7 @@ class FormTicket
 	public $track_id;
 
 	/**
-	 * @var string 		Email. Used also for the to name session vars to upload files.
+	 * @var string 		Email. Used also to name session vars to upload files.
 	 */
 	public $trackid;
 
@@ -258,6 +258,8 @@ class FormTicket
 	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, $with_contact = null, $action = '', $object = null)
 	{
 		global $conf, $langs, $user, $hookmanager;
+
+		$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails', 'ticket'));
@@ -742,8 +744,14 @@ class FormTicket
 			print '<tr><td>';
 			print $langs->trans("AssignedTo");
 			print '</td><td>';
-			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $form->select_dolusers($user_assign, 'fk_user_assign', 1);
+			if ($permissiontomanage) {
+				print img_picto('', 'user', 'class="pictofixedwidth"');
+				print $form->select_dolusers($user_assign, 'fk_user_assign', 1);
+			} else {
+				$userstat = new User($this->db);
+				$userstat->fetch($user_assign);
+				print $userstat->getNomUrl(-1);
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -861,8 +869,8 @@ class FormTicket
 	 *      Return html list of tickets type
 	 *
 	 *      @param  string|int[]	$selected		Id of preselected field or array of Ids
-	 *      @param  string			$htmlname		Nom de la zone select
-	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+	 *      @param  string			$htmlname		Name of select component
+	 *      @param  string			$filtertype		To filter on some codes in llx_c_ticket_type ('code1,code2...')
 	 *      @param  int				$format			0=id+label, 1=code+code, 2=code+label, 3=id+code
 	 *      @param  int|string		$empty      	1 = can be empty or 'string' to show the string as the empty value, 0 = can't be empty, 'ifone' = can be empty but autoselected if there is one only
 	 *      @param  int				$noadmininfo	0=Add admin info, 1=Disable admin info
@@ -895,8 +903,8 @@ class FormTicket
 
 		if (is_array($ticketstat->cache_types_tickets) && count($ticketstat->cache_types_tickets)) {
 			foreach ($ticketstat->cache_types_tickets as $id => $arraytypes) {
-				// On passe si on a demande de filtrer sur des modes de paiments particuliers
-				if (count($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
+				// We stop if we astto filter on some ticket type and code is not one requested.
+				if (count($filterarray) && !in_array($arraytypes['code'], $filterarray)) {
 					continue;
 				}
 
@@ -1698,54 +1706,60 @@ class FormTicket
 			print '</span></td></tr>';
 
 			// Recipients / adressed-to
-			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
-			print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
-			print '</td><td>';
-			if ($res) {
-				// Retrieve email of all contacts (internal and external)
-				$contacts = $ticketstat->getInfosTicketInternalContact(1);
-				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
+			$parameters = array();
+			$action = '';
+			$reshook = $hookmanager->executeHooks('printFieldTicketEmailTo', $parameters, $this, $action);
+			if (empty($reshook)) {
+				print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
+				print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
+				print '</td><td>';
+				if ($res) {
+					// Retrieve email of all contacts (internal and external)
+					$contacts = $ticketstat->getInfosTicketInternalContact(1);
+					$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
-				$sendto = array();
+					$sendto = array();
 
-				// Build array to display recipient list
-				if (is_array($contacts) && count($contacts) > 0) {
-					foreach ($contacts as $key => $info_sendto) {
-						if ($info_sendto['email'] != '') {
-							$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">").' <small class="opacitymedium">('.dol_escape_htmltag($info_sendto['libelle']).")</small>";
+					// Build array to display recipient list
+					if (is_array($contacts) && count($contacts) > 0) {
+						foreach ($contacts as $key => $info_sendto) {
+							if ($info_sendto['email'] != '') {
+								$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">").' <small class="opacitymedium">('.dol_escape_htmltag($info_sendto['libelle']).")</small>";
+							}
 						}
 					}
-				}
 
-				if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
-				} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
-					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
-				}
+					if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
+						$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
+						$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					}
 
-				if ($ticketstat->fk_soc > 0) {
-					$ticketstat->socid = $ticketstat->fk_soc;
-					$ticketstat->fetch_thirdparty();
+					if ($ticketstat->fk_soc > 0) {
+						$ticketstat->socid = $ticketstat->fk_soc;
+						$ticketstat->fetch_thirdparty();
 
-					if (!empty($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
-						$sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
+						if (!empty($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
+							$sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
+						}
+					}
+
+					if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
+						$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
+					}
+
+					// Print recipient list
+					if (is_array($sendto) && count($sendto) > 0) {
+						print img_picto('', 'email', 'class="pictofixedwidth"');
+						print implode(', ', $sendto);
+					} else {
+						print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
 					}
 				}
-
-				if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
-					$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
-				}
-
-				// Print recipient list
-				if (is_array($sendto) && count($sendto) > 0) {
-					print img_picto('', 'email', 'class="pictofixedwidth"');
-					print implode(', ', $sendto);
-				} else {
-					print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
-				}
+				print '</td></tr>';
+			} else {
+				print $hookmanager->resPrint;
 			}
-			print '</td></tr>';
-
 			// Send to CC
 			$sendtocc = getDolGlobalString('TICKET_SEND_INTERNAL_CC');
 			if ($sendtocc) {

@@ -27,6 +27,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/salaries/modules_salary.php';
 
 
 /**
@@ -40,9 +41,19 @@ class Salary extends CommonObject
 	public $element = 'salary';
 
 	/**
+	 * @var DoliDB Database handler
+	 */
+	public $db;
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'salary';
+
+	/**
+	 * @var string Module name (must match the module folder name)
+	 */
+	public $module = 'salaries';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -98,6 +109,11 @@ class Salary extends CommonObject
 	 * @var string
 	 */
 	public $type_payment_code;
+
+	/**
+	 * @var string|null
+	 */
+	public $num_payment;
 
 	/**
 	 * @var string salary payments label
@@ -200,6 +216,56 @@ class Salary extends CommonObject
 		$this->isextrafieldmanaged = 1;
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
+	}
+
+	/**
+	 *  Generate a document from a model
+	 *
+	 *  @param	    string		$model			Name of model ('standard_salary', ...)
+	 *  @param      Translate	$outputlangs    Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      array<string,mixed>		$moreparams		More parameters
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($model, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = array())
+	{
+		global $conf, $langs;
+
+		if (!dol_strlen($model)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model")), null, 'errors');
+			return 0;
+		}
+
+		$modelpath = 'core/modules/salaries/doc/';
+		$modelfile = $modelpath."pdf_".$model.".modules.php";
+
+		// Check if model file exists
+		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$modelfile)) {
+			require_once DOL_DOCUMENT_ROOT.'/'.$modelfile;
+
+			$classname = 'pdf_'.$model;
+			if (class_exists($classname)) {
+				$module = new $classname($this->db);
+
+				// Generate the PDF
+				/** @phan-suppress-next-line PhanPluginUnknownObjectMethodCall */
+				$result = $module->writeFile($this, $outputlangs);
+				if ($result > 0) {
+					return 1;
+				} else {
+					setEventMessages($module->error, $module->errors, 'errors');
+					return 0;
+				}
+			} else {
+				setEventMessages('Failed to load class '.$classname, null, 'errors');
+				return 0;
+			}
+		} else {
+			setEventMessages($langs->trans("ErrorModuleNotFound", $model), null, 'errors');
+			return 0;
+		}
 	}
 
 	/**
@@ -571,7 +637,7 @@ class Salary extends CommonObject
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								HTML code with URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{

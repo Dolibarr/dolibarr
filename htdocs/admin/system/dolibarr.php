@@ -30,6 +30,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
@@ -45,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
@@ -57,6 +59,9 @@ if (!$user->admin) {
 
 $sfurl = '';
 $version = '0.0';
+
+// Version blockedlog
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
 
 
 /*
@@ -171,14 +176,41 @@ print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").'<br><span 
 if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span>';
 }
-print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>';
 if (getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
-	print '<span class="badge-text badge-secondary">'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</span>';
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("VersionLastInstall").': <span class="">'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</span></span>';
 }
 print '</td></tr>'."\n";
+
+if (isALNERunningVersion()) {
+	print '<tr class="oddeven nohover">';
+	print '<td width="300">'.$langs->trans("VersionOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td><td>';
+	print $versionbadge;
+	print '</td>';
+	print '</tr>';
+}
+
 print '</table>';
 print '</div>';
+
+// Add a complementary optional information
+$infotoshow = '';
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if ($islne) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
+			// This is an alpha or beta version
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", getBlockedLogVersionToShow());
+		} else {
+			$infotoshow = $langs->trans("LNECertifiedVersionFR", getBlockedLogVersionToShow());
+		}
+	} else {
+		$infotoshow = $langs->trans("NotCertifiedVersionFR", getBlockedLogVersionToShow());
+	}
+}
+if ($infotoshow) {
+	print info_admin($infotoshow, 0, 0, 'info');
+}
+
 print '<br>';
 
 // Session

@@ -692,7 +692,7 @@ class Adherent extends CommonObject
 
 		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key, ip)";
+		$sql .= " (ref, datec, login, fk_user_author, fk_user_mod, fk_user_valid, morphy, fk_adherent_type, entity, import_key, ip)";
 		$sql .= " VALUES (";
 		$sql .= " '(PROV)'";
 		$sql .= ", '".$this->db->idate($this->datec)."'";
@@ -2252,8 +2252,8 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = ".self::STATUS_RESILIATED;
-		$sql .= ", fk_user_valid=".$user->id;
+		$sql .= " statut = ".((int) self::STATUS_RESILIATED);
+		$sql .= ", fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
@@ -2301,8 +2301,8 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = ".self::STATUS_EXCLUDED;
-		$sql .= ", fk_user_valid=".$user->id;
+		$sql .= " statut = ".((int) self::STATUS_EXCLUDED);
+		$sql .= ", fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);

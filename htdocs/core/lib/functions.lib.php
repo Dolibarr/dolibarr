@@ -9,7 +9,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
@@ -3428,7 +3428,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if ($conf->browser->layout == 'phone') {
 			$maxvisiblephotos = 1;
 		}
-		if ($showimage) {
+		$useLinkPathPhoto = getDolGlobalInt('PRODUCT_USE_LINK_PATH_FOR_PHOTO');
+		if ($showimage || $useLinkPathPhoto) {
 			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">' . $object->show_photos('product', $conf->product->multidir_output[$entity], 1, $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '') . '</div>';
 		} else {
 			if (getDolGlobalString('PRODUCT_NODISPLAYIFNOPHOTO')) {
@@ -3618,14 +3619,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		/** @var Product $object */
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
 			$morehtmlstatus .= '<span class="statusrefsell">' . $object->getLibStatut(6, 0) . '</span>';
 		}
 		$morehtmlstatus .= ' &nbsp; ';
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-			$morehtmlstatus .= ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+			$morehtmlstatus .= ajax_object_onoff($object, 'status_buy', 'status_buy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">' . $object->getLibStatut(6, 1) . '</span>';
 		}
@@ -5965,6 +5966,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
 				'webportal' => 'infobox-portal',
+				'website' => 'infobox-portal',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt' => 'imgforviewmode',
 				'calendar' => 'imgforviewmode',
@@ -6032,7 +6034,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'globe-americas' => '#aaa',
 				'region' => '#aaa',
 				'state' => '#aaa',
-				'website' => '#304',
+				//'website' => '#304',
 				'workstation' => '#a69944'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
@@ -7435,7 +7437,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	}
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
-	print '<div class="titre inline-block">';
+	print '<div class="titre inline-block nowrap">';
 	print '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '' && $totalnboflines > 0) {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="' . $langs->trans("NbRecordQualified") . '">(' . $totalnboflines . ')</span>';
@@ -7691,7 +7693,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
 	if (preg_match('/\((.*)\)/', $rate, $reg)) {
 		$morelabel = ' (' . $reg[1] . ')';
 		$rate = preg_replace('/\s*' . preg_quote($morelabel, '/') . '/', '', $rate);
-		$morelabel = ' ' . ($html ? '<span class="opacitymedium">' : '') . '(' . $reg[1] . ')' . ($html ? '</span>' : '');
+		$morelabel = ' ' . ($html ? '<span class="opacitymedium small">' : '') . '(' . $reg[1] . ')' . ($html ? '</span>' : '');
 	}
 	if (preg_match('/\*/', $rate)) {
 		$rate = str_replace('*', '', $rate);
@@ -7822,10 +7824,12 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$cursymbolafter .= ($tmpcur == $currency_code ? ' ' . $tmpcur : $tmpcur);
 		}
 	}
-	$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' ' : '') . $cursymbolafter;
 	if ($form) {
 		$output = preg_replace('/\s/', '&nbsp;', $output);
+		$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' <span class="small">'.$cursymbolafter.'</span>' : '');
 		$output = preg_replace('/\'/', '&#039;', $output);
+	} else {
+		$output = $cursymbolbefore . $output . $end . ($cursymbolafter ? ' '.$cursymbolafter : '');
 	}
 
 	return $output;
@@ -10628,6 +10632,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
 							}
@@ -10827,6 +10835,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
+
+		$substitutionarray['__DEPOSIT_PERCENT__'] = is_object($object) ? $object->deposit_percent : '';
+		$substitutionarray['__DEPOSIT_AMOUNT__'] = is_object($object) ? price2num($object->total_ttc * ($object->deposit_percent / 100), 'MT') : '';
 
 		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? price2num($object->total_ttc - $already_payed_all, 'MT') : '';
 
@@ -11974,7 +11985,10 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
-		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
+
+		// On string syntax error, dol_eval may return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
+		//var_dump($strToEvaluate, $rep);
+		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad call of') === false || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
 	return $rights;
@@ -12013,6 +12027,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
  *
  * @param 	string		$s					String to evaluate
  * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
+ * 											If we return a string on error, it must start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -12026,8 +12041,11 @@ function dol_eval_new($s)
 	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
 	// Old variables used
-	$object,
-	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	$object;
+
+	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
+		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	}
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -12290,6 +12308,7 @@ function dol_eval_new($s)
  *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  *                                          '2' (used for example for the compute property of extrafields)=Accept also '<[]'
  * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
+ * 											If we return a string on error, it must start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -12303,10 +12322,10 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	global $action, $mainmenu, $leftmenu;
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
+	global $object;
 
 	// Old variables (deprecated)
 	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
-		global $object;
 		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
 	}
 
@@ -12326,7 +12345,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		// Set $dolibarr_main_restrict_eval_methods_array
 		if (!isset($dolibarr_main_restrict_eval_methods)) {
-			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+			$dolibarr_main_restrict_eval_methods = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 		}
 		//print '$dolibarr_main_restrict_eval_methods = '.$dolibarr_main_restrict_eval_methods."\n";
 		$dolibarr_main_restrict_eval_methods_array = explode(',', str_replace(" ", "", $dolibarr_main_restrict_eval_methods));
@@ -12418,9 +12437,13 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		while ($scheck && $savescheck != $scheck) {
 			$savescheck = $scheck;
 			$scheck = preg_replace('/\$conf->[a-z\_]+->enabled/', '__VARCONFENABLED__', $scheck);		// Remove this once $user->module->enabled has been replaced everywhere with isModEnabled.
+			$scheck = preg_replace('/\$user->id/', '__VARUSERID__', $scheck);
 			$scheck = preg_replace('/\$user->hasRight/', '__VARUSERHASRIGHT__', $scheck);
 			$scheck = preg_replace('/\$user->rights/', '__VARUSERHASRIGHT__', $scheck);		// Remove this once $user->rights->xxx is replaced everywhere with $user->hasRight()
+			$scheck = preg_replace('/\$user->isAdmin/', '__VARUSERHASRIGHT__', $scheck);
 			$scheck = preg_replace('/\$user->admin/', '__VARUSERISADMIN__', $scheck);		// Remove this once $user->admin is replaced everywhere with $user->isAdmin()
+			$scheck = preg_replace('/\$user->isExternalUser/', '__VARUSERSOCID__', $scheck);
+			$scheck = preg_replace('/\$user->socid/', '__VARUSERSOCID__', $scheck);			// Remove this once $user->admin is replaced everywhere with $user->isExternalUser()
 			$scheck = preg_replace('/\(\$db\)/', '__VARDB__', $scheck);
 			$scheck = preg_replace('/\$langs/', '__VARLANGSTRANS__', $scheck);
 			$scheck = preg_replace('/\$mysoc/', '__VARMYSOC__', $scheck);
@@ -12430,11 +12453,17 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$scheck = preg_replace('/\$websitepage/', '__VARWEBSITEPAGE__', $scheck);
 			$scheck = preg_replace('/\$website/', '__VARWEBSITE__', $scheck);
 			$scheck = preg_replace('/\$objectoffield/', '__VAROBJECTOFFIELD__', $scheck);
+			$scheck = preg_replace('/\$object/', '__VAROBJECT__', $scheck);
 			$scheck = preg_replace('/\$var/', '__VARVAR__', $scheck);
 
-			// Now test if it remains 1 $
+			// deprecated (now we use $objecf->canvas or $objectoffield->canvas)
+			$scheck = preg_replace('/\$soc->canvas/', '__VARSOCCANVAS__', $scheck);
+			$scheck = preg_replace('/\$obj->canvas/', '__VAROBJCANVAS__', $scheck);
+
+			// Now test if it remains one '$'
 			if (strpos($scheck, '$') !== false) {
-				return 'Bad string syntax to evaluate (found use of $ that does not match one of the following pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s;
+				dol_syslog('Bad string syntax to evaluate (found use of $ not matching pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s, LOG_WARNING);
+				return 'Bad string syntax to evaluate (found use of $ not matching pattern: $user->hasRight, ($db), $langs, $mysoc, $action, $mainmenu, $leftmenu, $website, $websitepage, $objectoffield or $var123): ' . $s;
 			}
 		}
 
@@ -12904,7 +12933,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
 				if (count($values) !== 6) {
-					dol_syslog('Tabs module_parts entries must be composed of 6 values separated by ":", but got "' . $value . '". Please check your module descriptor classes.', LOG_ERR);
+					dol_syslog('The module_parts["tabs"] entries must be composed of 6 values separated by ":", but got "' . $value . '". Please check your module descriptor classes.', LOG_ERR);
 					continue;
 				}
 
@@ -12930,6 +12959,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						}
 					}
 				}
+
+				global $objectoffield;      // So we can use $objectoffield int verifCond
+				$objectoffield = $object;
 
 				if (!verifCond($values[4], '2')) {
 					continue;
@@ -13142,21 +13174,20 @@ function printCommonFooter($zone = 'private')
 
 							foreach ($defval as $paramkey => $paramval) {
 								// Solution 1: Add handler on submit to check if mandatory fields are empty
-								print 'var form = $(\'#' . dol_escape_js($paramkey) . '\').closest("form");' . "\n";
+								print 'var form = $(\'[name="'.dol_escape_js($paramkey).'"]\').closest("form");'."\n";
 								print "form.on('submit', function(event) {
-										var submitter = $(this).find(':submit:focus').get(0);
-										if (submitter) {
-											var buttonName = $(submitter).attr('name');
-											if (buttonName == 'cancel') {
-												console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
-												return true;
-											}
+										var submitter = \$(this).find(':submit:focus').get(0);
+										var buttonName = submitter ? \$(submitter).attr('name') : 'save';
+
+										if (buttonName == 'cancel') {
+											console.log('We click on cancel button so we accept submit with no need to check mandatory fields');
+											return true;
 										}
 
-										console.log('We did not click on cancel button but on something else, we check that field #" . dol_escape_js($paramkey) . " is not empty');
+										console.log('We did not click on cancel button but on something else, we check that field [name=".dol_escape_js($paramkey)."] is not empty');
 
-										var tmpvalue = jQuery('#" . dol_escape_js($paramkey) . "').val();
-										let tmptypefield = jQuery('#" . dol_escape_js($paramkey) . "').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
+										var tmpvalue = jQuery('[name=\"".dol_escape_js($paramkey)."\"]').val();
+										let tmptypefield = jQuery('[name=\"".dol_escape_js($paramkey)."\"]').prop('nodeName').toLowerCase(); // Get the tag name (div, section, footer...)
 
 										if (tmptypefield == 'textarea') {
 											// We must instead check the content of ckeditor
@@ -13174,11 +13205,13 @@ function printCommonFooter($zone = 'private')
 										if (tmpvalue === '0' && (tmptypefield == 'select' || tmptypefield == 'input')) {
 											tmpvalueisempty = true;
 										}
-										if (tmpvalueisempty && (buttonName == 'save')) {
+										if (tmpvalueisempty && buttonName !== 'cancel') {
 											console.log('field has type '+tmptypefield+' and is empty, we cancel the submit');
 											event.preventDefault(); // Stop submission of form to allow custom code to decide.
 											event.stopPropagation(); // Stop other handlers.
-											alert('" . dol_escape_js($langs->trans("ErrorFieldRequired", $paramkey) . ' (' . $langs->trans("CustomMandatoryFieldRule") . ')') . "');
+
+											alert('".dol_escape_js($langs->transnoentitiesnoconv("ErrorFieldRequired", $paramkey).' ('.$langs->transnoentitiesnoconv("CustomMandatoryFieldRule").')')."');
+
 											return false;
 										}
 										console.log('field has type '+tmptypefield+' and is defined to '+tmpvalue);
@@ -13201,7 +13234,6 @@ function printCommonFooter($zone = 'private')
 								// Now set the class "fieldrequired"
 								print 'jQuery(\':input[name="' . dol_escape_js($paramkey) . '"]\').closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
 							}
-
 
 							// If we submit using the cancel button, we remove the required attributes
 							print 'jQuery("input[name=\'cancel\']").click(function() {
