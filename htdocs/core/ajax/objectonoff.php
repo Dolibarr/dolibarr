@@ -91,7 +91,7 @@ if (!empty($user->socid)) {
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
 if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
-} elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
+} elseif ($element == 'product' && in_array($field, array('status', 'status_buy', 'status_batch', 'tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Field not supported.");	// This includes the exit.
@@ -111,7 +111,7 @@ if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $obj
 
 top_httphead();
 
-print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering new values
 if (($action == 'set') && !empty($id)) {	// Test on permission already done in header according to object and field.
@@ -127,7 +127,10 @@ if (($action == 'set') && !empty($id)) {	// Test on permission already done in h
 	$result = $object->setValueFrom($field, $value, $object->table_element, $id, $format, '', $user, $triggerkey);
 
 	if ($result < 0) {
-		print $object->error;
+		print $object->error."\n";
+		foreach ($object->errors as $msg) {
+			print $msg."\n";;
+		}
 		http_response_code(500);
 		exit;
 	}

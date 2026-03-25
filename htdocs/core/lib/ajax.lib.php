@@ -811,8 +811,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+                function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#set_'.$htmlname.'_'.$object->id.'").hide();
                     $("#del_'.$htmlname.'_'.$object->id.'").show();
                     // Enable another element
@@ -830,7 +837,11 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).show();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						alert(response.responseText);
+					}
+				);
             });
 
             // Del constant
@@ -843,8 +854,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+				function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#del_'.$htmlname.'_'.$object->id.'").hide();
                     $("#set_'.$htmlname.'_'.$object->id.'").show();
                     // Disable another element
@@ -862,7 +880,11 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).hide();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						alert(response.responseText);
+					}
+				);
             });
         });
     </script>';

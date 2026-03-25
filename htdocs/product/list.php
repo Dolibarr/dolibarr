@@ -2413,7 +2413,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.tosell']['checked'])) {
 			print '<td class="center nowrap">';
 			if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-				print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+				print ajax_object_onoff($product_static, 'status', 'status', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 			} else {
 				print $product_static->LibStatut($product_static->status, 5, 0);
 			}
@@ -2426,7 +2426,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.tobuy']['checked'])) {
 			print '<td class="center nowrap">';
 			if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+				print ajax_object_onoff($product_static, 'status_buy', 'status_buy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
 				print $product_static->LibStatut($product_static->status_buy, 5, 1);
 			}
