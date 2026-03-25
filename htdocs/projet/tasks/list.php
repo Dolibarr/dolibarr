@@ -198,6 +198,17 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->hasRight('projet', 'lire');
 $permissiontocreate = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
+$massactionTaskMap = array(
+	'preupdate_selected_tasks_progress' => 'update_selected_tasks_progress',
+	'preupdate_selected_tasks_start_date' => 'update_selected_tasks_start_date',
+	'preupdate_selected_tasks_deadline' => 'update_selected_tasks_deadline'
+);
+$massactionTaskList = array(
+	'close_selected_tasks',
+	'update_selected_tasks_progress',
+	'update_selected_tasks_start_date',
+	'update_selected_tasks_deadline'
+);
 
 if (!$permissiontoread) {
 	accessforbidden();
@@ -212,7 +223,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && !in_array($massaction, array('presend', 'confirm_presend'), true) && !isset($massactionTaskMap[$massaction]) && !in_array($massaction, $massactionTaskList, true)) {
 	$massaction = '';
 }
 
@@ -270,6 +281,114 @@ if (empty($reshook)) {
 	$objectlabel = 'Tasks';
 	$uploaddir = $conf->project->dir_output.'/tasks';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	$effectiveMassAction = '';
+	if (in_array($action, $massactionTaskList, true) && $confirm == 'yes') {
+		$effectiveMassAction = $action;
+	} elseif ($massaction == 'close_selected_tasks' && GETPOST('confirmmassaction', 'alpha')) {
+		$effectiveMassAction = $massaction;
+	}
+	if ($permissiontocreate && !empty($effectiveMassAction)) {
+		$toselectpost = GETPOST('toselect', 'array:int');
+		if (empty($toselectpost)) {
+			$toselectcsv = GETPOST('toselect', 'alphanohtml');
+			if (!empty($toselectcsv)) {
+				$toselectpost = array_map('intval', explode(',', $toselectcsv));
+			}
+		}
+		$tasksById = $object->getAuthorizedTasksForMassAction($user, $toselectpost);
+		if (empty($tasksById)) {
+			setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
+		} else {
+			$error = 0;
+			$done = 0;
+			$db->begin();
+			foreach ($tasksById as $taskId => $taskDb) {
+				$task = new Task($db);
+				if ($task->fetch($taskId) <= 0) {
+					$error++;
+					$task->error = empty($task->error) ? $langs->trans('ErrorRecordNotFound') : $task->error;
+					$task->errors[] = $task->error;
+					continue;
+				}
+
+				if ($effectiveMassAction == 'close_selected_tasks') {
+					$task->progress = 100;
+					$task->status = Task::STATUS_CLOSED;
+				} elseif ($effectiveMassAction == 'update_selected_tasks_progress') {
+					$progressraw = GETPOST('task_progress_'.$taskId, 'alphanohtml');
+					if ($progressraw === '' || !is_numeric($progressraw)) {
+						$error++;
+						$task->errors[] = $langs->trans('MassActionInvalidTaskProgressValue', $taskId);
+						continue;
+					}
+					$task->progress = max(0, min(100, (int) $progressraw));
+					$task->status = ($task->progress >= 100 ? Task::STATUS_CLOSED : Task::STATUS_ONGOING);
+				} elseif ($effectiveMassAction == 'update_selected_tasks_start_date' || $effectiveMassAction == 'update_selected_tasks_deadline') {
+					$taskdatetime = GETPOST('task_datetime_'.$taskId, 'alphanohtml');
+					$tasktimestamp = 0;
+					if (!empty($taskdatetime)) {
+						$tasktimestamp = dol_stringtotime(str_replace('T', ' ', $taskdatetime), 1);
+					}
+					if (empty($tasktimestamp) || $tasktimestamp < 0) {
+						$error++;
+						$task->errors[] = $langs->trans('MassActionInvalidTaskDateValue', $taskId);
+						continue;
+					}
+					$keepduration = GETPOSTINT('keep_duration_'.$taskId);
+					$oldstart = (!empty($task->date_start) ? (int) $task->date_start : 0);
+					$oldend = (!empty($task->date_end) ? (int) $task->date_end : 0);
+					$durationseconds = ($oldstart > 0 && $oldend > 0 ? ($oldend - $oldstart) : null);
+
+					if ($effectiveMassAction == 'update_selected_tasks_start_date') {
+						$task->date_start = $tasktimestamp;
+						if ($keepduration && $durationseconds !== null) {
+							$task->date_end = $tasktimestamp + $durationseconds;
+						}
+					} else {
+						$task->date_end = $tasktimestamp;
+						if ($keepduration && $durationseconds !== null) {
+							$task->date_start = $tasktimestamp - $durationseconds;
+						}
+					}
+				}
+
+				if ($task->update($user) <= 0) {
+					$error++;
+					if (!empty($task->errors)) {
+						setEventMessages('', $task->errors, 'errors');
+					} else {
+						setEventMessages($task->error, null, 'errors');
+					}
+				} else {
+					$done++;
+				}
+			}
+
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
+
+			if ($done > 0 && !$error) {
+				if ($effectiveMassAction == 'close_selected_tasks') {
+					setEventMessages($langs->trans('MassActionSelectedTasksClosed', $done), null, 'mesgs');
+				} elseif ($effectiveMassAction == 'update_selected_tasks_progress') {
+					setEventMessages($langs->trans('MassActionSelectedTasksProgressUpdated', $done), null, 'mesgs');
+				} elseif ($effectiveMassAction == 'update_selected_tasks_start_date') {
+					setEventMessages($langs->trans('MassActionSelectedTasksStartDateUpdated', $done), null, 'mesgs');
+				} elseif ($effectiveMassAction == 'update_selected_tasks_deadline') {
+					setEventMessages($langs->trans('MassActionSelectedTasksDeadlineUpdated', $done), null, 'mesgs');
+				}
+			} elseif (!$error) {
+				setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
+			}
+		}
+
+		$action = 'list';
+		$massaction = '';
+	}
 }
 
 // already done at line 85
@@ -734,7 +853,13 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if ($permissiontocreate) {
+	$arrayofmassactions['close_selected_tasks'] = img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("MassActionCloseSelectedTasks");
+	$arrayofmassactions['preupdate_selected_tasks_progress'] = img_picto('', 'projecttask', 'class="pictofixedwidth"').$langs->trans("MassActionUpdateSelectedTasksProgress");
+	$arrayofmassactions['preupdate_selected_tasks_start_date'] = img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("MassActionUpdateSelectedTasksStartDate");
+	$arrayofmassactions['preupdate_selected_tasks_deadline'] = img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("MassActionUpdateSelectedTasksDeadline");
+}
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preupdate_selected_tasks_progress', 'preupdate_selected_tasks_start_date', 'preupdate_selected_tasks_deadline'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);

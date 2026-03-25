@@ -94,6 +94,60 @@ if ($massaction == 'preclonetasks') {
 	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected, $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
 }
 
+if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_selected_tasks_start_date', 'preupdate_selected_tasks_deadline'), true) && is_object($objecttmp) && $objecttmp->element == 'project_task') {
+	if (!$user->hasRight('projet', 'creer')) {
+		setEventMessages($langs->trans('ErrorNotEnoughPermissions'), null, 'errors');
+	} else {
+		$tasksById = $objecttmp->getAuthorizedTasksForMassAction($user, $toselect);
+		if (empty($tasksById)) {
+			setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
+		} else {
+			$massactionTaskMap = array(
+				'preupdate_selected_tasks_progress' => 'update_selected_tasks_progress',
+				'preupdate_selected_tasks_start_date' => 'update_selected_tasks_start_date',
+				'preupdate_selected_tasks_deadline' => 'update_selected_tasks_deadline'
+			);
+			$finalAction = $massactionTaskMap[$massaction];
+			$formquestion = array();
+			$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
+
+			if ($finalAction == 'update_selected_tasks_progress') {
+				$tablehtml = '<table class="noborder centpercent">';
+				$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="right">'.$langs->trans('Progress').'</th></tr>';
+				foreach ($tasksById as $taskId => $taskDb) {
+					$inputname = 'task_progress_'.$taskId;
+					$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
+					$tablehtml .= '<td class="right"><input type="text" class="flat right width75" maxlength="6" id="'.dol_escape_htmltag($inputname).'" name="'.dol_escape_htmltag($inputname).'" value="'.((string) min(100, max(0, (int) $taskDb->progress))).'"> %</td></tr>';
+				}
+				$tablehtml .= '</table>';
+				$formquestion[] = array('type' => 'other', 'name' => 'task_progress', 'label' => '', 'value' => $tablehtml);
+				$titleform = $langs->trans('MassActionUpdateSelectedTasksProgress');
+			} else {
+				$tablehtml = '<table class="noborder centpercent">';
+				$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="center">'.$langs->trans('DateHour').'</th><th class="center">'.$langs->trans('MassActionKeepTaskDuration').'</th></tr>';
+				foreach ($tasksById as $taskId => $taskDb) {
+					$datetimeName = 'task_datetime_'.$taskId;
+					$keepdurationname = 'keep_duration_'.$taskId;
+					if ($finalAction == 'update_selected_tasks_start_date') {
+						$currenttimestamp = (!empty($taskDb->dateo) ? (int) $db->jdate($taskDb->dateo) : dol_now());
+					} else {
+						$currenttimestamp = (!empty($taskDb->datee) ? (int) $db->jdate($taskDb->datee) : dol_now());
+					}
+					$datetimevalue = dol_print_date($currenttimestamp, '%Y-%m-%dT%H:%M');
+					$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
+					$tablehtml .= '<td class="center"><input type="datetime-local" class="flat" id="'.dol_escape_htmltag($datetimeName).'" name="'.dol_escape_htmltag($datetimeName).'" value="'.dol_escape_htmltag($datetimevalue).'"></td>';
+					$tablehtml .= '<td class="center"><input type="checkbox" class="flat" id="'.dol_escape_htmltag($keepdurationname).'" name="'.dol_escape_htmltag($keepdurationname).'" value="1"></td></tr>';
+				}
+				$tablehtml .= '</table>';
+				$formquestion[] = array('type' => 'other', 'name' => 'task_datetime', 'label' => '', 'value' => $tablehtml);
+				$titleform = ($finalAction == 'update_selected_tasks_start_date' ? $langs->trans('MassActionUpdateSelectedTasksStartDate') : $langs->trans('MassActionUpdateSelectedTasksDeadline'));
+			}
+
+			print $form->formconfirm($_SERVER['PHP_SELF'], $titleform, $langs->trans('MassActionTaskPopupDescription'), $finalAction, $formquestion, '', 1, 500, 800, 0, 'Validate', 'Cancel');
+		}
+	}
+}
+
 if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$categ = new Categorie($db);
