@@ -715,12 +715,6 @@ parameters:
 			path: ../../../htdocs/admin/system/database.php
 
 		-
-			message: '#^Variable \$row might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/system/dbtable.php
-
-		-
 			message: '#^Loose comparison using \!\= between '',''\|''\.'' and '' '' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -751,12 +745,6 @@ parameters:
 			path: ../../../htdocs/admin/system/phpinfo.php
 
 		-
-			message: '#^Variable \$title in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/admin/system/phpinfo.php
-
-		-
 			message: '#^Call to function function_exists\(\) with ''exec''\|''popen'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -779,12 +767,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../../../htdocs/admin/tools/dolibarr_export.php
-
-		-
-			message: '#^Variable \$massaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/tools/export.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
@@ -819,24 +801,6 @@ parameters:
 		-
 			message: '#^Method Documentation\:\:setMenu\(\) should return mixed but return statement is missing\.$#'
 			identifier: return.missing
-			count: 1
-			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
-
-		-
-			message: '#^Method Documentation\:\:showCode\(\) has parameter \$lines with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
-
-		-
-			message: '#^Property Documentation\:\:\$menu type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
-
-		-
-			message: '#^Property Documentation\:\:\$summary type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
 
@@ -1089,12 +1053,6 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/barcode/printsheet.php
-
-		-
-			message: '#^Variable \$code might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/barcode/printsheet.php
 
@@ -6763,12 +6721,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
 			message: '#^Variable \$sql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -8441,12 +8393,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 4
 			path: ../../../htdocs/intracommreport/lib/intracommreport.lib.php
-
-		-
-			message: '#^Variable \$groupby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/intracommreport/list.php
 
 		-
 			message: '#^Variable \$type might not be defined\.$#'
@@ -11971,12 +11917,6 @@ parameters:
 			path: ../../../htdocs/takepos/invoice.php
 
 		-
-			message: '#^Variable \$batch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/invoice.php
-
-		-
 			message: '#^Variable \$body_ticket might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -12328,12 +12268,6 @@ parameters:
 			message: '#^Call to function property_exists\(\) with User and ''admin'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/user/notify/card.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
 			path: ../../../htdocs/user/notify/card.php
 
 		-
@@ -12755,18 +12689,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^Variable \$val might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/workstation/workstation_list.php
-
-		-
-			message: '#^Variable \$visible might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/workstation/workstation_list.php
 
 		-
 			message: '#^Variable \$num in isset\(\) always exists and is not nullable\.$#'

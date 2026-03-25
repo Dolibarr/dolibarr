@@ -36,6 +36,11 @@
  * @var string $elementtype
  * @var string $value
  */
+'@phan-var-force int $error';
+'@phan-var-force string $action';
+'@phan-var-force string $elementtype';
+'@phan-var-force string $value';
+
 $maxsizestring = 255;
 $maxsizeint = 10;
 $mesg = '';
@@ -146,6 +151,7 @@ if ($action == 'add') {
 			$parameters_array = explode("\r\n", $parameters);
 			foreach ($parameters_array as $param_ligne) {
 				if (!empty($param_ligne)) {
+					$matches = array();
 					if (preg_match_all('/,/', $param_ligne, $matches)) {
 						if (count($matches[0]) > 1) {
 							$error++;
@@ -240,7 +246,8 @@ if ($action == 'add') {
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
 					GETPOST("ai_prompt"),
-					(GETPOST('emptyonclone', 'alpha') ? 1 : 0)
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
+					(GETPOST('showintooltip', 'int') ? 1 : 0)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -426,7 +433,8 @@ if ($action == 'update') {
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
 					GETPOST("ai_prompt"),
-					(GETPOST('emptyonclone', 'alpha') ? 1 : 0)
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
+					(GETPOST('showintooltip', 'int') ? 1 : 0)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');

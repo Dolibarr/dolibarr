@@ -4,12 +4,12 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026 Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025 Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +40,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
@@ -94,9 +93,19 @@ $object = new AccountLine($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->element);
 
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
+		$object->id = $id;
+	}
+}
+
+
 /*
  * Actions
  */
+
 $error = 0;
 
 $parameters = array('socid' => $socid);
@@ -139,12 +148,6 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('b
 }
 
 if ($user->hasRight('banque', 'modifier') && $action == "update") {
-	$result = $object->fetch($rowid);
-	if ($result <= 0) {
-		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
-		$object->id = $rowid;
-	}
-
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
 
@@ -256,7 +259,7 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 	if (!$error) {
 		$db->begin();
-		$object->fetch($rowid);
+
 		$oldNum_rel = $object->num_releve;
 		$id = $object->fk_account;
 
@@ -317,6 +320,8 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 /*
  * View
  */
+
+$object->fetch($rowid);
 
 $form = new Form($db);
 
@@ -491,10 +496,17 @@ if ($result) {
 					print $langs->trans("User");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_various') {
+					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+					$paymenttmp = new PaymentVarious($db);
+					$paymenttmp->fetch($links[$key]['url_id']);
+					$paymenttmp->ref = $langs->trans("VariousPayment").' '.$paymenttmp->ref;
+					/*
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('VariousPayment'), 'payment').' ';
 					print $langs->trans("VariousPayment");
 					print '</a>';
+					*/
+					print $paymenttmp->getNomUrl(1);
 				} else {
 					// Example type = 'direct-debit', or 'credit-transfer', ....
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';

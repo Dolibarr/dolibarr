@@ -1534,25 +1534,11 @@ if ($action == 'create') {
 		$object->fetch_lines();
 		// Show object lines
 		if (!empty($object->lines)) {
-			$canchangeproduct = 1;
-			// To set ref for getNomURL function
-			foreach ($object->lines as $line) {
-				$line->ref = $line->label;
-				$line->product_ref = $line->label;
-				$line->product_label = $line->label;
-				// For backward compatibility
-				if (empty($line->subprice) && ! empty($line->pu_ht)) {
-					$line->subprice = $line->pu_ht;
-				}
-				if (empty($line->subprice_ttc) && ! empty($line->pu_ttc)) {
-					$line->subprice_ttc = $line->pu_ttc;
-				}
-			}
-
 			global $canchangeproduct;
 			$canchangeproduct = 0;
 
 			$object->statut = $object->suspended;
+			$object->status = $object->suspended;
 			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 0); // No date selector for template invoice
 		}
 

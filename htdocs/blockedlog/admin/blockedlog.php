@@ -120,7 +120,7 @@ if ($withtab) {
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
-$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
 
 
 // Special additional message for FR only
@@ -128,7 +128,7 @@ $infotoshow = '';
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		if (preg_match('/\-/', DOL_VERSION)) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
 			// This is an alpha or beta version
 			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
 		} else {
@@ -137,6 +137,8 @@ if ($mysoc->country_code == 'FR') {
 	} else {
 		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
 	}
+
+	$infotoshow .= ' - <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
 }
 
 // Show generic message (for countries that need registration) to explain we need registration to collect data and why
@@ -278,10 +280,10 @@ print '<!-- Link to pay -->';
 print '<span class="fas fa-external-link-alt" style=""></span> <span class="opacitymedium">'.$langs->trans("DebugTools").'</span><br>';
 print '<br>';
 
-$urlforceregistration = DOL_MAIN_URL_ROOT.'/index.php?foreregistration=1';
+$urlforceregistration = DOL_MAIN_URL_ROOT.'/index.php?forceregistration=1';
 print $langs->trans("URLToForceRegistration").'<br>';
-print '<div class="urllink"><input type="text" id="foreregistration" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforceregistration.'"><a class="" href="'.$urlforceregistration.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
-print ajax_autoselect('foreregistration');
+print '<div class="urllink"><input type="text" id="forceregistration" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforceregistration.'"><a class="" href="'.$urlforceregistration.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forceregistration');
 
 print '<br>';
 

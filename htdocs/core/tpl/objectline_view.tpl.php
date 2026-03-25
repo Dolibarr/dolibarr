@@ -83,7 +83,7 @@ if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIA
 	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_view.tpl.php';
 }
 
-global $mysoc;
+global $mysoc, $db;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
@@ -186,12 +186,12 @@ if (($line->info_bits & 2) == 2) {
 
 	if ($line->fk_product > 0) {
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : '') . $text;
 			if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
 				print $form->textwithpicto('', $description);
 			}
 		} else {
-			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : ''));
 		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
@@ -206,7 +206,7 @@ if (($line->info_bits & 2) == 2) {
 			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
-				print img_picto('', 'rightarrow');
+				print img_picto('', 'rightarrow.png');
 			}
 			if (preg_match('/^\(DEPOSIT\)/', $line->description)) {
 				$newdesc = preg_replace('/^\(DEPOSIT\)/', $langs->trans("Deposit"), $line->description);
@@ -462,7 +462,40 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	print '&nbsp;';
 }
 print '</td>';
+//Shippable Status
+if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+	$coldisplay++;
+	print '<td class="linecolstock center">';
 
+
+	if ($line->fk_product > 0 && $line->product_type == 0) {
+		static $productstatcache = array();
+
+		if (empty($productstatcache[$line->fk_product])) {
+			$prod = new Product($this->db);
+			$prod->fetch($line->fk_product);
+			$prod->load_stock('nobatch,warehouseopen');
+			$productstatcache[$line->fk_product]['stockreel'] = $prod->stock_reel;
+		}
+		$stock = $productstatcache[$line->fk_product]['stockreel'];
+		$reliquat = $line->qty;
+		if (!empty($object->expeditions[$line->id])) {
+			$reliquat -= $object->expeditions[$line->id];
+		}
+		if ($reliquat > 0) {
+			if ($stock >= $reliquat) {
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'green');
+			} else {
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'error');
+			}
+		} else {
+			print img_picto($langs->trans("Shipped"), 'statut5');
+		}
+	} else {
+		print '&nbsp;';
+	}
+	print '</td>';
+}
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short', $langs);

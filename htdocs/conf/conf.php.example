@@ -245,6 +245,15 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 $dolibarr_main_authentication='dolibarr';
 
 
+// dolibarr_main_authentication_autocreateuser
+// ============================================
+// Auto-creation of Dolibarr users on first OIDC login.
+// Set to 1 to allow new user accounts to be created automatically
+// when a user authenticates via OpenID Connect but has no existing account.
+// IMPORTANT: This must be set here in conf.php, not via the database setup.
+$dolibarr_main_authentication_autocreateuser=0;
+
+
 // Parameters used to setup LDAP authentication
 // --------------------------------------------
 // Uncomment them if dolibarr_main_authentication = 'ldap'

@@ -21,6 +21,7 @@ CREATE TABLE llx_blockedlog
 	rowid integer AUTO_INCREMENT PRIMARY KEY,	-- Automatic sequence ID
 	-- fields included into signature
 	module_source varchar(32) DEFAULT '',		-- field included into line signature. If the event was recorded from a POS module or another module.
+	pos_source varchar(32) DEFAULT '',			-- field included into line signature. The number of the terminal.
 	action varchar(50),							-- field included into line signature. The type of event.
 	entity integer DEFAULT 1 NOT NULL,			-- field included into line signature. For future usage of multi-entity.
 	date_creation	datetime,					-- field included into line signature. Date and time of event.

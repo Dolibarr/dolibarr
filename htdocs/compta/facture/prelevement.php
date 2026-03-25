@@ -797,113 +797,116 @@ if ($object->id > 0) {
 		$buttonlabel = $langs->trans("MakeBankTransferOrder");
 		$user_perms = $user->hasRight('paymentbybanktransfer', 'create');
 	}
-
+	// Calculate the remaining amount available for new transfer requests
+	// This takes into account pending requests (traite=0) and requests in non-credited transfer receipts
+	$remaintopaylesspendingdebit	= $resteapayer - $pending;
 	// Add a transfer request
-	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0) {
-		if ($resteapayer > 0) {
-			if ($user_perms) {
-				$remaintopaylesspendingdebit = $resteapayer - $pending;
-
-				$title = $langs->trans("NewStandingOrder");
-				if ($type == 'bank-transfer') {
-					$title = $langs->trans("NewPaymentByBankTransfer");
+	// If WITHDRAW_STRICT_CHECK_AMOUNT is enabled, allow multiple partial requests as long as the total requested amount doesn't exceed the invoice total
+	// Otherwise, use original behavior: block if any request is pending
+	if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+		// New behavior: check remaining amount
+		$canCreateRequest	= ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $remaintopaylesspendingdebit > 0);
+	} else {
+		// Original behavior: check if no open requests
+		$canCreateRequest	= ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0 && $resteapayer > 0);
+	}
+	if ($canCreateRequest) {
+		if ($user_perms) {
+			$title = $langs->trans("NewStandingOrder");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("NewPaymentByBankTransfer");
+			}
+			print '<!-- form to select BAN -->';
+			print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+			print '<input type="hidden" name="token" value="'.newToken().'" />';
+			print '<input type="hidden" name="id" value="'.$object->id.'" />';
+			print '<input type="hidden" name="type" value="'.$type.'" />';
+			print '<input type="hidden" name="action" value="new" />';
+			print '<div class="center formconsumeproduce">';
+			//print $langs->trans('CustomerIBAN').' ';
+			// if societe rib in model invoice, we preselect it
+			$selectedRib = '';
+			if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
+				$facturerec = new FactureRec($db);
+				$facturerec->fetch($object->fk_fac_rec_source);
+				if ($facturerec->fk_societe_rib) {
+					$companyBankAccount = new CompanyBankAccount($db);
+					$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
+					$selectedRib = $companyBankAccount->id;
 				}
-
-				print '<!-- form to select BAN -->';
-				print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+			}
+			$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
+			$defaultRibId = $object->thirdparty->getDefaultRib();
+			if ($defaultRibId) {
+				$companyBankAccount = new CompanyBankAccount($db);
+				$res = $companyBankAccount->fetch($defaultRibId);
+				if ($res > 0 && !$companyBankAccount->verif()) {
+					print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
+				}
+			} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+				print img_warning($langs->trans("NoDefaultIBANFound"));
+			}
+			// Bank Transfer Amount
+			if (getDolOptimizeSmallScreen()) {
+				print '<br>';
+			} else {
+				print ' &nbsp; &nbsp; ';
+			}
+			print '<label for="withdraw_request_amount">';
+			if ($type == 'bank-transfer') {
+				print $langs->trans('BankTransferAmount');
+			} else {
+				print $langs->trans("WithdrawRequestAmount");
+			}
+			print '</label> ';
+			print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
+			// Button
+			print '<br><br>';
+			print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
+			print '<br><br>';
+			print '</div>';
+			print '</form>';
+			if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
+				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
+				print "<br>";
+				// Add stripe sepa button
+				$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+				print '<form method="POST" action="">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
-
-				print '<div class="center formconsumeproduce">';
-
-				//print $langs->trans('CustomerIBAN').' ';
-
-				// if societe rib in model invoice, we preselect it
-				$selectedRib = '';
-				if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
-					$facturerec = new FactureRec($db);
-					$facturerec->fetch($object->fk_fac_rec_source);
-					if ($facturerec->fk_societe_rib) {
-						$companyBankAccount = new CompanyBankAccount($db);
-						$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
-						$selectedRib = $companyBankAccount->id;
-					}
-				}
-
-				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
-
-				$defaultRibId = $object->thirdparty->getDefaultRib();
-				if ($defaultRibId) {
-					$companyBankAccount = new CompanyBankAccount($db);
-					$res = $companyBankAccount->fetch($defaultRibId);
-					if ($res > 0 && !$companyBankAccount->verif()) {
-						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
-					}
-				} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-					print img_warning($langs->trans("NoDefaultIBANFound"));
-				}
-
-
-				// Bank Transfer Amount
-				if (getDolOptimizeSmallScreen()) {
-					print '<br>';
-				} else {
-					print ' &nbsp; &nbsp; ';
-				}
-				print '<label for="withdraw_request_amount">';
-				if ($type == 'bank-transfer') {
-					print $langs->trans('BankTransferAmount');
-				} else {
-					print $langs->trans("WithdrawRequestAmount");
-				}
-				print '</label> ';
-				print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
-
-				// Button
-				print '<br><br>';
+				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
+				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
 				print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
-				print '<br><br>';
-
-				print '</div>';
-
 				print '</form>';
-
-				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
-					print "<br>";
-					// Add stripe sepa button
-					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
-					print '<form method="POST" action="">';
-					print '<input type="hidden" name="token" value="'.newToken().'" />';
-					print '<input type="hidden" name="id" value="'.$object->id.'" />';
-					print '<input type="hidden" name="type" value="'.$type.'" />';
-					print '<input type="hidden" name="action" value="new" />';
-					print '<input type="hidden" name="paymenservice" value="stripesepa" />';
-					print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-					print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-					print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
-					print '</form>';
-				}
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 		}
 	} else {
-		if ($numopen == 0) {
-			if ($object->status > $object::STATUS_DRAFT) {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
+		// Different error messages based on the mode
+		if ($object->status > $object::STATUS_DRAFT) {
+			if ($object->paid == 0) {
+				if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+					// Total amount has already been requested (pending + in transfer receipts)
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountRequestedAlreadyReachesTotal")).'">'.$buttonlabel.'</a>';
+				} else {
+					// Original behavior: request already done or amount must be positive
+					if ($numopen > 0) {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
+					}
+				}
 			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
 		}
 	}
-
 	print "</div>\n";
 
 

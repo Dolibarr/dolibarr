@@ -197,4 +197,4 @@ FieldsEdit=Επεξεργασία πεδίων
 FieldsInsert=Εισαγωγή πεδίων
 FieldsView=Προβολή πεδίων
 AIPromptExtrafield=Προτροπή AI
-AIPromptExtrafieldDesc=Οι constants που χρησιμοποιούνται σε αυτό το πεδίο θα αντικατασταθούν με την αντίστοιχη τιμή.
+AIPromptExtrafieldDesc=Enter here a prompt that should return a value and only the value. The substition variables are replaced into the prompt before calling the AI API.

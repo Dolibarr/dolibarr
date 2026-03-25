@@ -70,6 +70,7 @@ $idproduct = GETPOSTINT('idproduct');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 $mobilepage = GETPOST('mobilepage', 'alpha');
+$batch = ''; // Default no batch if missing
 
 // Terminal is stored into $_SESSION["takeposterminal"];
 
@@ -217,7 +218,7 @@ if (empty($reshook)) {
 	// Test that period is not close
 	$tmpcurrentday = dol_getdate(dol_now());
 
-	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."pos_cash_fence";
+	$sql = "SELECT MIN(ref) as firstref FROM ".MAIN_DB_PREFIX."pos_cash_fence";
 	$sql .= " WHERE posnumber = ".((int) $takeposterminal);
 	$sql .= " AND year_close = ".((int) $tmpcurrentday['year']);
 	$sql .= " AND (";
@@ -227,18 +228,19 @@ if (empty($reshook)) {
 	$sql .= ")";
 	$sql .= " AND status = 1";
 
+	$refcashcontrol = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$nbcashcontrol = $obj->nb;
+			$refcashcontrol = $obj->firstref;
 		}
 	}
 
-	if ($nbcashcontrol) {
+	if ($refcashcontrol) {
 		$error++;
 		$langs->load('errors');
-		dol_htmloutput_errors($langs->trans("ACashControlHasBeenclosedForCurrentDay"), [], 1);
+		dol_htmloutput_errors($langs->trans("ACashControlHasBeenclosedForCurrentDay", $refcashcontrol), [], 1);
 		$action = '';
 	}
 
@@ -2067,7 +2069,7 @@ if ($placeid > 0) {
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
-				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow');
+				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow.png');
 				if ($line->product_label) {
 					$htmlsupplements[$line->fk_parent_line] .= $line->product_label;
 				}
@@ -2181,14 +2183,22 @@ if ($placeid > 0) {
 				$htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
 			}
 			if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
+				// Set the content of tooltip
 				$moreinfo = '';
+				$moreinfo .= $langs->trans("VATRate").': '.price($line->tva_tx).' %<br>';
+				$moreinfo .= $langs->trans("UnitPrice").': '.price($line->subprice).'<br>';
+				$moreinfo .= '<br>';
 				$moreinfo .= $langs->transcountry("TotalHT", $mysoc->country_code).': '.price($line->total_ht);
 				if ($line->vat_src_code) {
 					$moreinfo .= '<br>'.$langs->trans("VATCode").': '.$line->vat_src_code;
 				}
-				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_tva);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
+				$moreinfo .= '<br>'.$langs->trans("TotalVAT").': '.price($line->total_tva);
+				if ($mysoc->useLocalTax(1, 1, $mysoc)) {
+					$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
+				}
+				if ($mysoc->useLocalTax(2, 1, $mysoc)) {
+					$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
+				}
 				$moreinfo .= '<hr>';
 				$moreinfo .= $langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
 				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;

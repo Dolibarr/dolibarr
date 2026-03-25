@@ -202,8 +202,12 @@ class ActionsTicket extends CommonHookActions
 	{
 		global $langs;
 
+		$closeStatuses = [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED];
+
+		$permissiontoadd = $user->hasRight('ticket', 'write');
+
 		print '<!-- initial message of ticket -->'."\n";
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -217,7 +221,7 @@ class ActionsTicket extends CommonHookActions
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
-		if ($user->hasRight("ticket", "manage")) {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses)) {
 			if ($action != 'edit_message_init') {
 				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 			} else {
@@ -229,7 +233,7 @@ class ActionsTicket extends CommonHookActions
 
 		print '<tr>';
 		print '<td colspan="2">';
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -255,7 +259,7 @@ class ActionsTicket extends CommonHookActions
 		print '</table>';
 		print '</div>';
 
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 			print '</form>';
 		}
@@ -281,12 +285,12 @@ class ActionsTicket extends CommonHookActions
 
 		$action = GETPOST('action', 'aZ09');
 
-		print '<div class="ticketpublicarea ticketlargemargin centpercent" style="padding-top: 0">';
+		print '<div class="ticketpublicarea ticketlargemargin" style="padding-top: 0">';
 		$this->viewTicketOriginalMessage($user, $action, $object);
 		print '</div>';
 
 		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+			print '<div class="ticketpublicarea ticketlargemargin">';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="border centpercent">';
@@ -319,12 +323,14 @@ class ActionsTicket extends CommonHookActions
 							$userstat = new User($this->db);
 							$res = $userstat->fetch($arraymsgs['fk_user_author']);
 							if ($res) {
+								print img_picto('', 'user', 'class="pictofixedwidth"');
 								print $userstat->getNomUrl(0);
 							}
 						} elseif (isset($arraymsgs['fk_contact_author'])) {
 							$contactstat = new Contact($this->db);
 							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
 							if ($res) {
+								print img_picto('', 'contact', 'class="pictofixedwidth"');
 								print $contactstat->getNomUrl(0, 'nolink');
 							} else {
 								print $arraymsgs['fk_contact_author'];
@@ -336,7 +342,7 @@ class ActionsTicket extends CommonHookActions
 					}
 					print '</tr>';
 
-					print '<tr class="oddeven nohover">';
+					print '<tr class="oddeven nohover borderbottom">';
 					print '<td'.($show_user ? ' colspan="2"' : '').'>';
 					print $arraymsgs['message'];
 
@@ -418,7 +424,7 @@ class ActionsTicket extends CommonHookActions
 			print '</div>';
 			print '</div>';
 		} else {
-			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+			print '<div class="ticketpublicarea ticketlargemargin">';
 			print '<div class="info">'.$langs->trans('NoMsgForThisTicket').'</div>';
 			print '</div>';
 		}

@@ -32,7 +32,7 @@ ErrorFromToAccountsMustDiffers=Les comptes source et destination doivent être d
 ErrorBadThirdPartyName=Nom de tiers incorrect
 ForbiddenBySetupRules=Interdit par les règles de configuration
 ErrorProdIdIsMandatory=Le %s est obligatoire
-ErrorProdIdIsMandatoryForEuThirdparties=Le %s est obligatoire pour clients dans EEC
+ErrorProdIdIsMandatoryForEuThirdparties=Le %s est obligatoire pour les clients dans l'EEC
 ErrorAccountancyCodeCustomerIsMandatory=Le code comptable du client %s est obligatoire
 ErrorAccountancyCodeSupplierIsMandatory=Le code comptable du fournisseur %s est obligatoire
 ErrorBadCustomerCodeSyntax=La syntaxe du code client est incorrecte
@@ -168,6 +168,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Un mode de paiement a été défini de typ
 ErrorPHPNeedModule=Erreur, votre PHP doit avoir le module <b>%s</b> installé pour utiliser cette fonctionnalité.
 ErrorOpenIDSetupConfNotComplete=Pour des raisons de sécurité, vous devez également configurer le fichier conf.php de Dolibarr pour autoriser l'authentification par OpenID.
 ErrorOpenIDSetupNotComplete=Vous avez configuré Dolibarr pour accepter l'authentication OpenID, mais l'URL du service OpenID n'est pas défini dans la constante %s
+OIDCAutocreateUserDisabled=La création automatique d'utilisateurs lors de la connexion OIDC est actuellement désactivée. Pour l'activer, ajoutez $dolibarr_main_authentication_autocreateuser=1 à votre fichier conf.php fichier.
+OIDCAutocreateUserEnabled=La création automatique d'utilisateurs lors de la connexion OIDC est activée ($dolibarr_main_authentication_autocreateuser=1 est défini dans conf.php).
 ErrorWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
 ErrorBadFormat=Mauvais format
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Erreur, cet adhérent n'ait pas encore lié à un tiers. Lier le tier à un tiers existant ou créer un nouveau tiers avant de créer une adhésion avec facture.
@@ -467,3 +469,5 @@ SomeShipmentExists=Erreur : une expédition est liée à commande. Suppression 
 WarningEvaluationEmptyValidate=Impossible d'évaluer les niveaux de compétences non définis.
 ErrorBadParametersForDirectDebitFileCreate=Impossible de créer un virement bancaire fichier : le paramètre de format attendu n'est pas fourni.
 ErrorBadParametersForDirectDebitFileCreateDids=Impossible de créer un virement bancaire fichier : les identifiants des demandes de paiement existantes ne sont pas fournis.
+UserDoesNotHaveRightsToChangeHisPassword=Ce utilisateur n'a pas le droit de modifier son propre mot de passe
+ErrorExpeditionQtyTooHigh=La quantité à expédier (%s) dépasse la quantité restante à livrer (%s).

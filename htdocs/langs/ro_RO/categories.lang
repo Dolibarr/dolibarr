@@ -92,6 +92,7 @@ AddCustomerIntoCategory=Asignare categorie la client
 AddSupplierIntoCategory=Asignare categorie la furnizor
 AddFichinterIntoCategory=Asignare categorie la intervenție
 AddOrderIntoCategory=Atribuire categorie la comandă
+AddMoIntoCategory=Atribuie categoria comenzii de fabricație
 AddInvoiceIntoCategory=Asignare categorie la factură
 AddSupplierOrderIntoCategory=Asignare categorie la comandă de achiziție
 AddSupplierInvoiceIntoCategory=Asignare categorie la factură furnizor

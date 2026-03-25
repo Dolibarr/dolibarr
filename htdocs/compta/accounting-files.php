@@ -633,13 +633,15 @@ $head[$h][0] = $_SERVER["PHP_SELF"];
 $head[$h][1] = $langs->trans("AccountantFiles");
 $head[$h][2] = 'AccountancyFiles';
 
-print dol_get_fiche_head($head, 'AccountancyFiles');
+print dol_get_fiche_head($head, 'AccountancyFiles', '', -1);
 
 
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
+print '<div class="neutral">';
+
+print '<span class="opacitylow">'.$langs->trans("ExportAccountingSourceDocHelp");
 if (isModEnabled('accounting')) {
 	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
 }
@@ -696,7 +698,9 @@ foreach ($listofchoices as $choice => $val) {
 	$i++;
 }
 
-print '<input type="submit" class="button small nomarginleft margintoponly" name="search" value="'.$langs->trans("Search").'">';
+print '<br><br><center><input type="submit" class="button small nomarginleft margintoponly" name="search" value="'.$langs->trans("Search").'"></center>';
+
+print '</div>';
 
 print '</form>'."\n";
 

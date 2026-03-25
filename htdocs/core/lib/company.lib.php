@@ -968,7 +968,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		}
 
 		print "\n";
-		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '', 0, '', '', $massactionbutton);
+		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, 'project', 0, '', '', $massactionbutton);
 
 		print '<div class="div-table-responsive">' . "\n";
 		print '<table class="noborder centpercent">';
@@ -1042,7 +1042,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '</td>';
 
 						// Label
-						print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
+						print '<td title="' . dol_escape_htmltag($obj->title) . '"><div class="twolinesmax-normallineheight minwidth200onall">' . dol_escape_htmltag($obj->title) . '</div></td>';
 						// Date start
 						print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 						// Date end
@@ -1151,7 +1151,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 							print '</td>';
 
 							// Label
-							print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
+							print '<td title="' . dol_escape_htmltag($obj->title) . '"><div class="twolinesmax-normallineheight minwidth200onall">' . dol_escape_htmltag($obj->title) . '</div></td>';
 							// Date start
 							print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 							// Date end
@@ -1899,7 +1899,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$sql .= " a.percent as percent, 'action' as type,";
 		$sql .= " a.fk_element, a.elementtype,";
 		$sql .= " a.fk_contact,";
-		$sql .= " a.code,";
+		$sql .= " a.code, a.fulldayevent,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
@@ -2202,6 +2202,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
+						'fulldayevent' => (int) $obj->fulldayevent,
 						'note' => $obj->label,
 						'percent' => (int) $obj->percent,
 
@@ -2233,6 +2234,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
+						'fulldayevent' => (int) $obj->fulldayevent,
 						'note' => $obj->label,
 						'percent' => (int) $obj->percent,
 
@@ -2257,7 +2259,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 	}
 
-	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:int,lastname:string,firstname:string,contact_photo:string,socpeopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
+	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fulldayevent:int,fk_element:string,elementtype:string,contact_id:int,lastname:string,firstname:string,contact_photo:string,socpeopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
@@ -2322,10 +2324,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '</td>';
 		// Type
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'selecttype combolargeelem minwidth100 maxwidth150', 1);
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'selecttype combolargeelem minwidth75 maxwidth125', 1);
 		$out .= '</td>';
 		// Label - Title
-		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth125" name="search_agenda_label" value="' . $filters['search_agenda_label'] . '"></td>';
+		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth200" name="search_agenda_label" value="' . $filters['search_agenda_label'] . '"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		// Status ($percent can be 'na'or < 100 or 100)
@@ -2419,44 +2421,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 
 			// Date
 			$out .= '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
-			if ($histo[$key]['dateend']) {	// There is also a end date
-				$tmpa = dol_getdate($histo[$key]['datestart']);
-				$tmpb = dol_getdate($histo[$key]['dateend']);
-				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					// The same day
-					if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-						$out .= '<div class="center inline-block lineheightsmall">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .= '<br><span class="opacitymedium hourspan">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
-						$out .= '</span>';
-						$out .= '</div>';
-					} else {
-						$out .= '<div class="center inline-block lineheightsmall">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-						$out .= '<br><span class="opacitymedium hourspan">';
-						$out .= dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-						$out .= '</span>';
-						$out .= '</div>';
-					}
-				} else {
-					// Not the same day
-					$out .=  '<div class="center inline-block lineheightsmall">';
-					$out .=  dol_print_date($histo[$key]['datestart'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="opacitymedium hourspan">';
-					$out .=  dol_print_date($histo[$key]['datestart'], 'hourreduceformat', 'tzuserrel');
-					$out .=  '</span>';
-					$out .=  '</div>';
-					$out .=  ' - ';
-					$out .=  '<div class="center inline-block lineheightsmall">';
-					$out .=  dol_print_date($histo[$key]['dateend'], 'dayreduceformat', 'tzuserrel');
-					$out .=  '<br><span class="opacitymedium hourspan">';
-					$out .=  dol_print_date($histo[$key]['dateend'], 'hourreduceformat', 'tzuserrel');
-					$out .=  '</span>';
-					$out .=  '</div>';
-				}
-			}
+
+			$out .= dolOutputDates($histo[$key]['datestart'], $histo[$key]['dateend'], (int) $histo[$key]['fulldayevent'], 0, '', 'tzuserrel', 1);
+
 			// Add the late warning
 			$late = 0;
 			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
@@ -2798,7 +2765,7 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	if (is_array($filters) && !empty($filters['search_rowid'])) {
 		$sql .= natural_search('a.id', $filters['search_rowid'], 1);
 	}
-	if (is_array($filters) && !empty($filters['search_filtert'])) {
+	if (is_array($filters) && !empty($filters['search_filtert']) && ((int) $filters['search_filtert']) != -1) {
 		$sql .= natural_search('a.fk_user_action', $filters['search_filtert'], 1);
 	}
 

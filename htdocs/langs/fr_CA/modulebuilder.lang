@@ -127,3 +127,4 @@ EmailingSelectors=Sélecteurs d'emails
 EmailingSelectorDesc=Vous pouvez générer et éditer ici les fichiers de classe pour fournir de nouveaux sélecteurs de cibles de courrier électronique pour le module d'envoi de courrier électronique de masse
 EmailingSelectorFile=Fichier de sélection d'e-mails
 ModuleTranslatedIntoLangForKeyInto=Traduit dans un fichier .lang pour la clé %s en « %s »
+AIPromptExtrafieldDesc=Saisissez ici une invite qui doit renvoyer une valeur, et uniquement cette valeur. Les variables de substitution sont insérées dans l'invite avant l'appel à l'API d'IA.
