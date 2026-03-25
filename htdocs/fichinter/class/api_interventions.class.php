@@ -835,7 +835,12 @@ class Interventions extends DolibarrApi
 		$updateRes = $objectline->update(DolibarrApiAccess::$user);
 
 		if ($updateRes >= 0) {
-			return $this->_cleanObjectDatas($this->fichinter);
+			$result = $this->fichinter->fetch_lines();
+			if ($result > 0) {
+				return $this->_cleanObjectDatas($this->fichinter);
+			} else {
+				throw new RestException(500, $objectline->error);
+			}
 		} else {
 			throw new RestException(500, $objectline->error);
 		}
