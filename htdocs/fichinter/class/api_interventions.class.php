@@ -843,7 +843,7 @@ class Interventions extends DolibarrApi
 			if ($result > 0) {
 				return $this->_cleanObjectDatas($this->fichinter);
 			} else {
-				throw new RestException(500, $objectline->error);
+				throw new RestException(500, $this->fichinter->error);
 			}
 		} else {
 			throw new RestException(500, $objectline->error);
