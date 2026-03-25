@@ -967,12 +967,15 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 				})
 				.addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
-			input.data("ui-autocomplete")._renderItem = function( ul, item ) {
-				return $("<li>")
-					.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
-					.append( "<a>" + item.label + "</a>" )
-					.appendTo( ul );
-			};
+			const widgetInstance = input.data("ui-autocomplete");
+			if (widgetInstance) {
+				widgetInstance._renderItem = function( ul, item ) {
+					return $("<li>")
+						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+						.append( "<a>" + item.label + "</a>" )
+						.appendTo( ul );
+				};
+			}
 
 			this.button = $( "<button type=\'button\'>&nbsp;</button>" )
 				.attr( "tabIndex", -1 )

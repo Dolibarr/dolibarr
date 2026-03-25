@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2017-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017       Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020       Tobias Sekan				<tobias.sekan@startmail.com>
@@ -308,7 +308,7 @@ if ($search_bank_entry > 0) {
 if ($search_accountancy_account > 0) {
 	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
-if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX') && ($search_accountancy_subledger > 0)) {
+if (getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0 && ($search_accountancy_subledger > 0)) {
 	$sql .= " AND v.subledger_account = '".$db->escape($search_accountancy_subledger)."'";
 } else {
 	if ($search_accountancy_subledger != '' && $search_accountancy_subledger != '-1') {
@@ -581,13 +581,7 @@ if (!empty($arrayfields['subledger']['checked'])) {
 	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth150');
-	} else {
-		print '<input type="text" class="maxwidth150 maxwidthonsmartphone" name="search_accountancy_subledger" value="'.$search_accountancy_subledger.'">';
-	}
-
+	print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth150');
 	print '</div>';
 	print '</td>';
 }

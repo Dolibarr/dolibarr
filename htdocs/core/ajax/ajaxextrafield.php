@@ -196,8 +196,9 @@ if ($object instanceof CommonObject) {
 				if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 					$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
 				}
-				// can use SELECT request
-				if (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+				// can use SELECT sub request
+				global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+				if (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 					if (strpos($InfoFieldList[4], '$SEL$') !== false) {
 						$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
 					}

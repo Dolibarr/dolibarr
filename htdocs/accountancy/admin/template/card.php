@@ -576,11 +576,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
 				// Also, it is not possible to use a value that is not in the list.
 				// Also, the label is not automatically filled when a value is selected.
-				if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-					print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-				} else {
-					print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
-				}
+				print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 				// Add also input for subledger label
 				print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 				print '</td>';
@@ -620,15 +616,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $formaccounting->select_account('', 'general_account', 1, [], 1, 1, 'maxwidth300');
 			print '</td>';
 			print '<td>';
-			// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-			// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-			// Also, it is not possible to use a value that is not in the list.
-			// Also, the label is not automatically filled when a value is selected.
-			if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-				print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-			} else {
-				print '<input type="text" class="maxwidth150" name="new_subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
-			}
+			print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 			print '<br><input type="text" class="maxwidth150" name="new_subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 			print '</td>';
 			print '<td><input type="text" name="operation_label" class="flat minwidth150"></td>';

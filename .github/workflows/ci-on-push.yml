@@ -2,6 +2,9 @@ name: "CI-PUSH"
 
 on: [push]
 
+permissions:
+  contents: read
+
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml
