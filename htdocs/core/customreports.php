@@ -66,7 +66,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
-	$search_measures = GETPOST('search_measures', 'array');
+	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
 
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
@@ -76,11 +76,19 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') {
 		$search_groupby = array(GETPOST('search_groupby', 'alpha'));
 	}
-
 	'@phan-var-force string[] $search_groupby';
 
-	$search_yaxis = GETPOST('search_yaxis', 'array');
+	$search_yaxis = GETPOST('search_yaxis', 'array:alphanohtml');
 	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
+
+	$search_measures = array_map(function ($value) {
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_measures);
+	$search_xaxis = array_map(function ($value) {
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_xaxis);
+	$search_yaxis = array_map(function ($value) {
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_yaxis);
+	$search_groupby = array_map(function ($value) {
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_groupby);
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -478,7 +486,7 @@ if (count($search_groupby)) {
 			$fieldtocount = $gvalsanitized;
 		}
 
-		$sql = "SELECT DISTINCT ".$fieldtocount." as val";
+		$sql = "SELECT DISTINCT ".$fieldtocount." as val";	// $fieldtocount has been sanitized by previous lines as we can't use db->sanitie()
 
 		if (strpos($fieldtocount, 'te') === 0) {
 			$tabletouse = $object->table_element;
