@@ -570,17 +570,21 @@ class Interventions extends DolibarrApi
 
 
 	/**
-	 * Delete the line of the interventional.
+	 * Delete the line of the intervention
 	 *
-	 * @param int $id ID of the interventional
-	 * @param int $lineid ID of the line to delete
-	 * @return  Object						Object with cleaned properties
+	 * @since	23.0.0	Initial implementation
 	 *
-	 * @throws RestException
+	 * @param	int		$id			ID of the intervention
+	 * @param	int		$lineid		ID of the line to delete
+	 * @return	Object				Object with cleaned properties
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 405
 	 *
 	 * @url DELETE /{id}/lines/{lineid}
 	 */
-	public function deleteInterventionalLine($id, $lineid)
+	public function deleteLine($id, $lineid)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(403);
@@ -588,11 +592,11 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+			throw new RestException(404, 'Intervention not found');
 		}
 
 		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Interventional not in Draft Status : '.$this->fichinter->getLibStatut(1));
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
@@ -601,12 +605,12 @@ class Interventions extends DolibarrApi
 
 		$objectline = new FichinterLigne($this->db);
 		if ($objectline->fetch($lineid) <= 0) {
-			throw new RestException(404, 'Interventional Line not found');
+			throw new RestException(404, 'Intervention line not found');
 		}
 
 		$updateRes = $objectline->deleteLine(DolibarrApiAccess::$user);
 
-		if ($updateRes > 0) {
+		if ($updateRes >= 0) {
 			return $this->_cleanObjectDatas($this->fichinter);
 		} else {
 			throw new RestException(405, $this->fichinter->error);

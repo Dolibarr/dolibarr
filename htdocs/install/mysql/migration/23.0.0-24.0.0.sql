@@ -195,6 +195,8 @@ ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
+
 create table llx_product_lang_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
