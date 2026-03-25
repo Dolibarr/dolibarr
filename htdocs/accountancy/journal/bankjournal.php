@@ -790,7 +790,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							$bookkeeping->subledger_label = '';
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
-								$accountingaccount->fetch(null, $k, true);
+								$accountingaccount->fetch(0, $k, true);
 								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
 								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
@@ -802,7 +802,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							$bookkeeping->subledger_label = '';
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
-								$accountingaccount->fetch(null, $k, true);
+								$accountingaccount->fetch(0, $k, true);
 								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
 								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
@@ -814,7 +814,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							$bookkeeping->subledger_label = '';
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
-								$accountingaccount->fetch(null, $k, true);
+								$accountingaccount->fetch(0, $k, true);
 								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
 								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
@@ -826,7 +826,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							$bookkeeping->subledger_label = '';
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
-								$accountingaccount->fetch(null, $k, true);
+								$accountingaccount->fetch(0, $k, true);
 								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
 								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
@@ -838,7 +838,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							$bookkeeping->subledger_label = '';
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
-								$accountingaccount->fetch(null, $k, true);
+								$accountingaccount->fetch(0, $k, true);
 								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
 								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
@@ -850,7 +850,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 							if (empty($conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]])) {
 								$accountingaccount = new AccountingAccount($db);
-								$accountingaccount->fetch(null, $tabpay[$key]["account_various"], true);
+								$accountingaccount->fetch(0, $tabpay[$key]["account_various"], true);
 								$conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]] = $accountingaccount;
 							} else {
 								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]];
@@ -862,7 +862,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							$bookkeeping->subledger_label = '';
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
-								$accountingaccount->fetch(null, $k, true);
+								$accountingaccount->fetch(0, $k, true);
 								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
 								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
