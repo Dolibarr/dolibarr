@@ -138,7 +138,13 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 				} else {
 					$dateInputNames = array();
 					$keepDurationNames = array();
-					$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'"><table class="noborder centpercent">';
+					$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'">';
+					$tablehtml .= '<div class="opacitymedium margintoponly marginbottomonly">';
+					$tablehtml .= '<span class="marginright">'.$langs->trans('MassActionApplyDateToTasks').'</span>';
+					$tablehtml .= '<input type="datetime-local" class="flat marginright" id="global_task_datetime" value="">';
+					$tablehtml .= '<input type="button" class="button button-small smallpaddingimp" id="apply_global_task_datetime" value="'.dol_escape_htmltag($langs->trans('Apply')).'">';
+					$tablehtml .= '</div>';
+					$tablehtml .= '<table class="noborder centpercent">';
 					$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="center">'.$langs->trans('DateHour').'</th><th class="center">'.$langs->trans('MassActionKeepTaskDuration').'</th></tr>';
 					foreach ($tasksById as $taskId => $taskDb) {
 						$datetimeName = 'task_datetime_'.$taskId;
@@ -189,6 +195,13 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 					jQuery(document).ready(function() {
 						adjustProjectTaskMassactionModal();
 						jQuery(window).on("resize", adjustProjectTaskMassactionModal);
+						jQuery(document).on("click", "#apply_global_task_datetime", function() {
+							var globalValue = jQuery("#global_task_datetime").val();
+							if (typeof globalValue === "undefined" || globalValue === "") {
+								return;
+							}
+							jQuery("input[id^=\'task_datetime_\']").val(globalValue);
+						});
 					});
 				})();
 			</script>';

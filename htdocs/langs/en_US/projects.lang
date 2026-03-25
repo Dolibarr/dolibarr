@@ -349,3 +349,4 @@ MassActionSelectedTasksStartDateUpdated=%s task(s) start date updated.
 MassActionSelectedTasksDeadlineUpdated=%s task(s) deadline updated.
 MassActionInvalidTaskProgressValue=Invalid progress value for task ID %s.
 MassActionInvalidTaskDateValue=Invalid date value for task ID %s.
+MassActionApplyDateToTasks=Update tasks below
