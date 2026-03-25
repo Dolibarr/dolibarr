@@ -1229,7 +1229,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<td>';
 		//$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
 		$permissiontoselfeditpassword = 1;	// In creation, we suppose it to true
-		if ($permissiontoselfeditpassword) {
+		if ($permissiontoselfeditpassword) { // @phpstan-ignore-line because value is forced
 			print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
 			print '<label class="opacitymedium" for="forcepasswordchange">'.$langs->trans("AtNextLogin").'</label>';
 		} else {

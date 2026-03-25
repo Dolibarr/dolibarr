@@ -524,15 +524,15 @@ class User extends CommonObject
 	 *	Load a user from database with its id or ref (login).
 	 *  This function does not load permissions, only user properties. Use loadRights() for this just after the fetch.
 	 *
-	 *	@param	int		$id		       		If defined, id to used for search
-	 * 	@param  string	$login       		If defined, login to used for search
-	 *	@param  string	$sid				If defined, sid to used for search
+	 *	@param	int			$id		       		If defined, id to used for search
+	 * 	@param  string		$login       		If defined, login to used for search
+	 *	@param  string		$sid				If defined, sid to used for search
 	 * 	@param	int<0,1>	$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
-	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depends on default setup.
-	 *  @param	string	$email       		If defined, email to used for search
-	 *  @param	int		$fk_socpeople		If defined, id of contact for search
+	 *  @param  int     	$entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depends on default setup.
+	 *  @param	string		$email       		If defined, email to used for search
+	 *  @param	int			$fk_socpeople		If defined, id of contact for search
 	 *  @param	int<0,1>	$use_email_oauth2	1=Use also email_oauth2 to fetch on email
-	 * 	@return	int							Return integer <0 if KO, 0 not found, >0 if OK
+	 * 	@return	int								Return integer <0 if KO, 0 not found, >0 if OK
 	 */
 	public function fetch($id = 0, $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0, $use_email_oauth2 = 0)
 	{

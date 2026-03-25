@@ -2425,10 +2425,11 @@ if (empty($reshook)) {
 		if (isset($desc) && isset($depth)) {
 			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
 		} else {
+			$result = -1;
 			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
 		}
 
-		if (isset($result) && $result >= 0) {
+		if ($result >= 0) {
 			$ret = $object->fetch($object->id); // Reload to get new records
 			$object->fetch_thirdparty();
 
@@ -2835,6 +2836,7 @@ if (empty($reshook)) {
 				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $situation_percent, 0, $fk_unit, (float) $pu_ht_devise);
 
 				if ($result > 0) {
+					$ret = $object->fetch($id); // Reload to get new records
 					// Define output language and generate document
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
@@ -2851,8 +2853,6 @@ if (empty($reshook)) {
 							$outputlangs->load('products');
 						}
 						$model = $object->model_pdf;
-						$ret = $object->fetch($id); // Reload to get new records
-
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -3278,6 +3278,7 @@ if (empty($reshook)) {
 			);
 
 			if ($result >= 0) {
+				$ret = $object->fetch($id); // Reload to get new records
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
@@ -3293,8 +3294,6 @@ if (empty($reshook)) {
 						$outputlangs->setDefaultLang($newlang);
 						$outputlangs->load('products');
 					}
-
-					$ret = $object->fetch($id); // Reload to get new records
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
@@ -3919,11 +3918,13 @@ if ($action == 'create') {
 		}
 
 		// Ref
+		/*
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="2">';
 		print $langs->trans("Draft");
 		print '</td>';
 		print '</tr>'."\n";
+		*/
 
 		// Thirdparty
 		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
@@ -4061,9 +4062,11 @@ if ($action == 'create') {
 		// Standard invoice
 		print '<div class="listofinvoicetype"><div class="">';
 		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOSTINT('type') ? '' : ' checked').'> ';
-		$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
+		$tmp .= '<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk");
+		$tmp .= ' <span class="opacitymedium">'.$langs->trans("InvoiceStandardAsk2").'</span>';
+		$tmp .= '</label>';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
+		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc").'<br><br>'.$langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
 		print $desc;
 		if ((($origin == 'propal') || ($origin == 'commande')) && (!empty($originid))) {
 			/*print '<td class="nowrap" style="padding-left: 5px">';
@@ -4376,12 +4379,14 @@ if ($action == 'create') {
 		}
 
 		// Template invoice
+		/*
 		print '<div class="listofinvoicetype"><div class="">';
 		$tmp = '<input type="radio" name="type" id="radio_template" value="0" disabled> ';
 		$text = $tmp.'<label class="opacitymedium" for="radio_template">'.$langs->trans("RepeatableInvoice").'</label> ';
 		$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3, 'templateonsmartphone');
 		print $desc;
 		print '</div></div>'."\n";
+		*/
 
 		print '</div><br>';
 
@@ -5062,7 +5067,7 @@ if ($action == 'create') {
 					break;
 				default:
 					// Other error
-					setEventMessages($langs->trans("DisabledBecauseNotErasable").(empty($object->error) ? '' : ': '.$object->error), null, 'errors');
+					setEventMessages($langs->trans("DisabledBecauseNotEditable").(empty($object->error) ? ': UnknownReason' : ': '.$object->error), null, 'errors');
 					break;
 			}
 			$oktomodif = 0;
@@ -6881,7 +6886,7 @@ if ($action == 'create') {
 			} elseif ($isErasable == -1) {
 				$htmltooltip = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
 			} elseif ($isErasable <= 0) {	// Any other cases
-				$htmltooltip = $langs->trans('DisabledBecauseNotErasable');
+				$htmltooltip = $langs->trans('DisabledBecauseNotErasable').(empty($object->error) ? ': UnknownReason' : ': '.$object->error);
 			} elseif ($objectidnext) {
 				$htmltooltip = $langs->trans('DisabledBecauseReplacedInvoice');
 			}

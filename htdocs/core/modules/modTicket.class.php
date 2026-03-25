@@ -246,7 +246,7 @@ class modTicket extends DolibarrModules
 		$this->rights[$r][1] = "Manage tickets"; // libelle de la permission
 		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'manage';
+		$this->rights[$r][4] = 'manage_advance';
 
 		$r++;
 		$this->rights[$r][0] = 56006; // id de la permission

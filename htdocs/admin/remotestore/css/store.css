@@ -111,6 +111,7 @@ div.divsearchfield {
 }
 .updatedApp{
     background-color: #25a580;
+    line-height: 1em;
 }
 .notcompatible {
     color: red;
