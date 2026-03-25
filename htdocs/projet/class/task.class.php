@@ -625,7 +625,7 @@ class Task extends CommonObjectLine
 	 * Return authorized tasks for selected ids.
 	 *
 	 * @param	User	$user		Current user
-	 * @param	array	$toselect	List of selected task ids
+	 * @param	array<int>	$toselect	List of selected task ids
 	 * @return	array<int,object>	Tasks indexed by task id
 	 */
 	public function getAuthorizedTasksForMassAction($user, $toselect)

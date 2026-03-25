@@ -324,7 +324,7 @@ if (empty($reshook)) {
 					}
 					$task->progress = max(0, min(100, (int) $progressraw));
 					$task->status = ($task->progress >= 100 ? Task::STATUS_CLOSED : Task::STATUS_ONGOING);
-				} elseif ($effectiveMassAction == 'update_selected_tasks_start_date' || $effectiveMassAction == 'update_selected_tasks_deadline') {
+				} elseif (in_array($effectiveMassAction, array('update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true)) {
 					$taskdatetime = GETPOST('task_datetime_'.$taskId, 'alphanohtml');
 					dol_syslog(__FILE__." datetime payload taskId=".$taskId." value='".$taskdatetime."' keep_duration=".GETPOSTINT('keep_duration_'.$taskId), LOG_WARNING);
 					$tasktimestamp = 0;
