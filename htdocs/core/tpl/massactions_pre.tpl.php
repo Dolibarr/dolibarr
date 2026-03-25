@@ -113,7 +113,7 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 				$modalBodyHeight = min(620, max(220, 56 + ($rowCount * 34)));
 				$modalHeight = min(760, $modalBodyHeight + 170);
 				$formquestion = array();
-				$formquestion[] = array('type' => 'hidden', 'name' => 'massaction', 'value' => $finalAction);
+				$formquestion[] = array('type' => 'hidden', 'name' => 'massactiontaskfinal', 'value' => $finalAction);
 				$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
 
 			if ($finalAction == 'update_selected_tasks_progress') {

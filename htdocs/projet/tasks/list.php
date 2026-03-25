@@ -272,8 +272,12 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	$effectiveMassAction = '';
+	$massactiontaskfinal = GETPOST('massactiontaskfinal', 'aZ09');
+	dol_syslog(__FILE__." massaction='".$massaction."' action='".$action."' confirm='".$confirm."' massactiontaskfinal='".$massactiontaskfinal."'", LOG_DEBUG);
 	if (in_array($action, array('close_selected_tasks', 'update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
 		$effectiveMassAction = $action;
+	} elseif (in_array($massactiontaskfinal, array('update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
+		$effectiveMassAction = $massactiontaskfinal;
 	} elseif (in_array($massaction, array('update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
 		$effectiveMassAction = $massaction;
 	} elseif ($massaction == 'close_selected_tasks' && GETPOST('confirmmassaction', 'alpha')) {
@@ -288,6 +292,7 @@ if (empty($reshook)) {
 			}
 		}
 		$tasksById = $object->getAuthorizedTasksForMassAction($user, $toselectpost);
+		dol_syslog(__FILE__." effectiveMassAction='".$effectiveMassAction."' selected=".count($toselectpost)." authorized=".count($tasksById), LOG_DEBUG);
 		if (empty($tasksById)) {
 			setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
 		} else {
