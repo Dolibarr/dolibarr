@@ -102,12 +102,13 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 		if (empty($tasksById)) {
 			setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
 		} else {
-			$massactionTaskMap = array(
-				'preupdate_selected_tasks_progress' => 'update_selected_tasks_progress',
-				'preupdate_selected_tasks_start_date' => 'update_selected_tasks_start_date',
-				'preupdate_selected_tasks_deadline' => 'update_selected_tasks_deadline'
-			);
-			$finalAction = $massactionTaskMap[$massaction];
+			if ($massaction == 'preupdate_selected_tasks_progress') {
+				$finalAction = 'update_selected_tasks_progress';
+			} elseif ($massaction == 'preupdate_selected_tasks_start_date') {
+				$finalAction = 'update_selected_tasks_start_date';
+			} else {
+				$finalAction = 'update_selected_tasks_deadline';
+			}
 			$formquestion = array();
 			$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
 

@@ -198,17 +198,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->hasRight('projet', 'lire');
 $permissiontocreate = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
-$massactionTaskMap = array(
-	'preupdate_selected_tasks_progress' => 'update_selected_tasks_progress',
-	'preupdate_selected_tasks_start_date' => 'update_selected_tasks_start_date',
-	'preupdate_selected_tasks_deadline' => 'update_selected_tasks_deadline'
-);
-$massactionTaskList = array(
-	'close_selected_tasks',
-	'update_selected_tasks_progress',
-	'update_selected_tasks_start_date',
-	'update_selected_tasks_deadline'
-);
 
 if (!$permissiontoread) {
 	accessforbidden();
@@ -223,7 +212,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && !in_array($massaction, array('presend', 'confirm_presend'), true) && !isset($massactionTaskMap[$massaction]) && !in_array($massaction, $massactionTaskList, true)) {
+if (!GETPOST('confirmmassaction', 'alpha') && !in_array($massaction, array('presend', 'confirm_presend', 'preupdate_selected_tasks_progress', 'preupdate_selected_tasks_start_date', 'preupdate_selected_tasks_deadline', 'close_selected_tasks', 'update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true)) {
 	$massaction = '';
 }
 
@@ -283,7 +272,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	$effectiveMassAction = '';
-	if (in_array($action, $massactionTaskList, true) && $confirm == 'yes') {
+	if (in_array($action, array('close_selected_tasks', 'update_selected_tasks_progress', 'update_selected_tasks_start_date', 'update_selected_tasks_deadline'), true) && $confirm == 'yes') {
 		$effectiveMassAction = $action;
 	} elseif ($massaction == 'close_selected_tasks' && GETPOST('confirmmassaction', 'alpha')) {
 		$effectiveMassAction = $massaction;
