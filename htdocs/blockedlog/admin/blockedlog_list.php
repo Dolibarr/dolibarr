@@ -708,6 +708,7 @@ if (is_array($blocks)) {
 			if (empty($search_end) || $search_end == -1) {
 				$search_end = dol_now();
 			}
+			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 			if (empty($search_code) || in_array('BILL_VALIDATE', $search_code)) {
