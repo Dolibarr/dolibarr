@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@destailleur.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,7 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page ".basename(__FILE__)." can't be called with no conf defined.";
 	exit;
 }
+global $foundoldformat, $firstrecorddate;
 
 $firstrecorddatearray = array();
 if (!empty($search_end) && $search_end > 0) {

@@ -703,7 +703,6 @@ if (is_array($blocks)) {
 
 			$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 			$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-			global $foundoldformat, $firstrecorddate;
 			$foundoldformat = 0;
 			$firstrecorddate = 0;
 			if (empty($search_end) || $search_end == -1) {
