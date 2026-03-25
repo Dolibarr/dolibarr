@@ -186,7 +186,7 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 						var targetModalHeight = parseInt(jqWrapper.attr("data-modal-height"), 10) || 520;
 						var maxModalHeight = Math.max(220, jQuery(window).height() - 100);
 						var finalModalHeight = Math.min(targetModalHeight, maxModalHeight);
-							var finalBodyHeight = Math.max(120, Math.min(targetBodyHeight + 5, finalModalHeight - 150));
+							var finalBodyHeight = Math.max(120, Math.min(targetBodyHeight + 10, finalModalHeight - 150));
 						jqDialogContent.css("max-height", finalBodyHeight + "px");
 						jqDialogContent.css("overflow-y", "auto");
 						jqDialogContent.dialog("option", "height", finalModalHeight);
