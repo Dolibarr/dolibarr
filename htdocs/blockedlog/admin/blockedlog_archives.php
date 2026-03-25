@@ -532,9 +532,9 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
 		$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 		$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-		global $foundoldformat, $firstrecorddate;
 		$foundoldformat = 0;
 		$firstrecorddate = 0;
+		global $foundoldformat, $firstrecorddate;
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 

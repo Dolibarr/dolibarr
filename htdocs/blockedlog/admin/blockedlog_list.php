@@ -200,7 +200,7 @@ $morehtmlcenter = '';
 $texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-if (!userIsTaxAuditor()) {
+if (!userIsTaxAuditor()) { // @phpstan-ignore-line as it is already checked before
 	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 	if (!isRegistrationDataSavedAndPushed()) {
 		$texttop = '';
@@ -705,6 +705,7 @@ if (is_array($blocks)) {
 			$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 			$foundoldformat = 0;
 			$firstrecorddate = 0;
+			global $foundoldformat, $firstrecorddate;
 			if (empty($search_end) || $search_end == -1) {
 				$search_end = dol_now();
 			}
