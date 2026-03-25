@@ -2210,7 +2210,7 @@ if (empty($reshook)) {
 				// Special properties of replacement invoice
 
 				$object->situation_counter += 1;
-
+				$object->context['createfromclone'] = 'createfromclone';
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
 					$mesg = $object->error;
