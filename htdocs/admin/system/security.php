@@ -1029,6 +1029,9 @@ print '<br>';
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
 print '<br>';
 
+print '<strong>MAIN_ALLOW_LINK_STARTING_WITH_FILE</strong> = '.getDolGlobalString('MAIN_ALLOW_LINK_STARTING_WITH_FILE', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
 print '<strong>MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL</strong> = '.getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": ".$langs->trans("Undefined").' '.$langs->trans("or")." 0 - The value 1 allows the use of concatenation functions like . or dol_concat into extra fields conditions or formula but is not secured)</span><br>";
 print '<br>';
