@@ -119,7 +119,7 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 				$confirmQuestionRowHeight = 34;
 				$computedBodyHeight = $taskRowsHeight + $tableHeaderHeight + $updateTasksRowHeight + $confirmQuestionRowHeight + 25;
 				$modalBodyHeight = min(700, max(220, $computedBodyHeight));
-				$modalHeight = min(760, $modalBodyHeight + 170);
+				$modalHeight = min(900, $modalBodyHeight + 220);
 				$formquestion = array();
 				$currentProjectId = GETPOSTINT('id');
 				if ($currentProjectId > 0) {
@@ -192,7 +192,7 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 						var targetModalHeight = parseInt(jqWrapper.attr("data-modal-height"), 10) || 520;
 						var maxModalHeight = Math.max(220, jQuery(window).height() - 100);
 						var finalModalHeight = Math.min(targetModalHeight, maxModalHeight);
-							var finalBodyHeight = Math.max(120, Math.min(targetBodyHeight, finalModalHeight - 150));
+							var finalBodyHeight = Math.max(120, Math.min(targetBodyHeight, finalModalHeight - 120));
 						jqDialogContent.css("max-height", finalBodyHeight + "px");
 						jqDialogContent.css("overflow-y", "auto");
 						jqDialogContent.dialog("option", "height", finalModalHeight);
