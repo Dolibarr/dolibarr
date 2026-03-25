@@ -3,6 +3,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
+ * Copyright (C) 2026		Ferran Marcet				<fmarcet@2byte.es>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -19,6 +20,7 @@
 
 
 require_once __DIR__ . '/abstractdocument.controller.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 /**
  * \file        htdocs/webportal/controllers/documentlist.controller.class.php

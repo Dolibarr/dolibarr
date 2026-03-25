@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Mélina Joum				<melina.joum@altairis.fr>
@@ -66,6 +66,7 @@ $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
 $error = 0;
 $errors = array();
+$rowid = 0;
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -546,18 +547,19 @@ if (empty($reshook)) {
 						$db->free($resql);
 					}
 					if (!empty($lineid->rowid)) {
+						require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+						$genericObject = new GenericObject($db);
+						// We need to force table to update product_price extrafields
+						$genericObject->id = $lineid->rowid;
+						$genericObject->table_element = 'product_price';
 						foreach ($price_extralabels as $code => $label) {
-							$code_array = GETPOST($code, 'array');
-							$object->array_options['options_'.$code] = $code_array[$key];
+							$extrafield_values = $extrafields->getOptionalsFromPost('product_price', (string) $key);
+							$genericObject->array_options['options_'.$code] = $extrafield_values['options_'.$code];
 						}
-						// We need to force table to update product_price and not product extrafields
-						$object->id = $lineid->rowid;
-						$object->table_element = 'product_price';
-						$result = $object->insertExtraFields();
-						// Back to product table
-						$object->id = $id;
-						$object->table_element = 'product';
+						$result = $genericObject->insertExtraFields();
+
 						if ($result < 0) {
+							setEventMessages($genericObject->error, $genericObject->errors, 'errors');
 							$error++;
 						}
 					}
@@ -689,7 +691,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete_all_price_by_qty' && $permissiontoadd) {
 		$priceid = GETPOSTINT('priceid');
-		if (!empty($rowid)) {
+		if (!empty($priceid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE fk_product_price = ".((int) $priceid);
 
@@ -1186,7 +1188,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 		print '<tr class="liste_titre"><td>';
 		print $langs->trans("PriceLevel");
 		if ($user->admin) {
-			print ' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&token='.newToken().'&pricelevel='.$i.'&id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
+			print ' <a class="editfielda" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'editlabelsellingprice', 'id' => $object->id], true).'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
 		}
 		print '</td>';
 		print '<td style="text-align: right">'.$langs->trans("SellingPrice").'</td>';
@@ -1263,6 +1265,10 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			}
 			print '</td>';
 			if (!empty($extralabels)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+				$genericObject = new GenericObject($db);
+				// We need to force table to fetch optionals product_price extrafields
+				$genericObject->table_element = 'product_price';
 				$sql1 = "SELECT rowid";
 				$sql1 .= " FROM ".$object->db->prefix()."product_price";
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
@@ -1271,35 +1277,16 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
-				if ($resql1) {
-					$lineid = $object->db->fetch_object($resql1);
+				if ($resql1 && $lineid = $object->db->fetch_object($resql1)) {
+					$genericObject->id = $lineid->rowid;
+					$genericObject->fetch_optionals();
 				}
-				$sql2  = "SELECT";
-				$sql2 .= " fk_object";
 				foreach ($extralabels as $key => $value) {
-					$sql2 .= ", ".$db->sanitize($key);
-				}
-				$sql2 .= " FROM ".MAIN_DB_PREFIX."product_price_extrafields";
-				$sql2 .= " WHERE fk_object = ".((int) $lineid->rowid);
-				$resql2 = $db->query($sql2);
-				if ($resql2) {
-					if ($db->num_rows($resql2) != 1) {
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-								print '<td align="right"></td>';
-							}
-						}
-					} else {
-						$obj = $db->fetch_object($resql2);
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-								print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_price')."</td>";
-							}
-						}
+					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
+						print '<td align="right">'.$extrafields->showOutputField($key, $genericObject->array_options['options_' . $key], '', 'product_price')."</td>";
 					}
-					$db->free($resql1);
-					$db->free($resql2);
 				}
+				$db->free($resql1);
 			}
 			print '</tr>';
 
@@ -1895,6 +1882,10 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			print '</td>';
 
 			if (!empty($extralabels)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+				$genericObject = new GenericObject($db);
+				// We need to force table to fetch optionals product_price extrafields
+				$genericObject->table_element = 'product_price';
 				$sql1 = "SELECT rowid";
 				$sql1 .= " FROM ".$object->db->prefix()."product_price";
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
@@ -1903,44 +1894,23 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
-				if ($resql1) {
-					$lineid = $object->db->fetch_object($resql1);
+				if ($resql1 && $lineid = $object->db->fetch_object($resql1)) {
+					$genericObject->id = $lineid->rowid;
+					$genericObject->fetch_optionals();
 				}
-				if (empty($lineid->rowid)) {
-					foreach ($extralabels as $key => $value) {
-						if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
-							if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
-								$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
-							}
-
-							$extravalue = GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key};
-							print '<td align="center"><input name="'.$key.'['.$i.']" size="10" value="'.$extravalue.'"></td>';
+				foreach ($extralabels as $key => $value) {
+					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
+						if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
+							$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
 						}
-					}
-				} else {
-					$sql  = "SELECT";
-					$sql .= " fk_object";
-					foreach ($extralabels as $key => $value) {
-						$sql .= ", ".$db->sanitize($key);
-					}
-					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_extrafields";
-					$sql .= " WHERE fk_object = ".((int) $lineid->rowid);
-					$resql = $db->query($sql);
-					if ($resql) {
-						$obj = $db->fetch_object($resql);
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
-								if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
-									$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
-								}
 
-								$extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key} ?? '');
-								print '<td align="center"><input name="'.$key.'['.$i.']" size="10" value="'.$extravalue.'"></td>';
-							}
-						}
-						$db->free($resql);
+						// $extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $genericObject->array_options['options_' . $key] ?? '');
+						print '<td align="center">';
+						print $extrafields->showInputField($key, $genericObject->array_options['options_' . $key], '', (string) $i, '', '', $genericObject, 'product_price');
+						print '</td>';
 					}
 				}
+				$db->free($resql1);
 			}
 			print '</tr>';
 		}
