@@ -117,7 +117,7 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 				$tableHeaderHeight = 34;
 				$updateTasksRowHeight = ($isDateAction ? 36 : 0);
 				$confirmQuestionRowHeight = 34;
-				$computedBodyHeight = $taskRowsHeight + $tableHeaderHeight + $updateTasksRowHeight + $confirmQuestionRowHeight + 15;
+				$computedBodyHeight = $taskRowsHeight + $tableHeaderHeight + $updateTasksRowHeight + $confirmQuestionRowHeight + 10;
 				$modalBodyHeight = min(700, max(220, $computedBodyHeight));
 				$modalHeight = min(900, $modalBodyHeight + 220);
 				$formquestion = array();
