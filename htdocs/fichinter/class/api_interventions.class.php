@@ -789,7 +789,7 @@ class Interventions extends DolibarrApi
 	 * @param	array $request_data   InternventionalLine data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return	Object|false		  Object with cleaned properties
+	 * @return	Object		  Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *
