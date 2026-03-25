@@ -552,7 +552,7 @@ if (empty($reshook)) {
 						$genericObject->id = $lineid->rowid;
 						$genericObject->table_element = 'product_price';
 						foreach ($price_extralabels as $code => $label) {
-							$extrafield_values = $extrafields->getOptionalsFromPost('product_price', $key);
+							$extrafield_values = $extrafields->getOptionalsFromPost('product_price', (string) $key);
 							$genericObject->array_options['options_'.$code] = $extrafield_values['options_'.$code];
 						}
 						$result = $genericObject->insertExtraFields();
@@ -1905,7 +1905,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 
 						// $extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $genericObject->array_options['options_' . $key] ?? '');
 						print '<td align="center">';
-						print $extrafields->showInputField($key, $genericObject->array_options['options_' . $key], '', $i, '', '', $genericObject, 'product_price');
+						print $extrafields->showInputField($key, $genericObject->array_options['options_' . $key], '', (string) $i, '', '', $genericObject, 'product_price');
 						print '</td>';
 					}
 				}
