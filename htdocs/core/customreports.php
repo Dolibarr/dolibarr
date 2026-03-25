@@ -67,27 +67,33 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
+	if (!is_array($search_measures)) {
+		$search_measures = array();
+	}
 
-	//$search_xaxis = GETPOST('search_xaxis', 'array');
+	$search_xaxis = array();
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
 		$search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
 	}
-	//$search_groupby = GETPOST('search_groupby', 'array');
+	$search_groupby = array();
 	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') {
 		$search_groupby = array(GETPOST('search_groupby', 'alpha'));
 	}
 	'@phan-var-force string[] $search_groupby';
 
 	$search_yaxis = GETPOST('search_yaxis', 'array:alphanohtml');
+	if (!is_array($search_yaxis)) {
+		$search_yaxis = array();
+	}
 	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
 
-	$search_measures = array_map(function ($value) {
+	$search_measures = array_map(function (string $value): string {
 		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_measures);
-	$search_xaxis = array_map(function ($value) {
+	$search_xaxis = array_map(function (string $value): string {
 		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_xaxis);
-	$search_yaxis = array_map(function ($value) {
+	$search_yaxis = array_map(function (string $value): string {
 		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_yaxis);
-	$search_groupby = array_map(function ($value) {
+	$search_groupby = array_map(function (string $value): string {
 		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_groupby);
 
 	// Load variable for pagination
