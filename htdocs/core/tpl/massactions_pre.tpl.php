@@ -112,72 +112,72 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 			} else {
 				$finalAction = 'update_selected_tasks_deadline';
 			}
-				$rowCount = count($tasksById);
-				$isDateAction = ($finalAction != 'update_selected_tasks_progress');
-				$taskRowsHeight = $rowCount * 34;
-				$tableHeaderHeight = 34;
-				$updateTasksRowHeight = ($isDateAction ? 36 : 0);
-				$confirmQuestionRowHeight = 34;
-				$computedBodyHeight = $taskRowsHeight + $tableHeaderHeight + $updateTasksRowHeight + $confirmQuestionRowHeight + 5;
-				$modalBodyHeight = min(700, max(220, $computedBodyHeight));
-				$modalHeight = min(900, $modalBodyHeight + 220);
-				$formquestion = array();
-				$currentProjectId = GETPOSTINT('id');
-				if ($currentProjectId > 0) {
-					$formquestion[] = array('type' => 'hidden', 'name' => 'id', 'value' => $currentProjectId);
-				}
-				$formquestion[] = array('type' => 'hidden', 'name' => 'massactiontaskfinal', 'value' => $finalAction);
-				$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
+			$rowCount = count($tasksById);
+			$isDateAction = ($finalAction != 'update_selected_tasks_progress');
+			$taskRowsHeight = $rowCount * 34;
+			$tableHeaderHeight = 34;
+			$updateTasksRowHeight = ($isDateAction ? 36 : 0);
+			$confirmQuestionRowHeight = 34;
+			$computedBodyHeight = $taskRowsHeight + $tableHeaderHeight + $updateTasksRowHeight + $confirmQuestionRowHeight + 5;
+			$modalBodyHeight = min(700, max(220, $computedBodyHeight));
+			$modalHeight = min(900, $modalBodyHeight + 220);
+			$formquestion = array();
+			$currentProjectId = GETPOSTINT('id');
+			if ($currentProjectId > 0) {
+				$formquestion[] = array('type' => 'hidden', 'name' => 'id', 'value' => $currentProjectId);
+			}
+			$formquestion[] = array('type' => 'hidden', 'name' => 'massactiontaskfinal', 'value' => $finalAction);
+			$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
 
-				if ($finalAction == 'update_selected_tasks_progress') {
-					$progressInputNames = array();
-					$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'"><table class="noborder centpercent">';
-					$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="right">'.$langs->trans('Progress').'</th></tr>';
-					foreach ($tasksById as $taskId => $taskDb) {
-						$inputname = 'task_progress_'.$taskId;
-						$progressInputNames[] = $inputname;
-						$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
-						$tablehtml .= '<td class="right"><input type="text" class="flat right width75" maxlength="6" id="'.dol_escape_htmltag($inputname).'" name="'.dol_escape_htmltag($inputname).'" value="'.((string) min(100, max(0, (int) $taskDb->progress))).'"> %</td></tr>';
-					}
-					$tablehtml .= '</table></div>';
-					$formquestion[] = array('type' => 'other', 'name' => implode(',', $progressInputNames), 'label' => '', 'value' => $tablehtml);
-					$titleform = $langs->trans('MassActionUpdateSelectedTasksProgress');
-				} else {
-					$dateInputNames = array();
-					$keepDurationNames = array();
-					$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'">';
-					$tablehtml .= '<div class="opacitymedium margintoponly marginbottomonly">';
-					$tablehtml .= '<span class="marginright">'.$langs->trans('MassActionApplyDateToTasks').'</span>';
-					$tablehtml .= '<input type="datetime-local" class="flat marginright" id="global_task_datetime" value="">';
-					$tablehtml .= '<input type="button" class="button button-small smallpaddingimp" id="apply_global_task_datetime" value="'.dol_escape_htmltag($langs->trans('Apply')).'">';
-					$tablehtml .= '</div>';
-					$tablehtml .= '<table class="noborder centpercent">';
-					$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="center">'.$langs->trans('DateHour').'</th><th class="center">'.$langs->trans('Duration').'</th></tr>';
-					foreach ($tasksById as $taskId => $taskDb) {
-						$datetimeName = 'task_datetime_'.$taskId;
-						$keepdurationname = 'keep_duration_'.$taskId;
-						$dateInputNames[] = $datetimeName;
-						$keepDurationNames[] = $keepdurationname;
-						if ($finalAction == 'update_selected_tasks_start_date') {
-							$currenttimestamp = (!empty($taskDb->dateo) ? (int) $db->jdate($taskDb->dateo) : dol_now());
-						} else {
-							$currenttimestamp = (!empty($taskDb->datee) ? (int) $db->jdate($taskDb->datee) : dol_now());
-						}
-						$datetimevalue = dol_print_date($currenttimestamp, '%Y-%m-%dT%H:%M');
-						$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
-						$tablehtml .= '<td class="center"><input type="datetime-local" class="flat" id="'.dol_escape_htmltag($datetimeName).'" name="'.dol_escape_htmltag($datetimeName).'" value="'.dol_escape_htmltag($datetimevalue).'"></td>';
-						$tablehtml .= '<td class="center"><input type="checkbox" class="flat" id="'.dol_escape_htmltag($keepdurationname).'" name="'.dol_escape_htmltag($keepdurationname).'" value="1"></td></tr>';
-					}
-					$tablehtml .= '</table></div>';
-					$formquestion[] = array('type' => 'other', 'name' => implode(',', array_merge($dateInputNames, $keepDurationNames)), 'label' => '', 'value' => $tablehtml);
-					$titleform = ($finalAction == 'update_selected_tasks_start_date' ? $langs->trans('MassActionUpdateSelectedTasksStartDate') : $langs->trans('MassActionUpdateSelectedTasksDeadline'));
+			if ($finalAction == 'update_selected_tasks_progress') {
+				$progressInputNames = array();
+				$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'"><table class="noborder centpercent">';
+				$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="right">'.$langs->trans('Progress').'</th></tr>';
+				foreach ($tasksById as $taskId => $taskDb) {
+					$inputname = 'task_progress_'.$taskId;
+					$progressInputNames[] = $inputname;
+					$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
+					$tablehtml .= '<td class="right"><input type="text" class="flat right width75" maxlength="6" id="'.dol_escape_htmltag($inputname).'" name="'.dol_escape_htmltag($inputname).'" value="'.((string) min(100, max(0, (int) $taskDb->progress))).'"> %</td></tr>';
 				}
+				$tablehtml .= '</table></div>';
+				$formquestion[] = array('type' => 'other', 'name' => implode(',', $progressInputNames), 'label' => '', 'value' => $tablehtml);
+				$titleform = $langs->trans('MassActionUpdateSelectedTasksProgress');
+			} else {
+				$dateInputNames = array();
+				$keepDurationNames = array();
+				$tablehtml = '<div id="project_task_massaction_modal_wrapper" data-body-height="'.((int) $modalBodyHeight).'" data-modal-height="'.((int) $modalHeight).'">';
+				$tablehtml .= '<div class="opacitymedium margintoponly marginbottomonly">';
+				$tablehtml .= '<span class="marginright">'.$langs->trans('MassActionApplyDateToTasks').'</span>';
+				$tablehtml .= '<input type="datetime-local" class="flat marginright" id="global_task_datetime" value="">';
+				$tablehtml .= '<input type="button" class="button button-small smallpaddingimp" id="apply_global_task_datetime" value="'.dol_escape_htmltag($langs->trans('Apply')).'">';
+				$tablehtml .= '</div>';
+				$tablehtml .= '<table class="noborder centpercent">';
+				$tablehtml .= '<tr class="liste_titre"><th>'.$langs->trans('Task').'</th><th class="center">'.$langs->trans('DateAndHour').'</th><th class="center">'.$langs->trans('Duration').'</th></tr>';
+				foreach ($tasksById as $taskId => $taskDb) {
+					$datetimeName = 'task_datetime_'.$taskId;
+					$keepdurationname = 'keep_duration_'.$taskId;
+					$dateInputNames[] = $datetimeName;
+					$keepDurationNames[] = $keepdurationname;
+					if ($finalAction == 'update_selected_tasks_start_date') {
+						$currenttimestamp = (!empty($taskDb->dateo) ? (int) $db->jdate($taskDb->dateo) : dol_now());
+					} else {
+						$currenttimestamp = (!empty($taskDb->datee) ? (int) $db->jdate($taskDb->datee) : dol_now());
+					}
+					$datetimevalue = dol_print_date($currenttimestamp, '%Y-%m-%dT%H:%M');
+					$tablehtml .= '<tr><td>'.dol_escape_htmltag(!empty($taskDb->label) ? $taskDb->label : $taskDb->ref).'</td>';
+					$tablehtml .= '<td class="center"><input type="datetime-local" class="flat" id="'.dol_escape_htmltag($datetimeName).'" name="'.dol_escape_htmltag($datetimeName).'" value="'.dol_escape_htmltag($datetimevalue).'"></td>';
+					$tablehtml .= '<td class="center"><input type="checkbox" class="flat" id="'.dol_escape_htmltag($keepdurationname).'" name="'.dol_escape_htmltag($keepdurationname).'" value="1"></td></tr>';
+				}
+				$tablehtml .= '</table></div>';
+				$formquestion[] = array('type' => 'other', 'name' => implode(',', array_merge($dateInputNames, $keepDurationNames)), 'label' => '', 'value' => $tablehtml);
+				$titleform = ($finalAction == 'update_selected_tasks_start_date' ? $langs->trans('MassActionUpdateSelectedTasksStartDate') : $langs->trans('MassActionUpdateSelectedTasksDeadline'));
+			}
 
-				$pageforconfirm = $_SERVER['PHP_SELF'];
-				if ($currentProjectId > 0) {
-					$pageforconfirm .= (strpos($pageforconfirm, '?') === false ? '?' : '&').'id='.$currentProjectId;
-				}
-				print $form->formconfirm($pageforconfirm, $titleform, $langs->trans('MassActionTaskPopupDescription'), $finalAction, $formquestion, '', 1, $modalHeight, 800, 0, 'Validate', 'Cancel');
+			$pageforconfirm = $_SERVER['PHP_SELF'];
+			if ($currentProjectId > 0) {
+				$pageforconfirm .= (strpos($pageforconfirm, '?') === false ? '?' : '&').'id='.$currentProjectId;
+			}
+			print $form->formconfirm($pageforconfirm, $titleform, $langs->trans('MassActionTaskPopupDescription'), $finalAction, $formquestion, '', 1, $modalHeight, 800, 0, 'Validate', 'Cancel');
 			print '<script nonce="'.getNonce().'">
 				(function() {
 					function adjustProjectTaskMassactionModal() {
