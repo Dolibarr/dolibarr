@@ -180,7 +180,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
-	--colorbackgrey: #f0f0f0;
+	--colorbackgrey: #f6f6f6;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -204,7 +204,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #400030;
+	--fieldrequiredcolor: #000;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -262,7 +262,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	            --oddevencolor: rgb(220,220,220);
 	            --colorboxstatsborder: rgb(65,100,138);
 	            --dolgraphbg: #1d1e20;
-	            --fieldrequiredcolor: rgb(250,183,59);
+	            --fieldrequiredcolor: #fff;
 	            --colortextbacktab: rgb(220,220,220);
 	            --colorboxiconbg: rgb(36,38,39);
 	            --refidnocolor: rgb(220,220,220);
@@ -466,9 +466,12 @@ input {
 	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
-	padding: 3px !important;
+	padding: 4px !important;
 	padding-left: 6px !important;
 	padding-right: 6px !important;
+}
+.refid input[type="text"] {
+	height:22px;
 }
 
 select {
@@ -511,7 +514,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 }
 
 section.setupsection {
-	padding: 20px;
+	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
@@ -662,6 +665,21 @@ span.userimg.notfirst, div.userimg.notfirst {
 div.userimg.notfirst {
 	display: block-inline;
 }
+.cell2linesheight {
+	line-height: 1.4em;
+}
+.celldateheight {
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	line-height: 1.2em;
+}
+.dateborderright {
+	padding-right: 4px !important;
+	margin-right: 4px !important;
+	border-right: 1px solid #ddd;
+}
+.dateborderleft {
+}
 .center.inline-block.dateheight {
 	line-height: 1.1em;
 }
@@ -769,7 +787,7 @@ input.pageplusone {
 	color: var(--colortextlink);
 }
 .optiongrey, .opacitymedium {
-	opacity: 0.4;
+	opacity: 0.5;
 }
 .opacitymediumbycolor {
 	color: rgba(0, 0, 0, 0.4);
@@ -818,7 +836,7 @@ input.pageplusone {
 select:invalid, select.--error {
 	color: gray;
 }
-input:disabled, textarea:disabled, select[disabled='disabled']
+input:disabled:not(.colorthumb):not(.colorgrey), textarea:disabled, select[disabled='disabled']
 {
 	/* background: var(--inputbackgroundcolordisabled); */
 	/* color: var(--inputcolordisabled); */
@@ -1017,7 +1035,7 @@ button:focus {
 
 th .button {
 	box-shadow: none !important;
-	border-radius:0px !important;
+	border-radius: 0px;
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
@@ -1111,6 +1129,9 @@ textarea.centpercent {
 }
 .centerimp {
 	text-align: center !important;
+}
+.centeronsmartphone {
+	text-align: center;
 }
 .centergrid {
 	display: grid;
@@ -1338,6 +1359,8 @@ td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 	overflow-y: auto;
 	word-break: break-word;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 div.urllink {
 	padding: 5px;
@@ -1522,7 +1545,7 @@ div.divsearchfield {
 .divfilteralone {
 	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
-	padding-left: 5px;
+	padding: 10px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -1755,7 +1778,7 @@ select.flat.selectlimit {
 	border-right: none !important;
 	outline: none;
 }
-.strikefordisabled {
+.strikefordisabled, .strikefordisabled span, .strikefordisabled div {
 	text-decoration: line-through;
 }
 .widthdate {
@@ -2948,7 +2971,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	color: var(--colortexttitlenotab);
 	opacity: 0.85;
 }
-.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+.table-fiche-title .col-picto, .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;
 	font-size: 0.7em;
 	width: 20px;
@@ -2978,8 +3001,16 @@ span.widthpictotitle.pictotitle {
 	width: 14px;
 }
 .pictosubstatus {
-	padding-left: 2px;
-	padding-right: 2px;
+	padding: 4px;
+	border: 1px solid #ccc;
+	vertical-align: middle;
+	margin-right: 3px;
+	margin-left: 3px;
+	border-radius: 5px;
+}
+.pictosubstatus img {
+	vertical-align: text-bottom;
+	display: inline-block;
 }
 .pictostatus {
 	width: 15px;
@@ -3292,6 +3323,9 @@ div.tmenucenter
 	padding-left: 2px;
 	padding-right: 2px;
 	color: var(--colortextbackhmenu);
+	max-width: 85px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	<?php if ($disableimages) { ?>
 	padding-top: 8px;
 	height: 26px;
@@ -3299,7 +3333,6 @@ div.tmenucenter
 	padding-top: 2px;
 	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
-	/* width: 100%; */
 }
 #menu_titre_logo {
 	padding-top: 0;
@@ -3845,6 +3878,9 @@ img.userphotopublicvcard {
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
+img.gravatar.photouserphoto {
+	filter: grayscale(50%);
+}
 form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
@@ -4164,7 +4200,7 @@ div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 */
 div.tabBar {
 	color: var(--colortextbacktab);
-	padding-top: 16px;
+	padding-top: 20px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
 	margin: 0px 0px 30px 0px;
@@ -4246,6 +4282,9 @@ div.tabsActionNoBottom {
 div.tabsAction > a {
 	margin-bottom: 16px !important;
 }
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
+}
 
 a.tabTitle {
 	color: rgba(0,0,0,0.4) !important;
@@ -4307,7 +4346,7 @@ a.tab:hover
 	background: var(--colorbacktabcard1), 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png', 1); ?>) 50% 0 repeat-x;
 	color: var(--colortextbacktab);
 	*/
-	text-decoration: underline;
+	text-decoration: none;
 }
 a.tabimage {
 	color: #434956;
@@ -4376,9 +4415,11 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 .smallpaddingimp {
-	padding: 4px !important;
+	padding: 7px !important;
 	padding-left: 7px !important;
 	padding-right: 7px !important;
+	line-height: 1em !important;
+	border-radius: 3px !important;
 }
 input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
@@ -4580,7 +4621,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
-table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td,
+table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -4675,11 +4717,6 @@ table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice t
 }
 
 
-/*
-div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
-	border-bottom: 1px solid var(--colortopbordertitle1);
-}
-*/
 div.tabBar .lastrecordtable {
 	margin-bottom: 15px;
 }
@@ -5135,7 +5172,7 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a, .liste_titre td a span {
+.liste_titre td a:not(.button):not(.editfielda), .liste_titre td a:not(.button):not(.editfielda) span:not(.badge) {
 	text-shadow: none !important;
 	color: var(--colortexttitle) !important;
 }
@@ -5326,13 +5363,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-bottom: 2px;
 }
 .boxstats, .boxstatsempty {
-	padding-left: 6px;
-	padding-right: 6px;
+	padding-left: 5px;
+	padding-right: 3px;
 	width: 118px;
 }
 
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+	border-radius: 6px;
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5367,6 +5405,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 	.clearbothonsmartphone {
 		clear: both;
+	}
+	.clearbothonsmartphone:not(.hideonsmartphone) {
 		display: block !important;
 	}
 
@@ -5431,8 +5471,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 /*span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
 }*/
+span.boxstatstext span.fas {
+	filter: grayscale(100%);
+}
 span.boxstatstext {
-	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
+	opacity: 0.9;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: var(--colortext);
 	font-size: 0.8em;
@@ -5673,7 +5716,7 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #887711 !important; }
+.warning { color: #665511 !important; }
 .error   { color: #660000 !important; font-weight: bold; }
 .green   { color: #118822 !important; }
 .neutral { color: #444 !important; }
@@ -5682,10 +5725,10 @@ div.ok {
 	color: #114466;
 }
 
-div.info, div.warning, div.error, div.green, div.neutral {
+div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	padding-top: 16px;
-	padding-left: 10px;
-	padding-right: 4px;
+	padding-left: 20px;
+	padding-right: 10px;
 	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 5px;
@@ -5697,14 +5740,16 @@ div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
 }
 
 /* Neutral message */
-div.neutral {
-	border-<?php print $left; ?>: solid 5px #aaa;
+div.neutral, section.neutral {
 	background: #f8f8f8;
+}
+div.neutral {
+	border-<?php print $left; ?>: solid 5px #888;
 }
 
 /* Info message */
 div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+	border-<?php print $left; ?>: solid 5px #87bfc2;
 	background: #eff8fc;
 	color: #558;
 }
@@ -6035,6 +6080,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog.ui-widget.ui-widget-content {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
+	box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 15px;
 }
 .ui-dialog {
 	padding-left: 5px;
@@ -6059,6 +6105,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
 }
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	margin-right: 8px !important;
+}
 /*
 .ui-dialog .ui-dialog-content {
 	text-align: justify;
@@ -6066,7 +6115,40 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 */
 
 
-/* ============================================================================== */
+/* JQuery dialog */
+
+.ui-dialog .ui-widget-header {
+	border: none;
+	border-bottom: 1px solid #dbdbdb;
+	background: none;
+	border-radius: unset;
+}
+
+
+.ui-dialog .ui-dialog-titlebar-close {
+	position: absolute;
+	right: .3em;
+	top: 50%;
+	width: 20px;
+	margin: -10px 0 0 0;
+	padding: 1px;
+	height: 20px;
+	border-radius: 30px;
+	border: 1px solid #ededed;
+}
+
+.ui-dialog-title {
+	font-size: medium;
+}
+
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 0px;
+}
+
+
+	/* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
 
@@ -6463,20 +6545,21 @@ table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
 table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
-.cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
-.cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
-.cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
+.cal_current_month { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #E8E8E8; }
+.cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E8E8E8; }
+.cal_current_month_oneday { border-right: solid 1px #E8E8E8; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
-.cal_current_month_right { border-right: solid 1px #E0E0E0; }
+.cal_current_month_right { border-right: solid 1px #E8E8E8; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border-left: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today         { /* background: #FDFDF0; */ border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser { /* background: #FDFDF0; */ border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser_peruserleft { /* background: #FDFDF0; */ border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today         { /* background: #FDFDF0; */ border-left: solid 1px #E8E8E8; border-bottom: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser { /* background: #FDFDF0; */ border-right: solid 1px #E8E8E8; border-bottom: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { /* background: #FDFDF0; */ border-left: solid 2px #6C7C7B; border-right: solid 1px #E8E8E8; border-bottom: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_impair { /* background: #FDFDF0; */ }
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 0 !important; padding-<?php print $right; ?>: 0 !important; }
 .cal_impair        {
@@ -6485,7 +6568,6 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 }
-.cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
@@ -6765,8 +6847,14 @@ span.jPicker {
 	border-collapse: collapse;
 	border: none;
 }
+.jPicker tr.Hex td.Text input {
+	width: 60px !important;
+}
 .jPicker td.Text input {
-	width: 35px !important;
+	min-width: 40px;
+	padding: 8px;
+	border: 1px solid #bbb !important;
+	border-radius: 4px;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -9505,4 +9593,14 @@ div.extra_inline_chkbxlst, div.extra_inline_checkbox {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
+}
+
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }

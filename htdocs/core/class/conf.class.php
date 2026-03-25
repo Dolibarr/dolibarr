@@ -192,6 +192,10 @@ class Conf extends stdClass
 	/**
 	 * @var string
 	 */
+	public $format_hour_sec_short;
+	/**
+	 * @var string
+	 */
 	public $format_hour_short_duration;
 	/**
 	 * @var string
@@ -998,7 +1002,7 @@ class Conf extends stdClass
 				$this->global->THEME_SHOW_BORDER_ON_INPUT = 1;
 			}
 			if (!isset($this->global->THEME_ELDY_BORDER_RADIUS)) {
-				$this->global->THEME_ELDY_BORDER_RADIUS = 6;
+				$this->global->THEME_ELDY_BORDER_RADIUS = 8;
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1079,6 +1083,7 @@ class Conf extends stdClass
 			$this->format_date_short = "%d/%m/%Y"; // Format of day with PHP/C tags (strftime functions)
 			$this->format_date_short_java = "dd/MM/yyyy"; // Format of day with Java tags
 			$this->format_hour_short = "%H:%M";
+			$this->format_hour_sec_short = "%H:%M:%S";
 			$this->format_hour_short_duration = "%H:%M";
 			$this->format_date_text_short = "%d %b %Y";
 			$this->format_date_text = "%d %B %Y";
@@ -1382,6 +1387,12 @@ class Conf extends stdClass
 				// Note value is always forced to 1 in API and customreport context to avoid bind SQL injection into user input filters.
 				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
 			}
+
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+				// In on of this customer price modes, option PRODUCT_USE_CUSTOMER_PACKAGING is not implemented/supported, so we disable it
+				$this->global->PRODUCT_USE_CUSTOMER_PACKAGING = 0;
+			}
+
 
 			// For backward compatibility
 			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {

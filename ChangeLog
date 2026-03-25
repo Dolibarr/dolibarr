@@ -2,6 +2,47 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 23.0.0 compared to 22.0 *****
+
+For users:
+----------
+NEW: Need PHP 7.2 as minimum version
+NEW: Module "Advanced stock transfer" is moved with status stable.
+
+
+For developers:
+---------------
+
+
+WARNING:
+--------
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* ...
+
+
+
+***** ChangeLog for 23.0.1 compared to 23.0.0 *****
+
+FIX: Removed SQL error on install process.
+FIX: #37412 Better fix
+FIX: Added user filtering for displaying leave in the calendar (#37385)
+FIX: Bad value when entering price with multicurrency included tax.
+FIX: Better compatibility for module using condition object-> in tabs
+FIX: CSS
+FIX: Fetch of lead status
+FIX: Fix doc preview in comm card
+FIX: height of confirm popup
+FIX: option MAIN_USE_TITLE_FOR_USER was on update and not on create
+FIX: Order API: delete order returns wrong http response in case order could not be deleted (#37472)
+FIX: Pb with import of agendaevents. Date and import id not visible.
+FIX: read_supplier_price filter for stock complement (#37417)
+FIX: Reload page after check holiday for save param (#37410)
+FIX: Several trouble with demo docker packages. More secured way to use install.force.php file
+FIX: translation on multiselect with rich label - Fix CSS public ticket
+FIX: update COPYRIGHT file to reflect removed libraries in v23.0.0
+
+
 ***** ChangeLog for 23.0.0 compared to 22.0 *****
 
 For users:
@@ -210,13 +251,13 @@ The following changes may create regressions for some external modules, but were
 * Concatenation into computed property of extrafields is off by default. You can enable it from conf.php file by adding dol_concat to list of allowed function in $dolibarr_main_restrict_eval_methods,
   For example: $dolibarr_main_restrict_eval_methods='getDolGlobalString,getDolGlobalInt,getDolCurrency,fetchNoCompute,hasRight,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match';
 * Old variable $obj and $object are no more allowed into on the fly evaluated strings like computed or conditions on extrafields. Use $objectoffield to get current object
-  Also if you were using temporary variables int a computed extrafields, the nameot temporary variable must match $var123.
+  Also if you were using temporary variables in a computed extrafield, the name of the temporary variable must match $var123.
 * The hidden constant MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL in database has been replaced with the
   variable $dolibarr_main_allow_unsecured_special_chars_in_dol_eval into file conf/conf.php
-* $conf use into "computed formulae" of etrafields is now deprecated (not yet forbidden). You can replace use of $conf->currency by the new method getCurrency() and $conf->global->xxx by getDolGlobalString('xxx').
+* $conf use into "computed formulae" of extrafields is now deprecated (not yet forbidden). You can replace use of $conf->currency by the new method getCurrency() and $conf->global->xxx by getDolGlobalString('xxx').
 * $user->rights->module->perms is also deprecated. You can use $user->hasRight() instead.
 * The API endpoint /proposals/{id}/contact/{contactid}/{type}/{source} is now {id}/contact/{contactid}/{type} to match same behaviour than order and invoices.
-* The API endpoint /interventions/{id}/reopen hase been removed in favor of /interventions/{id}/settodraft
+* The API endpoint /interventions/{id}/reopen has been removed in favor of /interventions/{id}/settodraft
 * If the module geoipmaxmind is used, you must resubmit the geoip data file as it is now stored differently.
 
 

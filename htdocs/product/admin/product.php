@@ -645,7 +645,11 @@ if (isModEnabled("order") || isModEnabled("invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td class="right">';
-	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+		print '<span class="opacitymedium">'.$langs->trans("NotSupportedWithRuleForCustomerPrice").'</span>';
+	} else {
+		print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	}
 	print '</td>';
 	print '</tr>';
 }

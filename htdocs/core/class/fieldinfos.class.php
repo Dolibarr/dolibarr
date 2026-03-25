@@ -230,6 +230,11 @@ class FieldInfos
 	public $printable = false;
 
 	/**
+	 * @var bool	If displayed in getNomUrl
+	 */
+	public $showintooltip = false;
+
+	/**
 	 * @var bool	If field set to null on clone
 	 */
 	public $emptyOnClone = false;

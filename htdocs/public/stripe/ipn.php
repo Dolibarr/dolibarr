@@ -181,14 +181,15 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
+
+// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions that also trigger a webhook
+sleep(2);
+
+
 top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
-
-
-// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
-sleep(2);
 
 
 // Hook to allow external modules to handle Stripe webhook events
@@ -383,6 +384,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$objectType = $object->metadata->dol_type;
 	$TRANSACTIONID = $object->id;	// Example 'pi_123456789...'
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
@@ -482,12 +484,25 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$postactionmessages = array();
 
 		if ($paymentTypeCode == "CB" && ($paymentTypeCodeInDolibarr == 'card' || empty($paymentTypeCodeInDolibarr))) {
-			// Case payment type in Stripe and into prelevement_demande are both CARD.
+			// Case payment type at Stripe side and into prelevement_demande are both CARD.
 			// For this case, payment should already have been recorded so we just update flag of payment request if not yet 1
 
-			// TODO Set traite to 1
-			dol_syslog("TODO update flag traite to 1");
-			dol_syslog("TODO update flag traite to 1", LOG_DEBUG, 0, '_payment');
+			// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+			$paiement_ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+			$paiement_ext_payment_idold = $TRANSACTIONID;
+			$paiement_ext_payment_site = $service;
+
+			// Update the payment request to pay by credit card
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET traite = 1 WHERE traite = 0";
+			$sql .= " AND (type = '' OR type = 'card')";
+			$sql .= " AND (ext_payment_id = '".$db->escape($paiement_ext_payment_id)."' OR ext_payment_id = '".$db->escape($paiement_ext_payment_idold)."')";
+			$sql .= " AND ext_payment_site = '".$db->escape($paiement_ext_payment_site)."'";
+			$sql .= " AND fk_facture = ".((int) $invoice_id);
+			$sql .= " AND sourcetype = 'facture'";
+
+			dol_syslog("TODO update flag traite to 1 sql=".$sql);
+			dol_syslog("TODO update flag traite to 1 sql=".$sql, LOG_DEBUG, 0, '_payment');
+			//$db->query($sql);
 		} elseif ($paymentTypeCode == "PRE" && $paymentTypeCodeInDolibarr == 'ban') {
 			// Case payment type is Direct Debit and into prelevement_demande is also BAN.
 			// For this case, payment on invoice (not yet recorded) must be recorded and direct debit order must be closed.
@@ -522,7 +537,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
@@ -665,116 +680,121 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			}
 
 			if (!$error) {
-				if (getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION')) {
-					// If option to send email after confirmation of direct debit is on, we send the email (template must exists
-					$labeltouse = getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION');
-					// Example: $labeltouse = 'InvoicePaymentSuccess'
-
-					$invoice = new Facture($db);
-					$invoice->fetch($invoice_id);
-					$invoice->fetch_thirdparty();
-
-					// Set output language
-					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($invoice->thirdparty->default_lang) ? $mysoc->default_lang : $invoice->thirdparty->default_lang);
-					$outputlangs->loadLangs(array("main", "members", "bills"));
-
-					// Get email content from template
-					$arraydefaultmessage=null;
-
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					$formmail=new FormMail($db);
-
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
-
-					$appli = $mysoc->name;
-
-					$subject = '['.$appli.'] Invoice direct debit payment recevied';
-					$msg =  'An invoice direct debit payment for invoice '.$invoice->ref.' has been recevied';
-					if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
-					}
-
-					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $invoice);
-
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-
-					// Set the property ->ref_customer with ref_customer of contract so __REF_CLIENT__ will be replaced in email content
-					// Search contract linked to invoice
-					$foundcontract = null;
-					$invoice->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 1);
-
-					if (is_array($invoice->linkedObjects['contrat']) && count($invoice->linkedObjects['contrat']) > 0) {
-						//dol_sort_array($object->linkedObjects['facture'], 'date');
-						foreach ($invoice->linkedObjects['contrat'] as $contract) {
-							/** @var Contrat $contract */
-							'@phan-var-force Contrat $contract';
-							$substitutionarray['__CONTRACT_REF__'] = $contract->ref_customer;
-							$substitutionarray['__REFCLIENT__'] = $contract->ref_customer;	// For backward compatibility
-							$substitutionarray['__REF_CLIENT__'] = $contract->ref_customer;
-							$substitutionarray['__REF_CUSTOMER__'] = $contract->ref_customer;
-							$foundcontract = $contract;
-							break;
-						}
-					}
-
-					dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__='.$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
-
-					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-					// Attach a file ?
-					$listofpaths=array();
-					$listofnames=array();
-					$listofmimes=array();
-
-					/*
-					$invoicediroutput = $conf->invoice->dir_output;
-					$fileparams = dol_most_recent_file($invoicediroutput . '/' . $invoice->ref, preg_quote($invoice->ref, '/').'[^\-]+');
-					$file = $fileparams['fullname'];
-					$file = '';		// Disable attachment of invoice in emails
-
-					if ($file) {
-						$listofpaths=array($file);
-						$listofnames=array(basename($file));
-						$listofmimes=array(dol_mimetype($file));
-					}
-					*/
-
-					$from = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
-
-					$trackid = 'inv'.$invoice->id;
-					$moreinheader = 'X-Dolibarr-Info: public stripe ipn.php'."\r\n";
-					$addr_cc = '';
-					if (!empty($invoice->thirdparty->array_options['options_emailccinvoice'])) {
-						dol_syslog("We add the recipient ".$invoice->thirdparty->array_options['options_emailccinvoice']." as CC", LOG_DEBUG);
-						$addr_cc = $invoice->thirdparty->array_options['options_emailccinvoice'];
-					}
-
-					// Send email (substitutionarray must be done just before this)
-					include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjecttosend, $invoice->thirdparty->email, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $addr_cc, '', 0, -1, '', '', $trackid, $moreinheader);
-					if (empty($mailfile->error) && $mailfile->sendfile()) {
-						$result = 1;
-					} else {
-						$errmsg = $langs->trans("ErrorFailedToSendMail", $from, $invoice->thirdparty->email).'. '.$mailfile->error;
-
-						dol_syslog($errmsg);
-						dol_syslog($errmsg, LOG_WARNING, 0, '_payment');
-					}
-				} else {
-					dol_syslog("No email sent. Option STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION not set to the tmeplate label");
-					dol_syslog("No email sent. Option STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION not set to the tmeplate label", LOG_DEBUG, 0, '_payment');
-				}
-
 				$db->commit();
-				http_response_code(200);
-				return 1;
 			} else {
 				$db->rollback();
 				http_response_code(500);
 				return -1;
+			}
+
+			if (getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION')) {
+				$db->begin();
+
+				// If option to send email after confirmation of direct debit is on, we send the email (template must exists
+				$labeltouse = getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION');
+				// Example: $labeltouse = 'InvoicePaymentSuccess'
+
+				$invoice = new Facture($db);
+				$invoice->fetch($invoice_id);
+				$invoice->fetch_thirdparty();
+
+				// Set output language
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(empty($invoice->thirdparty->default_lang) ? $mysoc->default_lang : $invoice->thirdparty->default_lang);
+				$outputlangs->loadLangs(array("main", "members", "bills"));
+
+				// Get email content from template
+				$arraydefaultmessage=null;
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail=new FormMail($db);
+
+				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
+
+				$appli = $mysoc->name;
+
+				$subject = '['.$appli.'] Invoice direct debit payment recevied';
+				$msg =  'An invoice direct debit payment for invoice '.$invoice->ref.' has been recevied';
+				if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+					$subject = $arraydefaultmessage->topic;
+					$msg     = $arraydefaultmessage->content;
+				}
+
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $invoice);
+
+				complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+				// Set the property ->ref_customer with ref_customer of contract so __REF_CLIENT__ will be replaced in email content
+				// Search contract linked to invoice
+				$foundcontract = null;
+				$invoice->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 1);
+
+				if (is_array($invoice->linkedObjects['contrat']) && count($invoice->linkedObjects['contrat']) > 0) {
+					//dol_sort_array($object->linkedObjects['facture'], 'date');
+					foreach ($invoice->linkedObjects['contrat'] as $contract) {
+						/** @var Contrat $contract */
+						'@phan-var-force Contrat $contract';
+						$substitutionarray['__CONTRACT_REF__'] = $contract->ref_customer;
+						$substitutionarray['__REFCLIENT__'] = $contract->ref_customer;	// For backward compatibility
+						$substitutionarray['__REF_CLIENT__'] = $contract->ref_customer;
+						$substitutionarray['__REF_CUSTOMER__'] = $contract->ref_customer;
+						$foundcontract = $contract;
+						break;
+					}
+				}
+
+				dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__='.$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
+
+				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+				$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+				// Attach a file ?
+				$listofpaths=array();
+				$listofnames=array();
+				$listofmimes=array();
+
+				/*
+				$invoicediroutput = $conf->invoice->dir_output;
+				$fileparams = dol_most_recent_file($invoicediroutput . '/' . $invoice->ref, preg_quote($invoice->ref, '/').'[^\-]+');
+				$file = $fileparams['fullname'];
+				$file = '';		// Disable attachment of invoice in emails
+
+				if ($file) {
+					$listofpaths=array($file);
+					$listofnames=array(basename($file));
+					$listofmimes=array(dol_mimetype($file));
+				}
+				*/
+
+				$from = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
+
+				$trackid = 'inv'.$invoice->id;
+				$moreinheader = 'X-Dolibarr-Info: public stripe ipn.php'."\r\n";
+				$addr_cc = '';
+				if (!empty($invoice->thirdparty->array_options['options_emailccinvoice'])) {
+					dol_syslog("We add the recipient ".$invoice->thirdparty->array_options['options_emailccinvoice']." as CC", LOG_DEBUG);
+					$addr_cc = $invoice->thirdparty->array_options['options_emailccinvoice'];
+				}
+
+				// Send email (substitutionarray must be done just before this)
+				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$mailfile = new CMailFile($subjecttosend, $invoice->thirdparty->email, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $addr_cc, '', 0, -1, '', '', $trackid, $moreinheader);
+				if (empty($mailfile->error) && $mailfile->sendfile()) {
+					$result = 1;
+
+					dol_syslog("Option STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION: Email sent");
+					dol_syslog("Option STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION: Email sent", LOG_DEBUG, 0, '_payment');
+				} else {
+					$errmsg = 'Option STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION: '.$langs->trans("ErrorFailedToSendMail", $from, $invoice->thirdparty->email).'. '.$mailfile->error;
+
+					dol_syslog($errmsg);
+					dol_syslog($errmsg, LOG_WARNING, 0, '_payment');
+				}
+
+				$db->commit();
+			} else {
+				dol_syslog("Option STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION not set to the template label. No email sent.");
+				dol_syslog("Option STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION not set to the template label. No email sent.", LOG_DEBUG, 0, '_payment');
 			}
 		} else {
 			dol_syslog("The payment mode of this payment is ".$paymentTypeCode." in Stripe and ".$paymentTypeCodeInDolibarr." in Dolibarr. This case is not managed by the IPN");
@@ -791,6 +811,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 	$object = $event->data->object;
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
@@ -863,7 +884,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$actioncomm->ip = getUserRemoteIP();
 		}
 
-		$actioncomm->note_private = 'Error returned on payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
+		$actioncomm->note_private = 'Stripe Sepa payment error received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '').' - Payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
 		$actioncomm->label = 'Payment error (SEPA Stripe)';
 
 		$result = $actioncomm->create($user);
@@ -1003,6 +1024,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$object = $event->data->object;
 	$TRANSACTIONID = $object->payment_intent;
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
@@ -1187,7 +1209,10 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 		$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = $object->id;	// A string like 'du_...'
-		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
+
+		$paiement->note_private = 'Stripe fund withdrawn message received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '');
+		$paiement->note_private .= ' - Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
+
 		$paiement->fk_account   = $accountfrom->id;
 
 		$paiement->ext_payment_id   = $object->payment_intent;

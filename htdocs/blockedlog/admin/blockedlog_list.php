@@ -157,6 +157,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_array_options = array();
 }
 
+if (userIsTaxAuditor()) {
+	// When this hidden option is on, open another tab as the tab by default
+	header("Location: ".DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php");
+	exit;
+}
+
 
 /*
  *	View
@@ -191,11 +197,14 @@ if (GETPOST('withtab', 'alpha')) {
 }
 
 $morehtmlcenter = '';
+$texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if (!isRegistrationDataSavedAndPushed()) {
-	$texttop = '';
+if (!userIsTaxAuditor()) {
+	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+	if (!isRegistrationDataSavedAndPushed()) {
+		$texttop = '';
+	}
 }
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
@@ -603,7 +612,7 @@ if (is_array($blocks)) {
 		foreach ($totalamount as $key => $totalamountperref) {
 			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
 				// Total
-				print '<tr class="liste_total">';
+				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -615,9 +624,9 @@ if (is_array($blocks)) {
 				print '<td colspan="4">';
 				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key));
 				if ($key == 'BILL_VALIDATE') {
-					print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+					print ' <span class="opacitylow">('.$langs->trans("Turnover").')</span>';
 				} elseif ($key == 'PAYMENT_CUSTOMER') {
-					print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
 				}
 				print '</td>';
 
@@ -703,7 +712,7 @@ if (is_array($blocks)) {
 
 			if (empty($search_code) || in_array('BILL_VALIDATE', $search_code)) {
 				// Total
-				print '<tr class="liste_total">';
+				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -713,7 +722,7 @@ if (is_array($blocks)) {
 				// ID
 				print '<td colspan="4">';
 				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('logBILL_VALIDATE'));
-				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')';
+				print ' <span class="opacitylow">('.$langs->trans("Turnover").')';
 				print '<br>'.$langs->trans("LifetimeAmountShort").': '.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
 				if ($search_end && $search_end != -1) {
 					print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
@@ -755,7 +764,7 @@ if (is_array($blocks)) {
 			}
 			if (empty($search_code) || in_array('PAYMENT_CUSTOMER_CREATE', $search_code) || in_array('PAYMENT_CUSTOMER_DELETE', $search_code)) {
 				// Total
-				print '<tr class="liste_total">';
+				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -765,7 +774,7 @@ if (is_array($blocks)) {
 				// ID
 				print '<td colspan="4">';
 				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('logPAYMENT_CUSTOMER'));
-				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')';
+				print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')';
 				print '<br>'.$langs->trans("LifetimeAmountShort").': '.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
 				if ($search_end && $search_end != -1) {
 					print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');

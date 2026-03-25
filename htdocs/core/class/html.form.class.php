@@ -319,7 +319,7 @@ class Form
 				}
 				if (preg_match('/^(string|safehtmlstring|email|phone|url)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
-					$ret .= '<input type="text" id="' . $htmlname . '" name="' . $htmlname . '" value="' . ($editvalue ? $editvalue : $value) . '"' . (empty($tmp[1]) ? '' : ' size="' . $tmp[1] . '"') . ' autofocus>';
+					$ret .= '<input type="text" id="' . $htmlname . '" name="' . $htmlname . '" value="' . ($editvalue ? $editvalue : $value) . '"' . (empty($tmp[1]) ? '' : ' size="' . $tmp[1] . '"') . ' autofocus spellcheck="false">';
 				} elseif (preg_match('/^(integer)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value, 0);
@@ -973,19 +973,19 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 * @param int|string 	$selected 				Id or Code or Label of preselected country
-	 * @param string 		$htmlname 				Name of html select object
-	 * @param string 		$htmloption 			More html options on select object
-	 * @param integer 		$maxlength 				Max length for labels (0=no limit)
-	 * @param string 		$morecss 				More css class
-	 * @param string 		$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 * @param int|string 		$selected 				Id or Code or Label of preselected country (depending on $usecodeaskey)
+	 * @param string 			$htmlname 				Name of html select object
+	 * @param string 			$htmloption 			More html options on select object
+	 * @param integer 			$maxlength 				Max length for labels (0=no limit)
+	 * @param string 			$morecss 				More css class
+	 * @param string 			$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
 	 * @param int<0,1>|string 	$showempty 				Show empty choice
-	 * @param int<0,1>		$disablefavorites 		1=Disable favorites,
-	 * @param int<0,1> 		$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 * @param string[] 		$exclude_country_code 	Array of country code (iso2) to exclude
-	 * @param int<0,1>		$hideflags 				Hide flags
-	 * @param int<0,1>		$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
-	 * @return string       	                	HTML string with select
+	 * @param int<0,1>			$disablefavorites 		1=Disable favorites,
+	 * @param int<0,1> 			$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 * @param string[] 			$exclude_country_code 	Array of country code (iso2) to exclude
+	 * @param int<0,1>			$hideflags 				Hide flags
+	 * @param int<0,1>			$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @return string       		                	HTML string with select
 	 */
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0, $forcecombo = 0)
 	{
@@ -2668,7 +2668,8 @@ class Form
 			$out .= '})</script>';
 			$out .= img_picto('', 'user', 'class="pictofixedwidth"');
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter, 0, '', 'minwidth200');
-			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtouser" name="' . $action . 'assignedtouser" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= ' <button type="submit" disabled class="button valignmiddle smallpaddingimp reposition butActionAdd" id="' . $action . 'assignedtouser" name="' . $action . 'assignedtouser" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= $langs->trans("Add").'</button>';
 			$out .= '</div>';
 			//$out .= '<br>';
 		}
@@ -2770,7 +2771,9 @@ class Form
 			}
 			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, 0, 'minwidth200');
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= ' <button type="submit" disabled class="button valignmiddle smallpaddingimp reposition butActionAdd" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= $langs->trans("Add");
+			$out .= '</button>';
 			$out .= '<br>';
 		}
 
@@ -4481,7 +4484,7 @@ class Form
 		if (!getDolGlobalString('PRODUCT_BEST_SUPPLIER_PRICE_PRESELECTED')) {
 			$sql .= " ORDER BY s.nom, pfp.ref_fourn DESC";
 		} else {
-			$sql .= " ORDER BY pfp.unitprice ASC";
+			$sql .= " ORDER BY pfp.unitprice - pfp.unitprice * pfp.remise_percent / 100 ASC";
 		}
 
 		dol_syslog(get_class($this) . "::select_product_fourn_price", LOG_DEBUG);
@@ -6097,7 +6100,7 @@ class Form
 	 * @param string 		$labelbuttonno 		Label for No
 	 * @return string                        	HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No')
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No')
 	{
 		global $langs, $conf;
 
@@ -6117,7 +6120,7 @@ class Form
 		if (empty($height)) {
 			$height = 250;
 			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24) + 5;
+				$height += ((count($formquestion) - 2) * 24) + 10;
 			}
 		}
 
@@ -7582,7 +7585,7 @@ class Form
 			}
 
 			if (!$options_only) {
-				$return .= '<select class="flat minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
+				$return .= '<select class="flat valignmiddle minwidth75imp maxwidth100 right" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
 			}
 
 			$selectedfound = false;
@@ -9040,7 +9043,7 @@ class Form
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
-		global $conf, $extrafields, $user;
+		global $conf, $extrafields, $user, $hookmanager, $action;
 
 		// Example of common usage for a link to a thirdparty
 
@@ -9196,6 +9199,19 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 			//$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1'.(is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
+
+			// Hook 'selectForFormsListUrl' - Added to allow modules to modify the AJAX URL
+			$parameters = array(
+				'urloption' => $urloption,
+				'object'    => $objecttmp,
+				'htmlname'  => $htmlname,
+				'filter'    => $filter,
+				'searchkey' => $searchkey,
+			);
+			$reshook = $hookmanager->executeHooks('selectForFormsListUrl', $parameters, $objecttmp, $action);
+			if (!empty($reshook)) {
+				$urloption = $hookmanager->resPrint;
+			}
 
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter((string) $preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
@@ -9965,21 +9981,24 @@ class Form
 			if (!empty($array)) {
 				foreach ($array as $key => $value) {
 					$tmpkey = $key;
-					$tmpvalue = $value;
+					$tmplabel = $value;
+					$tmplabelhtml = '';
 					$tmpcolor = '';
 					$tmppicto = '';
-					$tmplabelhtml = '';
 					$tmpdisabled = '';
 					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
 						$tmpkey = $value['id'];
-						$tmpvalue = empty($value['label']) ? '' : $value['label'];
+						$tmplabel = empty($value['label']) ? '' : $value['label'];
+						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']) : $value['labelhtml'];
 						$tmpcolor = empty($value['color']) ? '' : $value['color'];
 						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
 						$tmpdisabled = empty($value['disabled']) ? '' : $value['disabled'];
-						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']) : $value['labelhtml'];
 					}
-					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
+					$newval = ($translate ? $langs->trans($tmplabel) : $tmplabel);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);
+
+					$tmplabelhtml = ($translate ? $langs->trans($tmplabelhtml) : $tmplabelhtml);
+					$tmplabelhtml = ($key_in_label ? $tmpkey . ' - ' . $tmplabelhtml : $tmplabelhtml);
 
 					$out .= '<option value="' . $tmpkey . '"';
 					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
@@ -9990,10 +10009,10 @@ class Form
 						$out .= ' disabled="disabled"';
 					}
 					if (!empty($tmplabelhtml)) {
-						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml, 0, 0, '', 0, 1) . '"';
+						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml) . '"';
 					} else {
 						$tmplabelhtml = ($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #' . $tmpcolor . '"') : '') . $newval;
-						$out .= ' data-html="' . dol_escape_htmltag($tmplabelhtml, 0, 0, '', 0, 1) . '"';
+						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml) . '"';
 					}
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
@@ -10623,9 +10642,11 @@ class Form
 					$htmltoenteralink .= '<table class="noborder">';
 					$htmltoenteralink .= '<tr class="liste_titre">';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
-					$htmltoenteralink .= '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">&nbsp;';
+					$htmltoenteralink .= '<td class="center"><input type="text" placeholder="'.dol_escape_htmltag($langs->trans("Ref")).'" name="reftolinkto" value="' . dol_escape_htmltag(GETPOST('reftolinkto', 'alpha')) . '">';
+					$htmltoenteralink .= '<br>';
 					$htmltoenteralink .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;';
-					$htmltoenteralink .= '<input type="submit" class="button smallpaddingimp" name="cancel" value="' . $langs->trans('Cancel') . '"></td>';
+					$htmltoenteralink .= '<input type="submit" class="button smallpaddingimp" name="cancel" value="' . $langs->trans('Cancel') . '">';
+					$htmltoenteralink .= '</td>';
 					$htmltoenteralink .= '</tr>';
 					$htmltoenteralink .= '</table>';
 					$htmltoenteralink .= '</form>';
@@ -11104,21 +11125,22 @@ class Form
 	/**
 	 * Return HTML code to output a photo
 	 *
-	 * @param string 	$modulepart 						Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-	 * @param Societe|Adherent|Contact|User|CommonObject	$object	Object containing data to retrieve file name
-	 * @param int 		$width 								Width of photo
-	 * @param int 		$height 							Height of photo (auto if 0)
-	 * @param int<0,1>	$caneditfield 						Add edit fields
-	 * @param string 	$cssclass 							CSS name to use on img for photo
-	 * @param string 	$imagesize 							'mini', 'small' or '' (original)
-	 * @param int<0,1>	$addlinktofullsize 					Add link to fullsize image
-	 * @param int<0,1>	$cache 								1=Accept to use image in cache
-	 * @param ''|'user'|'environment' 	$forcecapture 		'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int<0,1>	$noexternsourceoverwrite 			No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            			HTML code to output photo
+	 * @param string 										$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param Societe|Adherent|Contact|User|CommonObject	$object						Object containing data to retrieve file name
+	 * @param int 											$width 						Width of photo
+	 * @param int 											$height 					Height of photo (auto if 0)
+	 * @param int<0,1>										$caneditfield 				Add edit fields
+	 * @param string 										$cssclass 					CSS name to use on img for photo
+	 * @param string 										$imagesize 					'mini', 'small' or '' (original)
+	 * @param int<0,1>										$addlinktofullsize 			Add link to fullsize image
+	 * @param int<0,1>										$cache 						1=Accept to use image in cache
+	 * @param ''|'user'|'environment' 						$forcecapture 				'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int<0,1>										$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @param int<0,1>										$usesharelinkifavailable	Use 1 to use the share=key link if available. This is slower.
+	 * @return string                            										HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
-	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0, $usesharelinkifavailable = 0)
 	{
 		global $conf, $db, $langs;
 
@@ -11225,10 +11247,6 @@ class Form
 		$ret = '';
 
 		if ($dir) {
-			require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
-			$ecmfiles = new EcmFiles($db);
-			$relativefile = str_replace(DOL_DATA_ROOT .'/', '', $dir.'/'.$originalfile);
-			$ecmfiles->fetch(0, '', $relativefile);
 			if ($file && file_exists($dir . "/" . $file)) {
 				if ($addlinktofullsize) {
 					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity=' . $entity);
@@ -11238,8 +11256,21 @@ class Form
 						$ret .= '<a href="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($originalfile) . '&cache=' . $cache . '">';
 					}
 				}
-				if (!empty($ecmfiles->share)) {
-					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode((string) $ecmfiles->share) . '&cache=' . urlencode((string) $cache) . '">';
+
+				$sharekey = '';
+				if ($usesharelinkifavailable) {
+					// $dir is a full path '/home/.../dolibarr_documents/module'
+					$relativefileforecm = preg_replace('/^'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $dir.'/'.$originalfile);
+					// $relativefileforecme = 'module/...'
+					require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+					$ecmfiles = new EcmFiles($db);
+					$ecmfiles->fetch(0, '', $relativefileforecm);
+
+					$sharekey = (string) $ecmfiles->share;
+				}
+
+				if (!empty($sharekey)) {
+					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?hashp=' . urlencode($sharekey) . '&cache=' . urlencode((string) $cache) . '">';
 				} else {
 					$ret .= '<img alt="" class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . ' photologo' . (preg_replace('/[^a-z]/i', '_', $file)) . '" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . urlencode($modulepart) . '&entity=' . ((int) $entity) . '&file=' . urlencode($file) . '&cache=' . urlencode((string) $cache) . '">';
 				}

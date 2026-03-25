@@ -422,7 +422,7 @@ $leftmenuwidth = 254;
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
-	--colorbackgrey: #f0f0f0;
+	--colorbackgrey: #f6f6f6;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
@@ -570,6 +570,7 @@ input.downloadexternallink {
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
+	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
 	padding: 3px !important;
@@ -705,7 +706,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 }
 
 section.setupsection {
-	padding: 20px;
+	padding: 20px !important;
 	background-color: var(--colorbacktitle1);
 	border-radius: 5px;
 }
@@ -836,8 +837,20 @@ span.userimg.notfirst, div.userimg.notfirst {
 div.userimg.notfirst {
 	display: block-inline;
 }
-.center.inline-block.dateheight {
-	line-height: 1.1em;
+.cell2linesheight {
+	line-height: 1.4em;
+}
+.celldateheight {
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	line-height: 1.2em;
+}
+.dateborderright {
+	padding-right: 4px !important;
+	margin-right: 4px !important;
+	border-right: 1px solid #ddd;
+}
+.dateborderleft {
 }
 
 /* Used by timesheets */
@@ -981,7 +994,7 @@ input.pageplusone {
 select:invalid, select.--error {
 	color: gray;
 }
-input:disabled, textarea:disabled, select[disabled='disabled']
+input:disabled:not(.colorthumb):not(.colorgrey), textarea:disabled, select[disabled='disabled']
 {
 	background: var(--inputbackgroundcolordisabled);
 	color: var(--inputcolordisabled);
@@ -1264,6 +1277,9 @@ textarea.centpercent {
 }
 .centerimp {
 	text-align: center !important;
+}
+.centeronsmartphone {
+	text-align: center;
 }
 .centergrid {
 	display: grid;
@@ -1638,7 +1654,7 @@ span.fa.fa-plus-circle.paddingleft {
 .divfilteralone {
 	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
-	padding-left: 5px;
+	padding: 10px;
 }
 div.divsearchfield {
 	/* float: <?php print $left; ?>; */
@@ -1880,7 +1896,7 @@ select.flat.selectlimit {
 	border-right: none !important;
 	outline: none;
 }
-.strikefordisabled {
+.strikefordisabled, .strikefordisabled span, .strikefordisabled div {
 	text-decoration: line-through;
 }
 .widthdate {
@@ -3373,6 +3389,11 @@ div.tmenucenter
 {
 	padding-left: 0px;
 	padding-right: 0px;
+	max-width: 95px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--colortextbackhmenu);
 	<?php if ($disableimages) { ?>
 	padding-top: 10px;
 	height: 26px;
@@ -3380,7 +3401,6 @@ div.tmenucenter
 	padding-top: 2px;
 	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
-	width: 100%;
 }
 div.menu_titre {
 	padding-bottom: 5px;
@@ -3901,6 +3921,9 @@ img.userphotosmall {			/* size for user photo in lists */
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
+img.gravatar.photouserphoto {
+	filter: grayscale(50%);
+}
 img.userphotopublicvcard {
 	width: 60px;
 	height: 60px;
@@ -4243,6 +4266,9 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px !important;
+}
 div.tabBar tr.titre td {
 	padding-top: 20px;
 }
@@ -4358,6 +4384,10 @@ div.tabsActionNoBottom {
 div.tabsAction > a {
 	margin-bottom: 16px !important;
 }
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
+}
+
 
 div.popuptabset {
 	padding: 6px;
@@ -4634,6 +4664,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	margin: 0px 0px 20px 0px;
 
 	border-radius: 0.1em;
+}
+table.tagtable.liste.listwithfilterbefore {
+	margin-bottom: 8px;
+}
+table.noborder.boxtable {
+	margin-bottom: 2px;
 }
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
@@ -5305,9 +5341,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 }
-.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
-.noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
+.noborder > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.liste > tbody > tr:nth-child(odd):not(:last-child):not(.lastvisible) td:not(.liste_titre),
+.noborder .tagtr:nth-child(odd):not(:last-child):not(.lastvisible) .oddeven.tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #e8e8e8;
 }
@@ -5367,6 +5403,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 	.clearbothonsmartphone {
 		clear: both;
+	}
+	.clearbothonsmartphone:not(.hideonsmartphone) {
 		display: block !important;
 	}
 
@@ -5407,10 +5445,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
+	opacity: 0.9;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: #000;
 	font-size: 0.8em;
+}
+span.boxstatstext span.fas {
+	filter: grayscale(100%);
 }
 .boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
 	display: inline-flex;
@@ -5612,10 +5653,10 @@ div.ok {
   color: #114466;
 }
 
-div.info, div.warning, div.error, div.green, div.neutral {
+div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	padding-top: 16px;
-	padding-left: 10px;
-	padding-right: 4px;
+	padding-left: 20px;
+	padding-right: 10px;
 	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 4px;
@@ -5627,14 +5668,17 @@ div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
 }
 
 /* Neutral message */
-div.neutral {
-	border-<?php print $left; ?>: solid 5px #aaa;
+div.neutral, section.neutral {
 	background: #f8f8f8;
 }
+div.neutral {
+	border-<?php print $left; ?>: solid 5px #aaa;
+}
+
 
 /* Info message */
 div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+	border-<?php print $left; ?>: solid 5px #87bfc2;
 	background: #eff8fc;
 	color: #558;
 }
@@ -5966,6 +6010,9 @@ div#dialogforpopup {
 }
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
+}
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	margin-right: 8px !important;
 }
 /*
 .ui-dialog .ui-dialog-content {
@@ -6370,11 +6417,11 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_today         { /* background: #FDFDF0; */ border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser { /* background: #FDFDF0; */ border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser_peruserleft { /* background: #FDFDF0; */ border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_impair { /* background: #FDFDF0; */ }
 .cal_past          { }
 .cal_peruser         { padding: 0px; height: 22px !important; }
 .cal_peruserviewname { max-width: 140px; height: 22px !important; }
-.cal_impair        { background: #F8F8F8; }
-.cal_today_peruser_impair { background: #F8F8F0; }
+.cal_impair        { background: #FBFBFB; }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
 div.event { margin-top: 4px; margin-bottom: 4px; margin-left: 2px; margin-right: 2px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
@@ -6653,8 +6700,14 @@ span.jPicker {
 	border-collapse: collapse;
 	border: none;
 }
+.jPicker tr.Hex td.Text input {
+	width: 60px !important;
+}
 .jPicker td.Text input {
-	width: 35px !important;
+	min-width: 40px;
+	padding: 8px;
+	border: 1px solid #bbb !important;
+	border-radius: 4px;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -9243,4 +9296,14 @@ if (is_object($db)) {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
+}
+
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }

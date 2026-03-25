@@ -672,8 +672,8 @@ class ChargeSociales extends CommonObject
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->id)) {
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
 		}
 		if (!empty($this->label)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;

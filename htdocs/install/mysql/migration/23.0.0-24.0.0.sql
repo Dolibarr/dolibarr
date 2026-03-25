@@ -171,11 +171,37 @@ ALTER TABLE llx_accounting_balance_snapshot ADD UNIQUE INDEX uk_accounting_balan
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_account (entity, fk_fiscalyear, account_number, debit, credit);
 ALTER TABLE llx_accounting_balance_snapshot ADD INDEX idx_accounting_balance_snapshot_subaccount (entity, fk_fiscalyear, subledger_account, debit, credit);
 
+UPDATE llx_rights_def SET perms = 'manage_advance' WHERE module = 'ticket' AND perms = 'manage';
 
 -- Switch all crabe templates into sponge
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
+UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
 UPDATE llx_document_model as dm SET nom = 'sponge' WHERE nom = 'crabe' AND type ='invoice' AND NOT EXISTS (SELECT nom FROM llx_document_model AS dm2 WHERE nom = 'sponge' AND type = 'invoice' and dm2.entity = dm.entity);
 
+
+ALTER TABLE llx_extrafields ADD COLUMN showintooltip integer DEFAULT 0;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN amount_localtax1 double(24,8) DEFAULT 0 NOT NULL AFTER amount_tva;
+ALTER TABLE llx_societe_remise_except ADD COLUMN amount_localtax2 double(24,8) DEFAULT 0 NOT NULL AFTER amount_localtax1;
+ALTER TABLE llx_societe_remise_except ADD COLUMN localtax1_tx double(7,4)  DEFAULT 0 NOT NULL AFTER tva_tx;
+ALTER TABLE llx_societe_remise_except ADD COLUMN localtax1_type varchar(10)  NULL AFTER localtax1_tx;
+ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_tx double(7,4)  DEFAULT 0 NOT NULL AFTER localtax1_type;
+ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_type varchar(10)  NULL AFTER localtax2_tx;
+
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(HolidayHrInformationsPreviousMonthContent)__:<br>__ARRAY_EMPLOYEE_STARTDAY_ENDDAY_DAYS__', null, 0);
+
+ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
+
+ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
+
+create table llx_product_lang_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_fk_object(fk_object);
 
 -- end of migration

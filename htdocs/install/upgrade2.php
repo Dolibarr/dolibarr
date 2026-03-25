@@ -875,7 +875,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			});
 		});
 		</script>';
-		print '<a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		print '<a class="reposition trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
 
 		print '</td></tr>'."\n";
