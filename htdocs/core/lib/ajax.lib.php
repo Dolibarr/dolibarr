@@ -290,12 +290,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						$("#search_'.$htmlnamejquery.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
-						return $("<li>")
-						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
-						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
-						.appendTo(ul);
-					};
+					});
+					const widgetData = $("input#search_'.$htmlnamejquery.'").data("'.$dataforrenderITem.'");
+					if (widgetData) {
+						widgetData._renderItem = function( ul, item ) {
+							return $("<li>")
+							.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
+							.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
+							.appendTo(ul);
+						};
+					}
 
   				});';
 	$script .= '</script>';
@@ -811,8 +815,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+                function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#set_'.$htmlname.'_'.$object->id.'").hide();
                     $("#del_'.$htmlname.'_'.$object->id.'").show();
                     // Enable another element
@@ -830,7 +841,11 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).show();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						alert(response.responseText);
+					}
+				);
             });
 
             // Del constant
@@ -843,8 +858,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+				function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#del_'.$htmlname.'_'.$object->id.'").hide();
                     $("#set_'.$htmlname.'_'.$object->id.'").show();
                     // Disable another element
@@ -862,7 +884,11 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).hide();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						alert(response.responseText);
+					}
+				);
             });
         });
     </script>';

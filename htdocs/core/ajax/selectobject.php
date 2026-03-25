@@ -118,7 +118,7 @@ if ($objectdesc) {
 	$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
 
 	// Fallback to another solution to get $objecttmp
-	if (empty($objecttmp) && !empty($classpath) && preg_match('/\.class\.php$/', $classpath)) {
+	if (getDolGlobalString("MAIN_ALLOW_UNSECURED_FALLBACK_FOR_SELECTOBJECT") && empty($objecttmp) && !empty($classpath) && preg_match('/\.class\.php$/', $classpath)) {
 		dol_include_once($classpath);
 
 		if ($classname && class_exists($classname)) {

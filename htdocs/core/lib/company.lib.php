@@ -1042,7 +1042,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '</td>';
 
 						// Label
-						print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
+						print '<td title="' . dol_escape_htmltag($obj->title) . '"><div class="twolinesmax-normallineheight minwidth200onall">' . dol_escape_htmltag($obj->title) . '</div></td>';
 						// Date start
 						print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 						// Date end
@@ -1151,7 +1151,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 							print '</td>';
 
 							// Label
-							print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
+							print '<td title="' . dol_escape_htmltag($obj->title) . '"><div class="twolinesmax-normallineheight minwidth200onall">' . dol_escape_htmltag($obj->title) . '</div></td>';
 							// Date start
 							print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 							// Date end
