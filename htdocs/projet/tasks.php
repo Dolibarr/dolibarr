@@ -56,6 +56,8 @@ $langs->loadLangs($langsLoad);
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$massactionbutton = '';
+$permissiontodelete = false;
 //$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel');
