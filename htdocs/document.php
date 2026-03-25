@@ -6,7 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -416,7 +416,6 @@ if ($modulepart == 'facture') {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
 			$sql .= " WHERE rowid = ".((int) $invoice->id);
 			$db->query($sql);
-			//var_dump($invoice);exit;
 
 			$invoice->pos_print_counter += 1;
 			//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
@@ -431,10 +430,10 @@ if ($modulepart == 'facture') {
 				$hidedesc = 0;
 				$hideref = 0;
 				$moreparams = '';
-				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
-				$moreparams = isset($moreparams) ? $moreparams : null;
+				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0); // @phpstan-ignore-line as variable $hidedetails is forced
+				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0); // @phpstan-ignore-line as variable $hidedesc is forced
+				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0); // @phpstan-ignore-line as variable $hideref is forced
+				$moreparams = isset($moreparams) ? $moreparams : null; // @phpstan-ignore-line as variable $moreparams is forced
 
 				$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 				if ($result < 0) {
