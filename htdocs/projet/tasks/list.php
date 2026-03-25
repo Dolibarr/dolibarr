@@ -298,6 +298,7 @@ if (empty($reshook)) {
 		} else {
 			$error = 0;
 			$done = 0;
+			dol_syslog(__FILE__." start update loop action='".$effectiveMassAction."' ids=".implode(',', array_keys($tasksById)), LOG_WARNING);
 			$db->begin();
 			foreach ($tasksById as $taskId => $taskDb) {
 				$task = new Task($db);
@@ -314,6 +315,7 @@ if (empty($reshook)) {
 					$task->status = Task::STATUS_CLOSED;
 				} elseif ($effectiveMassAction == 'update_selected_tasks_progress') {
 					$progressraw = GETPOST('task_progress_'.$taskId, 'alphanohtml');
+					dol_syslog(__FILE__." progress payload taskId=".$taskId." value='".$progressraw."'", LOG_WARNING);
 					if ($progressraw === '' || !is_numeric($progressraw)) {
 						$error++;
 						$task->errors[] = $langs->trans('MassActionInvalidTaskProgressValue', $taskId);
@@ -323,6 +325,7 @@ if (empty($reshook)) {
 					$task->status = ($task->progress >= 100 ? Task::STATUS_CLOSED : Task::STATUS_ONGOING);
 				} elseif ($effectiveMassAction == 'update_selected_tasks_start_date' || $effectiveMassAction == 'update_selected_tasks_deadline') {
 					$taskdatetime = GETPOST('task_datetime_'.$taskId, 'alphanohtml');
+					dol_syslog(__FILE__." datetime payload taskId=".$taskId." value='".$taskdatetime."' keep_duration=".GETPOSTINT('keep_duration_'.$taskId), LOG_WARNING);
 					$tasktimestamp = 0;
 					if (!empty($taskdatetime)) {
 						$tasktimestamp = dol_stringtotime(str_replace('T', ' ', $taskdatetime), 1);
@@ -366,8 +369,10 @@ if (empty($reshook)) {
 
 			if ($error) {
 				$db->rollback();
+				dol_syslog(__FILE__." rollback action='".$effectiveMassAction."' done=".$done." error=".$error, LOG_WARNING);
 			} else {
 				$db->commit();
+				dol_syslog(__FILE__." commit action='".$effectiveMassAction."' done=".$done." error=".$error, LOG_WARNING);
 			}
 
 			if ($done > 0 && !$error) {
@@ -380,8 +385,10 @@ if (empty($reshook)) {
 				} elseif ($effectiveMassAction == 'update_selected_tasks_deadline') {
 					setEventMessages($langs->trans('MassActionSelectedTasksDeadlineUpdated', $done), null, 'mesgs');
 				}
+				dol_syslog(__FILE__." success message sent action='".$effectiveMassAction."' done=".$done, LOG_WARNING);
 			} elseif (!$error) {
 				setEventMessages($langs->trans('NoRecordSelected'), null, 'warnings');
+				dol_syslog(__FILE__." warning message sent action='".$effectiveMassAction."' done=".$done." error=".$error, LOG_WARNING);
 			}
 		}
 
