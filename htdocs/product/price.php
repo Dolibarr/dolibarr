@@ -66,6 +66,7 @@ $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
 $error = 0;
 $errors = array();
+$rowid = 0;
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
