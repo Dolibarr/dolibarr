@@ -502,7 +502,7 @@ $link = '';
 //print load_fiche_titre('', $link.' &nbsp; &nbsp; '.$nav.' '.$newcardbutton, '');
 
 // Local calendar
-$newtitle = '<div class="nowrap clear inline-block minheight30">';
+$newtitle = '<div class="nowrap clear inline-block minheight30 hideonsmartphone">';
 $newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
 $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);

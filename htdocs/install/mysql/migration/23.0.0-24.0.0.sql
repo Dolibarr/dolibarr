@@ -202,4 +202,18 @@ INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_ADDSTOCK_CANCEL','Stock transfer destination stock increment canceled','Executed when destination warehouses stock increment is canceled for a stock transfer','stocktransfer',678);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
+
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
+
+ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
+
+create table llx_product_lang_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_fk_object(fk_object);
+
 -- end of migration

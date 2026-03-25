@@ -246,7 +246,11 @@ $error = 0;
 $result = -1; // For static analysis
 $documentlink = ''; // For static analysis
 
+// Permissions
+$permissiontoread = $user->hasRight('accounting', 'mouvements', 'lire');
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$permissiontoexport = $user->hasRight('accounting', 'mouvements', 'export');
 
 
 /*
@@ -461,11 +465,6 @@ if (empty($reshook)) {
 		$param = '&type='.$type.$param;
 	}
 
-	// Permissions
-	$permissiontoread = $user->hasRight('societe', 'lire');
-	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->hasRight('societe', 'creer');
-
 	// Actions
 	if ($action === 'exporttopdf' && $permissiontoadd) {
 		if ($type == "sub") {
@@ -495,6 +494,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 
 	global $error;
+	/** @var int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
@@ -505,7 +505,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 			}
 		}
 
@@ -519,16 +519,16 @@ if (empty($reshook)) {
 						$nbok++;
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
-						$error++;
+						$error += 1;
 						break;
 					}
 				} elseif ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
+					$error += 1;
 					break;
 				} elseif (isset($object->date_validation) && $object->date_validation != '') {
 					setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
-					$error++;
+					$error += 1;
 					break;
 				}
 			}
@@ -557,7 +557,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newCloneMass($toselect, $journal_code, $massdate);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if ($error) {
 			$db->commit();
@@ -572,7 +572,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->assignAccountMass($toselect, (int) $account);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if (!$error) {
 			$db->commit();
@@ -587,7 +587,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newReturnAccount($toselect, $journal_code, $massdate);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if (!$error) {
 			$db->commit();
@@ -605,7 +605,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 				$nb_lettering = max(0, abs($nb_lettering) - 2);
 			} elseif ($nb_lettering == 0) {
 				$nb_lettering = 0;
@@ -646,7 +646,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 				$nb_lettering = max(0, abs($nb_lettering) - 2);
 			} elseif ($nb_lettering == 0) {
 				$nb_lettering = 0;
@@ -818,7 +818,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 	if ($nbtotalofrecords < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		$error++;
+		$error += 1;
 	}
 }
 
@@ -907,7 +907,7 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 	$newcardbutton .= dolGetButtonTitleSeparator();
 
@@ -996,21 +996,13 @@ $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
 if ($type == 'sub') {
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
-	} else {
-		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_start" value="'.dol_escape_htmltag($search_accountancy_code_start).'" placeholder="'.$langs->trans('From').'">';
-	}
+	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
 }
 $moreforfilter .= ' ';
 if ($type == 'sub') {
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
-	} else {
-		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_end" value="'.dol_escape_htmltag($search_accountancy_code_end).'" placeholder="'.$langs->trans('to').'">';
-	}
+	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }

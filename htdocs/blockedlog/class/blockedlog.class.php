@@ -129,7 +129,7 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-	 * @var int|string
+	 * @var int|string		Note we store in database in gmt time, not in server timezone time
 	 */
 	public $date_creation;
 
@@ -1321,12 +1321,14 @@ class BlockedLog
 
 		$previoushash = '';
 		$previousid = 0;
+		$previousdatecreation = 0;
 
 		try {
 			$tmparray = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
 
 			$previoushash = $tmparray['previoushash'];
 			$previousid = $tmparray['previousid'];
+			$previousdatecreation = $tmparray['previousdatecreation'];
 
 			$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
@@ -1420,7 +1422,7 @@ class BlockedLog
 				// Call remote API service to record the last counter
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				try {
-					$resultcall = callApiToPushCounter((int) $this->id, $this->signature, 0, (int) $previousid, $previoushash);
+					$resultcall = callApiToPushCounter((int) $this->id, $this->signature, $this->date_creation, 0, (int) $previousid, $previoushash, $previousdatecreation);
 				} catch (Exception $e) {
 					$error++;
 					$this->error = $e->getMessage();
@@ -1601,10 +1603,11 @@ class BlockedLog
 
 		$previousid = 0;
 		$previoussignature = '';
+		$previousdatecreation = 0;
 
 		// Fast search of previous record by searching with beforeid - 1. This is very fast and will work 99% of time.
 		if ($beforeid) {
-			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql = "SELECT rowid, signature, date_creation, object_format FROM ".MAIN_DB_PREFIX."blockedlog";
 			$sql .= " WHERE entity = ".((int) $conf->entity);
 			$sql .= " AND rowid = ".((int) $beforeid - 1);
 			$sql .= ($withlock ? " FOR UPDATE " : "");		// To be sure transaction the get last hash to generate the next one will be unlocked once transaction to create new record is finished
@@ -1615,6 +1618,11 @@ class BlockedLog
 				if ($obj) {
 					$previousid = $obj->rowid;
 					$previoussignature = $obj->signature;
+					$tz = 'gmt';
+					if (empty($obj->object_format) || $obj->object_format == 'V1') {
+						$tz = 'tzserver';
+					}
+					$previousdatecreation = $this->db->jdate($obj->date_creation, $tz);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -1624,7 +1632,7 @@ class BlockedLog
 
 		if (empty($previoussignature)) {
 			// Note: a select max rowid and then a select to get signature seems not faster due to filter on entity
-			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql = "SELECT rowid, signature, date_creation, object_format FROM ".MAIN_DB_PREFIX."blockedlog";
 			if ($beforeid) {
 				$sql .= $this->db->hintindex('entity_rowid', 1);
 			}
@@ -1641,6 +1649,11 @@ class BlockedLog
 				if ($obj) {
 					$previousid = $obj->rowid;
 					$previoussignature = $obj->signature;
+					$tz = 'gmt';
+					if (empty($obj->object_format) || $obj->object_format == 'V1') {
+						$tz = 'tzserver';
+					}
+					$previousdatecreation = $this->db->jdate($obj->date_creation, $tz);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -1654,7 +1667,7 @@ class BlockedLog
 			$previoussignature = $this->getOrInitFirstSignature();
 		}
 
-		return array('previousid' => $previousid, 'previoushash' => $previoussignature);
+		return array('previousid' => $previousid, 'previoushash' => $previoussignature, 'previousdatecreation' => $previousdatecreation);
 	}
 
 	/**

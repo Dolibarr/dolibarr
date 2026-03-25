@@ -75,10 +75,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED' && $object instanceof Propal) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			// If workflow to create order is on and signature was not done from the online signature page.
+			// If workflow to create order is on.
 			if (isModEnabled('order') && getDolGlobalString('WORKFLOW_PROPAL_AUTOCREATE_ORDER')) {
 				if (!empty($object->context['closedfromonlinesignature'])) {
-					// We must force permission to create order so the workflow action will work.
+					// If signature was done from the online signature page,
+					// we must force permission to create order so the workflow action will work.
 					$user->rights->commande->creer = 1;
 				}
 				$object->fetchObjectLinked();
