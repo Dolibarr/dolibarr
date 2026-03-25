@@ -36,13 +36,14 @@
  */
 '@phan-var-force array<string,float> $totalamountlifetime';
 '@phan-var-force array<string,float> $totalhtamountlifetime';
+'@phan-var-force int $error';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page ".basename(__FILE__)." can't be called with no conf defined.";
 	exit;
 }
-global $foundoldformat, $firstrecorddate;
+global $foundoldformat, $firstrecorddate, $error;
 
 $firstrecorddatearray = array();
 if (!empty($search_end) && $search_end > 0) {
