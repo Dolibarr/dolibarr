@@ -232,7 +232,7 @@ if ($action == 'add' && $permissiontoadd) {
 	if ($newfichinterid > 0) {
 		// Now we add line of details
 		foreach ($object->lines as $line) {
-			$newinter->addline($user, $newfichinterid, $line->desc, $line->datei, $line->duree, array());
+			$newinter->addline($user, $newfichinterid, $line->desc, dol_now(), $line->duree, array());
 		}
 
 		// Update the number of interventions created from the template (model)
