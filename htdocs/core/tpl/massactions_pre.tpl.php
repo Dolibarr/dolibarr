@@ -115,6 +115,10 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 				$modalBodyHeight = min(620, max(220, 56 + ($rowCount * 34)));
 				$modalHeight = min(760, $modalBodyHeight + 170);
 				$formquestion = array();
+				$currentProjectId = GETPOSTINT('id');
+				if ($currentProjectId > 0) {
+					$formquestion[] = array('type' => 'hidden', 'name' => 'id', 'value' => $currentProjectId);
+				}
 				$formquestion[] = array('type' => 'hidden', 'name' => 'massactiontaskfinal', 'value' => $finalAction);
 				$formquestion[] = array('type' => 'hidden', 'name' => 'toselect', 'value' => implode(',', array_keys($tasksById)));
 
@@ -156,7 +160,11 @@ if (in_array($massaction, array('preupdate_selected_tasks_progress', 'preupdate_
 					$titleform = ($finalAction == 'update_selected_tasks_start_date' ? $langs->trans('MassActionUpdateSelectedTasksStartDate') : $langs->trans('MassActionUpdateSelectedTasksDeadline'));
 				}
 
-			print $form->formconfirm($_SERVER['PHP_SELF'], $titleform, $langs->trans('MassActionTaskPopupDescription'), $finalAction, $formquestion, '', 1, $modalHeight, 800, 0, 'Validate', 'Cancel');
+				$pageforconfirm = $_SERVER['PHP_SELF'];
+				if ($currentProjectId > 0) {
+					$pageforconfirm .= (strpos($pageforconfirm, '?') === false ? '?' : '&').'id='.$currentProjectId;
+				}
+				print $form->formconfirm($pageforconfirm, $titleform, $langs->trans('MassActionTaskPopupDescription'), $finalAction, $formquestion, '', 1, $modalHeight, 800, 0, 'Validate', 'Cancel');
 			print '<script nonce="'.getNonce().'">
 				(function() {
 					function adjustProjectTaskMassactionModal() {
