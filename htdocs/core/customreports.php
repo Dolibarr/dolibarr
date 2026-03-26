@@ -97,9 +97,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 
 	$search_measures = array_map('sanititzekey', $search_measures);
-	$search_xaxis = array_map('sanititzekey', isset($search_xaxis) ? $search_xaxis : array());
+	$search_xaxis = array_map('sanititzekey', $search_xaxis);
 	$search_yaxis = array_map('sanititzekey', $search_yaxis);
-	$search_groupby = array_map('sanititzekey', isset($search_groupby) ? $search_groupby : array());
+	$search_groupby = array_map('sanititzekey', $search_groupby);
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
