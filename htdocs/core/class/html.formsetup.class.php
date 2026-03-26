@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2021  John BOTELLA    <john.botella@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021       John BOTELLA            <john.botella@atm-consulting.fr>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,11 +338,15 @@ class FormSetup
 		$out = '';
 		if ($item->enabled == 1) {
 			$trClass = 'oddeven';
+			$tdOutputFieldClass = '';
 			if ($item->getType() == 'title') {
 				$trClass = 'liste_titre';
 			}
 			if (!empty($item->fieldParams['trClass'])) {
 				$trClass .= ' '.$item->fieldParams['trClass'];
+			}
+			if (!empty($item->fieldParams['tdOutputFieldClass'])) {
+				$tdOutputFieldClass .= ' class="'.$item->fieldParams['tdOutputFieldClass'].'"';
 			}
 
 			$this->setupNotEmpty++;
@@ -353,7 +358,7 @@ class FormSetup
 			$out .= '</span>';
 			$out .= '</td>';
 
-			$out .= '<td>';
+			$out .= '<td'.$tdOutputFieldClass.'>';
 
 			if ($editMode) {
 				$out .= $item->generateInputField();
