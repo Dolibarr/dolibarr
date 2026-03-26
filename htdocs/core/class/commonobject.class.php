@@ -4404,12 +4404,67 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			// If we link a supplier order to a supplier invoice that already uses discounts coming from other supplier invoices
+			// (deposit invoice / credit note used as payment), also link those source invoices to the same supplier order.
+			// This helps keep "linked elements" consistent when totals are impacted by such discounts.
+			if ($origin === 'order_supplier' && $targettype === 'invoice_supplier' && $this->element === 'invoice_supplier' && (int) $origin_id > 0 && (int) $this->id > 0) {
+				$sourceinvoices = array();
+
+				$sqlsources = "SELECT DISTINCT rc.fk_invoice_supplier_source as rowid";
+				$sqlsources .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+				$sqlsources .= " WHERE rc.fk_invoice_supplier = ".((int) $this->id);
+				$sqlsources .= " AND rc.fk_invoice_supplier_source IS NOT NULL";
+
+				$resqlsources = $this->db->query($sqlsources);
+				if ($resqlsources) {
+					while ($objsrc = $this->db->fetch_object($resqlsources)) {
+						$srcid = (int) $objsrc->rowid;
+						if ($srcid > 0 && $srcid !== (int) $this->id) {
+							$sourceinvoices[$srcid] = $srcid;
+						}
+					}
+				} else {
+					dol_syslog(get_class($this)."::add_object_linked Failed to read supplier invoice discounts sources", LOG_WARNING);
+				}
+
+				if (!empty($sourceinvoices)) {
+					$existing = array();
+					$sourcelist = implode(',', $sourceinvoices);
+
+					$sqlexists = "SELECT fk_target";
+					$sqlexists .= " FROM ".$this->db->prefix()."element_element";
+					$sqlexists .= " WHERE fk_source = ".((int) $origin_id);
+					$sqlexists .= " AND sourcetype = '".$this->db->escape($origin)."'";
+					$sqlexists .= " AND targettype = '".$this->db->escape($targettype)."'";
+					$sqlexists .= " AND fk_target IN (".$this->db->sanitize($sourcelist).")";
+
+					$resqlexists = $this->db->query($sqlexists);
+					if ($resqlexists) {
+						while ($objexist = $this->db->fetch_object($resqlexists)) {
+							$existing[(int) $objexist->fk_target] = 1;
+						}
+					} else {
+						dol_syslog(get_class($this)."::add_object_linked Failed to read existing linked supplier invoices", LOG_WARNING);
+					}
+
+					foreach ($sourceinvoices as $srcid) {
+						if (!empty($existing[(int) $srcid])) {
+							continue;
+						}
+
+						$sqladd = "INSERT INTO " . $this->db->prefix() . "element_element (fk_source, sourcetype, fk_target, targettype)";
+						$sqladd .= " VALUES (".((int) $origin_id).", '".$this->db->escape($origin)."', ".((int) $srcid).", '".$this->db->escape($targettype)."')";
+						$this->db->query($sqladd); // Best-effort: do not fail original link action
+					}
+				}
+			}
+
 			if (!$notrigger) {
 				// Call trigger
 				$this->context['link_origin'] = $origin;
 				$this->context['link_origin_id'] = $origin_id;
 
-				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user);	// Note: We should have used here a hook. Not a business event
+				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user); // Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
 					$error++;
 				}

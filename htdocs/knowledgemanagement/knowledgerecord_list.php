@@ -553,7 +553,13 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
-		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
+		print '<td'.($cssforfield ? ' class="liste_titre '.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').($key == 'status' ? ' parentonrightofpage' : '').'"' : '');
+		if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
+			print ' title="'.dolPrintHTMLForAttribute((string) $object->$key).'"';
+		}
+		print '>';
+
+		//print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
@@ -708,6 +714,9 @@ while ($i < $imaxinloop) {
 			} elseif ($key == 'ref') {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 			}
+			if ($key == 'question') {
+				$cssforfield = 'minwidth200 tdoverflowbydiv';
+			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'right';
@@ -761,7 +770,9 @@ while ($i < $imaxinloop) {
 					print picto_from_langcode($object->lang, 'class="paddingrightonly saturatemedium opacitylow"');
 					print $labellang;
 				} elseif ($key == 'question') {
-					print dolGetFirstLineOfText($object->$key);
+					print '<div class="small twolinesmax lineheightsmall minwidth150 maxwidth250 classfortooltip">';
+					print dolGetFirstLineOfText($object->$key, 2);
+					print '</div>';
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}

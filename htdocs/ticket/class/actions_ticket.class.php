@@ -237,8 +237,8 @@ class ActionsTicket extends CommonHookActions
 			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$uselocalbrowser = true;
-			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
+			$uselocalbrowser = -1;
+			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 1 ? true : false;			// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 			if (!$ckeditorenabledforticket) {
 				$msg = dol_string_nohtmltag($msg, 2);
 			}

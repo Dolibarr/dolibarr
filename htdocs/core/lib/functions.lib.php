@@ -9280,7 +9280,9 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </>, so may changes string obfuscated with </> that pass the injection detection into a harmfull string
 
 	if ($cleanalsosomestyles) {		// Clean for remaining html tags
-		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		//$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$temp = preg_replace('/position\s*:\s*(absolute|fixed)/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$temp = preg_replace('/z-index\s*:/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 	if ($removeclassattribute) {	// Clean for remaining html tags
 		$temp = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
@@ -9584,7 +9586,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			}
 
 			// HTML sanitizer by DOMDocument
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
+			if (!empty($out) && getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
 					if (LIBXML_VERSION < 20900) {
@@ -9628,6 +9630,32 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					$dom->encoding = 'UTF-8';
 
+					// Add a layer to remove some styles
+					if (getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') == 2) {
+						foreach ($dom->getElementsByTagName('*') as $el) {
+							if ($el->hasAttribute('style')) {
+								$style = $el->getAttribute('style');
+
+								// delete some styles
+								$style = preg_replace('/z-index\s*:/i', '', $style);
+								$style = preg_replace('/position\s*:/i', '', $style);
+								$style = preg_replace('/top\s*:/i', '', $style);
+								$style = preg_replace('/left\s*:/i', '', $style);
+								$style = preg_replace('/background\s*:/i', '', $style);
+								/*
+								$style = preg_replace('/width\s*:/i', '', $style);
+								$style = preg_replace('/height\s*:/i', '', $style);
+								$style = preg_replace('/backdrop-filter\s*:/i', '', $style);
+								*/
+								if (trim($style) === '') {
+									$el->removeAttribute('style');
+								} else {
+									$el->setAttribute('style', $style);
+								}
+							}
+						}
+					}
+
 					$out = trim($dom->saveHTML());
 
 					// Restore [ and ] that were protected before loadHTML
@@ -9663,7 +9691,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// HTML sanitizer by Tidy
 			// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
 			// Tidy can't be used for non html text content as it is corrupting the new lines fields.
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
+			if (!empty($out) && getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
 					//var_dump($out);
@@ -9745,7 +9773,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			} elseif ($check == 'restricthtmlallowiframe') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1, 1);
 			} else {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);		// styles are allowed to allow rich text editor features of ckeditor managed by the "style=" attribute
 			}
 
 			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).

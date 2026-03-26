@@ -543,6 +543,42 @@ class DiscountAbsolute extends CommonObject
 				$this->fk_facture_line = $rowidline;
 				$this->fk_facture = $rowidinvoice;
 			}
+
+			// If a discount comes from a source invoice (deposit/credit note/excess) and is applied to another invoice,
+			// also create a link between the source invoice and the target invoice.
+			if ($rowidinvoice) {
+				$sourcetype = '';
+				$targettype = '';
+				$sourceinvoiceid = 0;
+
+				if (!empty($this->discount_type)) {
+					$sourcetype = 'invoice_supplier';
+					$targettype = 'invoice_supplier';
+					$sourceinvoiceid = (int) $this->fk_invoice_supplier_source;
+				} else {
+					$sourcetype = 'facture';
+					$targettype = 'facture';
+					$sourceinvoiceid = (int) $this->fk_facture_source;
+				}
+
+				if ($sourceinvoiceid > 0 && $sourceinvoiceid !== (int) $rowidinvoice) {
+					$sqlcheck = "SELECT 1";
+					$sqlcheck .= " FROM ".$this->db->prefix()."element_element";
+					$sqlcheck .= " WHERE fk_source = ".((int) $sourceinvoiceid);
+					$sqlcheck .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
+					$sqlcheck .= " AND fk_target = ".((int) $rowidinvoice);
+					$sqlcheck .= " AND targettype = '".$this->db->escape($targettype)."'";
+					$sqlcheck .= $this->db->plimit(1);
+
+					$rescheck = $this->db->query($sqlcheck);
+					if ($rescheck && $this->db->num_rows($rescheck) === 0) {
+						$sqladd = "INSERT INTO ".$this->db->prefix()."element_element (fk_source, sourcetype, fk_target, targettype)";
+						$sqladd .= " VALUES (".((int) $sourceinvoiceid).", '".$this->db->escape($sourcetype)."', ".((int) $rowidinvoice).", '".$this->db->escape($targettype)."')";
+						$this->db->query($sqladd); // Best-effort: do not fail discount link if object link can't be created.
+					}
+				}
+			}
+
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
