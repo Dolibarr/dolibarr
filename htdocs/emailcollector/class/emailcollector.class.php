@@ -3845,6 +3845,9 @@ class EmailCollector extends CommonObject
 							if ($reshook < 0) {
 								$errorforthisaction++;
 								$this->error = $hookmanager->resPrint;
+								if (!empty($hookmanager->resPrint)) {
+									$operationslog .= '<br>Hook error: '.dol_escape_htmltag($hookmanager->resPrint);
+								}
 							}
 							if ($errorforthisaction) {
 								$errorforactions++;
