@@ -1807,8 +1807,14 @@ abstract class CommonDocGenerator
 					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
 				}
 
+				if (!$enabled) {
+					continue;
+				}
+
+				// Reset enabled: only printable attribute determines PDF visibility
+				$enabled = 0;
 				$disableOnEmpty = 0;
-				if ($enabled && !empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
+				if (!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
 					$printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
 					if (in_array($printable, $params['printableEnable']) || in_array($printable, $params['printableEnableNotEmpty'])) {
 						$enabled = 1;

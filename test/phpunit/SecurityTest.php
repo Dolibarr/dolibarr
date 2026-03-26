@@ -623,251 +623,264 @@ class SecurityTest extends CommonClassTest
 		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
 		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
 
-		// We force $dolibarr_main_restrict_eval_methods to empty, so the code will use the old black-list patterns.
+		// We force $dolibarr_main_restrict_eval_methods to 2 values, so the code will use the old black-list patterns.
 		global $dolibarr_main_restrict_eval_methods;
-		print "\ndolibarr_main_restrict_eval_methods = ".$dolibarr_main_restrict_eval_methods."\n";
 
-		//$dolibarr_main_restrict_eval_methods = array();
+		foreach (array('', 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match') as $valparam) {
+			$dolibarr_main_restrict_eval_methods = $valparam;
+			print "\ndolibarr_main_restrict_eval_methods = ".$dolibarr_main_restrict_eval_methods."\n";
 
-
-		//$resulttest = dol_eval('((getDolGlobalString("MAIN_USE_ADVANCED_PERMS") ? $user->hasRight("user","group_advance","read") : $user->hasRight("user","user","lire")) || $user->admin) && !(isModEnabled("multicompany") && $conf->entity > 1 && getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE"))', 1, 0);
-		//print "resulttest = ".$resulttest."\n";
-		//$this->assertTrue($resulttest);
-
-		$result = dol_eval('1==1', 1, 0);
-		print "result1 = ".$result."\n";
-		$this->assertTrue($result);
-
-		$result = dol_eval('1==2', 1, 0);
-		print "result2 = ".$result."\n";
-		$this->assertFalse($result);
-
-		$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
-		$result3a = dol_eval($s, 1, 1, '2');
-		print "result3a = ".$result3a."\n";
-		$this->assertStringContainsString('Exception during evaluation: '.$s, $result3a);
-
-		$s = '((($var1 = new Project($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
-		$result3b = dol_eval($s, 1, 1, '2');
-		print "result3b = ".$result."\n";
-		$this->assertEquals('0', $result3b);
-
-		$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : "Parent project not found"';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result3c = ".$result."\n";
-		$this->assertEquals('Parent project not found', $result);
-
-		$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : \'Parent project not found\'';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result4 = ".$result."\n";
-		$this->assertEquals('Parent project not found', $result, 'Test 4');
-
-		$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
-		print "result5 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
-
-		$s = '4 < 5';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result6 = ".$result."\n";
-		$this->assertEquals('1', $result, 'Test 5');
-
-		/*
-		$s = 'MyClass::MyMethod()';
-		$result = dol_eval($s, 1, 1, '2');
-		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result, 'The string was not detected as evil');
-		*/
-
-		/* not allowed. Not a one line eval string
-		$result = (string) dol_eval('if ($a == 1) { }', 1, 1);
-		print "result4b = ".$result."\n";
-		$this->assertEquals('aaa', $result);
-		*/
-
-		// Now string not allowed
-
-		$s = '4 <5';
-		$result = (string) dol_eval($s, 1, 1, '2');		// in mode 2, char < is allowed only if followed by a space
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 <5 - The string was not detected as evil');
-
-		$s = '4 < 5';
-		$result = (string) dol_eval($s, 1, 1, '1');		// in mode 1, char < is always forbidden
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
-
-		$s = 'new abc->invoke(\'whoami\')';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$s = 'new ReflectionFunction(\'abc\')';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '1');		// result of dol_eval may be an object Closure
-		print "result4a = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the [ char and method "2"');
-
-		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '2');		// result of dol_eval may be an object Closure
-		print "result4b = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
-
-		$result = dol_eval('json_encode(array_map(implode("",array("ex","ec"), array("id")))', 1, 1, '1');		// result of dol_eval may be an object Closure
-		print "result4c = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
-
-		$result = dol_eval('$a=function() { }; $a', 1, 1, '0');		// result of dol_eval may be an object Closure
-		print "result5 = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
-
-		$result = dol_eval('$a=function() { }; $a();', 1, 1, '1');
-		print "result6 = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
-
-		$result = (string) dol_eval('instruction;', 1, 1);	// ; is not allowed.
-		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval('$var1=exec("ls")', 1, 1);
-		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval('$var1=exec(\'ls\')', 1, 1);
-		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval('$var1=exec ("ls")', 1, 1);
-		print "result8 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval("strrev('metsys') ('whoami')", 1, 1);
-		print "result8b = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
-
-		$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
-		print "result9 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval('`ls`', 1, 0);
-		print "result10 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval("('ex'.'ec')('ls')", 1, 0);	// This will execute exec of ls
-		print "result11 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval("('ex'.'ec') /* */ (/* */'ls')", 1, 0);	// This will execute exec of ls
-		print "result11 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
-		print "result12 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = dol_eval("90402.38+267678+0", 1, 1, 1);
-		print "result13 = ".$result."\n";
-		$this->assertEquals('358080.38', $result, 'The string was not detected as evil');
-
-		// Must be allowed
-
-		global $mainmenu,$leftmenu;	// Used into following strings to eval
-
-		$leftmenu = 'AAA';
-		$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
-		print "result = ".$result."\n";
-		$this->assertTrue($result);
-
-		// Same with a value that does not match
-		$leftmenu = 'XXX';
-		$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
-		print "result14 = ".$result."\n";
-		$this->assertFalse($result);
-
-		$leftmenu = 'AAA';
-		$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
-		print "result15 = ".$result."\n";
-		$this->assertTrue($result);
-
-		$leftmenu = 'XXX';
-		$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
-		print "result16 = ".$result."\n";
-		$this->assertFalse($result);
-
-		$leftmenu = 'XXX';
-		$conf->global->MAIN_FEATURES_LEVEL = 1;		// Force for the case option is -1
-		$string = '(isModEnabled("user") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
-		$result = dol_eval($string, 1, 1, '1');
-		print "result17 = ".$result."\n";
-		$this->assertTrue($result);
-
-		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && getDolGlobalInt("MAIN_FEATURES_LEVEL")', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
-		print "result18 = ".$result."\n";
-		$this->assertFalse($result);
-
-		$mainmenu = 'TTT';
-		$leftmenu = 'LLL';
-		$result = (string) dol_eval('$mainmenu=\'T2\' && ($mainmenu == \'TTT\')', 1, 0);
-		print "result11 = ".$result."\n";
-		$this->assertEquals('1', $result, 'The string was not detected as evil');
+			//$dolibarr_main_restrict_eval_methods = array();
 
 
-		// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL
+			//$resulttest = dol_eval('((getDolGlobalString("MAIN_USE_ADVANCED_PERMS") ? $user->hasRight("user","group_advance","read") : $user->hasRight("user","user","lire")) || $user->admin) && !(isModEnabled("multicompany") && $conf->entity > 1 && getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE"))', 1, 0);
+			//print "resulttest = ".$resulttest."\n";
+			//$this->assertTrue($resulttest);
 
-		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+			$result = dol_eval("('exec') /* */ ('id')");
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
-		$mainmenu = 'ex';
-		$result = (string) dol_eval('$mainmenu.\'ec\'', 1, 0);
-		print "resultconcat1 = ".$result."\n";
-		$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
+			$result = dol_eval("('exec')  ('id')");
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
-		$mainmenu = 'ex';
-		$leftmenu = 'ec';
-		$result = (string) dol_eval("\$mainmenu.\$leftmenu", 1, 0);
-		print "resultconcat2 = ".$result."\n";
-		$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
+			$result = dol_eval('1==1', 1, 0);
+			print "result1 = ".$result."\n";
+			$this->assertTrue($result);
 
-		// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0
+			$result = dol_eval('1==2', 1, 0);
+			print "result2 = ".$result."\n";
+			$this->assertFalse($result);
 
-		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
+			$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+			$result3a = dol_eval($s, 1, 1, '2');
+			print "result3a = ".$result3a."\n";
+			$this->assertStringContainsString('Exception during evaluation: '.$s, $result3a);
 
-		$leftmenu = 'ab';
-		$result = (string) dol_eval("(\$leftmenu.'s')", 1, 0);
-		print "resultconcat3 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden if not strictly between 2 numbers)', $result, 'Test concat - The string was not reported as a bad syntax when it should');
+			$s = '((($var1 = new Project($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+			$result3b = dol_eval($s, 1, 1, '2');
+			print "result3b = ".$result."\n";
+			$this->assertEquals('0', $result3b);
+
+			$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : "Parent project not found"';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result3c = ".$result."\n";
+			$this->assertEquals('Parent project not found', $result);
+
+			$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : \'Parent project not found\'';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result4 = ".$result."\n";
+			$this->assertEquals('Parent project not found', $result, 'Test 4');
+
+			$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
+			print "result5 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
+
+			$s = '4 < 5';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result6 = ".$result."\n";
+			$this->assertEquals('1', $result, 'Test 5');
+
+			/*
+			$s = 'MyClass::MyMethod()';
+			$result = dol_eval($s, 1, 1, '2');
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result, 'The string was not detected as evil');
+			*/
+
+			/* not allowed. Not a one line eval string
+			$result = (string) dol_eval('if ($a == 1) { }', 1, 1);
+			print "result4b = ".$result."\n";
+			$this->assertEquals('aaa', $result);
+			*/
+
+			// Now string not allowed
+
+			$s = '4 <5';
+			$result = (string) dol_eval($s, 1, 1, '2');		// in mode 2, char < is allowed only if followed by a space
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 <5 - The string was not detected as evil');
+
+			$s = '4 < 5';
+			$result = (string) dol_eval($s, 1, 1, '1');		// in mode 1, char < is always forbidden
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
+
+			$s = 'new abc->invoke(\'whoami\')';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$s = 'new ReflectionFunction(\'abc\')';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '1');		// result of dol_eval may be an object Closure
+			print "result4a = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the [ char and method "2"');
+
+			$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '2');		// result of dol_eval may be an object Closure
+			print "result4b = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
+
+			$result = dol_eval('json_encode(array_map(implode("",array("ex","ec"), array("id")))', 1, 1, '1');		// result of dol_eval may be an object Closure
+			print "result4c = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
+
+			$result = dol_eval('$a=function() { }; $a', 1, 1, '0');		// result of dol_eval may be an object Closure
+			print "result5 = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
+
+			$result = dol_eval('$a=function() { }; $a();', 1, 1, '1');
+			print "result6 = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
+
+			$result = (string) dol_eval('instruction;', 1, 1);	// ; is not allowed.
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('$var1=exec("ls")', 1, 1);
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('$var1=exec(\'ls\')', 1, 1);
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('$var1=exec ("ls")', 1, 1);
+			print "result8 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("strrev('metsys') ('whoami')", 1, 1);
+			print "result8b = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
+
+			$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
+			print "result9 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('`ls`', 1, 0);
+			print "result10 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("('ex'.'ec')('ls')", 1, 0);	// This will execute exec of ls
+			print "result11 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("('ex'.'ec') /* */ (/* */'ls')", 1, 0);	// This will execute exec of ls
+			print "result11 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
+			print "result12 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = dol_eval("90402.38+267678+0", 1, 1, 1);
+			print "result13 = ".$result."\n";
+			$this->assertEquals('358080.38', $result, 'The string was not detected as evil');
 
 
-		// Not allowed
+			// Must be allowed
 
-		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+			global $mainmenu,$leftmenu;	// Used into following strings to eval
 
-		$leftmenu = 'abs';
-		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
-		print "result20 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found a call using "$abc(" or "$abc (" instead of using the direct name of the function)', $result, 'Test 20 - The string was not detected as evil');
+			$leftmenu = 'AAA';
+			$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+			print "result = ".$result."\n";
+			$this->assertTrue($result);
 
-		$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
-		print "result21 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 21 - The string was not detected as evil');
+			// Same with a value that does not match
+			$leftmenu = 'XXX';
+			$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+			print "result14 = ".$result."\n";
+			$this->assertFalse($result);
 
-		$result = (string) dol_eval('($a = "ex") && ($b = "ec") && ($cmd = "$a$b") && $cmd ("curl localhost:5555")', 1, 0);
-		print "result22 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 22 - The string was not detected as evil');
+			$leftmenu = 'AAA';
+			$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+			print "result15 = ".$result."\n";
+			$this->assertTrue($result);
 
-		$result = (string) dol_eval('\'exec\'("aaa")', 1, 0);
-		print "result23 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when it should');
+			$leftmenu = 'XXX';
+			$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+			print "result16 = ".$result."\n";
+			$this->assertFalse($result);
 
-		$result = (string) dol_eval('1 + 2 <? echo "aaa" ?>', 1, 0, '2');
-		print "result24 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (The char ? can be used only with a space before and after)', json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+			$leftmenu = 'XXX';
+			$conf->global->MAIN_FEATURES_LEVEL = 1;		// Force for the case option is -1
+			$string = '(isModEnabled("user") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
+			$result = dol_eval($string, 1, 1, '1');
+			print "result17 = ".$result."\n";
+			$this->assertTrue($result);
 
-		$result = (string) dol_eval('$$a', 1, 0);
-		print "result25 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 25 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+			$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && getDolGlobalInt("MAIN_FEATURES_LEVEL")', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+			print "result18 = ".$result."\n";
+			$this->assertFalse($result);
+
+			$mainmenu = 'TTT';
+			$leftmenu = 'LLL';
+			$result = (string) dol_eval('$mainmenu=\'T2\' && ($mainmenu == \'TTT\')', 1, 0);
+			print "result11 = ".$result."\n";
+			$this->assertEquals('1', $result, 'The string was not detected as evil');
+
+
+			// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+
+			$mainmenu = 'ex';
+			$result = (string) dol_eval('$mainmenu.\'ec\'', 1, 0);
+			print "resultconcat1 = ".$result."\n";
+			$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
+
+			$mainmenu = 'ex';
+			$leftmenu = 'ec';
+			$result = (string) dol_eval("\$mainmenu.\$leftmenu", 1, 0);
+			print "resultconcat2 = ".$result."\n";
+			$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
+
+			// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
+
+			$leftmenu = 'ab';
+			$result = (string) dol_eval("(\$leftmenu.'s')", 1, 0);
+			print "resultconcat3 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden if not strictly between 2 numbers)', $result, 'Test concat - The string was not reported as a bad syntax when it should');
+
+
+			// Not allowed
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+
+			$leftmenu = 'abs';
+			$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
+			print "result20 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found a call using "$abc(" or "$abc (" instead of using the direct name of the function)', $result, 'Test 20 - The string was not detected as evil');
+
+			$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
+			print "result21 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 21 - The string was not detected as evil');
+
+			$result = (string) dol_eval('($a = "ex") && ($b = "ec") && ($cmd = "$a$b") && $cmd ("curl localhost:5555")', 1, 0);
+			print "result22 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 22 - The string was not detected as evil');
+
+			$result = (string) dol_eval('\'exec\'("aaa")', 1, 0);
+			print "result23 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when it should');
+
+			$result = (string) dol_eval('1 + 2 <? echo "aaa" ?>', 1, 0, '2');
+			print "result24 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (The char ? can be used only with a space before and after)', json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+
+			$result = (string) dol_eval('$$a', 1, 0);
+			print "result25 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 25 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+		}
 	}
 
 

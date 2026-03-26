@@ -360,11 +360,6 @@ class Users extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
-			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
-				continue;
-			}
 			/*if ($field == 'pass') {
 				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
 					throw new RestException(403, 'You are not allowed to modify/set password of other users');
@@ -372,6 +367,21 @@ class Users extends DolibarrApi
 				}
 			}
 			*/
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if (DolibarrApiAccess::$user->admin) {	// If user for API is admin
+				if ($field == 'admin' && $value != $this->useraccount->admin && empty($value)) {
+					throw new RestException(403, 'Reseting the admin status of a user is not possible using the API');
+				}
+			} else {
+				if ($field == 'admin' && $value != $this->useraccount->admin) {
+					throw new RestException(403, 'Only an admin user can modify the admin status of another user');
+				}
+			}
 
 			$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
 		}
