@@ -2904,8 +2904,6 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
  */
 function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
 {
-	global $conf;
-
 	$reg = array();
 
 	// Juridical status
@@ -2960,7 +2958,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	print '<!-- htmlPrintOnlineFooter -->' . "\n";
 
 	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
-	print '<footer class="center centpercent opacitymedium">' . "\n";
+	print '<footer class="center centpercent opacitymedium paddingbottom">' . "\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = ' . (empty($object) ? 'undefined' : $object->element) . ' -->';

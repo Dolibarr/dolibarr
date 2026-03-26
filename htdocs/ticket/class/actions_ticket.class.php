@@ -392,7 +392,11 @@ class ActionsTicket extends CommonHookActions
 								if (!empty($doc->share)) {
 									$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
 								} elseif ($doc->src_object_type == 'ticket') {
-									$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file_relative_path).'&entity='.getEntity('ticket', 0);
+									$downloadwrapper = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/document.php' : dol_buildpath('/public/ticket/document.php', 2);
+
+									global $dolibarr_main_instance_unique_id;
+									$securekey = dol_hash('dolibarr-'.$file_relative_path.'-'.$dolibarr_main_instance_unique_id, 'sha256');
+									$doclink = $downloadwrapper.'?modulepart='.$modulepart.'&attachment=0&entity='.getEntity('ticket', 0).'&securekey='.urlencode($securekey).'&file='.urlencode($file_relative_path);
 								}
 
 								$mimeAttr = ' mime="'.$mime.'" ';
