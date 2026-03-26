@@ -44,6 +44,7 @@
 @phan-var-force string $defaulttopiclang
 @phan-var-force string[] $arrayoffamiliestoexclude
 @phan-var-force string $file
+@phan-var-force string $modelmail
 @phan-var-force CommonObject $object
 ';
 
@@ -55,6 +56,9 @@ if (empty($conf) || !is_object($conf)) {
 
 $fileparams = array();
 $file = null;
+if (!isset($modelmail)) {
+	$modelmail = '';
+}
 
 if ($action == 'presend') {
 	$langs->load("mails");
