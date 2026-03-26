@@ -417,8 +417,25 @@ $dolibarr_cron_allow_cli='0';
 // 2 will allow custom PHP inside website features even if your PHP setup does not protect you against dangerous system calls (this may be dangerous if you don't have a RCE protection like SELnux or Apparmor).
 // Default value: '0'
 // Examples: '0', '1' or '2'
-
+//
 // $dolibarr_website_allow_custom_php='0';
+
+// dolibarr_allow_localurl_for_webhooks
+// ====================================
+// Allow webhooks to use a local url
+// Default value: '0'
+// Examples: '1'
+//
+// $dolibarr_allow_localurl_for_webhooks = '0';
+
+// dolibarr_allow_unsecured_select_in_extrafields_filter
+// =====================================================
+// Allow the use of subrequests inside USF IN filters
+// Default value: '0'
+// Examples: '1'
+//
+// $dolibarr_allow_unsecured_select_in_extrafields_filter = '0';
+
 
 
 // php_session_save_handler

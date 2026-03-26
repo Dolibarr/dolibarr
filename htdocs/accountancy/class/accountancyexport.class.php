@@ -1204,7 +1204,12 @@ class AccountancyExport
 
 			$tab['end_line'] = $end_line;
 
-			print implode('|', $tab);
+			$output = implode('|', $tab);
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 
 			$index++;
 		}

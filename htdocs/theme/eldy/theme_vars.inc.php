@@ -75,7 +75,7 @@ $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
-$butactionbg = '136, 96, 170';
+$butactionbg = '116, 96, 170';
 $textbutaction = '255, 255, 255';
 
 // text color

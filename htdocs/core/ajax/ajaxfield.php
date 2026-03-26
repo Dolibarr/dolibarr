@@ -77,14 +77,13 @@ if (empty($object->element)) {
 $module = $object->module;
 $element = $object->element;
 
+// Security check
 $usesublevelpermission = ($module != $element ? $element : '');
 if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
-
 // print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
-// Security check
 restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
 

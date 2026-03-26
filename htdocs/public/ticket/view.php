@@ -265,20 +265,16 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		print '<table class="ticketpublictable centpercent tableforfield">';
 
-		// Ref
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+		// Ref - Tracking ID
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").' / '.$langs->trans("TicketTrackId").'</td><td>';
 		print img_picto('', 'ticket', 'class="pictofixedwidth"');
-		print dol_escape_htmltag($object->dao->ref);
-		print '</td></tr>';
-
-		// Tracking ID
-		print '<tr><td>'.$langs->trans("TicketTrackId").'</td><td>';
-		print dol_escape_htmltag($object->dao->track_id);
+		print dolPrintHTML($object->dao->ref);
+		print '<span class="opacitylow"> &nbsp; / &nbsp; '.dolPrintHTML($object->dao->track_id).'</span>';
 		print '</td></tr>';
 
 		// Subject
 		print '<tr><td>'.$langs->trans("Subject").'</td><td>';
-		print '<span class="bold">';
+		print '<span class="bold large">';
 		print dol_escape_htmltag($object->dao->subject);
 		print '</span>';
 		print '</td></tr>';
@@ -308,6 +304,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
+		print img_picto('', 'calendar', 'class="pictofixedwidth"');
 		print dol_print_date($object->dao->datec, 'dayhour');
 		print '</td></tr>';
 
@@ -341,14 +338,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// User assigned
-		print '<tr><td>'.$langs->trans("AssignedTo").'</td><td>';
 		if ($object->dao->fk_user_assign > 0) {
+			print '<tr><td>'.$langs->trans("AssignedTo").'aaaa</td><td>';
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_assign);
 			print img_picto('', 'user', 'class="pictofixedwidth"');
 			print $fuser->getFullName($langs, 0);
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// External contributors
 		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')) {
@@ -429,12 +426,12 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			// List ticket
 			print '<div class="inline-block divButAction"><a class="left" style="padding-right: 50px" href="javascript:$(\'#form_view_ticket_list\').submit();">'.$langs->trans('ViewMyTicketList').'</a></div>';
 
-			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+			if ($object->dao->status < Ticket::STATUS_CLOSED) {
 				// New message
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('TicketAddMessage').'</a></div>';
 
 				// Close ticket
-				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+				if ($object->dao->status >= Ticket::STATUS_NOT_READ && $object->dao->status < Ticket::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}
@@ -445,7 +442,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 
 		// Message list
-		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+		print '<div class="ticketpublicarea ticketlargemargin">';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
 		print '</div>';
 

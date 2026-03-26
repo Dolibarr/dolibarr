@@ -521,7 +521,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".price2num($this->subprice).",";
 		$sql .= " '".$this->db->escape($this->ref_ext)."',";
-		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
+		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
 		$sql .= ' '.((int) $this->fk_code_ventilation).',';
@@ -732,9 +732,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", subprice=".price2num($this->subprice);
 		$sql .= ", remise_percent=".price2num($this->remise_percent);
 		if ($this->fk_remise_except) {
-			$sql .= ", fk_remise_except=".$this->fk_remise_except;
+			$sql .= ", fk_remise_except = ".((int) $this->fk_remise_except);
 		} else {
-			$sql .= ", fk_remise_except=null";
+			$sql .= ", fk_remise_except = null";
 		}
 		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->db->escape($this->vat_src_code))."'";
 		$sql .= ", tva_tx=".price2num($this->tva_tx);
@@ -742,27 +742,27 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax1_type='".$this->db->escape((string) $this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape((string) $this->localtax2_type)."'";
-		$sql .= ", qty=".price2num($this->qty);
-		$sql .= ", date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
-		$sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", product_type=".$this->product_type;
-		$sql .= ", info_bits='".$this->db->escape((string) $this->info_bits)."'";
-		$sql .= ", special_code=" . (int) $this->special_code;
+		$sql .= ", qty = ".((float) price2num($this->qty));
+		$sql .= ", date_start = ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
+		$sql .= ", date_end = ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
+		$sql .= ", product_type = ".((int) $this->product_type);
+		$sql .= ", info_bits = '".$this->db->escape((string) $this->info_bits)."'";
+		$sql .= ", special_code = " . (int) $this->special_code;
 		if (empty($this->skip_update_total)) {
-			$sql .= ", total_ht=".price2num($this->total_ht);
-			$sql .= ", total_tva=".price2num($this->total_tva);
-			$sql .= ", total_ttc=".price2num($this->total_ttc);
-			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
-			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
+			$sql .= ", total_ht = ".price2num($this->total_ht);
+			$sql .= ", total_tva = ".price2num($this->total_tva);
+			$sql .= ", total_ttc = ".price2num($this->total_ttc);
+			$sql .= ", total_localtax1 = ".price2num($this->total_localtax1);
+			$sql .= ", total_localtax2 = ".price2num($this->total_localtax2);
 		}
-		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
-		$sql .= ", buy_price_ht=".(($this->pa_ht || (string) $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
-		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
+		$sql .= ", buy_price_ht = ".(($this->pa_ht || (string) $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
+		$sql .= ", fk_parent_line = ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
-			$sql .= ", rang=".((int) $this->rang);
+			$sql .= ", rang = ".((int) $this->rang);
 		}
 		$sql .= ", situation_percent = ".((float) $this->situation_percent);
-		$sql .= ", fk_unit = ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", fk_unit = ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 
 		// Multicurrency
