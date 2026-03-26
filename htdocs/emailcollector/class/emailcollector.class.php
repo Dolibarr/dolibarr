@@ -4343,7 +4343,7 @@ class EmailCollector extends CommonObject
 				continue;
 			}
 			$hash = hash_file('sha256', $fileinfo['fullname']);
-			if ($hash !== false && $hash !== '' && empty($seenHashes[$hash])) {
+			if ($hash !== false && empty($seenHashes[$hash])) {
 				$seenHashes[$hash] = $fileinfo['name'];
 			}
 		}
@@ -4406,7 +4406,7 @@ class EmailCollector extends CommonObject
 			$contentHash = hash('sha256', $content);
 			$finalName = $safeName;
 			$useExisting = false;
-			if ($contentHash !== '' && !empty($seenHashes[$contentHash])) {
+			if (!empty($seenHashes[$contentHash])) {
 				$finalName = $seenHashes[$contentHash];
 				if (file_exists($destdir.'/'.$finalName)) {
 					$useExisting = true;
@@ -4424,22 +4424,21 @@ class EmailCollector extends CommonObject
 				}
 
 				$this->saveAttachment($destdir, $finalName, $content);
-				if ($contentHash !== '') {
-					$seenHashes[$contentHash] = $finalName;
-				}
+				$seenHashes[$contentHash] = $finalName;
 			}
 
 			$fullPath = $destdir.'/'.$finalName;
 			$size = (file_exists($fullPath) ? filesize($fullPath) : null);
-			$sha256 = ($contentHash !== '' ? $contentHash : (file_exists($fullPath) ? hash_file('sha256', $fullPath) : null));
+			$sizevalue = ($size === false ? null : $size);
+			$sha256 = $contentHash;
 
 			$stored[] = array(
 				'name' => $finalName,
 				'original_name' => $origName,
 				'relative_path' => ($relativeDir !== '' ? $relativeDir.'/'.$finalName : ''),
 				'content_type' => $mime,
-				'size' => ($size !== false && $size !== null ? (int) $size : null),
-				'sha256' => ($sha256 !== false && $sha256 !== null ? (string) $sha256 : null),
+				'size' => ($sizevalue !== null ? (int) $sizevalue : null),
+				'sha256' => $sha256,
 			);
 		}
 
