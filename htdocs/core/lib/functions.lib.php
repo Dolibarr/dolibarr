@@ -10980,7 +10980,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 		}
 
-		$extractLast4FromAccount = function ($raw) {
+		$extractLast4FromAccount = static function (mixed $raw): string {
 			$raw = trim((string) $raw);
 			if ($raw === '') {
 				return '';
@@ -11039,7 +11039,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$supplierBankText = $templateFallback;
 		if ($supplierBankLast4 !== '') {
 			if (strpos($templateWithLast4, '%s') !== false) {
-				$supplierBankText = str_replace('%s', $supplierBankLast4, $templateWithLast4);
+				$supplierBankText = strtr($templateWithLast4, array('%s' => $supplierBankLast4));
 			} else {
 				$supplierBankText = trim($templateWithLast4).' '.$supplierBankLast4;
 			}
