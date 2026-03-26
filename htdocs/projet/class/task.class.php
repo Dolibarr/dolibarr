@@ -645,7 +645,7 @@ class Task extends CommonObjectLine
 		$sql = "SELECT t.rowid, t.ref, t.label, t.dateo, t.datee, t.progress, t.fk_statut, t.fk_projet";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS t";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet AS p ON p.rowid = t.fk_projet";
-		$sql .= " WHERE t.rowid IN (".implode(',', $toselect).")";
+		$sql .= " WHERE t.rowid IN (".$this->db->sanitize(implode(',', $toselect)).")";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
 		$sql .= $projectlistfilter;
 

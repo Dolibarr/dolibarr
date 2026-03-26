@@ -66,6 +66,7 @@
 @phan-var-force int[] $arrayofselected
 @phan-var-force int[] $toselect
 @phan-var-force ?string $uploaddir
+@phan-var-force ?Task $taskstatic
 @phan-var-force int<0,1> $withmaindocfilemail
 @phan-var-force string $sendto
 @phan-var-force string $search_all
