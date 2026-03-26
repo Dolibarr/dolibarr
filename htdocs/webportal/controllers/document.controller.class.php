@@ -89,7 +89,7 @@ class DocumentController extends Controller
 	 */
 	public function init()
 	{
-		global $db, $conf, $hookmanager;
+		global $conf, $hookmanager;
 
 		define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
 
@@ -194,28 +194,30 @@ class DocumentController extends Controller
 			) {
 				if (isModEnabled($moduleName) && isset($conf->{$moduleName}->multidir_output[$entity])) {
 					// List of module supported in security tests (others are forbidden if not security test to check that document is owned by company is done)
-					if (in_array($moduleName, array('facture', 'invoice', 'commande', 'order', 'propal'))) {
+					if (in_array($moduleName, array('facture', 'invoice', 'commande', 'order', 'propal', 'ticket'))) {
 						$sql = "SELECT rowid, src_object_id, src_object_type FROM ".MAIN_DB_PREFIX.'ecm_files';
-						$sql .= " WHERE filename = '".$db->escape(basename($original_file))."'";
-						$sql .= " AND filepath = '".$db->escape(basename($tmparray['dir_output']).'/'.dirname($original_file))."'";
-						$resql = $db->query($sql);
+						$sql .= " WHERE filename = '".$this->db->escape(basename($original_file))."'";
+						$sql .= " AND filepath = '".$this->db->escape(basename($tmparray['dir_output']).'/'.dirname($original_file))."'";
+						$resql = $this->db->query($sql);
 						if ($resql) {
-							$obj = $db->fetch_object($resql);
+							$obj = $this->db->fetch_object($resql);
 
 							if ($obj->src_object_id && $obj->src_object_type) {
 								// Create the virtual user
-								$tmpuser = new User($db);
+								$tmpuser = new User($this->db);
 								$tmpuser->socid = $socId;
 
-								include_once DOl_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+								// Use dol_check_secure_access_document(); instead or not ?
 								$ok = checkUserAccessToObject($tmpuser, array($obj->src_object_type), $obj->src_object_id, '', '', 'fk_soc');
 
 								$accessallowed = ($ok ? 1 : 0);
 								$pathdir = $tmparray['dir_output'];
 							}
 						} else {
-							dol_print_error($db);
+							dol_print_error($this->db);
 						}
 					}
 				}
@@ -236,7 +238,6 @@ class DocumentController extends Controller
 
 		$fullpath_original_file = $pathdir . '/' . $original_file; // $fullpath_original_file is now a full path name
 
-		var_dump($pathdir);
 		// Security:
 		// We refuse directory transversal change and pipes in file names
 		if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {

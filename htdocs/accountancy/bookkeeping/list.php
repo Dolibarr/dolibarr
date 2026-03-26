@@ -498,7 +498,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 			}
 		}
 
@@ -513,16 +513,16 @@ if (empty($reshook)) {
 						$nbok++;
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
-						$error++;
+						$error += 1;
 						break;
 					}
 				} elseif ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
+					$error += 1;
 					break;
 				} elseif (isset($object->date_validation) && $object->date_validation != '') {
 					setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
-					$error++;
+					$error += 1;
 					break;
 				}
 			}
@@ -551,7 +551,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newCloneMass($toselect, $journal_code, $massdate);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if ($error) {
 			$db->commit();
@@ -566,7 +566,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->assignAccountMass($toselect, (int) $account);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if (!$error) {
 			$db->commit();
@@ -581,7 +581,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newReturnAccount($toselect, $journal_code, $massdate);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if (!$error) {
 			$db->commit();
@@ -599,7 +599,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 				$nb_lettering = max(0, abs($nb_lettering) - 2);
 			} elseif ($nb_lettering == 0) {
 				$nb_lettering = 0;
@@ -630,7 +630,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 				$nb_lettering = max(0, abs($nb_lettering) - 2);
 			} elseif ($nb_lettering == 0) {
 				$nb_lettering = 0;
@@ -1026,19 +1026,12 @@ if (!empty($arrayfields['t.numero_compte']['checked'])) {
 // Subledger account
 if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	print '<td class="liste_titre">';
-	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-	// use setup of keypress to select thirdparty and this hang browser on large database.
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		print '<div class="nowrap">';
-		//print $langs->trans('From').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
-		print '</div>';
-		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
-		print '</div>';
-	} else {
-		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.dol_escape_htmltag($search_accountancy_aux_code).'">';
-	}
+	print '<div class="nowrap">';
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
+	print '</div>';
 	print '</td>';
 }
 // Label operation

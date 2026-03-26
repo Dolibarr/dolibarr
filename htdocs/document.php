@@ -74,17 +74,8 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	if (!defined("NOIPCHECK")) {
 		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 	}
-} elseif (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'ticket' && strpos($_SERVER['HTTP_REFERER'], 'public/ticket') !== false) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
 }
+
 
 /**
  * Header empty
@@ -186,13 +177,15 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 // If we have a hash public (hashp), we guess the original_file.
 $ecmfile = '';
 if (!empty($hashp)) {
-	if (GETPOST('type', 'alpha')=='link') {
+	if (GETPOST('type', 'alpha') == 'link') {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$result = $link->fetch(0, $hashp);
 		if ($result > 0 && !empty($link->url)) {
-			header('Location: '.$link->url);
-			exit;
+			if (preg_match('/^(http|dav)/', $link->url)) {
+				header('Location: '.$link->url);
+				exit;
+			}
 		} else {
 			$langs->load("errors");
 			httponly_accessforbidden($langs->trans("ErrorLinkNotFoundWithSharedLink"), 403, 1);

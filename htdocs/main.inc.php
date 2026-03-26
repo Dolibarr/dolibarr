@@ -113,7 +113,7 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
-	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
+	ini_set('session.gc_maxlifetime', max(120, min(3600 * 24, (int) $_COOKIE[$sessiontimeout])));	// Between 120 and 86400
 }
 
 // This create lock, released by session_write_close() or end of page.

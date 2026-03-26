@@ -81,14 +81,21 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$search_yaxis = GETPOST('search_yaxis', 'array:alphanohtml');
 	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
 
-	$search_measures = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_measures);
-	$search_xaxis = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_xaxis);
-	$search_yaxis = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_yaxis);
-	$search_groupby = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_groupby);
+	/**
+	 * Sanitize key
+	 *
+	 * @param	string	$value		Value
+	 * @return	string				Sanitized value
+	 */
+	function sanititzekey($value)
+	{
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value);
+	}
+
+	$search_measures = array_map('sanititzekey', $search_measures);
+	$search_xaxis = array_map('sanititzekey', $search_xaxis);
+	$search_yaxis = array_map('sanititzekey', $search_yaxis);
+	$search_groupby = array_map('sanititzekey', $search_groupby);
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -123,7 +130,8 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 }
 
 // In customreport context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 if (empty($mode)) {
 	$mode = 'graph';
