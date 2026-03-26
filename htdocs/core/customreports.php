@@ -28,7 +28,10 @@
  * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
  * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);		// TODO Use a variable
  * $SHOWLEGEND = 0;
- * $search_xaxis = array('t.column');
+ * $search_xaxis = array('t.columnx');
+ * $search_yaxis = array('t.columny');		// for grid ???
+ * $search_measures = array('t.count');
+ * $search_groupby = array('t.column2');
  * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -51,7 +54,6 @@
 ';
 
 // Initialise values
-$search_groupby = array();
 $tabfamily = null;
 $objecttype = null;
 
@@ -93,9 +95,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 
 	$search_measures = array_map('sanititzekey', $search_measures);
-	$search_xaxis = array_map('sanititzekey', $search_xaxis);
+	$search_xaxis = array_map('sanititzekey', isset($search_xaxis) ? $search_xaxis : array());
 	$search_yaxis = array_map('sanititzekey', $search_yaxis);
-	$search_groupby = array_map('sanititzekey', $search_groupby);
+	$search_groupby = array_map('sanititzekey', isset($search_groupby) ? $search_groupby : array());
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -142,6 +144,14 @@ if (!isset($search_measures)) {
 if (!isset($search_xaxis)) {
 	// Ensure value is set and not null.
 	$search_xaxis = array();
+}
+if (!isset($search_yaxis)) {
+	// Ensure value is set and not null.
+	$search_yaxis = array();
+}
+if (!isset($search_groupby)) {
+	// Ensure value is set and not null.
+	$search_groupby = array();
 }
 if (!isset($search_graph)) {
 	// Ensure value is set and not null
