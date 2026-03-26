@@ -642,16 +642,13 @@ if (!empty($dolibarr_main_demo)) {
 				}
 
 				$conf->$module->enabled = false;		// Old usage
-				unset($conf->modules[$module]);
 
 				foreach ($modulepartkeys as $modulepartkey) {
 					unset($conf->modules_parts[$modulepartkey][$module]);
 				}
 				if ($module == 'fournisseur') {		// Special case
-					$conf->supplier_order->enabled = 0;		// Old usage
-					$conf->supplier_invoice->enabled = 0;	// Old usage
-					unset($conf->modules['supplier_order']);
-					unset($conf->modules['supplier_invoice']);
+					$conf->supplier_order->enabled = 0;
+					$conf->supplier_invoice->enabled = 0;
 				}
 			}
 		}
