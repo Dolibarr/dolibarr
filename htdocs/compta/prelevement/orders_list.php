@@ -56,8 +56,7 @@ $mode = GETPOST('mode', 'alpha');
 // Get supervariables
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOSTISARRAY('search_status') ? GETPOST('search_status', 'array:int') : array(GETPOST('search_status') ? GETPOST('search_status') : GETPOSTINT('status'));
-
+$search_status = GETPOSTISARRAY('search_status') ? GETPOST('search_status', 'array:int') : (GETPOSTISSET('search_status') ? array(GETPOSTINT('search_status')) : array());
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
@@ -459,7 +458,6 @@ while ($i < $imaxinloop) {
 		}
 	} else {
 		// Show line of result
-		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
@@ -481,16 +479,29 @@ while ($i < $imaxinloop) {
 		print '<td>';
 		print $directdebitorder->getNomUrl(1);
 		print "</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="center">'.dol_print_date($db->jdate($obj->date_trans), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="center">'.dol_print_date($db->jdate($obj->date_credit), 'day')."</td>\n";
-
-		//print '<td class="center">'.dol_print_date($db->jdate($obj->datem), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td>';
 		if ($obj->fk_bank_account > 0) {
@@ -500,10 +511,16 @@ while ($i < $imaxinloop) {
 			print $bankaccount->getNomUrl(1);
 		}
 		print "</td>";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="center">';
 		print $object->LibStatut($obj->status, 5);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -527,7 +544,7 @@ while ($i < $imaxinloop) {
 }
 
 if ($num == 0) {
-	print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	print '<tr><td colspan="'.$savnbfield.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 
 $db->free($resql);

@@ -62,6 +62,7 @@ require_once 'filefunc.inc.php';
  * @var string $dolibarr_main_url_root
  * @var string $dolibarr_main_url_root_alt
  * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_allow_unsecured_select_in_extrafields_filter;
  * @var string|string[] $dolibarr_main_stream_to_disable
  */
 '

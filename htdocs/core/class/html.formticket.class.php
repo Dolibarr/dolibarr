@@ -877,9 +877,10 @@ class FormTicket
 	 *      @param  int				$maxlength		Max length of label
 	 *      @param	string			$morecss		More CSS
 	 *      @param  int				$multiselect	Is multiselect ?
+	 *      @param	int				$disabledefault	Disable default
 	 *      @return void
 	 */
-	public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $multiselect = 0)
+	public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $multiselect = 0, $disabledefault = 0)
 	{
 		global $langs, $user;
 
@@ -934,7 +935,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif (in_array($id, $selected)) {
 					print ' selected="selected"';
-				} elseif ($arraytypes['use_default'] == "1" && empty($selected) && !$multiselect) {
+				} elseif ($arraytypes['use_default'] == "1" && empty($disabledefault) && empty($selected) && !$multiselect) {
 					print ' selected="selected"';
 				} elseif (count($ticketstat->cache_types_tickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 					print ' selected="selected"';
