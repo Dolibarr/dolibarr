@@ -2261,7 +2261,16 @@ abstract class CommonObject
 	{
 		$result = false;
 		if (!empty($id) && !empty($field) && !empty($table)) {
-			$sql = "SELECT ".$field." FROM ".$this->db->prefix().$table;
+			if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+				dol_syslog(get_class($this).'::getValueFrom Bad table name: '.$table, LOG_WARNING);
+				return -1;
+			}
+			if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_.]*$/', $field)) {
+				dol_syslog(get_class($this).'::getValueFrom Bad field name: '.$field, LOG_WARNING);
+				return -1;
+			}
+
+			$sql = "SELECT ".$this->db->sanitize($field)." FROM ".$this->db->prefix().$this->db->sanitize($table);
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
@@ -2331,6 +2340,15 @@ abstract class CommonObject
 		}
 		if (in_array($table, array('prelevement_bons'))) {	// TODO Add a field fk_user_modif into llx_prelevement_bons
 			$fk_user_field = '';
+		}
+
+		if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+			dol_syslog(get_class($this).'::getValueFrom Bad table name: '.$table, LOG_WARNING);
+			return -1;
+		}
+		if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_.]*$/', $field)) {
+			dol_syslog(get_class($this).'::getValueFrom Bad field name: '.$field, LOG_WARNING);
+			return -1;
 		}
 
 		$oldvalue = null;
@@ -4171,7 +4189,9 @@ abstract class CommonObject
 								$sqlfix .= " SET ".$this->db->sanitize($fieldtva)." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
 								$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
 								$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
+
 								dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+
 								$resqlfix = $this->db->query($sqlfix);
 								if (!$resqlfix) {
 									dol_print_error($this->db, 'Failed to update line');

@@ -9634,6 +9634,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					if (getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') == 2) {
 						foreach ($dom->getElementsByTagName('*') as $el) {
 							if ($el->hasAttribute('style')) {
+								// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 								$style = $el->getAttribute('style');
 
 								// delete some styles
@@ -9648,8 +9649,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 								$style = preg_replace('/backdrop-filter\s*:/i', '', $style);
 								*/
 								if (trim($style) === '') {
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 									$el->removeAttribute('style');
 								} else {
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 									$el->setAttribute('style', $style);
 								}
 							}
