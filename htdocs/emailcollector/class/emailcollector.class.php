@@ -4317,7 +4317,7 @@ class EmailCollector extends CommonObject
 	 * Save IMAP attachments into a target directory and return metadata (relative to DOL_DATA_ROOT).
 	 *
 	 * @param 	string	$destdir		Absolute target dir
-	 * @param 	array	$attachments	Array of Webklex\PHPIMAP\Attachment OR array(filename => raw_data)
+	 * @param 	array<int|string,\Webklex\PHPIMAP\Attachment|string>	$attachments	Array of Webklex\PHPIMAP\Attachment OR array(filename => raw_data)
 	 * @return 	array<int,array<string,mixed>>
 	 */
 	private function saveEmailCollectorAttachmentsToDir($destdir, $attachments)
@@ -4367,6 +4367,8 @@ class EmailCollector extends CommonObject
 
 			// PHP-IMAP (Webklex): array of Attachment objects.
 			if (is_object($attachment)) {
+				'@phan-var-force Webklex\PHPIMAP\Attachment $attachment';
+				/** @var \Webklex\PHPIMAP\Attachment $attachment */
 				try {
 					$origName = (string) $attachment->getName(); // Webklex Attachment uses magic __call
 				} catch (Throwable $e) {
