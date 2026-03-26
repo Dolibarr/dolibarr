@@ -3594,34 +3594,34 @@ class EmailCollector extends CommonObject
 											$this->errors = $projecttocreate->errors;
 
 											$operationslog .= '<br>'.$this->error;
-											} else {
-												if ($attachments) {
-													$destdir = $conf->project->dir_output.'/'.$projecttocreate->ref;
-													if (!dol_is_dir($destdir)) {
-														dol_mkdir($destdir);
+										} else {
+											if ($attachments) {
+												$destdir = $conf->project->dir_output.'/'.$projecttocreate->ref;
+												if (!dol_is_dir($destdir)) {
+													dol_mkdir($destdir);
+												}
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
+													foreach ($attachments as $attachment) {
+														// $attachment->save($destdir.'/');
+														$filename = $attachment->getFilename();
+														if (!$this->isAllowedAttachmentFilename($filename)) {
+															$skippedatt++;
+															continue;
+														}
+														$content = $attachment->getContent();
+														$this->saveAttachment($destdir, $filename, $content);
 													}
-													if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-														$skippedatt = 0;
-														foreach ($attachments as $attachment) {
-															// $attachment->save($destdir.'/');
-															$filename = $attachment->getFilename();
-															if (!$this->isAllowedAttachmentFilename($filename)) {
-																$skippedatt++;
-																continue;
-															}
-															$content = $attachment->getContent();
-															$this->saveAttachment($destdir, $filename, $content);
-														}
-														if ($skippedatt > 0) {
-															$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
-														}
-													} else {
-														$getMsg = $this->getmsg($connection, $imapemail, $destdir);
-														if ($getMsg < 0) {
-															$this->errors = array_merge($this->errors, [$this->error]);
-															return $getMsg;
-														}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
+												} else {
+													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
+													if ($getMsg < 0) {
+														$this->errors = array_merge($this->errors, [$this->error]);
+														return $getMsg;
+													}
+												}
 
 												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag((string) $projecttocreate->id);
 											} else {
@@ -3762,34 +3762,34 @@ class EmailCollector extends CommonObject
 											$errorforactions++;
 											$this->error = 'Failed to create ticket: '.$langs->trans($tickettocreate->error);
 											$this->errors = $tickettocreate->errors;
-											} else {
-												if ($attachments) {
-													$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
-													if (!dol_is_dir($destdir)) {
-														dol_mkdir($destdir);
+										} else {
+											if ($attachments) {
+												$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
+												if (!dol_is_dir($destdir)) {
+													dol_mkdir($destdir);
+												}
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
+													foreach ($attachments as $attachment) {
+														// $attachment->save($destdir.'/');
+														$filename = $attachment->getName();
+														if (!$this->isAllowedAttachmentFilename($filename)) {
+															$skippedatt++;
+															continue;
+														}
+														$content = $attachment->getContent();
+														$this->saveAttachment($destdir, $filename, $content);
 													}
-													if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-														$skippedatt = 0;
-														foreach ($attachments as $attachment) {
-															// $attachment->save($destdir.'/');
-															$filename = $attachment->getName();
-															if (!$this->isAllowedAttachmentFilename($filename)) {
-																$skippedatt++;
-																continue;
-															}
-															$content = $attachment->getContent();
-															$this->saveAttachment($destdir, $filename, $content);
-														}
-														if ($skippedatt > 0) {
-															$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
-														}
-													} else {
-														$getMsg = $this->getmsg($connection, $imapemail, $destdir);
-														if ($getMsg < 0) {
-															$this->errors = array_merge($this->errors, [$this->error]);
-															return $getMsg;
-														}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
+												} else {
+													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
+													if ($getMsg < 0) {
+														$this->errors = array_merge($this->errors, [$this->error]);
+														return $getMsg;
+													}
+												}
 
 												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag((string) $tickettocreate->id);
 											} else {
