@@ -493,6 +493,10 @@ if (empty($reshook)) {
 
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+						// If we build one invoice for several supplier orders, append the source order reference on the invoice line.
+						if (!empty($createbills_onebythird)) {
+							$desc = dol_concatdesc($desc, $langs->trans("SupplierOrder").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
+						}
 						if ($lines[$i]->subprice < 0) {
 							require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 

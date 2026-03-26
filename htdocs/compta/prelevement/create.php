@@ -111,7 +111,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'create' && $permissiontocreate) {
+	if ($action == 'create' && $permissiontocreate && GETPOSTISSET('createtransferrequest')) {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 		//var_dump($default_account);var_dump(getDolGlobalString($default_account));var_dump($id_bankaccount);exit;
 
@@ -144,6 +144,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
 			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, $toselect, 0, $sourcetype);
+
 			if ($result < 0) {
 				$mesg = '';
 
@@ -299,13 +300,15 @@ print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 
-print '<div class="tabsAction">'."\n";
 
 print '<form id="createBankTransfer" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 print '<input type="hidden" name="action" value="create">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
+//print '<input type="hidden" name="listofselectedids" value="'.$sourcetype.'">';
+
+print '<div class="tabsAction">'."\n";
 
 if ($nb) {
 	if ($pricetowithdraw) {
@@ -349,14 +352,14 @@ if ($nb) {
 				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'"/>';
+			print '<input type="submit" class="butAction margintoponly marginbottomonly" name="createtransferrequest" value="'.$title.'"/>';
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
 			print '<input type="hidden" name="format" value="ALL">'."\n";
-			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'">'."\n";
+			print '<input type="submit" class="butAction margintoponly marginbottomonly" name="createtransferrequest" value="'.$title.'">'."\n";
 		}
 	} else {
 		if ($mysoc->isInSEPA()) {
@@ -389,22 +392,6 @@ if ($nb) {
 	print $title;
 	print "</a>\n";
 }
-
-print "</form>\n";
-
-// Send selected lines to build the transfer file
-print '<script>
-	$().ready(() => {
-		let form_create_transfer = $("#createBankTransfer");
-		let form_list = $("#searchFormList");
-		form_create_transfer.submit(() => {
-			let selected_lines = Array.from(document.querySelectorAll("input.checkforselect:checked"))
-			selected_lines.map(line => {
-				form_create_transfer.append(line);
-			})
-		})
-	})
-</script>';
 
 print "</div>\n";
 
@@ -502,8 +489,8 @@ if ($resql) {
 		$param .= "&option=".urlencode($option);
 	}
 
-	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	//print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	//print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	if (!empty($limit)) {
 		print '<input type="hidden" name="limit" value="'.$limit.'"/>';

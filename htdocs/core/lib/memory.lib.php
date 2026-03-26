@@ -332,7 +332,7 @@ function dol_setshmop($memoryid, $data, $expire)
 		return 0; // No key reserved for this memoryid, we can't cache this memoryid
 	}
 
-	$newdata = serialize($data);
+	$newdata = json_encode($data);
 	$size = strlen($newdata);
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
 	$handle = shmop_open($shmkey, 'c', 0644, 6 + $size);
@@ -376,7 +376,7 @@ function dol_getshmop($memoryid)
 	if ($handle) {
 		$size = (int) trim(shmop_read($handle, 0, 6));
 		if ($size) {
-			$data = unserialize(shmop_read($handle, 6, $size));
+			$data = json_decode(shmop_read($handle, 6, $size), true);
 		} else {
 			return -1;
 		}

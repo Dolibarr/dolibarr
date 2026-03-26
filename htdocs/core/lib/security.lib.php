@@ -195,7 +195,7 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority (coming from $dolibarr_main_instance_unique_id)
+			// If dolcrypt_key is defined, we used it in priority (for backward compatibility)
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)

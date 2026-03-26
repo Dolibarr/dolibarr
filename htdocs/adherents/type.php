@@ -473,13 +473,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 				if (!empty($arrayfields['t.morphy']['checked'])) {
 					print '<td class="center">';
-					if ($objp->morphy == 'phy') {
-						print $langs->trans("Physical");
-					} elseif ($objp->morphy == 'mor') {
-						print $langs->trans("Moral");
-					} else {
-						print $langs->trans("MorAndPhy");
-					}
+					print $membertype->getmorphylib($objp->morphy, 1);
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.duration']['checked'])) {
@@ -502,8 +496,12 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				if (!empty($arrayfields['t.caneditamount']['checked'])) {
 					print '<td class="center">'.yn($objp->caneditamount).'</td>';
 				}
+				// Minimum amount
 				if (!empty($arrayfields['t.minimumamount']['checked'])) {
-					print '<td class="center">'.price($objp->minimumamount).'</td>';
+					print '<td class="center">';
+					$minimumamount = ((is_null($objp->minimumamount) || $objp->minimumamount === '') ? '' : price($objp->minimumamount));
+					print $minimumamount;
+					print '</td>';
 				}
 				if (!empty($arrayfields['t.amount']['checked'])) {
 					print '<td class="center">';
@@ -603,7 +601,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MinimumAmountShort").'</td><td>';
-	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : price($minimumamount)).'">';
+	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : ($minimumamount ? price($minimumamount): '')).'">';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
@@ -676,7 +674,9 @@ if ($rowid > 0) {
 		print '<table class="tableforfield border centpercent">';
 
 		// Morphy
-		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
+		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >';
+		print $object->getmorphylib($object->morphy, 1);
+		print '</td>';
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';

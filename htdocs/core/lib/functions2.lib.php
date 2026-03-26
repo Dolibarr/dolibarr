@@ -2007,7 +2007,11 @@ function dol_buildlogin($lastname, $firstname)
 		$charforseparator = '';
 	}
 
-	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
+	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {			// flastname
+		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
@@ -2031,14 +2035,12 @@ function dol_buildlogin($lastname, $firstname)
  */
 function getSoapParams()
 {
-	global $conf;
-
 	$params = array();
 	$proxyuse = getDolGlobalString('MAIN_PROXY_USE');
-	$proxyhost = (!$proxyuse ? false : $conf->global->MAIN_PROXY_HOST);
-	$proxyport = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (!$proxyuse ? false : $conf->global->MAIN_PROXY_USER);
-	$proxypass = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PASS);
+	$proxyhost = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_HOST'));
+	$proxyport = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PORT'));
+	$proxyuser = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_USER'));
+	$proxypass = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PASS'));
 	$timeout = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 10); // Connection timeout
 	$response_timeout = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30); // Response timeout
 	//print extension_loaded('soap');

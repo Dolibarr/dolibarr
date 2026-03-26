@@ -936,9 +936,9 @@ class ContratLigne extends CommonObjectLine
 		if ($resql) {
 			if ($date_end >= 0) {
 				// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-				$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-				$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+				$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+				$sqltoupdatecontract .= " WHERE rowid = ".((int) $this->fk_contrat);
 				$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 				if (!$resqltoupdatecontract) {
 					$this->error = $this->db->lasterror();
@@ -1001,9 +1001,9 @@ class ContratLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-			$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-			$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+			$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+			$sqltoupdatecontract .= " WHERE rowid = ".((int) $this->fk_contrat);
 			$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 			if (!$resqltoupdatecontract) {
 				$this->error = $this->db->lasterror();

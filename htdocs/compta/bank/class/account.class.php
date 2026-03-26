@@ -2577,7 +2577,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= " rappro = ".((int) $conciliated);
 		$sql .= ", num_releve = '".$this->db->escape($this->num_releve)."'";
 		if ($conciliated) {
-			$sql .= ", fk_user_rappro = ".$user->id;
+			$sql .= ", fk_user_rappro = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

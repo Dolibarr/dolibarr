@@ -1071,7 +1071,6 @@ if ($action == 'create') {	// aaa
 			// Ref customer
 			$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', 0, 1);
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
-			$morehtmlref .= '</div>';
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
@@ -1106,6 +1105,7 @@ if ($action == 'create') {	// aaa
 					}
 				}
 			}
+			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 

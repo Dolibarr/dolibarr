@@ -271,15 +271,17 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
 
-		// If MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is unset
-		$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;
+		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+
+		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is set
+		$dolibarr_allow_unsecured_select_in_extrafields_filter = 1;
 
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
-		// If MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is set (default)
-		$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is unset (default)
+		$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);

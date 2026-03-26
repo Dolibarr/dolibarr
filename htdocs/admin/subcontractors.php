@@ -236,7 +236,7 @@ print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->
 
 // Name of Accountant Company
 print '<tr class="oddeven"><td><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="itprovider_nom" id="itprovider_name" class="minwidth200" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_nom') ? GETPOST('itprovider_nom', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME')).'"'.(!getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME') ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
+print '<input name="itprovider_nom" id="itprovider_name" class="minwidth200" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_nom') ? GETPOST('itprovider_nom', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME')).'"></td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
