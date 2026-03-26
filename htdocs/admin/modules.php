@@ -859,7 +859,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				$icon.toggleClass("fa-folder", !isVisible);
 			}
 		});
-		
+
 		jQuery(document).on("click", ".modulefamilygroup", function() {
 			var $group = jQuery(this);
 			var $nextContainer = $group.nextAll(".div-table-responsive, .box-flex-container").first();
