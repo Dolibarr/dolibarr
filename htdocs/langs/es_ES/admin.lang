@@ -2269,6 +2269,8 @@ EmailCollectorHideMailHeaders=No incluya el contenido del encabezado del correo 
 EmailCollectorHideMailHeadersHelp=Cuando está habilitado, los encabezados de correo electrónico no se agregan al final del contenido del correo electrónico que se guarda como un evento de agenda.
 EmailCollectorIsNotAnswerUseReferences=Tratar la cabecera References genérica como respuesta para el filtro isnotanswer
 EmailCollectorIsNotAnswerUseReferencesHelp=Cuando está habilitado, cualquier cabecera References no vacía se considera respuesta al evaluar el filtro isnotanswer (comportamiento heredado). Déjelo desactivado para evitar falsos positivos en notificaciones automáticas de plataformas.
+EmailCollectorAllowedAttachmentExtensions=Extensiones de adjuntos permitidas
+EmailCollectorAllowedAttachmentExtensionsHelp=Lista separada por comas/punto y coma de extensiones permitidas al guardar adjuntos (ej: pdf,doc,docx,txt,pages). Vacío = no filtra. Si se define, los adjuntos sin extensión se ignoran.
 EmailCollectorExcludeEmails=Excluir correos electrónicos del remitente
 EmailCollectorExcludeEmailsPlaceholder=usuario@ejemplo.com, otro@ejemplo.com
 EmailCollectorExcludeDomains=Excluir dominio(s) del remitente
