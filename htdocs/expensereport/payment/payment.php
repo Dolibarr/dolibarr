@@ -249,7 +249,7 @@ if ($action == 'create' || empty($action)) {
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = ($datepaid == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepaid);
+	$datepayment = ($datepaid == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datepaid);
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
@@ -315,7 +315,7 @@ if ($action == 'create' || empty($action)) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id; // autofill remainder amount
 			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
 			}
 			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount

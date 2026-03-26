@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,6 +231,11 @@ if ($socid > 0) {
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhereOpenedOrders', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " ORDER BY c.rowid ASC";
 
 $resql = $db->query($sql);
@@ -258,7 +263,7 @@ if ($resql) {
 			$orderstatic->id = $obj->rowid;
 			$orderstatic->ref = $obj->ref;
 			$orderstatic->ref_customer = $obj->ref_customer;
-			$orderstatic->statut = $obj->status;
+			$orderstatic->status = $obj->status;
 			$orderstatic->billed = $obj->billed;
 
 			$companystatic->name = $obj->name;

@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,46 +147,8 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewmemberform">';
 
-	$urllogo = '';
-
-	// Define urllogo
-	if (getDolGlobalInt('BOOKCAL_SHOW_COMPANY_LOGO') || getDolGlobalString('BOOPKCAL_PUBLIC_INTERFACE_TOPIC')) {
-		// Print logo
-		if (getDolGlobalInt('BOOKCAL_SHOW_COMPANY_LOGO')) {
-			$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
-
-			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
-			} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-				$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-			}
-		}
-	}
-
-	print '<div class="center">';
-	// Output html code for logo
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	if ($urllogo) {
-		print '<a href="'.(getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') ? getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') : dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)).'">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
-		print '</a>';
-	}
-	if (getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC')) {
-		print '<div class="clearboth"></div><strong>'.(getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') ? getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') : $langs->trans("BookCalSystem")).'</strong>';
-	}
-	if (empty($urllogo) && ! getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC')) {
-		print $mysoc->name;
-	}
-	print '</div>';
-	if (!getDolGlobalInt('MAIN_HIDE_POWERED_BY')) {
-		print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-	}
-	print '</div>';
-
-	print '</div>';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	htmlPrintOnlineHeader($mysoc, $langs, 1, getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC', $langs->trans("BookCalSystem")), 'BOOKCAL_PUBLIC_INTERFACE_IMAGE');
 
 	print '<div class="divmainbodylarge">';
 }
@@ -322,6 +284,11 @@ llxHeaderVierge('BookingCalendar');
 
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
 
+if ($object->status == $object::STATUS_DRAFT) {
+	$langs->trans("errors");
+	$errmsg = $langs->trans("ErrorCalendarIsNotYetOpenOrHasBeenClosed");
+}
+
 dol_htmloutput_errors($errmsg);
 
 if ($action == 'create') {
@@ -346,7 +313,7 @@ if ($action == 'afteradd') {
 	print '<tr>';
 	print '<td>';
 	if ($action != 'create') {
-		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form name="formsearch" class="bookcalsearch" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
 		$nav = '<a href="?id='.$id."&year=".$prev_year."&month=".$prev_month.$param.'"><i class="fa fa-chevron-left"></i></a> &nbsp;'."\n";
@@ -385,7 +352,7 @@ if ($action == 'afteradd') {
 		print '</td>';
 
 		print '<td>';
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
@@ -421,7 +388,7 @@ if ($action == 'afteradd') {
 		print '  <td class="center hideonsmartphone">#</td>';
 		$i = 0;
 		while ($i < 7) {
-			$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
+			$numdayinweek = (($i + getDolGlobalInt('MAIN_START_WEEK', 1)) % 7);
 			if (!empty($conf->dol_optimize_smallscreen)) {
 				print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 				$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
@@ -449,8 +416,8 @@ if ($action == 'afteradd') {
 			setEventMessages($availability->error, $availability->errors, 'errors');
 		} else {
 			foreach ($arrayofavailabilities as $key => $value) {
-				$startarray = dol_getdate($value->start);
-				$endarray = dol_getdate($value->end);
+				$startarray = dol_getdate((int) $value->start);
+				$endarray = dol_getdate((int) $value->end);
 				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
 					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
 						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
@@ -530,7 +497,7 @@ if ($action == 'afteradd') {
 		print '<td>'; // Column visible after selection of a day
 		print '<div class="center bookingtab" style="height:50%">';
 		print '<div style="height:100%">';
-		print '<form id="formbooking" name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form id="formbooking" name="formbooking" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
@@ -592,7 +559,7 @@ if ($action == 'afteradd') {
 				url: "'.DOL_URL_ROOT.'/public/bookcal/bookcalAjax.php",
 				data: {
 					action: "verifyavailability",
-					id: '.$id.',
+					id: '.((int) $id).',
 					datetocheck: $(this).children("div").data("datetime"),
 					token: "'.currentToken().'",
 				}

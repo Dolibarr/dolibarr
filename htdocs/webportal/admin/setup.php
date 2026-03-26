@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+/* Copyright (C) 2023-2024 	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024	Lionel Vessiller			<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Translations
@@ -110,6 +112,16 @@ if (isModEnabled('order')) {
 // Enable access for the invoices
 if (isModEnabled('invoice')) {
 	$formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the intervention
+if (isModEnabled('intervention')) {
+	$formSetup->newItem('WEBPORTAL_FICHEINTER_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the tickets
+if (isModEnabled('ticket')) {
+	$formSetup->newItem('WEBPORTAL_TICKET_LIST_ACCESS')->setAsYesNo();
 }
 
 // Enable access for the partnership record
@@ -205,7 +217,7 @@ print ajax_autoselect('publicurlmember');
 //print '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 // Setup page goes here
-print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
+print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp", $langs->transnoentities("WebsiteAccount")));
 
 print '<br><br>';
 

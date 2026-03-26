@@ -1,12 +1,10 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-IdModule=identificación del módulo
 EnterNameOfObjectDesc=Ingrese el nombre del objeto a crear sin espacios. Use mayúsculas para separar palabras (Por ejemplo: MiObjeto, Estudiante, Profesor...). Se generará el archivo de clase CRUD, las páginas para enumerar/añadir/editar/eliminar el objeto y los archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definido en %s): <strong> %s </strong>
 ModuleBuilderDesc3=Módulos generados / editables encontrados: <strong> %s </strong>
 ModuleBuilderDesc4=Un módulo se detecta como 'módulo para Module Builer' cuando el archivo <strong>%s</strong> existe en la raíz del directorio del módulo.
 NewModule=Nuevo modulo
 ObjectKey=Clave de objeto
-ModuleInitialized=Archivos del módulo inicializados en el directorio <b>%s</b>
 FilesForObjectInitialized=Archivos para el nuevo objeto '%s' inicializados
 FilesForObjectUpdated=Archivos para el objeto '%s' actualizados (archivos .sql y archivo .class.php)
 ModuleBuilderDescdescription=Ingrese aquí toda la información general que describa su módulo.
@@ -37,7 +35,6 @@ SpaceOrSpecialCharAreNotAllowed=No se permiten espacios ni caracteres especiales
 FileNotYetGenerated=Archivo aún no generado
 GenerateCode=Generar codigo
 RegenerateMissingFiles=Generar archivos perdidos
-LanguageFile=Archivo para idioma
 ConfirmDeleteProperty=¿Está seguro de que desea eliminar la propiedad <strong> %s </strong>? Esto cambiará el código en la clase PHP pero también eliminará la columna de la definición de la tabla del objeto.
 NotNull=No nulo
 SearchAll=Usado para 'buscar todo'
@@ -129,3 +126,4 @@ InfoForApiFile=* Cuando genere un archivo por primera vez, se crearán todos los
 EmailingSelectorDesc=Puede generar y editar aquí los archivos de clase para proporcionar nuevos selectores de destino de correo electrónico para el módulo de correo electrónico masivo.
 EmailingSelectorFile=Archivo selector de correos electrónicos
 NoEmailingSelector=No hay archivo selector de correos electrónicos
+FieldsEdit=Editar campos

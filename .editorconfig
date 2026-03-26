@@ -18,6 +18,8 @@ insert_final_newline = true
 indent_style = tab
 [*.css]
 indent_style = tab
+[*.sh]
+indent_style = tab
 [*.xml]
 indent_style = tab
 [*.md]

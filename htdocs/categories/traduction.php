@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('categories', 'languages'));
+$langs->loadLangs(array('categories', 'languages', 'mrp'));
 
 $id     = GETPOSTINT('id');
 $label  = GETPOST('label', 'alpha');
@@ -211,12 +211,12 @@ if (!empty($object->multilangs)) {
 
 print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
-$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.urlencode($type));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = 'type:=:'.((int) $object->type);
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
-$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$ways = $object->print_all_ways("auto", '', 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";
 }

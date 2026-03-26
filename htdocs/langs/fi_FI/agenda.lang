@@ -2,6 +2,7 @@
 IdAgenda=ID-tapahtuma
 Actions=Tapahtumat
 Agenda=Agenda
+AgendaEvents=Ohjelmatapahtumat
 TMenuAgenda=Agenda
 Agendas=Agendat
 LocalAgenda=Oletuskalenteri
@@ -135,14 +136,14 @@ AgendaModelModule=Tapahtuman asiakirjamallit
 DateActionStart=Aloituspäivämäärä
 DateActionEnd=Lopetuspäivä
 AgendaUrlOptions1=Voit lisätä seuraavat parametrit suodattaaksesi tuloksia:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> rajoittaaksesi tulosteen käyttäjän omistamiin toimintoihin <b>%s</b> (käytä <b>logina=!%s</b> tapahtumille, joita käyttäjä ei omista).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> joko automaattisten tai manuaalisten tapahtumien saamiseksi
+AgendaUrlOptionsCode=<b>actioncode=%s</b> saadaksesi vain tietyn koodin omaavat tapahtumat
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> sisällyttääksesi lomatapahtumat.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> rajoittaaksesi tapahtumat viimeisten %s päivien ajalta (oletus on %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> viimeisimpien 50 tapahtuman rajoittamiseksi (oletus ja enimmäismäärä on %s).
 AgendaShowBirthdayEvents=Yhteyshenkilöiden syntymäpäivät
 AgendaHideBirthdayEvents=Piilota yhteyshenkilöiden syntymäpäivät
 Busy=Kiireinen
@@ -206,3 +207,6 @@ BookcalBookingTitle=Online ajanvaraus
 Transparency = Läpinäkyvyys
 ReadMore = Näytä lisää
 ReadLess = Näytä vähemmän
+RecurringEvent=Toistuva tapahtuma
+EventPartOfARecurringSerie=Tapahtuma on osa toistuvaa sarjaa, jonka tunnus on %s
+BookCalSystem=Verkkovaraus

@@ -17,6 +17,7 @@ AccountancyCodeAsset=Accounting code (asset)
 AccountancyCodeDepreciationAsset=Accounting code (depreciation asset account)
 AccountancyCodeDepreciationExpense=Accounting code (depreciation expense account)
 AssetsLines=Assets
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Delete
 DeleteAnAssetType=Delete an asset model
 ConfirmDeleteAssetType=Are you sure you want to delete this asset model?
@@ -70,6 +71,7 @@ AssetDisposal=Disposal
 AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
 AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
 # Asset status
+AssetInDraft=Draft
 AssetInProgress=In progress
 AssetDisposed=Disposed
 AssetRecorded=Accounted

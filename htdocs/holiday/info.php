@@ -60,6 +60,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$permissiontoapprove = $user->hasRight('holiday', 'approve');
+
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
 
@@ -69,6 +71,9 @@ if (($id > 0) || $ref) {
 		$canread = 1;
 	}
 	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if ($permissiontoapprove && $object->fk_validator == $user->id && !getDolGlobalString('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {	// TODO HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES not completely implemented
 		$canread = 1;
 	}
 	if (!$canread) {

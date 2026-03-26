@@ -77,6 +77,7 @@ CronType=Feladat típusa
 CronType_method=PHP osztály hívási metódusa
 CronType_command=Shell parancs
 CronCannotLoadClass=Nem sikerült betölteni a %s osztályfájlt (a %s osztály használatához)
+CronModuleNotEnabledInThisEntity=A Cron modul nincs engedélyezve ebben az entitásban (a %s objektum %s metódusának használatához)
 CronCannotLoadObject=A(z) %s osztályfájl betöltve, de a(z) %s objektum nem található benne
 UseMenuModuleToolsToAddCronJobs=Lépjen be a "<a href="%s">Főoldal - Felügyeleti eszközök - Ütemezett munkák</a>" menübe az ütemezett munkák megtekintéséhez és szerkesztéséhez.
 JobDisabled=A feladat letiltva

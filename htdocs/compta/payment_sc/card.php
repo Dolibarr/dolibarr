@@ -116,11 +116,6 @@ $head[$h][1] = $langs->trans("PaymentSocialContribution");
 $hselected = (string) $h;
 $h++;
 
-/*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
-$head[$h][1] = $langs->trans("Info");
-$h++;
-*/
-
 
 print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), -1, 'payment');
 

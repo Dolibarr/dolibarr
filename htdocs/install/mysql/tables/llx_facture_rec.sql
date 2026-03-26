@@ -66,7 +66,8 @@ create table llx_facture_rec
   multicurrency_total_ttc   double(24,8) DEFAULT 0,
 
   usenewprice        	integer DEFAULT 0,			-- update invoice with current price of product instead of recorded price
-  frequency          	integer,						-- frequency (for example: 3 for every 3 month)
+  usenewcurrencyrate   	integer DEFAULT 0,			-- update invoice with last currency rate instead of recorded rate
+  frequency          	integer,					-- frequency (for example: 3 for every 3 month)
   unit_frequency     	varchar(2) DEFAULT 'm',		-- 'm' for month (date_when must be a day <= 28), 'y' for year, ...
   rule_for_lines_dates	varchar(255) DEFAULT 'prepaid',
 
@@ -74,6 +75,7 @@ create table llx_facture_rec
   date_last_gen      datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
   nb_gen_done        integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
   nb_gen_max         integer DEFAULT NULL,		    -- maximum number of generation
-  auto_validate      integer DEFAULT 0,		-- 0 to create in draft, 1 to create and validate the new invoice
+  auto_validate      integer DEFAULT 0,		-- 0 to create in draft, 1 to create and validate the new invoice, 2 to create+validate and send
+  fk_email_template  integer DEFAULT NULL,		-- email template for automatic sending
   generate_pdf       integer DEFAULT 1      -- 0 disable pdf, 1 to generate pdf
 )ENGINE=innodb;

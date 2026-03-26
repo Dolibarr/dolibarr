@@ -48,7 +48,7 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -58,6 +58,11 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 * @var string model name
 	 */
 	public $name = 'Cicada';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 30;
 
 
 	/**

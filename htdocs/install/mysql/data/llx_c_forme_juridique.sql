@@ -170,23 +170,33 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '507', 'Lt
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '508', 'OHG - Offene Handelsgesellschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '509', 'eG - eingetragene Genossenschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '510', 'e.V. - eingetragener Verein');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '511', 'eGbR - eingetragene Gesellschaft bürgerlichen Rechts');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '512', 'Einzelunternehmen');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '513', 'PartG - Partnerschaftsgesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '514', 'PartG mbB - Partnerschaftsgesellschaft mit beschränkter Berufshaftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '515', 'KGaA - Kommanditgesellschaft auf Aktien');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '516', 'GmbH & Co. KGaA - Gesellschaft mit beschränkter Haftung & Compagnie Kommanditgesellschaft auf Aktien');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '517', 'SE - Societas Europaea');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '518', 'Stiftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '519', 'gGmbH - gemeinnützige Gesellschaft mit beschränkter Haftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '520', 'gUG - gemeinnützige Unternehmergesellschaft (haftungsbeschränkt)');
 
 -- Denmark
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8002', 'Anparts Selvskab ApS');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8003', 'Personlig ejet selvskab');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8004', 'Iværksætterselvskab IVS');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8005', 'Interessentskab I/S');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8006', 'Holdingselskab');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8007', 'Selskab Med Begrænset Hæftelse SMBA');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8008', 'Kommanditselskab K/S');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8009', 'SPE-selskab');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8010', 'Forening med begrænset ansvar (f.m.b.a.)');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8011', 'Frivillig forening');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8012', 'Almindelig forening');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8013', 'Andelsboligforening');
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8014', 'Særlig forening');
-
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8001', 'Aktieselskab A/S', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8002', 'Anpartsselskab ApS', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8003', 'Personligt ejet mindre virksomhed PMV', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8004', 'Iværksætterselskab IVS', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8005', 'Interessentskab I/S', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8006', 'Holdingselskab', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8007', 'Selskab Med Begrænset Hæftelse SMBA', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8008', 'Kommanditselskab K/S', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8009', 'SPE-selskab', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8010', 'Forening med begrænset ansvar (f.m.b.a.)', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8011', 'Frivillig forening', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8012', 'Almindelig forening', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8013', 'Andelsboligforening', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8014', 'Særlig forening', 0);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, isvatexempted) VALUES (80, '8015', 'Enkeltmandsvirksomhed', 0);
 
 -- Greece
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('10201',102,'Ατομική επιχείρηση',0,1);

@@ -27,12 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // Security check
 if (!$user->admin) {
@@ -97,7 +96,8 @@ $arrayofcss = array("/takepos/css/colorbox.css");
 
 llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-takepos page-admin_bar');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("GoBack"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("GoBack").'</span></a>';
+
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
 print dol_get_fiche_head($head, 'bar', 'TakePOS', -1, 'cash-register');
@@ -124,9 +124,8 @@ print $langs->trans("EnableBarOrRestaurantFeatures");
 print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
 print '</center>';
 
-print '<br>';
-
 if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
+	print '<br>';
 	print '<br>';
 	print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
 	print '<br><br>';
@@ -184,6 +183,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print $langs->trans("SupplementCategory");
 		print '</td>';
 		print '<td class="nowrap">';
+		//print $form->selectCategories(Categorie::TYPE_PRODUCT, 'TAKEPOS_SUPPLEMENTS_CATEGORY', null);
 		print img_picto('', 'category', 'class="pictofixedwidth"');
 		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0, 0, 'minwidth 200 maxwidth500 widthcentpercentminusx');
 		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
@@ -199,19 +199,10 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 
 	print '<tr class="oddeven value"><td>';
 	print 'QR - '.$langs->trans("AutoOrder");
+	print ' - <span class="warning">'.$langs->trans("Development").'</span>';
 	print '</td>';
 	print '<td class="">';
 	print ajax_constantonoff("TAKEPOS_AUTO_ORDER", array(), $conf->entity, 0, 0, 1, 0);
-	print '</td></tr>';
-
-	// Experimental minimal interface
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("BasicPhoneLayout");
-	print ' - <span class="warning">'.$langs->trans("Experimental").'</span>';
-	print '</td>';
-	print '<td class="">';
-	//print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
-	print ajax_constantonoff("TAKEPOS_PHONE_BASIC_LAYOUT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_warning');
 	print '</td></tr>';
 
 	print '</table>';

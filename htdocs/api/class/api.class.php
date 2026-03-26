@@ -1,8 +1,11 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	    William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +58,20 @@ class DolibarrApi
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
+
 		$production_mode = getDolGlobalBool('API_PRODUCTION_MODE');
+
+		if ($production_mode) {
+			// Create the directory Defaults::$cacheDirectory if it does not exist. If dir does not exist, using production_mode generates an error 500.
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (!dol_is_dir(Defaults::$cacheDirectory)) {
+				dol_mkdir(Defaults::$cacheDirectory, DOL_DATA_ROOT);
+			}
+			if (getDolGlobalString('MAIN_API_DEBUG')) {
+				dol_syslog("Debug API construct::cacheDirectory=".Defaults::$cacheDirectory, LOG_DEBUG, 0, '_api');
+			}
+		}
+
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -129,7 +145,7 @@ class DolibarrApi
 	/**
 	 * Filter properties that will be returned on object
 	 *
-	 * @phpstan-template T of Object
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object			Object to clean
 	 * @param   string  $properties		Comma separated list of properties names
@@ -180,7 +196,7 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensitive object data
-	 * @phpstan-template T of Object
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object		Object to clean
 	 * @return	Object				Object with cleaned properties
@@ -210,6 +226,8 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->warnings);
+		unset($object->TRIGGER_PREFIX);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -224,7 +242,6 @@ class DolibarrApi
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
-		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
 		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
@@ -237,7 +254,7 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
-		unset($object->model_pdf);
+		//unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);

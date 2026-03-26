@@ -32,6 +32,7 @@ PRINTIPP_HOST=پرنٹ سرور
 PRINTIPP_PORT=بندرگاہ
 PRINTIPP_USER=لاگ ان کریں
 PRINTIPP_PASSWORD=پاس ورڈ
+PRINTIPP_SSL=Use SSL
 NoDefaultPrinterDefined=کوئی ڈیفالٹ پرنٹر متعین نہیں ہے۔
 DefaultPrinter=ڈیفالٹ پرنٹر
 Printer=پرنٹر
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=پرنٹنگ ڈرائیور گوگل کلاؤڈ پر�
 PrintingDriverDescprintipp=ڈرائیور کپ پرنٹ کرنے کے لیے کنفیگریشن متغیر۔
 PrintTestDescprintgcp=گوگل کلاؤڈ پرنٹ کے لیے پرنٹرز کی فہرست۔
 PrintTestDescprintipp=کپ کے لیے پرنٹرز کی فہرست۔
+Testbbbb

@@ -3,6 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	John Botella			<john.botella@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,9 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php'; // used for color functions
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/context.class.php';
+
 
 /**
  * Class WebPortalTheme
@@ -75,20 +79,40 @@ class WebPortalTheme
 
 	/**
 	 * Constructor
+	 * @param	bool	$init	Init theme properties
 	 */
-	public function __construct()
+	public function __construct($init = true)
 	{
-		global $mysoc, $conf;
+		if ($init) {
+			$this->init();
+		}
+	}
+
+	/**
+	 * Init theme
+	 *
+	 * @return void
+	 */
+	public function init()
+	{
+		global $db, $conf;
+
+		$mysoc = new Societe($db);
+		$mysoc->setMysoc($conf);
 
 		$this->loadPrimaryColor();
 
-		$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
-		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
-		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+		$context = Context::getInstance();
+
+		$urllogo = Context::getRootConfigUrl() . 'img/login_logo.svg';
+		if ($context->userIsLog()) {
+			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
+				$urllogo = $context->getControllerUrl('viewimage') . '&modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/thumbs/' . $mysoc->logo_small);
+			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
+				$urllogo = $context->getControllerUrl('viewimage') . '&modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/' . $mysoc->logo);
+			} elseif (is_readable(DOL_DOCUMENT_ROOT . '/public/webportal/img/dolibarr_logo.svg')) {
+				$urllogo = Context::getRootConfigUrl() . 'img/dolibarr_logo.svg';
+			}
 		}
 
 		$this->loginLogoUrl = getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL', $urllogo);
@@ -121,5 +145,27 @@ class WebPortalTheme
 			$this->primaryColorHex = $outColor;
 			$this->primaryColorHsl = colorHexToHsl($outColor, 1, true);
 		}
+	}
+
+	/**
+	 * return current icons folder url
+	 *
+	 * @return string
+	 */
+	static public function getIconImagesUrl()
+	{
+		// TODO : add hook Or const override
+		return Context::getInstance()->getControllerUrl().'/img/icons/';
+	}
+
+	/**
+	 * return current icons folder path
+	 *
+	 * @return string
+	 */
+	static public function getIconImagesPath()
+	{
+		// TODO : add hook Or const override
+		return DOL_DOCUMENT_ROOT . '/public/webportal/img/icons';
 	}
 }

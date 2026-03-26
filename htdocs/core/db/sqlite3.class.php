@@ -5,8 +5,8 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,25 +429,25 @@ class DoliDBSqlite3 extends DoliDB
 
 			$descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='".$this->escape($tablename)."'");
 
-			// 1- Renommer la table avec un nom temporaire
+			// 1- Rename the table to a temporary name
 			$this->query("ALTER TABLE ".$tablename." RENAME TO tmp_".$tablename);
 
-			// 2- Recréer la table avec la contrainte ajoutée
+			// 2- Recreate the table with the new constraint
 
-			// on bricole la requete pour ajouter la contrainte
+			// Adjust the SQL request to add the constraint
 			$descTable = substr($descTable, 0, strlen($descTable) - 1);
 			$descTable .= ", CONSTRAINT ".$constraintname." FOREIGN KEY (".$localfields.") REFERENCES ".$foreignTable."(".$foreignFields.")";
 
-			// fermeture de l'instruction
+			// Add closing parenthesis for SQL query
 			$descTable .= ')';
 
-			// Création proprement dite de la table
+			// Perform query to create the table
 			$this->query($descTable);
 
-			// 3- Transférer les données
+			// 3- Copy the data from the temporary table (before adding constraint)
 			$this->query("INSERT INTO ".$tablename." SELECT * FROM tmp_".$tablename);
 
-			// 4- Supprimer la table temporaire
+			// 4- Delete the original (now temporary) table
 			$this->query("DROP TABLE tmp_".$tablename);
 
 			// dummy statement
@@ -500,7 +500,7 @@ class DoliDBSqlite3 extends DoliDB
 					$errormsg .= ' ('.$this->lasterrno.')';
 				}
 
-				if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) {
+				if (getDolGlobalString('SYSLOG_LEVEL') < LOG_DEBUG) {
 					dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR); // Log of request was not yet done previously
 				}
 				dol_syslog(get_class($this)."::query SQL Error message: ".$errormsg, LOG_ERR);
@@ -571,7 +571,7 @@ class DoliDBSqlite3 extends DoliDB
 			}
 			return $resultset->fetchArray(SQLITE3_NUM);
 		} else {
-			// si le curseur est un boolean on retourne la valeur 0
+			// If the cursor is a boolean, return 0
 			return 0;
 		}
 	}
@@ -651,7 +651,7 @@ class DoliDBSqlite3 extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return Sqlite3::escapeString($stringtoencode);
+		return SQLite3::escapeString($stringtoencode);
 	}
 
 	/**
@@ -753,7 +753,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param   string	$tab    	Table name concerned by insert. Not used for mysql, but required for Postgresql
 	 * @param	string	$fieldid	Field name
 	 * @return  int     			Id of row
 	 */
@@ -1114,11 +1114,15 @@ class DoliDBSqlite3 extends DoliDB
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
-		$sql .= $this->sanitize($field_desc['type']);
-		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('date', 'datetime'))) {
-				$sql .= "(".$this->sanitize($field_desc['value']).")";
-			}
+
+		if ($field_desc['type'] !== 'datetimegmt') {
+			$sql .= $this->sanitize($field_desc['type']);
+		} else {
+			$sql .= 'datetime';
+		}
+
+		if (in_array($field_desc['type'], array('double', 'int', 'varchar')) && array_key_exists('value', $field_desc) && !empty($field_desc['value'])) {
+			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
 		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
@@ -1164,8 +1168,15 @@ class DoliDBSqlite3 extends DoliDB
 	{
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$this->sanitize($table);
-		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ".$this->sanitize($field_desc['type']);
-		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ";
+
+		if ($field_desc['type'] !== 'datetimegmt') {
+			$sql .= $this->sanitize($field_desc['type']);
+		} else {
+			$sql .= 'datetime';
+		}
+
+		if (in_array($field_desc['type'], array('double', 'int', 'varchar')) && array_key_exists('value', $field_desc) && !empty($field_desc['value'])) {
 			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
 
@@ -1300,7 +1311,7 @@ class DoliDBSqlite3 extends DoliDB
 		// FIXME: not for SQLite
 		$fullpathofdump = '/pathtomysqldump/mysqldump';
 
-		$resql = $this->query('SHOW VARIABLES LIKE \'basedir\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
@@ -1319,7 +1330,7 @@ class DoliDBSqlite3 extends DoliDB
 		// FIXME: not for SQLite
 		$fullpathofimport = '/pathtomysql/mysql';
 
-		$resql = $this->query('SHOW VARIABLES LIKE \'basedir\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
@@ -1386,7 +1397,9 @@ class DoliDBSqlite3 extends DoliDB
 		$result = array();
 		/*
 		$sql='SHOW STATUS';
-		if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
+		if ($filter) {
+			$sql.=" LIKE '".$this->escape($filter)."'";
+		}
 		$resql=$this->query($sql);
 		if ($resql)
 		{

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2017-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017       Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020       Tobias Sekan				<tobias.sekan@startmail.com>
@@ -51,7 +51,7 @@ $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode      = GETPOST('mode', 'alpha');
 $massaction = GETPOST('massaction', 'aZ09');
-$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -217,6 +217,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
+	$search = array();
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		foreach ($object->fields as $key => $val) {
 			$search[$key] = '';
@@ -234,26 +235,22 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
 
 $form = new Form($db);
-$proj = null;
 $accountingaccount = new AccountingAccount($db);
 $bankline = new AccountLine($db);
 $variousstatic = new PaymentVarious($db);
+$formaccounting = new FormAccounting($db);
+$accountingjournal = new AccountingJournal($db);
 $accountstatic = null;
-$accountingjournal = null;
-if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
-	$formaccounting = new FormAccounting($db);
-}
-if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
-	$accountingjournal = new AccountingJournal($db);
-}
 if ($arrayfields['bank']['checked']) {
 	$accountstatic = new Account($db);
 }
+$proj = null;
 if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	$proj = new Project($db);
 }
@@ -311,7 +308,7 @@ if ($search_bank_entry > 0) {
 if ($search_accountancy_account > 0) {
 	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
-if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+if (getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0 && ($search_accountancy_subledger > 0)) {
 	$sql .= " AND v.subledger_account = '".$db->escape($search_accountancy_subledger)."'";
 } else {
 	if ($search_accountancy_subledger != '' && $search_accountancy_subledger != '-1') {
@@ -347,7 +344,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -403,16 +400,16 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_datep_start) {
-	$param .= '&search_datep_start='.urlencode($search_datep_start);
+	$param .= '&search_datep_start='.urlencode((string) $search_datep_start);
 }
 if ($search_datep_end) {
-	$param .= '&search_datep_end='.urlencode($search_datep_end);
+	$param .= '&search_datep_end='.urlencode((string) $search_datep_end);
 }
 if ($search_datev_start) {
-	$param .= '&search_datev_start='.urlencode($search_datev_start);
+	$param .= '&search_datev_start='.urlencode((string) $search_datev_start);
 }
 if ($search_datev_end) {
-	$param .= '&search_datev_end='.urlencode($search_datev_end);
+	$param .= '&search_datev_end='.urlencode((string) $search_datev_end);
 }
 if ($search_type_id > 0) {
 	$param .= '&search_type_id='.urlencode((string) ($search_type_id));
@@ -584,13 +581,7 @@ if (!empty($arrayfields['subledger']['checked'])) {
 	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth150');
-	} else {
-		print '<input type="text" class="maxwidth150 maxwidthonsmartphone" name="search_accountancy_subledger" value="'.$search_accountancy_subledger.'">';
-	}
-
+	print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth150');
 	print '</div>';
 	print '</td>';
 }
@@ -741,7 +732,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
@@ -824,7 +815,7 @@ while ($i < $imaxinloop) {
 				$accountstatic->ref = $obj->bref;
 				$accountstatic->number = $obj->bnumber;
 
-				if (isModEnabled('accounting') && is_object($accountingjournal)) {
+				if (isModEnabled('accounting') && $obj->accountancy_journal > 0) {
 					$accountstatic->account_number = $obj->bank_account_number;
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);

@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '380');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '160');
@@ -57,7 +56,7 @@ $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOSTINT('search_year');
 $search_categ  = GETPOSTINT('search_categ');
 $notab = GETPOSTINT('notab');
-$type = GETPOST('type', 'alpha');
+$type = GETPOST('type', 'alpha');	// Can be '' or '0' or '1'
 
 $error = 0;
 $mesg = '';
@@ -111,8 +110,6 @@ if (!($id > 0) && empty($ref) || $notab) {
 	$notab = 1;
 
 	llxHeader("", $langs->trans("ProductStatistics"), '', '', 0, 0, '', '', '', 'mod-product page-stats_card_general');
-
-	$type = GETPOSTINT('type');
 
 	$helpurl = '';
 	if ($type == '0') {
@@ -199,7 +196,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 
 
 if ($result || !($id > 0)) {
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if (empty($id) || $notab) {
 		print '<input type="hidden" name="notab" value="1">';
@@ -232,6 +229,7 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	// Year
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Year").'</td><td>';
@@ -246,10 +244,11 @@ if ($result || !($id > 0)) {
 		$arrayyears[$currentyear] = (string) $currentyear;
 	}
 	arsort($arrayyears);
+	print img_picto('', 'calendar', 'class="pictofixedwidth"');
 	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
 
-	// thirdparty
+	// Third party
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth400');
@@ -266,6 +265,9 @@ if ($result || !($id > 0)) {
 	$param .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
 	if ($socid > 0) {
 		$param .= '&socid='.((int) $socid);
+	}
+	if (!empty($search_categ)) {
+		$param .= '&search_categ='.((int) $search_categ);
 	}
 
 	// Choice of stats mode (byunit or bynumber)
@@ -352,6 +354,7 @@ if ($result || !($id > 0)) {
 	$arrayforlabel = array('byunit' => 'NumberOfUnits', 'bynumber' => 'NumberOf', 'byamount' => 'AmountIn');
 
 	if (isModEnabled('propal')) {
+		$langs->load("propal");
 		$graphfiles['propal'] = array('modulepart' => 'productstats_proposals',
 			'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Proposals")));
@@ -408,13 +411,13 @@ if ($result || !($id > 0)) {
 		$mesg = $px->isGraphKo();
 		if (!$mesg) {
 			foreach ($graphfiles as $key => $val) {
-				if (!$graphfiles[$key]['file']) {
+				if (!$val['file']) {
 					continue;
 				}
 
 				$graph_data = array();
 
-				if (dol_is_file($dir.'/'.$graphfiles[$key]['file'])) {
+				if (dol_is_file($dir.'/'.$val['file'])) {
 					// TODO Load cachefile $graphfiles[$key]['file']
 				} else {
 					$morefilters = '';
@@ -468,8 +471,8 @@ if ($result || !($id > 0)) {
 					$px->SetShading(3);
 					//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.((int) $object->entity).'&file='.urlencode($graphfiles[$key]['file']).($notab ? '&notab='.$notab : '');
-					$px->draw($dir."/".$graphfiles[$key]['file'], $url);
+					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$val['modulepart'].'&entity='.((int) $object->entity).'&file='.urlencode($val['file']).($notab ? '&notab='.$notab : '');
+					$px->draw($dir."/".$val['file'], $url);
 
 					$graphfiles[$key]['total'] = $px->total();
 					$graphfiles[$key]['output'] = $px->show();

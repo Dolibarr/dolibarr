@@ -66,7 +66,7 @@ class ModelePDFCards
 
 // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
- *	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
+ *	Create a document for visit card according to template defined in ADHERENT_CARDS_ADDON_PDF
  *
  *	@param	DoliDB		$db				Database handler
  *	@param	array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:int,ref:string,photo:string}>		$arrayofmembers	Array of members
@@ -77,13 +77,11 @@ class ModelePDFCards
  *  @param	string		$filename		Name of output file (without extension)
  *	@return int							Return integer <0 if KO, >0 if OK
  */
-function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard', $filename = 'tmp_cards')
+function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard_member', $filename = 'tmp_cards')
 {
 	// phpcs:enable
 	global $conf, $langs;
 	$langs->load("members");
-
-	$error = 0;
 
 	// Increase limit for PDF build
 	$err = error_reporting();
@@ -121,12 +119,14 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
 	}
+
 	foreach ($dirmodels as $reldir) {
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$template.".class.php";
 
 			// We check that file of doc generaotr exists
 			$file = dol_buildpath($reldir."core/modules/member/doc/".$file, 0);
+
 			if (file_exists($file)) {
 				$classname = $prefix.'_'.$template;
 				break;
@@ -137,8 +137,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		}
 	}
 
-
-	// Charge le modele
+	// Load template
 	if ($classname !== '') {
 		require_once $file;
 
@@ -149,6 +148,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
+
 		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath, 'member', 0, $filename) > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;

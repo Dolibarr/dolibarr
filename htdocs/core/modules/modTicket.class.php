@@ -211,7 +211,7 @@ class modTicket extends DolibarrModules
 		$this->boxes = array(
 			0 => array('file' => 'box_last_ticket.php', 'enabledbydefaulton' => 'Home'),
 			1 => array('file' => 'box_last_modified_ticket.php', 'enabledbydefaulton' => 'Home'),
-			2 => array('file' => 'box_ticket_by_severity.php', 'enabledbydefaulton' => 'ticketindex'),
+			2 => array('file' => 'box_graph_ticket_by_severity.php', 'enabledbydefaulton' => 'ticketindex'),
 			3 => array('file' => 'box_graph_nb_ticket_last_x_days.php', 'enabledbydefaulton' => 'ticketindex'),
 			4 => array('file' => 'box_graph_nb_tickets_type.php', 'enabledbydefaulton' => 'ticketindex'),
 			5 => array('file' => 'box_new_vs_close_ticket.php', 'enabledbydefaulton' => 'ticketindex')
@@ -246,7 +246,7 @@ class modTicket extends DolibarrModules
 		$this->rights[$r][1] = "Manage tickets"; // libelle de la permission
 		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'manage';
+		$this->rights[$r][4] = 'manage_advance';
 
 		$r++;
 		$this->rights[$r][0] = 56006; // id de la permission
@@ -307,7 +307,7 @@ class modTicket extends DolibarrModules
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',
-			'perms' => '$user->rights->ticket->write',
+			'perms' => '$user->hasRight("ticket", "write")',
 			'target' => '',
 			'user' => 2);
 		$r++;
@@ -357,7 +357,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'ticket',
-			'url' => '/categories/index.php?type=12',
+			'url' => '/categories/categorie_list.php?type=12',
 			'langs' => 'ticket',
 			'position' => 107,
 			'enabled' => 'isModEnabled("ticket") && isModEnabled("categorie")',

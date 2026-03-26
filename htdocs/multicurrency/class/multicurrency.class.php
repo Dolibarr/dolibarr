@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,11 +74,6 @@ class MultiCurrency extends CommonObject
 	public $name;
 
 	/**
-	 * @var int 			The environment ID when using a multicompany module
-	 */
-	public $entity;
-
-	/**
 	 * @var mixed Sample property 2
 	 */
 	public $date_create;
@@ -92,6 +87,11 @@ class MultiCurrency extends CommonObject
 	 * @var ?CurrencyRate 	The currency rate
 	 */
 	public $rate;
+
+	/**
+	 * @var ?CurrencyRate 	The currency rate direct
+	 */
+	public $rate_direct;
 
 	/**
 	 * @var string			URL endpoint for update of currency
@@ -544,7 +544,7 @@ class MultiCurrency extends CommonObject
 	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = 0)
 	{
-		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
+		$sql1 = "SELECT m.rowid, mc.rate, mc.rate_direct FROM ".MAIN_DB_PREFIX."multicurrency m";
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
 		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
@@ -564,7 +564,7 @@ class MultiCurrency extends CommonObject
 			if (getDolGlobalString('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE')) {
 				$resql = $dbs->query($sql1.$sql3);
 				if ($resql && $obj = $dbs->fetch_object($resql)) {
-					return array($obj->rowid, $obj->rate);
+					return array($obj->rowid, $obj->rate, $obj->rate_direct);
 				}
 			}
 
@@ -627,18 +627,19 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * With free account we can't set source then recalcul all rates to force another source.
+	 * With free account we can't set source to something else than US, to we recalculate all rates to force another source.
 	 * This modify the array &$TRate.
+	 * It is called by the syncRates() method.
 	 *
-	 * @param   stdClass	$TRate	Object containing all currencies rates
+	 * @param   stdClass	$TRate	Object containing all currencies rates to recalculate
 	 * @return	int					-1 if KO, 0 if nothing, 1 if OK
 	 */
 	public function recalculRates(&$TRate)
 	{
 		global $conf;
 
-		if ($conf->currency != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
-			$alternate_source = 'USD'.$conf->currency;
+		if (getDolCurrency() != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
+			$alternate_source = 'USD'.getDolCurrency();
 			if (!empty($TRate->$alternate_source)) {
 				$coef = 1 / $TRate->$alternate_source;
 				foreach ($TRate as $attr => &$rate) {
@@ -655,14 +656,15 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * Sync rates from API
+	 * Sync rates from API.
+	 * This is called by the admin page and by the autoupdate cron job.
 	 *
-	 * @param 	string  $key                No more used
-	 * @param   int     $addifnotfound      Add if not found
-	 * @param   string  $mode				"" for standard use, "cron" to use it in a cronjob
-	 * @return  int							Return integer <0 if KO, >0 if OK, if mode = "cron" OK is 0
+	 * @param 	int			$nu	                No more used
+	 * @param   int 	    $addifnotfound      Add if not found
+	 * @param   string  	$mode				"" for standard use, "cron" to use it in a cronjob
+	 * @return  int								Return integer <0 if KO, >0 if OK, if mode = "cron" OK is 0
 	 */
-	public function syncRates($key = '', $addifnotfound = 0, $mode = "")
+	public function syncRates($nu = 0, $addifnotfound = 0, $mode = "")
 	{
 		global $db, $langs;
 
@@ -698,6 +700,7 @@ class MultiCurrency extends CommonObject
 				$TRate = $response->quotes;
 				//$timestamp = $response->timestamp;
 
+				// Recalculate rate and update it (or add it) into database
 				if ($this->recalculRates($TRate) >= 0) {
 					foreach ($TRate as $currency_code => $rate) {
 						$code = substr($currency_code, 3, 3);

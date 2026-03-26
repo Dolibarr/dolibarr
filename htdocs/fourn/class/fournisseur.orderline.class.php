@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
@@ -100,6 +100,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	/**
 	 * Unit price without taxes
 	 * @var float
+	 * @deprecated Use $subprice
 	 */
 	public $pu_ht;
 
@@ -222,7 +223,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
 					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.$this->db->prefix()."product_fournisseur_price";
-					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
+					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('productsupplierprice').")";
 					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
 					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
 					$sqlsearchpackage .= " AND quantity <= ".((float) $objp->qty);	// required to be qualified
@@ -236,7 +237,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 						$objsearchpackage = $this->db->fetch_object($resqlsearchpackage);
 						if ($objsearchpackage) {
 							$this->fk_fournprice = $objsearchpackage->rowid;
-							$this->packaging     = $objsearchpackage->packaging;
+							$this->packaging     = (float) $objsearchpackage->packaging;
 						}
 					} else {
 						$this->error = $this->db->lasterror();
@@ -342,7 +343,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element;
 		$sql .= " (fk_commande, label, description, date_start, date_end,";
 		$sql .= " fk_product, product_type, special_code, rang,";
@@ -358,8 +359,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		} else {
 			$sql .= "null,";
 		}
-		$sql .= "'".$this->db->escape((string) $this->product_type)."',";
-		$sql .= ((int) $this->special_code) . ",";
+		$sql .= ((int) $this->product_type).",";
+		$sql .= ((int) $this->special_code).",";
 		$sql .= "'".$this->db->escape((string) $this->rang)."',";
 		$sql .= "'".$this->db->escape((string) $this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape((string) $this->vat_src_code)."'").",";
@@ -466,7 +467,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		}
 		// Multicurrency
 		$sql .= ", multicurrency_subprice = ".((float) price2num($this->multicurrency_subprice));
-		$sql .= ", multicurrency_subprice = ".((float) price2num($this->multicurrency_subprice_ttc));
+		$sql .= ", multicurrency_subprice_ttc = ".((float) price2num($this->multicurrency_subprice_ttc));
 		$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht));
 		$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva));
 		$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc));

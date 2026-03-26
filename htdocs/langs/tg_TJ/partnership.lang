@@ -74,3 +74,5 @@ NewPartnershipRequest=Дархости нави шарикӣ
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ин саҳифа бояд ақаллан як истинод ба яке аз доменҳои зерин дошта бошад: %s
 IPOfApplicant=IP-и аризадиҳанда
+PartnershipToReopen=Барои боз кардан
+PartnershipConfirmReOpenAsk=Оё мутмаин ҳастед, ки мехоҳед ин шарикиро аз нав кушоед <b> %sTXPROTECT-97>TXPROTECT-94

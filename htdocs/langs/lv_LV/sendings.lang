@@ -66,7 +66,47 @@ NoLineGoOnTabToAddSome=Nav rindiņas, atveriet cilni %s, lai pievienotu
 CreateInvoiceForThisCustomerFromSendings=Izveidojiet rēķinus
 IfValidateInvoiceIsNoSendingStayUnbilled=Ja rēķina apstiprināšana ir “Nē”, nosūtīšanas statuss būs “Bez rēķina”, līdz rēķins tiks apstiprināts.
 OptionToSetSendingBilledNotEnabled=Nav iespējota opcija no moduļa Workflow, lai pēc rēķina apstiprināšanas automātiski iestatītu sūtīšanu uz 'Rēķins', tāpēc pēc rēķina ģenerēšanas jums būs manuāli jāiestata sūtījumu statuss uz 'Rēķins'.
+NoWarehouseInBase=No warehouse in base
 ShipmentUpdated=Shipment successfully updated
+ShipmentIncrementStockOnDelete = Increase stock on deletion
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Piegāde
+DeliveryRef=Art piegādei
+DeliveryCard=Piegādes kvīts
+DeliveryOrder=Piegādes kvīts
+DeliveryDate=Piegādes datums
+CreateDeliveryOrder=Izveidot piegādes kvīti
+DeliveryStateSaved=Piegādes stāvoklis saglabāts
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Uzstādīt piegādes datumu
+ValidateDeliveryReceipt=Pārbaudiet piegādes kvīti
+ValidateDeliveryReceiptConfirm=Vai tiešām vēlaties apstiprināt piegādes kvīti?
+DeleteDeliveryReceipt=Dzēst piegādes saņemšanu
+DeleteDeliveryReceiptConfirm=Vai tiešām vēlaties dzēst piegādes kvīti <b> %s </b>?
+DeliveryMethod=Piegādes metode
+TrackingNumber=Sekošanas numurs
+DeliveryNotValidated=Piegāde nav apstiprināta
+StatusDeliveryCanceled=Atcelts
+StatusDeliveryDraft=Melnraksts
+StatusDeliveryValidated=Saņemts
+NameAndSignature=Vārds un paraksts:
+ToAndDate=Kam___________________________________ uz ____ / _____ / __________
+GoodStatusDeclaration=Ir saņēmuši iepriekš minētās preces labā stāvoklī,
+Deliverer=Piegādātājs:
+Sender=Nosūtītājs
+Recipient=Saņēmējs
+ErrorStockIsNotEnough=Nav pietiekami daudz krājumu
+Shippable=Piegādājams
+NonShippable=Nav nosūtāms
+ShowShippableStatus=Show shippable status
+ShowReceiving=Rādīt piegādes kvīti
+NonExistentOrder=Neeksistējošs pasūtījums
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -78,6 +118,7 @@ SumOfProductWeights=Summēt produkta svaru
 # warehouse details
 DetailWarehouseNumber= Noliktavas detaļas
 DetailWarehouseFormat= W: %s (Daudzums: %d)
+DetailChildrenFormat=%s : %s (Qty: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Parādīt pēdējo noliktavā ienākšanas datumu sūtījuma izveides laikā sērijas numuram vai partijai
 CreationOptions=Pieejamās iespējas sūtījuma izveides laikā
 ShipmentDistribution=Sūtījumu sadale
@@ -92,3 +133,4 @@ TypeContact_shipping_external_SHIPPING=Customer contact for shipping
 TypeContact_shipping_external_DELIVERY=Klienta kontaktpersona piegādei
 CloseShipment=Close shipment
 ConfirmCloseShipment=Confirm close shipment
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pre-select the batch/serial number with the earliest sell-by/eat-by date when creating a shipment

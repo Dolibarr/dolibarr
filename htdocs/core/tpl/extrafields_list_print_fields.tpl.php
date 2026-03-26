@@ -14,16 +14,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
  * @var Conf $conf
  * @var CommonObject $object
+ * @var stdClass $obj
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ *
+ * @var string $extrafieldsobjectkey
+ * @var string $extrafieldsobjectprefix
  */
-
 '
 @phan-var-force CommonObject $object
+@phan-var-force stdClass $obj
 ';
 
 // Protection to avoid direct call of template
@@ -61,7 +66,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 					$value = $datenotinstring;
 				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
-					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0' ? $obj->$tmpkey : '');
+					$value = $obj->$tmpkey ?? (isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : null) ?? '';
 				} else {
 					// The key may be in $obj->array_options if not in $obj
 					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
@@ -69,19 +74,20 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
-					$objectoffield = $object; // For compatibility with the computed formula
+					$objectoffield = $object; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
 					$value = dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
 				}
 
-				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object);
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object ?? null, 'list');
+
 				$title = dol_string_nohtmltag($valuetoshow);
 
 				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
-				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print ($title && !in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
 				print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
 				print $valuetoshow;

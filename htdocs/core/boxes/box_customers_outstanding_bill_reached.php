@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 	public $boxcode = "customersoutstandingbillreached";
 	public $boximg = "object_company";
 	public $boxlabel = "BoxCustomersOutstandingBillReached";
-	public $depends = array("facture", "societe");
+	public $depends = array("invoice", "societe");
 
 	public $enabled = 1;
 

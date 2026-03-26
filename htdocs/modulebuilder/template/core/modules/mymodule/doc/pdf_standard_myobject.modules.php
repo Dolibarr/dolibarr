@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) ---Replace with your own copyright and developer email---
@@ -322,8 +322,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/'.getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -667,57 +667,55 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 					$sign = 1;
 					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
-					if ($object->lines instanceof CommonInvoiceLine) {
-						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
-							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
-							} else {
-								$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
-							}
+					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					if ($prev_progress > 0 && $object->lines instanceof CommonInvoiceLine && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 						} else {
-							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
-							} else {
-								$tvaligne = $sign * $object->lines[$i]->total_tva;
-							}
+							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 						}
-
-						$localtax1ligne = $object->lines[$i]->total_localtax1;
-						$localtax2ligne = $object->lines[$i]->total_localtax2;
-						$localtax1_rate = $object->lines[$i]->localtax1_tx;
-						$localtax2_rate = $object->lines[$i]->localtax2_tx;
-						$localtax1_type = $object->lines[$i]->localtax1_type;
-						$localtax2_type = $object->lines[$i]->localtax2_type;
-
-						$vatrate = (string) $object->lines[$i]->tva_tx;
-
-						// Retrieve type from database for backward compatibility with old records
-						if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
-							&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
-							$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-							$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
-							$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
-						}
-
-						// retrieve global local tax
-						if ($localtax1_type && $localtax1ligne != 0) {
-							if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
-								$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
-							} else {
-								$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
-							}
-						}
-						if ($localtax2_type && $localtax2ligne != 0) {
-							if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
-								$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
-							} else {
-								$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
-							}
+					} else {
+						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+						} else {
+							$tvaligne = $sign * $object->lines[$i]->total_tva;
 						}
 					}
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+					$localtax1ligne = $object->lines[$i]->total_localtax1;
+					$localtax2ligne = $object->lines[$i]->total_localtax2;
+					$localtax1_rate = $object->lines[$i]->localtax1_tx;
+					$localtax2_rate = $object->lines[$i]->localtax2_tx;
+					$localtax1_type = $object->lines[$i]->localtax1_type;
+					$localtax2_type = $object->lines[$i]->localtax2_type;
+
+					$vatrate = (string) $object->lines[$i]->tva_tx;
+
+					// Retrieve type from database for backward compatibility with old records
+					if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
+						&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
+						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
+						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
+					}
+
+					// retrieve global local tax
+					if ($localtax1_type && $localtax1ligne != 0) {
+						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+						} else {
+							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						}
+					}
+					if ($localtax2_type && $localtax2ligne != 0) {
+						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+						} else {
+							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						}
+					}
+
+					if (((int) $object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
 
@@ -819,9 +817,12 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1053,14 +1054,14 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && !empty($object->thirdparty->code_compta_client)) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact
@@ -1220,7 +1221,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
@@ -1258,7 +1259,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

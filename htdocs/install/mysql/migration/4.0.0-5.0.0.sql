@@ -34,7 +34,7 @@ UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHE
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
-ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
+ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);
 
 ALTER TABLE llx_societe ALTER COLUMN fk_stcomm SET DEFAULT 0;
 
@@ -78,7 +78,7 @@ ALTER TABLE llx_chargesociales ADD COLUMN fk_user_modif         integer;
 ALTER TABLE llx_chargesociales ADD COLUMN fk_user_valid			integer;
 
 
-ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12) after cover; 
+ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12) after cover;
 
 DROP TABLE llx_document_generator;
 DROP TABLE llx_ecm_documents;
@@ -268,7 +268,7 @@ UPDATE llx_accounting_account SET account_parent = 0 WHERE account_parent = '';
 -- VMYSQL4.3 ALTER TABLE llx_product_price MODIFY COLUMN date_price DATETIME NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN date_price DROP NOT NULL;
 ALTER TABLE llx_product_price ALTER COLUMN date_price SET DEFAULT NULL;
- 
+
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
 ALTER TABLE llx_product_customer_price_log ADD COLUMN default_vat_code	varchar(10) after tva_tx;
@@ -278,4 +278,3 @@ ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
 UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
 UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';
-

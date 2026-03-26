@@ -36,6 +36,11 @@ class mod_member_simple extends ModeleNumRefMembers
 	public $name = 'Simple';
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 30;
+
 	// variables not inherited
 
 	/**

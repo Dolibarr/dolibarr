@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
@@ -48,11 +47,11 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 
 
-
 /*
  * Actions
  */
 
+$reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
@@ -81,7 +80,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
-		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", max(120, min(3600 * 24, GETPOSTINT("MAIN_SESSION_TIMEOUT"))), 'chaine', 0, '', $conf->entity);	// Between 120 and 86400
 	}
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT')) {
 		$res3 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", GETPOST("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 'alphanohtml'), 'int', 0, '', $conf->entity);
@@ -178,7 +177,7 @@ if (ini_get("session.gc_probability") == 0) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat right width50" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
+print '<input class="flat right width75" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 
@@ -213,19 +212,6 @@ print '<td class="nowrap">';
 print '<input class="flat right width50" name="MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100).'"> '.$langs->trans("FailedAuth");
 print '</td>';
 print '</tr>';
-
-/*
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$conf->global->MAIN_APPLICATION_TITLE = "";
-}
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.dol_escape_htmltag($conf->global->MAIN_APPLICATION_TITLE).'"> ';
-print '</td>';
-print '</tr>';
-*/
 
 print '</table>';
 

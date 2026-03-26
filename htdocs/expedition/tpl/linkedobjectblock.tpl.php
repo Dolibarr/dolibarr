@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2012       Regis Houssin   <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var	?Conf	$conf	Object config
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -31,8 +35,13 @@ global $user;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
+'@phan-var-force Expedition[] $linkedObjectBlock';
+/** @var Expedition[] $linkedObjectBlock */
 
 // Load translation files required by the page
 $langs->load("sendings");
@@ -50,7 +59,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td><?php echo $langs->trans("Shipment"); ?></td>
 		<td class="tdoverflowmax125"><?php echo $objectlink->getNomUrl(1); ?></td>
 		<td class="tdoverflowmax125" title="<?php dolPrintHTMLForAttribute($objectlink->ref_customer); ?>"><?php echo dolPrintHTML($objectlink->ref_customer); ?></td>
-		<td class="center"><?php echo dol_print_date($objectlink->date_delivery ? $objectlink->date_delivery : $objectlink->date_creation, 'day'); ?></td>
+		<td class="center"><?php echo dol_print_date($objectlink->date_creation, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('expedition', 'lire')) {
 			$total += $objectlink->total_ht;

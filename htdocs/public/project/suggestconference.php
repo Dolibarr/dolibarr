@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+/* Copyright (C) 2021		Dorian Vabre				<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/public/project/suggestconference.php
  *	\ingroup    member
- *	\brief      Example of form to suggest a conference
+ *	\brief      Form to suggest a conference of a given project
  */
 
 if (!defined('NOLOGIN')) {
@@ -66,6 +66,7 @@ global $dolibarr_main_url_root;
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  */
 
 // Init vars
@@ -118,7 +119,7 @@ if ($arrayofconfboothtype == -1) {
 }
 
 // Security check
-if (empty($conf->eventorganization->enabled)) {
+if (!isModEnabled('eventorganization')) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
 
@@ -214,6 +215,7 @@ if ($reshook < 0) {
 // Action called when page is submitted
 if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous public ssubmission. Check is done on the secureket + mitigation.
 	$error = 0;
+	$errors = [];
 
 	$urlback = '';
 
@@ -291,6 +293,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 			$modCodeClient = new $module($db);
 			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
+			/** @var ModeleThirdPartyCode $modCodeClient */
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
@@ -321,6 +324,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				$contact->country_id = GETPOSTINT("country_id");
 				$contact->state_id = GETPOSTINT("state_id");
 				$contact->email = $email;
+				$contact->status = 1; //Default status to Actif
 				$contact->statut = 1; //Default status to Actif
 				$resultcreatecontact = $contact->create($user);
 				if ($resultcreatecontact < 0) {
@@ -361,6 +365,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					}
 					$modCodeFournisseur = new $module($db);
 					'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
+					/** @var ModeleThirdPartyCode $modCodeFournisseur */
 
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
@@ -519,6 +524,7 @@ print '<br>';
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
 print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, '', 'center');
 // Welcome message
+print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
 // Title
@@ -575,7 +581,7 @@ print '<input type="hidden" name="action" value="add" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 
-print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
+//print '<br><span class="opacitymedium small">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 print dol_get_fiche_head();
@@ -594,17 +600,17 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Last Name
-print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span class="star">*</span></label></td>';
+print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></label></td>';
 print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // First Name
-print '<tr><td><label for="firstname">'.$langs->trans("Firstname").'<span class="star">*</span></label></td>';
+print '<tr><td><label for="firstname">'.$langs->trans("Firstname").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></label></td>';
 print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ? GETPOST("firstname", 'alpha') : $object->firstname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
-print '<tr><td>'.$langs->trans("Email").'<span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<span class="star">*</span>';
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span>';
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
@@ -646,13 +652,13 @@ if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '</td></tr>';
 }
 // Type of event
-print '<tr><td>'.$langs->trans("Format").'<span class="star">*</span></td>'."\n";
+print '<tr><td>'.$langs->trans("Format").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></td>'."\n";
 print '<td>'.Form::selectarray('eventtype', $arrayofconfboothtype, $eventtype, 1).'</td>';
 // Label
-print '<tr><td>'.$langs->trans("LabelOfconference").'<span class="star">*</span></td>'."\n";
+print '<tr><td>'.$langs->trans("LabelOfconference").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></td>'."\n";
 print '</td><td><input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
 // Note
-print '<tr><td>'.$langs->trans("Description").'<span class="star">*</span></td>'."\n";
+print '<tr><td>'.$langs->trans("Description").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></td>'."\n";
 print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_4.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 
 print "</table>\n";

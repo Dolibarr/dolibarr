@@ -843,13 +843,13 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '<tr><td><span class="fieldrequired">';
 		print $langs->trans("Firstname") . '</span></td><td>';
 		print img_picto('', 'user', 'class="pictofixedwidth"');
-		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required autofocus></td></tr>' . "\n";
+		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required autofocus></td></tr>' . "\n";
 
 		// Lastname
 		print '<tr><td><span class="fieldrequired">';
 		print $langs->trans("Lastname") . '</span></td><td>';
 		print img_picto('', 'user', 'class="pictofixedwidth"');
-		print '<input type="text" name="lastname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($lastname) . '" required></td></tr>' . "\n";
+		print '<input type="text" name="lastname" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag($lastname) . '" required></td></tr>' . "\n";
 
 		// Email
 		print '<tr><td><span class="fieldrequired">' . $langs->trans("EmailAttendee") . '</span></td><td>';

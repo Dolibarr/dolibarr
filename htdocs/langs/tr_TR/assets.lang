@@ -17,6 +17,7 @@ AccountancyCodeAsset=Muhasebe kodu (varlık)
 AccountancyCodeDepreciationAsset=Muhasebe kodu (amortisman varlık hesabı)
 AccountancyCodeDepreciationExpense=Muhasebe kodu (amortisman gideri hesabı)
 AssetsLines=Varlıklar
+ConfirmValidateAsset=İstediğinizden emin misiniz ile doğrula arasındaki bu varlık, <b>%s</b> referansıyla mı?
 DeleteType=Sil
 DeleteAnAssetType=Varlık modelini silme
 ConfirmDeleteAssetType=Bu varlık modelini silmek istediğinizden emin misiniz?
@@ -70,6 +71,7 @@ AssetDisposal=İmha etmek
 AssetConfirmDisposalAsk=<b> %s</b> varlığını elden çıkarmak istediğinizden emin misiniz?
 AssetConfirmReOpenAsk=<b> %s</b> öğesini yeniden açmak istediğinizden emin misiniz?
 # Asset status
+AssetInDraft=Ödeme emri
 AssetInProgress=Devam etmekte
 AssetDisposed=Bertaraf
 AssetRecorded=Hesaplandı

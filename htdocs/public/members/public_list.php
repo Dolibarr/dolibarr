@@ -126,7 +126,7 @@ if (!$sortfield) {
  */
 
 if (!getDolGlobalString('MEMBER_PUBLIC_ENABLED')) {
-	httponly_accessforbidden('Public access of list of members is not enabled');
+	httponly_accessforbidden('Public access of list of members is not enabled. See setup of module membership to enable it.');
 }
 
 $form = new Form($db);
@@ -164,7 +164,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

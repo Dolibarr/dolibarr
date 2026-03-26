@@ -119,6 +119,10 @@ class DolGraph
 	/**
 	 * @var bool
 	 */
+	public $hideYValues = false;
+	/**
+	 * @var bool
+	 */
 	public $hideYGrid = false;
 
 	/**
@@ -306,6 +310,18 @@ class DolGraph
 	public function setHideXValues($bool)
 	{
 		$this->hideXValues = $bool;
+		return true;
+	}
+
+	/**
+	 * Hide Y Values
+	 *
+	 * @param	bool		$bool	YValues or not
+	 * @return	bool				true
+	 */
+	public function setHideYValues($bool)
+	{
+		$this->hideYValues = $bool;
 		return true;
 	}
 
@@ -734,7 +750,9 @@ class DolGraph
 		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($max)) {
-					$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					if (isset($x[$i + 1])) {
+						$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					}
 				} elseif ($max < $x[$i + 1]) {
 					$max = $x[$i + 1];
 				}
@@ -764,7 +782,9 @@ class DolGraph
 		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($min)) {
-					$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					if (isset($x[$i + 1])) {
+						$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					}
 				} elseif ($min > $x[$i + 1]) {
 					$min = $x[$i + 1];
 				}
@@ -1315,8 +1335,8 @@ class DolGraph
 
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
-				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
-				$this->stringtoshow .= 'rotation: -Math.PI,' . "\n";
+				$this->stringtoshow .= 'circumference: 180,' . "\n";
+				$this->stringtoshow .= 'rotation: -90,' . "\n";
 			}
 			$this->stringtoshow .= 'elements: { arc: {' . "\n";
 			// Color of each arc
@@ -1466,24 +1486,20 @@ class DolGraph
 			}
 			$this->stringtoshow .= "}, \n";
 
-			/* For Chartjs v2.9 */
-			/*
-			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
-			if ($this->hideXValues) {
-				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
+			// Hide the X or Y values
+			if ($this->hideYValues || $this->hideXValues) {
+				$this->stringtoshow .= 'scales: { ';
+				if ($this->hideXValues) {
+					$this->stringtoshow .= 'x: { display: false }';
+				}
+				if ($this->hideYValues && $this->hideXValues) {
+					$this->stringtoshow .= ', ';
+				}
+				if ($this->hideYValues) {
+					$this->stringtoshow .= 'y: { display: false }';
+				}
+				$this->stringtoshow .= '}, ';
 			}
-			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
-			$this->stringtoshow .= 'distribution: \'linear\'';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }] }';
-			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
@@ -1668,7 +1684,7 @@ class DolGraph
 		global $langs;
 
 		if ($shownographyet) {
-			$s = '<div class="nographyet" style="width:' . (preg_match('/%/', $this->width) ? $this->width : $this->width . 'px') . '; height:' . (preg_match('/%/', $this->height) ? $this->height : $this->height . 'px') . ';"></div>';
+			$s = '<div class="nographyet" style="max-width: 400px; width:' . (preg_match('/%/', $this->width) ? $this->width : $this->width . 'px') . '; height:' . (preg_match('/%/', $this->height) ? $this->height : $this->height . 'px') . ';"></div>';
 			$s .= '<div class="nographyettext margintoponly">';
 			if (is_numeric($shownographyet)) {
 				$s .= $langs->trans("NotEnoughDataYet") . '...';

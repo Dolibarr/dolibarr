@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +15,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/core/tpl/extrafields_list_search_sql.tpl.php
+ *  \brief      Include file extrafields columns on the line for title of fields
  */
 
 /**

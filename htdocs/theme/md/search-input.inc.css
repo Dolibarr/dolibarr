@@ -27,7 +27,6 @@ input.search-tool-input:focus:not(.button):not(.buttonwebsite):not(.buttonreset)
 	background-size: 16px 16px;
 	background-position: 95% center;
 	background-position: calc(100% - 16px) center;
-	border-radius: 50px !important;
 	border: 1px solid #c4c4c2 !important;
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;

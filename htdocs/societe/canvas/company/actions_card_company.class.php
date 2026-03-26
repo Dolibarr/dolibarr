@@ -88,7 +88,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $conf, $langs, $user, $mysoc;
+		global $conf, $langs;
 		global $form, $formcompany;
 
 		$ret = $this->getObject($id, $ref);

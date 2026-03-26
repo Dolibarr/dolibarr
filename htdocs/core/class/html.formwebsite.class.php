@@ -147,7 +147,10 @@ class FormWebsite
 					}*/
 					if ($obj->typecontainer != $lasttypecontainer) {
 						$out .= '<option value="0" disabled>--- ';
-						$transcodecontainer = ucfirst($obj->typecontainer);
+						$transcodecontainer = ucfirst($obj->typecontainer);	// Label of group of page type
+						if ($transcodecontainer == 'Library') {
+							$transcodecontainer = 'System';
+						}
 						if ($obj->typecontainer == 'page') {
 							$transcodecontainer = 'CompletePage';
 						} elseif ($obj->typecontainer == 'container') {
@@ -369,7 +372,7 @@ class FormWebsite
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
-		$out = '<div id="template-selector" class="template-container hidden">';
+		$out = '<div id="template-selector" class="template-selector template-container hidden">';
 
 		// We disable some not ready templates
 		unset($arrayofsamples['dynamiccontent']);
@@ -395,6 +398,7 @@ class FormWebsite
 		$out .= '<input type="hidden" name="sample" value="" />';
 		$out .= '</div>';
 
+		$out .= '<!-- Js code to manage choice of a page layout for website -->'."\n";
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {

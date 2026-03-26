@@ -192,7 +192,7 @@ $error = 0;
  * Actions
  */
 
-if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemrission not required here. Public form. Security checked on the securekey and on mitigation
+if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on permission not required here. Public form. Security checked on the securekey and on mitigation
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -211,9 +211,6 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemriss
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
 		if (method_exists($object, 'call_trigger')) {
-			// Online customer is not a user, so we use the use that validates the documents
-			$user = new User($db);
-			$user->fetch($object->user_validation_id);
 			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
 			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
 			if ($result < 0) {
@@ -249,7 +246,7 @@ $title = $langs->trans("OnlineSignature");
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $title, '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
-htmlPrintOnlineHeader($mysoc, $langs);
+htmlPrintOnlineHeader($mysoc, $langs, 1, '', 'ONLINE_SIGN_IMAGE_PUBLIC_INTERFACE', 'ONLINE_SIGN_LOGO_'.$suffix, 'ONLINE_SIGN_LOGO');
 
 if ($action == 'refusepropal') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : ''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
@@ -280,46 +277,13 @@ print '<input type="hidden" name="ref" value="'.$ref.'" />';
 print "\n";
 print '<!-- Form to sign -->'."\n";
 
-print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
-
-// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
-// Define logo and logosmall
-$logosmall = $mysoc->logo_small;
-$logo = $mysoc->logo;
-$paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
-if (getDolGlobalString($paramlogo)) {
-	$logosmall = getDolGlobalString($paramlogo);
-} elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
-	$logosmall = getDolGlobalString('ONLINE_SIGN_LOGO');
-}
-//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
-// Define urllogo
-$urllogo = '';
-$urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-}
-// Output html code for logo
-if ($urllogo) {
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	print '>';
-	print '</div>';
-	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-	}
-	print '</div>';
-}
 if ($source == 'proposal' && getDolGlobalString('PROPOSAL_IMAGE_PUBLIC_SIGN')) {
 	print '<div class="backimagepublicproposalsign">';
 	print '<img id="idPROPOSAL_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('PROPOSAL_IMAGE_PUBLIC_SIGN').'">';
 	print '</div>';
 }
+
+print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 
 // Output introduction text
 $text = '';
@@ -395,8 +359,8 @@ if ($source == 'proposal') {
 
 	$amount = '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	$amount .= '</td><td class="CTableRow2">';
-	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
-	if ($object->multicurrency_code != $conf->currency) {
+	$amount .= '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, getDolCurrency()).'</b>';
+	if ($object->multicurrency_code != getDolCurrency()) {
 		$amount .= ' ('.price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code).')';
 	}
 	$amount .= '</td></tr>'."\n";
@@ -571,7 +535,7 @@ if ($source == 'proposal') {
 	$result = $object->fetch_thirdparty();
 
 	// Proposer
-	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("Proposer");
+	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("CreditorName");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>' . $creditor . '</b>';
@@ -748,10 +712,10 @@ print '<tr><td class="center">';
 if ($action == "dosign" && empty($cancel)) {
 	// Show the field to sign
 	print '<div class="tablepublicpayment">';
-	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly marginbottomonly borderbottom" id="name"  placeholder="'.$langs->trans("Lastname").'" autofocus>';
+	print '<input type="text" class="paddingleftonly marginleftonly paddingright marginrightonly marginbottomonly borderbottom" id="name"  placeholder="'.$langs->trans("Lastname").'" spellcheck="false" autofocus>';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
-	print '<input type="button" class="small noborderbottom cursorpointer buttonreset" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+	print '<input type="button" class="small noborderall cursorpointer buttonreset" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
 
 	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.
 	print '<div>';
@@ -767,7 +731,7 @@ if ($action == "dosign" && empty($cancel)) {
 
 	// Add js code managed into the div #signature
 	$urltogo = $_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '');
-	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
+	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
 	  $("#signature").jSignature({ color:"#000", lineWidth:0, '.(empty($conf->dol_optimize_smallscreen) ? '' : 'width: 280, ').'height: 180});
@@ -779,7 +743,6 @@ if ($action == "dosign" && empty($cancel)) {
 			$("#signbutton").on("click",function(){
 				console.log("We click on button sign");
 				document.body.style.cursor = \'wait\';
-				/* $("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\'); */
 				var signature = $("#signature").jSignature("getData", "image");
 				var name = document.getElementById("name").value;
 				$.ajax({

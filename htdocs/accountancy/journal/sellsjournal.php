@@ -4,12 +4,13 @@
  * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2014		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Vincent de Grandporé        <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +141,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 }
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp, f.situation_final,";
-$sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
+$sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.localtax1_tx, fd.localtax2_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer_general,";
@@ -223,6 +224,8 @@ $vatdata_cache = array();
 // Variables
 $cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', 'NotDefined');
 $cpttva = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined');
+$cptlocaltax1 = getDolGlobalString('ACCOUNTING_LT1_SOLD_ACCOUNT', 'NotDefined');
+$cptlocaltax2 = getDolGlobalString('ACCOUNTING_LT2_SOLD_ACCOUNT', 'NotDefined');
 
 $result = $db->query($sql);
 if ($result) {
@@ -262,12 +265,18 @@ if ($result) {
 			$vatdata_cache[$tax_id] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
-		$compta_localtax1 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
-		$compta_localtax2 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
+		$compta_localtax1 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cptlocaltax1);
+		$compta_localtax2 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cptlocaltax2);
 
 		// Define the array to store the detail of each vat rate and code for lines
 		if (price2num($obj->tva_tx) || !empty($obj->vat_src_code)) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
+			if ($obj->localtax1_tx > 0.0) {
+				$def_tva[$obj->rowid][$compta_localtax1][vatrate($obj->localtax1_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '').' LT1'] = (vatrate($obj->localtax1_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
+			}
+			if ($obj->localtax2_tx > 0.0) {
+				$def_tva[$obj->rowid][$compta_localtax2][vatrate($obj->localtax2_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '').' LT2'] = (vatrate($obj->localtax2_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
+			}
 		}
 
 		// Create a compensation rate for situation invoice.
@@ -455,30 +464,31 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 }
 */
 // New way, single query, load all unbound lines
-
-$sql = "
-SELECT
-    fk_facture,
-    COUNT(fd.rowid) as nb
-FROM
-    ".MAIN_DB_PREFIX."facturedet as fd
-WHERE
-    fd.product_type <= 2
-    AND fd.fk_code_ventilation <= 0
-    AND fd.total_ttc <> 0
-    AND fk_facture IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
-GROUP BY fk_facture
-";
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
-		if ($obj->nb > 0) {
-			$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+if (!empty($tabfac)) {
+	$sql = "
+	SELECT
+		fk_facture,
+		COUNT(fd.rowid) as nb
+	FROM
+		".MAIN_DB_PREFIX."facturedet as fd
+	WHERE
+		fd.product_type <= 2
+		AND fd.fk_code_ventilation <= 0
+		AND fd.total_ttc <> 0
+		AND fk_facture IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
+	GROUP BY fk_facture
+	";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj->nb > 0) {
+				$errorforinvoice[$obj->fk_facture] = 'somelinesarenotbound';
+			}
+			$i++;
 		}
-		$i++;
 	}
 }
 //var_dump($errorforinvoice);exit;
@@ -737,7 +747,14 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(0, $k, true);	// TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
+						}
+
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -798,7 +815,14 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(0, $k, true);    // TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity_rs'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity_rs'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_rs'][$k];
+						}
+
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -1265,7 +1289,7 @@ if (empty($action) || $action == 'view') {
 					print $accountoshow;
 				}
 				print '</td>';
-				print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0), $invoicestatic->ref, $langs->trans("RetainedWarranty")) . "</td>";
+				print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0), $invoicestatic->ref, $langs->trans("RetainedWarranty"), 1) . "</td>";
 				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
 				print "</tr>";
@@ -1296,7 +1320,7 @@ if (empty($action) || $action == 'view') {
 				print $accountoshow;
 			}
 			print '</td>';
-			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $langs->trans("SubledgerAccount")) . "</td>";
+			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $langs->trans("SubledgerAccount"), 1) . "</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print "</tr>";
@@ -1339,7 +1363,7 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
-			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accountingaccount->label) . "</td>";
+			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $accountingaccount->label, 1) . "</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
@@ -1382,7 +1406,7 @@ if (empty($action) || $action == 'view') {
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 					$labelvatrate = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 					$labelvatrate .= ($numtax ? ' - Localtax '.$numtax : '');
-					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $labelvatrate) . "</td>";
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $labelvatrate, 1) . "</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
@@ -1411,7 +1435,7 @@ if (empty($action) || $action == 'view') {
 				// Subledger account
 				print "<td>";
 				print '</td>';
-				print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $langs->trans("RevenueStamp")) . "</td>";
+				print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'customer'), $invoicestatic->ref, $langs->trans("RevenueStamp"), 1) . "</td>";
 				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
 				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";

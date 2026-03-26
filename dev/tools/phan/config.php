@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This is the phan config file used by .github/workflows/phan.yml
  */
@@ -35,7 +35,8 @@ $sanitizeRegex
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
 			'restricthtmlnolink',
-			'restricthtmlallowlinkscript'
+			'restricthtmlallowlinkscript',
+			'url',
 		)
 	).')*$/';
 
@@ -161,6 +162,7 @@ $VALID_MODULE_MAPPING = array(
 	'stock' => 'Stock',
 	'stocktransfer' => 'StockTransfer',
 	'stripe' => 'Stripe',
+	'subtotals' => 'Subtotals',
 	'supplier_invoice' => null,  // Special case, uses invoice
 	'supplier_order' => null,  // Special case, uses invoice
 	'supplier_proposal' => 'SupplierProposal',
@@ -225,6 +227,24 @@ return [
 	'backward_compatibility_checks' => false,
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
+	/*'included_extension_subset' => [
+		'curl',
+		'dom',
+		'filter',
+		'gd',
+		'imap',
+		'intl',
+		'json',
+		'libxml',
+		'mbstring',
+		'mysqli',
+		'opcache',
+		'openssl',
+		'session',
+		'sqlite3',
+		'xml',
+		'zip'
+	],*/
 	'globals_type_map' => [
 		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>',
 		'action' => 'string',
@@ -253,7 +273,6 @@ return [
 		'disablemove' => 'int<0,1>',
 		'disableremove' => 'int<0,1>',
 		'dolibarr_main_authentication' => 'string',
-		'dolibarr_main_data_root' => 'string',
 		'dolibarr_main_data_root' => 'string',
 		'dolibarr_main_db_encrypted_pass' => 'string',
 		'dolibarr_main_db_host' => 'string',
@@ -326,6 +345,7 @@ return [
 		'htdocs/includes/',
 		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
+		'htdocs/admin/tools/ui/',
 		PHAN_DIR . '/stubs/',
 	],
 	//'exclude_file_regex' => '@^vendor/.*/(tests?|Tests?)/@',
@@ -427,15 +447,18 @@ return [
 	'suppress_issue_types' => [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
+		'PhanDeprecatedImplicitNullableParam',
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginConstantVariableNull',		// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
 		'PhanTypeArraySuspiciousNullable',	// About 440 occurrences
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanTypeMismatchArgumentSuperType', 	// a lot of false positive, in most cases, we want to keep the code as it is
 
 		'PhanPluginWhitespaceTab',		// Dolibarr uses tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
