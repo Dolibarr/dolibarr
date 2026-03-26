@@ -1,8 +1,6 @@
 name: "CI-PUSH"
 
 on: [push]
-permissions:
-  contents: read
 
 permissions:
   contents: read
