@@ -13,7 +13,7 @@
  * Copyright (C) 2016-2021	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2017-2023	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2021		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
@@ -976,7 +976,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 }
 
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-propale page-list');
 
 $param = '&search_status='.urlencode($search_status);
 if (!empty($mode)) {

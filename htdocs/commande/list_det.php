@@ -55,6 +55,7 @@ if (isModEnabled('margin')) {
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (isModEnabled('category')) {
@@ -91,9 +92,9 @@ $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_end_month'), GETPOSTINT('search_datedelivery_end_day'), GETPOSTINT('search_datedelivery_end_year'));
 
 $search_product_category_array = array();
+$searchCategoryProductOperator = 0;
 if (isModEnabled('category')) {
 	$search_product_category_array = GETPOST("search_category_".Categorie::TYPE_PRODUCT."_list", "array");
-	$searchCategoryProductOperator = 0;
 	if (GETPOSTISSET('formfilteraction')) {
 		$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
@@ -254,7 +255,22 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'commande', $id, '');
 
-$permissiontoread = false;
+$permissiontoread = $user->hasRight("commande", "lire");
+$permissiontoadd = $user->hasRight("commande", "creer");
+$permissiontodelete = $user->hasRight("commande", "supprimer");
+$permissiontoexport = $user->hasRight("commande", "commande", "export");
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
+	$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
+	$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
+	$permissiontosendbymail = $user->hasRight("commande", "order_advance", "send");
+} else {
+	$permissiontovalidate = $user->hasRight("commande", "creer");
+	$permissiontoclose = $user->hasRight("commande", "creer");
+	$permissiontocancel = $user->hasRight("commande", "creer");
+	$permissiontosendbymail = $user->hasRight("commande", "creer");
+}
+
 
 /*
  * Actions
@@ -337,30 +353,11 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Commande';
 	$objectlabel = 'Orders';
-	$permissiontoread = $user->hasRight("commande", "lire");
-	$permissiontoadd = $user->hasRight("commande", "creer");
-	$permissiontodelete = $user->hasRight("commande", "supprimer");
-	$permissiontoexport = $user->hasRight("commande", "commande", "export");
-	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-		$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
-		$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
-		$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
-		$permissiontosendbymail = $user->hasRight("commande", "order_advance", "send");
-	} else {
-		$permissiontovalidate = $user->hasRight("commande", "creer");
-		$permissiontoclose = $user->hasRight("commande", "creer");
-		$permissiontocancel = $user->hasRight("commande", "creer");
-		$permissiontosendbymail = $user->hasRight("commande", "creer");
-	}
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-// Closed records
-// if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
-
-// }
 
 /*
  * View
@@ -371,6 +368,7 @@ $now = dol_now();
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formproduct = new FormProduct($db);
 $formmargin = null;
 if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
@@ -902,9 +900,6 @@ if ($resql) {
 		// TODO add mass action here
 		// 'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	// if ($permissiontovalidate) {
-	// 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
-	// }
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$url = DOL_URL_ROOT.'/commande/card.php?action=create';
@@ -982,8 +977,6 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
-		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Warehouse');
 		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'minwidth300imp maxwidth300 widthcentpercentminusx');
@@ -1897,6 +1890,10 @@ if ($resql) {
 			if ($obj->warehouse > 0) {
 				print img_picto('', 'stock', 'class="paddingrightonly"');
 			}
+			if (!is_object($formproduct)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+				$formproduct = new FormProduct($db);
+			}
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'], $obj->warehouse, 'none');
 			print "</td>\n";
 			if (!$i) {
@@ -2311,10 +2308,10 @@ if ($resql) {
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $permissiontoread;
-	$delallowed = $permissiontoadd;
+	$genallowed = 0;
+	$delallowed = 0;
 
-	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, $genallowed, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {
 	dol_print_error($db);
 }

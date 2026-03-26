@@ -9,7 +9,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
@@ -3428,7 +3428,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if ($conf->browser->layout == 'phone') {
 			$maxvisiblephotos = 1;
 		}
-		if ($showimage) {
+		$useLinkPathPhoto = getDolGlobalInt('PRODUCT_USE_LINK_PATH_FOR_PHOTO');
+		if ($showimage || $useLinkPathPhoto) {
 			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">' . $object->show_photos('product', $conf->product->multidir_output[$entity], 1, $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '') . '</div>';
 		} else {
 			if (getDolGlobalString('PRODUCT_NODISPLAYIFNOPHOTO')) {
@@ -3618,14 +3619,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		/** @var Product $object */
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
 			$morehtmlstatus .= '<span class="statusrefsell">' . $object->getLibStatut(6, 0) . '</span>';
 		}
 		$morehtmlstatus .= ' &nbsp; ';
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-			$morehtmlstatus .= ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+			$morehtmlstatus .= ajax_object_onoff($object, 'status_buy', 'status_buy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">' . $object->getLibStatut(6, 1) . '</span>';
 		}
@@ -7436,7 +7437,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	}
 
 	print '<td class="nobordernopadding valignmiddle col-title">';
-	print '<div class="titre inline-block">';
+	print '<div class="titre inline-block nowrap">';
 	print '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '' && $totalnboflines > 0) {
 		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="' . $langs->trans("NbRecordQualified") . '">(' . $totalnboflines . ')</span>';
@@ -10635,6 +10636,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
 							}
@@ -10834,6 +10839,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
+
+		$substitutionarray['__DEPOSIT_PERCENT__'] = is_object($object) ? $object->deposit_percent : '';
+		$substitutionarray['__DEPOSIT_AMOUNT__'] = is_object($object) ? price2num($object->total_ttc * ($object->deposit_percent / 100), 'MT') : '';
 
 		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? price2num($object->total_ttc - $already_payed_all, 'MT') : '';
 
@@ -12276,6 +12284,11 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		}
 		*/
 
+		// Check if there is PHP comments (can be used to obfuscate code)
+		if (strpos($s, '/*') !== false || strpos($s, '//') !== false) {
+			return 'Bad string syntax to evaluate (The comment string /* and // are not allowed): ' . $s;
+		}
+
 		// Check if we found a ? without a space before and after
 		$tmps = str_replace(' ? ', '__XXX__', $s);
 		if (strpos($tmps, '?') !== false) {
@@ -12368,16 +12381,15 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		}
 
 		// We block use of php exec or php file functions
-		$forbiddenphpstrings = array('}[', ')(');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction', 'SplFileObject', 'SplTempFileObject'));
-
-		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "keyword(" or just "keyword", we don't want "keyword" at all)
-		// We must exclude all functions that allow to execute another function. This includes all function that has a parameter with type "callable" to avoid things
-		// like we can do with array_map and its callable parameter:  dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '0')
-		$forbiddenphpfunctions = array();
-		$forbiddenphpmethods = array();
+		$forbiddenphpstrings = array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction', 'SplFileObject', 'SplTempFileObject');
 
 		if (empty($dolibarr_main_restrict_eval_methods)) {	// If forced to ''
+			// We list all forbidden function as keywords we don't want to see (we don't mind it if is "keyword(" or just "keyword", we don't want "keyword" at all)
+			// We must exclude all functions that allow to execute another function. This includes all function that has a parameter with type "callable" to avoid things
+			// like we can do with array_map and its callable parameter:  dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '0')
+			$forbiddenphpfunctions = array();
+			$forbiddenphpmethods = array();
+
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
@@ -12441,7 +12453,9 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 				dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
 				return 'Bad string syntax to evaluate: ' . $s;
 			}
-		} else {
+		}
+
+		if (!empty($dolibarr_main_restrict_eval_methods)) {
 			// Accept only white-listed allowed function and classes
 			// TODO Get all pattern '/([\s\w]+)\(/', then check that $reg[1] is a defined class or a function into a given list
 			$pattern = '/([\s\w\'\]\"]+)\(/';
@@ -12471,8 +12485,27 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 					}
 				}
 			}
-		}
 
+			$forbiddenphpregex = 'global\s*\$';
+			$forbiddenphpregex .= '|';			// or
+			$forbiddenphpregex .= '}\s*\[';
+			$forbiddenphpregex .= '|';			// or
+			$forbiddenphpregex .= '\)\s*\(';
+
+			// Now scan all forbidden patterns
+			do {
+				$oldstringtoclean = $s;
+				$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+				$s = preg_replace('/' . $forbiddenphpregex . '/i', '__forbiddenstring__', $s);
+				//$s = preg_replace('/' . $forbiddenphpmethodsregex . '/i', '__forbiddenstring__', $s);
+				//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+			} while ($oldstringtoclean != $s);
+
+			if (strpos($s, '__forbiddenstring__') !== false) {
+				dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
+				return 'Bad string syntax to evaluate: ' . $s;
+			}
+		}
 
 		//print $s."<br>\n";
 		ob_start(); // An evaluation has no reason to output data
@@ -16117,7 +16150,9 @@ function dolForgeSQLCriteriaCallback($matches)
 
 	$regbis = array();
 
-	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID/code/field only (or subrequest if MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTERnot enabled)
+	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID/code/field only (or subrequest if $dolibarr_allow_unsecured_select_in_extrafields_filter not enabled)
+		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
 		$tmpescaped2 = '(';
 		// Explode and sanitize each element in list
@@ -16131,7 +16166,7 @@ function dolForgeSQLCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
-			} elseif (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+			} elseif (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'

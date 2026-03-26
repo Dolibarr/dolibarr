@@ -274,16 +274,20 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				if ($numrows == 0) {
 					// Define default setup for password encryption
 					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
-					dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0); // All entities
 					if (function_exists('password_hash')) {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'password_hash', 'chaine', 0, '', 0); // All entities
 					} else {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0); // All entities
+						dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0); // All entities
 					}
 				}
 
 				dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = ' . getDolGlobalString('DATABASE_PWD_ENCRYPTED').' MAIN_SECURITY_HASH_ALGO = ' . getDolGlobalString('MAIN_SECURITY_HASH_ALGO'), LOG_INFO);
 			}
+
+			// Set some default variables
+			dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", bin2hex(random_bytes(12)), 'chaine', 0, '', 0); // All entities
+
 
 			// Create user used to create the admin user
 			$createuser = new User($db);

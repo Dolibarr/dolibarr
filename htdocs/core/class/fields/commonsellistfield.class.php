@@ -247,7 +247,8 @@ class CommonSellistField extends CommonField
 							$filter = str_replace('$ENTITY$', (string) $conf->entity, $filter);
 						}
 						// can use SELECT request
-						if (strpos($filter, '$SEL$') !== false && !getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+						global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+						if (strpos($filter, '$SEL$') !== false && !empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 							$filter = str_replace('$SEL$', 'SELECT', $filter);
 						}
 						// can use MODE parameter (list or view)

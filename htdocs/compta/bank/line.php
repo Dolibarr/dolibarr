@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026 Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2025 Frédéric France      <frederic.france@free.fr>
@@ -496,10 +496,17 @@ if ($result) {
 					print $langs->trans("User");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_various') {
+					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+					$paymenttmp = new PaymentVarious($db);
+					$paymenttmp->fetch($links[$key]['url_id']);
+					$paymenttmp->ref = $langs->trans("VariousPayment").' '.$paymenttmp->ref;
+					/*
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('VariousPayment'), 'payment').' ';
 					print $langs->trans("VariousPayment");
 					print '</a>';
+					*/
+					print $paymenttmp->getNomUrl(1);
 				} else {
 					// Example type = 'direct-debit', or 'credit-transfer', ....
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';

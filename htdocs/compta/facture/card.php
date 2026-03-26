@@ -3918,11 +3918,13 @@ if ($action == 'create') {
 		}
 
 		// Ref
+		/*
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="2">';
 		print $langs->trans("Draft");
 		print '</td>';
 		print '</tr>'."\n";
+		*/
 
 		// Thirdparty
 		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
@@ -4060,9 +4062,11 @@ if ($action == 'create') {
 		// Standard invoice
 		print '<div class="listofinvoicetype"><div class="">';
 		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOSTINT('type') ? '' : ' checked').'> ';
-		$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
+		$tmp .= '<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk");
+		$tmp .= ' <span class="opacitymedium">'.$langs->trans("InvoiceStandardAsk2").'</span>';
+		$tmp .= '</label>';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
+		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc").'<br><br>'.$langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
 		print $desc;
 		if ((($origin == 'propal') || ($origin == 'commande')) && (!empty($originid))) {
 			/*print '<td class="nowrap" style="padding-left: 5px">';
@@ -4375,12 +4379,14 @@ if ($action == 'create') {
 		}
 
 		// Template invoice
+		/*
 		print '<div class="listofinvoicetype"><div class="">';
 		$tmp = '<input type="radio" name="type" id="radio_template" value="0" disabled> ';
 		$text = $tmp.'<label class="opacitymedium" for="radio_template">'.$langs->trans("RepeatableInvoice").'</label> ';
 		$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3, 'templateonsmartphone');
 		print $desc;
 		print '</div></div>'."\n";
+		*/
 
 		print '</div><br>';
 
@@ -5061,7 +5067,7 @@ if ($action == 'create') {
 					break;
 				default:
 					// Other error
-					setEventMessages($langs->trans("DisabledBecauseNotErasable").(empty($object->error) ? '' : ': '.$object->error), null, 'errors');
+					setEventMessages($langs->trans("DisabledBecauseNotEditable").(empty($object->error) ? ': UnknownReason' : ': '.$object->error), null, 'errors');
 					break;
 			}
 			$oktomodif = 0;
@@ -6880,7 +6886,7 @@ if ($action == 'create') {
 			} elseif ($isErasable == -1) {
 				$htmltooltip = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
 			} elseif ($isErasable <= 0) {	// Any other cases
-				$htmltooltip = $langs->trans('DisabledBecauseNotErasable');
+				$htmltooltip = $langs->trans('DisabledBecauseNotErasable').(empty($object->error) ? ': UnknownReason' : ': '.$object->error);
 			} elseif ($objectidnext) {
 				$htmltooltip = $langs->trans('DisabledBecauseReplacedInvoice');
 			}

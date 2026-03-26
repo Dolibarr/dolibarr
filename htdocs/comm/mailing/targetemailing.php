@@ -564,8 +564,6 @@ if ($object->fetch($id) >= 0) {
 			// Sort $modulenames
 			sort($modulenames);
 
-			$var = true;
-
 			// Loop on each submodule
 			foreach ($modulenames as $modulename) {
 				// Loading Class
@@ -664,7 +662,7 @@ if ($object->fetch($id) >= 0) {
 		}	// End foreach dir
 
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
 		print '</div>';	// End table
