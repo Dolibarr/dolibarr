@@ -4171,7 +4171,9 @@ abstract class CommonObject
 								$sqlfix .= " SET ".$this->db->sanitize($fieldtva)." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
 								$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
 								$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
+
 								dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+
 								$resqlfix = $this->db->query($sqlfix);
 								if (!$resqlfix) {
 									dol_print_error($this->db, 'Failed to update line');
