@@ -125,6 +125,43 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
+} elseif ($action == 'updatebadcharunauthorized') {
+	$badCharUnauthorized = GETPOST('MAIN_LOGIN_BADCHARUNAUTHORIZED', 'none');
+	if (is_array($badCharUnauthorized)) {
+		$badCharUnauthorized = '';
+	}
+	$badCharUnauthorized = str_replace(array("\r", "\n"), '', (string) $badCharUnauthorized);
+
+	$db->begin();
+	$error = 0;
+
+	if ($badCharUnauthorized === '') {
+		if (dolibarr_set_const($db, "MAIN_LOGIN_BADCHARUNAUTHORIZED_ALLOW_EMPTY", '1', 'chaine', 0, '', $conf->entity) <= 0) {
+			$error++;
+		}
+		if (!$error && dolibarr_del_const($db, "MAIN_LOGIN_BADCHARUNAUTHORIZED", $conf->entity) < 0) {
+			$error++;
+		}
+	} else {
+		if (dolibarr_del_const($db, "MAIN_LOGIN_BADCHARUNAUTHORIZED_ALLOW_EMPTY", $conf->entity) < 0) {
+			$error++;
+		}
+		if (!$error && dolibarr_set_const($db, "MAIN_LOGIN_BADCHARUNAUTHORIZED", $badCharUnauthorized, 'chaine', 0, '', $conf->entity) <= 0) {
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
+		$conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED = $badCharUnauthorized;
+		$conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED_ALLOW_EMPTY = ($badCharUnauthorized === '' ? '1' : '0');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
+	}
 }
 
 
@@ -151,6 +188,9 @@ print dol_get_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1,
 
 print '<br>';
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updatebadcharunauthorized">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -196,9 +236,22 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+$loginBadCharUnauthorized = getDolGlobalLoginBadCharUnauthorized();
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("LoginBadCharUnauthorized").'</td>';
+print '<td class="center" width="20">'.$form->textwithpicto('', $langs->trans("LoginBadCharUnauthorizedHelp", getDolGlobalLoginBadCharUnauthorized()), 1, 'help').'</td>';
+print '<td class="right">';
+print '<input type="text" class="flat minwidth300" name="MAIN_LOGIN_BADCHARUNAUTHORIZED" value="'.dol_escape_htmltag($loginBadCharUnauthorized).'">';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
-
+print '<div class="center">';
+print '<input type="submit" class="button button-save reposition" value="'.$langs->trans("Save").'">';
+print '</div>';
+print '</form>';
 
 print '<br>';
 

@@ -122,8 +122,8 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 	$claim_firstname = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_FIRSTNAME', 'given_name');
 	$claim_lastname = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLAIM_LASTNAME', 'family_name');
 
-	// Sanitize login: Dolibarr rejects certain characters (default: ,@<>"')
-	$badChars = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+	// Sanitize login using Dolibarr forbidden characters for logins.
+	$badChars = getDolGlobalLoginBadCharUnauthorized();
 	$sanitized_login = $login;
 
 	if (preg_match('/['.preg_quote($badChars, '/').']/', $login)) {

@@ -290,6 +290,25 @@ function getDolGlobalString($key, $default = '')
 }
 
 /**
+ * Return the list of unauthorized characters in user logins.
+ *
+ * @return string
+ */
+function getDolGlobalLoginBadCharUnauthorized()
+{
+	global $conf;
+
+	if (!empty($conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED_ALLOW_EMPTY)) {
+		return '';
+	}
+	if (isset($conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED)) {
+		return (string) $conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED;
+	}
+
+	return ',@<>"\'';
+}
+
+/**
  * Return a Dolibarr global constant int value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *

@@ -165,3 +165,5 @@ UserSetInGroup=utilisateur défini dans le groupe
 ColorGroup=Couleur du groupe
 NotHolidayApprover=N'est pas autorisé à valider des congés
 NotExpenseReportApprover=N'est pas autorisé à valider des notes de frais
+LoginBadCharUnauthorized=Caractères non autorisés dans les logins
+LoginBadCharUnauthorizedHelp=Les caractères saisis ici seront interdits dans les logins utilisateur. Si vous laissez vide et enregistrez, aucun caractère ne sera interdit. Valeur par défaut historique si rien n'a jamais été configuré : %s
