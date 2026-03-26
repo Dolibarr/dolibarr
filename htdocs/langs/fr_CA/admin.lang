@@ -17,6 +17,7 @@ PurgeSessions=Sessions claires
 ConfirmPurgeSessions=Êtes-vous sûr de vouloir supprimer toutes les sessions ? Cela déconnectera tous les utilisateurs sauf vous.
 ConfirmLockNewSessions=Êtes-vous sûr de vouloir limiter les nouvelles connexions Dolibarr à vous seul ? Seul l'utilisateur <b>%s</b> pourra se connecter.
 PermissionsOnFiles=Autorisations d'accès aux fichiers
+NoSessionFound=La configuration PHP ne permet pas d'afficher la liste des sessions actives. Le répertoire de session (<b>%s</b>) peut être protégé (permissions du système d'exploitation ou open_basedir de PHP).
 HostCharset=Jeu de caractères hôte
 ClientCharset=Encodage Client
 ClientSortingCharset=Classement client

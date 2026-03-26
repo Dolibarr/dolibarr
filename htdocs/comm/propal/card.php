@@ -313,6 +313,11 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
+		$ret = $object->fetch($id); // Reload to get new records
+		if ($ret > 0) {
+			$object->fetch_thirdparty();
+		}
+
 		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			// Define output language
 			$outputlangs = $langs;
@@ -321,15 +326,8 @@ if (empty($reshook)) {
 				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			$ret = $object->fetch($id); // Reload to get new records
-			if ($ret > 0) {
-				$object->fetch_thirdparty();
-			}
 			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
-
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-		exit();
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
 		// Delete line
 		$object->fetch($id);
@@ -372,6 +370,9 @@ if (empty($reshook)) {
 		if ($result > 0 && getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE')) {
 			$result = $object->closeProposal($user, $object::STATUS_SIGNED);
 		}
+
+		$ret = $object->fetch($id); // Reload to get new records
+
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
@@ -387,13 +388,14 @@ if (empty($reshook)) {
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
 				if ($ret > 0) {
 					$object->fetch_thirdparty();
 				}
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit();
 		} else {
 			$langs->load("errors");
 			if (count($object->errors) > 0) {
@@ -1199,10 +1201,11 @@ if (empty($reshook)) {
 		if (isset($desc) && isset($depth)) {
 			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
 		} else {
+			$result = -1;
 			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
 		}
 
-		if (isset($result) && $result >= 0) {
+		if ($result >= 0) {
 			$ret = $object->fetch($object->id); // Reload to get new records
 			$object->fetch_thirdparty();
 
@@ -2040,7 +2043,7 @@ if (empty($reshook)) {
 
 			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
-			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise);
+			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -2131,10 +2134,11 @@ if (empty($reshook)) {
 		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
-		if ($ret < 0) {
+		$result = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($result < 0) {
 			$error++;
 		}
+
 		if (!$error) {
 			$result = $object->updateExtraField($attribute_name, 'PROPAL_MODIFY');
 			if ($result < 0) {
@@ -2149,6 +2153,7 @@ if (empty($reshook)) {
 
 	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		if ($action == 'addcontact' && $usercancreate) {
+			$result = 0;
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -2596,6 +2601,9 @@ if ($action == 'create') {
 		}
 
 		// Other attributes
+		if (getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_PROPAL') && $socid > 0) {
+			$thirdpartytopropagateextrafieldsfrom = $soc;
+		}
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
 		// Lines from source
@@ -2936,7 +2944,7 @@ if ($action == 'create') {
 		// Confirmation delete product/service line
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	} elseif ($action == 'ask_subtotal_deleteline') {
-		// Confirmation de la suppression d'une ligne subtotal
+		// Confirmation of removal of a subtotal line
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";

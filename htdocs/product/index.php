@@ -32,11 +32,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'intcomma');
 if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
@@ -204,7 +203,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	if ($conf->use_javascript_ajax) {
 		$graph .= '<div class="div-table-responsive-no-min">';
 		$graph .= '<table class="noborder centpercent">';
-		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").'</th></tr>';
+		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").' - '.$langs->trans("ProductStatus").'</th></tr>';
 		$graph .= '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
 
 		$SommeA = $prodser[0]['sell'];

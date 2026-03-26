@@ -75,6 +75,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force string $text
 @phan-var-force string $description
 @phan-var-force Object $objp
+@phan-var-force int $i
 ';
 
 // Handle subtotals line view
@@ -82,7 +83,7 @@ if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIA
 	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_view.tpl.php';
 }
 
-global $mysoc;
+global $mysoc, $db;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
@@ -127,7 +128,7 @@ $coldisplay = 0;
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print($i + 1); ?></span></td>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
@@ -408,10 +409,19 @@ print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')'
 print $tooltiponpriceend;
 ?></td>
 
-	<td class="linecoluht nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
+<td class="linecoluht nowraponall right">
+	<?php
+	$coldisplay++;
+	if (empty($line->fk_remise_except)) print price($sign * $line->subprice);
+	?>
+</td>
 
 <?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
+	<td class="linecoluht_currency nowraponall right">
+	<?php $coldisplay++;
+	if (empty($line->fk_remise_except)) print price($sign * $line->multicurrency_subprice);
+	?>
+	</td>
 <?php }
 
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
@@ -423,7 +433,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	if (!$upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
 	}
-	print (isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));	// if upinctax can't be known, we show subprice excl ta
+	if (empty($line->fk_remise_except)) print (isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));	// if upinctax can't be known, we show subprice excl ta
 	?></td>
 <?php }
 
@@ -437,7 +447,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	if (!$multicurrency_upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
 	}
-	print (isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
+	if (empty($line->fk_remise_except)) print (isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
 	?></td>
 <?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
@@ -452,7 +462,40 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	print '&nbsp;';
 }
 print '</td>';
+//Shippable Status
+if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+	$coldisplay++;
+	print '<td class="linecolstock center">';
 
+
+	if ($line->fk_product > 0 && $line->product_type == 0) {
+		static $productstatcache = array();
+
+		if (empty($productstatcache[$line->fk_product])) {
+			$prod = new Product($this->db);
+			$prod->fetch($line->fk_product);
+			$prod->load_stock('nobatch,warehouseopen');
+			$productstatcache[$line->fk_product]['stockreel'] = $prod->stock_reel;
+		}
+		$stock = $productstatcache[$line->fk_product]['stockreel'];
+		$reliquat = $line->qty;
+		if (!empty($object->expeditions[$line->id])) {
+			$reliquat -= $object->expeditions[$line->id];
+		}
+		if ($reliquat > 0) {
+			if ($stock >= $reliquat) {
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'green');
+			} else {
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'error');
+			}
+		} else {
+			print img_picto($langs->trans("Shipped"), 'statut5');
+		}
+	} else {
+		print '&nbsp;';
+	}
+	print '</td>';
+}
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short', $langs);

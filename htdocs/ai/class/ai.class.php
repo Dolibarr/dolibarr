@@ -60,6 +60,8 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to anayze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+
 
 	/**
 	 * Constructor
@@ -77,15 +79,27 @@ class Ai
 	}
 
 	/**
+	 * get API Service
+	 *
+	 * @return	string		API service
+	 */
+	public function getApiService()
+	{
+		return $this->apiService;
+	}
+
+	/**
 	 * Generate response of instructions
 	 *
-	 * @param   string  		$instructions   Instruction to generate content
-	 * @param   string  		$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
-	 * @param   string  		$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
-	 * @param	string			$format			Format for output ('', 'html', ...)
+	 * @param   string|array<mixed,mixed>	$instructions   String instruction to generate content (or file path) or array of payload or ID of file with function threads
+	 * @param   string  					$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
+	 * @param   string  					$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation', 'docparsing')
+	 * @param	string						$format			Format for output ('', 'html', ...)
+	 * @param	array<string,string>		$moreheaders	More headers
+	 * @param	string						$moreendpoint	Add a part to endpoint url
 	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
 	 */
-	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
+	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '', $moreheaders = array(), $moreendpoint = '')
 	{
 		global $dolibarr_main_data_root;
 
@@ -114,27 +128,43 @@ class Ai
 			} elseif ($function == 'transcription') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'transcriptions';
-			} else {
+			} elseif ($function == 'file') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'files';
+			} elseif ($function == 'assistant') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistans';
+			} elseif ($function == 'thread') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
+			} else {	// if $function == 'docparsing', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
 			}
+		}
+		if ($moreendpoint) {
+			$this->apiEndpoint .= '/'.$moreendpoint;
 		}
 
 		// $model may be undefined or 'auto'.
 		// If this is the case, we must get it from $function and $this->apiService
 		if (empty($model) || $model == 'auto') {
 			// Return the model from $this->apiService.
-			if ($function == 'imagegeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]);
+			if (in_array($function, array('file', 'assistant', 'thread'))) {
+				$model = '';
+			} elseif ($function == 'imagegeneration') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'audiogeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'transcription') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'translation') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]['default']);
+			} elseif ($function == 'docparsing') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]['default']);
 			} else {
 				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
 			}
 		}
 
@@ -182,45 +212,53 @@ class Ai
 			if (empty($prePrompt) && $function == 'textrephraser') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER;
 			}
-
-			$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
-
-			// Set payload string
-			/*{
-				"messages": [
-				{
-					"content": "You are a helpful assistant.",
-					"role": "system"
-				},
-				{
-					"content": "Hello!",
-					"role": "user"
-				}
-				],
-				"model": "tinyllama-1.1b",
-				"stream": true,
-				"max_tokens": 2048,
-				"stop": [
-					"hello"
-				],
-				"frequency_penalty": 0,
-				"presence_penalty": 0,
-				"temperature": 0.7,
-				"top_p": 0.95
-			}*/
-
-			$arrayforpayload = array(
-				'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
-				'model' => $model,
-			);
-
-			// Add a system message
-			$addDateTimeContext = false;
-			if ($addDateTimeContext) {		// @phpstan-ignore-line
-				$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+			if (empty($prePrompt) && $function == 'docparsing') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_DOC_PARSING;
 			}
-			if ($prePrompt) {
-				$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+
+			if (is_array($instructions)) {
+				$arrayforpayload = $instructions;
+				$fullInstructions = '';
+			} else {
+				$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
+
+				// Set payload string
+				/*{
+					"messages": [
+					{
+						"content": "You are a helpful assistant.",
+						"role": "system"
+					},
+					{
+						"content": "Hello!",
+						"role": "user"
+					}
+					],
+					"model": "tinyllama-1.1b",
+					"stream": true,
+					"max_tokens": 2048,
+					"stop": [
+						"hello"
+					],
+					"frequency_penalty": 0,
+					"presence_penalty": 0,
+					"temperature": 0.7,
+					"top_p": 0.95
+				}*/
+
+				$arrayforpayload = array(
+					'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
+					'model' => $model,
+				);
+
+				// Add a system message
+				$addDateTimeContext = false;
+				if ($addDateTimeContext) {		// @phpstan-ignore-line
+					$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+				}
+				if ($prePrompt) {
+					$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+				}
 			}
 
 			/*
@@ -229,12 +267,23 @@ class Ai
 			$arrayforpayload['stream'] = false;
 			*/
 
-			$payload = json_encode($arrayforpayload);
+			if ($function == 'thread') {
+				$payload = $instructions;
+			} else {
+				$payload = json_encode($arrayforpayload);
+			}
 
 			$headers = array(
 				'Authorization: Bearer ' . $this->apiKey,
-				'Content-Type: application/json'
 			);
+			if ($function != 'file') {
+				$headers[] = 'Content-Type: application/json';
+			}
+			if (!empty($moreheaders)) {
+				foreach ($moreheaders as $morekey => $moreval) {
+					$headers[] = $morekey.': '.$moreval;
+				}
+			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
 				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
@@ -242,8 +291,18 @@ class Ai
 					$fp = fopen($outputfile, "w");	// overwrite
 
 					if ($fp) {
-						fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following HTTP headers and Payload:\n");
+						if ($function == 'docparsing') {
+							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following file to upload:\n");
+							fwrite($fp, $instructions."\n");
+						} else {
+							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following message:\n");
+							fwrite($fp, $fullInstructions."\n");
+							fwrite($fp, "And prepompt:\n");
+							fwrite($fp, $prePrompt."\n");
+						}
+						fwrite($fp, "HTTP Header\n");
 						fwrite($fp, var_export($headers, true)."\n");
+						fwrite($fp, "Payload\n");
 						fwrite($fp, var_export($payload, true)."\n");
 
 						fclose($fp);
@@ -282,6 +341,7 @@ class Ai
 					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
+						fwrite($fp, "Answer\n");
 						fwrite($fp, var_export((empty($response['content']) ? 'No content result' : $response['content']), true)."\n");
 
 						fclose($fp);

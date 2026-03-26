@@ -34,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';	// So the
 
 
 /**
- *      Class permettant la generation du formulaire html d'envoi de mail unitaire
+ *      Class to manage a HTML form to send a unitary email
  *      Usage: $formail = new FormMail($db)
- *             $formmail->proprietes=1 ou chaine ou tableau de valeurs
- *             $formmail->show_form() affiche le formulaire
+ *             $formmail->proprietes=1 or string or array of values
+ *             $formmail->show_form() show the form
  */
 class FormMail extends Form
 {
@@ -629,7 +629,7 @@ class FormMail extends Form
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
 					'shipping_send', 'reception_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
-					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
+					'invoice_supplier_send', 'supplier_payment_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
@@ -718,7 +718,6 @@ class FormMail extends Form
 
 						// Add also email aliases if there is some
 						$listaliases = array(
-							'user_aliases' => (empty($user->email_aliases) ? '' : $user->email_aliases),
 							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
 						);
 

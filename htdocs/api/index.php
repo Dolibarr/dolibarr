@@ -119,7 +119,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // In API context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 
 $url = $_SERVER['PHP_SELF'];
@@ -201,9 +202,9 @@ if (getDolGlobalString('MAIN_API_DEBUG')) {
 		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
 		//	'version' => $api->r->getRequestedApiVersion(),
 		//	'data'    => $api->r->getRequestData(),
-		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//dol_syslog("Debug API input ".formatLogOb
+		dol_syslog("Debug API url ".formatLogObject($r->url), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".formatLogObject($r->getRequestData()), LOG_DEBUG, 0, '_api');
 		//}
 	});
 }

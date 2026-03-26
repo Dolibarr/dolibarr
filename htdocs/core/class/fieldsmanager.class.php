@@ -599,6 +599,7 @@ class FieldsManager
 		$fieldInfos->emptyOnClone = !empty($attributes['emptyonclone'][$key]);
 		$fieldInfos->langFile = $attributes['langfile'][$key] ?? '';
 		$fieldInfos->printable = !empty($attributes['printable'][$key]);
+		$fieldInfos->showintooltip = !empty($attributes['showintooltip'][$key]);
 		$fieldInfos->aiPrompt = $attributes['aiprompt'][$key] ?? '';
 		$fieldInfos->viewCss = $attributes['cssview'][$key] ?? '';
 		$fieldInfos->listCss = $attributes['csslist'][$key] ?? '';

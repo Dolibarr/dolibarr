@@ -217,6 +217,7 @@ DelayedInsert=Insertion avec délai
 EncodeBinariesInHexa=Encoder les champs binaires en hexadécimal
 IgnoreDuplicateRecords=Ignorer les erreurs de doublons (INSERT IGNORE)
 AutoDetectLang=Détection automatique (navigateur)
+AutoDetectLangShort=Détection automatique
 FeatureDisabledInDemo=Fonction désactivée dans la démo
 FeatureAvailableOnlyOnStable=Fonction disponible uniquement sur les versions officielles stables
 BoxesDesc=Les widgets sont des composants montrant des informations que vous pouvez ajouter à vos pages pour les personnaliser. Vous pouvez choisir de les afficher ou non en sélectionnant la page cible et en cliquant sur "Activer" ou "Désactiver".

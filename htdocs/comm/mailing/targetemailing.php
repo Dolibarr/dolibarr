@@ -100,6 +100,8 @@ if (version_compare(phpversion(), '7.0', '>=')) {
 	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 }
 
+$arrayfields = array();
+
 // Security check
 if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
@@ -562,8 +564,6 @@ if ($object->fetch($id) >= 0) {
 			// Sort $modulenames
 			sort($modulenames);
 
-			$var = true;
-
 			// Loop on each submodule
 			foreach ($modulenames as $modulename) {
 				// Loading Class
@@ -619,7 +619,9 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd center valignmiddle">';
 					if ($nbofrecipient === '' || $nbofrecipient >= 0) {
-						print $nbofrecipient;
+						if ($nbofrecipient !== '') {
+							print '<span class="badge badge-info">'.$nbofrecipient.'</span>';
+						}
 					} else {
 						print $langs->trans("Error").' '.img_error($obj->error);
 					}
@@ -660,7 +662,7 @@ if ($object->fetch($id) >= 0) {
 		}	// End foreach dir
 
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
 		print '</div>';	// End table
@@ -778,7 +780,7 @@ if ($object->fetch($id) >= 0) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
 
-		$morehtmlright = '<a class="reposition marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>&nbsp;';
+		$morehtmlrightbeforearrow = '<a class="reposition marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>&nbsp;';
 
 		print '</form>';
 
@@ -793,7 +795,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page_y" value="">';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlright);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlrightbeforearrow);
 
 		if ($massaction == 'reset_target') {
 			// Confirm reset

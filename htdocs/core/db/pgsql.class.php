@@ -8,7 +8,7 @@
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -752,7 +752,7 @@ class DoliDBPgsql extends DoliDB
 	 *  @param	string	$test           Test expression (example: 'cd.statut=0', 'field IS NULL')
 	 *  @param	string	$resok          Result to generate when test is True
 	 *  @param	string	$resko          Result to generate when test is False
-	 *  @return	string          		chaine format SQL
+	 *  @return	string          		Partial SQL string for IF condition
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
@@ -1219,10 +1219,8 @@ class DoliDBPgsql extends DoliDB
 			$sql .= 'datetime';
 		}
 
-		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'date', 'datetime', 'datetimegmt')) && $field_desc['value']) {
-				$sql .= "(".$this->sanitize($field_desc['value']).")";
-			}
+		if (in_array($field_desc['type'], array('varchar')) && array_key_exists('value', $field_desc) && !empty($field_desc['value'])) {
+			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
 		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
@@ -1276,10 +1274,8 @@ class DoliDBPgsql extends DoliDB
 			$sql .= 'datetime';
 		}
 
-		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime', 'datetimegmt')) && $field_desc['value']) {
-				$sql .= "(".$this->sanitize($field_desc['value']).")";
-			}
+		if (in_array($field_desc['type'], array('varchar')) && array_key_exists('value', $field_desc) && !empty($field_desc['value'])) {
+			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
 
 		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {

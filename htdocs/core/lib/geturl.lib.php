@@ -43,9 +43,10 @@
  * @param	int							$timeoutconnect		Timeout for connection time
  * @param	int							$timeoutresponse	Timeout for total time including connection
  * @param	array<int,mixed>|null		$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string						$morelogsuffix		If set to a string '_suffix', some logs are also added into the file "dolibarr_suffix.log"
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array(), $morelogsuffix = '')
 {
 	// Get global variables for proxy use
 	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
@@ -58,11 +59,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
 	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
+	}
 
 	if (!function_exists('curl_init')) {
 		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, '_curl');
 		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, $morelogsuffix);
+		}
+
 		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'PHP curl library must be installed');
 	}
 
@@ -134,6 +142,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				$redir_list["FTPS"] = 1;
 			}
 		}
+	} else {
+		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Parameter allowedschemes of getURLContent must be an array of protocol schemes');
 	}
 
 	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
@@ -142,9 +152,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, '_curl');
 	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, $morelogsuffix);
+	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
-	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);	// Timeout for connection
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);			// Timeout for total time including connection
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -251,17 +264,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			if (function_exists('gethostbyname')) {
-				$iptocheck = gethostbyname($hosttocheck);
-			} else {
-				$iptocheck = $hosttocheck;
-			}
-			// TODO Resolve ip v6
+			$iptocheck = resolveDNS($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
-			$iptocheck = '0'; //
+			$iptocheck = '0'; // will disabled check on IP
 		}
 
 		if ($iptocheck) {
@@ -320,7 +328,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, '_curl');
 		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
+	if ($morelogsuffix) {
+		// This may contains binary data, so we don't output response by default.
+		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, $morelogsuffix);
+		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, $morelogsuffix);
+	}
+
+	dol_syslog("getURLContent response size=".strlen($response)); // This $response may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {
@@ -336,8 +350,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_msg'] = curl_error($ch);
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
+
 		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, '_curl');
+		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, $morelogsuffix);
 		}
 	} else {
 		//$info = curl_getinfo($ch);
@@ -372,6 +390,43 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// @phpstan-ignore-next-line
 	return $rep;
 }
+
+
+/**
+ * Resolve a hostname into its IP
+ *
+ * @param	string	$hosttocheck		Hostname to check
+ * @return	string						First ip found (IP v4 or IP v6). If resolution fails, the $hosttocheck is returned.
+ */
+function resolveDns($hosttocheck)
+{
+	$iptocheck = null;
+
+	// Resolve $hosttocheck to get the IP $iptocheck
+	if (function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION')) {
+		try {
+			$records = dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
+
+			if (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ip'])) {			// We take the first one
+				$iptocheck = $records[0]['ip'];
+			} elseif (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ipv6'])) {	// We take the first one
+				$iptocheck = $records[0]['ipv6'];
+			}
+		} catch (Exception $e) {
+			// Nothing done
+		}
+	} elseif (function_exists('gethostbyname')) {	// resolve only ipv4
+		$iptocheck = gethostbyname($hosttocheck);
+	} else {
+		$iptocheck = $hosttocheck;
+	}
+
+	if ($iptocheck === null) {
+		$iptocheck = $hosttocheck;
+	}
+	return $iptocheck;
+}
+
 
 /**
  * Is IP allowed

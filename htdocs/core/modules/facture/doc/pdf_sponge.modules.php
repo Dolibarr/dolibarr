@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -386,15 +386,9 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				// Set certificate
-				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
-				$certprivate = empty($user->conf->CERTIFICATE_CRT_PRIVATE) ? '' : $user->conf->CERTIFICATE_CRT_PRIVATE;
-				// If user has no certificate, we try to take the company one
-				if (!$cert) {
-					$cert = getDolGlobalString('CERTIFICATE_CRT');
-				}
-				if (!$certprivate) {
-					$certprivate = getDolGlobalString('CERTIFICATE_CRT_PRIVATE');
-				}
+				$cert = getDolUserString('CERTIFICATE_CRT', getDolGlobalString('CERTIFICATE_CRT'));
+				$certprivate = getDolUserString('CERTIFICATE_CRT_PRIVATE', getDolGlobalString('CERTIFICATE_CRT_PRIVATE'));
+
 				// If a certificate is found
 				if ($cert) {
 					$info = array(
@@ -421,6 +415,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					// Do not take into account lines of the type “deposit.”
 					$is_deposit = false;
+					$reg = array();
 					if (preg_match('/^\((.*)\)$/', $object->lines[$i]->desc, $reg)) {
 						if ($reg[1] == 'DEPOSIT') {
 							$is_deposit = true;
@@ -934,7 +929,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// // Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -2264,7 +2259,8 @@ class pdf_sponge extends ModelePDFFactures
 			$resteapayer_origin = 0;
 		}
 
-		if (($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && !getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS')) {
+		if ((($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && !getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS'))
+			|| isALNERunningVersion()) {
 			// Already paid + Deposits
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -2667,14 +2663,14 @@ class pdf_sponge extends ModelePDFFactures
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact

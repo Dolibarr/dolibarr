@@ -352,7 +352,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		$tplcontent .= $objectpage->content."\n";
 
-		// Add logic to handle view and actions for managing parameters in the config page
+		// Add logic to handle view and actions for managing parameters in the special config page
 		if ($objectpage->type_container == 'setup') {
 			$content = '<div id="websitetemplateconfigpage">'."\n";
 			$content .= '<?php'."\n";

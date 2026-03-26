@@ -18,6 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var	?Conf	$conf	Object config
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";

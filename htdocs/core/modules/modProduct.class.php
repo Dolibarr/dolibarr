@@ -9,7 +9,7 @@
  * Copyright (C) 2014		Cedric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,10 @@
  */
 
 /**
- *	\defgroup   produit     Module products
+ *	\defgroup   product     Module products
  *	\brief      Module to manage catalog of predefined products
  *	\file       htdocs/core/modules/modProduct.class.php
- *	\ingroup    produit
+ *	\ingroup    product
  *	\brief      Description and activation file for the module to manage catalog of predefined products
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -359,12 +359,14 @@ class modProduct extends DolibarrModules
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
 			$this->export_label[$r] = "ProductsMultiPrice"; // Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r] = array(array("produit", "export"));
-			$this->export_fields_array[$r] = array('p.rowid' => "Id", 'p.ref' => "Ref", 'p.label' => "Label",
+			$this->export_fields_array[$r] = array(
+				'p.rowid' => "Id", 'p.ref' => "Ref", 'p.label' => "Label",
 				'pr.price_base_type' => "PriceBase", 'pr.price_level' => "PriceLevel",
 				'pr.price' => "PriceLevelUnitPriceHT", 'pr.price_ttc' => "PriceLevelUnitPriceTTC",
 				'pr.price_min' => "MinPriceLevelUnitPriceHT", 'pr.price_min_ttc' => "MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx' => 'PriceLevelVATRate',
-				'pr.date_price' => 'DateCreation');
+				'pr.date_price' => 'DateCreation'
+			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 			}
@@ -374,19 +376,27 @@ class modProduct extends DolibarrModules
 			//	'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
 			//	'p.datec'=>'Date','p.tms'=>'Date'
 			//);
-			$this->export_entities_array[$r] = array('p.rowid' => "product", 'p.ref' => "product", 'p.label' => "Label",
+			$this->export_entities_array[$r] = array(
+				'p.rowid' => "product", 'p.ref' => "product", 'p.label' => "Label",
 				'pr.price_base_type' => "product", 'pr.price_level' => "product", 'pr.price' => "product",
 				'pr.price_ttc' => "product",
 				'pr.price_min' => "product", 'pr.price_min_ttc' => "product",
 				'pr.tva_tx' => 'product',
 				'pr.recuperableonly' => 'product',
-				'pr.date_price' => "product");
+				'pr.date_price' => "product"
+			);
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price_extrafields as extra ON pr.rowid = extra.fk_object';
 			$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
 			$this->export_sql_end[$r] .= ' AND pr.date_price = (SELECT MAX(pr2.date_price) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity IN ('.getEntity('product').'))'; // export only latest prices not full history
-			$this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
+			// $this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
+			global $keyforselect, $keyforelement, $keyforaliasextra;
+			$keyforselect = 'product_price';
+			$keyforelement = 'product';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
 
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {

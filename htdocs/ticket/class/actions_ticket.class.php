@@ -202,8 +202,12 @@ class ActionsTicket extends CommonHookActions
 	{
 		global $langs;
 
+		$closeStatuses = [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED];
+
+		$permissiontoadd = $user->hasRight('ticket', 'write');
+
 		print '<!-- initial message of ticket -->'."\n";
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -217,7 +221,7 @@ class ActionsTicket extends CommonHookActions
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
-		if ($user->hasRight("ticket", "manage")) {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses)) {
 			if ($action != 'edit_message_init') {
 				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 			} else {
@@ -229,12 +233,12 @@ class ActionsTicket extends CommonHookActions
 
 		print '<tr>';
 		print '<td colspan="2">';
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$uselocalbrowser = true;
-			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
+			$uselocalbrowser = -1;
+			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 1 ? true : false;			// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 			if (!$ckeditorenabledforticket) {
 				$msg = dol_string_nohtmltag($msg, 2);
 			}
@@ -255,7 +259,7 @@ class ActionsTicket extends CommonHookActions
 		print '</table>';
 		print '</div>';
 
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// MESSAGE
 			print '</form>';
 		}
@@ -388,7 +392,11 @@ class ActionsTicket extends CommonHookActions
 								if (!empty($doc->share)) {
 									$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
 								} elseif ($doc->src_object_type == 'ticket') {
-									$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file_relative_path).'&entity='.getEntity('ticket', 0);
+									$downloadwrapper = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/document.php' : dol_buildpath('/public/ticket/document.php', 2);
+
+									global $dolibarr_main_instance_unique_id;
+									$securekey = dol_hash('dolibarr-'.$file_relative_path.'-'.$dolibarr_main_instance_unique_id, 'sha256');
+									$doclink = $downloadwrapper.'?modulepart='.$modulepart.'&attachment=0&entity='.getEntity('ticket', 0).'&securekey='.urlencode($securekey).'&file='.urlencode($file_relative_path);
 								}
 
 								$mimeAttr = ' mime="'.$mime.'" ';

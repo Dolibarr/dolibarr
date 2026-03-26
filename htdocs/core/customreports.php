@@ -28,7 +28,10 @@
  * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
  * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);		// TODO Use a variable
  * $SHOWLEGEND = 0;
- * $search_xaxis = array('t.column');
+ * $search_xaxis = array('t.columnx');
+ * $search_yaxis = array('t.columny');		// for grid ???
+ * $search_measures = array('t.count');
+ * $search_groupby = array('t.column2');
  * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -51,7 +54,6 @@
 ';
 
 // Initialise values
-$search_groupby = array();
 $tabfamily = null;
 $objecttype = null;
 
@@ -81,14 +83,21 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$search_yaxis = GETPOST('search_yaxis', 'array:alphanohtml');
 	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
 
-	$search_measures = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_measures);
-	$search_xaxis = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_xaxis);
-	$search_yaxis = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_yaxis);
-	$search_groupby = array_map(function ($value) {
-		return preg_replace('/[^a-z0-9\._\-]+/', '', $value); }, $search_groupby);
+	/**
+	 * Sanitize key
+	 *
+	 * @param	string	$value		Value
+	 * @return	string				Sanitized value
+	 */
+	function sanititzekey($value)
+	{
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value);
+	}
+
+	$search_measures = array_map('sanititzekey', $search_measures);
+	$search_xaxis = array_map('sanititzekey', isset($search_xaxis) ? $search_xaxis : array());
+	$search_yaxis = array_map('sanititzekey', $search_yaxis);
+	$search_groupby = array_map('sanititzekey', isset($search_groupby) ? $search_groupby : array());
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -123,7 +132,8 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 }
 
 // In customreport context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 if (empty($mode)) {
 	$mode = 'graph';
@@ -134,6 +144,14 @@ if (!isset($search_measures)) {
 if (!isset($search_xaxis)) {
 	// Ensure value is set and not null.
 	$search_xaxis = array();
+}
+if (!isset($search_yaxis)) {
+	// Ensure value is set and not null.
+	$search_yaxis = array();
+}
+if (!isset($search_groupby)) {
+	// Ensure value is set and not null.
+	$search_groupby = array();
 }
 if (!isset($search_graph)) {
 	// Ensure value is set and not null
@@ -245,7 +263,7 @@ if ($objecttype) {
 '@phan-var-force CommonObject $object';
 
 // Security check
-$socid = 0;
+//$socid = 0;
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden('Access forbidden to external users');
@@ -368,6 +386,7 @@ $arrayofgroupby = array();
 $arrayofyaxis = array();
 $arrayofvaluesforgroupby = array();
 
+$features = '';
 if (!empty($object->element)) {
 	$features = $object->element;
 } else {
@@ -379,8 +398,11 @@ if (!empty($object->element_for_permission)) {
 	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
-// Security check
-restrictedArea($user, $features, 0, '');
+// $arrayoftype contains several features
+// Test on permission can be done on a given selected feature only
+
+// Security check (do not stop here, get only result to show message later)
+$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
 
 
 /*
@@ -620,6 +642,14 @@ if (count($search_groupby)) {
 	}
 }
 //var_dump($arrayofvaluesforgroupby);exit;
+
+
+if (!$resultcheck) {
+	print '<div class="error">';
+	print $langs->trans("NotEnoughPermissions");
+	print '</div>';
+}
+
 
 
 //$tmparray = dol_getdate(dol_now());

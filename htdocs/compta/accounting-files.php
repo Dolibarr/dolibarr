@@ -6,7 +6,7 @@
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,12 +129,12 @@ if ($user->socid > 0) {
 
 // Define $arrayofentities if multientity is set.
 $arrayofentities = array();
-if (isModEnabled('multicompany') && is_object($mc)) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 	$arrayofentities = $mc->getEntitiesList();
 }
 
 $entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : (GETPOSTISSET('search_entity') ? GETPOSTINT('search_entity') : $conf->entity));
-if (isModEnabled('multicompany') && is_object($mc)) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 	if (empty($entity) && getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
 		$entity = '0,'.implode(',', array_keys($arrayofentities));
 	}
@@ -520,7 +520,7 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 		dol_mkdir($dirfortmpfile);
 
 		$log = $langs->transnoentitiesnoconv("Type");
-		if (isModEnabled('multicompany') && is_object($mc)) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			$log .= ','.$langs->transnoentitiesnoconv("Entity");
 		}
 		$log .= ','.$langs->transnoentitiesnoconv("Date");
@@ -565,7 +565,7 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				}
 
 				$log .= '"'.$langs->transnoentitiesnoconv($file['item']).'"';
-				if (isModEnabled('multicompany') && is_object($mc)) {
+				if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 					$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
 				}
 				$log .= ','.dol_print_date($file['date'], 'dayrfc');
@@ -633,13 +633,15 @@ $head[$h][0] = $_SERVER["PHP_SELF"];
 $head[$h][1] = $langs->trans("AccountantFiles");
 $head[$h][2] = 'AccountancyFiles';
 
-print dol_get_fiche_head($head, 'AccountancyFiles');
+print dol_get_fiche_head($head, 'AccountancyFiles', '', -1);
 
 
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
+print '<div class="neutral">';
+
+print '<span class="opacitylow">'.$langs->trans("ExportAccountingSourceDocHelp");
 if (isModEnabled('accounting')) {
 	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
 }
@@ -654,7 +656,7 @@ print "\n";
 
 // Export is for current company only
 $socid = 0;
-if (isModEnabled('multicompany') && is_object($mc)) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 	$mc->getInfo($conf->entity);
 	print ' &nbsp; <span class="marginleftonly marginrightonly'.(!getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES') ? ' opacitymedium' : '').'">'.$langs->trans("Entity").' : ';
 	if (getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
@@ -696,7 +698,9 @@ foreach ($listofchoices as $choice => $val) {
 	$i++;
 }
 
-print '<input type="submit" class="button small nomarginleft margintoponly" name="search" value="'.$langs->trans("Search").'">';
+print '<br><br><center><input type="submit" class="button small nomarginleft margintoponly" name="search" value="'.$langs->trans("Search").'"></center>';
+
+print '</div>';
 
 print '</form>'."\n";
 

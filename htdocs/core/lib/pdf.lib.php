@@ -14,7 +14,7 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -307,12 +307,11 @@ function pdf_getPDFFontSize($outputlangs)
  *
  * @param	string		$logo		Full path to logo file to use
  * @param	bool		$url		Image with url (true or false)
- * @return	int|float
+ * @return	float
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
-	global $conf;
-	$height = (!getDolGlobalString('MAIN_DOCUMENTS_LOGO_HEIGHT') ? 20 : $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
+	$height = getDolGlobalFloat('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
 	$maxwidth = 130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($logo, $url);
@@ -322,7 +321,7 @@ function pdf_getHeightForLogo($logo, $url = false)
 			$height = $height * $maxwidth / $width;
 		}
 	}
-	//print $tmp['width'].' '.$tmp['height'].' '.$width; exit;
+
 	return $height;
 }
 
@@ -381,10 +380,10 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param   Societe|Contact     $thirdparty     Contact or thirdparty
- * @param   Translate           $outputlangs    Output language
- * @param   int<0,1>            $includealias   1=Include alias name after name
- * @return  string                              String with name of thirdparty (+ alias if requested)
+ * @param   Societe|Contact|null    $thirdparty     Contact or thirdparty
+ * @param   Translate           	$outputlangs    Output language
+ * @param   int<0,1>            	$includealias   1=Include alias name after name
+ * @return  string                  	            String with name of thirdparty (+ alias if requested)
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias = 0)
 {
@@ -767,7 +766,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 
 
 /**
- *   	Show header of page for PDF generation
+ *   	Add some information from the blockedlog module
  *
  *   	@param	TCPDF		$pdf     		Object PDF
  *      @param	Translate	$outputlangs	Object lang for output
@@ -807,6 +806,21 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
 			}
+
+			$isADuplicata = ($object->pos_print_counter >= 2);
+			if ($isADuplicata) {
+				$posy += 3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, '*** '.$outputlangs->trans("DUPLICATA").(getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT') ? ' (no '.($object->pos_print_counter - 1).')' : '').' ***', '', 'R');
+			}
+		}
+
+		if ($object->status == $object::STATUS_DRAFT) {
+			$posy += 5;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, '*** '.strtoupper($outputlangs->trans("TemporaryReceipt")).' ***', '', 'R');
 		}
 	}
 }

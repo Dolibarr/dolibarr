@@ -1963,7 +1963,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, ref, doc_date, code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, ref, doc_date, code_journal, journal_label, doc_ref, doc_type, fk_doc,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement, import_key";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -1985,6 +1985,7 @@ class BookKeeping extends CommonObject
 			$this->doc_date = $this->db->jdate($obj->doc_date);
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
+			$this->fk_doc = $obj->fk_doc;
 			$this->date_creation = $this->db->jdate($obj->date_creation);
 			$this->date_modification = $this->db->jdate($obj->date_modification);
 			if ($mode != "_tmp") {
@@ -2257,6 +2258,9 @@ class BookKeeping extends CommonObject
 				$error++;
 			}
 
+			// Store the new piece_num so caller can use it after transformTransaction()
+			$this->piece_num = $next_piecenum;
+
 			if (!$error) {
 				// Delete if there is an empty line
 				$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity)." AND numero_compte IS NULL AND debit = 0 AND credit = 0";
@@ -2522,7 +2526,7 @@ class BookKeeping extends CommonObject
 		$alias = !empty($alias) && strpos($alias, '.') === false ? $alias . "." : $alias;
 
 		if (!isset(self::$can_modify_bookkeeping_sql_cached[$alias]) || $force) {
-			$result = $this->loadFiscalPeriods($force, 'active');
+			$result = $this->loadFiscalPeriods($force, 'active');	// This set $conf->cache['active_fiscal_period_cached']
 			if ($result < 0) {
 				return null;
 			}
@@ -2533,9 +2537,10 @@ class BookKeeping extends CommonObject
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
 					$sql_list[$i] = "(";
 					$sql_list[$i] .= "'".$this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date";
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_end'])) {
 						$sql_list[$i] .= " AND ";
-						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end'])."'";
+						$sql_list[$i] .= $this->db->sanitize($alias)."doc_date <= '" . $this->db->idate((int) $fiscal_period['date_end'])."'";
 					}
 					$sql_list[$i] .= ")";
 					$i++;
@@ -2595,6 +2600,7 @@ class BookKeeping extends CommonObject
 			}
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $bookkeeping->doc_date && (empty($fiscal_period['date_end']) || $bookkeeping->doc_date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
@@ -2693,6 +2699,7 @@ class BookKeeping extends CommonObject
 
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $date && (empty($fiscal_period['date_end']) || $date <= $fiscal_period['date_end'])) {
 						return 1;
 					}

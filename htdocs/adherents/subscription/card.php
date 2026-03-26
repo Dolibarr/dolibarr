@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -344,7 +345,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public)).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {

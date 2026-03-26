@@ -459,7 +459,7 @@ class OrderLine extends CommonOrderLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
@@ -630,7 +630,7 @@ class OrderLine extends CommonOrderLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql .= " description='".$this->db->escape($this->desc)."'";
 		$sql .= " , label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
@@ -730,7 +730,7 @@ class OrderLine extends CommonOrderLine
 			$this->total_localtax2 = 0;
 		}
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql .= " total_ht='".price2num($this->total_ht)."'";
 		$sql .= ",total_tva='".price2num($this->total_tva)."'";

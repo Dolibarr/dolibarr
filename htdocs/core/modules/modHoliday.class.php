@@ -150,6 +150,21 @@ class modHoliday extends DolibarrModules
 				'status' => 1,
 				'test' => '$conf->holiday->enabled',
 				'datestart' => $datestart
+			),
+			1 => array(
+				'label' => 'SendPreviousMonthHRInformations:holiday',
+				'jobtype' => 'method',
+				'class' => 'holiday/class/holiday.class.php',
+				'objectname' => 'Holiday',
+				'method' => 'sendPreviousMonthHRInformations',
+				'parameters' => 'emailaddress, EmailTemplateCode',
+				'comment' => 'Send HR information to the defined email address. EmailTemplateCode can be id or label of emailtemplate to send',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24 * 31,
+				'priority' => 50,
+				'status' => 0,
+				'test' => '$conf->holiday->enabled',
+				'datestart' => $datestart
 			)
 		);
 
@@ -306,6 +321,16 @@ class modHoliday extends DolibarrModules
 			'd.ref' => 'Ref*', 'd.fk_user' => 'UserID*', 'd.fk_type' => 'TypeOfLeaveId*','d.fk_validator' => 'ApprovedBy*',
 			'd.date_debut' => 'DateStart*', 'd.date_fin' => 'DateEnd*', 'd.halfday' => 'HalfDay', 'd.description' => 'Description*',
 			'd.date_create' => 'DateCreation*'
+		);
+
+		// Import of leave balance
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ListeLB"; // Translation key
+		$this->import_icon[$r] = 'holiday';
+		$this->import_tables_array[$r] = array('d' => MAIN_DB_PREFIX.'holiday_users');
+		$this->import_fields_array[$r] = array(
+			'd.fk_user' => "Employee*", 'd.nb_holiday' => "LeaveBalance*", 'd.fk_type' => "LeaveType*"
 		);
 
 		$keyforselect = 'holiday';

@@ -573,8 +573,8 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	}
 
 	dol_syslog("newpayment.php execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_payment');
-	dol_syslog("GET=".var_export($_GET, true), LOG_DEBUG, 0, '_payment');
-	dol_syslog("POST=".var_export($_POST, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("GET=".formatLogObject($_GET), LOG_DEBUG, 0, '_payment');
+	dol_syslog("POST=".formatLogObject($_POST), LOG_DEBUG, 0, '_payment');
 
 	$stripeToken = GETPOST("stripeToken", 'alpha');
 	$email = GETPOST("email", 'alpha');
@@ -666,7 +666,8 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 							'metadata' => $metadata,
 							'customer' => $customer->id,
 							'source' => $card,
-						  'statement_descriptor_suffix' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+							'statement_descriptor' => dol_trunc($FULLTAG, 22, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt for SEPA
+							'statement_descriptor_suffix' => dol_trunc($FULLTAG, 12, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt for CARD (company + description)
 						), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 						// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 						if (empty($charge)) {
@@ -733,7 +734,8 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 					'capture'  => true, // Charge immediately
 					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 					'metadata' => $metadata,
-					'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+					'statement_descriptor' => dol_trunc($FULLTAG, 22, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt for SEPA
+					'statement_descriptor_suffix' => dol_trunc($FULLTAG, 12, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt for CARD (company + description)
 				), array("idempotency_key" => (string) $FULLTAG, "stripe_account" => (string) $stripeacc));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge)) {
@@ -756,7 +758,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			print('Message is:'.$err['message']."\n");
 
 			$error++;
-			$errormessage = "ErrorCard ".$e->getMessage()." err=".var_export($err, true);
+			$errormessage = "ErrorCard ".$e->getMessage()." err=".formatLogObject($err);
 			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
@@ -1829,7 +1831,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		include_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 		$partnership = new Partnership($db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$result = $partnership->fetch(0, null, null, $member->thirdparty->id);
+		$result = $partnership->fetch(0, '', 0, (int) $member->thirdparty->id);
 		if ($result > 0) {
 			$pp = 1;
 		}
@@ -2768,7 +2770,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 						"metadata" => $metadata
 					);
 					if ($TAG) {
-						$arrayforpaymentintent["statement_descriptor"] = dol_trunc($TAG, 10, 'right', 'UTF-8', 1); // 22 chars that appears on bank receipt (company + description)
+						$arrayforpaymentintent["statement_descriptor"] = dol_trunc($TAG, 22, 'right', 'UTF-8', 1); // 22 chars that appears on bank receipt (company + description)
 					}
 
 					$arrayforcheckout = array(

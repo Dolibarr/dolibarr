@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021  John BOTELLA    <john.botella@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ class FormSetup
 
 	/**
 	 * an list of hidden inputs used only in edit mode
-	 * @var array<string,string>  Currently array{token:string,action:string}
+	 * @var array<string,int|string>  	Currently array{token:string,action:string}
 	 */
 	public $formHiddenInputs = array();
 
@@ -144,11 +145,11 @@ class FormSetup
 	/**
 	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
-	 * @param 	bool 	$editMode 		True will display output on edit mod
-	 * @param	bool	$hideTitle		True to hide the first title line
-	 * @param	string	$title			Title of first line
-	 * @param	string	$cssfirstcolumn	CSS first column
-	 * @return 	string					Html output
+	 * @param 	int|bool 	$editMode 		True will display output on edit mod
+	 * @param	bool		$hideTitle		True to hide the first title line
+	 * @param	string		$title			Title of first line
+	 * @param	string		$cssfirstcolumn	CSS first column
+	 * @return 	string						Html output
 	 */
 	public function generateOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
@@ -183,7 +184,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode, $hideTitle, $title, $cssfirstcolumn);
+			$out .= $this->generateTableOutput((bool) $editMode, $hideTitle, $title, $cssfirstcolumn);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -931,7 +932,20 @@ class FormSetupItem
 				$input = $this->fieldParams['input'] ?? array();
 				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
 				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
-				$suffixarray = array('ifoff' => empty($this->fieldParams['alertifoff']) ? '' : '_red', 'ifon' => empty($this->fieldParams['alertifon']) ? '' : '_red');
+				$suffixarray = array(
+					'ifoff' => '',
+					'ifon' => '',
+				);
+				if (!empty($this->fieldParams['alertifoff'])) {
+					$suffixarray['ifoff'] = '_red';
+				} elseif (!empty($this->fieldParams['warningifoff'])) {
+					$suffixarray['ifoff'] = '_warning';
+				}
+				if (!empty($this->fieldParams['alertifon'])) {
+					$suffixarray['ifon'] = '_red';
+				} elseif (!empty($this->fieldParams['warningifon'])) {
+					$suffixarray['ifon'] = '_warning';
+				}
 
 				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, $suffixarray, '', $this->cssClass);
 			} else {
@@ -1159,7 +1173,7 @@ class FormSetupItem
 			$min = $genhandler->length;
 			$max = $genhandler->length2;
 		}
-		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
+		$out = '<input required="required" type="password" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
 		if ($min) {
 			$out .= ' minlength="' . $min . '"';
 		}

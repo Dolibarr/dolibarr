@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
  *
@@ -1901,7 +1901,7 @@ if ($action == 'create') {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 100, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -2082,7 +2082,7 @@ if ($id > 0 && $action != 'create') {
 	$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 
-	// Confirmation suppression action
+	// Deletion confirmation action
 	if ($action == 'delete') {
 		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
@@ -2472,7 +2472,7 @@ if ($id > 0 && $action != 'create') {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		// Wysiwyg editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+		$doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 

@@ -7,10 +7,10 @@
  * Copyright (C) 2012-2015  Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2016       Bahfir abbes        <bafbes@gmail.com>
  * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
- * Copyright (C) 2017-2019  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2017-2026  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
@@ -21,6 +21,7 @@
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
+ * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +153,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 *
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
@@ -571,12 +572,12 @@ abstract class CommonObject
 	public $multicurrency_tx;
 
 	/**
-	 * @var float 		Multicurrency total amount excluding taxes (HT = "Hors Taxe" in French)
+	 * @var float 		Multicurrency total amount excluding taxes
 	 */
 	public $multicurrency_total_ht;
 
 	/**
-	 * @var float 		Multicurrency total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * @var float 		Multicurrency total VAT amount
 	 */
 	public $multicurrency_total_tva;
 
@@ -641,13 +642,13 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var ?float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
+	 * @var ?float 		Total amount excluding taxes
 	 * @see update_price()
 	 */
 	public $total_ht;
 
 	/**
-	 * @var ?float 		Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * @var ?float 		Total VAT amount
 	 * @see update_price()
 	 */
 	public $total_tva;
@@ -665,7 +666,7 @@ abstract class CommonObject
 	public $total_localtax2;
 
 	/**
-	 * @var ?float 		Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 * @var ?float 		Total amount including taxes
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -1029,6 +1030,12 @@ abstract class CommonObject
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
 					continue;
 				}
+
+				if (empty($extrafields->attributes[$this->table_element]['showintooltip'][$key])) {
+					continue;
+				}
+
+
 				if ($count >= abs($MAX_EXTRAFIELDS_TO_SHOW_IN_TOOLTIP)) {
 					$data['more_extrafields'] = '<br>...';
 					break;
@@ -1279,6 +1286,22 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 			return -1;
 		}
+
+		// Check that the contact actually exists in database
+		$sql_check = "SELECT rowid FROM ".$this->db->prefix().($source == 'internal' ? "user" : "socpeople")." WHERE rowid = ".((int) $fk_socpeople);
+		$resql_check = $this->db->query($sql_check);
+		if ($resql_check) {
+			if (!$this->db->num_rows($resql_check)) {
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorRecordNotFound");
+				dol_syslog(get_class($this)."::add_contact Contact/user id ".$fk_socpeople." does not exist", LOG_ERR);
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
 		if (!$type_contact) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "2");
@@ -2749,16 +2772,25 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
 
 		if ($this->status >= 0 || $this->element == 'societe') {
+			$this->oldcopy = dol_clone($this, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
 			// TODO uniformize field name
 			$fieldname = 'fk_mode_reglement';
+			$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
 			if ($this->element == 'societe') {
 				$fieldname = 'mode_reglement';
+				$triggerName = 'COMPANY';
+			}
+			if (get_class($this) == 'Facture') {
+				$triggerName = 'BILL';
 			}
 			if (get_class($this) == 'Fournisseur') {
 				$fieldname = 'mode_reglement_supplier';
+				$triggerName = 'BILL_SUPPLIER';
 			}
 			if (get_class($this) == 'Tva') {
 				$fieldname = 'fk_typepayment';
+				$triggerName = 'VAT';
 			}
 			if (get_class($this) == 'Salary') {
 				$fieldname = 'fk_typepayment';
@@ -2774,10 +2806,10 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') {
 					$this->mode_reglement_supplier_id = $id;
 				}
+
 				// Triggers
 				if (!$error && !$notrigger) {
 					// Call triggers
-					$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
 					$result = $this->call_trigger($triggerName.'_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
@@ -3103,7 +3135,7 @@ abstract class CommonObject
 	 */
 	public function setPaymentTerms($id, $deposit_percent = null)
 	{
-		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.var_export($deposit_percent, true).')');
+		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.formatLogObject($deposit_percent).')');
 		if ($this->status >= 0 || $this->element == 'societe') {
 			// TODO uniformize field name
 			$fieldname = 'fk_cond_reglement';
@@ -4372,12 +4404,67 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			// If we link a supplier order to a supplier invoice that already uses discounts coming from other supplier invoices
+			// (deposit invoice / credit note used as payment), also link those source invoices to the same supplier order.
+			// This helps keep "linked elements" consistent when totals are impacted by such discounts.
+			if ($origin === 'order_supplier' && $targettype === 'invoice_supplier' && $this->element === 'invoice_supplier' && (int) $origin_id > 0 && (int) $this->id > 0) {
+				$sourceinvoices = array();
+
+				$sqlsources = "SELECT DISTINCT rc.fk_invoice_supplier_source as rowid";
+				$sqlsources .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+				$sqlsources .= " WHERE rc.fk_invoice_supplier = ".((int) $this->id);
+				$sqlsources .= " AND rc.fk_invoice_supplier_source IS NOT NULL";
+
+				$resqlsources = $this->db->query($sqlsources);
+				if ($resqlsources) {
+					while ($objsrc = $this->db->fetch_object($resqlsources)) {
+						$srcid = (int) $objsrc->rowid;
+						if ($srcid > 0 && $srcid !== (int) $this->id) {
+							$sourceinvoices[$srcid] = $srcid;
+						}
+					}
+				} else {
+					dol_syslog(get_class($this)."::add_object_linked Failed to read supplier invoice discounts sources", LOG_WARNING);
+				}
+
+				if (!empty($sourceinvoices)) {
+					$existing = array();
+					$sourcelist = implode(',', $sourceinvoices);
+
+					$sqlexists = "SELECT fk_target";
+					$sqlexists .= " FROM ".$this->db->prefix()."element_element";
+					$sqlexists .= " WHERE fk_source = ".((int) $origin_id);
+					$sqlexists .= " AND sourcetype = '".$this->db->escape($origin)."'";
+					$sqlexists .= " AND targettype = '".$this->db->escape($targettype)."'";
+					$sqlexists .= " AND fk_target IN (".$this->db->sanitize($sourcelist).")";
+
+					$resqlexists = $this->db->query($sqlexists);
+					if ($resqlexists) {
+						while ($objexist = $this->db->fetch_object($resqlexists)) {
+							$existing[(int) $objexist->fk_target] = 1;
+						}
+					} else {
+						dol_syslog(get_class($this)."::add_object_linked Failed to read existing linked supplier invoices", LOG_WARNING);
+					}
+
+					foreach ($sourceinvoices as $srcid) {
+						if (!empty($existing[(int) $srcid])) {
+							continue;
+						}
+
+						$sqladd = "INSERT INTO " . $this->db->prefix() . "element_element (fk_source, sourcetype, fk_target, targettype)";
+						$sqladd .= " VALUES (".((int) $origin_id).", '".$this->db->escape($origin)."', ".((int) $srcid).", '".$this->db->escape($targettype)."')";
+						$this->db->query($sqladd); // Best-effort: do not fail original link action
+					}
+				}
+			}
+
 			if (!$notrigger) {
 				// Call trigger
 				$this->context['link_origin'] = $origin;
 				$this->context['link_origin_id'] = $origin_id;
 
-				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user);	// Note: We should have used here a hook. Not a business event
+				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user); // Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
 					$error++;
 				}
@@ -4901,6 +4988,9 @@ abstract class CommonObject
 			if ($elementTable == 'prelevement_bons') {
 				$fieldstatus = "statut";
 			}
+			if ($elementTable == 'bank_account') {
+				$fieldstatus = "clos";
+			}
 			if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
 				$fieldstatus = 'status';
 			}
@@ -5097,7 +5187,7 @@ abstract class CommonObject
 			$arraytoscan = array_flip($this->childtables);
 		}
 
-		// Test if child exists
+		// Test on all child tables to scan if child exists
 		$haschild = 0;
 		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
@@ -5134,6 +5224,7 @@ abstract class CommonObject
 					$sql .= " AND c.entity = ".((int) $entity);
 				}
 			}
+			//var_dump($table, $element, $sql);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -5156,6 +5247,7 @@ abstract class CommonObject
 				return -1;
 			}
 		}
+
 		if ($haschild > 0) {
 			$this->errors[] = "ErrorRecordHasChildren";
 			return $haschild;
@@ -5549,7 +5641,7 @@ abstract class CommonObject
 				$product_static = new Product($this->db);
 				$product_static->fetch($line->fk_product);
 
-				$product_static->ref = $line->ref; //can change ref in hook
+				$product_static->ref = (string) $line->ref; //can change ref in hook
 				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
@@ -5772,7 +5864,7 @@ abstract class CommonObject
 		} elseif (!empty($line->fk_product)) {
 			$productstatic = new Product($this->db);
 			$productstatic->id = $line->fk_product;
-			$productstatic->ref = $line->ref;
+			$productstatic->ref = (string) $line->ref;
 			$productstatic->type = $line->fk_product_type;
 			if (empty($productstatic->ref)) {
 				$line->fetch_product();
@@ -6164,7 +6256,8 @@ abstract class CommonObject
 		} else {
 			// TODO: Try to set type above again
 			'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);  // @phan-suppress-line-PhanTypeMismatchArgument
+			$this->context['moreparams'] = $moreparams;
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);  // @phan-suppress-line-PhanTypeMismatchArgument
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
@@ -6264,6 +6357,12 @@ abstract class CommonObject
 				$setsharekey = true;
 			}
 			if ($this->element == 'supplier_proposal' && getDolGlobalInt("SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD")) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'order_supplier' && getDolGlobalInt("SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD")) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'invoice_supplier' && getDolGlobalInt("SUPPLIER_INVOICE_ALLOW_EXTERNAL_DOWNLOAD")) {
 				$setsharekey = true;
 			}
 			if ($this->element == 'societe_rib' && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
@@ -7056,7 +7155,7 @@ abstract class CommonObject
 			// - multipts => "MULTIPOINT(0 0, 20 20, 60 60)"
 			// - linestrg => "LINESTRING(0 0, 10 10, 20 25, 50 60)"
 			// - polygon  => "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-			$sqlColumnValues[$key] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
+			$sqlColumnValues[$attributeKey] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
 		}
 
 		$this->db->begin();
@@ -8567,12 +8666,12 @@ abstract class CommonObject
 	 * Code very similar with showOutputField of extra fields
 	 *
 	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
-	 * @param  string  	$key            	Key of attribute
-	 * @param  string  	$value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  	$moreparam      	To add more parameters on html tag
-	 * @param  string  	$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  	$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   	$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
+	 * @param  string  		$key            	Key of attribute
+	 * @param  string|int  	$value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  		$moreparam      	To add more parameters on html tag
+	 * @param  string  		$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  		$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   		$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
 	 * @return string
 	 */
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
@@ -8589,6 +8688,7 @@ abstract class CommonObject
 		//$label = empty($val['label']) ? '' : $val['label'];
 		$type  = empty($val['type']) ? '' : $val['type'];
 		$size  = empty($val['css']) ? '' : $val['css'];
+
 		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
@@ -9369,6 +9469,7 @@ abstract class CommonObject
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = '', $display_type = 'card')
 	{
 		global $db, $conf, $langs, $action, $form, $hookmanager;
+		global $objectoffield;
 
 		if (!is_object($form)) {
 			$form = new Form($db);
@@ -9380,6 +9481,9 @@ abstract class CommonObject
 		if (!is_array($extrafields->attributes[$this->table_element])) {
 			dol_syslog("extrafields->attributes was not loaded with extrafields->fetch_name_optionals_label(table_element);", LOG_WARNING);
 		}
+
+		// Ensure $objectoffield is available for dol_eval visibility formulas.
+		$objectoffield = $this;
 
 		$out = '';
 
@@ -9965,7 +10069,7 @@ abstract class CommonObject
 	 *  @param		string					$modulepart		'product', 'ticket', ...
 	 *  @param      string					$sdir        	Directory to scan (full absolute path)
 	 *  @param      int<0,1>|''|'small'		$size        	0 or ''=original size, 1 or 'small'=use thumbnail if possible
-	 *  @param      int						$nbmax       	Nombre maximum de photos (0=pas de max)
+	 *  @param      int						$nbmax       	Maximum number of photos (0=no max)
 	 *  @param      int						$nbbyrow     	Number of image per line or -1 to use div separator or 0 to use no separator. Used only if size=1 or 'small'.
 	 * 	@param		int						$showfilename	1=Show filename
 	 * 	@param		int						$showaction		1=Show icon with action links (resize, delete)
@@ -9985,6 +10089,7 @@ abstract class CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 
 		$sortfield = 'position_name';
 		$sortorder = 'asc';
@@ -10031,6 +10136,64 @@ abstract class CommonObject
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir, $this);
 		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
+
+		$useLinkPathPhoto = false;
+
+		if (getDolGlobalInt('PRODUCT_USE_LINK_PATH_FOR_PHOTO')) {
+			$link = new Link($this->db);
+			$links = array();
+			$link->fetchAll($links, 'product', $this->id);
+
+			if (count($links) > 0)
+				$useLinkPathPhoto = true;
+
+			if ($useLinkPathPhoto) {
+				// Start table or div based on nbbyrow
+				if ($nbbyrow > 0) {
+					$return .= '<table class="valigntop center centpercent" style="border:0; padding:2px; border-spacing:2px; border-collapse: separate;">';
+				}
+
+				$i = 0;
+				foreach ($links as $link) {
+					if (!empty($link->url) && preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $link->url)) {
+						$url = dol_escape_htmltag($link->url);
+						$i++;
+						$nbphoto++;
+
+						if ($nbbyrow > 0 && ($i % $nbbyrow == 1)) {
+							$return .= '<tr class="center valignmiddle">';
+						}
+
+						if ($nbbyrow > 0) {
+							$return .= '<td style="width:'.ceil(100/$nbbyrow).'%" class="photo">';
+						} else {
+							$return .= '<div class="inline-block">';
+						}
+
+						$return .= '<img class="photo photowithmargin'.($addphotorefcss?' '.$addphotorefcss:'').'"'.($maxHeight?' height="'.$maxHeight.'"':'').' src="'.$url.'" title="External image">';
+
+						if ($nbbyrow > 0) {
+							$return .= '</td>';
+							if ($i % $nbbyrow == 0) {
+								$return .= '</tr>';
+							}
+						} else {
+							$return .= '</div>';
+						}
+					}
+				}
+
+				if ($nbbyrow > 0) {
+					while ($i % $nbbyrow) {
+						$return .= '<td style="width:'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$i++;
+					}
+					if ($nbphoto) {
+						$return .= '</table>';
+					}
+				}
+			}
+		}
 
 		if (count($filearray)) {
 			if ($sortfield && $sortorder) {
@@ -10084,7 +10247,7 @@ abstract class CommonObject
 						}
 
 						// Show image (width height=$maxHeight)
-						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
+						// If thumb file available and image source is too large, we use the thumb, otherwise we use the original photo
 						$alt = $langs->transnoentitiesnoconv('File').': '.$relativefile;
 						$alt .= ' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
 						if ($overwritetitle) {
@@ -11756,7 +11919,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Set the error message for the object and log it.
+	 * Set the error message for the object and logs it, including the file name and line number.
 	 *
 	 * @param string $message      the error message
 	 * @param int<0,7> $loglevel   the log level
@@ -11764,7 +11927,13 @@ abstract class CommonObject
 	 */
 	public function setErrorWithLog($message, $loglevel = LOG_ERR)
 	{
+		global $dolibarr_main_document_root;
+
 		$this->setErrorWithoutLog($message);
-		dol_syslog($message, $loglevel);
+		$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+		$file = str_replace($dolibarr_main_document_root, '', $trace[0]['file'] ?? 'file unknown');
+		$line = $trace[0]['line'] ?? 'line unknown';
+		$syslogMessage = sprintf('%s:%s %s', $file, $line, $message);
+		dol_syslog($syslogMessage, $loglevel);
 	}
 }

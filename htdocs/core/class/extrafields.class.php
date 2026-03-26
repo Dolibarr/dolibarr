@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2025  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
@@ -163,9 +163,10 @@ class ExtraFields
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
 	 *  @param	string			$aiprompt			Ai prompt value
 	 *  @param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
+	 *  @param	int<0,1>		$showintooltip		Is attribute to be show on tooltip
 	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -201,7 +202,7 @@ class ExtraFields
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone, $showintooltip);
 			$err2 = $this->errno;
 			if ($result2 > 0
 				|| ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')
@@ -430,10 +431,11 @@ class ExtraFields
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @param  string          $aiprompt     	Ai prompt value
 	 *	@param	int<0,1>		$emptyonclone	Is attribute to be emptied after object clone
+	 *	@param	int<0,1>		$showintooltip	Is attribute to be show on tooltip
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -470,6 +472,8 @@ class ExtraFields
 		if (empty($totalizable)) {
 			$totalizable = 0;
 		}
+
+		$showintooltip = empty($showintooltip) ? 0 : 1;
 
 		$css = '';
 		if (!empty($moreparams) && !empty($moreparams['css'])) {
@@ -521,7 +525,8 @@ class ExtraFields
 			$sql .= " csslist,";
 			$sql .= " cssview,";
 			$sql .= " aiprompt,";
-			$sql .= " emptyonclone";
+			$sql .= " emptyonclone,";
+			$sql .= " showintooltip";
 			$sql .= " )";
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
@@ -550,7 +555,8 @@ class ExtraFields
 			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
 			$sql .= " '".$this->db->escape($aiprompt)."',";
-			$sql .= " ".((int) $emptyonclone);
+			$sql .= " ".((int) $emptyonclone).' ,';
+			$sql .= " ".((int) $showintooltip);
 			$sql .= ')';
 
 			if ($this->db->query($sql)) {
@@ -697,10 +703,11 @@ class ExtraFields
 	 *  @param	array<string,mixed>	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @param	string	$aiprompt			Ai prompt value
 	 *	@param	int<0,1>	$emptyonclone		Is attribute to be emptied after object clone
+	 *	@param	int<0,1>	$showintooltip		Is attribute to be show on tooltip
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
 	{
 		global $action, $hookmanager;
 
@@ -782,7 +789,7 @@ class ExtraFields
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
+				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -799,7 +806,7 @@ class ExtraFields
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
 					dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone, $showintooltip);
 				}
 				if ($result > 0) {
 					$sql = '';
@@ -858,14 +865,15 @@ class ExtraFields
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @param	string	$aiprompt			Ai prompt value
 	 *	@param	int<0,1>	$emptyonclone	Is attribute to be emptied after object clone
+	 *	@param	int<0,1>	$showintooltip	Is attribute to be show on tooltip
 	 *  @return	int							Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
 	{
 		// phpcs:enable
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable.", ".$aiprompt);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable.", ".$aiprompt.", ".$showintooltip);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') {
@@ -896,6 +904,8 @@ class ExtraFields
 		if (empty($emptyonclone)) {
 			$emptyonclone = 0;
 		}
+
+		$showintooltip = empty($showintooltip) ? 0 : 1;
 
 		$css = '';
 		if (!empty($moreparams) && !empty($moreparams['css'])) {
@@ -966,6 +976,7 @@ class ExtraFields
 			$sql .= " csslist,";
 			$sql .= " cssview,";
 			$sql .= " aiprompt,";
+			$sql .= " showintooltip,";
 			$sql .= " emptyonclone";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($attrname)."',";
@@ -995,6 +1006,7 @@ class ExtraFields
 			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
 			$sql .= " '".$this->db->escape($aiprompt)."',";
+			$sql .= " ".((int) $showintooltip)." ,";
 			$sql .= " ".((int) $emptyonclone);
 			$sql .= ")";
 
@@ -1026,7 +1038,7 @@ class ExtraFields
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf,$hookmanager;
 
 		if (empty($elementtype)) {
 			return array();
@@ -1049,7 +1061,7 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt,";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, showintooltip, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt,";
 		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
@@ -1096,6 +1108,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
 					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
+					$this->attributes[$tab->elementtype]['showintooltip'][$tab->name] = $tab->showintooltip;
 					$this->attributes[$tab->elementtype]['totalizable'][$tab->name] = ($tab->totalizable ? 1 : 0);
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
@@ -1116,6 +1129,22 @@ class ExtraFields
 		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
+		}
+
+		// Hook to complete/modify extrafields loaded from database
+		if (is_object($hookmanager)) {
+			$parameters = array(
+				'elementtype' => $elementtype,
+				'attrname' => $attrname,
+				'forceload' => $forceload,
+			);
+			$reshook = $hookmanager->executeHooks('completeFetchNameOptionalsLabel', $parameters, $this);
+			if ($reshook > 0 && is_array($hookmanager->resArray)) {
+				// Allow hook to inject additional extrafields definitions
+				foreach ($hookmanager->resArray as $key => $val) {
+					$array_name_label[$key] = $val;
+				}
+			}
 		}
 
 		return $array_name_label;
@@ -1564,7 +1593,8 @@ class ExtraFields
 								$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
 							}
 							// can use SELECT request
-							if (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+							global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+							if (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 								if (strpos($InfoFieldList[4], '$SEL$') !== false) {
 									$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
 								}
@@ -1590,16 +1620,24 @@ class ExtraFields
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
 
-							// can use filter on any field of object
+							// can use filter on any field of object or in array_options
 							if (is_object($object)) {
 								$tags = [];
 								preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);	// Example: $InfoFieldList[4] is ($dateadh$:<=:CURRENT_DATE)
 								foreach ($tags[0] as $keytag => $valuetag) {
 									$property = preg_replace('/[^a-z0-9_]/', '', strtolower($tags[1][$keytag]));
-									if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
-										$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+									if (strpos($property, 'options_') === 0) { // Example: $InfoFieldList[4] is ($options_dateadh$:<=:CURRENT_DATE) if options_datadh is an extrafield
+										if (strpos($InfoFieldList[4], $valuetag) !== false && isset($object->array_options[$property]) && !empty($object->array_options[$property])) {
+											$InfoFieldList[4] = str_replace($valuetag, (string) $object->array_options[$property], $InfoFieldList[4]);
+										} else {
+											$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										}
 									} else {
-										$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
+											$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+										} else {
+											$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+										}
 									}
 								}
 							}
@@ -2483,7 +2521,8 @@ class ExtraFields
 									}
 								}
 
-								$s = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.($mode ? ' '.$mode : '').'"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>';
+								// $mode is 'list'
+								$s = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.' list"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>';
 								if ($numElem >= 2) {
 									$s .= img_object($c->label, 'category', 'class="small"');
 								} else {
@@ -2804,7 +2843,7 @@ class ExtraFields
 	 */
 	public function setOptionalsFromPost($extralabels, $object, $onlykey = '', $todefaultifmissing = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
@@ -2943,6 +2982,16 @@ class ExtraFields
 						unset($error_field_required[$key]);
 						$nofillrequired--;
 					}
+				}
+
+				// Hook to process custom extrafields from POST
+				if (is_object($hookmanager)) {
+					$parameters = array(
+						'key' => $key,
+						'key_type' => $key_type,
+						'value_key' => &$value_key,
+					);
+					$reshook = $hookmanager->executeHooks('setOptionalsFromPostExtra', $parameters, $object);
 				}
 
 				$object->array_options["options_".$key] = $value_key;

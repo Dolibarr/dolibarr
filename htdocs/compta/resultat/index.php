@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2016  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -162,7 +162,7 @@ $encaiss_ttc = array();
 $decaiss = array();
 $decaiss_ttc = array();
 
-// Affiche en-tete du rapport
+// Display report header
 if ($modecompta == 'CREANCES-DETTES') {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -223,7 +223,7 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 
 
 /*
- * Factures clients
+ * Customers invoices
  */
 
 $subtotal_ht = 0;
@@ -286,7 +286,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 //}
 
 if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
-	// On ajoute les paiements clients anciennes version, non lies par paiement_facture
+	// Adding legacy client payments not linked via 'paiement_facture'.
 	if ($modecompta != 'CREANCES-DETTES') {
 		$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -335,7 +335,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 
 
 /*
- * Frais, factures fournisseurs.
+ * Expenses, supplier invoices.
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
