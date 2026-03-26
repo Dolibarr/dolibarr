@@ -2456,8 +2456,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 				} else {
 					$error++;
 				}
-			}
-			elseif (preg_match('/\.docx$/i', $filename)) {
+			} elseif (preg_match('/\.docx$/i', $filename)) {
 				$textforfulltextindex = dolExtractTextFromDocxFile($filetoprocess, $keywords);
 				if ($textforfulltextindex !== '' || $keywords !== '') {
 					$cmd = 'native DOCX parser';
