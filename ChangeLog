@@ -18,7 +18,7 @@ For developers:
 WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* ...
+* Permission on portal module has been fixed so hook run by this modules must be checked
 
 
 

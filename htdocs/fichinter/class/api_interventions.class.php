@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025-2026	William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
@@ -795,28 +795,30 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * update the line of the interventional.
+	 * Update a line of an intervention
 	 *
-	 * @param	int   $id             Id of order to update
-	 * @param	int   $lineid         Id of line to update
-	 * @param	array $request_data   InternventionalLine data
+	 * @param	int		$id					ID of order to update
+	 * @param	int		$lineid				ID of line to update
+	 * @param	array	$request_data		Intervention line data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return	Object|false		  Object with cleaned properties
+	 * @return	Object						Object with cleaned properties
 	 *
-	 * @throws RestException
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 *
 	 * @url PUT /{id}/lines/{lineid}
 	 */
-	public function updateInterventionalLine($id, $lineid, $request_data)
+	public function putLine($id, $lineid, $request_data)
 	{
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+			throw new RestException(404, 'Intervention not found');
 		}
 
 		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Interventional not in Draft Status : '.$this->fichinter->getLibStatut(1));
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
@@ -825,7 +827,7 @@ class Interventions extends DolibarrApi
 
 		$objectline = new FichinterLigne($this->db);
 		if ($objectline->fetch($lineid) <= 0) {
-			throw new RestException(404, 'Interventional Line not found');
+			throw new RestException(404, 'Intervention line not found');
 		}
 		$request_data = (object) $request_data;
 
@@ -836,10 +838,16 @@ class Interventions extends DolibarrApi
 
 		$updateRes = $objectline->update(DolibarrApiAccess::$user);
 
-		if ($updateRes > 0) {
-			return $this->_cleanObjectDatas($this->fichinter);
+		if ($updateRes >= 0) {
+			$result = $this->fichinter->fetch($id);
+			if ($result > 0) {
+				return $this->_cleanObjectDatas($this->fichinter);
+			} else {
+				throw new RestException(500, $this->fichinter->error);
+			}
+		} else {
+			throw new RestException(500, $objectline->error);
 		}
-		return false;
 	}
 
 
