@@ -146,8 +146,9 @@ foreach my $PROJECT (@PROJECTLIST) {
 	  . "/core/modules/mod"
 	  . ucfirst($PROJECT)
 	  . ".class.php";
+	my $IN;
 	$result = open(
-		my $IN,
+		$IN,
 		"<",
 		$SOURCE
 		  . "/htdocs/"
@@ -159,7 +160,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 	$custom = false;
 	if ( !$result ) {
 		$result = open(
-			my $IN,
+			$IN,
 			"<",
 			$SOURCE
 			  . "/htdocs/custom/"
@@ -318,8 +319,8 @@ foreach my $PROJECT (@PROJECTLIST) {
 				print "Now, we will copy all files declared in the makepack-"
 				  . $PROJECT
 				  . ".conf into the directory $BUILDROOT\n";
-
-				open( my $IN2, "<", "makepack-" . $PROJECT . ".conf" )
+				my $IN2;
+				open( $IN2, "<", "makepack-" . $PROJECT . ".conf" )
 				  or die "Error: Can't open conf file makepack-"
 				  . $PROJECT
 				  . ".conf for reading.\n";
