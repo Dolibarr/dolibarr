@@ -384,9 +384,11 @@ class Tickets extends DolibarrApi
 	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
 	 * @param array $request_data   Request data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 * @return int  ID of ticket
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
+	 * @return int|array  ID of ticket, or ticket/action IDs when requested
+	 * @phan-return int|array{ticket_id:int,action_id:int}
+	 * @phpstan-return int|array{ticket_id:int,action_id:int}
 	 */
 	public function postNewMessage($request_data = null)
 	{
