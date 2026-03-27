@@ -197,8 +197,8 @@ if ($action == "add" && $permissiontoadd) {
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-			dol_print_error($db, $error);
 			$db->rollback();
+
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}

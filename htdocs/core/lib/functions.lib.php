@@ -9,7 +9,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
@@ -3428,7 +3428,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if ($conf->browser->layout == 'phone') {
 			$maxvisiblephotos = 1;
 		}
-		if ($showimage) {
+		$useLinkPathPhoto = getDolGlobalInt('PRODUCT_USE_LINK_PATH_FOR_PHOTO');
+		if ($showimage || $useLinkPathPhoto) {
 			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">' . $object->show_photos('product', $conf->product->multidir_output[$entity], 1, $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '') . '</div>';
 		} else {
 			if (getDolGlobalString('PRODUCT_NODISPLAYIFNOPHOTO')) {
@@ -3618,14 +3619,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		/** @var Product $object */
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
 			$morehtmlstatus .= '<span class="statusrefsell">' . $object->getLibStatut(6, 0) . '</span>';
 		}
 		$morehtmlstatus .= ' &nbsp; ';
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
-			$morehtmlstatus .= ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+			$morehtmlstatus .= ajax_object_onoff($object, 'status_buy', 'status_buy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">' . $object->getLibStatut(6, 1) . '</span>';
 		}
@@ -9279,7 +9280,9 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </>, so may changes string obfuscated with </> that pass the injection detection into a harmfull string
 
 	if ($cleanalsosomestyles) {		// Clean for remaining html tags
-		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		//$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$temp = preg_replace('/position\s*:\s*(absolute|fixed)/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$temp = preg_replace('/z-index\s*:/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 	if ($removeclassattribute) {	// Clean for remaining html tags
 		$temp = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
@@ -9583,7 +9586,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			}
 
 			// HTML sanitizer by DOMDocument
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
+			if (!empty($out) && getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
 					if (LIBXML_VERSION < 20900) {
@@ -9627,6 +9630,35 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					$dom->encoding = 'UTF-8';
 
+					// Add a layer to remove some styles
+					if (getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') == 2) {
+						foreach ($dom->getElementsByTagName('*') as $el) {
+							if ($el->hasAttribute('style')) {
+								// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+								$style = $el->getAttribute('style');
+
+								// delete some styles
+								$style = preg_replace('/z-index\s*:/i', '', $style);
+								$style = preg_replace('/position\s*:/i', '', $style);
+								$style = preg_replace('/top\s*:/i', '', $style);
+								$style = preg_replace('/left\s*:/i', '', $style);
+								$style = preg_replace('/background\s*:/i', '', $style);
+								/*
+								$style = preg_replace('/width\s*:/i', '', $style);
+								$style = preg_replace('/height\s*:/i', '', $style);
+								$style = preg_replace('/backdrop-filter\s*:/i', '', $style);
+								*/
+								if (trim($style) === '') {
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+									$el->removeAttribute('style');
+								} else {
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+									$el->setAttribute('style', $style);
+								}
+							}
+						}
+					}
+
 					$out = trim($dom->saveHTML());
 
 					// Restore [ and ] that were protected before loadHTML
@@ -9662,7 +9694,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// HTML sanitizer by Tidy
 			// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
 			// Tidy can't be used for non html text content as it is corrupting the new lines fields.
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
+			if (!empty($out) && getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
 					//var_dump($out);
@@ -9744,7 +9776,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			} elseif ($check == 'restricthtmlallowiframe') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1, 1);
 			} else {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);		// styles are allowed to allow rich text editor features of ckeditor managed by the "style=" attribute
 			}
 
 			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
@@ -12279,6 +12311,11 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		}
 		*/
 
+		// Check if there is PHP comments (can be used to obfuscate code)
+		if (strpos($s, '/*') !== false || strpos($s, '//') !== false) {
+			return 'Bad string syntax to evaluate (The comment string /* and // are not allowed): ' . $s;
+		}
+
 		// Check if we found a ? without a space before and after
 		$tmps = str_replace(' ? ', '__XXX__', $s);
 		if (strpos($tmps, '?') !== false) {
@@ -12371,16 +12408,15 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		}
 
 		// We block use of php exec or php file functions
-		$forbiddenphpstrings = array('}[', ')(');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction', 'SplFileObject', 'SplTempFileObject'));
-
-		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "keyword(" or just "keyword", we don't want "keyword" at all)
-		// We must exclude all functions that allow to execute another function. This includes all function that has a parameter with type "callable" to avoid things
-		// like we can do with array_map and its callable parameter:  dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '0')
-		$forbiddenphpfunctions = array();
-		$forbiddenphpmethods = array();
+		$forbiddenphpstrings = array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction', 'SplFileObject', 'SplTempFileObject');
 
 		if (empty($dolibarr_main_restrict_eval_methods)) {	// If forced to ''
+			// We list all forbidden function as keywords we don't want to see (we don't mind it if is "keyword(" or just "keyword", we don't want "keyword" at all)
+			// We must exclude all functions that allow to execute another function. This includes all function that has a parameter with type "callable" to avoid things
+			// like we can do with array_map and its callable parameter:  dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '0')
+			$forbiddenphpfunctions = array();
+			$forbiddenphpmethods = array();
+
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
@@ -12444,7 +12480,9 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 				dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
 				return 'Bad string syntax to evaluate: ' . $s;
 			}
-		} else {
+		}
+
+		if (!empty($dolibarr_main_restrict_eval_methods)) {
 			// Accept only white-listed allowed function and classes
 			// TODO Get all pattern '/([\s\w]+)\(/', then check that $reg[1] is a defined class or a function into a given list
 			$pattern = '/([\s\w\'\]\"]+)\(/';
@@ -12474,8 +12512,27 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 					}
 				}
 			}
-		}
 
+			$forbiddenphpregex = 'global\s*\$';
+			$forbiddenphpregex .= '|';			// or
+			$forbiddenphpregex .= '}\s*\[';
+			$forbiddenphpregex .= '|';			// or
+			$forbiddenphpregex .= '\)\s*\(';
+
+			// Now scan all forbidden patterns
+			do {
+				$oldstringtoclean = $s;
+				$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+				$s = preg_replace('/' . $forbiddenphpregex . '/i', '__forbiddenstring__', $s);
+				//$s = preg_replace('/' . $forbiddenphpmethodsregex . '/i', '__forbiddenstring__', $s);
+				//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+			} while ($oldstringtoclean != $s);
+
+			if (strpos($s, '__forbiddenstring__') !== false) {
+				dol_syslog('Bad string syntax to evaluate: ' . $s, LOG_WARNING);
+				return 'Bad string syntax to evaluate: ' . $s;
+			}
+		}
 
 		//print $s."<br>\n";
 		ob_start(); // An evaluation has no reason to output data
@@ -16120,7 +16177,9 @@ function dolForgeSQLCriteriaCallback($matches)
 
 	$regbis = array();
 
-	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID/code/field only (or subrequest if MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTERnot enabled)
+	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID/code/field only (or subrequest if $dolibarr_allow_unsecured_select_in_extrafields_filter not enabled)
+		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
 		$tmpescaped2 = '(';
 		// Explode and sanitize each element in list
@@ -16134,7 +16193,7 @@ function dolForgeSQLCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
-			} elseif (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+			} elseif (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'

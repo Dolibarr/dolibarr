@@ -1164,13 +1164,21 @@ class Stripe extends CommonObject
 
 							$cs = $s->setupIntents->create($dataforintent);
 							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
-							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
-							// note: $cs->mandate contains ID of mandate on Stripe side
 
 							if (!$cs) {
-								$this->error = 'Link SEPA <-> Customer failed';
+								$this->error = 'Link SEPA <-> setupIntent->create failed';
 								dol_syslog($this->error, LOG_ERR);
+								$cs2 = null;
 							} else {
+								// note: $cs->mandate contains ID of mandate on Stripe side
+								$cs2 = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
+								if (!$cs2) {
+									$this->error = 'Link SEPA <-> setupIntent->confirm failed';
+									dol_syslog($this->error, LOG_ERR);
+								}
+							}
+
+							if ($cs && $cs2) {
 								dol_syslog("Update the payment mode of the customer");
 
 								// print json_encode($sepa);

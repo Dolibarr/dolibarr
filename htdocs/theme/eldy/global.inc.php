@@ -680,6 +680,9 @@ div.userimg.notfirst {
 }
 .dateborderleft {
 }
+.center.inline-block.dateheight {
+	line-height: 1.1em;
+}
 .smallheight {
 	line-height: 1em;
 }
@@ -729,8 +732,17 @@ td.linecoldescription.bomline {
 	width: 400px;
 }
 
-td.amount, span.amount, div.amount, b.amount {
+td.amount {
 	color: #006666;
+}
+span.amount, div.amount, b.amount {
+	color: #006666;
+	/*
+	background-color: #006666;
+	color: #FFF;
+	border-radius: 3px;
+	padding: 2px 4px 2px 4px;
+	*/
 }
 td.amountneg, span.amountneg, div.amountneg, b.amountneg
 {

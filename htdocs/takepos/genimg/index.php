@@ -104,21 +104,5 @@ if ($query == "cat") {
 		}
 	}
 } else {
-	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resized when downloaded.
-
-	// The file
-	$filename = $query.".jpg";
-
-	// Dimensions
-	list($width, $height) = getimagesize($filename);
-	$new_width = $w;
-	$new_height = $h;
-
-	// Resample
-	$image_p = imagecreatetruecolor($new_width, $new_height);
-	$image = imagecreatefromjpeg($filename);
-	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-
-	// Output
-	imagejpeg($image_p, null, 100);
+	print 'Invalid param query. Must be "cat" or "pro"';
 }
