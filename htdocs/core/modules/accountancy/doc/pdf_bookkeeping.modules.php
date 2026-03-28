@@ -544,6 +544,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		$this->warnings = $hookmanager->warnings;
 		if ($reshook < 0) {
 			$this->error = $hookmanager->error;
 			$this->errors = $hookmanager->errors;
@@ -652,7 +653,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
+		$text = (string) $this->emetteur->name;
 		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 

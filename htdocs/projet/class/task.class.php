@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -1015,7 +1015,7 @@ class Task extends CommonObjectLine
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -1696,10 +1696,10 @@ class Task extends CommonObjectLine
 				} else {
 					$this->status = Task::STATUS_VALIDATED;
 				}
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			} else {
 				$this->status = Task::STATUS_ONGOING;
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2106,6 +2106,7 @@ class Task extends CommonObjectLine
 
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($this->timespent_id);
+		$old_fk_element = $timespent->fk_element; // Store old task ID before potential change
 
 		$timespent->element_date = $this->timespent_date;
 		$timespent->element_datehour = $this->timespent_datehour;
@@ -2116,6 +2117,7 @@ class Task extends CommonObjectLine
 			$timespent->fk_user = $this->timespent_fk_user;
 		}
 		$timespent->fk_product = $this->timespent_fk_product;
+		$timespent->fk_element = $this->id; // Update task assignment (may be changed)
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;
 		$timespent->invoice_line_id = $this->timespent_invoicelineid;
@@ -2176,6 +2178,32 @@ class Task extends CommonObjectLine
 			if ($res_update <= 0) {
 				$this->error = $this->db->lasterror();
 				$ret = -2;
+			}
+		}
+
+		// If task assignment changed, recalculate duration_effective for both old and new tasks
+		if ($ret == 1 && $old_fk_element != $this->id) {
+			// Recalculate duration_effective for the OLD task
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+			$sql .= " SET duration_effective = (SELECT COALESCE(SUM(element_duration), 0) FROM " . MAIN_DB_PREFIX . "element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = " . ((int) $old_fk_element) . ")";
+			$sql .= " WHERE rowid = " . ((int) $old_fk_element);
+			dol_syslog(get_class($this) . "::updateTimeSpent update old task", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				$ret = -2;
+			}
+			// Recalculate duration_effective for the NEW task
+			if ($ret == 1) {
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+				$sql .= " SET duration_effective = (SELECT COALESCE(SUM(element_duration), 0) FROM " . MAIN_DB_PREFIX . "element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = " . ((int) $this->id) . ")";
+				$sql .= " WHERE rowid = " . ((int) $this->id);
+				dol_syslog(get_class($this) . "::updateTimeSpent update new task", LOG_DEBUG);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					$ret = -2;
+				}
 			}
 		}
 

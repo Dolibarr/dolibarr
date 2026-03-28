@@ -80,7 +80,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
-		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", max(120, min(3600 * 24, GETPOSTINT("MAIN_SESSION_TIMEOUT"))), 'chaine', 0, '', $conf->entity);	// Between 120 and 86400
 	}
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT')) {
 		$res3 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", GETPOST("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 'alphanohtml'), 'int', 0, '', $conf->entity);
@@ -177,7 +177,7 @@ if (ini_get("session.gc_probability") == 0) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat right width50" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
+print '<input class="flat right width75" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 

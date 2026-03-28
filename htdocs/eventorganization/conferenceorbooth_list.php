@@ -466,17 +466,17 @@ if ($projectid > 0) {
 	print '<tr><td class="titlefield">';
 	$typeofdata = 'checkbox:'.($project->accept_conference_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
-	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? '1' : '0'), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td class="valuefield">';
-	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, null, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? '1' : '0'), $project, $permissiontoadd, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
 	$typeofdata = 'checkbox:'.($project->accept_booth_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
-	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? '1' : '0'), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td class="valuefield">';
-	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, null, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? '1' : '0'), $project, $permissiontoadd, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
@@ -995,7 +995,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';

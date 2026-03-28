@@ -126,6 +126,11 @@ class Context
 	public $rootUrl;
 
 	/**
+	 * @var string cdn url for public/includes
+	 */
+	public $cdnUrl;
+
+	/**
 	 * @var string[]
 	 */
 	public $menu_active = array();
@@ -207,6 +212,10 @@ class Context
 		// Init of base URL. Must be the public URL.
 		$this->rootUrl = self::getRootConfigUrl();
 
+		// Init of CDN URL. Must be the public URL.
+		// BECAUSE IN SOME CASES IT COULD BE IMPORTANT TO HIDE PUBLIC URL BUT YOU CAN SET A CDN URL IN HIDDEN CONF
+		$this->cdnUrl = getDolGlobalString('WEBPORTAL_CDN_URL', dol_buildpath('/public/includes/', 3));
+		$this->cdnUrl = rtrim(trim($this->cdnUrl), '/');
 
 		$this->theme = new WebPortalTheme(false);
 	}
@@ -244,6 +253,8 @@ class Context
 		$this->addControllerDefinition('propallist', $defaultControllersPath . 'propallist.controller.class.php', 'PropalListController');
 		$this->addControllerDefinition('orderlist', $defaultControllersPath . 'orderlist.controller.class.php', 'OrderListController');
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
+		$this->addControllerDefinition('ficheinterlist', $defaultControllersPath . 'ficheinterlist.controller.class.php', 'FicheinterListController');
+		$this->addControllerDefinition('ticketlist', $defaultControllersPath . 'ticketlist.controller.class.php', 'TicketListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
 		//** below the addition of DocumentListController adding files by third party attached documents

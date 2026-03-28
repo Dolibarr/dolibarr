@@ -46,6 +46,10 @@ IPP_Color=Boja
 IPP_Device=Uređaj
 IPP_Media=Mediji za štampač
 IPP_Supported=Vrsta medija
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Ništa
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Boja
 DirectPrintingJobsDesc=Na ovoj stranici su navedeni poslovi za štampanje pronađeni za dostupne štampače.
 GoogleAuthNotConfigured=Google OAuth nije postavljen. Omogućite modul OAuth i postavite Google ID/tajnu.
 GoogleAuthConfigured=Google OAuth vjerodajnice su pronađene u podešavanju modula OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Konfiguracijske varijable za upravljački program za 
 PrintingDriverDescprintipp=Konfiguracijske varijable za print driver Cups.
 PrintTestDescprintgcp=Lista štampača za Google Cloud Print.
 PrintTestDescprintipp=Lista štampača za čaše.
-Testbbbb
+PrinterLocation=Printer location

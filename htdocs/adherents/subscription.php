@@ -149,7 +149,9 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 			$langs->load("errors");
 			setEventMessages($company->error, $company->errors, 'errors');
 		} else {
-			$action = 'addsubscription';
+			$object->socid = $result;
+
+			$action = 'createsubscription';
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -248,14 +250,14 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		$langs->load("errors");
 		$errmsg = $langs->trans("ErrorBadDateFormat", $langs->transnoentitiesnoconv("DateSubscription"));
 		setEventMessages($errmsg, null, 'errors');
-		$action = 'addsubscription';
+		$action = 'createsubscription';
 	}
 	if (GETPOST('end') && !$datesubend) {
 		$error++;
 		$langs->load("errors");
 		$errmsg = $langs->trans("ErrorBadDateFormat", $langs->transnoentitiesnoconv("DateEndSubscription"));
 		setEventMessages($errmsg, null, 'errors');
-		$action = 'addsubscription';
+		$action = 'createsubscription';
 	}
 	if (!$datesubend) {
 		$datesubend = dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit), -1, 'd');
@@ -264,7 +266,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		$error++;
 		$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment"));
 		setEventMessages($errmsg, null, 'errors');
-		$action = 'addsubscription';
+		$action = 'createsubscription';
 	}
 
 	// Check if a payment is mandatory or not
@@ -274,7 +276,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 			$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			setEventMessages($errmsg, null, 'errors');
 			$error++;
-			$action = 'addsubscription';
+			$action = 'createsubscription';
 		} else {
 			// If an amount has been provided, we check also fields that becomes mandatory when amount is not null.
 			if (isModEnabled('bank') && GETPOST("paymentsave") != 'none') {
@@ -283,26 +285,26 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
-						$action = 'addsubscription';
+						$action = 'createsubscription';
 					}
 					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
-						$action = 'addsubscription';
+						$action = 'createsubscription';
 					}
 					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOSTINT("accountid") > 0)) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
-						$action = 'addsubscription';
+						$action = 'createsubscription';
 					}
 				} else {
 					if (GETPOSTINT("accountid")) {
 						$errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
-						$action = 'addsubscription';
+						$action = 'createsubscription';
 					}
 				}
 			}
@@ -335,7 +337,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 			$db->commit();
 		} else {
 			$db->rollback();
-			$action = 'addsubscription';
+			$action = 'createsubscription';
 		}
 
 		if (!$error) {
@@ -695,11 +697,11 @@ print dol_get_fiche_end();
 
 // Button to create a new subscription if member no draft (-1) neither resiliated (0) neither excluded (-2)
 if ($user->hasRight('adherent', 'cotisation', 'creer')) {
-	if ($action != 'addsubscription' && $action != 'create_thirdparty') {
+	if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 		print '<div class="tabsAction">';
 
 		if ($object->status > 0) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription&token='.newToken().'">'.$langs->trans("AddSubscription")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=createsubscription">'.$langs->trans("AddSubscription")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 		}
@@ -711,7 +713,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 /*
  * List of subscriptions
  */
-if ($action != 'addsubscription' && $action != 'create_thirdparty') {
+if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 	$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
 	$sql .= " c.rowid as crowid, c.subscription,";
 	$sql .= " c.datec, c.fk_type as cfk_type,";
@@ -820,7 +822,7 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 }
 
 
-if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
+if (($action != 'createsubscription' && $action != 'create_thirdparty')) {
 	// Show online payment link
 	// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -839,7 +841,7 @@ if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
 /*
  * Add new subscription form
  */
-if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->hasRight('adherent', 'cotisation', 'creer')) {
+if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user->hasRight('adherent', 'cotisation', 'creer')) {
 	print '<br>';
 
 	print load_fiche_titre($langs->trans("NewCotisation"));
@@ -932,7 +934,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		// If customer code was forced to "required", we ask it at creation to avoid error later
 		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$tmpcompany = new Societe($db);
-			$tmpcompany->name = $companyname;
+			$tmpcompany->name = (string) $companyname;
 			$tmpcompany->get_codeclient($tmpcompany, 0);
 			$customercode = $tmpcompany->code_client;
 			$formquestion[] = array(

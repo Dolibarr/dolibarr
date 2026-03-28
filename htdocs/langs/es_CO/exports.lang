@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - exports
+ExportsArea=Las exportaciones
 NewExport=Exportación nueva
 NewImport=Importación nueva
+ExportableDatas=Conjunto de datos exportable
 ImportableDatas=Conjunto de datos importable
 SelectExportDataSet=Elija el conjunto de datos que desea exportar ...
 SelectImportDataSet=Elija el conjunto de datos que desea importar ...
@@ -51,7 +53,6 @@ TablesTarget=Tablas dirigidas
 FieldTarget=Campo objetivo
 FieldSource=Campo fuente
 NbOfSourceLines=Número de líneas en el archivo fuente
-NowClickToTestTheImport=Verifique que el formato de archivo (delimitadores de campo y cadena) de su archivo coincida con las opciones que se muestran y que haya omitido la línea de encabezado, o estos se marcarán como errores en la siguiente simulación. <br> Haga clic en el botón "<b> %s </b>" para ejecutar una verificación de la estructura / contenido del archivo y simular el proceso de importación. <br> <b> No se cambiarán datos en su base de datos </b>.
 RunSimulateImportFile=Ejecutar simulación de importación
 FieldNeedSource=Este campo requiere datos del archivo de origen
 SomeMandatoryFieldHaveNoSource=Algunos campos obligatorios no tienen origen en el archivo de datos
@@ -95,7 +96,6 @@ EndAtLineNb=Terminar en el número de línea
 ImportFromToLine=Rango límite (desde - hasta). Ej. para omitir la(s) línea(s) de encabezado.
 SetThisValueTo2ToExcludeFirstLine=Por ejemplo, establezca este valor en 3 para excluir las 2 primeras líneas. <br> Si las líneas del encabezado NO se omiten, esto dará como resultado múltiples errores en la simulación de importación.
 KeepEmptyToGoToEndOfFile=Mantenga este campo vacío para procesar todas las líneas hasta el final del archivo.
-SelectPrimaryColumnsForUpdateAttempt=Seleccione la(s) columna(s) para usar como clave principal para ACTUALIZAR importación
 UpdateNotYetSupportedForThisImport=La actualización no es compatible con este tipo de importación (solo insertar)
 NoUpdateAttempt=No se realizó ningún intento de actualización, solo insertar
 ImportDataset_user_1=Usuarios (empleados o no) y propiedades

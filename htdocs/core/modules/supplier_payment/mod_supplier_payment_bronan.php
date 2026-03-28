@@ -48,7 +48,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

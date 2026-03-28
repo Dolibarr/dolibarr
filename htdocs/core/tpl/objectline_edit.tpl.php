@@ -58,7 +58,6 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
 '
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
@@ -117,7 +116,7 @@ $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo($i + 1); ?></td>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php /* @phan-suppress-current-line  PhanUndeclaredGlobalVariable */ echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -134,7 +133,7 @@ $coldisplay++;
 		<?php
 		if (empty($canchangeproduct)) {
 			if ($line->fk_parent_line > 0) {
-				echo img_picto('', 'rightarrow');
+				echo img_picto('', 'rightarrow.png');
 			} ?>
 			<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 			<?php
@@ -303,7 +302,14 @@ $coldisplay++;
 		&nbsp;
 	<?php } ?>
 	</td>
-
+	<?php
+	// Shippable Status (Empty cell for edit mode to keep column alignment)
+	if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+		print '<td class="linecolstock center">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	?>
 	<?php
 	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		$unit_type = false;
@@ -348,7 +354,9 @@ $coldisplay++;
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;
 
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%';
+			print ' '.$form->textwithpicto('', $langs->trans("PreviousProgress").' ('.$old_fieldv.'%)');
+			print '</td>';
 		} else {
 			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
 		}
@@ -412,7 +420,9 @@ $coldisplay++;
 	$prefillDates = false;
 	$date_start_prefill = 0;
 	$date_end_prefill = 0;
+	// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 	if (getDolGlobalString('MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE') && !empty($object->lines) && $i > 0) {
+		// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 		for ($j = $i - 1; $j >= 0; $j--) {
 			$lastline = $object->lines[$j];
 			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end))) {
@@ -504,6 +514,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		?>
 			$("input[name='np_marginRate']:first").blur(function(e) {
+				console.log("np_marginRate blur, call checkFreeLine");
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
@@ -511,6 +522,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		?>
 			$("input[name='np_markRate']:first").blur(function(e) {
+				console.log("np_markRate blur, call checkFreeLine");
 				return checkFreeLine(e, "np_markRate");
 			});
 		<?php
@@ -528,15 +540,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			return true;
 
 		var ratejs = price2numjs(rate.val());
-		if (! $.isNumeric(ratejs))
-		{
+		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
-		{
+		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
 			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
@@ -546,7 +556,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		var price = 0;
 		remisejs = price2numjs(remise.val());
 
-		if (remisejs != 100) {	// If a discount not 100 or no discount
+		if (remisejs != 100) {		// If there is a discount that is not 100 or if no discount at all (most common case)
 			if (remisejs == '') {
 				remisejs = 0;
 			}
@@ -559,7 +569,9 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+
+		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+		$("input[name='price_ht']:first").val(pricejs(price));
 
 		return true;
 	}

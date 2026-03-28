@@ -92,7 +92,7 @@ if ($object->element == 'product') {
 	/** @var Product $object */
 	print '<td class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 	print '<td>';
-	print img_picto('', 'stock');
+	print img_picto('', 'stock', 'class="pictofixedwidth"');
 	$selected = (GETPOST("dwid") ? GETPOSTINT("dwid") : (GETPOST('id_entrepot') ? GETPOSTINT('id_entrepot') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
 	$warehousestatus = 'warehouseopen,warehouseinternal';
 	print $formproduct->selectWarehouses($selected, 'id_entrepot', $warehousestatus, 1, 0, 0, '', 0, 0, array(), 'minwidth75 maxwidth300 widthcentpercentminusx');
@@ -102,7 +102,7 @@ if ($object->element == 'stockmouvement') {
 	/** @var MouvementStock $object */
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
-	print img_picto('', 'product');
+	print img_picto('', 'product', 'class="pictofixedwidth"');
 	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, array(), 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }

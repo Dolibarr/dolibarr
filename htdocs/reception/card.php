@@ -12,7 +12,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Nick Fragoulis
  *
@@ -235,6 +235,9 @@ if (empty($reshook)) {
 	// Reopen
 	if ($action == 'reopen' && $permissiontoadd) {	// Test on permissions not required here
 		$result = $object->reOpen();
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Confirm back to draft status
@@ -593,7 +596,7 @@ if (empty($reshook)) {
 
 		// TODO add alternative status
 		/*} elseif ($action == 'reopen' && ($user->hasRights('reception', 'creer') || $user->hasRights('reception', 'reception_advance', 'validate'))) {
-			$result = $object->setStatut(0);
+			$result = $object->setStatut(Reception::STATUS_DRAFT);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 		}*/
@@ -1603,6 +1606,19 @@ if ($action == 'create' && $permissiontoadd) {
 				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('receptiondet_batch', '_' . $suffix, '');
 			}
 
+			$reshook = $hookmanager->executeHooks('dataProcessing', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} elseif (empty($reshook)) {
+				$dispatchLines = array_merge($dispatchLines, $hookmanager->resArray);
+			} elseif ($reshook > 0) {
+				// $resArray starts from [0], we need $dispatchLines to start from [1], so we shift it
+				$dispatchLines = $hookmanager->resArray;
+				array_unshift($dispatchLines, null);
+				unset($dispatchLines[0]);
+				$numAsked = count($dispatchLines);
+			}
+
 			print '<script type="text/javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function(event) {
@@ -1658,6 +1674,14 @@ if ($action == 'create' && $permissiontoadd) {
 						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
 					}
 				}
+
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				} else {
+					print $hookmanager->resPrint;
+				}
 				print "</tr>\n";
 			}
 
@@ -1703,7 +1727,7 @@ if ($action == 'create' && $permissiontoadd) {
 					//var_dump($dispatchLines[$indiceAsked]);
 
 					print '<td>';
-					print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$line->id.'"></a>'; // Anchor to return to the line
 
 					print '<input type="hidden" name="productl'.$indiceAsked.'" value="'.$line->fk_product.'">';
 
@@ -1848,6 +1872,16 @@ if ($action == 'create' && $permissiontoadd) {
 						} else {
 							print '<td colspan="3"></td>';
 						}
+					}
+
+					$parameters = array();
+					$parameters['dispatchLine'] = $dispatchLines[$indiceAsked];
+					$parameters['indiceAsked'] = $indiceAsked;
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					} else {
+						print $hookmanager->resPrint;
 					}
 				}
 
@@ -2320,8 +2354,6 @@ if ($action == 'create' && $permissiontoadd) {
 
 	print '<div class="clearboth"></div>';
 
-	print dol_get_fiche_end();
-
 	/*
 	* Lines of simple reception
 	*/
@@ -2424,6 +2456,14 @@ if ($action == 'create' && $permissiontoadd) {
 				print $langs->trans("Batch");
 			}
 			print '</td>';
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				print $hookmanager->resPrint;
+			}
 		} else {
 			$statusreceived = $object::STATUS_CLOSED;
 			if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
@@ -2443,6 +2483,14 @@ if ($action == 'create' && $permissiontoadd) {
 
 			if (isModEnabled('productbatch')) {
 				print '<td class="left">'.$langs->trans("Batch").'</td>';
+			}
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				print $hookmanager->resPrint;
 			}
 		}
 		print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
@@ -2665,6 +2713,15 @@ if ($action == 'create' && $permissiontoadd) {
 					}
 				}
 				print '</table></td>';
+
+				$parameters = array();
+				$parameters['line'] = $lines[$i];
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				} else {
+					print $hookmanager->resPrint;
+				}
 			} else {
 				// Qty to receive or received
 				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
@@ -2712,6 +2769,15 @@ if ($action == 'create' && $permissiontoadd) {
 						print '<td></td>';
 					}
 				}
+
+				$parameters = array();
+				$parameters['line'] = $lines[$i];
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				} else {
+					print $hookmanager->resPrint;
+				}
 			}
 
 			// Weight
@@ -2757,6 +2823,13 @@ if ($action == 'create' && $permissiontoadd) {
 			print "</tr>";
 
 			$arrayofpurchaselinealreadyoutput[$lines[$i]->fk_commandefourndet] = $lines[$i]->fk_commandefourndet;
+
+			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				print $hookmanager->resPrint;
+			}
 
 			// Display lines extrafields
 			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
@@ -2870,7 +2943,7 @@ if ($action == 'create' && $permissiontoadd) {
 	if ($action != 'presend' && $action != 'editline') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-		$objectref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName((string) $object->ref);
 		$filedir = $conf->reception->dir_output."/".$objectref;
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

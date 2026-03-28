@@ -4,9 +4,10 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1473,7 +1474,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			switch ($uploaderrorcode) {
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-				case UPLOAD_ERR_FORM_SIZE:	// 2
+				case UPLOAD_ERR_FORM_SIZE:	// 2 - Exceed the MAX_FILE_SIZE specified into a field in form
 					return 'ErrorFileSizeTooLarge';
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';
@@ -2281,7 +2282,7 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  */
 function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null, $forceFullTextIndexation = '')
 {
-	global $db, $user, $conf;
+	global $db, $user;
 
 	$result = 0;
 	$error = 0;
@@ -2333,12 +2334,12 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$ecmfile->share = getRandomPassword(true);
 		}
 
-		// Use a convertisser Doc to Text
-		$useFullTextIndexation = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT');
+		// Use a convert tool for Doc to Text
+		$useFullTextIndexation = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT');	// Can be '', 'pdftotext' or 'docling'
 		if (empty($useFullTextIndexation) && $forceFullTextIndexation == '1') {
-			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT')) {
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT')) {		// Command line for pdftotext
 				$useFullTextIndexation = 'pdftotext';
-			} elseif (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING')) {
+			} elseif (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING')) {	// Command line for docling
 				$useFullTextIndexation = 'docling';
 			}
 		}
@@ -2354,61 +2355,15 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$keywords = '';
 			$cmd = '';
 			if (preg_match('/\.pdf/i', $filename)) {
-				// TODO Move this into external submodule files
+				// Convertfile into text
+				$result = dolDocToText($filetoprocess);
 
-				// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser
-
-				// Use the method pdftotext to generate a HTML
-				if (preg_match('/pdftotext/i', $useFullTextIndexation)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-					$utils = new Utils($db);
-					$outputfile = $conf->admin->dir_temp.'/tmppdftotext.'.$user->id.'.out'; // File used with popen method
-
-					// We also exclude '/temp/' dir and 'documents/admin/documents'
-					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
-					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
-
-					if (!$resultexec['error']) {
-						$txt = $resultexec['output'];
-						$matches = array();
-						if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
-							$keywords = $matches[1];
-						}
-						if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
-							$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
-						}
-					} else {
-						dol_syslog($resultexec['error']);
-						$error++;
-					}
-				}
-
-				// Use the method docling to generate a .md (https://ds4sd.github.io/docling/)
-				if (preg_match('/docling/i', $useFullTextIndexation)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-					$utils = new Utils($db);
-					$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
-
-					// We also exclude '/temp/' dir and 'documents/admin/documents'
-					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
-					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
-
-					if (!$resultexec['error']) {
-						$txt = $resultexec['output'];
-						//$matches = array();
-						//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
-						//	$keywords = $matches[1];
-						//}
-						//if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
-						//	$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
-						//}
-						$textforfulltextindex = $txt;
-					} else {
-						dol_syslog($resultexec['error']);
-						$error++;
-					}
+				if (empty($result['error'])) {
+					$textforfulltextindex = $result['content'];
+					$filetoprocess = $result['keywords'];
+					$cmd = $result['cmd'];
+				} else {
+					$error++;
 				}
 			}
 
@@ -3123,43 +3078,43 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->invoice->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity])) {
-		// Wrapping pour les apercu propal
+		// Wrapping for preview of proposals
 		if ($fuser->hasRight('propal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'apercucommande' && !empty($conf->order->multidir_output[$entity])) {
-		// Wrapping pour les apercu commande
+		// Wrapping for preview of orders
 		if ($fuser->hasRight('commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
 	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output)) {
-		// Wrapping pour les apercu intervention
+		// Wrapping for preview of intervention
 		if ($fuser->hasRight('ficheinter', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercucontract') && !empty($conf->contract->multidir_output[$entity])) {
-		// Wrapping pour les apercu contrat
+		// Wrapping for preview of contracts
 		if ($fuser->hasRight('contrat', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->multidir_output[$entity].'/'.$original_file;
 	} elseif (($modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output)) {
-		// Wrapping pour les apercu supplier proposal
+		// Wrapping for preview of vendor proposals
 		if ($fuser->hasRight('supplier_proposal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->supplier_proposal->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
-		// Wrapping pour les apercu supplier order
+		// Wrapping for preview of purchase orders
 		if ($fuser->hasRight('fournisseur', 'commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
-		// Wrapping pour les apercu supplier invoice
+		// Wrapping for preview of supplier invoices
 		if ($fuser->hasRight('fournisseur', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3189,19 +3144,19 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercuexpensereport') && !empty($conf->expensereport->dir_output)) {
-		// Wrapping pour les apercu expense report
+		// Wrapping for preview of expense report
 		if ($fuser->hasRight('expensereport', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'propalstats' && !empty($conf->propal->multidir_temp[$entity])) {
-		// Wrapping pour les images des stats propales
+		// Wrapping for statistics images of proposal
 		if ($fuser->hasRight('propal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_temp[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'orderstats' && !empty($conf->order->dir_temp)) {
-		// Wrapping pour les images des stats commandes
+		// Wrapping for statistics images of orders
 		if ($fuser->hasRight('commande', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3212,7 +3167,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->commande->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'billstats' && !empty($conf->invoice->dir_temp)) {
-		// Wrapping pour les images des stats factures
+		// Wrapping for statistics images of purchase orders
 		if ($fuser->hasRight('facture', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3223,7 +3178,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->facture->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'expeditionstats' && !empty($conf->expedition->dir_temp)) {
-		// Wrapping pour les images des stats expeditions
+		// Wrapping for statistics images of shipments
 		if ($fuser->hasRight('expedition', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3235,13 +3190,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->deplacement->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'memberstats' && !empty($conf->member->dir_temp)) {
-		// Wrapping pour les images des stats expeditions
+		// Wrapping for statistics images of memberships
 		if ($fuser->hasRight('adherent', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->member->dir_temp.'/'.$original_file;
 	} elseif (preg_match('/^productstats_/i', $modulepart) && !empty($conf->product->dir_temp)) {
-		// Wrapping pour les images des stats produits
+		// Wrapping for statistics images of products
 		if ($fuser->hasRight('produit', $lire) || $fuser->hasRight('service', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3253,7 +3208,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$modulepartsuffix = str_replace('tax-', '', $modulepart);
 		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
-	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
+	} elseif (($modulepart == 'actions' || $modulepart == 'actioncomm') && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
 		if ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
@@ -3334,7 +3289,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe').")";
-	} elseif ($modulepart == 'contact' && !empty($conf->societe->multidir_output[$entity])) {
+	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
@@ -3467,34 +3422,35 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output)) {
-		// Wrapping pour les commandes fournisseurs
+		// Wrapping for purchase orders
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') && !empty($conf->fournisseur->facture->dir_output)) {
-		// Wrapping pour les factures fournisseurs
+		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif ($modulepart == 'supplier_payment') {
-		// Wrapping pour les rapport de paiements
+		// Wrapping for supplier payments
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
+		$original_file = preg_replace("/payment\//", "", $original_file);	// Because the $conf->fournisseur->payment->dir_output already contains the "payment/"
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif ($modulepart == 'payment') {
-		// Wrapping pour les rapport de paiements
-		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		// Wrapping for report of payments
+		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->compta->payment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'facture_paiement' && !empty($conf->invoice->dir_output)) {
-		// Wrapping pour les rapport de paiements
+		// Wrapping for report of payments
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3509,7 +3465,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output)) {
+	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
 		// Wrapping pour les expedition
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3523,13 +3479,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
-		// Wrapping pour les actions
+		// Wrapping for actions
 		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
 	} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
-		// Wrapping pour les produits et services
+		// Wrapping for products and services
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3542,7 +3498,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$original_file = $conf->service->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot') {
-		// Wrapping pour les lots produits
+		// Wrapping for product lots
 		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3563,21 +3519,32 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (isModEnabled('stock')) {
 			$original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 		}
+	} elseif ($modulepart == 'entrepot') {
+		// Wrapping for stock warehouse
+		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
+		}
+		if (($fuser->hasRight('stock', $lire) || $fuser->hasRight('stock', 'movement', $lire) || $fuser->hasRight('stock', 'mouvement', $lire)) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		if (isModEnabled('stock')) {
+			$original_file = $conf->stock->multidir_output[$entity].'/'.$original_file;
+		}
 	} elseif ($modulepart == 'contract' && !empty($conf->contract->multidir_output[$entity])) {
-		// Wrapping pour les contrats
+		// Wrapping for contracts
 		if ($fuser->hasRight('contrat', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract').")";
 	} elseif ($modulepart == 'donation' && !empty($conf->don->dir_output)) {
-		// Wrapping pour les dons
+		// Wrapping for donation
 		if ($fuser->hasRight('don', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->don->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'dolresource' && !empty($conf->resource->dir_output)) {
-		// Wrapping pour les dons
+		// Wrapping for resources
 		if ($fuser->hasRight('resource', $read) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3813,8 +3780,7 @@ function dol_filecache($directory, $filename, $object)
 	$cachefile = $directory.$filename;
 
 	file_put_contents($cachefile, serialize($object), LOCK_EX);
-
-	dolChmod($cachefile, '0644');
+	dolChmod($cachefile);
 }
 
 /**
@@ -3863,12 +3829,12 @@ function dirbasename($pathfile)
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
+ * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array for response
  * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
  * @param   string				$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
  * @param   string				$pathref            Path ref (DOL_DOCUMENT_ROOT)
  * @param   string[]			$checksumconcat     Array of checksum
- * @return	array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array of filenames
+ * @return	array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array of filenames
  */
 function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {
@@ -3876,24 +3842,34 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 
 	//$exclude = 'install';
 
-	foreach ($dir->md5file as $file) {    // $file is a simpleXMLElement
+	$entry = array();
+	$algo = '';
+	if (!empty($dir->md5file)) {
+		$entry = $dir->md5file;
+		$algo = 'md5';
+	} elseif (!empty($dir->sha256file)) {
+		$entry = $dir->sha256file;
+		$algo = 'sha256';
+	}
+
+	foreach ($entry as $file) {    // $file is a simpleXMLElement
 		$filename = $path.$file['name'];
 		$file_list['insignature'][] = $filename;
 		$expectedsize = (empty($file['size']) ? '' : $file['size']);
-		$expectedmd5 = (string) $file;
+		$expectedhash = (string) $file;
 
 		if (!file_exists($pathref.'/'.$filename)) {
-			$file_list['missing'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize);
+			$file_list['missing'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'algo' => (string) $algo);
 		} else {
-			$md5_local = md5_file($pathref.'/'.$filename);
+			$hash_local = hash_file($algo, $pathref.'/'.$filename);
 
 			if ($conffile == '/etc/dolibarr/conf.php' && $filename == '/filefunc.inc.php') {	// For install with deb or rpm, we ignore test on filefunc.inc.php that was modified by package
-				$checksumconcat[] = $expectedmd5;
+				$checksumconcat[] = $expectedhash;
 			} else {
-				if ($md5_local != $expectedmd5) {
-					$file_list['updated'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize, 'md5' => (string) $md5_local);
+				if ($hash_local != $expectedhash) {
+					$file_list['updated'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'hash' => (string) $hash_local, 'algo' => (string) $algo);
 				}
-				$checksumconcat[] = $md5_local;
+				$checksumconcat[] = $hash_local;
 			}
 		}
 	}
@@ -4088,4 +4064,130 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 	}
 
 	return true;
+}
+
+/**
+ * @param 	string	$filetoprocess				File name to process
+ * @param 	string 	$useFullTextIndexation		Method for txt conversion
+ * @param	string	$options					Output format ('html', 'fulltext');
+ * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>, 'cmd'=> )
+ */
+function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $options = 'html')
+{
+	global $conf, $db, $user;
+
+	$error = 0;
+	$keywords = array();
+	$textforfulltextindex = '';
+	$cmd = '';
+
+	if (empty($useFullTextIndexation)) {
+		$useFullTextIndexation = 'pdftotext';
+	}
+
+	// TODO Move this into external submodule files
+
+	// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser or https://github.com/smalot/pdfparser
+	// Use the method pdftotext to generate a HTML
+	if (preg_match('/pdftotext/i', $useFullTextIndexation)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+		$utils = new Utils($db);
+		$outputfile = $conf->admin->dir_temp.'/tmppdftotext.'.$user->id.'.out'; // File used with popen method
+
+		// We also exclude '/temp/' dir and 'documents/admin/documents'
+		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+		if ($options == 'fulltext') {
+			$params = '-nodiag -layout';
+		} else {
+			$params = '-htmlmeta';
+		}
+		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext') . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
+		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+		if (empty($resultexec['error'])) {
+			$matches = array();
+			if ($options == 'fulltext') {
+				$textforfulltextindex = $resultexec['output'];
+			}
+			if ($options == 'html') {
+				$txt = $resultexec['output'];
+				if (preg_match('/<meta name="keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+					$keywords = $matches[1];
+				}
+				if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+					$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+				}
+			}
+		} else {
+			dol_syslog($resultexec['error']);
+			$error++;
+		}
+	}
+
+
+	// Use the method docling to generate a .md (https://ds4sd.github.io/docling/)
+	if (preg_match('/docling/i', $useFullTextIndexation)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+		$utils = new Utils($db);
+		$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
+
+		// We also exclude '/temp/' dir and 'documents/admin/documents'
+		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+		if (!$resultexec['error']) {
+			$txt = $resultexec['output'];
+			//$matches = array();
+			//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+			//	$keywords = $matches[1];
+			//}
+			//if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+			//	$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+			//}
+			$textforfulltextindex = $txt;
+		} else {
+			dol_syslog($resultexec['error']);
+			$error++;
+		}
+	}
+
+	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex, 'cmd' => $cmd);
+}
+
+/**
+ * Remove the last line of a text file
+ *
+ * @param  string	$fullpath		Full path of file
+ * @return int						Return <0 if error, >0 if OK
+ */
+function removeLastLine($fullpath)
+{
+	// Generate tmp file content without the last line
+	$fp = fopen($fullpath, "r");
+	fseek($fp, -1, SEEK_END);
+	$pos = -1;
+	$char = fgetc($fp);
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	while ($char !== "\n" && $char !== false) {
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	/*
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last-1 line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	*/
+	$truncatePos = ftell($fp);
+	fclose($fp);
+	// Truncate the tmp file to remove the last line
+	$fp = fopen($fullpath, "c+");
+	ftruncate($fp, $truncatePos);
+	fclose($fp);
+
+	return 1;
 }

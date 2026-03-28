@@ -594,8 +594,8 @@ if (empty($reshook)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+					// We reevaluate the price according to the var rate because vat of transaction can be different of
+					// the one of the product by default (for example when country is different between seller and buyer).
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
@@ -844,7 +844,7 @@ if (empty($reshook)) {
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
+			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
 			if ($result >= 0) {
 				$object->fetch($object->id); // Reload lines
 
@@ -1485,7 +1485,7 @@ if ($action == 'create') {
 		if ($object->frequency > 0) {
 			print '<br>';
 
-			if (empty($conf->cron->enabled)) {
+			if (!isModEnabled('cron')) {
 				print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));
 			}
 
@@ -1534,25 +1534,11 @@ if ($action == 'create') {
 		$object->fetch_lines();
 		// Show object lines
 		if (!empty($object->lines)) {
-			$canchangeproduct = 1;
-			// To set ref for getNomURL function
-			foreach ($object->lines as $line) {
-				$line->ref = $line->label;
-				$line->product_ref = $line->label;
-				$line->product_label = $line->label;
-				// For backward compatibility
-				if (empty($line->subprice) && ! empty($line->pu_ht)) {
-					$line->subprice = $line->pu_ht;
-				}
-				if (empty($line->subprice_ttc) && ! empty($line->pu_ttc)) {
-					$line->subprice_ttc = $line->pu_ttc;
-				}
-			}
-
 			global $canchangeproduct;
 			$canchangeproduct = 0;
 
 			$object->statut = $object->suspended;
+			$object->status = $object->suspended;
 			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 0); // No date selector for template invoice
 		}
 

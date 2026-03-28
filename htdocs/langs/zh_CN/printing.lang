@@ -46,6 +46,10 @@ IPP_Color=彩色
 IPP_Device=设备
 IPP_Media=打印媒体
 IPP_Supported=媒体类型
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=无
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=颜色
 DirectPrintingJobsDesc=此页列出了为可用打印机找到的打印任务。
 GoogleAuthNotConfigured=谷歌OAuth还没有设置。启用OAuth模块和设置谷歌 ID/密码。
 GoogleAuthConfigured=在OAuth模块的设置中发现了Google OAuth凭据。
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=配置可用的谷歌云打印机驱动
 PrintingDriverDescprintipp=打印驱动程序杯的配置变量。
 PrintTestDescprintgcp=谷歌云打印机列表
 PrintTestDescprintipp=杯子打印机清单。
-Testbbbb
+PrinterLocation=Printer location

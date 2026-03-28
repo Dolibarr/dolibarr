@@ -970,13 +970,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<table class="border tableforfield centpercent">';
 
 	// Type Prospect/Customer/Supplier
-	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td colspan="2">';
+	print '<tr><td class="titlefield">';
+	print $langs->trans('NatureOfThirdParty');
+	print '</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="2">';
+		print $langs->trans('CustomerCode');
+		print '</td><td>';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
@@ -1019,7 +1022,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
 			print $form->editfieldkey($langs->trans("StripeCustomerId").' (Test)', 'key_accounttest', $tmpstripecu, $object, (int) $permissiontoaddupdatepaymentinformation, 'string', '', 0, 2, 'socid');
-			print '</td><td>';
+			print '</td><td'.(empty($tmpstripecu) ? ' class="right"' : '').'>';
 			print $form->editfieldval($langs->trans("StripeCustomerId").' (Test)', 'key_accounttest', $tmpstripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', null, null, '', 2, '', 'socid');
 			if ($tmpstripecu && $action != 'editkey_accounttest') {
 				$connect = '';
@@ -1029,9 +1032,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$tmpstripecu;
 				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
 			}
-			print '</td><td class="right">';
 			if (empty($tmpstripecu)) {
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
 				print '<input type="hidden" name="action" value="synccustomertostripetest">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1049,7 +1051,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
 			print $form->editfieldkey($langs->trans("StripeCustomerId").' (Live)', 'key_account', $tmpstripecu, $object, (int) $permissiontoaddupdatepaymentinformation, 'string', '', 0, 2, 'socid');
-			print '</td><td>';
+			print '</td><td'.(empty($tmpstripecu) ? ' class="right"' : '').'>';
 			print $form->editfieldval($langs->trans("StripeCustomerId").' (Live)', 'key_account', $tmpstripecu, $object, $permissiontoaddupdatepaymentinformation, 'string', '', null, null, '', 2, '', 'socid');
 			if ($tmpstripecu && $action != 'editkey_account') {
 				$connect = '';
@@ -1059,9 +1061,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$tmpstripecu;
 				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
 			}
-			print '</td><td class="right">';
 			if (empty($tmpstripecu)) {
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1075,7 +1076,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	if ($object->fournisseur) {
 		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="2">';
+		print $langs->trans('SupplierCode');
+		print '</td><td>';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
@@ -1111,9 +1113,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		// Stripe customer key 'cu_....' stored into llx_societe_account
 		print '<tr><td class="titlefield">';
 		print $form->editfieldkey("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, (int) $permissiontoaddupdatepaymentinformation, 'string', '', 0, 2, 'socid');
-		print '</td><td>';
+		print '</td><td'.(empty($stripesupplieracc) ? ' class="right"' : '').'>';
 		print $form->editfieldval("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontoaddupdatepaymentinformation, 'string', '', null, null, '', 2, '', 'socid');
-		if (isModEnabled('stripe') && $stripesupplieracc && $action != 'editkey_account_supplier') {
+		if ($stripesupplieracc && $action != 'editkey_account_supplier') {
 			$connect = '';
 
 			$url = 'https://dashboard.stripe.com/test/connect/accounts/'.$stripesupplieracc;
@@ -1122,9 +1124,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
 		}
-		print '</td><td class="right">';
 		if (empty($stripesupplieracc)) {
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
 			print '<input type="hidden" name="action" value="syncsuppliertostripe">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1883,8 +1884,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 
 			// Fields from hook
-			// TODO: No longer in foreach -> using last rib of for each which may be undeclared!
-			$parameters = array('arrayfields' => array(), 'stripe_card_ref' => $rib->stripe_card_ref, 'stripe_account' => $rib->stripe_account, 'linetype' => 'stripebanremoteonly');
+			$parameters = array('arrayfields' => array(), 'src' => $src, 'linetype' => 'stripebanremoteonly');
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -1995,14 +1995,14 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'" spellcheck="false"></td></tr>';
 
 	$required = (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) ? "fieldrequired" : "";
 	print '<tr><td class="'.$required.'">'.$langs->trans("BankName").'</td>';
-	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'" spellcheck="false"></td></tr>';
 
 	// Show fields of bank account
 	$bankaccount = $companybankaccount;
@@ -2061,35 +2061,38 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-	print '<textarea name="address" rows="4" cols="40" maxlength="255">';
-	print $companybankaccount->address;
+	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
+	print dolPrintHTMLForTextArea($companybankaccount->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->owner_name.'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->owner_name.'" spellcheck="false"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
-	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255">';
-	print $companybankaccount->owner_address;
+	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
+	print dolPrintHTMLForTextArea($companybankaccount->owner_address);
 	print "</textarea></td></tr>";
 
 	print '</table>';
 	print '</div>';
 
 	if (isModEnabled('prelevement')) {
-		print '<br>';
+		print '<hr>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		if (empty($companybankaccount->rum)) {
 			$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, (string) $companybankaccount->id);
 		}
 
+		// Title
+		print '<tr><td class="titlefieldcreate" colspan="5">'.$langs->trans("WithdrawalsSetup").'</td></tr>';
+
 		// RUM
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
-		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'"></td></tr>';
+		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'" spellcheck="false"></td></tr>';
 
 		$date_rum = GETPOSTDATE('date_rum', '00:00:00');
 
@@ -2102,7 +2105,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("ExternalSystemID")." ('pm_...' or 'src_...')</td>";
-		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
+		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'" spellcheck="false"></td></tr>';
 
 		print '</table>';
 		print '</div>';
@@ -2132,13 +2135,13 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth300" type="text" id="label" name="label" value="'.$companypaymentmode->label.'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" id="label" name="label" value="'.$companypaymentmode->label.'" spellcheck="false"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("NameOnCard").'</td>';
-	print '<td><input class="minwidth200" type="text" name="proprio" value="'.$companypaymentmode->owner_name.'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="proprio" value="'.$companypaymentmode->owner_name.'" spellcheck="false"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("CardNumber").'</td>';
-	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.$companypaymentmode->number.'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.$companypaymentmode->number.'" spellcheck="false"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
 	print '<td>';
@@ -2150,7 +2153,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<td><input size="8" type="text" name="cvn" value="'.$companypaymentmode->cvn.'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("ExternalSystemID")." ('pm_... ".$langs->trans("or")." card_....')</td>";
-	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'" spellcheck="false"></td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -2177,13 +2180,13 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth250" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $langs->trans("Bank").' '.$object->name).'"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $langs->trans("Bank").' '.$object->name).'" spellcheck="false"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Bank").'</td>';
-	print '<td><input class="minwidth250" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="bank" name="bank" value="'.GETPOST('bank').'" spellcheck="false"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
@@ -2234,36 +2237,39 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			print $langs->trans($val);
 		}
 		print '</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.GETPOST($name).'"></td>';
+		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.GETPOST($name).'" spellcheck="false"></td>';
 		print '</tr>';
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
-	print GETPOST('address');
+	print dolPrintHTMLForTextArea(GETPOST('address'));
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td><input class="minwidth200" type="text" name="proprio" value="'.GETPOST('proprio').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="proprio" value="'.GETPOST('proprio').'" spellcheck="false"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
-	print GETPOST('owner_address');
+	print dolPrintHTMLForTextArea(GETPOST('owner_address'));
 	print "</textarea></td></tr>";
 
 	print '</table>';
 	print '</div>';
 
 	if (isModEnabled('prelevement')) {
-		print '<br>';
+		print '<hr>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
+
+		// Title
+		print '<tr><td class="titlefieldcreate" colspan="5">'.$langs->trans("WithdrawalsSetup").'</td></tr>';
 
 		// RUM
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("RUM"), $langs->trans("RUMLong").'<br>'.$langs->trans("RUMWillBeGenerated")).'</td>';
-		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"></td></tr>';
+		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'" spellcheck="false"></td></tr>';
 
 		$date_rum = GETPOSTDATE('date_rum', '00:00:00');
 
@@ -2276,7 +2282,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("ExternalSystemID")." ('src_....')</td>";
-		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
+		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'" spellcheck="false"></td></tr>';
 
 		print '</table>';
 		print '</div>';
@@ -2309,13 +2315,13 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.GETPOST('label', 'alpha').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.GETPOST('label', 'alpha').'" spellcheck="false"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("NameOnCard").'</td>';
-	print '<td><input class="minwidth200" type="text" name="proprio" value="'.GETPOST('proprio', 'alpha').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="proprio" value="'.GETPOST('proprio', 'alpha').'" spellcheck="false"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("CardNumber").'</td>';
-	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.GETPOST('cardnumber', 'alpha').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.GETPOST('cardnumber', 'alpha').'" spellcheck="false"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
 	print '<td>';
@@ -2324,10 +2330,10 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CVN").'</td>';
-	print '<td><input class="width50" type="text" name="cvn" value="'.GETPOST('cvn', 'alpha').'"></td></tr>';
+	print '<td><input class="width50" type="text" name="cvn" value="'.GETPOST('cvn', 'alpha').'" spellcheck="false"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("ExternalSystemID")." ('card_....')</td>";
-	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'" spellcheck="false"></td></tr>';
 
 	print '</table>';
 	print '</div>';

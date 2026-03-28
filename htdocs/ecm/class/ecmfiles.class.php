@@ -684,6 +684,7 @@ class EcmFiles extends CommonObject
 				$line->src_object_type = $obj->src_object_type;
 				$line->src_object_id = $obj->src_object_id;
 				$line->agenda_id = $obj->agenda_id;
+				$line->fetch_optionals();
 				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
@@ -996,12 +997,12 @@ class EcmFiles extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to (propal, etc) module name
-	 *  @param	int  	$notooltip			1=Disable tooltip
-	 *  @param	int		$maxlen				Max length of visible user name
-	 *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int					$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string				$option				On what the link point to (propal, etc) module name
+	 *  @param	int  				$notooltip			1=Disable tooltip
+	 *  @param	int					$maxlen				Max length of visible user name
+	 *  @param  string  			$morecss            Add more css on link
+	 *	@return	string									String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
@@ -1076,9 +1077,6 @@ class EcmFiles extends CommonObject
 				$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="paddingright"')).$linkend);
 			} else {
 				$result .= ($linkstart.img_mime($this->filename, ($notooltip ? '' : dol_escape_htmltag($label, 1)), ($notooltip ? '' : ' paddingright')).$linkend);
-			}
-			if ($withpicto != 2) {
-				$result .= ' ';
 			}
 		}
 		$result .= $linkstart.$this->filename.$linkend;
@@ -1174,6 +1172,11 @@ class EcmFilesLine extends CommonObjectLine
 	 * @var int Entity
 	 */
 	public $entity;
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'ecm_files';
 
 	/**
 	 * @var string

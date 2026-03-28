@@ -263,7 +263,19 @@ with
 
 PHP JQUERYFILETREE:
 -------------------
-* Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
+* Remove directory htdocs/public/includes/jquery/plugins/jqueryFileTree/connectors
+
+
+
+PHP Mobile_DETECT:
+------------------
+Remplacer:
+
+array $headers = null,
+
+par
+
+$headers = null,
 
 
 

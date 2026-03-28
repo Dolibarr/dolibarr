@@ -61,7 +61,7 @@ License: GPL-3+
 
 ------------------------------------------------------------
 
-Files: htdocs/includes/ckeditor/*
+Files: htdocs/public/includes/ckeditor/*
 Copyright: 2003-2012 CKSource - Frederico Knabben
 License: GPL-2+
  The ckeditor is triple licensed under the GNU General Public License (GPL),
@@ -190,7 +190,7 @@ License: CC-By-SA
 
 ------------------------------------------------------------
 
-Files: htdocs/includes/jquery/*
+Files: htdocs/public/includes/jquery/*
 Copyright: JQuery team
 https://www.jquery.com
 License: GPL-2+ or MIT

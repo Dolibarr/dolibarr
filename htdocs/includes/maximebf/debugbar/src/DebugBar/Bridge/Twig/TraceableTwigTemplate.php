@@ -15,7 +15,7 @@ use Twig_TemplateInterface;
 
 /**
  * Wraps a Twig_Template to add profiling features
- * 
+ *
  * @deprecated
  */
 class TraceableTwigTemplate extends Twig_Template implements Twig_TemplateInterface

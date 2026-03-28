@@ -128,7 +128,7 @@ if (empty($force_install_nophpinfo) && (!file_exists($lockfile) && !file_exists(
 print "<br>\n";
 
 // Check PHP version max
-$arrayphpmaxversionwarning = array(8, 4, 0);
+$arrayphpmaxversionwarning = array(8, 5, 0);
 if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
 	print img_picto('', 'warning', 'class="pictofixedwidth error"');
 	print $langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
@@ -380,6 +380,7 @@ if (!file_exists($conffile)) {
 	// Requirements met/all ok: display the next step button
 	if ($checksok) {
 		$ok = false;
+		$validfoundconf = false;
 
 		// Try to create db connection
 		if (file_exists($conffile)) {
@@ -389,6 +390,8 @@ if (!file_exists($conffile)) {
 					print '<span class="error">A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.</span><br>'."\n";
 					dol_syslog("A '".$conffiletoshow."' file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the '".$conffiletoshow."' file.", LOG_WARNING);
 				} else {
+					$validfoundconf = true;
+
 					require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 					// If password is encoded, we decode it
@@ -444,12 +447,14 @@ if (!file_exists($conffile)) {
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 			$dolibarrversiontoinstallarray = versiondolibarrarray();
+		} elseif ($validfoundconf) {
+			print 'Failed to connect with data found int the current conf.php file.<br>';
 		}
 
 		// Show title
 		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
-			print $langs->trans("VersionLastUpgrade").' <b><span class="badge-text badge-secondary okinversed">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> &nbsp; - &nbsp; ';
-			print $langs->trans("VersionProgram").' <b><span class="badge-text badge-secondary okinversed">'.DOL_VERSION.'</span></b>';
+			print $langs->trans("VersionLastUpgrade").' <b><span class="badge-text okinversed">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> &nbsp; - &nbsp; ';
+			print $langs->trans("VersionProgram").' <b><span class="badge-text okinversed">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
 			print '<br>';
@@ -640,7 +645,7 @@ if (!file_exists($conffile)) {
 		print '</table>'."\n";
 
 		if (count($notavailable_choices)) {
-			print '<br><div id="AShowChoices" style="opacity: 0.5">';
+			print '<br><div id="AShowChoices" class="opacitymedium cursorpointer">';
 			print '> '.$langs->trans('ShowNotAvailableOptions').'...';
 			print '</div>';
 
@@ -664,9 +669,9 @@ $("div#AShowChoices").click(function() {
     $("div#navail_choices").toggle();
 
     if ($("div#navail_choices").css("display") == "none") {
-        $(this).text("> '.$langs->trans('ShowNotAvailableOptions').'...");
+        $(this).text(\'> '.dol_escape_js($langs->transnoentitiesnoconv('ShowNotAvailableOptions')).'...\');
     } else {
-        $(this).text("'.$langs->trans('HideNotAvailableOptions').'...");
+        $(this).text(\'> '.dol_escape_js($langs->transnoentitiesnoconv('HideNotAvailableOptions')).'...\');
     }
 
 });

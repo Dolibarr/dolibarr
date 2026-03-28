@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  * Copyright (C) 2025		Jean François Baillette		<jean-francois@swiiptel.net>
+ * Copyright (C) 2026		Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,7 +338,7 @@ class Users extends DolibarrApi
 	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return int
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 */
 	public function post($request_data = null)
 	{
@@ -360,11 +361,6 @@ class Users extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
-			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
-				continue;
-			}
 			/*if ($field == 'pass') {
 				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
 					throw new RestException(403, 'You are not allowed to modify/set password of other users');
@@ -372,6 +368,21 @@ class Users extends DolibarrApi
 				}
 			}
 			*/
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if (DolibarrApiAccess::$user->admin) {	// If user for API is admin
+				if ($field == 'admin' && $value != $this->useraccount->admin && empty($value)) {
+					throw new RestException(403, 'Reseting the admin status of a user is not possible using the API');
+				}
+			} else {
+				if ($field == 'admin' && $value != $this->useraccount->admin) {
+					throw new RestException(403, 'Only an admin user can modify the admin status of another user');
+				}
+			}
 
 			$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
 		}
@@ -850,13 +861,14 @@ class Users extends DolibarrApi
 	 *
 	 * @param	int		$group				ID of group
 	 * @param	int     $load_members		Load members list or not {@min 0} {@max 1}
+	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return  Object				        object of User objects
 	 *
 	 * @throws RestException 400 Bad Request
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
 	 */
-	public function infoGroups($group, $load_members = 0)
+	public function infoGroups($group, $load_members = 0, $includepermissions = 0)
 	{
 		if ($group == 0) {
 			throw new RestException(400, 'No usergroup with id=0 can exist');
@@ -872,6 +884,10 @@ class Users extends DolibarrApi
 
 		if ($result < 1) {
 			throw new RestException(404, 'Usergroup not found');
+		}
+
+		if ($includepermissions) {
+			$group_static->loadRights();
 		}
 
 		return $this->_cleanUserGroup($group_static);

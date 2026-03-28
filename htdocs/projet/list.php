@@ -1209,11 +1209,14 @@ if ($search_opp_amount != '') {
 if ($search_budget_amount != '') {
 	$param .= '&search_budget_amount='.urlencode($search_budget_amount);
 }
+if ($search_usage_opportunity != '') {
+	$param .= '&search_usage_opportunity='.urlencode($search_usage_opportunity);
+}
 if ($search_usage_task != '') {
 	$param .= '&search_usage_task='.urlencode($search_usage_task);
 }
 if ($search_usage_bill_time != '') {
-	$param .= '&search_usage_opportunity='.urlencode($search_usage_bill_time);
+	$param .= '&search_usage_bill_time='.urlencode($search_usage_bill_time);
 }
 if ($search_usage_event_organization != '') {
 	$param .= '&search_usage_event_organization='.urlencode($search_usage_event_organization);
@@ -1346,7 +1349,7 @@ $moreforfilter .= '</div>';
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$langs->load("categories");
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_USER, $search_category_user_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->trans("UsersCategoryShort"));
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_USER, $search_category_user_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->transnoentitiesnoconv("UsersCategoryShort"));
 }
 
 
@@ -1368,7 +1371,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 // Filter on project categories
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->trans("ProjectsCategoryShort"));
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth200imp minwidth200 widthcentpercentminusx', -1, 1, 1, $langs->transnoentitiesnoconv("ProjectsCategoryShort"));
 }
 
 // Filter on customer categories
@@ -2107,10 +2110,10 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Title
+		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">';
-			print dol_escape_htmltag($obj->title);
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print dolPrintHTML($obj->title);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

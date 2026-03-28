@@ -1,7 +1,7 @@
 <?php
 
 /* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -243,7 +243,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource', 'class="pictofixedwidth"');
-	print $formresource->select_resource_list($resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 0, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list($resources, 'resources', '', 0, 0, 0, array(), '', 2, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -296,7 +296,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource', 'class="pictofixedwidth"');
-	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 1, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', 0, 0, 0, array(), '', 2, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -355,7 +355,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/workstation/workstation_list.php', 1).'?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl('/workstation/workstation_list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*

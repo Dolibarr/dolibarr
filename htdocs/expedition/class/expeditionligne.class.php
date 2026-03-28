@@ -406,6 +406,14 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 		$this->db->begin();
 
+		if (getDolGlobalString('STOCK_EXPEDITION_NO_MORE_THAN_ORDER') && !empty($this->fk_elementdet) && !empty($this->fk_expedition)) {
+			$this->checkQtyVsOrderLine($this->fk_elementdet, $this->qty, 0);
+			if (!empty($this->error)) {
+				$this->db->rollback();
+				return -5;
+			}
+		}
+
 		if (empty($this->rang)) {
 			$this->rang = 0;
 		}
@@ -664,6 +672,34 @@ class ExpeditionLigne extends CommonObjectLine
 
 		$this->db->begin();
 
+		if (!empty($this->id) && empty($this->fk_elementdet)) {
+			$sql = "SELECT fk_elementdet FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$this->fk_elementdet = $obj->fk_elementdet;
+				}
+			}
+		}
+
+		if (getDolGlobalString('STOCK_EXPEDITION_NO_MORE_THAN_ORDER') && !empty($this->fk_elementdet)) {
+			$qty_to_check = $this->qty;
+			if (!empty($this->detail_batch)) {
+				if (is_array($this->detail_batch)) {
+					$qty_to_check = array_sum(array_column($this->detail_batch, 'qty'));
+				} else {
+					$qty_to_check = $this->detail_batch->qty;
+				}
+			}
+			$this->checkQtyVsOrderLine($this->fk_elementdet, $qty_to_check, $this->id);
+			if (!empty($this->error)) {
+				$this->db->rollback();
+				return -5;
+			}
+		}
+
 		// Clean parameters
 		if (empty($this->qty)) {
 			$this->qty = 0;
@@ -820,5 +856,54 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->db->rollback();
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Check that qty to ship does not exceed remaining qty on order line.
+	 * Sets $this->error if check fails.
+	 *
+	 * @param  int   $fk_elementdet   rowid of order line (commandedet)
+	 * @param  float $qty             quantity to check
+	 * @param  int   $exclude_line_id rowid of current expeditiondet to exclude (0 for insert)
+	 * @return bool  true if OK, false if exceeded
+	 */
+	private function checkQtyVsOrderLine(int $fk_elementdet, float $qty, int $exclude_line_id): bool
+	{
+		global $langs;
+
+		// Ordered quantity on the source order line
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		$orderline = new OrderLine($this->db);
+		if ($orderline->fetch($fk_elementdet) <= 0) {
+			return true; // Order line not found, skip check
+		}
+		$qty_ordered = (float) $orderline->qty;
+
+		// Quantity already shipped on other shipment lines
+		$sql  = "SELECT COALESCE(SUM(ed.qty), 0) as qty_shipped";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.rowid = ed.fk_expedition";
+		$sql .= " WHERE ed.fk_elementdet = ".((int) $fk_elementdet);
+		$sql .= " AND e.fk_statut >= 0"; // exclude only deleted ones
+		if ($exclude_line_id > 0) {
+			$sql .= " AND ed.rowid != ".((int) $exclude_line_id); // exclude current line being edited
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return true;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$qty_already_shipped = $obj ? (float) $obj->qty_shipped : 0;
+
+		$qty_remaining = $qty_ordered - $qty_already_shipped;
+
+		if ($qty > $qty_remaining) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorExpeditionQtyTooHigh', $qty, max(0, $qty_remaining));
+			return false;
+		}
+
+		return true;
 	}
 }

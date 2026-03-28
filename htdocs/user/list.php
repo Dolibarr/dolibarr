@@ -7,7 +7,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,6 +155,7 @@ $arrayfields = array(
 	'u.thm' => array('label' => "THM", 'langs' => 'salaries', 'checked' => '-1', 'position' => 82, 'enabled' => '1', 'isameasure' => 1),
 	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'u.import_key' => array('label' => "ImportId", 'checked' => '-1', 'position' => 800, 'enabled' => '1'),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
@@ -190,6 +191,9 @@ $search_job = GETPOST('search_job', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
 $search_categ = GETPOST("search_categ", 'intcomma');
+$search_datelastlogin = GETPOSTDATE('search_datelastlogin', '', 'tzuserrel');
+$search_datepreviouslogin = GETPOSTDATE('search_datepreviouslogin', '', 'tzuserrel');
+
 $searchCategoryUserOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryUserOperator = GETPOSTINT('search_category_user_operator');
@@ -284,9 +288,8 @@ if (empty($reshook)) {
 		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
-		$search_date_creation = "";
-		$search_date_modification = "";
 		$search_categ = 0;
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 		if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
@@ -391,7 +394,7 @@ $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.l
 $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
-$sql .= " u.ldap_sid, u.statut as status, u.entity,";
+$sql .= " u.ldap_sid, u.statut as status, u.entity, u.import_key,";
 $sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
@@ -869,6 +872,11 @@ if (!empty($arrayfields['date_modification']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['u.import_key']['checked'])) {
+	// Import ID
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -995,6 +1003,14 @@ if (!empty($arrayfields['u.datec']['checked'])) {
 }
 if (!empty($arrayfields['date_modification']['checked'])) {
 	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "date_modification", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['import_key']['checked'])) {
+	print_liste_field_titre("ImportId", $_SERVER["PHP_SELF"], "u.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.import_key']['checked'])) {
+	print_liste_field_titre("ImportId", $_SERVER["PHP_SELF"], "u.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.statut']['checked'])) {
@@ -1279,7 +1295,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Multicompany enabled
-		if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
 				if (!$obj->entity) {
 					$labeltouse = $langs->trans("AllEntities");
@@ -1397,6 +1413,13 @@ while ($i < $imaxinloop) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Import
+		if (!empty($arrayfields['u.import_key']['checked'])) {
+			print '<td class="center">'.dolPrintHTML($obj->import_key).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

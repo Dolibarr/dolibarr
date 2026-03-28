@@ -202,9 +202,7 @@ if (!function_exists('dol_loginfunction')) {
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 
 		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
-			if (session_status() != PHP_SESSION_ACTIVE) {
-				dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
-			}
+			dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
 		}
 
 		if (GETPOST('urlfrom', 'alpha')) {

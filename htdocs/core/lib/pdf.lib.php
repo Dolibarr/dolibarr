@@ -14,7 +14,7 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -242,7 +242,7 @@ function pdf_getEncryption($pathoffile)
 
 	//ob_start();
 	@($parser = new TCPDF_PARSER(ltrim($content)));
-	list($xref, $data) = $parser->getParsedData();
+	[$xref, $data] = $parser->getParsedData();
 	unset($parser);
 	//ob_end_clean();
 
@@ -307,12 +307,11 @@ function pdf_getPDFFontSize($outputlangs)
  *
  * @param	string		$logo		Full path to logo file to use
  * @param	bool		$url		Image with url (true or false)
- * @return	int|float
+ * @return	float
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
-	global $conf;
-	$height = (!getDolGlobalString('MAIN_DOCUMENTS_LOGO_HEIGHT') ? 20 : $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
+	$height = getDolGlobalFloat('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
 	$maxwidth = 130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($logo, $url);
@@ -322,7 +321,7 @@ function pdf_getHeightForLogo($logo, $url = false)
 			$height = $height * $maxwidth / $width;
 		}
 	}
-	//print $tmp['width'].' '.$tmp['height'].' '.$width; exit;
+
 	return $height;
 }
 
@@ -381,15 +380,13 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param   Societe|Contact     $thirdparty     Contact or thirdparty
- * @param   Translate           $outputlangs    Output language
- * @param   int<0,1>            $includealias   1=Include alias name after name
- * @return  string                              String with name of thirdparty (+ alias if requested)
+ * @param   Societe|Contact|null    $thirdparty     Contact or thirdparty
+ * @param   Translate           	$outputlangs    Output language
+ * @param   int<0,1>            	$includealias   1=Include alias name after name
+ * @return  string                  	            String with name of thirdparty (+ alias if requested)
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias = 0)
 {
-	global $conf;
-
 	// Recipient name
 	$socname = '';
 
@@ -420,7 +417,6 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 
 	return $outputlangs->convToOutputCharset((string) $socname);
 }
-
 
 /**
  *   	Return a string with full address formatted for output on PDF documents
@@ -765,6 +761,67 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 	}
 	if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') != '-1') {
 		$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
+	}
+}
+
+
+/**
+ *   	Add some information from the blockedlog module
+ *
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ * 		@param	float		$page_height	Height of page
+ * 		@param	Facture		$object			Object invoice
+ * 		@param	int			$w				Width for text
+ * 		@param	float		$posx			Pos x
+ * 		@param	float		$posy			Pos y
+ *      @return	void
+ */
+function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
+{
+	global $db;
+
+	// Transaction ID
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+	if (isALNERunningVersion() && isModEnabled('blockedlog')) {
+		if ($object->status > $object::STATUS_DRAFT) {
+			$unalterablelogid = 'UNDEFINED';
+			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
+			$sql .= $db->order('rowid', 'DESC');
+			$sql .= $db->plimit(1);
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$unalterablelogid = $obj->signature;
+				}
+			}
+
+			if ($unalterablelogid != 'UNDEFINED') {
+				$posy += 5;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
+			}
+
+			$isADuplicata = ($object->pos_print_counter >= 2);
+			if ($isADuplicata) {
+				$posy += 3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, '*** '.$outputlangs->trans("DUPLICATA").(getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT') ? ' (no '.($object->pos_print_counter - 1).')' : '').' ***', '', 'R');
+			}
+		}
+
+		if ($object->status == $object::STATUS_DRAFT) {
+			$posy += 5;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, '*** '.strtoupper($outputlangs->trans("TemporaryReceipt")).' ***', '', 'R');
+		}
 	}
 }
 
@@ -1163,7 +1220,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 	// Prof Id 1
-	if (!empty($fromcompany->idprof1) && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+	if (!empty($fromcompany->idprof1) && ($fromcompany->country_code != 'FR' || (empty($fromcompany->idprof2) || strpos($fromcompany->idprof2, $fromcompany->idprof1) !== 0))) {
 		$field = $outputlangs->transcountrynoentities("ProfId1", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1253,7 +1310,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$pdf->SetDrawColor(224, 224, 224);
 	// Option for footer text color
 	if (getDolGlobalString('PDF_FOOTER_TEXT_COLOR')) {
-		list($r, $g, $b) = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
+		[$r, $g, $b] = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
 		$pdf->SetTextColor($r, $g, $b);
 	}
 
@@ -1291,7 +1348,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				[$r, $g, $b] = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
@@ -1343,7 +1400,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				[$r, $g, $b] = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
@@ -2456,15 +2513,31 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
-			if (getDolGlobalString('SITUATION_DISPLAY_DIFF_ON_PDF')) {
+			// 2 = situation_percent is non-cumulative (delta of current situation)
+			// 1 = (old mode): situation_percent is cumulative (state at situation)
+			$isCumulative = getDolGlobalInt('INVOICE_USE_SITUATION') === 1;
+			$showDelta = (bool) getDolGlobalInt('SITUATION_DISPLAY_DIFF_ON_PDF');
+
+			if ($isCumulative xor $showDelta) {
+				// Either:
+				// - old mode and we want to show a total or
+				// - new mode and we want to show a delta
+				$result = $object->lines[$i]->situation_percent;
+			} else {
+				// Either:
+				// - old mode but we want to show a delta or
+				// - new mode but we want to show a total
 				$prev_progress = 0;
 				if (method_exists($object->lines[$i], 'get_prev_progress')) {
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}
-				$result = round($object->lines[$i]->situation_percent - $prev_progress, 1).'%';
-			} else {
-				$result = round($object->lines[$i]->situation_percent, 1).'%';
+				$result = $isCumulative ?
+					// old mode: we need to compute the delta (total - sum of previous)
+					$object->lines[$i]->situation_percent - $prev_progress :
+					// new mode: we need to compute the total (sum of previous + delta)
+					$prev_progress + $object->lines[$i]->situation_percent;
 			}
+			$result = round($result, 1).'%';
 		}
 	}
 	return $result;
@@ -2510,17 +2583,11 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
 			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
-				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
-				$prev_progress = 0;
-				$progress = 1;
-				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
+				if (method_exists($object->lines[$i], 'getSituationRatio')) {
+					$total_ht *= $object->lines[$i]->getSituationRatio();
 				}
-				$result .= price($sign * ($total_ht / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
-			} else {
-				$result .= price($sign * $total_ht, 0, $outputlangs);
 			}
+			$result .= price($sign * $total_ht, 0, $outputlangs);
 		}
 	}
 	return $result;
@@ -2566,20 +2633,38 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
 			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
-				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
-				$prev_progress = 0;
-				$progress = 1;
-				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
-				}
-				$result .= price($sign * ($total_ttc / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
-			} else {
-				$result .= price($sign * $total_ttc, 0, $outputlangs);
+				$total_ttc *= $object->lines[$i]->getSituationRatio();
 			}
+			$result .= price($sign * $total_ttc, 0, $outputlangs);
 		}
 	}
 	return $result;
+}
+
+/**
+ * Check if a linked object can be displayed based on third-party privacy rules.
+ *
+ * This function prevents displaying customer data to suppliers or supplier data to customers
+ * according to the configuration and the socid of the main object and the linked object.
+ *
+ * @param object $object The main Dolibarr object (e.g., invoice, order, proposal)
+ * @param object $elementobject The linked object to check (e.g., linked order, linked invoice)
+ * @return bool Returns true if the linked object can be displayed, false otherwise.
+ */
+function canDisplayLinkedObjectInPDF($object, $elementobject)
+{
+	$objectSocId = getObjectSocId($object);
+	$elementSocId = getObjectSocId($elementobject);
+
+	if (getDolGlobalBool("PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC")) {
+		return true;
+	}
+
+	if (!empty($objectSocId) && !empty($elementSocId) && $objectSocId != $elementSocId) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
@@ -2613,41 +2698,58 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
+			$optiontohidelinkedorders = "PDF_HIDE_LINKED_ORDERS_ON_SAME_THIRDPARTY";
+			if ($objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
+				$optiontohidelinkedorders = "PDF_HIDE_LINKED_PURCHASE_ORDERS_ON_SAME_THIRDPARTY";
+			}
 			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1 && count($objects) <= getDolGlobalInt("MAXREFONDOC", 10) && !getDolGlobalString("PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE")) {
+			if (count($objects) > 1 && count($objects) <= getDolGlobalInt("MAXREFONDOC", 10) && !getDolGlobalString($optiontohidelinkedorders)) {
 				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
+					$outputList = '';
 					foreach ($objects as $elementobject) {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
+						if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+							$outputList = dol_concatdesc($outputList, $outputlangs->transnoentities($elementobject->ref) . (empty($elementobject->ref_client) ? '' : ' (' . $elementobject->ref_client . ')') . (empty($elementobject->ref_supplier) ? '' : ' (' . $elementobject->ref_supplier . ')') . ' ');
+							$outputList = dol_concatdesc($outputList, $outputlangs->transnoentities("OrderDate") . ' : ' . dol_print_date($elementobject->date, 'day', '', $outputlangs));
+						}
+					}
+
+					if (!empty($outputList)) {
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
+						$object->note_public = dol_concatdesc($object->note_public, $outputList);
 					}
 				}
-			} elseif (count($objects) == 1) {
+			} elseif (count($objects) == 1 && !getDolGlobalString($optiontohidelinkedorders)) {
 				$elementobject = array_shift($objects);
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'contrat') {
 			'@phan-var-force Contrat[] $objects';
 			$outputlangs->load('contracts');
 			foreach ($objects as $elementobject) {
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'fichinter') {
 			'@phan-var-force Fichinter[] $objects';
 			$outputlangs->load('interventions');
 			foreach ($objects as $elementobject) {
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("InterDate");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("InterDate");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->datec, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'shipping') {
 			'@phan-var-force Expedition[] $objects';
