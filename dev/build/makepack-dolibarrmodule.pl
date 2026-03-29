@@ -81,10 +81,10 @@ my $batch           = 0;
 for ( 0 .. @ARGV - 1 ) {
 	if ( $ARGV[$_] =~ /^-*target=(\w+)/i ) { $target = $1; $batch = 1; }
 	if ( $ARGV[$_] =~ /^-*desti=(.+)/i )   { $DESTI  = $1; }
-	if ( $ARGV[$_] =~ /^-*prefix=(.+)/i ) {
-		$PREFIX = $1;
-		$FILENAMESNAPSHOT .= "-" . $PREFIX;
-	}
+#	if ( $ARGV[$_] =~ /^-*prefix=(.+)/i ) {
+#		$PREFIX = $1;
+#		$FILENAMESNAPSHOT .= "-" . $PREFIX;
+#	}
 }
 $SOURCE = "$DIR/../..";
 $DESTI  = "$SOURCE/dev/build";
@@ -157,7 +157,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 		  . ucfirst($PROJECT)
 		  . ".class.php"
 	);
-	$custom = false;
+	$custom = 0;
 	if ( !$result ) {
 		$result = open(
 			$IN,
@@ -180,7 +180,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 		}
 	}
 	else {
-		$custom = true;
+		$custom = 1;
 	}
 	while (<$IN>) {
 		if ( $_ =~ /this->version\s*=\s*'([\d\.]+)'/ ) {
@@ -365,13 +365,13 @@ foreach my $PROJECT (@PROJECTLIST) {
 				}
 				close $IN2;
 
-				@timearray = localtime( time() );
-				$fulldate =
-				    ( $timearray[5] + 1900 ) . '-'
-				  . ( $timearray[4] + 1 ) . '-'
-				  . $timearray[3] . ' '
-				  . $timearray[2] . ':'
-				  . $timearray[1];
+#				@timearray = localtime( time() );
+#				$fulldate =
+#				    ( $timearray[5] + 1900 ) . '-'
+#				  . ( $timearray[4] + 1 ) . '-'
+#				  . $timearray[3] . ' '
+#				  . $timearray[2] . ':'
+#				  . $timearray[1];
 
 #open(VF,">$BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt");
 #print "Create version file $BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt with date ".$fulldate."\n";
