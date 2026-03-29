@@ -104,8 +104,11 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 	//print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
 	if (GETPOST('mode', 'aZ09') == 'vatforalllines') {
 		print '<div class="classvatforalllines inline-block nowraponall">';
-		print $form->load_tva('vatforalllines', '', $mysoc, $object->thirdparty, 0, 0, '', false, 1);
-		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		$societe_vendeuse = strpos($object->element, 'supplier') === false ? $mysoc : $object->thirdparty;
+		$societe_acheteuse = strpos($object->element, 'supplier') === false ? $object->thirdparty : $mysoc;
+		$vat_mode = strpos($object->element, 'supplier') === false ? 1 : 2;
+		print $form->load_tva('vatforalllines', '', $societe_vendeuse, $societe_acheteuse, 0, 0, '', false, 1, $vat_mode);
+		print '<input class="inline-block button smallpaddingimp valignmiddle" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
 		print '</div>';
 	}
 }
@@ -134,6 +137,11 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 // Qty
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
+//ShippableStatus
+if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+	print '<th class="linecolstock center" style="width: 30px;">'.$langs->trans("ShippableStatus").'</th>';
+}
+
 // Unit
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<th class="linecoluseunit left">'.$langs->trans('Unit').'</th>';
@@ -144,7 +152,7 @@ print '<th class="linecoldiscount right nowraponall">';
 print $langs->trans('ReductionShort');
 
 // @phan-suppress-next-line PhanUndeclaredConstantOfClass
-if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
+if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
 	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'remiseforalllines') {

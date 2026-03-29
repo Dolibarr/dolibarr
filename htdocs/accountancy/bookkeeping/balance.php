@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
@@ -142,7 +142,11 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+// Permissions
+$permissiontoread = $user->hasRight('accounting', 'mouvements', 'lire');
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$permissiontoexport = $user->hasRight('accounting', 'mouvements', 'export');
 
 
 /*
@@ -235,8 +239,8 @@ if ($action == 'export' && $user->hasRight('accounting', 'mouvements', 'lire')) 
 
 	if ($exportType === 'csv') {
 		$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
-		$filename = 'balance';
-		$type_export = 'balance';
+		$filename = 'balance';		// Used by the tpl
+		$type_export = 'balance';	// Used by the tpl
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 		foreach ($object->lines as $line) {
@@ -352,7 +356,7 @@ if ($action != 'export') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 
-		$newcardbutton .= dolGetButtonTitle($langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')', '', 'fa fa-file-csv paddingleft', $_SERVER['PHP_SELF'], 'exportcsvbutton', 1, array('morecss' => 'marginleftonly'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')', '', 'fa fa-file-csv paddingleft', $_SERVER['PHP_SELF'], 'exportcsvbutton', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -368,7 +372,7 @@ if ($action != 'export') {
 		});
 		</script>';
 
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'], 'exportpdfbutton', 1, array('morecss' => 'marginleftonly'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'], 'exportpdfbutton', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
@@ -413,21 +417,13 @@ if ($action != 'export') {
 	// Accountancy account
 	$moreforfilter .= $langs->trans('AccountAccounting').': ';
 	if ($type == 'sub') {
-		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-			$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
-		} else {
-			$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_start" value="'.dol_escape_htmltag($search_accountancy_code_start).'" placeholder="'.$langs->trans('From').'">';
-		}
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
 	} else {
 		$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200', 'accounts');
 	}
 	$moreforfilter .= ' ';
 	if ($type == 'sub') {
-		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-			$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
-		} else {
-			$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_end" value="'.dol_escape_htmltag($search_accountancy_code_end).'" placeholder="'.$langs->trans('to').'">';
-		}
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
 	} else {
 		$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 'accounts');
 	}

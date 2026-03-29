@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +202,7 @@ if ($action == 'update' && $permissiontobind) {
 		$ko = 0;
 		$msg = '';
 		$sql = '';
-		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {	// @phpstan-ignore-line Bug phpstan thinking that empty(array()) is always true
+		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 			$accounting = new AccountingAccount($db);
 
 			$arrayofdifferentselectedvalues = array();
@@ -466,9 +466,9 @@ if ($resql) {
 	if ($search_current_account_valid && $search_current_account_valid != '-1') {
 		$param .= "&search_current_account_valid=".urlencode($search_current_account_valid);
 	}
-	if ($accounting_product_mode) {
-		$param .= '&accounting_product_mode='.urlencode($accounting_product_mode);
-	}
+	// if ($accounting_product_mode) { // can't be empty see line 91-93
+	$param .= '&accounting_product_mode='.urlencode($accounting_product_mode);
+	// }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	if ($optioncss != '') {
@@ -552,10 +552,12 @@ if ($resql) {
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();
-		$formquestion[] = array('type' => 'other',
+		$formquestion[] = array(
+			'type' => 'other',
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
-			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
+			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone')
+		);
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", $nbselected), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
 	}
 
@@ -563,7 +565,7 @@ if ($resql) {
 	$moreforfilter = '';
 	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductList : 0);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductOperator : 0);
 	}
 
 	// Show/hide child products. Hidden by default
@@ -662,7 +664,7 @@ if ($resql) {
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
-		// Ref produit as link
+		// Product ref as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
 		$product_static->type = $obj->product_type;
@@ -907,49 +909,48 @@ if ($resql) {
 	}
 	print '</table>';
 	print '</div>';
+	?>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			function init_savebutton() {
+				console.log("We check if at least one line is checked")
 
-	print '<script type="text/javascript">
-        jQuery(document).ready(function() {
-        	function init_savebutton()
-        	{
-	            console.log("We check if at least one line is checked")
+				atleastoneselected = 0;
+				jQuery(".checkforselect").each(function(index) {
+					/* console.log( index + ": " + $( this ).text() ); */
+					if ($(this).is(':checked')) atleastoneselected++;
+				});
 
-    			atleastoneselected=0;
-	    		jQuery(".checkforselect").each(function( index ) {
-	  				/* console.log( index + ": " + $( this ).text() ); */
-	  				if ($(this).is(\':checked\')) atleastoneselected++;
-	  			});
+				if (atleastoneselected) jQuery("#changeaccount").removeAttr('disabled');
+				else jQuery("#changeaccount").attr('disabled', 'disabled');
+				if (atleastoneselected) jQuery("#changeaccount").attr('class', 'button');
+				else jQuery("#changeaccount").attr('class', 'button');
+			}
 
-	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
-	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'button\');
-	            else jQuery("#changeaccount").attr(\'class\',\'button\');
-        	}
-
-        	jQuery(".checkforselect").change(function() {
-        		init_savebutton();
-        	});
-        	jQuery(".productforselect").change(function() {
-				console.log($(this).attr("id")+" "+$(this).val());
+			jQuery(".checkforselect").change(function() {
+				init_savebutton();
+			});
+			jQuery(".productforselect").change(function() {
+				console.log($(this).attr("id") + " " + $(this).val());
 				if ($(this).val() && $(this).val() != -1) {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', true);
+					$(".productforselect"+$(this).attr("id")).prop('checked', true);
 				} else {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', false);
+					$(".productforselect"+$(this).attr("id")).prop('checked', false);
 				}
-        		init_savebutton();
-        	});
+				init_savebutton();
+			});
 
-        	init_savebutton();
+			init_savebutton();
 
-            jQuery("#search_current_account").keyup(function() {
-        		if (jQuery("#search_current_account").val() != \'\')
-                {
-                    console.log("We set a value of account to search "+jQuery("#search_current_account").val()+", so we disable the other search criteria on account");
-                    jQuery("#search_current_account_valid").val(-1);
-                }
-        	});
-        });
-        </script>';
+			jQuery("#search_current_account").keyup(function() {
+				if (jQuery("#search_current_account").val() != '') {
+					console.log("We set a value of account to search " + jQuery("#search_current_account").val() + ", so we disable the other search criteria on account");
+					jQuery("#search_current_account_valid").val(-1);
+				}
+			});
+		});
+	</script>
+	<?php
 
 	print '</form>';
 

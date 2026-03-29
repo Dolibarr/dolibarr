@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
  *
@@ -116,6 +116,9 @@ if (GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100) {
 
 // Security check
 $socid = GETPOSTINT('socid');
+if (empty($socid)) {
+	$socid = $user->socid; // External users: fall back to their own company (consistent with other card pages)
+}
 $id = GETPOSTINT('id');
 if ($user->socid && ($socid != $user->socid)) {
 	accessforbidden();
@@ -202,6 +205,7 @@ if ($reshook < 0) {
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || ((empty($object->id) || $object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
+$usercandelete = $user->hasRight('agenda', 'allactions', 'delete') || (($object->authorid === $user->id || $object->userownerid === $user->id) && $user->hasRight('agenda', 'myactions', 'delete'));
 
 
 /*
@@ -415,6 +419,10 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		if (GETPOST("elementtype", 'alpha')) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
+			// Keep permission check aligned with rights class aliases (see restrictedArea()).
+			if ($modulecodetouseforpermissioncheck == 'productbatch') {
+				$modulecodetouseforpermissioncheck = 'produit';
+			}
 			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
 
 			$hasPermissionOnLinkedObject = 0;
@@ -992,6 +1000,10 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		if (GETPOST("elementtype", 'alpha')) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
+			// Keep permission check aligned with rights class aliases (see restrictedArea()).
+			if ($modulecodetouseforpermissioncheck == 'productbatch') {
+				$modulecodetouseforpermissioncheck = 'produit';
+			}
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -1206,22 +1218,19 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 }
 
 // Delete event
-if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercancreate) {
+if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes' && $usercandelete) {
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	if ($user->hasRight('agenda', 'myactions', 'delete')
-		|| $user->hasRight('agenda', 'allactions', 'delete')) {
-		$result = $object->delete($user);
+	$result = $object->delete($user);
 
-		if ($result >= 0) {
-			header("Location: index.php");
-			exit;
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	if ($result >= 0) {
+		header("Location: index.php");
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -1642,7 +1651,9 @@ if ($action == 'create') {
 	print '<table class="border centpercent nobottom">';
 
 	// Assigned to user
-	print '<tr><td class="nowrap titlefieldcreate"><span>'.$langs->trans("ActionAffectedTo").'</span></td><td>';
+	print '<tr><td class="nowrap titlefieldcreate"><span>';
+	print $langs->trans("AssignedTo");
+	print '</span></td><td>';
 	$listofuserid = [];
 	$listofcontactid = [];
 	$listofotherid = [];
@@ -1692,7 +1703,7 @@ if ($action == 'create') {
 				$listofresourceid = [];
 			}
 			$firstelem = reset($listofresourceid);
-			if (isset($listofresourceid[$firstelem['id']])) {
+			if ($firstelem && isset($listofresourceid[$firstelem['id']])) {
 				$listofresourceid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
 			}
 		}
@@ -1841,7 +1852,7 @@ if ($action == 'create') {
 			print '</select>';
 			print ajax_combobox('taskid');
 		} else {
-			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 32, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 64, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
 		}
 		print '</td></tr>';
 	}
@@ -1853,7 +1864,12 @@ if ($action == 'create') {
 		$hasPermissionOnLinkedObject = 0;
 
 		$elProp = getElementProperties($origin);
-		if ($user->hasRight($elProp['module'], 'read') || $user->hasRight($elProp['module'], $elProp['element'], 'read')) {
+		$modulecodetouseforpermissioncheck = $elProp['module'];
+		// Keep permission check aligned with rights class aliases (see restrictedArea()).
+		if ($modulecodetouseforpermissioncheck == 'productbatch') {
+			$modulecodetouseforpermissioncheck = 'produit';
+		}
+		if ($user->hasRight($modulecodetouseforpermissioncheck, 'read') || $user->hasRight($modulecodetouseforpermissioncheck, $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
 		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
@@ -1885,7 +1901,7 @@ if ($action == 'create') {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 100, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -1904,9 +1920,9 @@ if ($action == 'create') {
 		//checkbox create reminder
 		print '<hr>';
 
-		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br>';
+		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.(empty(GETPOST('addreminder')) ? '' : 'checked').'><br>';
 
-		print '<div class="reminderparameters" style="display: none;">';
+		print '<div class="reminderparameters" '.(empty(GETPOST('addreminder')) ? 'style="display: none;' : '').' ">';
 		print '<br>';
 
 		print '<table class="border centpercent">';
@@ -1914,7 +1930,8 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
+
+		print $form->selectTypeDuration('offsetunit', (empty($offsetunit) ? 'i' : $offsetunit), $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
@@ -1925,7 +1942,7 @@ if ($action == 'create') {
 		//Mail Model
 		if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, (empty($modelmail) ? 0 : $modelmail));
 			print '</td></tr>';
 		}
 
@@ -1966,42 +1983,47 @@ if ($action == 'create') {
 				});
 		   })';
 		print '</script>'."\n";
-		?>
-		<script type="text/javascript">
-			$(document).ready(function () {
-				$("#addreminder").click(function(){
-					console.log("Click on addreminder");
-					if (this.checked) {
-						$(".reminderparameters").show();
-					} else {
-						$(".reminderparameters").hide();
-					}
-					$("#selectremindertype").select2("destroy");
-					$("#selectremindertype").select2();
-					$("#select_offsetunittype_duration").select2("destroy");
-					$("#select_offsetunittype_duration").select2();
-					selectremindertype();
-				 });
-				$("#selectremindertype").change(function(){
-					selectremindertype();
-				});
-				function selectremindertype() {
-					console.log("Call selectremindertype");
-					var selected_option = $("#selectremindertype option:selected").val();
-					if(selected_option == "email") {
-						$("#select_actioncommsendmodel_mail").closest("tr").show();
-					} else {
-						$("#select_actioncommsendmodel_mail").closest("tr").hide();
-					}
-				}
-			});
-		</script>
-		<?php
+
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+	            		function toggle_reminder_part(evt) {
+							console.log("Toggle reminder part");
+	            		    if ($("#addreminder").is(":checked")) {
+	            		    	$(".reminderparameters").show();
+                            } else {
+                            	$(".reminderparameters").hide();
+                            }
+							$("#selectremindertype").select2("destroy");
+							$("#selectremindertype").select2();
+							$("#select_offsetunittype_duration").select2("destroy");
+							$("#select_offsetunittype_duration").select2();
+							selectremindertype();
+	            		 });
+
+						toggle_reminder_part();
+						$("#addreminder").click(toggle_reminder_part);
+
+	            		$("#selectremindertype").change(function(){
+							selectremindertype();
+	            		});
+
+						function selectremindertype() {
+							console.log("Call selectremindertype");
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
+	            		    }
+						}
+
+                   })';
+		print '</script>'."\n";
 	}
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Add");
+	print $form->buttonsSaveCancel("Create");
 
 	print "</form>";
 }
@@ -2060,7 +2082,7 @@ if ($id > 0 && $action != 'create') {
 	$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 
-	// Confirmation suppression action
+	// Deletion confirmation action
 	if ($action == 'delete') {
 		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
@@ -2142,6 +2164,9 @@ if ($id > 0 && $action != 'create') {
 		// Ref
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
+		// Title
+		print '<tr><td class="fieldrequired'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' titlefieldcreate' : '').'">'.$langs->trans("Title").'</td><td><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
+
 		// Type of event
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && $object->elementtype != "ticket") {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -2162,9 +2187,6 @@ if ($id > 0 && $action != 'create') {
 			print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
 			print '</td><td><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
 		}
-
-		// Title
-		print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
 
 		// Full day event
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td class="valignmiddle height30 small">';
@@ -2240,7 +2262,14 @@ if ($id > 0 && $action != 'create') {
 		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, ($caneditdateorowner ? 0 : 1), 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print '</td></tr>';
 
-		print '<tr><td class="">&nbsp;</td><td></td></tr>';
+		// Location
+		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
+			print '<tr><td>'.$langs->trans("Location").'</td><td>';
+			print img_picto('', 'map-marker-alt', 'class="pictofixedwidth"');
+			print '<input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.$object->location.'"></td></tr>';
+		}
+
+		print '<tr class="tdsmallheight"><td class="tdsmallheight">&nbsp;</td><td class="tdsmallheight"></td></tr>';
 
 		// Assigned to
 		$listofuserid = []; // User assigned
@@ -2286,17 +2315,6 @@ if ($id > 0 && $action != 'create') {
 		}*/
 		print '</td></tr>';
 
-		// Location
-		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
-			print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.$object->location.'"></td></tr>';
-		}
-
-		// Status
-		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
-		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
-		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300');
-		print '</td></tr>';
-
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
@@ -2307,10 +2325,16 @@ if ($id > 0 && $action != 'create') {
 		print '</table>';
 
 
-		print '<br><hr><br>';
+		print '<br>';
 
 
 		print '<table class="border tableforfield centpercent">';
+
+		// Status
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
+		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
+		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'minwidth150 maxwidth300');
+		print '</td></tr>';
 
 		if (isModEnabled("societe")) {
 			// Related company
@@ -2396,7 +2420,7 @@ if ($id > 0 && $action != 'create') {
 				</script>
 				<?php
 
-				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
+				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 64, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 				print '</td>';
@@ -2429,7 +2453,7 @@ if ($id > 0 && $action != 'create') {
 						$tid = GETPOSTINT("taskid");
 					}
 
-					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 64, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
 
 					print '</td>';
 				} else {
@@ -2448,7 +2472,7 @@ if ($id > 0 && $action != 'create') {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		// Wysiwyg editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+		$doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -2977,8 +3001,7 @@ if ($id > 0 && $action != 'create') {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
-			if ($user->hasRight('agenda', 'allactions', 'delete') ||
-			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'delete'))) {
+			if ($usercandelete) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';

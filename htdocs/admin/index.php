@@ -82,7 +82,6 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 
 print '<span class="opacitymedium hideonsmartphone">';
 print $langs->trans("SetupDescription1").'<br>';
-//print $langs->trans("AreaForAdminOnly").' ';
 
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
 	$setupcompanynotcomplete = 1;
@@ -91,7 +90,6 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 }
 
 if ($setupcompanynotcomplete) {
-	print '<br>';
 	print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
 }
 
@@ -124,8 +122,8 @@ print '<br><br>';
 print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
-	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 10px;"');
+	print '<br><div class="warning marginrightonly"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 
 print '</a>';
@@ -133,7 +131,6 @@ print '</section>';
 
 print '<br>';
 print '<br>';
-
 
 // Show info setup modules
 
@@ -155,8 +152,8 @@ print '<a class="nounderlineimp fontsize-1-1" href="'.DOL_URL_ROOT.'/admin/modul
 print '<br><br>'.$langs->trans("SetupDescription4b");
 if ($nbmodulesnotautoenabled < getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("errors");
-	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
+	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 10px;"');
+	print '<br><div class="warning marginrightonly"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
 }
 
 print '</section>';

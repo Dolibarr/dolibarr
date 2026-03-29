@@ -407,7 +407,7 @@ class ContratLigne extends CommonObjectLine
 	 *
 	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlength		Max length
-	 *  @return	string					Chaine avec URL
+	 *  @return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0)
 	{
@@ -639,10 +639,9 @@ class ContratLigne extends CommonObjectLine
 			$this->remise_percent = 0;
 		}
 
-		// Calcul du total TTC et de la TVA pour la ligne a partir de
-		// qty, pu, remise_percent et txtva
-		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+		// and this is done at the line level, which has its own VAT rate
 		$localtaxes_type = getLocalTaxesFromRate($this->tva_tx, 0, $this->thirdparty, $mysoc);
 
 		$tabprice = calcul_price_total($this->qty, $this->subprice, $this->remise_percent, (float) $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
@@ -785,7 +784,7 @@ class ContratLigne extends CommonObjectLine
 		// phpcs:enable
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
 		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');
@@ -937,9 +936,9 @@ class ContratLigne extends CommonObjectLine
 		if ($resql) {
 			if ($date_end >= 0) {
 				// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-				$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-				$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+				$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+				$sqltoupdatecontract .= " WHERE rowid = ".((int) $this->fk_contrat);
 				$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 				if (!$resqltoupdatecontract) {
 					$this->error = $this->db->lasterror();
@@ -1002,9 +1001,9 @@ class ContratLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-			$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-			$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+			$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+			$sqltoupdatecontract .= " WHERE rowid = ".((int) $this->fk_contrat);
 			$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 			if (!$resqltoupdatecontract) {
 				$this->error = $this->db->lasterror();

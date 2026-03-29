@@ -122,16 +122,21 @@ if ($action == 'send' && !$cancel) {
 		try {
 			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
 		} catch (Exception $e) {
+			$error++;
 			setEventMessages($e->getMessage(), null, 'error');
 		}
-		$result = $smsfile->sendfile(); // This send SMS
+		if (!$error) {
+			$result = $smsfile->sendfile(); // This send SMS
+			if (!$result) {
+				$error++;
+				setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
+			}
+		}
 
-		if ($result) {
+		if (!$error) {
 			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
-			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("ResultKo"), null, 'errors');
-			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
 
 		$action = '';

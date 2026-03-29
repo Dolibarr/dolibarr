@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -143,6 +143,8 @@ $leftmenuwidth = 240;
 @phan-var-force int $nbtopmenuentries
 @phan-var-force int $nbtopmenuentriesreal
 @phan-var-force string $path
+@phan-var-force string $theme
+@phan-var-force string $left
 @phan-var-force string $right
 @phan-var-force string $textDanger
 @phan-var-force string $textSuccess
@@ -178,7 +180,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
-	--colorbackgrey: #f0f0f0;
+	--colorbackgrey: #f6f6f6;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -202,7 +204,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #400030;
+	--fieldrequiredcolor: #000;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -260,7 +262,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	            --oddevencolor: rgb(220,220,220);
 	            --colorboxstatsborder: rgb(65,100,138);
 	            --dolgraphbg: #1d1e20;
-	            --fieldrequiredcolor: rgb(250,183,59);
+	            --fieldrequiredcolor: #fff;
 	            --colortextbacktab: rgb(220,220,220);
 	            --colorboxiconbg: rgb(36,38,39);
 	            --refidnocolor: rgb(220,220,220);
@@ -334,6 +336,9 @@ input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-passw
 input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 28px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
 .input-icon-user, .input-icon-password {
 	padding-right: 28px !important;
 }
@@ -351,7 +356,7 @@ table.liste th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), table.liste
 }
 th.wrapcolumntitle dl dt a span.fas.fa-list {
 	vertical-align: middle;
-	padding-bottom: 1px;
+	padding-bottom: 4px;
 }
 
 .liste_titre input[name=search_month], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end] {
@@ -385,13 +390,15 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	background-color: unset;
 }
 
-.liste_titre input, .liste_titre select {
+.liste_titre input:not(#search_component_params_input):not(.select2-search__field), .liste_titre select {
 	border: none;
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>);
+	border-style: solid;
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>-width: 1px !important;
+	border-color: var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
-div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
@@ -448,19 +455,23 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 	padding: 3px;
-	padding-left: 3px;
+	padding-left: 4px;
 }
 .tableforfield input {
-	padding-left: 2px;
+	padding-left: 4px;
 }
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
+	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
-	padding: 3px !important;
+	padding: 4px !important;
 	padding-left: 6px !important;
 	padding-right: 6px !important;
+}
+.refid input[type="text"] {
+	height:22px;
 }
 
 select {
@@ -503,7 +514,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 }
 
 section.setupsection {
-	padding: 20px;
+	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
@@ -520,7 +531,7 @@ div.tabBar textarea:focus:not(.textarea-ai_feature):not(.cke_source) {
 }
 input:focus:not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
- .select2-container--focus span.selection span.select2-selection:not(.massactionselect) {
+ .select2-container--focus span.selection span.select2-selection:not(.noborderfocus):not(.massactionselect) {
 <?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border: 1px solid #666 !important;
 <?php } else { ?>
@@ -600,7 +611,7 @@ div.buttonpayment input:focus {
 div.buttonpayment input {
 	background-color: unset;
 	color: #fff;
-	border-bottom: unset;
+	border: unset;
 	font-weight: bold;
 	text-transform: uppercase;
 	cursor: pointer;
@@ -654,6 +665,31 @@ span.userimg.notfirst, div.userimg.notfirst {
 div.userimg.notfirst {
 	display: block-inline;
 }
+.cell2linesheight {
+	line-height: 1.4em;
+}
+.celldateheight {
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	line-height: 1.2em;
+}
+.dateborderright {
+	padding-right: 4px !important;
+	margin-right: 4px !important;
+	border-right: 1px solid #ddd;
+}
+.dateborderleft {
+}
+.center.inline-block.dateheight {
+	line-height: 1.1em;
+}
+.smallheight {
+	line-height: 1em;
+}
+tr.tdsmallheight, tr.tdsmallheight td {
+	height: 1.5em !important;
+}
+
 
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
@@ -696,8 +732,17 @@ td.linecoldescription.bomline {
 	width: 400px;
 }
 
-td.amount, span.amount, div.amount, b.amount {
+td.amount {
 	color: #006666;
+}
+span.amount, div.amount, b.amount {
+	color: #006666;
+	/*
+	background-color: #006666;
+	color: #FFF;
+	border-radius: 3px;
+	padding: 2px 4px 2px 4px;
+	*/
 }
 td.amountneg, span.amountneg, div.amountneg, b.amountneg
 {
@@ -751,7 +796,7 @@ input.pageplusone {
 	color: var(--colortextlink);
 }
 .optiongrey, .opacitymedium {
-	opacity: 0.4;
+	opacity: 0.5;
 }
 .opacitymediumbycolor {
 	color: rgba(0, 0, 0, 0.4);
@@ -764,6 +809,9 @@ input.pageplusone {
 }
 .opacitytransp {
 	opacity: 0;
+}
+.noopacity {
+	opacity: unset !important;
 }
 .colorwhite {
 	color: var(--colorwhite);
@@ -797,10 +845,11 @@ input.pageplusone {
 select:invalid, select.--error {
 	color: gray;
 }
-input:disabled, textarea:disabled, select[disabled='disabled']
+input:disabled:not(.colorthumb):not(.colorgrey), textarea:disabled, select[disabled='disabled']
 {
-	background: var(--inputbackgroundcolordisabled);
-	color: var(--inputcolordisabled);
+	/* background: var(--inputbackgroundcolordisabled); */
+	/* color: var(--inputcolordisabled); */
+	opacity: 0.5;
 }
 
 input.liste_titre {
@@ -857,9 +906,18 @@ input#onlinepaymenturl, input#directdownloadlink {
 
 
 .formconsumeproduce {
-	background: #f3f3f3;
-	padding: 20px 0px 0px 0px;
+	border-left: solid 5px #666;
+	background: #efefef;
+	/* background: #f3f3f3; */
+
+	padding: 20px 20px 20px 20px;
 	border-radius: 8px;
+}
+.formborder {
+	border: solid 2px #444;
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #fffff4;
 }
 
 div#moretabsList, div#moretabsListaction {
@@ -986,11 +1044,13 @@ button:focus {
 
 th .button {
 	box-shadow: none !important;
-	border-radius:0px !important;
+	border-radius: 0px;
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
 	min-width: 54px;
+	padding-left: 4px !important;
+	padding-right: 4px !important;
 }
 .valigntop {
 	vertical-align: top;
@@ -1040,7 +1100,7 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
-.smallincombo {
+.select2-results__option .smallincombo {
 	font-size: 95%;
 	font-weight: bold;
 }
@@ -1078,6 +1138,9 @@ textarea.centpercent {
 }
 .centerimp {
 	text-align: center !important;
+}
+.centeronsmartphone {
+	text-align: center;
 }
 .centergrid {
 	display: grid;
@@ -1293,20 +1356,26 @@ td.wordbreak img, td.wordbreakimp img {
 .borderimp {
 	border: 1px solid #888 !important;
 }
-.text-warning {
-	color : <?php print $textWarning; ?>
-}
 /* CSS used for long description and extrafield text */
 .shortmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .longmessagecut {
 	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
+	word-break: break-word;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
+.overflowellipsis .shortmessagecut, .overflowellipsis .longmessagecut {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 div.urllink {
 	padding: 5px;
 	margin-top: 5px;
@@ -1321,6 +1390,9 @@ div.urllink {
 	justify-content: flex-start;
 	align-items: center;
 	height: 2em;
+}
+div.urllink.unsetheight {
+	height: unset;
 }
 div.urllink span.fa, div.urllink span.fas, div.urllink span.far {
 	width: 22px;
@@ -1341,7 +1413,7 @@ div.urllink input {
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
-	color: #888 !important;
+	/* color: #888 !important; */
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
 }
@@ -1369,7 +1441,9 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender
 	white-space: nowrap;
 }
 
-
+.text-warning {
+	color : <?php print $textWarning; ?>
+}
 body[class*="colorblind-"] .text-warning{
 	color : <?php print $colorblind_deuteranopes_textWarning; ?>
 }
@@ -1485,7 +1559,7 @@ div.divsearchfield {
 .divfilteralone {
 	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
-	padding-left: 5px;
+	padding: 10px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -1666,6 +1740,9 @@ select.flat.selectlimit {
 	border-bottom: 1px solid var(--inputbordercolor);
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
+	padding-bottom: 4px;
+	padding-top: 4px;
+	height: 28px;
 }
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
@@ -1715,7 +1792,7 @@ select.flat.selectlimit {
 	border-right: none !important;
 	outline: none;
 }
-.strikefordisabled {
+.strikefordisabled, .strikefordisabled span, .strikefordisabled div {
 	text-decoration: line-through;
 }
 .widthdate {
@@ -1838,6 +1915,14 @@ select.flat.selectlimit {
 	height: auto !important;
 	word-break: break-word;
 }
+.threelinesmax, .threelinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	height: auto !important;
+	word-break: break-word;
+}
 .twolinesmax-normallineheight {
 	line-height: normal;
 }
@@ -1852,7 +1937,16 @@ select.flat.selectlimit {
 	margin-top: 25px !important;
 }
 .navselectiondate {
-	width: 250px;
+	min-width: 250px;
+}
+
+.showonhover:hover *::before {
+	visibility: visible !important;
+	display: inline-block !important;
+}
+.showonhover:not(:hover) *::before {
+	visibility: hidden;
+	display: inline-block !important;
 }
 
 /* Styles for amount on card */
@@ -2120,6 +2214,7 @@ maxscreenheightless200 {
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidthdate  { max-width: 105px; }
+.maxwidthdate.textbrowser  { max-width: 105px; font-size: 0.9em; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -2401,7 +2496,7 @@ datalist {
 
 	/* input, input[type=text], */
 	select {
-		width: 98%;
+		/* width: 98%; */
 		min-width: 40px;
 	}
 
@@ -2477,19 +2572,19 @@ td.showDragHandle {
 
 
 /* ============================================================================== */
-/* Styles de positionnement des zones                                             */
+/* Zone positioning styles                                                        */
 /* ============================================================================== */
 
 #id-container {
 	width: 100%;
 	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
-		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 	<?php } ?>
 	/* table-layout: fixed; */
 
 }
 #id-right, #id-left {
-	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+	display: table-cell;			/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 	float: none;
 	vertical-align: top;
 }
@@ -2570,6 +2665,7 @@ td.showDragHandle {
 	display: table-cell;
 <?php } ?>
 	border-<?php echo $right; ?>: 1px solid #ECECEC;
+	border-bottom: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -2678,7 +2774,7 @@ div.vmenu, td.vmenu {
 	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
-		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
 		table-layout: fixed;
 		width: 100%;
 	}
@@ -2738,9 +2834,10 @@ div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
 	margin-top: 0px;
 }
-
 .page-modulehelp div.fiche {
 	width: 100%;
+	margin-left: 15px;
+	margin-right: 20px;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -2748,6 +2845,7 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -2887,7 +2985,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	color: var(--colortexttitlenotab);
 	opacity: 0.85;
 }
-.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+.table-fiche-title .col-picto, .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;
 	font-size: 0.7em;
 	width: 20px;
@@ -2917,8 +3015,16 @@ span.widthpictotitle.pictotitle {
 	width: 14px;
 }
 .pictosubstatus {
-	padding-left: 2px;
-	padding-right: 2px;
+	padding: 4px;
+	border: 1px solid #ccc;
+	vertical-align: middle;
+	margin-right: 3px;
+	margin-left: 3px;
+	border-radius: 5px;
+}
+.pictosubstatus img {
+	vertical-align: text-bottom;
+	display: inline-block;
 }
 .pictostatus {
 	width: 15px;
@@ -2952,8 +3058,9 @@ span.widthpictotitle.pictotitle {
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;	/* Do not use em unit here */
-	padding-right: 2px;
+	width: 16px;	/* Do not use em unit here */
+	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	margin-right: 4px;
 }
 
 .colorthumb {
@@ -3072,7 +3179,7 @@ img.photorefnoborder {
 }
 
 /* ============================================================================== */
-/* Menu top et 1ere ligne tableau                                                 */
+/* Top menu and first line of table                                               */
 /* ============================================================================== */
 
 #id-top {
@@ -3230,6 +3337,9 @@ div.tmenucenter
 	padding-left: 2px;
 	padding-right: 2px;
 	color: var(--colortextbackhmenu);
+	max-width: 85px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	<?php if ($disableimages) { ?>
 	padding-top: 8px;
 	height: 26px;
@@ -3237,7 +3347,6 @@ div.tmenucenter
 	padding-top: 2px;
 	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
-	/* width: 100%; */
 }
 #menu_titre_logo {
 	padding-top: 0;
@@ -3488,7 +3597,7 @@ form#login {
 	max-width: 560px;
 <?php
 if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
-	print '	background-color: rgba(255, 255, 255, 0.9);';
+	print '	background-color: rgba(255, 255, 255, 0.99);';
 } else {
 	print '	background-color: var(--colorbackbody);';
 }
@@ -3497,9 +3606,10 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	border-radius: 5px;
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
-	border: none;
+	/* border: none; */
 	border-bottom: solid 1px rgba(180,180,180,.4);
-	padding: 5px;
+	padding: 8px;
+	padding-left: 12px;
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -3531,14 +3641,14 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.7em;
+	top: 0.8em;
 	right: 11px;
 	background: none;
 	border: none;
 	opacity: 0.3;
 }
 .login_table #tdpasswordlogin #togglepassword .fa {
-	padding: 0 3px;
+	padding: 0 7px;
 	width: auto;
 }
 #togglepassword .fa::before {
@@ -3597,6 +3707,7 @@ table.login_table_securitycode tr td {
 #img_logo, .img_logo {
 	max-width: 160px;
 	max-height: 90px;
+	border-radius: 4px;
 }
 
 div.backgroundsemitransparent {
@@ -3698,6 +3809,10 @@ div.login_block_user {
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
+.alogin.aloginpasswordforgotten, .alogin.aloginpasswordforgotten:hover, .alogin.aloginhelp, .alogin.aloginhelp:hover {
+	opacity: 0.5;
+}
+
 span.fa.atoplogin, span.fa.atoplogin:hover {
 	font-size: 16px;
 	text-decoration: none !important;
@@ -3721,7 +3836,8 @@ img.login, img.printer, img.entity {
 }
 
 
-.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto,
+.userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {		/* size for user photo in login bar */
 	width: <?php echo $disableimages ? '26' : '30'; ?>px;
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
 	border-radius: 50%;
@@ -3736,6 +3852,16 @@ img.userphoto {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 }
+.userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {
+	vertical-align: middle;
+	color: unset;
+}
+.userimg.atoplogin span.userphoto::before, .userimgatoplogin span.userphoto::before {
+	margin-top: 7px;
+	display: inline-block;
+	margin-right: 8px;
+}
+
 span.userimg div.userphoto {
 	background-color: #eee;
 	border-radius: 0.72em;
@@ -3766,7 +3892,10 @@ img.userphotopublicvcard {
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
-form[name="addtime"] img.userphoto {
+img.gravatar.photouserphoto {
+	filter: grayscale(50%);
+}
+form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
 }
 .span-icon-user {
@@ -3794,6 +3923,7 @@ div.vmenu, td.vmenu {
 .vmenu {
 	width: <?php echo $leftmenuwidth; ?>px;
 	margin-left: 8px;
+	/* text-transform: capitalize; */
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -3858,7 +3988,7 @@ a.vsmenu:link, a.vsmenu:visited {
 	white-space: nowrap;
 }
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
-li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
+li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; cursor: default !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	text-align: <?php print $left; ?>; color: #aaa; text-decoration: none;
@@ -4084,7 +4214,7 @@ div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 */
 div.tabBar {
 	color: var(--colortextbacktab);
-	padding-top: 16px;
+	padding-top: 20px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
 	margin: 0px 0px 30px 0px;
@@ -4099,6 +4229,12 @@ div.tabBar tr.titre td {
 }
 div.fiche table:not(.table-fiche-title) tr.titre td {
 	padding-top: 10px;
+}
+div.fiche >.table-fiche-title tr.toptitle td.col-picto,
+div.fiche >.table-fiche-title tr.toptitle td.col-title,
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-picto,
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-title {
+	filter: grayscale(90%);
 }
 
 div.tabBar.tabBarNoTop {
@@ -4150,7 +4286,7 @@ div.popuptab {
 /* ============================================================================== */
 
 div.tabsAction {
-	margin: 20px 0em 30px 0em;
+	margin: 20px 0em 40px 0em;
 	padding: 0em 0em;
 	text-align: right;
 }
@@ -4159,6 +4295,9 @@ div.tabsActionNoBottom {
 }
 div.tabsAction > a {
 	margin-bottom: 16px !important;
+}
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
 }
 
 a.tabTitle {
@@ -4221,7 +4360,7 @@ a.tab:hover
 	background: var(--colorbacktabcard1), 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png', 1); ?>) 50% 0 repeat-x;
 	color: var(--colortextbacktab);
 	*/
-	text-decoration: underline;
+	text-decoration: none;
 }
 a.tabimage {
 	color: #434956;
@@ -4290,9 +4429,11 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 .smallpaddingimp {
-	padding: 4px !important;
+	padding: 7px !important;
 	padding-left: 7px !important;
 	padding-right: 7px !important;
+	line-height: 1em !important;
+	border-radius: 3px !important;
 }
 input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
@@ -4306,6 +4447,7 @@ input.buttonlink {
 	color: var(--colortextlink);
 	background-color: transparent;
 	cursor: pointer;
+	border: none !important;
 }
 input.buttonlink:hover {
 	text-decoration: underline;
@@ -4319,20 +4461,8 @@ input.buttonreset {
 	background-color: transparent;
 	cursor: pointer;
 }
-.nopaddingleft {
-	padding-<?php print $left; ?>: 0px;
-}
 div.tabs.nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
-}
-.nopaddingright {
-	padding-<?php print $right; ?>: 0px;
-}
-.nopaddingtopimp {
-	padding-top: 0px !important;
-}
-.nopaddingbottomimp {
-	padding-bottom: 0px !important;
 }
 .notopnoleft {
 	border-collapse: collapse;
@@ -4383,7 +4513,7 @@ div .tdtop:not(.tagtdnote) {
 	height: unset !important;
 }
 
-table.border td, table.bordernooddeven td, div.border div div.tagtd {
+table.border td, table.bordernooddeven td, div.border div div.tagtd, div.table-border div div.tagtd {
 	padding: 2px 2px 2px 2px;
 	border-collapse: collapse;
 }
@@ -4505,7 +4635,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
-table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type td, table.formdoc tr:last-of-type td,
+table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
@@ -4600,11 +4731,9 @@ table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice t
 }
 
 
-/*
-div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
-	border-bottom: 1px solid var(--colortopbordertitle1);
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px;
 }
-*/
 div.tabBar table:not(.nobottom).border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
@@ -4665,7 +4794,7 @@ td.linecoldescription {
 	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
 table.tableforfield td, .tagtr.table-border-row .tagtd, table.border.margintable .trforfield td {
-	padding: 2px 4px 2px 10px;			/* t r b l */
+	padding: 2px 8px 2px 10px;			/* t r b l */
 }
 table.liste td, table.noborder > tr > td,
 table.noborder > tbody > tr > td,
@@ -4726,6 +4855,7 @@ table.listwithfilterbefore {
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
+.confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
 
 /* Pagination */
 div.refidpadding  {
@@ -5056,9 +5186,9 @@ tr.liste_titre_topborder td {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 }
-.liste_titre td a {
+.liste_titre td a:not(.button):not(.editfielda), .liste_titre td a:not(.button):not(.editfielda) span:not(.badge) {
 	text-shadow: none !important;
-	color: var(--colortexttitle);
+	color: var(--colortexttitle) !important;
 }
 .liste_titre td a.notasortlink {
 	color: var(--colortextlink);
@@ -5247,13 +5377,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-bottom: 2px;
 }
 .boxstats, .boxstatsempty {
-	padding-left: 6px;
-	padding-right: 6px;
+	padding-left: 5px;
+	padding-right: 3px;
 	width: 118px;
 }
 
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+	border-radius: 6px;
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5288,6 +5419,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 	.clearbothonsmartphone {
 		clear: both;
+	}
+	.clearbothonsmartphone:not(.hideonsmartphone) {
 		display: block !important;
 	}
 
@@ -5349,11 +5482,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
-span.boxstatstext span:not(.fas) {
+/*span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
+}*/
+span.boxstatstext span.fas {
+	filter: grayscale(100%);
 }
 span.boxstatstext {
-	opacity: 0.5;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
+	opacity: 0.9;		/* a bug if browser make z-index was discovered when opacity is set, if still present, we must disable it */
 	line-height: 18px;
 	color: var(--colortext);
 	font-size: 0.8em;
@@ -5594,32 +5730,42 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #887711 !important; }
+.warning { color: #665511 !important; }
 .error   { color: #660000 !important; font-weight: bold; }
 .green   { color: #118822 !important; }
+.neutral { color: #444 !important; }
 
 div.ok {
 	color: #114466;
 }
 
-div.info, div.warning, div.error, div.green {
+div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	padding-top: 16px;
-	padding-left: 10px;
-	padding-right: 4px;
+	padding-left: 20px;
+	padding-right: 10px;
 	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 5px;
 }
 
-/* Info admin */
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+	box-shadow: 1px 1px 6px #d4d4d4;
+	margin: 1em 0em 1.2em 0em;
+}
+
+/* Neutral message */
+div.neutral, section.neutral {
+	background: #f8f8f8;
+}
+div.neutral {
+	border-<?php print $left; ?>: solid 5px #888;
+}
+
+/* Info message */
 div.info {
-	border-<?php print $left; ?>: solid 5px #87cfd2;
+	border-<?php print $left; ?>: solid 5px #87bfc2;
 	background: #eff8fc;
 	color: #558;
-}
-div.fiche div.info, div.fiche div.warning {
-	box-shadow: 4px 4px 12px #e4e4e4;
-	margin: 1em 0em 1.2em 0em;
 }
 
 /* Ok message */
@@ -5694,6 +5840,15 @@ div.boximport {
 .product_line_stock_too_low { color: var(--productlinestocktoolow); }
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
+#tablesubscribe .fieldrequired {
+	font-weight: inherit !important;
+	color: inherit !important;
+}
+#tablesubscribe .fieldrequired:after {
+	content: " *";
+	color: #660000;
+	font-weight: bold;
+}
 
 td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 34px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.5em; }
@@ -5922,7 +6077,10 @@ div#card-errors {
 /* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
-.ui-dialog-titlebar {
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 15px;
 }
 .ui-dialog-content {
 	margin-bottom: 10px;	/* same than .ui-widget-header */
@@ -5936,6 +6094,7 @@ div#card-errors {
 .ui-dialog.ui-widget.ui-widget-content {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
+	box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 15px;
 }
 .ui-dialog {
 	padding-left: 5px;
@@ -5950,22 +6109,60 @@ div#card-errors {
 	border-bottom: 1px solid #AAA;
 	margin-bottom: 12px;
 }
-button.ui-button-icon-only.ui-dialog-titlebar-close {
-	padding: 12px;
-	margin-top: -15px;
-}
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	box-shadow: 5px 5px 20px #AAA;
 }
+
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
 }
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	margin-right: 8px !important;
+}
+/*
+.ui-dialog .ui-dialog-content {
+	text-align: justify;
+}
+*/
 
 
-/* ============================================================================== */
+/* JQuery dialog */
+
+.ui-dialog .ui-widget-header {
+	border: none;
+	border-bottom: 1px solid #dbdbdb;
+	background: none;
+	border-radius: unset;
+}
+
+
+.ui-dialog .ui-dialog-titlebar-close {
+	position: absolute;
+	right: .3em;
+	top: 50%;
+	width: 20px;
+	margin: -10px 0 0 0;
+	padding: 1px;
+	height: 20px;
+	border-radius: 30px;
+	border: 1px solid #ededed;
+}
+
+.ui-dialog-title {
+	font-size: medium;
+}
+
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+	margin-right: 0px;
+}
+
+
+	/* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
 
@@ -6362,20 +6559,21 @@ table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
 table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
-.cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
-.cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
-.cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
+.cal_current_month { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #E8E8E8; }
+.cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E8E8E8; }
+.cal_current_month_oneday { border-right: solid 1px #E8E8E8; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
-.cal_current_month_right { border-right: solid 1px #E0E0E0; }
+.cal_current_month_right { border-right: solid 1px #E8E8E8; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border-left: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today         { /* background: #FDFDF0; */ border-left: solid 1px #E8E8E8; border-bottom: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser { /* background: #FDFDF0; */ border-right: solid 1px #E8E8E8; border-bottom: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { /* background: #FDFDF0; */ border-left: solid 2px #6C7C7B; border-right: solid 1px #E8E8E8; border-bottom: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_impair { /* background: #FDFDF0; */ }
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 0 !important; padding-<?php print $right; ?>: 0 !important; }
 .cal_impair        {
@@ -6384,7 +6582,6 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 }
-.cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
@@ -6392,6 +6589,8 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; padding-bottom: 2px !important; padding-top: 2px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
+tr.trcalweek { height: 300px; }
+tr.trcalday { height: 300px; }
 .cal_event              { font-size: 1em; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
 .cal_event a:visited    { color: #111111; font-weight: normal !important; }
@@ -6662,8 +6861,14 @@ span.jPicker {
 	border-collapse: collapse;
 	border: none;
 }
+.jPicker tr.Hex td.Text input {
+	width: 60px !important;
+}
 .jPicker td.Text input {
-	width: 35px !important;
+	min-width: 40px;
+	padding: 8px;
+	border: 1px solid #bbb !important;
+	border-radius: 4px;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -6743,6 +6948,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 .colorselector {
 	border: solid 1px #ddd !important;
+}
+input.colorpicker {
+	color: unset !important;
+	background-color: unset !important;
 }
 
 
@@ -7159,6 +7368,9 @@ div#ecm-layout-center {
 	top: auto !important;
 	bottom: 4px !important;
 <?php } ?>
+	<?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_UNDER_MENU')) { ?>
+	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
+	<?php } ?>
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
 	width: auto;
@@ -7357,6 +7569,9 @@ input.select2-input {
 	border: none;
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
+li.select2-selection__choice {
+	white-space: break-spaces;
+}
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7378,7 +7593,10 @@ input.select2-input {
 	<?php } ?>
 }
 
-.blockvmenusearch .select2-container--default .select2-selection--single,
+.blockvmenusearch .select2-container--default .select2-selection--single
+{
+	/* background-color: var(--colorbackvmenu1); */
+}
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
 	background-color: var(--colorbackvmenu1);
@@ -7437,7 +7655,7 @@ input.select2-input {
 	border-top: 1px solid #ccc;
 	border-bottom: solid 1px var(--inputbordercolor);
 }
-.select2-container--default .select2-selection--single {
+.select2-container--default .select2-selection--single:not(.selectwidget) {
 	outline: none;
 	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
@@ -7450,6 +7668,23 @@ input.select2-input {
 
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 
+	box-shadow: none !important;
+}
+.liste_titre .select2-container--default .select2-selection--single:not(.selectwidget),
+.liste_titre .select2-container--default .select2-selection--multiple {
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--colorbacktitle1);
+}
+
+
+.select2-container--default .select2-selection--single.selectwidget,
+.select2-container--default .select2-selection--single.selectwidget:hover,
+.select2-container--default .select2-selection--single.selectwidget:focus {
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: solid 1px var(--inputbordercolor);
+	border-radius: 0;
 	box-shadow: none !important;
 }
 .select2-container--default .select2-selection--multiple {
@@ -7486,7 +7721,7 @@ input.select2-input {
 	margin-top: 0.25em !important;
 }
 .select2-selection--multiple input.select2-search__field {
-	border-bottom: none !important;
+	border: none !important;
 }
 
 .select2-search__field
@@ -7701,6 +7936,7 @@ select.multiselectononeline {
 	min-height: unset;
 	height: 2.2em !important;
 	opacity: 0;
+	min-width: 50px;
 	/* width: 1px !important; */
 }
 
@@ -7747,6 +7983,8 @@ select.multiselectononeline {
 	box-shadow: none !important;
 	margin-top: 1px !important;
 	margin-bottom: 0 !important;
+	margin-<?php echo $left ?>: 0px !important;
+	margin-<?php echo $right ?>: 3px !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
@@ -7990,8 +8228,11 @@ div.kanban.column div.ui-sortable-helper {
 }
 .searchpage .searchform input {
 	font-size: 1.15em;
+	height: inherit;
 }
-
+.searchpage :focus-visible {
+  outline: none;
+}
 
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
@@ -9053,7 +9294,8 @@ table.jPicker {
 		width: 260px;
 	}
 
-	.side-nav-vert .user-menu .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
+	.side-nav-vert .user-menu .dropdown-menu,
+	#topmenu-global-search-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
 		width: 285px !important;	/* must be width of menu + padding + padding of sidenav */
 		min-width: unset !important;
 	}
@@ -9340,6 +9582,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/tooltips.inc.css', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/input-feedback.css', 0);
 
 
 // Add custom CSS if defined
@@ -9364,4 +9607,14 @@ div.extra_inline_chkbxlst, div.extra_inline_checkbox {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
+}
+
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }

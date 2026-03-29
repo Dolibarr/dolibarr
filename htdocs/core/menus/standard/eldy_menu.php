@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -222,7 +222,7 @@ class MenuManager
 							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 						}
 					}
-					print $val['titre'];
+					print ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -246,12 +246,12 @@ class MenuManager
 
 					// Start a new ul level 1
 					$level = 1;
-					print str_pad('', $level).'<ul class="ullevel1">'."\n";
+					print str_repeat(' ', $level).'<ul class="ullevel1">'."\n";
 
 					// Do we have to add an extra entry that is not into menu array ?
 					if (($canonrelurl != $canonnexturl && !in_array($val['mainmenu'], array('tools')))
 						|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false)) {
-						print str_pad('', $level).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
+						print str_repeat(' ', $level).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
 
 						if ($val['level'] == 0) {
@@ -281,12 +281,6 @@ class MenuManager
 							$showmenu = false;
 						}
 
-						$newlinelevel = ($val2['level'] + 1);
-						if ($newlinelevel > $lastlinelevel) {
-							print str_pad('', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
-						}
-						$lastlinelevel = ($val2['level'] + 1);
-
 						// If at least one parent is not enabled, we do not show any menu of all children
 						if ($val2['level'] > 0) {
 							$levelcursor = $val2['level'] - 1;
@@ -299,6 +293,12 @@ class MenuManager
 						}
 
 						if ($showmenu) {		// Visible (option to hide when not allowed is off or allowed)
+							$newlinelevel = ($val2['level'] + 1);
+							if ($newlinelevel > $lastlinelevel) {
+								print str_repeat(' ', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
+							}
+							$lastlinelevel = ($val2['level'] + 1);
+
 							$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
 							$substitarray['__USERID__'] = $user->id; // For backward compatibility
 							$val2['url'] = make_substitutions($val2['url'], $substitarray); // Make also substitution of __(XXX)__ and __[XXX]__
@@ -322,7 +322,7 @@ class MenuManager
 							// Show entry li level $val2['level']+1
 
 							// @phan-suppress-next-line PhanParamSuspiciousOrder
-							print str_pad('', ($val2['level'] + 1));
+							print str_repeat(' ', ($val2['level'] + 1));
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {
 								print ' ui-btn-icon-right ui-btn'; // ui-btn to highlight on clic
@@ -351,10 +351,10 @@ class MenuManager
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
 								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
 							} else {
-								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level']+1).'"></i>';
+								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level'] + 1).'"></i>';
 							}
 
-							print $val2['titre'];
+							print ucfirst($val2['titre']);
 							if ($relurl2) {
 								print '</a>';
 							}
@@ -370,8 +370,8 @@ class MenuManager
 								print '</li>'."\n";
 								$fromcursor = 0;
 								while ($fromcursor < ($currentlevel - $nextlevel)) {
-									print str_pad('', $currentlevel - $fromcursor).'</ul>'."\n";
-									print str_pad('', $currentlevel - $fromcursor - 1).'</li>'."\n";	// end level $val2['level']+1
+									print str_repeat(' ', $currentlevel - $fromcursor).'</ul>'."\n";
+									print str_repeat(' ', $currentlevel - $fromcursor - 1).'</li>'."\n";	// end level $val2['level']+1
 									$fromcursor++;
 								}
 							} else {
@@ -381,8 +381,8 @@ class MenuManager
 						//var_dump($submenu);
 					}
 
-					print str_pad('', $level).'</ul>'."\n";			// end ul level 1
-					print str_pad('', $level - 1).'</li>'."\n";			// end ul level 1
+					print str_repeat(' ', $level).'</ul>'."\n";			// end ul level 1
+					print str_repeat(' ', $level - 1).'</li>'."\n";			// end ul level 1
 				} elseif ($val['enabled'] == 2) {
 					print '<li class="lilevel0">';
 
@@ -394,7 +394,7 @@ class MenuManager
 						print $val['prefix'];
 					}
 
-					print $val['titre'];
+					print ucfirst($val['titre']);
 					print '</span>';
 
 					print '</li>'."\n";		// close entry level 0

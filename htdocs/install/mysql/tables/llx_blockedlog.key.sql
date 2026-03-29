@@ -18,7 +18,7 @@
 
 ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action_certified (entity,action);
 ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
-ALTER TABLE llx_blockedlog ADD INDEX idx_linktoref (linktoref);
+-- VMYSQL4.3 ALTER TABLE llx_blockedlog ADD INDEX idx_linktoref (linktoref(255));
 ALTER TABLE llx_blockedlog ADD INDEX signature (signature);
 
 -- For debug fields
@@ -28,4 +28,4 @@ ALTER TABLE llx_blockedlog ADD INDEX fk_user (fk_user);
 -- We add this index for the "SELECT rowid, signature FROM llx_blockedlog FORCE INDEX entity_rowid WHERE entity = x AND rowid < z ORDER BY rowid DESC"
 ALTER TABLE llx_blockedlog ADD INDEX entity_rowid (entity, rowid);
 
-ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);
+--ALTER TABLE llx_blockedlog ADD CONSTRAINT fk_linktoref FOREIGN KEY (linktoref) REFERENCES llx_blockedlog(ref_object);

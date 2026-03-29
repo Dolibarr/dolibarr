@@ -36,6 +36,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -46,15 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 if (isModEnabled('barcode')) {
 	dol_include_once('/core/class/html.formbarcode.class.php');
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
@@ -88,10 +87,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
-	accessforbidden();
-}
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -119,9 +114,13 @@ if ($id > 0 || $ref) {
 	$prod->fetch($id, $ref);
 }
 
+if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
+	accessforbidden();
+}
+
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
-// EN: Manage advanced permission to write supplier prices
+// Case of advanced permission to write supplier prices
 $usercancreate = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $usercancreate : $user->hasRight('product', 'product_advance', 'write_supplier_prices'));
 
 if ($object->id > 0) {
@@ -134,6 +133,7 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
+
 
 /*
  * Actions
@@ -613,9 +613,9 @@ if ($id > 0 || $ref) {
 				// Packaging/Conditionnement
 				print '<tr>';
 
-				print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
+				print '<td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 				print '<td>';
-				$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "1" : price2num($object->packaging, 'MS'));
+				$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "" : price2num($object->packaging, 'MS'));
 				print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 				// Units
@@ -872,7 +872,7 @@ if ($id > 0 || $ref) {
 					$sql  = "SELECT";
 					$sql .= " fk_object";
 					foreach ($extralabels as $key => $value) {
-						$sql .= ", ".$key;
+						$sql .= ", ".$db->sanitize($key);
 					}
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
 					$sql .= " WHERE fk_object = ".((int) $rowid);
@@ -929,15 +929,19 @@ if ($id > 0 || $ref) {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
-				// EN: Display add button only when user can write supplier prices
+				// Display add button only when user can write supplier prices
 				if ($usercancreate) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $object->id).'&action=create_price&token='.newToken().'">';
+					print $langs->trans("AddSupplierPrice").'</a>';
+				} else {
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">';
 					print $langs->trans("AddSupplierPrice").'</a>';
 				}
 			}
 		}
 
 		print "</div>\n";
+
 
 		if ($user->hasRight("fournisseur", "read")) { // Duplicate ? this check is already in the head of this file
 			$param = '';
@@ -1306,7 +1310,7 @@ if ($id > 0 || $ref) {
 						$sql  = "SELECT";
 						$sql .= " fk_object";
 						foreach ($extralabels as $key => $value) {
-							$sql .= ", ".$key;
+							$sql .= ", ".$db->sanitize($key);
 						}
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
 						$sql .= " WHERE fk_object = ".((int) $productfourn->product_fourn_price_id);

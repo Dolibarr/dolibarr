@@ -48,6 +48,7 @@ require '../../main.inc.php'; // Load $user and permissions
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -416,7 +417,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 } elseif ($action == "opendrawer" && $term != '' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 
 	// check printer for terminal
@@ -436,15 +437,35 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 } elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run') && $user->hasRight('facture', 'lire')) {
 	top_httphead('application/html');
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);
+
 	// check printer for terminal
-	if ((getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term) > 0) {
+	if ((getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector")) {
 		$object = new Facture($db);
 		$object->fetch($id);
 
-		$printer->sendToPrinter($object, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
+		$resultinccounter = 0;
+		$templateidtouse = 0;
+
+		$url = DOL_URL_ROOT."/blockedlog/ajax/block-add.php?id=".((int) $object->id).'&element='.urlencode($object->element)."&action=DOC_PREVIEW&token=".newToken();
+
+		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+
+		if ((string) $result['http_code'] == '200') {
+			$resultinccounter++;
+			$object->pos_print_counter++;	// increase counter to match the change in database
+
+			$templateidtouse = getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term);	// Note that this may not be ignored by the sendToPrinter()
+		}
+
+		if ($resultinccounter) {
+			// Send to printer
+			$printer->sendToPrinter($object, $templateidtouse, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
+		} else {
+			print 'Failed to update print counter for object ID='.$object->id;
+		}
 	}
 } elseif ($action == 'getInvoice' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
@@ -461,7 +482,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 
 	$object = new Facture($db);
 	$printer = new dolReceiptPrinter($db);

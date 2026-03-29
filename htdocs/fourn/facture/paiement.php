@@ -400,7 +400,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	$result = $object->fetch($facid);
 
 	$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-	$dateinvoice = ($datefacture == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datefacture);
+	$dateinvoice = ($datefacture == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datefacture);
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
 	$sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
@@ -629,18 +629,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<thead>';
 						print '<tr class="liste_titre">';
 						print '<th>'.$langs->trans('Invoice').'</th>';
-						print '<th>'.$langs->trans('RefSupplier').'</th>';
+						//print '<th>'.$langs->trans('RefSupplier').'</th>';
 						if ($displayAllInvoices) {
 							print '<th class="center">' . $langs->trans('Type') . '</th>';
 						}
 						print '<th class="center">'.$langs->trans('Date').'</th>';
 						print '<th class="center">'.$langs->trans('DateMaxPayment').'</th>';
 						if (isModEnabled("multicurrency")) {
+							$langs->load("multicurrency");
+							$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
 							print '<th>'.$langs->trans('Currency').'</th>';
-							print '<th class="right">'.$langs->trans('MulticurrencyAmountTTC').'</th>';
-							print '<th class="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</th>';
-							print '<th class="right">'.$langs->trans('MulticurrencyRemainderToPay').'</th>';
-							print '<th class="center">'.$langs->trans('MulticurrencyPaymentAmount').'</th>';
+							print '<th class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
+							print '<th class="right">'.$langs->trans('AlreadyPaid').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
+							print '<th class="right">'.$langs->trans('RemainderToPay').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
+							print '<th class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
 						}
 						print '<th class="right">'.$langs->trans('AmountTTC').'</th>';
 						print '<th class="right">'.$langs->trans('AlreadyPaid').'</th>';
@@ -692,11 +694,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 							// Ref
 							print '<td data-col="object-name" class="nowraponall">';
+							print '<div class="inline-block lineheightsmall">';
 							print $invoicesupplierstatic->getNomUrl(1);
+							print '<br><span class="opacitymedium small" title="'.$langs->trans("RefSupplier").'">';
+							print dolPrintHTML($objp->ref_supplier);
+							print '</span>';
+							print '</div>';
 							print '</td>';
 
 							// Ref supplier
-							print '<td data-col="ref-supplier" >'.$objp->ref_supplier.'</td>';
+							//print '<td data-col="ref-supplier" >'.$objp->ref_supplier.'</td>';
 
 							// type
 							if ($displayAllInvoices) {
@@ -873,7 +880,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 							// Print total
 							print '<tr class="liste_total">';
-							$colspan = 4;
+							$colspan = 3;
 
 							// type
 							if ($displayAllInvoices) {

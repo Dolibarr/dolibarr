@@ -31,7 +31,6 @@
 define('DONOTLOADCONF', 1); // To avoid loading conf by file inc.php
 
 include 'inc.php';
-
 /**
  * @var string	$conffile
  * @var string	$conffiletoshow
@@ -49,7 +48,12 @@ include 'inc.php';
  * @var string	$dolibarr_main_db_encryption
  * @var string	$dolibarr_main_db_encrypted_pass
  * @var string	$dolibarr_main_db_cryptkey
+ * @var string	$dolibarr_main_db_character_set
+ * @var string	$dolibarr_main_db_collation
  */
+'
+@phan-var-force string $dolibarr_main_db_collation
+';
 
 global $langs;
 
@@ -120,7 +124,7 @@ if (@file_exists($forcedfile)) {
 	 * @var string	$force_install_distrib
 	 */
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
-	if ($force_install_noedit) {
+	if (!empty($force_install_noedit)) {
 		$main_dir = detect_dolibarr_main_document_root();
 		if (!empty($argv[3])) {
 			$main_dir = $argv[3]; // override when executing the script in command line
@@ -583,7 +587,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 		print '<tr><td>';
 		print $langs->trans("ConfFileReload");
 		print '</td>';
-		print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+		print '<td>'.img_picto('OK', 'tick').'</td></tr>';
 
 		// Create database user if requested
 		if (isset($db_create_user) && ($db_create_user == "1" || $db_create_user == "on")) {
@@ -641,7 +645,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 							print $langs->trans("UserCreation").' : ';
 							print $dolibarr_main_db_user;
 							print '</td>';
-							print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+							print '<td>'.img_picto('OK', 'tick').'</td></tr>';
 						} else {
 							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
 								|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
@@ -669,7 +673,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 					print $langs->trans("UserCreation").' : ';
 					print $dolibarr_main_db_user;
 					print '</td>';
-					print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td>';
+					print '<td>'.img_picto('Error', 'warning', 'class="error"').'</td>';
 					print '</tr>';
 
 					// warning message due to connection failure
@@ -700,7 +704,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 					print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
 					print $dolibarr_main_db_name;
 					print '</td>';
-					print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
+					print '<td>'.img_picto('OK', 'tick').'</td></tr>';
 
 					$newdb->select_db($dolibarr_main_db_name);
 					$check1 = $newdb->getDefaultCharacterSetDatabase();
@@ -728,7 +732,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 				print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
 				print $dolibarr_main_db_name;
 				print '</td>';
-				print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td>';
+				print '<td>'.img_picto('Error', 'warning', 'class="error"').'</td>';
 				print '</tr>';
 
 				// warning message
@@ -746,38 +750,38 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 
 		// We test access with dolibarr database user (not admin)
 		if (!$error) {
-			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
+			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".((string) $conf->db->user)." name=".((string) $conf->db->name));
 			//print "connection de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+			$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 			if ($db->connected) {
-				dolibarr_install_syslog("step1: connection to server by user ".$conf->db->user." ok");
+				dolibarr_install_syslog("step1: connection to server by user ".((string) $conf->db->user)." ok");
 				print "<tr><td>";
-				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 				print $dolibarr_main_db_host;
 				print "</td><td>";
-				print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
+				print img_picto('OK', 'tick');
 				print "</td></tr>";
 
 				// server access ok, basic access ok
 				if ($db->database_selected) {
-					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".$conf->db->user." ok");
+					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".((string) $conf->db->user)." ok");
 					print "<tr><td>";
-					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 					print $dolibarr_main_db_name;
 					print "</td><td>";
-					print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
+					print img_picto('OK', 'tick');
 					print "</td></tr>";
 
 					$error = 0;
 				} else {
-					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".$conf->db->user." failed", LOG_ERR);
+					dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".((string) $conf->db->user)." failed", LOG_ERR);
 					print "<tr><td>";
-					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+					print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 					print $dolibarr_main_db_name;
 					print '</td><td>';
-					print '<img src="../theme/eldy/img/error.png" alt="Error">';
+					print img_picto('Error', 'warning', 'class="error"');
 					print "</td></tr>";
 
 					// warning message
@@ -790,17 +794,17 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 					$error++;
 				}
 			} else {
-				dolibarr_install_syslog("step1: connection to server by user ".$conf->db->user." failed", LOG_ERR);
+				dolibarr_install_syslog("step1: connection to server by user ".((string) $conf->db->user)." failed", LOG_ERR);
 				print "<tr><td>";
-				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+				print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".((string) $conf->db->user).") : ";
 				print $dolibarr_main_db_host;
 				print '</td><td>';
-				print '<img src="../theme/eldy/img/error.png" alt="Error">';
+				print img_picto('Error', 'warning', 'class="error"');
 				print "</td></tr>";
 
 				// warning message
 				print '<tr><td colspan="2"><br>';
-				print $langs->trans("ErrorConnection", $conf->db->host, $conf->db->name, $conf->db->user);
+				print $langs->trans("ErrorConnection", $conf->db->host, $conf->db->name, ((string) $conf->db->user));
 				print $langs->trans('IfLoginDoesNotExistsCheckCreateUser').'<br>';
 				print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 				print '</td></tr>';
@@ -904,7 +908,7 @@ function write_conf_file($conffile)
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
 	global $conffile, $conffiletoshow;
 	global $force_dolibarr_lib_NUSOAP_PATH;
-	global $force_dolibarr_lib_FPDF_PATH, $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
+	global $force_dolibarr_lib_FPDF_PATH, $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_TCPDI_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
 	global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
 	global $force_dolibarr_js_CKEDITOR, $force_dolibarr_js_JQUERY, $force_dolibarr_js_JQUERY_UI;
@@ -986,6 +990,9 @@ function write_conf_file($conffile)
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
+		fwrite($fp, "\n");
+
+		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');
@@ -1097,7 +1104,7 @@ function write_conf_file($conffile)
 			print $langs->trans("SaveConfigurationFile");
 			print ' <strong>'.$conffile.'</strong>';
 			print "</td><td>";
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
+			print img_picto('OK', 'tick');
 			print "</td></tr>";
 		} else {
 			$error++;

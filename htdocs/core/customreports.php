@@ -28,7 +28,10 @@
  * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
  * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);		// TODO Use a variable
  * $SHOWLEGEND = 0;
- * $search_xaxis = array('t.column');
+ * $search_xaxis = array('t.columnx');
+ * $search_yaxis = array('t.columny');		// for grid ???
+ * $search_measures = array('t.count');
+ * $search_groupby = array('t.column2');
  * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -51,7 +54,6 @@
 ';
 
 // Initialise values
-$search_groupby = array();
 $tabfamily = null;
 $objecttype = null;
 
@@ -66,7 +68,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
-	$search_measures = GETPOST('search_measures', 'array');
+	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
 
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
@@ -76,11 +78,26 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') {
 		$search_groupby = array(GETPOST('search_groupby', 'alpha'));
 	}
-
 	'@phan-var-force string[] $search_groupby';
 
-	$search_yaxis = GETPOST('search_yaxis', 'array');
+	$search_yaxis = GETPOST('search_yaxis', 'array:alphanohtml');
 	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
+
+	/**
+	 * Sanitize key
+	 *
+	 * @param	string	$value		Value
+	 * @return	string				Sanitized value
+	 */
+	function sanititzekey($value)
+	{
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value);
+	}
+
+	$search_measures = array_map('sanititzekey', $search_measures);
+	$search_xaxis = array_map('sanititzekey', isset($search_xaxis) ? $search_xaxis : array());
+	$search_yaxis = array_map('sanititzekey', $search_yaxis);
+	$search_groupby = array_map('sanititzekey', isset($search_groupby) ? $search_groupby : array());
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -114,6 +131,10 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 }
 
+// In customreport context, we force the protection to avoid forging of criteria including bind SQL injection
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
+
 if (empty($mode)) {
 	$mode = 'graph';
 }
@@ -123,6 +144,14 @@ if (!isset($search_measures)) {
 if (!isset($search_xaxis)) {
 	// Ensure value is set and not null.
 	$search_xaxis = array();
+}
+if (!isset($search_yaxis)) {
+	// Ensure value is set and not null.
+	$search_yaxis = array();
+}
+if (!isset($search_groupby)) {
+	// Ensure value is set and not null.
+	$search_groupby = array();
 }
 if (!isset($search_graph)) {
 	// Ensure value is set and not null
@@ -234,7 +263,7 @@ if ($objecttype) {
 '@phan-var-force CommonObject $object';
 
 // Security check
-$socid = 0;
+//$socid = 0;
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden('Access forbidden to external users');
@@ -357,6 +386,7 @@ $arrayofgroupby = array();
 $arrayofyaxis = array();
 $arrayofvaluesforgroupby = array();
 
+$features = '';
 if (!empty($object->element)) {
 	$features = $object->element;
 } else {
@@ -368,8 +398,11 @@ if (!empty($object->element_for_permission)) {
 	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
-// Security check
-restrictedArea($user, $features, 0, '');
+// $arrayoftype contains several features
+// Test on permission can be done on a given selected feature only
+
+// Security check (do not stop here, get only result to show message later)
+$resultcheck = restrictedArea($user, $features, 0, '', '', 'fk_soc', 'rowid', 0, 1);
 
 
 /*
@@ -455,22 +488,23 @@ if ($action == 'viewgraph') {
 if (count($search_groupby)) {
 	$fieldtocount = '';
 	foreach ($search_groupby as $gkey => $gval) {
-		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
+		$gvalwithoutprefix = preg_replace('/^[a-z]+\./i', '', $gval);
+		$gvalsanitized = preg_replace('/[^a-z0-9\._\-]+/i', '', $gval);
 
-		if (preg_match('/\-year$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-year$/', '', $search_groupby[$gkey]);
+		if (preg_match('/\-year$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-year$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y')";
-		} elseif (preg_match('/\-month$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-month$/', '', $search_groupby[$gkey]);
+		} elseif (preg_match('/\-month$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-month$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m')";
-		} elseif (preg_match('/\-day$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-day$/', '', $search_groupby[$gkey]);
+		} elseif (preg_match('/\-day$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-day$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d')";
 		} else {
-			$fieldtocount = $search_groupby[$gkey];
+			$fieldtocount = $gvalsanitized;
 		}
 
-		$sql = "SELECT DISTINCT ".$fieldtocount." as val";
+		$sql = "SELECT DISTINCT ".$fieldtocount." as val";	// $fieldtocount has been sanitized by previous lines as we can't use db->sanitie()
 
 		if (strpos($fieldtocount, 'te') === 0) {
 			$tabletouse = $object->table_element;
@@ -608,6 +642,14 @@ if (count($search_groupby)) {
 	}
 }
 //var_dump($arrayofvaluesforgroupby);exit;
+
+
+if (!$resultcheck) {
+	print '<div class="error">';
+	print $langs->trans("NotEnoughPermissions");
+	print '</div>';
+}
+
 
 
 //$tmparray = dol_getdate(dol_now());

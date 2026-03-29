@@ -10,6 +10,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_file extends LogHandler
 {
+	// @phan-suppress-next-line PhanPluginDuplicateArrayKey
+	const DOL_LOG_LEVELS = array(
+		LOG_EMERG => 'EMERG',
+		LOG_ALERT => 'ALERT',
+		LOG_CRIT => 'CRIT',
+		LOG_ERR => 'ERR',
+		LOG_WARNING => 'WARNING',
+		LOG_NOTICE => 'NOTICE',
+		LOG_INFO => 'INFO',
+		LOG_DEBUG => 'DEBUG'
+	);
+
 	/**
 	 * @var string
 	 */
@@ -141,19 +153,6 @@ class mod_syslog_file extends LogHandler
 
 		return $suffixinfilename ? preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
 	}
-
-
-	// @phan-suppress-next-line PhanPluginDuplicateArrayKey
-	const DOL_LOG_LEVELS = array(
-		LOG_EMERG => 'EMERG',
-		LOG_ALERT => 'ALERT',
-		LOG_CRIT => 'CRIT',
-		LOG_ERR => 'ERR',
-		LOG_WARNING => 'WARNING',
-		LOG_NOTICE => 'NOTICE',
-		LOG_INFO => 'INFO',
-		LOG_DEBUG => 'DEBUG'
-	);
 
 	/**
 	 * Export the message

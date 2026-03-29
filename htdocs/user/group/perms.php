@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +119,15 @@ if (empty($reshook)) {
 
 		$user->clearrights();
 		$user->loadRights();
+
+		// We redirect to avoid to get an URL with token inside
+		$qs = $_SERVER["QUERY_STRING"];
+		$qs = preg_replace('/&action=addrights/', '', $qs);
+		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
+		$qs = preg_replace('/&confirm=yes/', '', $qs);
+		//var_dump($qs);exit;
+		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
+		exit;
 	}
 
 	if ($action == 'delrights' && $permissiontoedit) {
@@ -135,6 +144,15 @@ if (empty($reshook)) {
 
 		$user->clearrights();
 		$user->loadRights();
+
+		// We redirect to avoid to get an URL with token inside
+		$qs = $_SERVER["QUERY_STRING"];
+		$qs = preg_replace('/&action=delrights/', '', $qs);
+		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
+		$qs = preg_replace('/&confirm=yes/', '', $qs);
+		//var_dump($qs);exit;
+		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
+		exit;
 	}
 }
 
@@ -250,7 +268,7 @@ if (isModEnabled('multicompany')) {
 }
 
 // Multicompany
-if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 	$mc->getInfo($object->entity);
 	print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 	print '<td class="valeur">'.dol_escape_htmltag($mc->label);
@@ -506,7 +524,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		// Own permission by group
 		if ($permissiontoedit) {
 			print '<td class="center nowrap">';
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+			print '<a class="reposition" id="'.$obj->id.'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
 			//print img_edit_remove($langs->trans("Remove"));
 			print img_picto($langs->trans("Remove"), 'switch_on');
 			print '</a>';
@@ -521,7 +539,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		// Do not own permission
 		if ($permissiontoedit) {
 			print '<td class="center nowrap">';
-			print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+			print '<a class="reposition addexpandedmodulesinparamlist" id="'.$obj->id.'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
 			//print img_edit_add($langs->trans("Add"));
 			print img_picto($langs->trans("Add"), 'switch_off');
 			print '</a>';

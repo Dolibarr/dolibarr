@@ -118,6 +118,11 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
+// In API context, we force the protection to avoid forging of criteria including bind SQL injection
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
+
+
 $url = $_SERVER['PHP_SELF'];
 if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
 	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
@@ -197,9 +202,9 @@ if (getDolGlobalString('MAIN_API_DEBUG')) {
 		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
 		//	'version' => $api->r->getRequestedApiVersion(),
 		//	'data'    => $api->r->getRequestData(),
-		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//dol_syslog("Debug API input ".formatLogOb
+		dol_syslog("Debug API url ".formatLogObject($r->url), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".formatLogObject($r->getRequestData()), LOG_DEBUG, 0, '_api');
 		//}
 	});
 }

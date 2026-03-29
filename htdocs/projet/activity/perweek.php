@@ -418,6 +418,7 @@ $extrafieldsobjectkey = 'projet_task';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $tasksarray = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, (string) $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields, 0, $search_array_options_task, 1);// We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+
 $tasksarraywithoutfilter = array();
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
 	$tasksarraywithoutfilter = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, '', (string) $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
@@ -501,7 +502,7 @@ if ($usertoprocess->id != $user->id) {
 }
 print '<div class="taskiddiv inline-block">';
 print img_picto('', 'projecttask', 'class="pictofixedwidth"');
-$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, 'widthcentpercentminusx', '', 'all', $usertoprocess);
+$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, 'widthcentpercentminusx maxwidth500', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'position', 0, 'maxwidth150onsmartphone');
@@ -579,12 +580,12 @@ if ($form->num > 1 || empty($conf->dol_optimize_smallscreen)) {
 if (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'" spellcheck="false">';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_thirdparty" class="maxwidth100" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_thirdparty" class="maxwidth100" value="'.dol_escape_htmltag($search_thirdparty).'" spellcheck="false">';
 	$moreforfilter .= '</div>';
 }
 
@@ -673,11 +674,11 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
 	print '<span class="nowraponall">';
-	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
+	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphotosmall" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
 	print '</span>';
 	print '</th>';
-	print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+	print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-3).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
 }
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0

@@ -28,7 +28,7 @@
  *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
-define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -62,7 +62,7 @@ if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
 	// For logo of company (by definition, the company logo is public)
-	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
+	if ($_GET["modulepart"] == 'mycompany' && isset($_GET['file']) && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
 	}
 	// For barcode live generation (barcode are just a graph of a value, so can be public)

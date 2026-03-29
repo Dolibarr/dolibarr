@@ -60,4 +60,3 @@ interface iCache
      */
     public function isCached($name);
 }
-
