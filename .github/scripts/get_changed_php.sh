@@ -20,11 +20,11 @@ if [[ -z "${GITHUB_TOKEN:-}" ]]; then
 fi
 if [[ -z "${GITHUB_REPOSITORY:-}" ]]; then
 	echo "GITHUB_REPOSITORY is not set" >&2
-	exit 1
+	exit 2
 fi
 if [[ -z "${GITHUB_EVENT_PATH:-}" ]]; then
 	echo "GITHUB_EVENT_PATH is not set" >&2
-	exit 1
+	exit 3
 fi
 
 # Extract the pull request number from the event payload
@@ -68,12 +68,12 @@ done
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
 
 
-FORBIDDEN_FILES=$(echo "$all_changed_files" | grep -E '^htdocs/langs/([^/]+)/.*\.lang$' | grep -v 'htdocs/langs/en_US/')
+FORBIDDEN_FILES=$(echo "$all_changed_files" | grep -E 'htdocs/langs/([^/]+)/.*\.lang$' | grep -v 'htdocs/langs/en_US/')
 if [ -n "$FORBIDDEN_FILES" ]; then
   echo "You tried to mody one or more language files that are not allowed to be modified in Pull requests."
   echo "$FORBIDDEN_FILES"
   echo "To modify translation that are not the source language (en_US), you must modify them from transifex.com"
-  exit 1
+  exit 10
 fi
 
 

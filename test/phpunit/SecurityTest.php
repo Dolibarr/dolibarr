@@ -653,10 +653,39 @@ class SecurityTest extends CommonClassTest
 			print "result2 = ".$result."\n";
 			$this->assertFalse($result);
 
-			$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
-			$result3a = dol_eval($s, 1, 1, '2');
-			print "result3a = ".$result3a."\n";
-			$this->assertStringContainsString('Exception during evaluation: '.$s, $result3a);
+			if (empty($dolibarr_main_restrict_eval_methods)) {		// Old mode
+				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
+				$result3a = dol_eval($s, 1, 1, '2');
+				print "result3a = ".$result3a."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3a, 'The string was not detected as evil : '.$s);
+
+				$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+				$result3c = dol_eval($s, 1, 1, '2');
+				print "result3c = ".$result3c."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3c, 'The string was not detected as evil : '.$s);
+
+				$s = '((($var1 = new SimpleXMLElement()) ? \'1\' : \'0\')';
+				$result3d= dol_eval($s, 1, 1, '2');
+				print "result3d = ".$result."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3d, 'The string was not detected as evil : '.$s);
+			} else {												// New mode for v23+
+				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
+				$result3a = dol_eval($s, 1, 1, '2');
+				print "result3a = ".$result3a."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate.', $result3a, 'The string was not detected as evil');
+
+				$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+				$result3c = dol_eval($s, 1, 1, '2');
+				print "result3c = ".$result3c."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result3c, 'The string was not detected as evil');
+
+				$s = '((($var1 = new SimpleXMLElement()) ? \'1\' : \'0\')';
+				$result3d= dol_eval($s, 1, 1, '2');
+				print "result3d = ".$result."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result3d, 'The string was not detected as evil');
+			}
+
+			// This next one are okfor syntax and allowance
 
 			$s = '((($var1 = new Project($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
 			$result3b = dol_eval($s, 1, 1, '2');
@@ -672,10 +701,6 @@ class SecurityTest extends CommonClassTest
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result4 = ".$result."\n";
 			$this->assertEquals('Parent project not found', $result, 'Test 4');
-
-			$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
-			print "result5 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
 
 			$s = '4 < 5';
 			$result = (string) dol_eval($s, 1, 1, '2');
@@ -707,11 +732,21 @@ class SecurityTest extends CommonClassTest
 			print "result = ".$result."\n";
 			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
 
+			$s = '1==\x01';
+			$result = dol_eval($s, 1, 1, '1');	// Check that we can't make dol_eval on string containing \ char.
+			print "result5 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
+
 			$s = 'new abc->invoke(\'whoami\')';
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result = ".$result."\n";
 			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
+			/*          $s = 'new ReflectionFunction(\'abc\')';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+			*/
 			$s = 'new ReflectionFunction(\'abc\')';
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result = ".$result."\n";
