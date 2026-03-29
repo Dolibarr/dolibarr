@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
@@ -43,6 +44,52 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
  */
 class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 {
+	/**
+	 * @param  int<0,max> $socid Thirdparty id
+	 * @return string           IBAN (decrypted), empty if none
+	 */
+	protected function getDefaultThirdpartyIban($socid)
+	{
+		$iban = '';
+		if ((int) $socid <= 0) {
+			return '';
+		}
+
+		$sql = "SELECT iban_prefix as iban";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as rib";
+		$sql .= " WHERE fk_soc = ".((int) $socid);
+		$sql .= " AND rib.default_rib = 1";
+		$sql .= " AND rib.type = 'ban'";
+		$sql .= " LIMIT 1";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$iban = dolDecrypt($obj->iban);
+			}
+		}
+
+		return (string) $iban;
+	}
+
+	/**
+	 * @param  object[] $lines Lines with a possible ref_supplier property
+	 * @return string[]        Unique list of supplier references
+	 */
+	protected function getSupplierRefsFromLines($lines)
+	{
+		$out = array();
+		if (!is_array($lines)) {
+			return $out;
+		}
+		foreach ($lines as $l) {
+			if (is_object($l) && !empty($l->ref_supplier)) {
+				$out[(string) $l->ref_supplier] = true;
+			}
+		}
+		return array_keys($out);
+	}
+
 	/**
 	 * @var DoliDB Database handler
 	 */
@@ -634,7 +681,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		global $langs, $conf, $mysoc;
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "orders", "companies", "bills"));
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "banks", "suppliers"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -664,6 +711,34 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		} else {
 			$text = $this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+		}
+
+		// Title (right)
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierPayment")." ".$outputlangs->convToOutputCharset($object->ref), 0, 'R');
+
+		$pdf->SetFont('', '', $default_font_size - 1);
+		$posy += 6;
+		if (!empty($object->date)) {
+			$pdf->SetXY($posx, $posy);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), 0, 'R');
+			$posy += 4;
+		}
+
+		$supplierRefs = $this->getSupplierRefsFromLines($object->lines);
+		if (!empty($supplierRefs)) {
+			$pdf->SetXY($posx, $posy);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSupplier")." : ".implode(', ', $supplierRefs), 0, 'R');
+			$posy += 4;
+		}
+
+		$ibanDest = $this->getDefaultThirdpartyIban((int) $object->thirdparty->id);
+		if (!empty($ibanDest)) {
+			$pdf->SetXY($posx, $posy);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("IBAN")." : ".$ibanDest, 0, 'R');
+			$posy += 4;
 		}
 		/*
 		$pdf->SetFont('','B', $default_font_size + 3);
@@ -808,26 +883,36 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 
-			// Show default IBAN account
-			$iban = '';
-			$sql = "SELECT iban_prefix as iban";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as rib";
-			$sql .= " WHERE fk_soc = ".($object->thirdparty->id);
-			$sql .= " AND rib.default_rib = 1";
-			$sql .= " AND rib.type = 'ban'";
-			$sql .= " LIMIT 1";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$obj = $this->db->fetch_object($resql);
-				if ($obj) {
-					$iban = dolDecrypt($obj->iban);
-				}
-			}
-
+			// Show default IBAN account (destination account)
+			$iban = $this->getDefaultThirdpartyIban((int) $object->thirdparty->id);
 			if (!empty($iban)) {
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->SetXY($posx + 2, $posy + 15);
 				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
+			}
+
+			// Show origin bank account used for the payment (our bank account)
+			if (!empty($object->fk_account) && (int) $object->fk_account > 0) {
+				$bankaccount = new Account($this->db);
+				if ($bankaccount->fetch((int) $object->fk_account) > 0) {
+					$ibanOrigin = dolDecrypt((string) $bankaccount->iban);
+					if ($ibanOrigin === '' && !empty($bankaccount->iban)) {
+						$ibanOrigin = (string) $bankaccount->iban;
+					}
+					$label = (string) $bankaccount->label;
+					$line = $outputlangs->transnoentities("BankAccount").': '.$label;
+					if ($ibanOrigin !== '') {
+						$line .= ' - '.$langs->trans("IBAN").': '.$ibanOrigin;
+					} elseif (!empty($bankaccount->number)) {
+						$line .= ' - '.$outputlangs->transnoentities("Account").': '.$bankaccount->number;
+					}
+
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->SetTextColor(0, 0, 0);
+					$pdf->SetXY($this->marge_gauche, 82);
+					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 4, $line, 0, 'L');
+					$pdf->SetTextColor(0, 0, 60);
+				}
 			}
 		}
 

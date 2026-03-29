@@ -1352,6 +1352,18 @@ class SecurityTest extends CommonClassTest
 	{
 		global $conf;
 
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 2;				// 1 = only valid html, 2 = only valid htm and allowed styles
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
+
+		// Test on sanitizing styles
+		$result = dol_htmlwithnojs('Text <div style="position: 0">Div content</div><span style="z-index: 123">Text</span> and more', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('Text'."\n".'<div style="0">Div content</div>'."\n".'<span style="123">Text</span> and more', $result, 'Test sanitizing style for CSS UI redressing');
+
+
+
 		// Test on a string in hindi with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES because
 		// in past this case was losing the UTF8.
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
@@ -1367,17 +1379,15 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
 
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 
 		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
 
 
+		// Test emoticons
 
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
-		// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
 
 		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
 		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
