@@ -351,9 +351,9 @@ print '</div>';
 print '</td>';
 print '</tr>';
 
-if ($res && $db->num_rows($res) > 0) {
+if ($resql && $num > 0) {
 	$i = 0;
-	while ($obj = $db->fetch_object($res)) {
+	while ($obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
 
 		// Date
