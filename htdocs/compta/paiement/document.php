@@ -31,6 +31,13 @@
  */
 
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -41,14 +48,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers', 'other'));
 
@@ -57,15 +56,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-if ($object !== null) {
-	$result = restrictedArea($user, $object->element, $object->id, 'payment', '');
-}
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
@@ -92,8 +84,16 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = null;
 }
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($object !== null) {
+	$result = restrictedArea($user, $object->element, $object->id, 'payment', '');
+}
 
 $permissiontoadd = ($user->hasRight('facture', 'creer')); // Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
@@ -106,10 +106,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$form = new Form($db);
-
 $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
-llxHeader('', $title);
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_prepare_head($object);
