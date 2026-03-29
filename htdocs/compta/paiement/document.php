@@ -88,9 +88,8 @@ if ($object->fetch($id, $ref)) {
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if ($object !== null) {
-	$result = restrictedArea($user, $object->element, $object->id, 'payment', '');
-}
+
+restrictedArea($user, $object->element, $object->id, 'payment', '');
 
 $permissiontoadd = ($user->hasRight('facture', 'creer')); // Used by the include of actions_setnotes.inc.php
 

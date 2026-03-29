@@ -2786,7 +2786,7 @@ class User extends CommonObject
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 
-			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
+			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
