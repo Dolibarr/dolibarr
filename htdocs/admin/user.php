@@ -126,7 +126,7 @@ if ($action == 'set_default') {
 		dol_print_error($db);
 	}
 } elseif ($action == 'updatebadcharunauthorized') {
-	$badCharUnauthorized = GETPOST('MAIN_LOGIN_BADCHARUNAUTHORIZED', 'none');
+	$badCharUnauthorized = GETPOST('MAIN_LOGIN_BADCHARUNAUTHORIZED', 'password');
 	if (is_array($badCharUnauthorized)) {
 		$badCharUnauthorized = '';
 	}
