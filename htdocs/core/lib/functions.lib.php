@@ -12506,9 +12506,14 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 							}
 						}
 					} else {
-						if ($reg[1] == 'ReflectionFunction') {
-							dol_syslog('Bad string syntax to evaluate: Class ReflectionFunction is not allowed. ' . $s, LOG_WARNING);
-							return 'Bad string syntax to evaluate. Class ReflectionFunction is not allowed. ' . $s;
+						if (!class_exists($reg[1])) {
+							dol_syslog('Bad string syntax to evaluate: Class "'.$reg[1].'" does not exist. ' . $s, LOG_WARNING);
+							return 'Bad string syntax to evaluate. Class "'.$reg[1].'" does not exist. ' . $s;
+						}
+						$parents = class_parents($reg[1]);	// Get list of parent classes of class we want to check
+						if (!in_array('CommonObject', $parents)) {	// Only classes that inherit CommonObject are ok. This forbid dangerous classes like ReflectionFunction, SplFileObject, ...
+							dol_syslog('Bad string syntax to evaluate: Class "'.$reg[1].'" is not allowed because only classes extended CommonObject can be used in dynamic evaluation. ' . $s, LOG_WARNING);
+							return 'Bad string syntax to evaluate. Class "'.$reg[1].'" is not allowed because only classes extended CommonObject can be used in dynamic evaluation. ' . $s;
 						}
 					}
 				}
