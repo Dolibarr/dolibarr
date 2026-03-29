@@ -1360,7 +1360,12 @@ class SecurityTest extends CommonClassTest
 		// Test on sanitizing styles
 		$result = dol_htmlwithnojs('Text <div style="position: 0">Div content</div><span style="z-index: 123">Text</span> and more', 0, 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('Text'."\n".'<div style="0">Div content</div>'."\n".'<span style="123">Text</span> and more', $result, 'Test sanitizing style for CSS UI redressing');
+		// Normalize formatting differences between libxml/php versions (spaces and line breaks around tags/style values)
+		$normalizedresult = str_replace(array("\r", "\n", "\t"), '', $result);
+		$normalizedresult = preg_replace('/style="\s*([0-9]+)\s*"/', 'style="$1"', $normalizedresult);
+		$normalizedresult = preg_replace('/\s*</', '<', $normalizedresult);
+		$normalizedresult = preg_replace('/>\s*/', '>', $normalizedresult);
+		$this->assertEquals('Text<div style="0">Div content</div><span style="123">Text</span> and more', $normalizedresult, 'Test sanitizing style for CSS UI redressing');
 
 
 

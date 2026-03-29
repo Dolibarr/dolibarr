@@ -68,6 +68,15 @@ done
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
 
 
+FORBIDDEN_FILES=$(echo "$all_changed_files" | grep -E '^htdocs/langs/([^/]+)/.*\.lang$' | grep -v 'htdocs/langs/en_US/')
+if [ -n "$FORBIDDEN_FILES" ]; then
+  echo "You tried to mody one or more language files that are not allowed to be modified in Pull requests."
+  echo "$FORBIDDEN_FILES"
+  echo "To modify translation that are not the source language (en_US), you must modify them from transifex.com"
+  exit 1
+fi
+
+
 # Determine changed files flag
 if [ -z "$all_changed_files" ]; then
     any_changed="false"
