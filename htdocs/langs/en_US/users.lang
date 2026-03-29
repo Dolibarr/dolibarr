@@ -171,4 +171,4 @@ AtNextLogin=At next connection
 UserDoesNotHaveRightsToChangeHisPassword=This user doesn't have the rights to change his own password
 NotPossible=Not possible
 LoginBadCharUnauthorized=Unauthorized characters in logins
-LoginBadCharUnauthorizedHelp=Characters entered here will be forbidden in user logins. If you save an empty value, no character will be forbidden. Historical default value if nothing was ever configured: %s
+LoginBadCharUnauthorizedHelp=Characters entered here will be forbidden in user logins. If you save an empty value, no character will be forbidden (making your instance unsecured). Historical default value if nothing was ever configured: %s
