@@ -2,8 +2,6 @@ name: "CI-PUSH"
 
 on: [push]
 
-permissions:
-  contents: read
 
 jobs:
   pre-commit:

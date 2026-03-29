@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,17 +264,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			if (function_exists('gethostbyname')) {
-				$iptocheck = gethostbyname($hosttocheck);
-			} else {
-				$iptocheck = $hosttocheck;
-			}
-			// TODO Resolve ip v6
+			$iptocheck = resolveDns($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
-			$iptocheck = '0'; //
+			$iptocheck = '0'; // will disabled check on IP
 		}
 
 		if ($iptocheck) {
@@ -395,6 +390,43 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// @phpstan-ignore-next-line
 	return $rep;
 }
+
+
+/**
+ * Resolve a hostname into its IP
+ *
+ * @param	string	$hosttocheck		Hostname to check
+ * @return	string						First ip found (IP v4 or IP v6). If resolution fails, the $hosttocheck is returned.
+ */
+function resolveDns($hosttocheck)
+{
+	$iptocheck = null;
+
+	// Resolve $hosttocheck to get the IP $iptocheck
+	if (function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION')) {
+		try {
+			$records = dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
+
+			if (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ip'])) {			// We take the first one
+				$iptocheck = $records[0]['ip'];
+			} elseif (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ipv6'])) {	// We take the first one
+				$iptocheck = $records[0]['ipv6'];
+			}
+		} catch (Exception $e) {
+			// Nothing done
+		}
+	} elseif (function_exists('gethostbyname')) {	// resolve only ipv4
+		$iptocheck = gethostbyname($hosttocheck);
+	} else {
+		$iptocheck = $hosttocheck;
+	}
+
+	if ($iptocheck === null) {
+		$iptocheck = $hosttocheck;
+	}
+	return $iptocheck;
+}
+
 
 /**
  * Is IP allowed

@@ -237,8 +237,8 @@ class ActionsTicket extends CommonHookActions
 			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$uselocalbrowser = true;
-			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
+			$uselocalbrowser = -1;
+			$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 1);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 			if (!$ckeditorenabledforticket) {
 				$msg = dol_string_nohtmltag($msg, 2);
 			}
@@ -392,7 +392,11 @@ class ActionsTicket extends CommonHookActions
 								if (!empty($doc->share)) {
 									$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
 								} elseif ($doc->src_object_type == 'ticket') {
-									$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file_relative_path).'&entity='.getEntity('ticket', 0);
+									$downloadwrapper = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/document.php' : dol_buildpath('/public/ticket/document.php', 2);
+
+									global $dolibarr_main_instance_unique_id;
+									$securekey = dol_hash('dolibarr-'.$file_relative_path.'-'.$dolibarr_main_instance_unique_id, 'sha256');
+									$doclink = $downloadwrapper.'?modulepart='.$modulepart.'&attachment=0&entity='.getEntity('ticket', 0).'&securekey='.urlencode($securekey).'&file='.urlencode($file_relative_path);
 								}
 
 								$mimeAttr = ' mime="'.$mime.'" ';

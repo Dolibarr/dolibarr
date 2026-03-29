@@ -51,8 +51,68 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class GetUrlLibTest extends CommonClassTest
 {
 	/**
+	 * testResolveDNS
+	 *
+	 * @return	int
+	 */
+	public function testResolveDNS()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$modes = array('default', 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION');
+
+		foreach ($modes as $mode) {
+			if ($mode == 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION') {
+				$conf->global->MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION = 1;
+			} else {	// default
+				unset($conf->global->MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION);
+			}
+
+			$result = resolveDns('192.16.0.1');
+			print __METHOD__." 192.16.0.1 mode ".$mode." result=".$result."\n";
+			$this->assertEquals('192.16.0.1', $result, 'Test resolveDNS 1 mode '.$mode);
+
+			$result = resolveDns('::1');
+			print __METHOD__." ::1 mode ".$mode." result=".$result."\n";
+			$this->assertEquals('::1', $result, 'Test resolveDNS 2 mode '.$mode);
+
+			$result = resolveDns('anamethatdoesnotexist123really');
+			print __METHOD__." anamethatdoesnotexist123really mode ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('anamethatdoesnotexist123really')), 'Test resolveDNS 4 mode '.$mode);
+
+			// name if ip that resolve both on ipv4and ipv6
+
+			$result = resolveDns('www.dolimed.com');
+			print __METHOD__." www.dolimed.com mode ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('104.21.7.66', '172.67.187.137')), 'Test resolveDNS 3 mode '.$mode);
+
+			// name if ipv4 resolution only
+
+			$result = resolveDns('ipv4.dolicloud.com');
+			print __METHOD__." ipv4.dolicloud.com ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('147.135.135.36')), 'Test resolveDNS 5 mode '.$mode);
+
+			// name if ipv6 resolution only
+
+			$result = resolveDns('ipv6.dolicloud.com');
+			print __METHOD__." ipv6.dolicloud.com ".$mode." result=".$result."\n";
+			if ($mode == 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION') {
+				$this->assertTrue(in_array($result, array('ipv6.dolicloud.com')), 'Test resolveDNS 6 mode '.$mode);
+			} else {
+				$this->assertTrue(in_array($result, array('2001:41d0:302:1000::4:1437')), 'Test resolveDNS 6 mode '.$mode);
+			}
+		}
+	}
+
+
+	/**
 	 * testGetRootURLFromURL
 	 *
+	 * @depends	testResolveDNS
 	 * @return	int
 	 */
 	public function testGetRootURLFromURL()
@@ -101,6 +161,7 @@ class GetUrlLibTest extends CommonClassTest
 	/**
 	 * testGetDomainFromURL
 	 *
+	 * @depends	testGetRootURLFromURL
 	 * @return	int
 	 */
 	public function testGetDomainFromURL()
@@ -188,6 +249,7 @@ class GetUrlLibTest extends CommonClassTest
 	/**
 	 * testRemoveHtmlComment
 	 *
+	 * @depends	testGetDomainFromURL
 	 * @return	int
 	 */
 	public function testRemoveHtmlComment()

@@ -338,14 +338,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// User assigned
-		print '<tr><td>'.$langs->trans("AssignedTo").'</td><td>';
 		if ($object->dao->fk_user_assign > 0) {
+			print '<tr><td>'.$langs->trans("AssignedTo").'aaaa</td><td>';
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_assign);
 			print img_picto('', 'user', 'class="pictofixedwidth"');
 			print $fuser->getFullName($langs, 0);
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// External contributors
 		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')) {
@@ -426,12 +426,12 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			// List ticket
 			print '<div class="inline-block divButAction"><a class="left" style="padding-right: 50px" href="javascript:$(\'#form_view_ticket_list\').submit();">'.$langs->trans('ViewMyTicketList').'</a></div>';
 
-			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+			if ($object->dao->status < Ticket::STATUS_CLOSED) {
 				// New message
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('TicketAddMessage').'</a></div>';
 
 				// Close ticket
-				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+				if ($object->dao->status >= Ticket::STATUS_NOT_READ && $object->dao->status < Ticket::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}

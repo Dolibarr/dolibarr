@@ -18,8 +18,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/saveinplace.php
- *       \brief      File to load or update field value. Was used in past when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
+ *       \file      htdocs/core/ajax/saveinplace.php
+ *       \brief     File to load (loadinplace.php) or update (saveinplace.php) a field value.
+ *       			Was used in past when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -94,6 +95,10 @@ if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
 }
 
+if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+}
+
 
 /*
  * View
@@ -117,7 +122,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 
 	//$savemethod = GETPOST('savemethod', 'alpha', 2);
 	//$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
-	$savemethodname = 'setValueFrom';
 
 	$newelement = $element;
 	$subelement = null;
@@ -192,15 +196,8 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$newvalue = ($timestamp / 1000);
 		}
 
-		if (!$error) {
-			// Specific for add_object_linked()
-			// TODO add a function for variable treatment
-			$object->ext_fk_element = $newvalue;
-			$object->ext_element = $ext_element;
-			$object->fk_element = $fk_element;
-			$object->element = $element;
-
-			$ret = $object->$savemethodname($field, $newvalue, $table_element, (int) $fk_element, $format);
+		if (!$error && is_object($object)) {
+			$ret = $object->setValueFrom($field, $newvalue, $object->table_element, (int) $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {
 					$value = price($newvalue);
