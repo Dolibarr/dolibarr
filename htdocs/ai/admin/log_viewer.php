@@ -170,11 +170,11 @@ if ($contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search_array as $key => $val) {
 	if (!empty($val) || $val === '0') {
-		$param .= '&' . $key . '=' . urlencode($val);
+		$param .= '&' . urlencode($key) . '=' . urlencode($val);
 	}
 }
 
@@ -351,9 +351,9 @@ print '</div>';
 print '</td>';
 print '</tr>';
 
-if ($res && $db->num_rows($res) > 0) {
+if ($resql && $num > 0) {
 	$i = 0;
-	while ($obj = $db->fetch_object($res)) {
+	while ($obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
 
 		// Date
