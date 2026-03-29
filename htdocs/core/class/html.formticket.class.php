@@ -566,7 +566,7 @@ class FormTicket
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
-		$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2 ? true : false;			// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 		if (!$ckeditorenabledforticket) {
 			$msg = dol_string_nohtmltag($msg, 2);
 		}
@@ -1884,7 +1884,7 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
-		$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2 ? true : false;			// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 		if (!$ckeditorenabledforticket) {
 			$defaultmessage = dol_string_nohtmltag($defaultmessage, 2);
 		}
