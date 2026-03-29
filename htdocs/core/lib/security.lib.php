@@ -142,7 +142,13 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 	if (empty($ciphering)) {
 		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
@@ -195,10 +201,10 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority (for backward compatibility)
+			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
 		} else {
-			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
 			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
