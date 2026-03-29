@@ -1371,6 +1371,11 @@ td.wordbreak img, td.wordbreakimp img {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+.overflowellipsis .shortmessagecut, .overflowellipsis .longmessagecut {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 div.urllink {
 	padding: 5px;
 	margin-top: 5px;
