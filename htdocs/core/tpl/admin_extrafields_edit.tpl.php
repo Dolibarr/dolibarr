@@ -40,6 +40,12 @@
  * @var string $textobject
  * @var string[] $type2label
  */
+'@phan-var-force string $attrname';
+'@phan-var-force string $action';
+'@phan-var-force string $elementtype';
+'@phan-var-force string $textobject';
+'@phan-var-force string[] $type2label';
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -192,6 +198,7 @@ $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help = $extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall = $extrafields->attributes[$elementtype]['entityid'][$attrname];
 $printable = $extrafields->attributes[$elementtype]['printable'][$attrname];
+$showITooltip = $extrafields->attributes[$elementtype]['showintooltip'][$attrname];
 $enabled = $extrafields->attributes[$elementtype]['enabled'][$attrname];
 $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
@@ -327,7 +334,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <td class="valeur"><textarea name="ai_prompt" id="ai_prompt" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo($aiprompt); ?></textarea></td></tr>
 
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo dol_escape_htmltag($default); ?>" spellcheck="false"></td></tr>
 
 <!-- Unique -->
 <tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo($unique ? ' checked' : ''); ?>></td></tr>
@@ -351,6 +358,11 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dol_escape_htmltag((string) $printable); ?>"></td></tr>
+
+
+<!-- Visibility for getNomUrl -->
+<tr><td class="extra_showintooltip"><?php echo $form->textwithpicto($langs->trans("DisplayExtraOnTooltip"), $langs->trans("DisplayExtraOnTooltipDesc")); ?>
+</td><td class="valeur"><input id="showintooltip" type="checkbox" name="showintooltip" value="1" <?php echo($showITooltip ? ' checked' : ''); ?> ></td></tr>
 
 <!-- Can be summed -->
 <tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo($totalizable ? ' checked' : ''); ?>></td></tr>

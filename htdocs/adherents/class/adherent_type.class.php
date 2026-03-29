@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2021     	Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -305,9 +305,10 @@ class AdherentType extends CommonObject
 	 * Update or add a translation for this member type
 	 *
 	 * @param  User $user Object user making update
+	 * @param  int  $notrigger Do not execute trigger
 	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
-	public function setMultiLangs($user)
+	public function setMultiLangs($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -375,13 +376,15 @@ class AdherentType extends CommonObject
 			}
 		}
 
-		// Call trigger
-		$result = $this->call_trigger('MEMBER_TYPE_SET_MULTILANGS', $user);
-		if ($result < 0) {
-			$this->error = $this->db->lasterror();
-			return -1;
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('MEMBER_TYPE_SET_MULTILANGS', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+			// End call triggers
 		}
-		// End call triggers
 
 		return 1;
 	}
@@ -391,9 +394,10 @@ class AdherentType extends CommonObject
 	 *
 	 * @param string $langtodelete 	Language code to delete
 	 * @param User   $user         	Object user making delete
-	 * @return int                   Return integer <0 if KO, >0 if OK
+	 * @param  int   $notrigger     Do not execute trigger
+	 * @return int                  Return integer <0 if KO, >0 if OK
 	 */
-	public function delMultiLangs($langtodelete, $user)
+	public function delMultiLangs($langtodelete, $user, $notrigger = 0)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type_lang";
 		$sql .= " WHERE fk_type = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
@@ -401,14 +405,16 @@ class AdherentType extends CommonObject
 		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			// Call trigger
-			$result = $this->call_trigger('MEMBER_TYPE_DEL_MULTILANGS', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
-				return -1;
+			if (empty($notrigger)) {
+				// Call trigger
+				$result = $this->call_trigger('MEMBER_TYPE_DEL_MULTILANGS', $user);
+				if ($result < 0) {
+					$this->error = $this->db->lasterror();
+					dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+					return -1;
+				}
+				// End call triggers
 			}
-			// End call triggers
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -523,7 +529,7 @@ class AdherentType extends CommonObject
 
 			// Multilangs
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				if ($this->setMultiLangs($user) < 0) {
+				if ($this->setMultiLangs($user, $notrigger) < 0) {
 					$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 					return -2;
 				}
@@ -927,23 +933,68 @@ class AdherentType extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *  @param	int<0,2>	$addbadge	Add badge (1=Full label, 2=First letters only)
 	 *	@return	string					Label
 	 */
-	public function getmorphylib($morphy = '')
+	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+
+		$s = '';
+
 		if ($morphy == 'phy') {
-			return $langs->trans("Physical");
+			$s = $langs->trans("Physical");
 		} elseif ($morphy == 'mor') {
-			return $langs->trans("Moral");
+			$s = $langs->trans("Moral");
 		} else {
-			return $langs->trans("MorAndPhy");
+			$s = $langs->trans("MorAndPhy");
 		}
-		//return $morphy;
+
+		if ($addbadge) {
+			$labeltoshowm = $langs->trans("Moral");
+			$labeltoshowp = $langs->trans("Physical");
+
+			$labeltoshow = $s;
+			if ($morphy === 'phy') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshow))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshow, 2));
+					}
+				}
+				$s = '<span class="member-individual-back paddingleftimp paddingrightimp" title="'.$langs->trans("Physical").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy === 'mor') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshow))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshow, 2));
+					}
+				}
+				$s = '<span class="member-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("Moral").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy === '') {
+				if ($addbadge == 2) {
+					$labeltoshow1 = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow1 == dol_strtoupper(dolGetFirstLetters($labeltoshow1))) {
+						$labeltoshow1 = dol_strtoupper(dolGetFirstLetters($labeltoshow1, 2));
+					}
+					$labeltoshow2 = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow2 == dol_strtoupper(dolGetFirstLetters($labeltoshow2))) {
+						$labeltoshow2 = dol_strtoupper(dolGetFirstLetters($labeltoshow2, 2));
+					}
+					$labeltoshow = $labeltoshow1.' '.$langs->trans("or").' '.$labeltoshow2;
+				}
+				$s = '<span class="member-individual-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("MorAndPhy").'">'.$labeltoshow.'</span>';
+			}
+		}
+
+		return $s;
 	}
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
 	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}

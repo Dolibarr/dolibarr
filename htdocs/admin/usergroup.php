@@ -57,14 +57,17 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 
 $type = 'group';
 
+
 /*
  * Action
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+$reg = array();
+
 if ($action == 'set_default') {
-	$ret = addDocumentModel($value, $type, $label, $scandir);
+	$ret = addDocumentModel($value, $type, '', '');
 	$res = true;
 } elseif ($action == 'del_default') {
 	$ret = delDocumentModel($value, $type);
@@ -85,7 +88,7 @@ if ($action == 'set_default') {
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$ret = addDocumentModel($value, $type, $label, $scandir);
+		$ret = addDocumentModel($value, $type, '', '');
 	}
 	$res = true;
 } elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {

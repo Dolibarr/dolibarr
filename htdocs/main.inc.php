@@ -74,10 +74,17 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
 /**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
  * @var ?string $php_session_save_handler
  * @var ?string $dolibarr_main_force_https
  * @var ?string $dolibarr_main_restrict_ip
  * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_demo
  */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -113,7 +120,7 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
-	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
+	ini_set('session.gc_maxlifetime', max(120, min(3600 * 24, (int) $_COOKIE[$sessiontimeout])));	// Between 120 and 86400
 }
 
 // This create lock, released by session_write_close() or end of page.
@@ -444,31 +451,33 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
-// Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOSTISSET('disablemodules')) {
-	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
-}
-if (!empty($_SESSION["disablemodules"])) {
-	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
+if (!empty($dolibarr_main_demo)) {
+	// Disable modules (this must be after session_start and after conf has been loaded)
+	if (GETPOSTISSET('disablemodules')) {
+		$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
+	}
+	if (!empty($_SESSION["disablemodules"])) {
+		$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
 
-	$disabled_modules = explode(',', $_SESSION["disablemodules"]);
-	foreach ($disabled_modules as $module) {
-		if ($module) {
-			if (empty($conf->$module)) {
-				$conf->$module = new stdClass(); 	// To avoid warnings
-			}
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+		foreach ($disabled_modules as $module) {
+			if ($module) {
+				if (empty($conf->$module)) {
+					$conf->$module = new stdClass(); 	// To avoid warnings
+				}
 
-			$conf->$module->enabled = false;		// Old usage
-			unset($conf->modules[$module]);
+				$conf->$module->enabled = false;		// Old usage
+				unset($conf->modules[$module]);
 
-			foreach ($modulepartkeys as $modulepartkey) {
-				unset($conf->modules_parts[$modulepartkey][$module]);
-			}
-			if ($module == 'fournisseur') {		// Special case
-				$conf->supplier_order->enabled = 0;		// Old usage
-				$conf->supplier_invoice->enabled = 0;	// Old usage
-				unset($conf->modules['supplier_order']);
-				unset($conf->modules['supplier_invoice']);
+				foreach ($modulepartkeys as $modulepartkey) {
+					unset($conf->modules_parts[$modulepartkey][$module]);
+				}
+				if ($module == 'fournisseur') {		// Special case
+					$conf->supplier_order->enabled = 0;		// Old usage
+					$conf->supplier_invoice->enabled = 0;	// Old usage
+					unset($conf->modules['supplier_order']);
+					unset($conf->modules['supplier_invoice']);
+				}
 			}
 		}
 	}
@@ -1837,6 +1846,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Langs tool see Documentation at admin/tools/ui/dolibarr-context/index.php
 			$jsContextFiles[] = 'dolibarr-tool.langs.js';
 			$jsContextVars['MAIN_LANG_DEFAULT'] = $langs->getDefaultLang();// For langs tool
+			$jsContextVars['DOL_URL_ROOT'] = DOL_URL_ROOT;
 			$jsContextVars['DOL_LANG_INTERFACE_URL'] = dol_buildpath('public/langs/langs-tool-interface.php', 1);// For langs tool
 		}
 
@@ -3910,7 +3920,8 @@ if (!function_exists("llxFooter")) {
 
 		if (isModEnabled('blockedlog') && ($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') && $forcepushcounter) {
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-			if (!isALNEQualifiedVersion()) {
+			$islne = isALNEQualifiedVersion(1, 1);
+			if (!$islne) {
 				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Not a LNE qualified version -->\n";
 			} elseif (!isRegistrationDataSaved()) {
 				print "\n<!-- NO CALL TO API TO PUSH COUNTER. Registration data not saved -->\n";
@@ -3925,9 +3936,12 @@ if (!function_exists("llxFooter")) {
 
 					if ((int) $tmpresult2['previousid']) {
 						// Call remote API service to record the last counter
-						$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], 1, (int) $tmpresult2['previousid'], $tmpresult2['previoushash']);
+						$resultcall = callApiToPushCounter((int) $tmpresult['previousid'], $tmpresult['previoushash'], $tmpresult['previousdatecreation'], 1, (int) $tmpresult2['previousid'], $tmpresult2['previoushash'], $tmpresult2['previousdatecreation']);
 
-						print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log -->\n";
+						$algo = 'sha256';
+						$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
+
+						print "\n<!-- API TO PUSH COUNTER WAS CALLED. Result is ".$resultcall.". You may have log into dolibarr_dolibarrpushcounter.log for hash_unique_id=".dol_trunc($hash_unique_id, 10)." -->\n";
 					}
 				} else {
 					print "\n<!-- NO CALL TO API TO PUSH COUNTER. Last rowid and signature not found -->\n";

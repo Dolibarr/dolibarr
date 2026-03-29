@@ -968,7 +968,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		}
 
 		print "\n";
-		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '', 0, '', '', $massactionbutton);
+		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, 'project', 0, '', '', $massactionbutton);
 
 		print '<div class="div-table-responsive">' . "\n";
 		print '<table class="noborder centpercent">';
@@ -1042,7 +1042,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '</td>';
 
 						// Label
-						print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
+						print '<td title="' . dol_escape_htmltag($obj->title) . '"><div class="twolinesmax-normallineheight minwidth200onall">' . dol_escape_htmltag($obj->title) . '</div></td>';
 						// Date start
 						print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 						// Date end
@@ -1151,7 +1151,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 							print '</td>';
 
 							// Label
-							print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
+							print '<td title="' . dol_escape_htmltag($obj->title) . '"><div class="twolinesmax-normallineheight minwidth200onall">' . dol_escape_htmltag($obj->title) . '</div></td>';
 							// Date start
 							print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 							// Date end
@@ -2904,8 +2904,6 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
  */
 function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
 {
-	global $conf;
-
 	$reg = array();
 
 	// Juridical status
@@ -2960,7 +2958,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	print '<!-- htmlPrintOnlineFooter -->' . "\n";
 
 	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
-	print '<footer class="center centpercent opacitymedium">' . "\n";
+	print '<footer class="center centpercent opacitymedium paddingbottom">' . "\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = ' . (empty($object) ? 'undefined' : $object->element) . ' -->';

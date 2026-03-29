@@ -576,19 +576,13 @@ class Facture extends CommonInvoice
 			$previousdaynextdatewhen = null;
 
 			if ($originaldatewhen) {
-				if ($_facrec->rule_for_lines_dates == 'prepaid') {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
-				}
-
-				if ($_facrec->rule_for_lines_dates == 'postpaid') {
+				if ($_facrec->rule_for_lines_dates == 'postpaid') {		// Bugged feature, should use different variable nameas we store something different.
 					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
-				} elseif ($nextdatewhen) {
+					$originaldatewhen = dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency);
+				} else {
+					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
 					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
 				}
-
-				$originaldatewhen = $_facrec->rule_for_lines_dates == 'postpaid'
-					? dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency)
-					: $originaldatewhen;
 			}
 
 			// Define thirdparty
@@ -1196,6 +1190,9 @@ class Facture extends CommonInvoice
 	{
 		// Source invoice load
 		$facture = new Facture($this->db);
+
+		// Avoid updating the row ranks
+		$facture->context['createfromclone'] = 1;
 
 		// Retrieve all extrafield
 		// fetch optionals attributes and labels
@@ -5554,7 +5551,7 @@ class Facture extends CommonInvoice
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines, 'takepos'=Specimen for takepos module
+	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines, 'nonegativeup'=No negative unit price, 'takepos'=Specimen for takepos module
 	 *  @return	int
 	 */
 	public function initAsSpecimen($option = '')
@@ -5632,7 +5629,7 @@ class Facture extends CommonInvoice
 				$line->localtax1_tx = 0;
 				$line->localtax2_tx = 0;
 				$line->remise_percent = 0;
-				if ($xnbp == 1 && $option != 'takepos') {        // Qty is negative (product line)
+				if ($xnbp == 1 && $option != 'takepos' && $option != 'nonegativeup') {        // Qty is negative (product line)
 					$prodid = mt_rand(1, $num_prods);
 					if (isset($prodids[$prodid])) {
 						$line->fk_product = $prodids[$prodid];
@@ -5644,7 +5641,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ht = -200;
 					$line->multicurrency_total_ttc = -239.2;
 					$line->multicurrency_total_tva = -39.2;
-				} elseif ($xnbp == 2 && $option != 'takepos') {    // UP is negative (free line)
+				} elseif ($xnbp == 2 && $option != 'takepos' && $option != 'nonegativeup') {    // UP is negative (free line)
 					$line->subprice = -100;
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;
