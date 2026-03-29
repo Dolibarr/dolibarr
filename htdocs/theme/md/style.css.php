@@ -1500,6 +1500,10 @@ td.wordbreak img, td.wordbreakimp img {
 	overflow-y: auto;
 	word-break: break-word;
 }
+.overflowellipsis .shortmessagecut, .overflowellipsis .longmessagecut {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 div.urllink {
 	padding: 5px;
 	margin-top: 5px;
