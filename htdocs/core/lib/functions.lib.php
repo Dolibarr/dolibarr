@@ -9633,6 +9633,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// Add a layer to remove some styles
 					if (getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') == 2) {
 						foreach ($dom->getElementsByTagName('*') as $el) {
+							// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 							if ($el->hasAttribute('style')) {
 								// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 								$style = $el->getAttribute('style');
