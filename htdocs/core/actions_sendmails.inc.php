@@ -238,10 +238,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 								$thirdpartyLabel = (string) $thirdparty->nom;
 							}
 						}
-						if ($thirdpartyLabel === '') {
-							$thirdpartyLabel = $langs->transnoentities('ThirdParty');
+						if ($thirdpartyLabel !== '') {
+							$tmparray[] = dol_string_nospecial($thirdpartyLabel, ' ', array(",")).' <'.$thirdpartyEmail.'>';
+						} else {
+							$tmparray[] = $thirdpartyEmail;
 						}
-						$tmparray[] = dol_string_nospecial($thirdpartyLabel, ' ', array(",")).' <'.$thirdpartyEmail.'>';
 					}
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
