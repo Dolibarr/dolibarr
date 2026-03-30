@@ -197,6 +197,19 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
 
+
+UPDATE llx_cronjob set test = 'isModEnabled("agenda")' WHERE test = '$conf->agenda->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("invoice")' WHERE test = '$conf->facture->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("holiday")' WHERE test = '$conf->holiday->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("member")' WHERE test = '$conf->adherent->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("partnership")' WHERE test = '$conf->partnership->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("emailcollector")' WHERE test = '$conf->emailcollector->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("project")' WHERE test = '$conf->projet->enabled';
+-- Work only with very recent version of mysql UPDATE llx_cronjob SET test = REGEXP_REPLACE(test, '\\$conf->([^ ]+)->enabled', 'isModEnabled("$1")');
+UPDATE llx_cronjob set test = 'isModEnabled("sellyoursaas")' WHERE test = '$conf->sellyoursaas->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("scaninvoices")' WHERE test = '$conf->scaninvoices->enabled';
+
+
 create table llx_product_lang_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
