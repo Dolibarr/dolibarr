@@ -580,13 +580,29 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n" . '<script type="text/javascript">';
 	print '$(document).ready(function () {
 			function toggleSubledger() {
-				var isCentral = $("#accountingaccount_number option:selected").data("centralized");
-				console.log("the selected general ledger account is centralised?", isCentral);
-				if (isCentral) {
-					$("#subledger_account, #subledger_label").prop("disabled", false);
-				} else {
-					$("#subledger_account, #subledger_label").prop("disabled", true);
-				}
+			    var isCentral = $("#accountingaccount_number option:selected").data("centralized");
+			    console.log("the selected general ledger account is centralised?", isCentral);
+
+			    var isAjaxMode = $("#search_subledger_account").length > 0;
+			    var $visibleSubledger = isAjaxMode
+			        ? $("#search_subledger_account")
+			        : $("#subledger_account");
+
+			    if (isCentral) {
+			        $visibleSubledger.prop("disabled", false);
+			        if (!isAjaxMode) {
+			            $("#subledger_account").prop("disabled", false).trigger("change");
+			        }
+			        $("#subledger_label").prop("disabled", false);
+			    } else {
+			        $visibleSubledger.prop("disabled", true).val("");
+			        if (!isAjaxMode) {
+			            $("#subledger_account").val("").prop("disabled", true).trigger("change");
+			        } else {
+			            $("#subledger_account").val("");
+			        }
+			        $("#subledger_label").val("").prop("disabled", true);
+			    }
 			}
 
 			toggleSubledger();
