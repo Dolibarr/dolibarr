@@ -3003,6 +3003,8 @@ while ($i < $imaxinloop) {
 					$generic_commande->getLinesArray(); 	// Load array ->lines
 					$generic_commande->loadExpeditions();	// Load array ->expeditions
 
+					$stock = [];
+
 					$numlines = count($generic_commande->lines); // Loop on each line of order
 					for ($lig = 0; $lig < $numlines; $lig++) {
 						$orderLine = $generic_commande->lines[$lig];
@@ -3027,9 +3029,15 @@ while ($i < $imaxinloop) {
 								$generic_product->stock_theorique = $productstat_cachevirtual[$orderLine->fk_product]['stock_reel'];
 							}
 
-							if ($reliquat > $generic_product->stock_reel) {
+							if (!array_key_exists($orderLine->fk_product, $stock)) {
+								$stock[$orderLine->fk_product] = $generic_product->stock_reel;
+							}
+
+							if ($reliquat > $stock[$orderLine->fk_product]) {
 								$notshippable++;
 							}
+
+							$stock[$orderLine->fk_product] = $stock[$orderLine->fk_product] - $reliquat;
 							if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {  // Default code. Default should be this case.
 								$text_info .= $reliquat.' x '.$orderLine->product_ref.'&nbsp;'.dol_trunc($orderLine->product_label, 20);
 								$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
