@@ -9,10 +9,8 @@ RUN apt-get update && apt-get install -y \
         --with-freetype --with-jpeg \
     && docker-php-ext-install \
         gd pdo pdo_mysql mysqli \
-        zip xml calendar intl
-
-# Activation du module Apache rewrite
-RUN a2enmod rewrite
+       zip xml calendar intl \
+    && a2enmod rewrite
 
 # Dossier de travail
 WORKDIR /var/www/html
