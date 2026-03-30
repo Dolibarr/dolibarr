@@ -977,6 +977,56 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
+	 * Sets an expense report as paid
+	 *
+	 * @param   int		$id            Expense report ID
+	 * @param   string	$close_code    Code filled if we classify to 'Paid completely' when payment is not complete (for escompte for example)
+	 * @param   string	$close_note    Comment defined if we classify to 'Paid' when payment is not complete (for escompte for example)
+	 * @return	Object				   Object with cleaned properties
+	 *
+	 * @url POST    {id}/settopaid
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function settopaid($id, $close_code = '', $close_note = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403);
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->expensereport->setPaid(DolibarrApiAccess::$user, $close_code, $close_note);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error : '.$this->expensereport->error);
+		}
+
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
+
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
+
+	/**
 	 * Update a payment of an expense report
 	 *
 	 * @since	20.0.0	Initial implementation
