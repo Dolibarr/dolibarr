@@ -2666,7 +2666,7 @@ class Holiday extends CommonObject
 
 		$typeleaves = $this->getTypes(1, -1);
 		$arraytypeleaves = array();
-		foreach ($typeleaves as $key => $val) {
+		foreach ($typeleaves as $val) {
 			$labeltoshow = ($outputlangs->trans($val['code']) != $val['code'] ? $outputlangs->trans($val['code']) : $val['label']);
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
@@ -2791,21 +2791,30 @@ class Holiday extends CommonObject
 			}
 		}
 		$mailtemplate = $formmail->getEMailTemplate($this->db, "holiday", $user, $outputlangs, $templateId, 1, $templateLabel);
-		$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
-		complete_substitutions_array($substitutionarray, $outputlangs, $this);
 
-		$subject = make_substitutions($mailtemplate->topic, $substitutionarray, $outputlangs);
-		$msg = make_substitutions($mailtemplate->content, $substitutionarray, $outputlangs);
-		$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+		if (is_numeric($mailtemplate) || empty($mailtemplate->topic)) {
+			$this->errors[] = 'No mail template found for code "'.$templateLabel.'" or id "'.$templateId.'".';
+			$error++;
+			return 1;
+		}
 
-		$msg = preg_replace('/__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__/', $outputarrayleaves, $msg);
-		$cmail = new CMailFile($subject, $mailto, $from, $msg, array(), array(), array(), '', '', 0, 1);
-		$result = $cmail->sendfile();
-		if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
-			$this->errors[] = $cmail->error;
-			if (is_array($cmail->errors) && count($cmail->errors) > 0) {
-				$this->errors = array_merge($this->errors, $cmail->errors);
-				$error++;
+		if (!$error) {
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
+			complete_substitutions_array($substitutionarray, $outputlangs, $this);
+
+			$subject = make_substitutions($mailtemplate->topic, $substitutionarray, $outputlangs);
+			$msg = make_substitutions($mailtemplate->content, $substitutionarray, $outputlangs);
+			$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+
+			$msg = preg_replace('/__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__/', $outputarrayleaves, $msg);
+			$cmail = new CMailFile($subject, $mailto, $from, $msg, array(), array(), array(), '', '', 0, 1);
+			$result = $cmail->sendfile();
+			if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
+				$this->errors[] = $cmail->error;
+				if (is_array($cmail->errors) && count($cmail->errors) > 0) {
+					$this->errors = array_merge($this->errors, $cmail->errors);
+					$error++;
+				}
 			}
 		}
 

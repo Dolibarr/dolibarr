@@ -10957,23 +10957,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__DAY_TEXT_SHORT__' => dol_trunc($daytext, 3, 'right', 'UTF-8', 1), // Mon
 			'__DAY_TEXT_MIN__' => dol_trunc($daytext, 1, 'right', 'UTF-8', 1), // M
 			'__MONTH__' => (string) $tmp['mon'],
-			'__MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp['mon'])),
-			'__MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp['mon'])),
-			'__MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp['mon'])),
 			'__YEAR__' => (string) $tmp['year'],
 			'__YEAR_PREVIOUS_MONTH__' => (string) $tmp3['year'],
 			'__YEAR_NEXT_MONTH__' => (string) $tmp5['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],
-			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp3['month'])),
-			'__PREVIOUS_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp3['month'])),
-			'__PREVIOUS_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp3['month'])),
 			'__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
 			'__NEXT_DAY__' => (string) $tmp4['day'],
 			'__NEXT_MONTH__' => (string) $tmp5['month'],
-			'__NEXT_MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp5['month'])),
-			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp5['month'])),
-			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp5['month'])),
 			'__NEXT_YEAR__' => (string) ($tmp['year'] + 1),
 		));
 	}
@@ -10983,9 +10983,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if ((empty($exclude) || !in_array('system', $exclude)) && (empty($include) || in_array('user', $include))) {
 		$substitutionarray['__DOL_MAIN_URL_ROOT__'] = DOL_MAIN_URL_ROOT;
-		$substitutionarray['__(AnyTranslationKey)__'] = $outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__(AnyTranslationKey|langfile)__'] = $outputlangs->trans('TranslationOfKey') . ' (load also language file before)';
-		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->trans('ValueOfConstantKey');
+		$substitutionarray['__(AnyTranslationKey)__'] = $outputlangs->transnoentitiesnoconv('TranslationOfKey');
+		$substitutionarray['__(AnyTranslationKey|langfile)__'] = $outputlangs->transnoentitiesnoconv('TranslationOfKey') . ' (load also language file before)';
+		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->transnoentitiesnoconv('ValueOfConstantKey');
 	}
 
 	// Note: The lazyload variables are replaced only during the call by make_substitutions, and only if necessary

@@ -171,4 +171,4 @@ ListeLB=List of leave balance
 LeaveType = Type of leave balance
 HolidayHrInformationsPreviousMonth=Hr information for previous month
 HolidayHrInformationsPreviousMonthTopic=HR informations for the month of __PREVIOUS_MONTH_TEXT__
-HolidayHrInformationsPreviousMonthContent=Please find attached the HR information for the month of __PREVIOUS_MONTH_TEXT__ for the company __MYCOMPANY_NAME__
+HolidayHrInformationsPreviousMonthContent=Please find the HR information for the month of __PREVIOUS_MONTH_TEXT__ for the company __MYCOMPANY_NAME__
