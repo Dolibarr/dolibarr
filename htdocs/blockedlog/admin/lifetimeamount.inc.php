@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@destailleur.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,8 @@
  */
 '@phan-var-force array<string,float> $totalamountlifetime';
 '@phan-var-force array<string,float> $totalhtamountlifetime';
+'@phan-var-force int $error';
+global $foundoldformat, $firstrecorddate, $error;
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

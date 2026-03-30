@@ -10,6 +10,7 @@
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke	 		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -841,6 +842,39 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$linenum = 0;
 	$atleastonequalified = 0;
 	$atleastoneforfamily = 0;
+
+	print '<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery(".modulefamilygroup").each(function() {
+			var $group = jQuery(this);
+			var $title = $group.find(".titre.inline-block").first();
+			var $nextContainer = $group.nextAll(".div-table-responsive, .box-flex-container").first();
+			if ($title.length && !$title.children(".modulefamilytoggleicon").length) {
+				$title.prepend("<i class=\"fa modulefamilytoggleicon paddingleft paddingleftright\"></i> ");
+			}
+			var $icon = $title.children(".modulefamilytoggleicon").first();
+			var isVisible = $nextContainer.is(":visible");
+			if ($icon.length && $nextContainer.length) {
+				$icon.toggleClass("fa-folder-open", isVisible);
+				$icon.toggleClass("fa-folder", !isVisible);
+			}
+		});
+
+		jQuery(document).on("click", ".modulefamilygroup", function() {
+			var $group = jQuery(this);
+			var $nextContainer = $group.nextAll(".div-table-responsive, .box-flex-container").first();
+			if ($nextContainer.length) {
+				var $icon = $group.find(".modulefamilytoggleicon").first();
+				var isVisible = $nextContainer.is(":visible");
+				$nextContainer.stop(true, true).slideToggle(150);
+				if ($icon.length) {
+					$icon.toggleClass("fa-folder-open", !isVisible);
+					$icon.toggleClass("fa-folder", isVisible);
+				}
+			}
+		});
+	});
+	</script>';
 
 	foreach ($orders as $key => $value) {
 		$linenum++;

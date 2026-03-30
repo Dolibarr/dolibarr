@@ -510,6 +510,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 	if (!empty($arrayofselected)) {
 		$bankid = GETPOSTINT('bankid');
 		$paiementid = GETPOSTINT('paiementid');
+		$note_private = GETPOST('note_private', 'restricthtml');
 		$paiementdate = dol_mktime(12, 0, 0, GETPOSTINT('datepaimentmonth'), GETPOSTINT('datepaimentday'), GETPOSTINT('datepaimentyear'));
 		if (empty($paiementdate)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -560,6 +561,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
 								$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
 								$paiement->paiementid = $paiementid;
+								$paiement->note_private = $note_private;
 								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
 								if ($paiement_id < 0) {
 									$langs->load("errors");
@@ -1549,6 +1551,7 @@ if ($massaction == 'makepayment') {
 		array('type' => 'date', 'name' => 'datepaiment', 'label' => $langs->trans("Date"), 'datenow' => 1),
 		array('type' => 'other', 'name' => 'paiementid', 'label' => $langs->trans("PaymentMode"), 'value' => $form->select_types_paiements(GETPOST('search_paymentmode'), 'paiementid', '', 0, 0, 1, 0, 1, '', 1)),
 		array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
+		array('type' => 'other', 'name' => 'note_private', 'label' => $langs->trans("Comments"), 'value' => '<textarea name="note_private" id="note_private" class="minwidth200" rows="3"></textarea>'),
 		//array('type' => 'other', 'name' => 'invoicesid', 'label' => '', 'value'=>'<input type="hidden" id="invoicesid" name="invoicesid" value="'.implode('#',GETPOST('toselect','array')).'">'),
 	);
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakePaymentAndClassifyPayed'), $langs->trans('EnterPaymentReceivedFromCustomer'), 'makepayment_confirm', $formquestion, 1, 0, 200, 500, 1);

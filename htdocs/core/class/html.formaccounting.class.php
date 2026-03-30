@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2015		Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
@@ -486,20 +486,99 @@ class FormAccounting extends Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return list of auxiliary accounts. Cumulate list from customers, suppliers and users.
+	 * Behavior depends on constant ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT:
+	 *   0 = free text input, no autocomplete, no list
+	 *   1 = native HTML select with full list loaded, with select2 (original behavior)
+	 *   2 = ajax search triggered after 1 character typed
+	 *   3 = ajax search triggered after 2 characters typed
+	 *   4 = ajax search triggered after 3 characters typed (recommended for large datasets)
 	 *
-	 * @param string   		$selectid       Preselected pcg_type
-	 * @param string   		$htmlname       Name of field in html form
-	 * @param int|string    $showempty      Add an empty field
-	 * @param string   		$morecss        More css
-	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
-	 * @return string|int<-1,-1>			String with HTML select, or -1 if error
+	 * @param string        $selectid              Preselected account number
+	 * @param string        $htmlname              Name of field in html form
+	 * @param int|string    $showempty             Add an empty field
+	 * @param string        $morecss               More css
+	 * @param string        $usecache              Key to use for cache (mode 0 only)
+	 * @param string        $labelhtmlname         HTML name of label input for autofill of subledger label
+	 * @param string        $selected_input_value  Displayed text of preselected entry (ajax modes 2/3/4 only)
+	 * @return string|int<-1,-1>                   HTML string or -1 on error
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '', $selected_input_value = '')
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $langs;
 
+		$out = '';
+		$auxaccount_mode = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', 0);
+
+		// MODE 0: free text input - no list, no autocomplete
+		if ($auxaccount_mode == 0) {
+			$out .= '<input type="text" class="'.$morecss.'" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selectid.'" />';
+			return $out;
+		}
+
+		// MODES 2/3/4: ajax - on-demand loading via endpoint
+		// minLength: mode 2 -> 1 char, mode 3 -> 2 chars, etc
+		if (!empty($conf->use_javascript_ajax) && $auxaccount_mode >= 2) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+			$minLength = $auxaccount_mode - 1;
+			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1';
+
+			// Resolve displayed text from selectid if no label was provided (e.g. on page reload)
+			if ($selectid && empty($selected_input_value)) {
+				// Search in thirdparties first
+				$sql = "SELECT nom AS name FROM ".$this->db->prefix()."societe";
+				$sql .= " WHERE entity IN (".getEntity('societe').")";
+				$sql .= " AND (code_compta = '".$this->db->escape($selectid)."'";
+				$sql .= "   OR code_compta_fournisseur = '".$this->db->escape($selectid)."')";
+				$sql .= $this->db->plimit(1, 0);
+				$resql = $this->db->query($sql);
+				if ($resql && ($obj = $this->db->fetch_object($resql))) {
+					$selected_input_value = $selectid.' ('.$obj->name.')';
+					$this->db->free($resql);
+				} else {
+					// Fallback: search in users
+					$sql2 = "SELECT lastname, firstname FROM ".$this->db->prefix()."user";
+					$sql2 .= " WHERE entity IN (".getEntity('user').")";
+					$sql2 .= " AND accountancy_code = '".$this->db->escape($selectid)."'";
+					$sql2 .= $this->db->plimit(1, 0);
+					$resql2 = $this->db->query($sql2);
+					if ($resql2 && ($obj2 = $this->db->fetch_object($resql2))) {
+						$selected_input_value = $selectid.' ('.dolGetFirstLastname($obj2->firstname, $obj2->lastname).')';
+						$this->db->free($resql2);
+					} else {
+						$selected_input_value = $selectid;
+					}
+				}
+			}
+
+			// Visible text input — targeted by ajax_autocompleter() JavaScript via "input#search_$htmlname"
+			$placeholder = (!empty($showempty) && !is_numeric($showempty)) ? $showempty : $langs->trans("Search");
+			$out .= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.dol_escape_htmltag($selected_input_value).'" placeholder="'.$langs->trans($placeholder).'" />';
+
+			// Hidden input + jQuery UI autocomplete JS — the hidden id="$htmlname" is generated by ajax_autocompleter() itself
+			$out .= ajax_autocompleter($selectid, $htmlname, DOL_URL_ROOT.'/core/ajax/auxaccount.php', $urloption, $minLength, 0, array());
+
+			// Autofill subledger label — listen on "change" of the hidden field
+			// ajax_autocompleter() calls .val(ui.item.id).trigger("change") on the hidden field upon selection
+			if (!empty($labelhtmlname)) {
+				$out .= '<script nonce="'.getNonce().'">
+            jQuery(document).ready(function() {
+                $("#'.dol_escape_js($htmlname).'").on("change", function() {
+                    var searchVal = $("#search_'.dol_escape_js($htmlname).'").val();
+                    var match = /\(([^)]+)\)/.exec(searchVal);
+                    if (match) {
+                        $("input[name=\"'.dol_escape_js($labelhtmlname).'\"]").val(match[1]);
+                    }
+                });
+            });
+            </script>';
+			}
+
+			return $out;
+		}
+
+		// MODE 1 (or ajax disabled): native HTML select with full list + select2 - original behavior
 		$aux_account = array();
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
@@ -528,11 +607,10 @@ class FormAccounting extends Form
 				dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 				return -1;
 			}
-
 			$this->db->free($resql);
 
 			// Auxiliary user account
-			$sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
+			$sql = "SELECT DISTINCT accountancy_code, lastname, firstname";
 			$sql .= " FROM ".$this->db->prefix()."user";
 			$sql .= " WHERE entity IN (".getEntity('user').")";
 			$sql .= " ORDER BY accountancy_code";
@@ -558,21 +636,20 @@ class FormAccounting extends Form
 			}
 		}
 
-		// Build select
-		$out = '';
+		// Build native select — select2 is automatically activated by Form::selectarray() with $useajax=1
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
-		//automatic filling if we give the name of the subledger_label input
+
+		// Autofill subledger label on select2 selection event
 		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
 			$out .= '<script nonce="'.getNonce().'">
-				jQuery(document).ready(() => {
-					$("#'.$htmlname.'").on("select2:select", function(e) {
-						var regExp = /\(([^)]+)\)/;
-						const match = regExp.exec(e.params.data.text);
-						$(\'input[name="'.dol_escape_js($labelhtmlname).'"]\').val(match[1]);
-					});
-				});
-
-			</script>';
+		        jQuery(document).ready(() => {
+		            $("#'.dol_escape_js($htmlname).'").on("select2:select", function(e) {
+		                var regExp = /\(([^)]+)\)/;
+		                const match = regExp.exec(e.params.data.text);
+		                if (match) { $("input[name=\"'.dol_escape_js($labelhtmlname).'\"]").val(match[1]); }
+		            });
+		        });
+        	</script>';
 		}
 
 		return $out;

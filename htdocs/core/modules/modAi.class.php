@@ -245,7 +245,7 @@ class modAi extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->ai->enabled',
+			//      'test' => 'isModEnabled('ai')',
 			//      'priority' => 50,
 			//  ),
 		);

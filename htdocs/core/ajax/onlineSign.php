@@ -300,10 +300,8 @@ if ($action == "importSignature") {
 
 				if (!$error) {
 					if (method_exists($object, 'call_trigger')) {
-						//customer is not a user !?! so could we use same user as validation ?
-						$user = new User($db);
-						$user->fetch($object->user_validation_id);
 						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+
 						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
 						if ($result < 0) {
 							$error++;

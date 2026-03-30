@@ -455,11 +455,10 @@ class FieldsManager
 	 */
 	public function getFieldsInfos($key, &$object, &$extrafields = null, $mode = 'view', $params = array())
 	{
-		global $langs;
-
 		$fieldInfos = null;
 
 		$patternObjectPrefix = getDolGlobalInt('MAIN_FIELDS_NEW_OBJECT_KEY_PREFIX') ? 'object_' : '';
+		$matches = array();
 		if (preg_match('/^options_(.*)/i', $key, $matches)) {
 			$fieldKey = $matches[1];
 			$fieldInfos = $this->getFieldInfosFromExtraField($object, $extrafields, $fieldKey, $mode, $params);

@@ -648,6 +648,11 @@ class pdf_octopus extends ModelePDFFactures
 				$pagenb = $pageposbeforeprintlines;
 
 				for ($i = 0; $i < $nblines; $i++) {
+					$parameters = array('i' => $i, 'object' => $object); // Ajoute 'object' ici
+					$reshook = $hookmanager->executeHooks('beforePrintPDFline', $parameters, $this, $action);
+					if ($reshook > 0 && !empty($hookmanager->resArray['object'])) {
+						$object = $hookmanager->resArray['object'];
+					}
 					$linePosition = $i + 1;
 					$curY = $nexY;
 
