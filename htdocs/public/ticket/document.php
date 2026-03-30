@@ -269,7 +269,7 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 top_httphead($type);
 
 header('Content-Description: File Transfer');
-if ($encoding) {
+if ($encoding) { // @phpstan-ignore-line as variable is set to '' and never change
 	header('Content-Encoding: '.$encoding);
 }
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
