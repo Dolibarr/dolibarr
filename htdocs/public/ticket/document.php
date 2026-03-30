@@ -289,7 +289,7 @@ if (is_object($db)) {
 }
 
 // Send file now
-if ($readfile) {
+if ($readfile) { // @phpstan-ignore-line as value is set to true just before
 	header('Content-Length: '.dol_filesize($fullpath_original_file));
 
 	readfileLowMemory($fullpath_original_file_osencoded);
