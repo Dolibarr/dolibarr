@@ -34,7 +34,6 @@ if [[ "$pr_number" == "null" ]]; then
 	exit 0
 fi
 
-# Split repository into owner and repo name
 # Split repository into owner and repo name using Bash parameter expansion
 owner="${GITHUB_REPOSITORY%%/*}"  # Extract text before the first '/'
 repo="${GITHUB_REPOSITORY##*/}"   # Extract text after the last '/'
@@ -72,12 +71,12 @@ done
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
 all_changed_lang=$(IFS=" " ; echo "${changed_lang_files[*]}")
 
-
+forbidden_files=""
 #forbidden_files=$(echo "$all_changed_lang" | grep -E 'htdocs/langs/([^/]+)/.*\.lang$' | grep -v 'htdocs/langs/en_US/')
 #if [ -n "$forbidden_files" ]; then
 #  echo "You tried to modify one or more language files that are not allowed to be modified in Pull requests."
 #  echo "$forbidden_files"
-#  echo "To modify translation that are not the source language (en_US), you must modify them from transifex.com"
+#  echo "To modify translations that are not the source language (en_US), you must modify them from transifex.com"
 #  exit 10
 #fi
 
