@@ -653,10 +653,39 @@ class SecurityTest extends CommonClassTest
 			print "result2 = ".$result."\n";
 			$this->assertFalse($result);
 
-			$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
-			$result3a = dol_eval($s, 1, 1, '2');
-			print "result3a = ".$result3a."\n";
-			$this->assertStringContainsString('Exception during evaluation: '.$s, $result3a);
+			if (empty($dolibarr_main_restrict_eval_methods)) {		// Old mode
+				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
+				$result3a = dol_eval($s, 1, 1, '2');
+				print "result3a = ".$result3a."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3a, 'The string was not detected as evil : '.$s);
+
+				$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+				$result3c = dol_eval($s, 1, 1, '2');
+				print "result3c = ".$result3c."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3c, 'The string was not detected as evil : '.$s);
+
+				$s = '((($var1 = new SimpleXMLElement()) ? \'1\' : \'0\')';
+				$result3d= dol_eval($s, 1, 1, '2');
+				print "result3d = ".$result."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3d, 'The string was not detected as evil : '.$s);
+			} else {												// New mode for v23+
+				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
+				$result3a = dol_eval($s, 1, 1, '2');
+				print "result3a = ".$result3a."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate.', $result3a, 'The string was not detected as evil');
+
+				$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+				$result3c = dol_eval($s, 1, 1, '2');
+				print "result3c = ".$result3c."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result3c, 'The string was not detected as evil');
+
+				$s = '((($var1 = new SimpleXMLElement()) ? \'1\' : \'0\')';
+				$result3d= dol_eval($s, 1, 1, '2');
+				print "result3d = ".$result."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result3d, 'The string was not detected as evil');
+			}
+
+			// This next one are okfor syntax and allowance
 
 			$s = '((($var1 = new Project($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
 			$result3b = dol_eval($s, 1, 1, '2');
@@ -672,10 +701,6 @@ class SecurityTest extends CommonClassTest
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result4 = ".$result."\n";
 			$this->assertEquals('Parent project not found', $result, 'Test 4');
-
-			$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
-			print "result5 = ".$result."\n";
-			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
 
 			$s = '4 < 5';
 			$result = (string) dol_eval($s, 1, 1, '2');
@@ -707,11 +732,21 @@ class SecurityTest extends CommonClassTest
 			print "result = ".$result."\n";
 			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
 
+			$s = '1==\x01';
+			$result = dol_eval($s, 1, 1, '1');	// Check that we can't make dol_eval on string containing \ char.
+			print "result5 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
+
 			$s = 'new abc->invoke(\'whoami\')';
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result = ".$result."\n";
 			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
+			/*          $s = 'new ReflectionFunction(\'abc\')';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+			*/
 			$s = 'new ReflectionFunction(\'abc\')';
 			$result = (string) dol_eval($s, 1, 1, '2');
 			print "result = ".$result."\n";
@@ -1352,6 +1387,21 @@ class SecurityTest extends CommonClassTest
 	{
 		global $conf;
 
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 2;				// 1 = only valid html, 2 = only valid htm and allowed styles
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
+
+		// Test on sanitizing styles
+		$result = dol_htmlwithnojs('Text <div style="position: 0">Div content</div><span style="z-index: 123">Text</span> and more', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		// Normalize formatting differences between libxml/php versions (spaces and line breaks around tags/style values)
+		$normalizedresult = str_replace(array("\r", "\n", "\t"), ' ', $result);
+		$normalizedresult = preg_replace('/style="\s*([0-9]+)\s*"/', 'style="$1"', $normalizedresult);
+		$normalizedresult = preg_replace('/>\s*</', '><', $normalizedresult);
+		$this->assertEquals('Text <div style="0">Div content</div><span style="123">Text</span> and more', $normalizedresult, 'Test sanitizing style for CSS UI redressing');
+
+
 		// Test on a string in hindi with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES because
 		// in past this case was losing the UTF8.
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
@@ -1367,17 +1417,15 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
 
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 
 		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
 
 
+		// Test emoticons
 
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
-		// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
 
 		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
 		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');

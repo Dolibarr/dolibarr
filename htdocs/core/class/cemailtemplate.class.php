@@ -477,8 +477,7 @@ class CEmailTemplate extends CommonObject
 	public function fetch($id, $label = null, $noextrafields = 0, $nolines = 0)
 	{
 		// The table llx_c_email_templates has no field ref. The field ref was named "label" instead. So we change the call to fetchCommon.
-		//$result = $this->fetchCommon($id, $label, '', $noextrafields);
-		$result = $this->fetchCommon($id, '', " AND t.label = '".$this->db->escape($label)."'", $noextrafields);
+		$result = $this->fetchCommon($id, '', ((!$id || $label) ? " AND t.label = '".$this->db->escape($label)."'" : ''), $noextrafields);
 
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
