@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,7 +264,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			$iptocheck = resolveDNS($hosttocheck);
+			$iptocheck = resolveDns($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.

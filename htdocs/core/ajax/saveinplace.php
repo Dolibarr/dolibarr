@@ -196,14 +196,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$newvalue = ($timestamp / 1000);
 		}
 
-		if (!$error) {
-			// Specific for add_object_linked()
-			// TODO add a function for variable treatment
-			$object->ext_fk_element = $newvalue;
-			$object->ext_element = $ext_element;
-			$object->fk_element = $fk_element;
-			$object->element = $element;
-
+		if (!$error && is_object($object)) {
 			$ret = $object->setValueFrom($field, $newvalue, $object->table_element, (int) $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {

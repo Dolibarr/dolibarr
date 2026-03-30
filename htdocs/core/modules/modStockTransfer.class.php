@@ -221,7 +221,7 @@ class modStockTransfer extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->stocktransfer->enabled',
+			//      'test' => 'isModEnabled('stocktransfer')',
 			//      'priority' => 50,
 			//  ),
 		);

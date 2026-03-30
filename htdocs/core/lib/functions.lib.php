@@ -9636,6 +9636,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 							if (!$el instanceof DOMElement) {
 								continue;
 							}
+
+							// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 							if ($el->hasAttribute('style')) {
 								// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 								$style = $el->getAttribute('style');
@@ -10337,11 +10339,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
-
 			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature') && (empty($exclude) || !in_array('recruitment', $exclude)) && (empty($include) || in_array('recruitment', $include))) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
+			}
+			if (isModEnabled('holiday') && (!is_object($object) || $object->element == 'holiday') && (empty($exclude) || !in_array('holiday', $exclude)) && (empty($include) || in_array('holiday', $include))) {
+				$substitutionarray['__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__'] = '__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__';
 			}
 			if (isModEnabled('project') && (empty($exclude) || !in_array('project', $exclude)) && (empty($include) || in_array('project', $include))) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
@@ -10957,23 +10961,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__DAY_TEXT_SHORT__' => dol_trunc($daytext, 3, 'right', 'UTF-8', 1), // Mon
 			'__DAY_TEXT_MIN__' => dol_trunc($daytext, 1, 'right', 'UTF-8', 1), // M
 			'__MONTH__' => (string) $tmp['mon'],
-			'__MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp['mon'])),
-			'__MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp['mon'])),
-			'__MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp['mon'])),
 			'__YEAR__' => (string) $tmp['year'],
 			'__YEAR_PREVIOUS_MONTH__' => (string) $tmp3['year'],
 			'__YEAR_NEXT_MONTH__' => (string) $tmp5['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],
-			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp3['month'])),
-			'__PREVIOUS_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp3['month'])),
-			'__PREVIOUS_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp3['month'])),
 			'__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
 			'__NEXT_DAY__' => (string) $tmp4['day'],
 			'__NEXT_MONTH__' => (string) $tmp5['month'],
-			'__NEXT_MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp5['month'])),
-			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp5['month'])),
-			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp5['month'])),
 			'__NEXT_YEAR__' => (string) ($tmp['year'] + 1),
 		));
 	}
@@ -10983,9 +10987,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if ((empty($exclude) || !in_array('system', $exclude)) && (empty($include) || in_array('user', $include))) {
 		$substitutionarray['__DOL_MAIN_URL_ROOT__'] = DOL_MAIN_URL_ROOT;
-		$substitutionarray['__(AnyTranslationKey)__'] = $outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__(AnyTranslationKey|langfile)__'] = $outputlangs->trans('TranslationOfKey') . ' (load also language file before)';
-		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->trans('ValueOfConstantKey');
+		$substitutionarray['__(AnyTranslationKey)__'] = $outputlangs->transnoentitiesnoconv('TranslationOfKey');
+		$substitutionarray['__(AnyTranslationKey|langfile)__'] = $outputlangs->transnoentitiesnoconv('TranslationOfKey') . ' (load also language file before)';
+		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->transnoentitiesnoconv('ValueOfConstantKey');
 	}
 
 	// Note: The lazyload variables are replaced only during the call by make_substitutions, and only if necessary
@@ -12508,9 +12512,14 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 							}
 						}
 					} else {
-						if ($reg[1] == 'ReflectionFunction') {
-							dol_syslog('Bad string syntax to evaluate: Class ReflectionFunction is not allowed. ' . $s, LOG_WARNING);
-							return 'Bad string syntax to evaluate. Class ReflectionFunction is not allowed. ' . $s;
+						if (!class_exists($reg[1])) {
+							dol_syslog('Bad string syntax to evaluate: Class "'.$reg[1].'" does not exist. ' . $s, LOG_WARNING);
+							return 'Bad string syntax to evaluate. Class "'.$reg[1].'" does not exist. ' . $s;
+						}
+						$parents = class_parents($reg[1]);	// Get list of parent classes of class we want to check
+						if (!in_array('CommonObject', $parents)) {	// Only classes that inherit CommonObject are ok. This forbid dangerous classes like ReflectionFunction, SplFileObject, ...
+							dol_syslog('Bad string syntax to evaluate: Class "'.$reg[1].'" is not allowed because only classes extended CommonObject can be used in dynamic evaluation. ' . $s, LOG_WARNING);
+							return 'Bad string syntax to evaluate. Class "'.$reg[1].'" is not allowed because only classes extended CommonObject can be used in dynamic evaluation. ' . $s;
 						}
 					}
 				}

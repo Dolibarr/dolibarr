@@ -34,6 +34,9 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 -- Recruiting
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'recruitment','recruitmentcandidature_send','',0,null,null,'(AnswerCandidature)'       ,100,'isModEnabled("recruitment")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourCandidature)__',       '__(Hello)__ __CANDIDATE_FULLNAME__,<br><br>\n\n__(YourCandidatureAnswerMessage)__<br>__ONLINE_INTERVIEW_SCHEDULER_TEXT_AND_URL__\n<br><br>\n__(Sincerely)__<br>__SENDEREMAIL_SIGNATURE__',null, 0);
 
+-- Holiday
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(Hello)__<br><br>__(HolidayHrInformationsPreviousMonthContent)__:<br>__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__<br><br>__SENDEREMAIL_SIGNATURE__', null, 0);
+
 -- Event organization
 -- Message for default setup of EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskConf)',       10, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskConf)__', '__(Hello)__,<br /><br />__(OrganizationEventConfRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__SENDEREMAIL_SIGNATURE__', null, '1', null);
