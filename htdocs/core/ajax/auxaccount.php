@@ -65,6 +65,9 @@ $limit     = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_SEARCH_LIMIT', 100);
 $minLength = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', 2) - 1;
 
 $results = array();
+/**
+ * @var array<string,mixed> $results
+ */
 
 if (strlen($searchkey) >= $minLength) {
 	// Search anywhere by default (use LIKE '%term%')
