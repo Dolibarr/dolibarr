@@ -71,7 +71,7 @@ done
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
 all_changed_lang=$(IFS=" " ; echo "${changed_lang_files[*]}")
 
-
+forbidden_files=""
 #forbidden_files=$(echo "$all_changed_lang" | grep -E 'htdocs/langs/([^/]+)/.*\.lang$' | grep -v 'htdocs/langs/en_US/')
 #if [ -n "$forbidden_files" ]; then
 #  echo "You tried to modify one or more language files that are not allowed to be modified in Pull requests."
