@@ -233,7 +233,7 @@ $fullpath_original_file = getMultidirOutput($object, 'ticket').'/'.$original_fil
 
 // Security:
 // Limit access if permissions are wrong
-if (!$accessallowed) {
+if (!$accessallowed) { // @phpstan-ignore-line as value is set to 1 just before
 	accessforbidden();
 }
 
