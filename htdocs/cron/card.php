@@ -350,7 +350,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td class="fieldrequired titlefieldcreate">';
 	print $langs->trans('CronLabel')."</td>";
-	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'"> ';
+	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -366,7 +366,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'"> ';
+	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronModuleHelp"), 1, 'help');
@@ -375,7 +375,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'"> ';
+	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronClassFileHelp"), 1, 'help');
@@ -384,7 +384,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'"> ';
+	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronObjectHelp"), 1, 'help');
@@ -393,7 +393,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" /> ';
+	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronMethodHelp"), 1, 'help');
@@ -402,7 +402,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" /> ';
+	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronArgsHelp"), 1, 'help');
@@ -411,7 +411,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'" /> ';
+	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'"  spellcheck="false" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
