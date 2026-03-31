@@ -85,6 +85,8 @@
 @phan-var-force ?string $objectlabel
 @phan-var-force ?string $option
 @phan-var-force int $deliveryreceipt
+@phan-var-force string $month
+@phan-var-force string $year
 @phan-var-force ?array<string,mixed> $moreparams
 @phan-var-force ?string $search_status
 @phan-var-force ?int $hidedetails
