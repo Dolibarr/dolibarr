@@ -85,6 +85,10 @@
 @phan-var-force ?string $option
 @phan-var-force int $deliveryreceipt
 @phan-var-force ?array<string,mixed> $moreparams
+@phan-var-force ?string $search_status
+@phan-var-force ?int $hidedetails
+@phan-var-force ?int $hidedesc
+@phan-var-force ?int $hideref
 ';
 
 
