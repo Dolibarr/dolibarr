@@ -75,6 +75,7 @@
  */
 '
 @phan-var-force int $error
+@phan-var-force ?string $permissiontoadd
 @phan-var-force ?string $permissiontoread
 @phan-var-force ?string $permissiontodelete
 @phan-var-force ?string $permissiontoclose
