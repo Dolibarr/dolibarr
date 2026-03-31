@@ -168,7 +168,7 @@ class Holiday extends CommonObject
 	public $fk_type;
 
 	/**
-	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int}>
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:string,date_modification:string,description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:string,statut:int,status:int}>
 	 */
 	public $holiday = array();
 
@@ -586,8 +586,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
-				$tab_result[$i]['statut'] = $obj->status;
-				$tab_result[$i]['status'] = $obj->status;
+				$tab_result[$i]['statut'] = (int) $obj->status;
+				$tab_result[$i]['status'] = (int) $obj->status;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
 				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
@@ -716,8 +716,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
-				$tab_result[$i]['statut'] = $obj->status;
-				$tab_result[$i]['status'] = $obj->status;
+				$tab_result[$i]['statut'] = (int) $obj->status;
+				$tab_result[$i]['status'] = (int) $obj->status;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
 				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
