@@ -168,7 +168,7 @@ class Holiday extends CommonObject
 	public $fk_type;
 
 	/**
-	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,date_valid:mixed,fk_user_valid:mixed,date_approval:int|'',fk_user_approve:int,date_refuse:mixed,fk_user_refuse:int,date_cancel:mixed,fk_user_cancel:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
 	 */
 	public $holiday = array();
 
@@ -253,6 +253,7 @@ class Holiday extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModelNumRefHolidays $obj';
+			/** @var ModelNumRefHolidays $obj */
 			$numref = $obj->getNextValue($objsoc, $this);
 
 			if ($numref != "") {
@@ -720,7 +721,7 @@ class Holiday extends CommonObject
 				$tab_result[$i]['status'] = (int) $obj->status;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
-				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
+				$tab_result[$i]['fk_user_valid'] = (int) $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
 				$tab_result[$i]['fk_user_approve'] = (int) $obj->fk_user_approve;
 				$tab_result[$i]['date_refuse'] = $obj->date_refuse;
