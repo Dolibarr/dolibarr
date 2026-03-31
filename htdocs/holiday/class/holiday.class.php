@@ -1802,11 +1802,7 @@ class Holiday extends CommonObject
 				$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
 			}
 
-			if (!$error) {
-				return 1;
-			} else {
-				return 0;
-			}
+			return 1;
 		} else {
 			// Update for one user
 			$nbHoliday = price2num($nbHoliday, 5);
