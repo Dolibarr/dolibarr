@@ -175,7 +175,7 @@ if ($action == "importSignature") {
 							}
 							$pdf->SetFont(pdf_getPDFFont($langs));
 
-							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 								$pdf->SetCompression(false);
 							}
 
@@ -388,7 +388,7 @@ if ($action == "importSignature") {
 							}
 							$pdf->SetFont(pdf_getPDFFont($langs));
 
-							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 								$pdf->SetCompression(false);
 							}
 
@@ -527,7 +527,7 @@ if ($action == "importSignature") {
 							}
 							$pdf->SetFont(pdf_getPDFFont($langs));
 
-							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 								$pdf->SetCompression(false);
 							}
 
@@ -678,7 +678,7 @@ if ($action == "importSignature") {
 								}
 								$pdf->SetFont(pdf_getPDFFont($langs));
 
-								if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+								if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 									$pdf->SetCompression(false);
 								}
 
@@ -882,7 +882,7 @@ if ($action == "importSignature") {
 							}
 							$pdf->SetFont(pdf_getPDFFont($langs));
 
-							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 								$pdf->SetCompression(false);
 							}
 

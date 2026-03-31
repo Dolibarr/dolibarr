@@ -120,7 +120,7 @@ class pdf_standard_salary extends ModelePDFSalary
 		global $conf, $langs;
 
 		$outputlangs = is_object($outputlangs) ? $outputlangs : $langs;
-		if (getDolGlobalString('MAIN_USE_FPDF')) $outputlangs->charset_output = 'ISO-8859-1';
+		if (getDolGlobalBool('MAIN_USE_FPDF')) $outputlangs->charset_output = 'ISO-8859-1';
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "salaries"));
 

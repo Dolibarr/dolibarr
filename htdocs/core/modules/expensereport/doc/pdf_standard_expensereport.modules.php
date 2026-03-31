@@ -227,7 +227,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -297,7 +297,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Trips"));
-				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+				if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -316,13 +316,13 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 95;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 65 : 10);
+				$tab_top_newpage = (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 65 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
+				if (getDolGlobalBool('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
 					// Get first sale rep
 					if (is_object($object->thirdparty)) {
 						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
@@ -390,7 +390,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$pdf->setPage($pageposafter + 1);
@@ -419,7 +419,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+								if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
@@ -460,7 +460,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -480,7 +480,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -506,7 +506,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ht), 1, 'C');
 				$pdf->SetFillColor(248, 248, 248);
 
-				if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
+				if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 					// TODO Show vat amount per tax level
 					$posy += 5;
 					$pdf->SetXY(120, $posy);
@@ -595,7 +595,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		// Type
 		$pdf->SetXY($this->posxtype - 1, $curY);
 		$nextColumnPosX = $this->posxup;
-		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
+		if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$nextColumnPosX = $this->posxtva;
 		}
 		if (isModEnabled('project')) {
@@ -622,7 +622,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		//}
 
 		// VAT Rate
-		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
+		if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$vat_rate = pdf_getlinevatrate($object, $linenumber, $outputlangs, $hidedetails);
 			$pdf->SetXY($this->posxtva, $curY);
 			$pdf->MultiCell($this->posxup - $this->posxtva - 0.8, 4, $vat_rate, 0, 'C');
@@ -784,7 +784,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 			$posy = 50;
 			$posx = $this->marge_gauche;
 			$hautcadre = 40;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = 118;
 			}
 
@@ -799,7 +799,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender information
-			if (!getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (!getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetFont('', 'B', $default_font_size);
 				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
@@ -818,7 +818,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 			// Show recipient
 			$posy = 50;
 			$posx = 100;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 
@@ -984,7 +984,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		//}
 
 		// VAT
-		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
+		if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxtva - 0.8, $tab_top + 1);

@@ -1330,7 +1330,7 @@ class FormFile
 			}
 		}
 		// For backward compatibility, we detect file stored into an old path
-		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && isset($filearray[0]) && $filearray[0]['level1name'] == 'photos') {
+		if (getDolGlobalBool('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && isset($filearray[0]) && $filearray[0]['level1name'] == 'photos') {
 			$relativepath = preg_replace('/^.*\/produit\//', '', $filearray[0]['path']).'/';
 		}
 

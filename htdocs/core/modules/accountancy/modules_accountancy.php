@@ -162,7 +162,7 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 		$nexY = $pdf->GetY();
 
 		$this->verticalLinesSpacesCoordinates[$pdf->getPage()][] = ['start' => $curY, 'end' => $nexY];
-		if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+		if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES')) {
 			$this->addDashLine($pdf, $pageposafter, $nexY);
 		}
 	}

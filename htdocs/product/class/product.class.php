@@ -6656,7 +6656,7 @@ class Product extends CommonObject
 		$result = 0;
 
 		$dir = $sdir;
-		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+		if (getDolGlobalBool('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 			$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos";
 		} else {
 			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product').dol_sanitizeFileName($this->ref);
@@ -6699,7 +6699,7 @@ class Product extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 		$dir = $sdir;
-		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+		if (getDolGlobalBool('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 			$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos/";
 		} else {
 			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product');

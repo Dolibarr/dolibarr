@@ -241,7 +241,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -336,7 +336,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+				if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -356,7 +356,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -401,7 +401,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+								if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
@@ -459,7 +459,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 
 					// Add line
-					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
+					if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
@@ -481,7 +481,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -501,7 +501,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -759,7 +759,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
+		if (getDolGlobalBool('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
@@ -769,7 +769,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			}
 		}
 
-		if (getDolGlobalString('PDF_SHOW_PROJECT'))	{
+		if (getDolGlobalBool('PDF_SHOW_PROJECT'))	{
 			$object->fetchProject();
 			if (!empty($object->project->ref))
 			{
@@ -818,7 +818,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			// Show payer
 			$posy = 42;
 			$posx = $this->marge_gauche;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 			$hautcadre = 40;
@@ -860,7 +860,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			}
 			$posy = 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 

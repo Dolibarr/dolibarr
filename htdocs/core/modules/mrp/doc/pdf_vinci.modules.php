@@ -149,7 +149,7 @@ class pdf_vinci extends ModelePDFMo
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -171,8 +171,8 @@ class pdf_vinci extends ModelePDFMo
 		$nblines = count($object->lines);
 
 		$hidetop = 0;
-		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
+		if (getDolGlobalBool('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
+			$hidetop = getDolGlobalBool('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
 		if ($conf->mrp->dir_output) {
@@ -248,7 +248,7 @@ class pdf_vinci extends ModelePDFMo
 					$key_word.=" ".$outputlangs->convToOutputCharset($object->thirdparty->name);
 				}
 				$pdf->SetKeyWords($key_word);
-				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+				if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -269,7 +269,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -313,7 +313,7 @@ class pdf_vinci extends ModelePDFMo
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
@@ -370,7 +370,7 @@ class pdf_vinci extends ModelePDFMo
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						$height_note = $posyafter - $tab_top_newpage;
@@ -392,7 +392,7 @@ class pdf_vinci extends ModelePDFMo
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 
@@ -461,7 +461,7 @@ class pdf_vinci extends ModelePDFMo
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								//if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter + 1);
 							} else {
 								// We found a page break
@@ -512,7 +512,7 @@ class pdf_vinci extends ModelePDFMo
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								//if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter + 1);
 							} else {
 								// We found a page break
@@ -1064,7 +1064,7 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		$pdf->SetFont('', '', $default_font_size - 1);
-		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
+		if (getDolGlobalBool('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
@@ -1074,7 +1074,7 @@ class pdf_vinci extends ModelePDFMo
 			}
 		}
 
-		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
+		if (getDolGlobalBool('PDF_SHOW_PROJECT')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
@@ -1156,7 +1156,7 @@ class pdf_vinci extends ModelePDFMo
 		}
 
 		// Get contact
-		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
+		if (getDolGlobalBool('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$usertmp = new User($this->db);
@@ -1201,7 +1201,7 @@ class pdf_vinci extends ModelePDFMo
 			// Show sender
 			$posy = 42 + $top_shift;
 			$posx = $this->marge_gauche;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 			$hautcadre = 40;
@@ -1255,7 +1255,7 @@ class pdf_vinci extends ModelePDFMo
 			//}
 			//$posy = 42 + $top_shift;
 			//$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			//if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			//if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 			//	$posx = $this->marge_gauche;
 			//}
 			//

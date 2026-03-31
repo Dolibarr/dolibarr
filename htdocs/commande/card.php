@@ -2772,7 +2772,7 @@ if ($action == 'create' && $usercancreate) {
 							'datenow' => true
 						);
 
-						if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
+						if (getDolGlobalBool('INVOICE_POINTOFTAX_DATE')) {
 							$formquestion[] = array(
 								'type' => 'date',
 								'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
