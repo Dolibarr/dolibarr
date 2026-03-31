@@ -2794,7 +2794,6 @@ class Holiday extends CommonObject
 		if (is_numeric($mailtemplate) || empty($mailtemplate->topic)) {
 			$this->errors[] = 'No mail template found for code "'.$templateLabel.'" or id "'.$templateId.'".';
 			$error++;
-			return 1;
 		}
 
 		if (!$error) {
