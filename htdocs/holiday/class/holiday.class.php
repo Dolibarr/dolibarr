@@ -719,7 +719,7 @@ class Holiday extends CommonObject
 				$tab_result[$i]['halfday'] = (int) $obj->halfday;
 				$tab_result[$i]['statut'] = (int) $obj->status;
 				$tab_result[$i]['status'] = (int) $obj->status;
-				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
+				$tab_result[$i]['fk_validator'] = (int) $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
 				$tab_result[$i]['fk_user_valid'] = (int) $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
