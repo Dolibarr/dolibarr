@@ -576,7 +576,7 @@ class Holiday extends CommonObject
 
 				$tab_result[$i]['rowid'] = (int) $obj->rowid;
 				$tab_result[$i]['id'] = (int) $obj->rowid;
-				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
+				$tab_result[$i]['ref'] = (string) ($obj->ref ? $obj->ref : $obj->rowid);
 
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
@@ -705,7 +705,7 @@ class Holiday extends CommonObject
 
 				$tab_result[$i]['rowid'] = (int) $obj->rowid;
 				$tab_result[$i]['id'] = (int) $obj->rowid;
-				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
+				$tab_result[$i]['ref'] = (string) ($obj->ref ? $obj->ref : $obj->rowid);
 
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
