@@ -168,13 +168,10 @@ class Holiday extends CommonObject
 	public $fk_type;
 
 	/**
-	 * @var array
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int}>
 	 */
 	public $holiday = array();
 
-	/**
-	 * @var array
-	 */
 	public $events = array();
 
 	/**
@@ -374,12 +371,9 @@ class Holiday extends CommonObject
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->ref = $initialref;
-
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
 					}
 
 					if (!$error && !$notrigger) {
@@ -579,12 +573,12 @@ class Holiday extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$tab_result[$i]['rowid'] = $obj->rowid;
-				$tab_result[$i]['id'] = $obj->rowid;
+				$tab_result[$i]['rowid'] = (int) $obj->rowid;
+				$tab_result[$i]['id'] = (int) $obj->rowid;
 				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
 
-				$tab_result[$i]['fk_user'] = $obj->fk_user;
-				$tab_result[$i]['fk_type'] = $obj->fk_type;
+				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
+				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
 				$tab_result[$i]['description'] = $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
@@ -708,12 +702,12 @@ class Holiday extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$tab_result[$i]['rowid'] = $obj->rowid;
-				$tab_result[$i]['id'] = $obj->rowid;
+				$tab_result[$i]['rowid'] = (int) $obj->rowid;
+				$tab_result[$i]['id'] = (int) $obj->rowid;
 				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
 
-				$tab_result[$i]['fk_user'] = $obj->fk_user;
-				$tab_result[$i]['fk_type'] = $obj->fk_type;
+				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
+				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
 				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
 				$tab_result[$i]['description'] = $obj->description;
