@@ -168,7 +168,7 @@ class Holiday extends CommonObject
 	public $fk_type;
 
 	/**
-	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int}>
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
 	 */
 	public $holiday = array();
 
@@ -602,15 +602,15 @@ class Holiday extends CommonObject
 				$tab_result[$i]['user_firstname'] = (string) $obj->user_firstname;
 				$tab_result[$i]['user_lastname'] = (string) $obj->user_lastname;
 				$tab_result[$i]['user_login'] = (string) $obj->user_login;
-				$tab_result[$i]['user_statut'] = (string) $obj->user_status;
-				$tab_result[$i]['user_status'] = (string) $obj->user_status;
+				$tab_result[$i]['user_statut'] = (int) $obj->user_status;
+				$tab_result[$i]['user_status'] = (int) $obj->user_status;
 				$tab_result[$i]['user_photo'] = (string) $obj->user_photo;
 
 				$tab_result[$i]['validator_firstname'] = (string) $obj->validator_firstname;
 				$tab_result[$i]['validator_lastname'] = (string) $obj->validator_lastname;
 				$tab_result[$i]['validator_login'] = (string) $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = (string) $obj->validator_status;
-				$tab_result[$i]['validator_status'] = (string) $obj->validator_status;
+				$tab_result[$i]['validator_statut'] = (int) $obj->validator_status;
+				$tab_result[$i]['validator_status'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
 
 				$i++;
@@ -732,15 +732,15 @@ class Holiday extends CommonObject
 				$tab_result[$i]['user_firstname'] = (string) $obj->user_firstname;
 				$tab_result[$i]['user_lastname'] = (string) $obj->user_lastname;
 				$tab_result[$i]['user_login'] = (string) $obj->user_login;
-				$tab_result[$i]['user_statut'] = (string) $obj->user_status;
-				$tab_result[$i]['user_status'] = (string) $obj->user_status;
+				$tab_result[$i]['user_statut'] = (int) $obj->user_status;
+				$tab_result[$i]['user_status'] = (int) $obj->user_status;
 				$tab_result[$i]['user_photo'] = (string) $obj->user_photo;
 
 				$tab_result[$i]['validator_firstname'] = (string) $obj->validator_firstname;
 				$tab_result[$i]['validator_lastname'] = (string) $obj->validator_lastname;
 				$tab_result[$i]['validator_login'] = (string) $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = (string) $obj->validator_status;
-				$tab_result[$i]['validator_status'] = (string) $obj->validator_status;
+				$tab_result[$i]['validator_statut'] = (int) $obj->validator_status;
+				$tab_result[$i]['validator_status'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
 
 				$i++;
