@@ -1268,7 +1268,7 @@ class Project extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-		$sql .= " SET fk_statut = ".$targetstatus;
+		$sql .= " SET fk_statut = ".((int) $targetstatus);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		//$sql .= " AND entity = ".((int) $conf->entity);	// Disabled, when we use the ID for the where, we must not add any other search condition
 
@@ -1321,7 +1321,7 @@ class Project extends CommonObject
 			$this->targetstatus = $targetstatus;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = ".$targetstatus.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
+			$sql .= " SET fk_statut = ".((int) $targetstatus).", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if (getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
 				$sql .= " AND fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_INPROGRESS.")";
