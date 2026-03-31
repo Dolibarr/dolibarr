@@ -513,6 +513,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.fk_user,";
 		$sql .= " cp.fk_type,";
 		$sql .= " cp.date_create,";
+		$sql .= " cp.tms as date_modification,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
@@ -581,6 +582,7 @@ class Holiday extends CommonObject
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
+				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
 				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
