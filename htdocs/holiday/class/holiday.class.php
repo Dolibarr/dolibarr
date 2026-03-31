@@ -167,7 +167,14 @@ class Holiday extends CommonObject
 	 */
 	public $fk_type;
 
+	/**
+	 * @var array
+	 */
 	public $holiday = array();
+
+	/**
+	 * @var array
+	 */
 	public $events = array();
 
 	/**
