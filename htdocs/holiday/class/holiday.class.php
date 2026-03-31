@@ -2636,7 +2636,6 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		$db = $this->db;
 		$outputlangs = $langs;
 
 		$error = 0;
