@@ -97,7 +97,7 @@ class Holiday extends CommonObject
 	public $date_fin_gmt = '';
 
 	/**
-	 * @var int|string 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	 * @var int|string 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning (in db integer default 0)
 	 */
 	public $halfday = '';
 
@@ -168,7 +168,7 @@ class Holiday extends CommonObject
 	public $fk_type;
 
 	/**
-	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:string,date_modification:string,description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:string,statut:int,status:int}>
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:string,date_modification:string,description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int}>
 	 */
 	public $holiday = array();
 
@@ -450,18 +450,18 @@ class Holiday extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
-				$this->ref   = ($obj->ref ? $obj->ref : $obj->rowid);
-				$this->fk_user = $obj->fk_user;
+				$this->id    = (int) $obj->rowid;
+				$this->ref   = (string) ($obj->ref ? $obj->ref : $obj->rowid);
+				$this->fk_user = (int) $obj->fk_user;
 				$this->date_create = $this->db->jdate($obj->date_create);
 				$this->description = $obj->description;
 				$this->date_debut = $this->db->jdate($obj->date_debut);
 				$this->date_fin = $this->db->jdate($obj->date_fin);
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
-				$this->halfday = $obj->halfday;
-				$this->status = $obj->status;
-				$this->statut = $obj->status;	// deprecated
+				$this->halfday = (int) $obj->halfday;
+				$this->status = (int) $obj->status;
+				$this->statut = (int) $obj->status;	// deprecated
 				$this->fk_validator = $obj->fk_validator;
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->fk_user_valid = $obj->fk_user_valid;
@@ -580,38 +580,38 @@ class Holiday extends CommonObject
 				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
-				$tab_result[$i]['description'] = $obj->description;
+				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
-				$tab_result[$i]['halfday'] = $obj->halfday;
+				$tab_result[$i]['halfday'] = (int) $obj->halfday;
 				$tab_result[$i]['statut'] = (int) $obj->status;
 				$tab_result[$i]['status'] = (int) $obj->status;
-				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
+				$tab_result[$i]['fk_validator'] = (int) $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
-				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
+				$tab_result[$i]['fk_user_valid'] = (int) $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
-				$tab_result[$i]['fk_user_approve'] = $obj->fk_user_approve;
+				$tab_result[$i]['fk_user_approve'] = (int) $obj->fk_user_approve;
 				$tab_result[$i]['date_refuse'] = $this->db->jdate($obj->date_refuse);
-				$tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
+				$tab_result[$i]['fk_user_refuse'] = (int) $obj->fk_user_refuse;
 				$tab_result[$i]['date_cancel'] = $this->db->jdate($obj->date_cancel);
-				$tab_result[$i]['fk_user_cancel'] = $obj->fk_user_cancel;
-				$tab_result[$i]['detail_refuse'] = $obj->detail_refuse;
+				$tab_result[$i]['fk_user_cancel'] = (int) $obj->fk_user_cancel;
+				$tab_result[$i]['detail_refuse'] = (string) $obj->detail_refuse;
 
-				$tab_result[$i]['user_firstname'] = $obj->user_firstname;
-				$tab_result[$i]['user_lastname'] = $obj->user_lastname;
-				$tab_result[$i]['user_login'] = $obj->user_login;
-				$tab_result[$i]['user_statut'] = $obj->user_status;
-				$tab_result[$i]['user_status'] = $obj->user_status;
-				$tab_result[$i]['user_photo'] = $obj->user_photo;
+				$tab_result[$i]['user_firstname'] = (string) $obj->user_firstname;
+				$tab_result[$i]['user_lastname'] = (string) $obj->user_lastname;
+				$tab_result[$i]['user_login'] = (string) $obj->user_login;
+				$tab_result[$i]['user_statut'] = (string) $obj->user_status;
+				$tab_result[$i]['user_status'] = (string) $obj->user_status;
+				$tab_result[$i]['user_photo'] = (string) $obj->user_photo;
 
-				$tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
-				$tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-				$tab_result[$i]['validator_login'] = $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = $obj->validator_status;
-				$tab_result[$i]['validator_status'] = $obj->validator_status;
-				$tab_result[$i]['validator_photo'] = $obj->validator_photo;
+				$tab_result[$i]['validator_firstname'] = (string) $obj->validator_firstname;
+				$tab_result[$i]['validator_lastname'] = (string) $obj->validator_lastname;
+				$tab_result[$i]['validator_login'] = (string) $obj->validator_login;
+				$tab_result[$i]['validator_statut'] = (string) $obj->validator_status;
+				$tab_result[$i]['validator_status'] = (string) $obj->validator_status;
+				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
 
 				$i++;
 			}
@@ -710,38 +710,38 @@ class Holiday extends CommonObject
 				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
 				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
-				$tab_result[$i]['description'] = $obj->description;
+				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
-				$tab_result[$i]['halfday'] = $obj->halfday;
+				$tab_result[$i]['halfday'] = (int) $obj->halfday;
 				$tab_result[$i]['statut'] = (int) $obj->status;
 				$tab_result[$i]['status'] = (int) $obj->status;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
 				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
-				$tab_result[$i]['fk_user_approve'] = $obj->fk_user_approve;
+				$tab_result[$i]['fk_user_approve'] = (int) $obj->fk_user_approve;
 				$tab_result[$i]['date_refuse'] = $obj->date_refuse;
-				$tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
+				$tab_result[$i]['fk_user_refuse'] = (int) $obj->fk_user_refuse;
 				$tab_result[$i]['date_cancel'] = $obj->date_cancel;
-				$tab_result[$i]['fk_user_cancel'] = $obj->fk_user_cancel;
-				$tab_result[$i]['detail_refuse'] = $obj->detail_refuse;
+				$tab_result[$i]['fk_user_cancel'] = (int) $obj->fk_user_cancel;
+				$tab_result[$i]['detail_refuse'] = (string) $obj->detail_refuse;
 
-				$tab_result[$i]['user_firstname'] = $obj->user_firstname;
-				$tab_result[$i]['user_lastname'] = $obj->user_lastname;
-				$tab_result[$i]['user_login'] = $obj->user_login;
-				$tab_result[$i]['user_statut'] = $obj->user_status;
-				$tab_result[$i]['user_status'] = $obj->user_status;
-				$tab_result[$i]['user_photo'] = $obj->user_photo;
+				$tab_result[$i]['user_firstname'] = (string) $obj->user_firstname;
+				$tab_result[$i]['user_lastname'] = (string) $obj->user_lastname;
+				$tab_result[$i]['user_login'] = (string) $obj->user_login;
+				$tab_result[$i]['user_statut'] = (string) $obj->user_status;
+				$tab_result[$i]['user_status'] = (string) $obj->user_status;
+				$tab_result[$i]['user_photo'] = (string) $obj->user_photo;
 
-				$tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
-				$tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-				$tab_result[$i]['validator_login'] = $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = $obj->validator_status;
-				$tab_result[$i]['validator_status'] = $obj->validator_status;
-				$tab_result[$i]['validator_photo'] = $obj->validator_photo;
+				$tab_result[$i]['validator_firstname'] = (string) $obj->validator_firstname;
+				$tab_result[$i]['validator_lastname'] = (string) $obj->validator_lastname;
+				$tab_result[$i]['validator_login'] = (string) $obj->validator_login;
+				$tab_result[$i]['validator_statut'] = (string) $obj->validator_status;
+				$tab_result[$i]['validator_status'] = (string) $obj->validator_status;
+				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
 
 				$i++;
 			}
