@@ -713,6 +713,10 @@ if ($action == 'create' || $action == 'presend') {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
+	if (GETPOST("mode", "aZ09") == 'init' && empty($_POST)) {
+		$formticket->clear_attached_files();
+	}
+
 	$formticket->trackid = '';		// TODO Use a unique key to avoid conflict in upload file feature
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
