@@ -377,6 +377,7 @@ TextSummarize=Text summarize
 RephraserByAI=Rephrase message in
 RephraseStyleProfessional=Professional style
 RephraseStyleHumouristic=Humouristic style
+RephraseSpellChecker=Spell checker
 TextRephraser=Text style rephraser
 AIEnhancements=AI Enhancements
 TLSv1=TLSv1
