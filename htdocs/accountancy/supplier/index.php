@@ -171,6 +171,7 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 	}
 
 	dol_syslog('htdocs/accountancy/supplier/index.php');
+
 	$result = $db->query($sql);
 	if (!$result) {
 		$error++;
@@ -243,7 +244,6 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 			$suggestedid = 0;
 
 			$return = $accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'supplier');
-
 			if (!is_array($return) && $return < 0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {
