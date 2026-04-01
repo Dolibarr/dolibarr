@@ -85,6 +85,9 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
 		$allowaccess = $this->_checkAccessRights('delete', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
@@ -362,6 +365,9 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function putById($id, $request_data = null)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
 		$allowaccess = $this->_checkAccessRights('write', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied update access to Event attendees');
@@ -463,6 +469,12 @@ class EventAttendees extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '')
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
 		// we first need to fetch the object so we can get the fk_project id and then check for access
 		$result = $this->event_attendees->fetch($id, $ref);
 		if (!$result) {
