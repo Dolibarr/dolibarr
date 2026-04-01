@@ -469,7 +469,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '')
 	{
-		if ($id < 1 ) {
+		if ($id < 1 && empty($ref)) {
 			throw new RestException(400, 'No eventattendee with id<1 can exist');
 		}
 		if (empty($id) && empty($ref)) {
