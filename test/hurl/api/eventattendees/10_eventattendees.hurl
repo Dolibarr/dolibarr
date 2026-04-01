@@ -14,8 +14,12 @@ HTTP 200
 GET http://{{hostnport}}/api/index.php/eventattendees?limit=100&page=1
 HTTP 200
 
-# GET with fk_user
-GET http://{{hostnport}}/api/index.php/eventattendees?fk_user=0
+# GET without loadlinkedobjects
+GET http://{{hostnport}}/api/index.php/eventattendees?loadlinkedobjects=0
+HTTP 200
+
+# GET with loadlinkedobjects
+GET http://{{hostnport}}/api/index.php/eventattendees?loadlinkedobjects=1
 HTTP 200
 
 # GET with properties=id%2Cstatus
