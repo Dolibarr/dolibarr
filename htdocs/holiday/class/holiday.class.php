@@ -2740,8 +2740,8 @@ class Holiday extends CommonObject
 				$arrayleaves[] = array(
 					"user" => $tmpuser->getNomUrl(0, 'nolink', 0, 0, 24, 1),
 					"type" => $arraytypeleaves[$obj->fk_type],
-					"date_start" => dol_print_date($date_start_inmonth, 'day') . '<span class="opacitymedium">('.$outputlangs->trans($listhalfday[$starthalfdayinmonth]).')</span>',
-					"date_end" => dol_print_date($date_end_inmonth, 'day') . '<span class="opacitymedium">('.$outputlangs->trans($listhalfday[$endhalfdayinmonth]).')</span>',
+					"date_start" => dol_print_date($date_start_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$starthalfdayinmonth]).')</span>',
+					"date_end" => dol_print_date($date_end_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$endhalfdayinmonth]).')</span>',
 					"used_days" => num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id)
 				);
 			}
