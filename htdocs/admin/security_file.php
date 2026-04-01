@@ -225,7 +225,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseAntivirusOnUploadedFile").'</td>';
 print '<td class="">';
 if (defined('MAIN_ANTIVIRUS_UPLOAD_ON') && constant('MAIN_ANTIVIRUS_UPLOAD_ON')) {
-	print img_picto($langs->trans("Enabled")." - Can't be disabled (MAIN_ANTIVIRUS_UPLOAD_ON is set)", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
+	print img_picto($langs->trans("Enabled")." - Can't be disabled (PHP constant MAIN_ANTIVIRUS_UPLOAD_ON is set)", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 } else {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_ANTIVIRUS_UPLOAD_ON', array(), null, 0, 0, 1);
