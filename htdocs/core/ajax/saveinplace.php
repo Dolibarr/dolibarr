@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +196,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$newvalue = ($timestamp / 1000);
 		}
 
-		if (!$error && is_object($object)) {
+		if (!$error && is_object($object)) { // @phpstan-ignore-line as object is already tested as object at the beginning
 			$ret = $object->setValueFrom($field, $newvalue, $object->table_element, (int) $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {
