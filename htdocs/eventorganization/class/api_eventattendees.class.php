@@ -492,6 +492,8 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
 
+		$this->event_attendees->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->event_attendees);
 	}
 
