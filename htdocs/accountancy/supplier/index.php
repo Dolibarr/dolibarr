@@ -184,7 +184,7 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 		$facture_static = new FactureFournisseur($db);
 		$facture_static_det = new SupplierInvoiceLine($db);
 		$product_static = new Product($db);
-		var_dump($num_lines);
+
 		$i = 0;
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
@@ -243,7 +243,7 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 			$suggestedid = 0;
 
 			$return = $accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'supplier');
-			var_dump($return);
+
 			if (!is_array($return) && $return < 0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {
