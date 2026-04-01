@@ -200,7 +200,8 @@ class EventAttendees extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.status:=:1) and (t.email:=:'bad@example.com')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array						Array of order objects
+	 * @param int		$loadlinkedobjects	Load also linked object. 0 (default), 1 load linked objects
+	* @return  array						Array of order objects
 	 * @phan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
@@ -209,7 +210,7 @@ class EventAttendees extends DolibarrApi
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		// $allowaccess = $this->_checkAccessRights('read', 0);
 		// if (!$allowaccess) {
@@ -263,9 +264,13 @@ class EventAttendees extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
-				if ($event_attendees_static->fetch($obj->rowid, '') > 0) {
+				if ($event_attendees_static->fetch($obj->rowid) > 0) {
 					$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
 					if ($rowallowaccess) {
+						if ($loadlinkedobjects) {
+							// retrieve linked objects
+								$event_attendees_static->fetchObjectLinked();
+						}
 						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
 						$onerowaccessgranted = $rowallowaccess;
 					}
