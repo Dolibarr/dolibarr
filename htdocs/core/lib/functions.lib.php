@@ -17040,23 +17040,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
 
-					if ($actionstatic->code == 'AC_TICKET_CREATE') {
-						$out .= dolPrintHTML($newmess);
-					} else {
-						$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
-					}
+					$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
 
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> ' . $langs->trans("ReadLess") . '</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					if ($actionstatic->code == 'AC_TICKET_CREATE') {
-						dol_syslog('else::actionstatic->code='.$actionstatic->code, LOG_DEBUG);
-						$out .= dolPrintHTML($newmess);
-					} else {
-						$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
-					}				}
-
+					$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
+				}
 				$out .= '</div>';
 
 			}
