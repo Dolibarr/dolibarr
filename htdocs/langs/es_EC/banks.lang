@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bancos / Efectivo
-MenuVariousPayment=Manual Journal Entries
-MenuNewVariousPayment=New manual journal entry
 BankAccounts=Cuentas bancarias
 BankAccountsAndGateways=Cuentas bancarias | Puertas de enlace
 AccountRef=Cuenta bancaria ref
@@ -107,10 +105,6 @@ DocumentModelSepaMandate=Plantilla de mandato de la SEPA. Útil para los países
 DocumentModelBan=Plantilla para imprimir una página con información BAN.
 NewVariousPayment=Nuevo pago misceláneo
 VariousPayment=Pago misceláneo
-ShowVariousPayment=Show manual journal entries
-AddVariousPayment=Add manual journal entries
-VariousPaymentId=Manual journal entry ID
-VariousPaymentLabel=Manual journal entry label
 FindYourSEPAMandate=Este es su mandato de SEPA para autorizar a nuestra empresa a realizar un pedido de débito directo a su banco. Devuélvalo firmado (escaneo del documento firmado) o envíelo por correo a
 AutoReportLastAccountStatement=Rellene automáticamente el campo 'número de extracto bancario' con el último número de extracto al realizar la conciliación
 BankColorizeMovementDesc=Si esta función está habilitada, puede elegir un color de fondo específico para los movimientos de débito o crédito

@@ -1964,6 +1964,8 @@ class pdf_sponge extends ModelePDFFactures
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
+				$tmpatleastoneratenotnull = 0;
+
 				// Local tax 1 before VAT
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
@@ -1972,7 +1974,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
-							//$this->atleastoneratenotnull++;
+							//$tmpatleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -2010,7 +2012,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
-							//$this->atleastoneratenotnull++;
+							//$tmpatleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -2063,11 +2065,11 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {	// by default, we show detail of vat here
 					// VAT
 					foreach ($this->tva_array as $tvakey => $tvaval) {
 						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
-							$this->atleastoneratenotnull++;
+							$tmpatleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -2097,7 +2099,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				//Local tax 1 after VAT
+				// Local tax 1 after VAT
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 						continue;
@@ -2105,7 +2107,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
-							//$this->atleastoneratenotnull++;
+							//$tmpatleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -2134,7 +2136,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				//Local tax 2 after VAT
+				// Local tax 2 after VAT
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 						continue;
@@ -2143,7 +2145,7 @@ class pdf_sponge extends ModelePDFFactures
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						// retrieve global local tax
 						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
-							//$this->atleastoneratenotnull++;
+							//$tmpatleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -2171,6 +2173,9 @@ class pdf_sponge extends ModelePDFFactures
 						}
 					}
 				}
+
+				$this->atleastoneratenotnull = $tmpatleastoneratenotnull;
+
 
 				// Revenue stamp
 				if (price2num($object->revenuestamp, 'MT') != 0) {
@@ -2557,7 +2562,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		pdfWriteBlockedLogSignature($pdf, $outputlangs, $this->page_hauteur, $object, $w, $posx, $posy);
+		pdfWriteAdditionnalTitle($pdf, $outputlangs, $this->page_hauteur, $object, $w, $posx, $posy);
 
 		/*
 		$posy += 5;

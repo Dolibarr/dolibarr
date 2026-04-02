@@ -56,6 +56,7 @@ $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 //$hmacexportkey = GETPOST('hmacexportkey', 'password');
+$inputregistrationnumber = GETPOST('inputregistrationnumber');
 
 $search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
@@ -182,9 +183,116 @@ print $langs->trans("ControlDesc")."<br>";
 print "</div>\n";
 
 
+print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="export">';
+
+print '<div class="neutral">';
+
+print '<span class="hideonsmartphone">'.$langs->trans("PleaseEnterPartialRegistrationNumber").': </span>';
+
+print '<input type="text" name="inputregistrationnumber" class="width300" placeholder="'.$langs->trans("RegistrationNumber").'" value="'.$inputregistrationnumber.'" spellcheck="false">';
+
+print '<br>';
+print '<br>';
+
+print '<center>';
+print '<input type="submit" class="button small" name="submit" value="'.$langs->trans("ControlSignals").'">';
+print '</center>';
+
+print ' </div>';
+
+print '</form>';
+
 print dol_get_fiche_end();
 
-print '<br><br>';
+print '<br>';
+
+if ($inputregistrationnumber && strlen($inputregistrationnumber) < 8) {
+	// Message
+	print img_picto('', 'cross', 'class="pictofixedwidth"').$langs->trans("RegistrationNumberIsTooShort");
+} elseif ($inputregistrationnumber) {
+	// Return known information on this registration number
+	if (!isModEnabled('captureserver')) {
+		print 'The module captureserver to capture the signals from installed instance is not enabled. Is this instance the master instance of the Dolibarr foundation ?';
+	} else {
+		// Reportregistration
+		$sql = "SELECT rowid, registerid, registername, registerprofid, registeremail, date_creation, tms, content, comment,";
+		$sql .= " versiondolibarr, versionblockedlog, country_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."captureserver_captureserver";
+		$sql .= " WHERE registerid LIKE '".$db->escape($inputregistrationnumber)."%'";
+		$sql .= " AND type = 'dolibarrregistration'";
+		$sql .= " LIMIT 100";		// Should have only 1 record, so a limit of 100 is enough
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = 0;
+			while ($obj = $db->fetch_object($resql)) {
+				$num++;
+				print img_picto('', 'tick', 'class="pictofixedwidth"').' <b>'.dol_print_date($obj->date_creation, 'dayhour', 'gmt').'</b> &nbsp; ';
+				print $langs->trans("RegistrationDone");
+				print ' - '.$langs->trans("BlockedLogInstance").' '.dolPrintHTML($obj->registerid);
+				print '<br>';
+				print $langs->trans("LastRegistrationUpdate").' '.dol_print_date($obj->tms, 'dayhour', 'gmt');
+				print '<br>';
+				print $obj->registername.' - '.$obj->registerprofid.' - '.$obj->country_code.' - '.$obj->registeremail;
+				print '<br>';
+				print $langs->trans("Version").': '.$obj->versiondolibarr.' - '.$langs->trans("VersionOfModule", $langs->transnoentitiesnoconv("BlockedLog")).': '.$obj->versionblockedlog;
+				/*
+				print '<div class="small">';
+				print $langs->trans("Note").': ';
+				print $obj->comment;
+				print '</div>';
+				*/
+				print '<br>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+		if ($num == 0) {
+			print img_picto('', 'cross', 'class="pictofixedwidth error"').$langs->trans("NoRegistrationFound");
+			print '<br>';
+		}
+		print '<br>';
+
+
+		// Report backup restoration or last lines deletion
+		$sql = "SELECT rowid, registerid, date_creation, content, comment from ".MAIN_DB_PREFIX."captureserver_captureserver";
+		$sql .= " WHERE registerid LIKE '".$db->escape($inputregistrationnumber)."%'";
+		$sql .= " AND type = 'deletion_or_backup_restoration'";
+		$sql .= " LIMIT 100";		// Should not happen, so a limit of 100 is enough
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = 0;
+			while ($obj = $db->fetch_object($resql)) {
+				$num++;
+				print img_picto('', 'cross', 'class="pictofixedwidth"').' <b>'.dol_print_date($obj->date_creation, 'dayhour').'</b> &nbsp; ';
+				print $langs->trans("BackupRestorationOrLastLineDeletionDetected");
+				print ' - '.$langs->trans("BlockedLogInstance").' '.dolPrintHTML($obj->registerid);
+				print '<br>';
+				print '<div class="small">';
+				print $langs->trans("Note").': ';
+				print $obj->comment;
+				print '</div>';
+				print '<br>';
+				/*
+				print '<textarea class=small">';
+				print dolPrintHTMLForTextArea($obj->content);
+				print '</textarea>';
+				*/
+				print '<br>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+		if ($num == 0) {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("NoBackupRestorationOrLastLineDeletionDetected");
+		}
+		print '<br>';
+	}
+}
+
 
 // End of page
 llxFooter();
