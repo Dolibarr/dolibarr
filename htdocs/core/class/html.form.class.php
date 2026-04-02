@@ -10481,7 +10481,8 @@ class Form
 		if (!is_object($object->thirdparty)) {
 			if ($object->element == 'subscription') {
 				$adh = new Adherent($object->db);
-				$adh->fetch($object->fk_adherent);
+				$fk_adherent = $object->fk_adherent;
+				$adh->fetch($fk_adherent);
 				$thirdparty_id = $adh->fetch_thirdparty();
 			}
 		} else {
