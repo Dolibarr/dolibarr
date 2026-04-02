@@ -652,7 +652,7 @@ if (empty($reshook)) {
 			$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 		}
 
-		if (isset($mesg) && !$mesg) {
+		if (isset($mesg) && empty($mesg)) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
