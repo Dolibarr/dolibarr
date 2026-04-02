@@ -16249,7 +16249,7 @@ function dolForgeSQLCriteriaCallback($matches)
  */
 function getTimelineIcon($actionstatic, &$histo, $key)
 {
-	dol_syslog(__METHOD__, LOG_DEBUG);
+	dol_syslog('getTimelineIcon::begin', LOG_DEBUG);
 	global $langs;
 
 	$out = '<!-- timeline icon -->' . "\n";
@@ -16357,7 +16357,7 @@ function getActionCommEcmList($object)
  */
 function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
-	dol_syslog(__METHOD__, LOG_DEBUG);
+	dol_syslog('show_actions_messaging::begin', LOG_DEBUG);
 	global $user, $conf;
 	global $form;
 
