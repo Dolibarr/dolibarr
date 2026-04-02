@@ -624,6 +624,8 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesg = $object->error;
+		} else {
+			$mesg = null;
 		}
 
 		setEventMessages($mesg, $mesgs, 'errors');
@@ -657,8 +659,9 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesg = $object->error;
+		} else {
+			$mesg = null;
 		}
-
 		setEventMessages($mesg, $mesgs, 'errors');
 		$action = "";
 	}
