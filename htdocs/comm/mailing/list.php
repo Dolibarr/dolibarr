@@ -118,14 +118,6 @@ if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_
 }
 //restrictedArea($user, 'mailing');
 
-if ($projectid) {
-	$tmpproject = new Project($db);
-	$tmpproject->fetch($projectid);
-	$projectref = $tmpproject->ref;
-	$search_refproject = $projectref;
-}
-
-
 /*
  * Actions
  */
@@ -222,6 +214,9 @@ if ($filteremail) {
 	if ($search_all) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
 	}
+	if ($projectid) {
+		$sql .= " AND pr.rowid = ".$db->escape($projectid)." ";
+	}
 	if ($search_refproject) {
 		$sql .= natural_search('pr.ref', $search_refproject);
 	}
@@ -257,6 +252,9 @@ if ($filteremail) {
 	}
 	if ($search_all) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
+	}
+	if ($projectid) {
+		$sql .= " AND pr.rowid = ".$db->escape($projectid)." ";
 	}
 	if ($search_refproject) {
 		$sql .= natural_search('pr.ref', $search_refproject);
