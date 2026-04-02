@@ -215,7 +215,7 @@ if ($filteremail) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
 	}
 	if ($projectid) {
-		$sql .= " AND pr.rowid = ".$db->escape($projectid)." ";
+		$sql .= " AND pr.rowid = ".((int) $projectid)." ";
 	}
 	if ($search_refproject) {
 		$sql .= natural_search('pr.ref', $search_refproject);
@@ -254,7 +254,7 @@ if ($filteremail) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
 	}
 	if ($projectid) {
-		$sql .= " AND pr.rowid = ".$db->escape($projectid)." ";
+		$sql .= " AND pr.rowid = ".((int) $projectid)." ";
 	}
 	if ($search_refproject) {
 		$sql .= natural_search('pr.ref', $search_refproject);
