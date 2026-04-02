@@ -10479,7 +10479,7 @@ class Form
 		$listofidcompanytoscan = '';
 
 		if (!is_object($object->thirdparty)) {
-			if ($object->element == 'subscription') {
+			if ($object->element == 'subscription' && isset($object->fk_adherent)) {
 				$adh = new Adherent($object->db);
 				$fk_adherent = $object->fk_adherent;
 				$adh->fetch($fk_adherent);
