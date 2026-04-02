@@ -118,6 +118,13 @@ if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_
 }
 //restrictedArea($user, 'mailing');
 
+if ($projectid) {
+	$tmpproject = new Project($db);
+	$tmpproject->fetch($projectid);
+	$projectref = $tmpproject->ref;
+	$search_refproject = $projectref;
+}
+
 
 /*
  * Actions
