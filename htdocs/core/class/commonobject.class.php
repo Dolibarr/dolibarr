@@ -4373,6 +4373,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		if (empty($this->origin_type) && !empty($this->origin)) {
 			$this->origin_type = $this->origin;
@@ -4544,6 +4545,7 @@ abstract class CommonObject
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
 		global $hookmanager, $action;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Important for pdf generation time reduction
 		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
@@ -4714,6 +4716,7 @@ abstract class CommonObject
 	 */
 	public function clearObjectLinkedCache()
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
 			unset($this->linkedObjectsFullLoaded[$this->id]);
 		}
@@ -4739,6 +4742,7 @@ abstract class CommonObject
 		$updatesource = false;
 		$updatetarget = false;
 		$f_user = isset($f_user) ? $f_user : $user;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid) && empty($targettype)) {
 			$updatesource = true;

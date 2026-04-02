@@ -1787,6 +1787,7 @@ class Adherent extends CommonObject
 				$subscription->datec = $this->db->jdate($obj->datec);
 				$subscription->dateh = $this->db->jdate($obj->dateh);
 				$subscription->datef = $this->db->jdate($obj->datef);
+				$subscription->fetchObjectLinked();
 
 				$this->subscriptions[] = $subscription;
 
