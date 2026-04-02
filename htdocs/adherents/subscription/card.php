@@ -403,9 +403,19 @@ if ($rowid && $action != 'edit') {
 	$somethingshown = $formfile->numoffiles;
 	*/
 	// Show links to link elements
-	//$tmparray = $form->showLinkToObjectBlock($object, null, array('subscription'), 1);
-	$somethingshown = $form->showLinkedObjectBlock($object, '');
+	// Show links to link members thirdparty's elements
 
+	print '<!-- Show links to link members thirdpartys elements -->';
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('societe'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
+	$compatibleImportElementsList = false;
+	$id = $object->fk_adherent;
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
+	// without that include PHP Warning:  Undefined variable $id in /var/www/html/core/actions_dellink.inc.php on line 47
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 	print '</div><div class="fichehalfright">';
 
