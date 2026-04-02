@@ -635,8 +635,10 @@ class Setup extends DolibarrApi
 	/**
 	 * Get country by ID.
 	 *
-	 * @param 	int       $id        	ID of country
-	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
+	 * @param 	int		$id        		ID of country
+	 * @param 	string	$lang      		Code of the language the name of the country must be translated to
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
 	 * @phan-return Ccountry
 	 * @phpstan-return Ccountry
@@ -646,9 +648,9 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
-	public function getCountryByID($id, $lang = '')
+	public function getCountryByID($id, $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		return $this->_fetchCcountry($id, '', '', $lang);
+		return $this->_fetchCcountry($id, '', '', $lang = '', $loadregions, $loadstates);
 	}
 
 	/**
@@ -656,7 +658,9 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	string    $code      	Code of country (2 characters)
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
-	 * @return 	Object 					Object with cleaned properties
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
+	* @return 	Object 					Object with cleaned properties
 	 * @phan-return Ccountry
 	 * @phpstan-return Ccountry
 	 *
@@ -665,9 +669,9 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
-	public function getCountryByCode($code, $lang = '')
+	public function getCountryByCode($code, $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		return $this->_fetchCcountry(0, $code, '', $lang);
+		return $this->_fetchCcountry(0, $code, '', $lang = '', $loadregions, $loadstates);
 	}
 
 	/**
@@ -675,6 +679,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	string    $iso       	ISO of country (3 characters)
 	 * @param 	string    $lang     	Code of the language the name of the country must be translated to
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
 	 *
 	 * @url     GET dictionary/countries/byISO/{iso}
@@ -682,9 +688,9 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
-	public function getCountryByISO($iso, $lang = '')
+	public function getCountryByISO($iso, $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		return $this->_fetchCcountry(0, '', $iso, $lang);
+		return $this->_fetchCcountry(0, '', $iso, $lang = '', $loadregions, $loadstates);
 	}
 
 	/**
@@ -744,13 +750,15 @@ class Setup extends DolibarrApi
 	 * @param 	string    $code      	Code of country (2 characters)
 	 * @param 	string    $iso       	ISO of country (3 characters)
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
 	 * @phan-return Ccountry
 	 * @phpstan-return Ccountry
 	 *
 	 * @throws RestException
 	 */
-	private function _fetchCcountry($id, $code = '', $iso = '', $lang = '')
+	private function _fetchCcountry($id, $code = '', $iso = '', $lang = '', $loadregions = 0, $loadstates = 0)
 	{
 		$country = new Ccountry($this->db);
 
@@ -760,6 +768,15 @@ class Setup extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving country : '.$country->error);
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Country not found');
+		} else {
+			if ($loadregions > 0) {
+				$regions = $this->getListOfRegions($sortfield = "code_region", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
+				$country->regions = $regions;
+			}
+			if ($loadstates > 0) {
+				$states = $this->getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
+				$country->states = $states;
+			}
 		}
 
 		$this->translateLabel($country, $lang, 'Country');
