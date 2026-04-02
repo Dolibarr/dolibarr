@@ -1462,6 +1462,8 @@ class Project extends CommonObject
 				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
 			} elseif ($option == 'eventorganization') {
 				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
+			} elseif ($option == 'mailing') {
+				$url = DOL_URL_ROOT.'/comm/mailing/list.php?projectid='.$this->id;
 			} else {
 				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
 			}
