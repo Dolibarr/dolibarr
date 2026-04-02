@@ -56,7 +56,7 @@ $mode = GETPOST('mode', 'alpha');
 // Get supervariables
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOSTISARRAY('search_status') ? GETPOST('search_status', 'array:int') : (GETPOSTISSET('search_status') ? array(GETPOSTINT('search_status')) : array());
+$search_status = GETPOSTISARRAY('search_status') ? GETPOST('search_status', 'array:int') : (GETPOSTISSET('search_status') ? GETPOST('search_status', 'array:intcomma') : array());
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination

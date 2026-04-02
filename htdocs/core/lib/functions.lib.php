@@ -13795,6 +13795,7 @@ function getLabelSpecialCode($idcode)
  * @param string	$addlink		Add a 'link to' after
  * @param string	$textonlink		Text to show on link or 'image'
  * @return string
+ * @see showValueWithClipboardCPButton()
  */
 function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
 {
