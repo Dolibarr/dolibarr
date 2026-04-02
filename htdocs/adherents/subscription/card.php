@@ -411,7 +411,7 @@ if ($rowid && $action != 'edit') {
 	$htmltoenteralink = $tmparray['htmltoenteralink'];
 	print $htmltoenteralink;
 
-	$compatibleImportElementsList = false;
+	$compatibleImportElementsList = array();
 	$id = $object->fk_adherent;
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 	// without that include PHP Warning:  Undefined variable $id in /var/www/html/core/actions_dellink.inc.php on line 47
