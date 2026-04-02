@@ -279,7 +279,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 
 	if (isModEnabled('mailing')) {
-		$langs->load('mailing');
+		$langs->load('mails');
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/comm/mailing/list.php', ['projectid' => $project->id]);
 		$head[$h][1] = $langs->trans("EMailings");
 
