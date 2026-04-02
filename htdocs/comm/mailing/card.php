@@ -850,6 +850,17 @@ if ($action == 'create') {	// aaa
 
 	// Project
 	if (isModEnabled('project')) {
+			// Link mailing to project
+			if (GETPOST('origin', 'alpha') == 'project') {
+				$projectid = GETPOSTINT('originid');
+			} else {
+				$projectid = GETPOSTINT('projectid');
+			}
+
+			if ($projectid > 0) {
+				$object->setProject($projectid);
+			}
+
 			$langs->load("projects");
 			print '<tr class="field_projectid">';
 			print '<td class="titlefieldcreate">' . $langs->trans("Project") . '</td><td class="valuefieldcreate">';

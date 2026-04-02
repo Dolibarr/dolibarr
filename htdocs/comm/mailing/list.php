@@ -479,7 +479,7 @@ if ($projectid) {
 	print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 }
 
-$url = DOL_URL_ROOT.'/comm/mailing/card.php?action=create'.($projectid ? '&origin=projet_project&originid='.$projectid : '');
+$url = DOL_URL_ROOT.'/comm/mailing/card.php?action=create'.($projectid ? '&origin=project&originid='.$projectid : '');
 
 $newcardbutton = '';
 if ($user->hasRight('mailing', 'creer')) {
