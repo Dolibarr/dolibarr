@@ -17049,7 +17049,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
 				}
 				$out .= '</div>';
-
 			}
 
 			// Timeline footer
