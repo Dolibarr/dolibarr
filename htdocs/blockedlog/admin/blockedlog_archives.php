@@ -713,7 +713,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	print '<input type="hidden" name="action" value="checkconfirmed">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<div class="formconsumeproduce">';
+	print '<div class="neutral">';
 
 	print '<b>'.$langs->trans("File").'</b> : '.GETPOST('urlfile').'<br>';
 
@@ -805,7 +805,6 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	print '<br><br>';
 
 	print '<center>';
-	//print '<a class="button small nomarginleft" href="'.$_SERVER["PHP_SELF"].'?action=checkconfirmed&urlfile='.urlencode(GETPOST('urlfile')).'">'.$langs->trans("ControlFile").'</a>';
 	print '<input type="submit" class="button small" name="submit" value="'.$langs->trans("ControlFile").'">';
 	print '</center>';
 

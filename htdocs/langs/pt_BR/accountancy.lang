@@ -122,7 +122,6 @@ ACCOUNTING_LENGTH_AACCOUNT=Comprimento das contas contábeis de terceiros (se vo
 ACCOUNTING_BANK_CONCILIATED=Transferir para a contabilidade apenas o linhas reconciliadas nos extratos bancários (por padrão, poderia ser desmarcado em cada transferência)
 BANK_DISABLE_DIRECT_INPUT=Desabilitar o registro direto da transação na conta bancária
 ACCOUNTANCY_ER_DATE_RECORD=Use a data final do período de um relatório de despesas como a data para a transferência para a contabilidade, em vez da data da despesa
-ACCOUNTANCY_COMBO_FOR_AUX=Habilitar lista de combinação para conta subsidiária (pode ser lento se você tiver muitos terceiros, interromper a capacidade de pesquisar em uma parte do valor)
 ACCOUNTING_DATE_START_BINDING=Desabilitar vinculação e transferência na contabilidade quando a data for inferior a esta data (as transações anteriores a esta data serão excluídas por padrão)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na página para transferir dados para a contabilidade, qual é o período selecionado por padrão
 ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=Quando a contabilidade é gerada, etiqueta da operação padrão
