@@ -16249,6 +16249,7 @@ function dolForgeSQLCriteriaCallback($matches)
  */
 function getTimelineIcon($actionstatic, &$histo, $key)
 {
+	dol_syslog(__METHOD__, LOG_DEBUG);
 	global $langs;
 
 	$out = '<!-- timeline icon -->' . "\n";
@@ -16356,6 +16357,7 @@ function getActionCommEcmList($object)
  */
 function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
+	dol_syslog(__METHOD__, LOG_DEBUG);
 	global $user, $conf;
 	global $form;
 
@@ -17018,14 +17020,17 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$out .= '</h3>';
 
 			// Message
+			if ($actionstatic->code == 'AC_TICKET_CREATE') {
+				$newmess = $filterobj->message;
+			} else {
+				$newmess = $histo[$key]['message'];
+			}
 			if (
-				!empty($histo[$key]['message'] && $histo[$key]['message'] != $libelle)
-				&& $actionstatic->code != 'AC_TICKET_CREATE'
+				!empty($newmess && $newmess != $libelle)
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
 				$out .= '<div class="timeline-body wordbreak small">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
-				$newmess = $histo[$key]['message'];
 				$truncatedText = dolGetFirstLineOfText($newmess, $truncateLines);
 				if ($truncateLines > 0 && strlen($newmess) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
@@ -17035,16 +17040,25 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
 
-					$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
+					if ($actionstatic->code == 'AC_TICKET_CREATE') {
+						$out .= dolPrintHTML($newmess);
+					} else {
+						$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
+					}
 
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> ' . $langs->trans("ReadLess") . '</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					$out .= dolPrintHTML($newmess, 0, array('pre', 'code'));
-				}
+					if ($actionstatic->code == 'AC_TICKET_CREATE') {
+						dol_syslog('else::actionstatic->code='.$actionstatic->code, LOG_DEBUG);
+						$out .= dolPrintHTML($newmess);
+					} else {
+						$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
+					}				}
 
 				$out .= '</div>';
+
 			}
 
 			// Timeline footer
