@@ -78,9 +78,25 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
-	// TODO Add number of archive files in badge
+	// Add badge on nb of files
+	$block_static = new BlockedLog($db);
+	$upload_dir = getMultidirOutput($block_static, 'blockedlog').'/archives';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = 0;
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'archives';
 	$h++;
+
+	if (userIsTaxAuditor()) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_control.php".$param;
+		$head[$h][1] = $langs->trans("OtherControl");
+		$head[$h][2] = 'control';
+		$h++;
+	}
 
 	if ($mysoc->country_code == 'FR') {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/documentation.php".$param;
@@ -458,7 +474,9 @@ function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid
 }
 
 /**
- * Return if user is a ta auditor
+ * Return if user is a tax auditor.
+ * Must be an external user and BLOCKEDLOG_FOR_TAX_AUDITOR must be set to 1 OR
+ * BLOCKEDLOG_FOR_TAX_AUDITOR must be set to 2
  *
  * @return	int		Return > 0 if user is an external user so must be restricted to archive control feature
  */
@@ -466,5 +484,5 @@ function userIsTaxAuditor()
 {
 	global $user;
 
-	return ((getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid) ? 1 : 0);
+	return (((getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid) || getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') == '2') ? 1 : 0);
 }
