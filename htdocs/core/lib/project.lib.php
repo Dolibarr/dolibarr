@@ -280,7 +280,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	if (isModEnabled('mailing')) {
 		$langs->load('mailing');
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/eventorganization/mailing_list.php', ['projectid' => $project->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/comm/mailing/list.php', ['projectid' => $project->id]);
 		$head[$h][1] = $langs->trans("EMailings");
 
 		// Enable caching of mass mailing count
@@ -307,7 +307,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("EMailings")).'">'.$nbMassMailing.'</span>';
 			$head[$h][1] .= '</span>';
 		}
-		$head[$h][2] = 'eventorganisation';
+		$head[$h][2] = 'mailing';
 		$h++;
 	}
 
