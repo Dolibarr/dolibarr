@@ -613,6 +613,7 @@ if (empty($reshook)) {
 		$action = "create";
 	}
 
+	$mesg = null;
 	if ($action == 'classin' && $permissiontocreate) {
 		$mesgs = array();
 		$setResult = $object->setProject(GETPOSTINT('projectid'));
@@ -624,8 +625,6 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesg = $object->error;
-		} else {
-			$mesg = null;
 		}
 
 		setEventMessages($mesg, $mesgs, 'errors');
@@ -633,6 +632,7 @@ if (empty($reshook)) {
 	}
 
 	// Action update description of emailing
+	$mesg = null;
 	if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontovalidatesend) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
@@ -659,8 +659,6 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesg = $object->error;
-		} else {
-			$mesg = null;
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
 		$action = "";
