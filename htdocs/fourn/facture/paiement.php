@@ -563,7 +563,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 				$sql .= ' WHERE f.entity IN ('.getEntity('supplier_invoice').')';
-    			$sql .= ' AND (f.fk_soc = '.((int) $object->socid);				
+				$sql .= ' AND (f.fk_soc = '.((int) $object->socid);
 				$aux = $object->fetch_thirdparty();
 				// Can pay invoices of all child of parent company
 				if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && !empty($object->thirdparty->parent)) {
