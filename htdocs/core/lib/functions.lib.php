@@ -296,16 +296,11 @@ function getDolGlobalString($key, $default = '')
  */
 function getDolGlobalLoginBadCharUnauthorized()
 {
-	global $conf;
-
-	if (!empty($conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED_ALLOW_EMPTY)) {
+	if (getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED_ALLOW_EMPTY')) {
 		return '';
 	}
-	if (isset($conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED)) {
-		return (string) $conf->global->MAIN_LOGIN_BADCHARUNAUTHORIZED;
-	}
 
-	return ',@<>"\'';
+	return getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 }
 
 /**
