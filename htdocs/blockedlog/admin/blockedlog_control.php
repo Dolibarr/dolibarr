@@ -246,13 +246,14 @@ if ($inputregistrationnumber && strlen($inputregistrationnumber) < 8) {
 				*/
 				print '<br>';
 			}
+			if ($num == 0) {
+				print img_picto('', 'cross', 'class="pictofixedwidth error"').$langs->trans("NoRegistrationFound");
+				print '<br>';
+			}
 		} else {
 			dol_print_error($db);
 		}
-		if ($num == 0) {
-			print img_picto('', 'cross', 'class="pictofixedwidth error"').$langs->trans("NoRegistrationFound");
-			print '<br>';
-		}
+
 		print '<br>';
 
 
@@ -283,12 +284,13 @@ if ($inputregistrationnumber && strlen($inputregistrationnumber) < 8) {
 				*/
 				print '<br>';
 			}
+			if ($num == 0) {
+				print img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("NoBackupRestorationOrLastLineDeletionDetected");
+			}
 		} else {
 			dol_print_error($db);
 		}
-		if ($num == 0) {
-			print img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("NoBackupRestorationOrLastLineDeletionDetected");
-		}
+
 		print '<br>';
 	}
 }
