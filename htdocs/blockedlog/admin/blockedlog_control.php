@@ -144,19 +144,12 @@ if ($action == 'control' && $user->hasRight('blockedlog', 'read')) {		// read is
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if ($withtab) {
-	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
-} else {
-	$title = $langs->trans("BrowseBlockedLog");
-}
+$title = $langs->trans("BrowseBlockedLog");
 $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
 $linkback = '';
-if ($withtab) {
-	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
-}
 
 $morehtmlcenter = '';
 $texttop = '';
