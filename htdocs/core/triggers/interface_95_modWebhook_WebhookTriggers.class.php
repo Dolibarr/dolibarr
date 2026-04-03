@@ -124,7 +124,9 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				}
 
 				// warning; the test page use its own call
-				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
+				global $dolibarr_allow_localurl_for_webhooks;
+				$localurl = empty($dolibarr_allow_localurl_for_webhooks) ? 0 : 2;
+				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), $localurl, -1);
 
 				$errormsg = "";
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {

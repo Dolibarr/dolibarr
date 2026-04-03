@@ -213,6 +213,7 @@ function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 }
 
 
+//var_dump(GETPOST('firstname')); exit;
 
 /*
  * Actions

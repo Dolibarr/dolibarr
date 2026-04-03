@@ -282,6 +282,14 @@ class Documentation
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
 				),
+				'UxMenuTooltipTheme' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/tooltip-themes/index.php', 1),
+					'icon' => 'fas fa-comment',
+					'submenu' => array(),
+					'summary' => array(
+						'Introduction' => '#ux-introduction',
+						'TooltipThemesAndOrientation' => '#tooltip-themes',),
+				),
 			)
 		);
 
@@ -538,5 +546,45 @@ class Documentation
 		$doleditor = new DolEditor(md5($content), $content, '', 0, 'Basic', 'In', true, false, 'ace', 0, '99%', 1);
 		print $doleditor->Create(1, '', false, '', $option);
 		print '</div>';
+	}
+
+
+	/**
+	 * Generate lorem ipsum
+	 *
+	 * @param int  $paragraphCount nb paragraph you need
+	 * @param int  $wordsPerParagraph nb words per paragraph you need
+	 * @param bool $html return html formatted paragraph
+	 *
+	 * @return string
+	 */
+	static public function generateLoremIpsum($paragraphCount = 3, $wordsPerParagraph = 50, $html = true)
+	{
+		$baseText = "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum";
+
+		$words = explode(" ", $baseText);
+		$paragraphs = [];
+
+		for ($p = 0; $p < $paragraphCount; $p++) {
+			$sentence = [];
+			for ($i = 0; $i < $wordsPerParagraph; $i++) {
+				$word = $words[array_rand($words)];
+
+				// Randomly add a comma
+				if ($i > 2 && rand(0, 10) > 8) {
+					$word .= ",";
+				}
+
+				$sentence[] = $word;
+			}
+
+			$paragraphText = ucfirst(implode(" ", $sentence)) . ".";
+			if ($html) {
+				$paragraphText = "<p>$paragraphText</p>";
+			}
+			$paragraphs[] = $paragraphText;
+		}
+
+		return implode($html ? "\n" : "\n\n", $paragraphs);
 	}
 }

@@ -1613,7 +1613,7 @@ class FormOther
 	 */
 	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
-		global $langs, $extrafields, $form;
+		global $form;
 
 		$arrayofgroupbylabel = array();
 		foreach ($arrayofgroupby as $key => $val) {

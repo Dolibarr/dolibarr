@@ -150,6 +150,21 @@ class modHoliday extends DolibarrModules
 				'status' => 1,
 				'test' => '$conf->holiday->enabled',
 				'datestart' => $datestart
+			),
+			1 => array(
+				'label' => 'SendPreviousMonthHRInformations:holiday',
+				'jobtype' => 'method',
+				'class' => 'holiday/class/holiday.class.php',
+				'objectname' => 'Holiday',
+				'method' => 'sendPreviousMonthHRInformations',
+				'parameters' => 'emailaddress, HolidayHrInformationsPreviousMonth',
+				'comment' => 'Send HR information to the defined email address in first parameter. Second parameter must be the email template code (can be id or label of emailtemplate to send)',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24 * 31,
+				'priority' => 50,
+				'status' => 0,
+				'test' => 'isModEnabled("holiday")',
+				'datestart' => $datestart
 			)
 		);
 

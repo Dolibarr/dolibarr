@@ -255,7 +255,7 @@ $infotoshow = '';
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		if (preg_match('/\-/', DOL_VERSION)) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
 			// This is an alpha or beta version
 			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
 		} else {
@@ -264,6 +264,8 @@ if ($mysoc->country_code == 'FR') {
 	} else {
 		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
 	}
+
+	$infotoshow .= ' - <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
 }
 
 // Show generic message (for countries that need registration) to explain we need registration to collect data and why
@@ -307,7 +309,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 	} else {
 		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
 		$htmltext .= $langs->trans("ApplicationHasBeenRegistered");
-		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary">'.dol_trunc($registrationnumber, 10).'</span>';
+		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary" title="Flag stored into MAIN_FIRST_REGISTRATION_OK_DATE. Registered data saved into BLOCKEDLOG_REGISTRATION_...">'.dol_trunc($registrationnumber, 10).'</span>';
 		$htmltext .= '<br>';
 		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
 		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
