@@ -600,15 +600,15 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	}
 
 	// External calendars
-	if (is_array($showextcals) && count($showextcals) > 0) {
+	if (is_array($showextcals) && count($showextcals) > 0) { // @phpstan-ignore-line $showextcals is always an array
 		$s .= '<script type="text/javascript">'."\n";
 		$s .= 'jQuery(document).ready(function () {
 				jQuery("div input[name^=\"check_ext\"]").each(function(index, elem) {
 					var name = jQuery(elem).attr("name");
 					if (jQuery(elem).is(":checked")) {
-					    jQuery(".family_ext" + name.replace("check_ext", "")).show();
+						jQuery(".family_ext" + name.replace("check_ext", "")).show();
 					} else {
-					    jQuery(".family_ext" + name.replace("check_ext", "")).hide();
+						jQuery(".family_ext" + name.replace("check_ext", "")).hide();
 					}
 				});
 
