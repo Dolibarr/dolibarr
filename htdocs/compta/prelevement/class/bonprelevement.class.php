@@ -1974,7 +1974,10 @@ class BonPrelevement extends CommonObject
 						$obj = $this->db->fetch_object($resql);
 
 						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
-							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
+							$soc = new Societe($this->db);
+							$soc->fetch($obj->socid);
+							$msg = (empty($thirdpartyBANIds)) ? 'ErrorCompanyHasDuplicateDefaultBAN' : 'ErrorCompanyHasDuplicateInvoicesBAN';
+							$this->error = $langs->trans($msg, $soc->getNomUrl());
 							$this->invoice_in_error[$obj->idfac] = $this->error;
 							$result = -2;
 							break;
