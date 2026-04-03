@@ -44,6 +44,7 @@
 @phan-var-force string $defaulttopiclang
 @phan-var-force string[] $arrayoffamiliestoexclude
 @phan-var-force string $file
+@phan-var-force string $modelmail
 @phan-var-force CommonObject $object
 ';
 
@@ -55,6 +56,9 @@ if (empty($conf) || !is_object($conf)) {
 
 $fileparams = array();
 $file = null;
+if (!isset($modelmail)) {
+	$modelmail = '';
+}
 
 if ($action == 'presend') {
 	$langs->load("mails");
@@ -86,6 +90,9 @@ if ($action == 'presend') {
 	$outputlangs = $langs;
 	$newlang = '';
 	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		if (!is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
 		if (is_object($object->thirdparty)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
@@ -132,22 +139,24 @@ if ($action == 'presend') {
 
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
 		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument')) {
-			$hidedetails = $hidedetails?$hidedetails:'';
-			$hidedesc = $hidedetails?$hidedetails:'';
-			$hideref = $hidedetails?$hidedetails:'';
+			$hidedetails = empty($hidedetails) ? '' : $hidedetails;
+			$hidedesc = empty($hidedesc) ? '' : $hidedesc;
+			$hideref = empty($hideref) ? '' : $hideref;
 
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
-				dol_print_error($db, $object->error, $object->errors);
-				exit();
+				dol_syslog(__FILE__.' generateDocument failed for '.$object->element.' id='.(empty($object->id) ? 0 : $object->id).' error='.$object->error, LOG_ERR);
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			if ($object->element == 'invoice_supplier') {
-				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			} else {
-				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
-			}
+			if ($result >= 0) {
+				if ($object->element == 'invoice_supplier') {
+					$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+				} else {
+					$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+				}
 
-			$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+				$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+			}
 		}
 	}
 
