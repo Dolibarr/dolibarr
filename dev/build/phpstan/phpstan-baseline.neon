@@ -7687,12 +7687,6 @@ parameters:
 			path: ../../../htdocs/holiday/class/holiday.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/holiday/class/holiday.class.php
-
-		-
 			message: '#^Property Holiday\:\:\$events has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
