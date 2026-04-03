@@ -589,6 +589,7 @@ if ($object->fetch($id) >= 0) {
 				// If module is qualified
 				if ($qualified) {
 					if ($allowaddtarget) {
+						print '<!-- BEGIN modulename='.$modulename.' BEGIN -->';
 						print '<form class="oddeven trforbreakperms trforbreaknobg impair tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="action" value="add">';
@@ -627,6 +628,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					print '</div>';
 
+					print '<!-- Begin formFilter -->';
 					print '<div class="tagtd left valignmiddle">';
 					if ($allowaddtarget) {
 						try {
@@ -640,7 +642,36 @@ if ($object->fetch($id) >= 0) {
 							print $langs->trans("None");
 						}
 					}
+
+					if ($modulename == 'eventorganization') {
+						print '<!-- Begin statusFilter -->';
+						print '<div class="tagtd left valignmiddle">';
+						require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+						$attendeeforstatus = new ConferenceOrBoothAttendee($db);
+
+						$epreselected = array();
+						$ekey_in_label = 0;
+						$evalue_as_key = 0;
+						$emorecss = '';
+						$etranslate = 1;
+						$ewidth = '390';
+						$emoreattrib = '';
+						$enu = '';
+						$eplaceholder = $langs->trans("Attendees").' '.$langs->trans("Statut").' — '.$langs->trans("ExtrafieldCheckBox").' — '. $langs->trans("NoneOrSeveral");
+						$eaddjscombo = -1;
+						// Event attendees statuses to add from
+						print '<span class="fas fa-users  em088 infobox-project pictofixedwidth" style="" title="Organized event attendees"></span>';
+						print '<tr class="field_addattendees">';
+						print $form->multiselectarray('attendeeStatusList', $attendeeforstatus->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo);
+						print '<span class="fa fa-info-circle valignmiddle paddingleft" title="Will add '.$langs->trans("EmailAttendee").' of the '.$langs->trans("Event").' '.$langs->trans("Attendees").' with the selected '.$langs->trans("Statut").'"></span></a>';
+						print '</td></tr>';
+
+						print '</div>';
+						print '<!-- End statusFilter -->';
+					}
+
 					print '</div>';
+					print '<!-- End formFilter -->';
 
 					print '<div class="tagtd right valignmiddle">';
 					if ($allowaddtarget) {
@@ -654,6 +685,7 @@ if ($object->fetch($id) >= 0) {
 
 					if ($allowaddtarget) {
 						print '</form>';
+						print '<!-- END modulename='.$modulename.' END -->';
 					} else {
 						print '</div>';
 					}

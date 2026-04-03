@@ -76,6 +76,7 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public function add_to_target($mailing_id)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		// phpcs:enable
 		global $conf, $langs;
 
@@ -83,7 +84,7 @@ class mailing_eventorganization extends MailingTargets
 		$addDescription = '';
 
 		$sql = "SELECT p.ref, p.entity, e.rowid as id, e.fk_project, e.email as email, e.email_company as company_name, e.firstname as firstname, e.lastname as lastname,";
-		$sql .= " 'eventorganizationattendee' as source";
+		$sql .= " 'eventorganizationattendee' as source, e.status as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e,";
 		$sql .= " ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE e.email <> ''";
@@ -92,6 +93,11 @@ class mailing_eventorganization extends MailingTargets
 		$sql .= " AND e.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		if (GETPOSTINT('filter_eventorganization') > 0) {
 			$sql .= " AND e.fk_project = ".(GETPOSTINT('filter_eventorganization'));
+		}
+		if (GETPOSTISSET('attendeeStatusList')) {
+			$attendeeStatusList = (GETPOST('attendeeStatusList'));
+			$attendeeStatusListStr = implode(", ", $attendeeStatusList);
+			$sql .= " AND e.status IN (".$attendeeStatusListStr.")";
 		}
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
