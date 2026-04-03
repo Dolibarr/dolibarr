@@ -39,6 +39,5 @@ NoEval=Nenhuma avaliação feita para este funcionário
 VacantCheckboxHelper=Marcar esta opção mostrará as posições não preenchidas (vaga de emprego)
 SaveLevelSkill =Nível de habilidade(s) salvo(s)
 JobsExtraFields=Atributos complementares (Perfis de trabalho)
-NoDescription=Sem descrição
 TheJobProfileHasNoSkillsDefinedFixBefore=O perfil de trabalho avaliado deste funcionário não tem nenhuma habilidade definida nele. Adicione habilidade(s), depois exclua e reinicie a avaliação.
 LinkToUserCreated=Link para um funcionário caso o candidato tenha sido contratado e convertido em usuário.
