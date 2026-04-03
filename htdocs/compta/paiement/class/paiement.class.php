@@ -303,7 +303,7 @@ class Paiement extends CommonObject
 	 *
 	 *  @param	User	  $user                	Object user
 	 *  @param  int		  $closepaidinvoices   	1=Also close paid invoices to paid, 0=Do nothing more
-	 *  @param  Societe   $thirdparty           Thirdparty
+	 *  @param  Societe|null   $thirdparty           Thirdparty
 	 *  @return int                 			id of created payment, < 0 if error
 	 */
 	public function create($user, $closepaidinvoices = 0, $thirdparty = null)
