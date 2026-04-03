@@ -857,6 +857,44 @@ if ($action == 'create') {	// aaa
 			print ' <a href="' . DOL_URL_ROOT . '/projet/card.php?action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create') . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddProject") . '"></span></a>';
 			print '</td>';
 			print '</tr>';
+			if (isModEnabled('eventorganization')) {
+				require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+				$attendee = new ConferenceOrBoothAttendee($db);
+				$booth = new ConferenceOrBooth($db);
+
+				$epreselected = array();
+				$ekey_in_label = 0;
+				$evalue_as_key = 1;
+				$emorecss = '';
+				$etranslate = 1;
+				$ewidth = '390';
+				$emoreattrib = '';
+				$enu = '';
+				$eplaceholder = $langs->trans("ExtrafieldCheckBox").' — '. $langs->trans("NoneOrSeveral");
+				$eaddjscombo = -1;
+				// Event attendees email
+				print '<tr class="field_addattendees">';
+				print '<td>&#8627;'.$langs->trans("Add").' '.$langs->trans("EmailAttendee").'</td><td>'.$langs->trans("Attendees").' '.$langs->trans("Statut").':&#8194;';
+				print $form->multiselectarray('EmailAttendee', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo );
+				print '<span class="fa fa-info-circle valignmiddle paddingleft" title="Will add '.$langs->trans("EmailAttendee").' of the '.$langs->trans("Event").' '.$langs->trans("Attendees").' with the selected '.$langs->trans("Statut").'"></span></a>';
+				print '</td></tr>';
+
+				// Event attendees company email
+				print '<tr class="field_addcompanymail">';
+				print '<td>&#8627;'.$langs->trans("Add").' '.$langs->trans("EmailCompany").'</td><td>'.$langs->trans("Attendees").' '.$langs->trans("Statut").':&#8194;';
+				print $form->multiselectarray('EmailCompany', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo );
+				print '<span class="fa fa-info-circle valignmiddle paddingleft" title="Will add any '.$langs->trans("EmailCompany").' of the '.$langs->trans("Event").' '.$langs->trans("Attendees").' with the selected '.$langs->trans("Statut").'"></span></a>';
+				print '</td></tr>';
+
+				// Conference or booth
+				$ewidth = '465';
+				print '<tr class="field_addbooth">';
+				print '<td>&#8627;'.$langs->trans("Add").' '.$langs->trans("ConferenceOrBooth").' <small>('.$langs->trans("ThirdParties").')</small></td><td>'.$langs->trans("Statut").':&#8194;';
+				print $form->multiselectarray('ConferenceOrBooth', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo );
+				print '<span class="fa fa-info-circle valignmiddle paddingleft" title="Will add any '.$langs->trans("ThirdParties").' of the '.$langs->trans("ListOfConferencesOrBooths").' with the selected '.$langs->trans("Statut").'"></span></a>';
+				print '</td></tr>';
+			}
 	}
 
 	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
