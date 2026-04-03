@@ -570,6 +570,8 @@ class Setup extends DolibarrApi
 	 * @param string    $filter     To filter the countries by name
 	 * @param string    $lang       Code of the language the label of the countries must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+	 * @param	int		$loadregions	Load also Regions for countries: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for countries: 0 (default), 1 load states
 	 * @return array                List of countries
 	 * @phan-return Ccountry[]
 	 * @phpstan-return Ccountry[]
@@ -579,7 +581,7 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error retrieving list of countries
 	 */
-	public function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '')
+	public function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '', $loadregions = 0, $loadstates = 0)
 	{
 		$list = array();
 
@@ -620,6 +622,15 @@ class Setup extends DolibarrApi
 					// and then apply the filter if there is one.
 					$this->translateLabel($country, $lang, 'Country');
 
+					if ($loadregions > 0) {
+						$regions = $this->getListOfRegions($sortfield = "code_region", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
+						$country->regions = $regions;
+					}
+					if ($loadstates > 0) {
+						$states = $this->getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
+						$country->states = $states;
+					}
+
 					if (empty($filter) || stripos((string) $country->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($country);
 					}
@@ -645,11 +656,15 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/countries/{id}
 	 *
+	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
 	public function getCountryByID($id, $lang = '', $loadregions = 0, $loadstates = 0)
 	{
+		if ($id < 1) {
+			throw new RestException(400, 'Error: id < 1');
+		}
 		return $this->_fetchCcountry($id, '', '', $lang = '', $loadregions, $loadstates);
 	}
 
@@ -666,6 +681,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/countries/byCode/{code}
 	 *
+	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
@@ -685,6 +701,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET dictionary/countries/byISO/{iso}
 	 *
+	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
