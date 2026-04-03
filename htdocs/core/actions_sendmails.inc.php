@@ -226,7 +226,24 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// Recipient was provided from combo list
 			foreach ($receiver as $key => $val) {
 				if ($val == 'thirdparty') { // Key selected means current third party ('thirdparty' may be used for current member or current user too)
-					$tmparray[] = dol_string_nospecial($thirdparty->getFullName($langs), ' ', array(",")).' <'.$thirdparty->email.'>';
+					$thirdpartyEmail = (is_object($thirdparty) && !empty($thirdparty->email)) ? (string) $thirdparty->email : '';
+					if ($thirdpartyEmail !== '') {
+						$thirdpartyLabel = '';
+						if (is_object($thirdparty)) {
+							if (method_exists($thirdparty, 'getFullName')) {
+								$thirdpartyLabel = (string) $thirdparty->getFullName($langs);
+							} elseif (!empty($thirdparty->name)) {
+								$thirdpartyLabel = (string) $thirdparty->name;
+							} elseif (!empty($thirdparty->nom)) {
+								$thirdpartyLabel = (string) $thirdparty->nom;
+							}
+						}
+						if ($thirdpartyLabel !== '') {
+							$tmparray[] = dol_string_nospecial($thirdpartyLabel, ' ', array(",")).' <'.$thirdpartyEmail.'>';
+						} else {
+							$tmparray[] = $thirdpartyEmail;
+						}
+					}
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
