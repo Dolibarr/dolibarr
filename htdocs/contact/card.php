@@ -10,7 +10,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
- * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
+ * Copyright (C) 2020-2026	Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -793,28 +793,30 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth250 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_pro') ? GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+			print $form->showPhoneInput($object->phone_pro, 'phone_pro', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
+
 			print '<td>'.$form->editfieldkey('PhonePerso', 'phone_perso', '', $object, 0).'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td>';
+			print $form->showPhoneInput($object->phone_perso, 'phone_perso', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+			print '</td>';
 			print '</tr>';
 
 			print '<tr><td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+			print $form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx');
+			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
+
 			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-			print '<input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
+			print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+			print '</td>';
 			print '</tr>';
 
 			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->email)) == 0) {
@@ -1072,27 +1074,29 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Phone
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', GETPOST('phone_pro', 'alpha'), $object, 0).'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro') ? GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+			print $form->showPhoneInput($object->phone_pro, 'phone_pro', $object->country_id, 'object_phoning', 'maxwidth150', 80);
+			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
-			print '<td>'.$form->editfieldkey('PhonePerso', 'fax', GETPOST('phone_perso', 'alpha'), $object, 0).'</td>';
+
+			print '<td>'.$form->editfieldkey('PhonePerso', 'phone_perso', GETPOST('phone_perso', 'alpha'), $object, 0).'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+			print $form->showPhoneInput($object->phone_perso, 'phone_perso', $object->country_id, 'object_phoning', 'maxwidth150', 80);
+			print '</td></tr>';
 
 			print '<tr><td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0, 'string', '').'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+			print $form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth150', 80);
+			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
+
 			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ? GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
+			print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150', 80);
+			print '</td></tr>';
 
 			// EMail
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (int) (getDolGlobalInt('SOCIETE_EMAIL_MANDATORY'))).'</td>';
