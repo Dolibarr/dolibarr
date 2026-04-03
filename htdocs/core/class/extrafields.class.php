@@ -1056,7 +1056,6 @@ class ExtraFields
 		}
 
 		if ($elementtype != 'all' && isset($this->attributes[$elementtype]) && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload && isset($this->attributes[$elementtype]['label'])) {
-			dol_syslog(__METHOD__.'::long if', LOG_DEBUG);
 			return $this->attributes[$elementtype]['label'];
 		}
 
