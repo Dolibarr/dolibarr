@@ -32,13 +32,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-require_once './lib/replenishment.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +39,12 @@ require_once './lib/replenishment.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+require_once './lib/replenishment.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
@@ -364,10 +363,10 @@ $prod = new Product($db);
 $title = $langs->trans('MissingStocks');
 
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-	$sqldesiredtock = $db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
+	$sqldesiredstock = $db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
 	$sqlalertstock = $db->ifsql("pse.seuil_stock_alerte IS NULL", "p.seuil_stock_alerte", "pse.seuil_stock_alerte");
 } else {
-	$sqldesiredtock = 'p.desiredstock';
+	$sqldesiredstock = 'p.desiredstock';
 	$sqlalertstock = 'p.seuil_stock_alerte';
 }
 
@@ -378,7 +377,7 @@ $sql .= ' p.desiredstock, p.seuil_stock_alerte,';
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
 	$sql .= ' pse.desiredstock as desiredstockpse, pse.seuil_stock_alerte as seuil_stock_alertepse,';
 }
-$sql .= " " . $sqldesiredtock . " as desiredstockcombined, " . $sqlalertstock . " as seuil_stock_alertecombined,";
+$sql .= " " . $sqldesiredstock . " as desiredstockcombined, " . $sqlalertstock . " as seuil_stock_alertecombined,";
 $sql .= ' s.fk_product,';
 $sql .= " SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
@@ -525,7 +524,7 @@ if ($usevirtualstock) {
 	}
 
 	$sql .= ' HAVING (';
-	$sql .= " (" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')';
+	$sql .= " (" . $sqldesiredstock . " >= 0 AND (" . $sqldesiredstock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')';
 	$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ") + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ") + ".$sqlHookVirtualStock."))";
 	$sql .= ' OR';
 	if ($includeproductswithoutdesiredqty == 'on') {
@@ -553,7 +552,7 @@ if ($usevirtualstock) {
 	}
 } else {
 	$sql .= ' HAVING (';
-	$sql .= "(" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ")))";
+	$sql .= "(" . $sqldesiredstock . " >= 0 AND (" . $sqldesiredstock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ")))";
 	$sql .= ' OR';
 	if ($includeproductswithoutdesiredqty == 'on') {
 		$sql .= " ((" . $sqlalertstock . " >= 0 OR " . $sqlalertstock . " IS NULL) AND (" . $db->ifsql($sqlalertstock . " IS NULL", "0", $sqlalertstock) . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')))';

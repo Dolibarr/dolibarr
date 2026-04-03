@@ -1218,7 +1218,7 @@ if (empty($reshook)) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		$warehouseid = (GETPOSTINT('warehouseid') > 0 ? GETPOSTINT('warehouseid') : getDolGlobalInt($constantforkey));	// Get the warehouse id from GETPOSTINT('warehouseid'), otherwise use default setup.
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET batch = '".$db->escape($batch)."', fk_warehouse = ".((int) $warehouseid);
-		$sql .= " WHERE rowid=".((int) $idoflineadded);
+		$sql .= " WHERE rowid = ".((int) $idoflineadded);
 		$db->query($sql);
 	}
 
@@ -1229,7 +1229,7 @@ if (empty($reshook)) {
 			$printer = new dolReceiptPrinter($db);
 		}
 
-		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place);
 		$resql = $db->query($sql);
 		$row = $db->fetch_object($resql);
 		$headerorder = '<html><br><b>'.$langs->trans('Place').' '.$row->label.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
@@ -1254,7 +1254,7 @@ if (empty($reshook)) {
 			}
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid = ".((int) $line->id); //Set to print on printer 1
 				$db->query($sql);
 				$order_receipt_printer1 .= '<tr><td class="left">';
 				if ($line->fk_product) {
@@ -1277,7 +1277,7 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 1
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 		$linestoprint = 0;
@@ -1292,7 +1292,7 @@ if (empty($reshook)) {
 			$count = count($result);
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid=".$line->id; //Set to print on printer 2
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid = ".((int) $line->id); //Set to print on printer 2
 				$db->query($sql);
 				$order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 				if (!empty($line->array_options['options_order_notes'])) {
@@ -1309,7 +1309,7 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 2
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 		$linestoprint = 0;
@@ -1324,7 +1324,7 @@ if (empty($reshook)) {
 			$count = count($result);
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='3' where rowid=".$line->id; //Set to print on printer 3
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='3' where rowid = ".((int) $line->id); //Set to print on printer 3
 				$db->query($sql);
 				$order_receipt_printer3 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 				if (!empty($line->array_options['options_order_notes'])) {
@@ -1341,7 +1341,7 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 3
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture=".$invoice->id; // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 	}
@@ -1899,7 +1899,7 @@ if (empty($mobilepage) || $mobilepage == "invoice") {
 }
 if (!$usediv) {
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-		$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+		$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place);
 		$resql = $db->query($sql);
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
