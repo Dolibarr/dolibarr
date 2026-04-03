@@ -1116,7 +1116,7 @@ class BonPrelevement extends CommonObject
 				return -1;
 			}
 
-			while($obj = $this->db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$thirdpartyBANIds[] = (int) $obj->fk_societe_rib;
 
 				dol_syslog(__METHOD__ . " Found BAN ID to use: ".$obj->fk_societe_rib);
