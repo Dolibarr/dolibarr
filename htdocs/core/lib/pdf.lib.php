@@ -793,7 +793,7 @@ function pdfWriteAdditionnalTitle(&$pdf, $outputlangs, $page_height, $object, &$
  *   	@param	int			$index			Index
  *   	@param	TCPDF		$pdf     		Object PDF
  *      @param	Translate	$outputlangs	Object lang for output
- *      @param	Translate	$outputlangsbis	Object lang for output
+ *      @param	?Translate	$outputlangsbis	Object lang for output
  * 		@param	Facture		$object			Object invoice
  * 		@param	float		$col1x			Col1x
  * 		@param	float		$col2x			Col2x
@@ -1028,19 +1028,21 @@ function pdfWriteVATArray(&$docgenerator, &$index, &$pdf, $outputlangs, $outputl
  *   	@param	int			$index			Index
  *   	@param	TCPDF		$pdf     		Object PDF
  *      @param	Translate	$outputlangs	Object lang for output
- *      @param	Translate	$outputlangsbis	Object lang for output
+ *      @param	?Translate	$outputlangsbis	Object lang for output
  * 		@param	Facture		$object			Object invoice
  * 		@param	float		$col1x			Col1x
  * 		@param	float		$col2x			Col2x
  * 		@param	float		$largcol2		Largcol2
  * 		@param	float		$tab2_top		Tab2_top
  * 		@param	float		$tab2_hl		Tab2_hl
- * 		@param	float		$deja_regle			Already paid
- * 		@param	float		$creditnoteamount	Credit notes amount
- * 		@param	float		$depositsamount		Deposits amount
+ * 		@param	float		$deja_regle				Already paid
+ * 		@param	float		$creditnoteamount		Credit notes amount
+ * 		@param	float		$depositsamount			Deposits amount
+ * 		@param	float		$resteapayer			Remain to pay
+ * 		@param	float		$resteapayer_origin		Remain to pay
  *      @return	void
  */
-function pdfWriteAlreadyPaid(&$docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount)
+function pdfWriteAlreadyPaid(&$docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer, $resteapayer_origin)
 {
 	global $mysoc;
 
