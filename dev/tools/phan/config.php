@@ -80,6 +80,7 @@ $VALID_MODULE_MAPPING = array(
 	'bom' => 'Bom',
 	'bookcal' => 'BookCal',
 	'bookmark' => 'Bookmark',
+	'captureserver' => null, // Not provided by default, no module tests
 	'cashdesk' => null,  // TODO: fill in proper class
 	'category' => 'Categorie',
 	'clicktodial' => 'ClickToDial',
