@@ -495,12 +495,12 @@ if ($action == 'encrypt') {
 					if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity || empty($extrafields->attributes[$elementtype]['entityid'][$attributekey])) {
 						dol_syslog("Loop on each extafields of table ".$arrayofelement['table_element']);
 
-						$sql  = "SELECT te.rowid, te.".$attributekey;
-						$sql .= " FROM ".MAIN_DB_PREFIX.$arrayofelement['table_element']." as t, ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields as te';
+						$sql  = "SELECT te.rowid, te.".$db->sanitize($attributekey);
+						$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element'])." as t, ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element']).'_extrafields as te';
 						$sql .= " WHERE te.fk_object = t.rowid";
-						$sql .= " AND te.".$attributekey." NOT LIKE 'dolcrypt:%'";
-						$sql .= " AND te.".$attributekey." IS NOT NULL";
-						$sql .= " AND te.".$attributekey." <> ''";
+						$sql .= " AND te.".$db->sanitize($attributekey)." NOT LIKE 'dolcrypt:%'";
+						$sql .= " AND te.".$db->sanitize($attributekey)." IS NOT NULL";
+						$sql .= " AND te.".$db->sanitize($attributekey)." <> ''";
 						if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity) {
 							$sql .= " AND t.entity = ".getEntity($arrayofelement['element'], 0);
 						}
@@ -518,7 +518,7 @@ if ($action == 'encrypt') {
 								if ($pass) {
 									$newpassword = dolEncrypt($pass);
 
-									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields';
+									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element']).'_extrafields';
 									$sqlupdate .= " SET ".$attributekey." = '".$db->escape($newpassword)."'";
 									$sqlupdate .= " WHERE rowid = ".((int) $id);
 
