@@ -325,6 +325,25 @@ class CodingPhpTest extends CommonClassTest
 		//exit;
 
 
+		// Check sql string UPDATE ... " . MAIN_DB_PREFIX . $...
+		$ok = true;
+		$matches = array();
+		preg_match_all('/(DELETE|UPDATE)\s*"\s*\.\s*[a-zA-Z_]+\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			if ($val[2] == 'thi') {
+				continue;
+			}
+			if ($val[2] == 'db-') {
+				continue;
+			}
+			var_dump($matches);
+			$ok = false;
+			break;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, 'Found non quoted or not casted var in sql request '.$file['relativename'].' - Bad.');
+		//exit;
+
 		// Check sql string DELETE|OR|AND|WHERE|INSERT ... yyy = ".$xxx
 		//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string, or an (int) if int, when forging sql request.
 		$ok = true;
