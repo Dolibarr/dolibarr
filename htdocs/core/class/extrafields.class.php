@@ -1037,7 +1037,6 @@ class ExtraFields
 	 */
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		// phpcs:enable
 		global $conf,$hookmanager;
 
