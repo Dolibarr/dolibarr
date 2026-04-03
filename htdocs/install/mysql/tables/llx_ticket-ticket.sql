@@ -22,6 +22,7 @@ CREATE TABLE llx_ticket
 	ref			varchar(128) NOT NULL,
 	track_id    varchar(128) NOT NULL,
 	fk_soc		integer DEFAULT 0,
+	fk_member	integer DEFAULT 0,
 	fk_project	integer DEFAULT 0,
 	fk_contract	integer DEFAULT 0,
 	origin_email   varchar(128),

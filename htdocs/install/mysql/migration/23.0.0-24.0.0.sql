@@ -552,5 +552,6 @@ DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 --noqa:enable=PRS
 
+ALTER TABLE llx_ticket ADD COLUMN fk_member integer DEFAULT 0 AFTER fk_soc;
 
 -- end of migration
