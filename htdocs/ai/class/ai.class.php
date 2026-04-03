@@ -60,7 +60,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
-	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to anayze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
 
 
 	/**
