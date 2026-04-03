@@ -2061,7 +2061,7 @@ class pdf_sponge extends ModelePDFFactures
 			$resteapayer_origin = 0;
 		}
 
-		pdfWriteAlreadyPaid($this, $index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer);
+		pdfWriteAlreadyPaid($this, $index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer, $resteapayer_origin);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetTextColor(0, 0, 0);

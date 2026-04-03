@@ -1102,7 +1102,7 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), '', 1);
 		print '</td>';
 	}
 	// Date order
