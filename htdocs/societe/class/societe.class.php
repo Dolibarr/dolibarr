@@ -1116,38 +1116,6 @@ class Societe extends CommonObject
 
 				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
 
-				// update accountancy for this entity
-				if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
-
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
-					$sql .= " fk_soc";
-					$sql .= ", entity";
-					$sql .= ", vat_reverse_charge";
-					$sql .= ", accountancy_code_customer_general";
-					$sql .= ", accountancy_code_customer";
-					$sql .= ", accountancy_code_supplier_general";
-					$sql .= ", accountancy_code_supplier";
-					$sql .= ", accountancy_code_buy";
-					$sql .= ", accountancy_code_sell";
-					$sql .= ") VALUES (";
-					$sql .= $this->id;
-					$sql .= ", ".((int) $conf->entity);
-					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
-					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier_general)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
-					$sql .= ")";
-					$result = $this->db->query($sql);
-					if (!$result) {
-						$error++;
-						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
-					}
-				}
-
 				// Addition of the assigned sales representative
 				if ($this->commercial_id != '' && $this->commercial_id != -1) {
 					$this->add_commercial($user, $this->commercial_id);
