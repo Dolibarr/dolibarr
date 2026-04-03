@@ -865,7 +865,7 @@ if ($action == 'create') {	// aaa
 
 			$epreselected = array();
 			$ekey_in_label = 0;
-			$evalue_as_key = 1;
+			$evalue_as_key = 0;
 			$emorecss = '';
 			$etranslate = 1;
 			$ewidth = '390';
