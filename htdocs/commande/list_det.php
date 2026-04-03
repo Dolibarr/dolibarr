@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2016-2021	Ferran Marcet				<fmarcet@2byte.es>
@@ -1889,10 +1889,6 @@ if ($resql) {
 			print '<td class="nowrap">';
 			if ($obj->warehouse > 0) {
 				print img_picto('', 'stock', 'class="paddingrightonly"');
-			}
-			if (!is_object($formproduct)) {
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-				$formproduct = new FormProduct($db);
 			}
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'], $obj->warehouse, 'none');
 			print "</td>\n";

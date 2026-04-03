@@ -1041,6 +1041,7 @@ class ExtraFields
 		global $conf,$hookmanager;
 
 		if (empty($elementtype)) {
+			dol_syslog(__METHOD__.'::empty elementtype', LOG_DEBUG);
 			return array();
 		}
 
@@ -1089,6 +1090,8 @@ class ExtraFields
 					// We can add this attribute to object. TODO Remove this and return $this->attributes[$elementtype]['label']
 					if ($tab->type != 'separate') {
 						$array_name_label[$tab->name] = $tab->label;
+					} else {
+						$array_name_label[$tab->name] = $tab->type;
 					}
 
 

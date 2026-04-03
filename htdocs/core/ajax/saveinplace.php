@@ -196,7 +196,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$newvalue = ($timestamp / 1000);
 		}
 
-		if (!$error && is_object($object)) {
+		if (!$error && is_object($object)) { // @phpstan-ignore-line as object is already tested as object at the beginning
 			$ret = $object->setValueFrom($field, $newvalue, $object->table_element, (int) $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {

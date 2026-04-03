@@ -1711,7 +1711,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a select list.
 	 *
-	 * @param ?array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>  $fieldOptions  A table of field options
+	 * @param ?array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string,note:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)
