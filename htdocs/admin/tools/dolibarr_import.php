@@ -247,7 +247,7 @@ print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3<
 print '<br>';
 
 print '<span class="opacitymedium">';
-print $langs->trans("RestoreDesc4", 'dolibarr_main_dolcrypt_key or dolibarr_main_instance_unique_id').'<br>';
+print $langs->trans("RestoreDesc4", 'dolibarr_main_instance_unique_id '.$langs->transnoentitiesnoconv("or").' dolibarr_main_dolcrypt_key').'<br>';
 print '</span>';
 
 print '<br>';
