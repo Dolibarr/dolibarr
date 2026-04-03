@@ -1799,7 +1799,7 @@ class BonPrelevement extends CommonObject
 	 * @param   int[]  	$thirdpartyBANIds	If defined, will use this IDs to get the RIB. Otherwise, the first default BAN will be taken.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate(string $format = 'ALL', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, Array $thirdpartyBANIds = [])
+	public function generate(string $format = 'ALL', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, array $thirdpartyBANIds = [])
 	{
 		global $conf, $langs, $mysoc;
 
