@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Juanjo Menent 		    <jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke          <Charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,8 +221,22 @@ if (isModEnabled('recruitment')) {
 		}
 	}
 }
+
 print '</td></tr>';
 
+if (isModEnabled('webportal')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - WebPortal public form</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print '</td></tr>';
 print '</table>';
 print '</div>';
 
@@ -242,7 +257,9 @@ if (isModEnabled('member') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_ME
 if (isModEnabled('don') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
 	$showavailablecaptcha = 1;
 }
-
+if (isModEnabled('webportal') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) {
+	$showavailablecaptcha = 1;
+}
 $selectedcaptcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 
 if ($showavailablecaptcha) {
