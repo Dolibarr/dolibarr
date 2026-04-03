@@ -470,7 +470,6 @@ MailToSendSupplierRequestForQuotation=Solicitud de presupuesto
 MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas de proveedores
 MailToSendContract=Los contratos
-MailToExpenseReport=Informe de gastos
 MailToProject=Projectos
 ByDefaultInList=Mostrar por defecto en la vista de lista
 YouUseLastStableVersion=Usas la última versión estable

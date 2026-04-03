@@ -71,7 +71,6 @@ EnableBarOrRestaurantFeatures=Activer les fonctionnalités pour bar ou restauran
 ConfirmDeletionOfThisPOSSale=Confirmez-vous la suppression de cette vente en cours?
 ConfirmDiscardOfThisPOSSale=Voulez-vous écarter cette vente en cours?
 NoClientErrorMessage=Veuillez sélectionner un client d'abord
-History=Historique
 ValidateAndClose=Valider et fermer
 Terminal=Terminal
 NumberOfTerminals=Nombre de terminaux

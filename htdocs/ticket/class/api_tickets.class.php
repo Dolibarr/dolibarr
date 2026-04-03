@@ -384,18 +384,31 @@ class Tickets extends DolibarrApi
 	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
 	 * @param array $request_data   Request data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 * @return int  ID of ticket
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
+	 * @return int|array  ID of ticket, or ticket/action IDs when requested
+	 * @phan-return int|array{ticket_id:int,action_id:int}
+	 * @phpstan-return int|array{ticket_id:int,action_id:int}
 	 */
 	public function postNewMessage($request_data = null)
 	{
-		$ticketstatic = new Ticket($this->db);
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validateMessage($request_data);
+
+		$return_action_id = false;
+		if (isset($request_data['return_action_id'])) {
+			$return_action_id = !empty($request_data['return_action_id']);
+			unset($request_data['return_action_id']);
+		}
+
+		$attachments = array();
+		if (isset($request_data['attachments']) && is_array($request_data['attachments'])) {
+			$attachments = $request_data['attachments'];
+			unset($request_data['attachments']);
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -412,8 +425,83 @@ class Tickets extends DolibarrApi
 			throw new RestException(404, 'Ticket not found');
 		}
 		$this->ticket->message = $ticketMessageText;
-		if (!$this->ticket->createTicketMessage(DolibarrApiAccess::$user)) {
+
+		$filename_list = array();
+		$mimetype_list = array();
+		$mimefilename_list = array();
+		if (!empty($attachments)) {
+			global $conf;
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+			$destdir = $conf->ticket->dir_output.'/'.$this->ticket->ref;
+			if (!dol_is_dir($destdir) && dol_mkdir($destdir) < 0) {
+				throw new RestException(500, 'Error while trying to create directory '.$destdir);
+			}
+
+			foreach ($attachments as $attachment) {
+				if (!is_array($attachment) || empty($attachment['filename'])) {
+					continue;
+				}
+
+				$filename = dol_sanitizeFileName($attachment['filename']);
+				if (empty($filename)) {
+					continue;
+				}
+
+				$filecontent = isset($attachment['filecontent']) ? $attachment['filecontent'] : '';
+				$fileencoding = isset($attachment['fileencoding']) ? $attachment['fileencoding'] : '';
+				$content = ($fileencoding === 'base64') ? base64_decode($filecontent) : $filecontent;
+				if ($content === false) {
+					throw new RestException(400, 'Failed to decode attachment '.$filename);
+				}
+
+				$destfile = $destdir.'/'.$filename;
+				if (is_file($destfile)) {
+					$pathinfo = pathinfo($filename);
+					$suffix = ' - '.dol_print_date(dol_now(), 'dayhourlog');
+					$extension = !empty($pathinfo['extension']) ? '.'.$pathinfo['extension'] : '';
+					$basename = !empty($pathinfo['filename']) ? $pathinfo['filename'] : preg_replace('/\.[^.]+$/', '', $filename);
+					$destfile = $destdir.'/'.$basename.$suffix.$extension;
+				}
+
+				$destfiletmp = DOL_DATA_ROOT.'/admin/temp/'.basename($destfile);
+				if (!dol_is_dir(dirname($destfiletmp))) {
+					dol_mkdir(dirname($destfiletmp));
+				}
+
+				$fhandle = @fopen($destfiletmp, 'w');
+				if (!$fhandle) {
+					throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
+				}
+				$nbofbyteswrote = fwrite($fhandle, $content);
+				fclose($fhandle);
+				if ($nbofbyteswrote === false) {
+					throw new RestException(500, "Failed to write file '".$destfiletmp."'");
+				}
+
+				$moreinfo = array(
+					'description' => 'File uploaded using ticket API',
+					'src_object_type' => $this->ticket->element,
+					'src_object_id' => $this->ticket->id,
+					'gen_or_uploaded' => 'uploaded'
+				);
+				$resultmove = dol_move($destfiletmp, $destfile, '0', 1, 0, 1, $moreinfo);
+				if (!$resultmove) {
+					throw new RestException(500, "Failed to move file into '".$destfile."'");
+				}
+
+				$filename_list[] = $destfile;
+				$mimefilename_list[] = basename($destfile);
+				$mimetype_list[] = !empty($attachment['mimetype']) ? $attachment['mimetype'] : '';
+			}
+		}
+
+		$actionid = $this->ticket->createTicketMessage(DolibarrApiAccess::$user, 0, $filename_list, $mimetype_list, $mimefilename_list);
+		if ($actionid <= 0) {
 			throw new RestException(500, 'Error when creating ticket');
+		}
+		if ($return_action_id) {
+			return array('ticket_id' => $this->ticket->id, 'action_id' => $actionid);
 		}
 		return $this->ticket->id;
 	}
