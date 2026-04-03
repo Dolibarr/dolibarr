@@ -787,6 +787,335 @@ function pdfWriteAdditionnalTitle(&$pdf, $outputlangs, $page_height, $object, &$
 
 
 /**
+ *   	Add some information from the blockedlog module
+ *
+ *   	@param	CommonDocGenerator	$docgenerator	Doc generator
+ *   	@param	int			$index			Index
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ *      @param	Translate	$outputlangsbis	Object lang for output
+ * 		@param	Facture		$object			Object invoice
+ * 		@param	float		$col1x			Col1x
+ * 		@param	float		$col2x			Col2x
+ * 		@param	float		$largcol2		Largcol2
+ * 		@param	float		$tab2_top		Tab2_top
+ * 		@param	float		$tab2_hl		Tab2_hl
+ *      @return	void
+ */
+function pdfWriteVATArray(&$docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl)
+{
+	global $mysoc;
+
+	$tmpatleastoneratenotnull = 0;
+
+	// Local tax 1 before VAT
+	foreach ($docgenerator->localtax1 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('1', '3', '5'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Local tax 2 before VAT
+	foreach ($docgenerator->localtax2 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('1', '3', '5'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Situations totals might be wrong on huge amounts with old mode 1
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1 && $object->situation_cycle_ref && $object->situation_counter > 1) {
+		$sum_pdf_tva = 0;
+		foreach ($docgenerator->tva as $tvakey => $tvaval) {
+			$sum_pdf_tva += $tvaval; // sum VAT amounts to compare to object
+		}
+
+		if ($sum_pdf_tva != $object->total_tva) { // apply coef to recover the VAT object amount (the good one)
+			if (!empty($sum_pdf_tva)) {
+				$coef_fix_tva = $object->total_tva / $sum_pdf_tva;
+			} else {
+				$coef_fix_tva = 1;
+			}
+
+
+			foreach ($docgenerator->tva as $tvakey => $tvaval) {
+				$docgenerator->tva[$tvakey] = $tvaval * $coef_fix_tva;
+			}
+			foreach ($docgenerator->tva_array as $tvakey => $tvaval) {
+				$docgenerator->tva_array[$tvakey]['amount'] = $tvaval['amount'] * $coef_fix_tva;
+			}
+		}
+	}
+
+	if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {	// by default, we show detail of vat here
+		// VAT
+		foreach ($docgenerator->tva_array as $tvakey => $tvaval) {
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
+				$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', $tvakey)) {
+					$tvakey = str_replace('*', '', $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+				if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
+					$totalvat .= vatrate((string) $tvaval['vatrate'], true).$tvacompl;
+				} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
+					$totalvat .= $tvaval['vatcode'].$tvacompl;
+				} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) $tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+
+				$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($tvaval['amount'], 'MT'), 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Local tax 1 after VAT
+	foreach ($docgenerator->localtax1 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('2', '4', '6'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Local tax 2 after VAT
+	foreach ($docgenerator->localtax2 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('2', '4', '6'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			// retrieve global local tax
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	$docgenerator->atleastoneratenotnull = $tmpatleastoneratenotnull;
+}
+
+
+/**
+ *   	Add some information from the blockedlog module
+ *
+ *   	@param	CommonDocGenerator	$docgenerator	Doc generator
+ *   	@param	int			$index			Index
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ *      @param	Translate	$outputlangsbis	Object lang for output
+ * 		@param	Facture		$object			Object invoice
+ * 		@param	float		$col1x			Col1x
+ * 		@param	float		$col2x			Col2x
+ * 		@param	float		$largcol2		Largcol2
+ * 		@param	float		$tab2_top		Tab2_top
+ * 		@param	float		$tab2_hl		Tab2_hl
+ * 		@param	float		$deja_regle			Already paid
+ * 		@param	float		$creditnoteamount	Credit notes amount
+ * 		@param	float		$depositsamount		Deposits amount
+ *      @return	void
+ */
+function pdfWriteAlreadyPaid(&$docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount)
+{
+	global $mysoc;
+
+	$useborder = 0;
+
+	if ((($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && !getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS'))
+		|| isALNERunningVersion()) {
+		// Already paid + Deposits
+		$index++;
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Paid").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("Paid") : ''), 0, 'L', false);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+		//if (!isModEnabled("multicurrency") || $object->multicurrency_tx == 1 || getDolGlobalInt('MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF') == 0) {
+		$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', false);
+		//} else {
+		//		$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', false);
+		//
+		//		$index++;
+		//		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+		//		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Paid").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("Paid") : '').' ('.$outputlangs->getCurrencySymbol($mysoc->currency_code).')', $useborder, 'L', true);
+
+		//		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+		//		$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle_origin + $depositsamount_origin, 0, $outputlangs, 1, -1, -1, $mysoc->currency_code), $useborder, 'L', true);
+		//}
+
+		// Credit note
+		if ($creditnoteamount) {
+			$labeltouse = ($outputlangs->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangs->transnoentities("CreditNotesOrExcessReceived") : $outputlangs->transnoentities("CreditNotes");
+			$labeltouse .= (is_object($outputlangsbis) ? (' / '.(($outputlangsbis->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangsbis->transnoentities("CreditNotesOrExcessReceived") : $outputlangsbis->transnoentities("CreditNotes"))) : '');
+			$index++;
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $labeltouse, 0, 'L', false);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', false);
+		}
+
+		if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
+			$index++;
+			$pdf->SetFillColor(255, 255, 255);
+
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', true);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT'), 0, $outputlangs), $useborder, 'R', true);
+
+			$resteapayer = 0;
+			$resteapayer_origin = 0;
+		}
+
+		$index++;
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFillColor(224, 224, 224);
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : ''), $useborder, 'L', true);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+		if (!isModEnabled("multicurrency") || $object->multicurrency_tx == 1 || getDolGlobalInt('MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF') == 0) {
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', true);
+		} else {
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', true);
+
+			//$pdf->MultiCell($largcol2, $tab2_hl, '('.price($resteapayer_origin, 0, $outputlangs, 1, -1, 'MT', $mysoc->currency_code).')   '.price($resteapayer, 0, $outputlangs), 0, 'R', true);
+			$index++;
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->SetFillColor(224, 224, 224);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : '').' ('.$outputlangs->getCurrencySymbol($mysoc->currency_code).')', $useborder, 'L', true);
+
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer_origin, 0, $outputlangs, 1, -1, -1, $mysoc->currency_code), $useborder, 'L', true);
+		}
+	}
+}
+
+
+/**
  *	Return array of possible substitutions for PDF content (without external module substitutions).
  *
  *	@param	Translate	    $outputlangs	Output language
