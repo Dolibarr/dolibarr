@@ -876,14 +876,14 @@ if ($action == 'create') {	// aaa
 			// Event attendees email
 			print '<tr class="field_addattendees">';
 			print '<td>&#8627;'.$langs->trans("Add").' '.$langs->trans("EmailAttendee").'</td><td>'.$langs->trans("Attendees").' '.$langs->trans("Statut").':&#8194;';
-			print $form->multiselectarray('EmailAttendee', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo );
+			print $form->multiselectarray('EmailAttendee', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo);
 			print '<span class="fa fa-info-circle valignmiddle paddingleft" title="Will add '.$langs->trans("EmailAttendee").' of the '.$langs->trans("Event").' '.$langs->trans("Attendees").' with the selected '.$langs->trans("Statut").'"></span></a>';
 			print '</td></tr>';
 
 			// Event attendees company email
 			print '<tr class="field_addcompanymail">';
 			print '<td>&#8627;'.$langs->trans("Add").' '.$langs->trans("EmailCompany").'</td><td>'.$langs->trans("Attendees").' '.$langs->trans("Statut").':&#8194;';
-			print $form->multiselectarray('EmailCompany', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo );
+			print $form->multiselectarray('EmailCompany', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo);
 			print '<span class="fa fa-info-circle valignmiddle paddingleft" title="Will add any '.$langs->trans("EmailCompany").' of the '.$langs->trans("Event").' '.$langs->trans("Attendees").' with the selected '.$langs->trans("Statut").'"></span></a>';
 			print '</td></tr>';
 
@@ -891,7 +891,7 @@ if ($action == 'create') {	// aaa
 			$ewidth = '465';
 			print '<tr class="field_addbooth">';
 			print '<td>&#8627;'.$langs->trans("Add").' '.$langs->trans("ConferenceOrBooth").' <small>('.$langs->trans("ThirdParties").')</small></td><td>'.$langs->trans("Statut").':&#8194;';
-			print $form->multiselectarray('ConferenceOrBooth', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo );
+			print $form->multiselectarray('ConferenceOrBooth', $attendee->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo);
 			print '<span class="fa fa-info-circle valignmiddle paddingleft" title="Will add any '.$langs->trans("ThirdParties").' of the '.$langs->trans("ListOfConferencesOrBooths").' with the selected '.$langs->trans("Statut").'"></span></a>';
 			print '</td></tr>';
 		}
