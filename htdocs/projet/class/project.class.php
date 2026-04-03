@@ -1929,7 +1929,7 @@ class Project extends CommonObject
 	public function update_element($tableName, $elementSelectId)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
@@ -1965,14 +1965,14 @@ class Project extends CommonObject
 	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
-			$sql .= " SET fk_project=NULL";
-			$sql .= " WHERE id=".((int) $elementSelectId);
+			$sql .= " SET fk_project = NULL";
+			$sql .= " WHERE id = ".((int) $elementSelectId);
 		} else {
-			$sql .= " SET ".$projectfield."=NULL";
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
