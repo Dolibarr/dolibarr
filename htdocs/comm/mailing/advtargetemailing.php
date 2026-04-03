@@ -845,7 +845,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>'."\n";
-		print $formadvtargetemaling->advMultiselectarray('cust_typeent', $formcompany->typent_array(0, " AND id <> 0"), $array_query['cust_typeent']);
+		print $formadvtargetemaling->advMultiselectarray('cust_typeent', $formcompany->typent_array(0, "(id:<>:0)"), $array_query['cust_typeent']);
 		print '</td><td>'."\n";
 		print '</td></tr>'."\n";
 
@@ -855,7 +855,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray("cust_effectif_id", $formcompany->effectif_array(0, " AND id <> 0"), $array_query['cust_effectif_id']);
+		print $formadvtargetemaling->advMultiselectarray("cust_effectif_id", $formcompany->effectif_array(0, "(id:<>:0)"), $array_query['cust_effectif_id']);
 		print '</td><td>'."\n";
 		print '</td></tr>'."\n";
 
