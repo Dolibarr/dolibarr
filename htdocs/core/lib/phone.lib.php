@@ -76,9 +76,8 @@ function dol_build_phone($db, $code, $number)
 
 	if ($code !== '') {
 		// Strip national trunk prefix (e.g. leading "0" for France)
-		$phone_code_int = (int) ltrim($code, '+');
 		$sql = "SELECT trunk_prefix FROM ".$db->prefix()."c_country";
-		$sql .= " WHERE phone_code = ".$phone_code_int;
+		$sql .= " WHERE phone_code = ".((int) ltrim($code, '+'));
 		$sql .= " AND trunk_prefix IS NOT NULL AND trunk_prefix != ''";
 		$sql .= " LIMIT 1";
 		$resql = $db->query($sql);
@@ -115,9 +114,8 @@ function dol_get_trunk_prefix($db, $phone_code)
 		return '';
 	}
 
-	$phone_code_int = (int) ltrim($phone_code, '+');
 	$sql = "SELECT trunk_prefix FROM ".$db->prefix()."c_country";
-	$sql .= " WHERE phone_code = ".$phone_code_int;
+	$sql .= " WHERE phone_code = ".((int) ltrim($phone_code, '+'));
 	$sql .= " AND trunk_prefix IS NOT NULL AND trunk_prefix != ''";
 	$sql .= " LIMIT 1";
 	$resql = $db->query($sql);

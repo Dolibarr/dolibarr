@@ -1159,7 +1159,7 @@ class Form
 				$codeArray[$i]['rowid'] = $obj->rowid;
 				$codeArray[$i]['code'] = $obj->code;
 				$codeArray[$i]['label'] = $translabel;
-				$codeArray[$i]['phone_code'] = !empty($obj->phone_code) ? '+'.$obj->phone_code : '';
+				$codeArray[$i]['phone_code'] = '+'.$obj->phone_code;
 				$codeArray[$i]['favorite'] = $obj->favorite;
 				$codeArray[$i]['trunk_prefix'] = $obj->trunk_prefix;
 				$favorite[$i] = $obj->favorite;
@@ -1202,7 +1202,7 @@ class Form
 					continue;
 				}
 
-				if ($row['favorite'] && $row['code']) {
+				if ($row['favorite']) {
 					$atleastonefavorite++;
 				}
 				if (empty($row['favorite']) && $atleastonefavorite) {
