@@ -1978,7 +1978,7 @@ class Project extends CommonObject
 	 */
 	public function shiftTaskDate($old_project_dt_start)
 	{
-		global $user, $langs, $conf;
+		global $user;
 
 		$error = 0;
 		$result = 0;
