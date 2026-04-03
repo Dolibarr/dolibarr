@@ -648,6 +648,10 @@ class pdf_octopus extends ModelePDFFactures
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
 
+				$pdf_sub_options = array();
+				$pdf_sub_options['titleshowuponpdf'] = 1;
+				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
+
 				for ($i = 0; $i < $nblines; $i++) {
 					$parameters = array('i' => $i, 'object' => $object); // Ajoute 'object' ici
 					$reshook = $hookmanager->executeHooks('beforePrintPDFline', $parameters, $this, $action);
