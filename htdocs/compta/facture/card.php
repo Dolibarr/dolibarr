@@ -4473,7 +4473,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Date point of tax
-		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
+		if (getDolGlobalBool('INVOICE_POINTOFTAX_DATE')) {
 			print '<tr><td class="fieldrequired">'.$langs->trans('DatePointOfTax').'</td><td colspan="2">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
 			print $form->selectDate($date_pointoftax ? $date_pointoftax : -1, 'date_pointoftax', 0, 0, 0, "add", 1, 1);
@@ -5491,7 +5491,7 @@ if ($action == 'create') {
 
 		print '</tr>';
 
-		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
+		if (getDolGlobalBool('INVOICE_POINTOFTAX_DATE')) {
 			// Date invoice point of tax
 			print '<tr><td>';
 			print '<table class="nobordernopadding centpercent"><tr><td>';

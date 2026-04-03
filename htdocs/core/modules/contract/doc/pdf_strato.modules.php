@@ -156,7 +156,7 @@ class pdf_strato extends ModelePDFContract
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -254,7 +254,7 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Contract")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+				if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -273,7 +273,7 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				// Display notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
@@ -401,7 +401,7 @@ class pdf_strato extends ModelePDFContract
 									if (!empty($tplidx)) {
 										$pdf->useTemplate($tplidx);
 									}
-									if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+									if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 										$this->_pagehead($pdf, $object, 0, $outputlangs);
 									}
 									$pdf->setPage($pageposafter + 1);
@@ -448,7 +448,7 @@ class pdf_strato extends ModelePDFContract
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-							if (!getDolGlobalString('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							if (!empty($tplidx)) {
@@ -728,14 +728,14 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_contrat, "day", false, $outputlangs, true), '', 'R');
 
-		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && $object->thirdparty->code_client) {
+		if (!getDolGlobalBool('MAIN_PDF_HIDE_CUSTOMER_CODE') && $object->thirdparty->code_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
-		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
+		if (!getDolGlobalBool('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -764,13 +764,13 @@ class pdf_strato extends ModelePDFContract
 			// Show sender
 			$posy = 42;
 			$posx = $this->marge_gauche;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 			$hautcadre = 40;
 
 			// Show sender frame
-			if (!getDolGlobalString('MAIN_PDF_NO_SENDER_FRAME')) {
+			if (!getDolGlobalBool('MAIN_PDF_NO_SENDER_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx, $posy - 5);
@@ -781,7 +781,7 @@ class pdf_strato extends ModelePDFContract
 			}
 
 			// Show sender name
-			if (!getDolGlobalString('MAIN_PDF_HIDE_SENDER_NAME')) {
+			if (!getDolGlobalBool('MAIN_PDF_HIDE_SENDER_NAME')) {
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFont('', 'B', $default_font_size);
@@ -819,19 +819,19 @@ class pdf_strato extends ModelePDFContract
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact) ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
 
 			// Show recipient
-			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
+			$widthrecbox = getDolGlobalBool('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalBool('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posy += $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 
 			// Show recipient frame
-			if (!getDolGlobalString('MAIN_PDF_NO_RECIPENT_FRAME')) {
+			if (!getDolGlobalBool('MAIN_PDF_NO_RECIPENT_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);

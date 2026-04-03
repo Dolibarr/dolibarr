@@ -166,7 +166,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -184,8 +184,8 @@ class pdf_standard_asset extends ModelePDFAsset
 		$nblines = (is_array($object->lines) ? count($object->lines) : 0);
 
 		$hidetop = 0;
-		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
+		if (getDolGlobalBool('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
+			$hidetop = getDolGlobalBool('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
 		if ($conf->asset->dir_output.'/asset') {
@@ -255,7 +255,7 @@ class pdf_standard_asset extends ModelePDFAsset
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset((string) $object->thirdparty->name));
-				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+				if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -290,10 +290,10 @@ class pdf_standard_asset extends ModelePDFAsset
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 				$tab_height = 130 - $top_shift;
 				$tab_height_newpage = 150;
-				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+				if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 					$tab_height_newpage -= $top_shift;
 				}
 
@@ -337,7 +337,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
@@ -395,7 +395,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						$height_note = $posyafter - $tab_top_newpage;
@@ -416,7 +416,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 
@@ -611,7 +611,7 @@ class pdf_standard_asset extends ModelePDFAsset
 					$nexY = max($nexY, $posYAfterImage);
 
 					// Add line
-					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
+					if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
@@ -631,7 +631,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -649,7 +649,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -887,7 +887,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		// 	$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
 		// }
 
-		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
+		if (getDolGlobalBool('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
@@ -897,7 +897,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			}
 		}
 
-		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
+		if (getDolGlobalBool('PDF_SHOW_PROJECT')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
@@ -926,7 +926,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		}
 
 		// Get contact
-		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
+		if (getDolGlobalBool('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$usertmp = new User($this->db);
@@ -953,15 +953,15 @@ class pdf_standard_asset extends ModelePDFAsset
 			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalBool('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posy += $top_shift;
 			$posx = $this->marge_gauche;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 
-			$hautcadre = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
-			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
+			$hautcadre = getDolGlobalBool('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
+			$widthrecbox = getDolGlobalBool('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
 
 
 			// Show sender frame
@@ -1009,14 +1009,14 @@ class pdf_standard_asset extends ModelePDFAsset
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
 
 			// Show recipient
-			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
+			$widthrecbox = getDolGlobalBool('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalBool('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posy += $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 
@@ -1134,7 +1134,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			'border-left' => true, // add left line separator
 		);
 
-		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
+		if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$this->cols['vat']['status'] = true;
 		}
 

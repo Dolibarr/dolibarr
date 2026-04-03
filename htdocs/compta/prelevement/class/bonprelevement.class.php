@@ -2462,7 +2462,7 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				<RmtInf>' . $CrLf;
 
 				// Structured data for Belgium
-				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $mysoc->country_code == 'BE') {
+				if (getDolGlobalBool('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $mysoc->country_code == 'BE') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
 
 					$invoicestatic = new Facture($this->db);

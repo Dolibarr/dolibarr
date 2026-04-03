@@ -962,7 +962,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		}
 		$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+		if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 

@@ -2120,7 +2120,7 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	global $hookmanager;
 
 	$sign = 1;
-	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+	if (isset($object->type) && $object->type == 2 && getDolGlobalBool('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
 
@@ -2163,7 +2163,7 @@ function pdf_getlineupwithtax($object, $i, $outputlangs, $hidedetails = 0)
 	global $hookmanager;
 
 	$sign = 1;
-	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+	if (isset($object->type) && $object->type == 2 && getDolGlobalBool('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
 
@@ -2517,7 +2517,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	global $hookmanager;
 
 	$sign = 1;
-	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+	if (isset($object->type) && $object->type == 2 && getDolGlobalBool('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
 
@@ -2567,7 +2567,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 	global $hookmanager;
 
 	$sign = 1;
-	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+	if (isset($object->type) && $object->type == 2 && getDolGlobalBool('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
 
@@ -2848,7 +2848,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 	global $hookmanager;
 
 	$sign = 1;
-	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+	if (isset($object->type) && $object->type == 2 && getDolGlobalBool('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
 	if ($object->lines[$i]->special_code == 3) {

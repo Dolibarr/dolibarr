@@ -8920,7 +8920,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 
 	// Define $arrayforoldpath that is module path using a hierarchy on more than 1 level.
 	$arrayforoldpath = array('cheque' => 2, 'category' => 2, 'supplier_invoice' => 2, 'invoice_supplier' => 2, 'mailing' => 2, 'supplier_payment' => 2);
-	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+	if (getDolGlobalBool('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		$arrayforoldpath['product'] = 2;
 	}
 
@@ -10720,7 +10720,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ONLINE_PAYMENT_URL__'] = $paymenturl;
 
 				// Show structured communication
-				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
+				if (getDolGlobalBool('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
 					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication($object->ref, $object->type);
 				}

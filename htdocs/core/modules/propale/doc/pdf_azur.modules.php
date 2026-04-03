@@ -138,7 +138,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 		$this->posxdiscount = 162;
 		$this->postotalht = 174;
-		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') || getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
+		if (getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') || getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$this->posxtva = $this->posxup;
 		}
 		$this->posxpicture = $this->posxtva - getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20); // width of images
@@ -194,7 +194,7 @@ class pdf_azur extends ModelePDFPropales
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -231,7 +231,7 @@ class pdf_azur extends ModelePDFPropales
 				$objphoto->fetch($object->lines[$i]->fk_product);
 				//var_dump($objphoto->ref);exit;
 				$pdir = array();
-				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+				if (getDolGlobalBool('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
@@ -343,7 +343,7 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfCommercialProposalTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+				if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -390,7 +390,7 @@ class pdf_azur extends ModelePDFPropales
 
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -415,7 +415,7 @@ class pdf_azur extends ModelePDFPropales
 
 				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
+				if (getDolGlobalBool('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
 					// Get first sale rep
 					if (is_object($object->thirdparty)) {
 						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
@@ -497,7 +497,7 @@ class pdf_azur extends ModelePDFPropales
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						$pdf->setPage($pageposbefore + 1);
@@ -541,7 +541,7 @@ class pdf_azur extends ModelePDFPropales
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+								if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
@@ -577,7 +577,7 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// VAT Rate
-					if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
+					if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxtva - 5, $curY);
 						$pdf->MultiCell($this->posxup - $this->posxtva + 4, 3, $vat_rate, 0, 'R');
@@ -684,7 +684,7 @@ class pdf_azur extends ModelePDFPropales
 					}
 
 					// Add line
-					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
+					if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
@@ -706,7 +706,7 @@ class pdf_azur extends ModelePDFPropales
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -726,7 +726,7 @@ class pdf_azur extends ModelePDFPropales
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -824,7 +824,7 @@ class pdf_azur extends ModelePDFPropales
 								foreach ($filetomerge->lines as $linefile) {
 									$filetomerge_dir = null;
 									if (!empty($linefile->id) && !empty($linefile->file_name)) {
-										if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+										if (getDolGlobalBool('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											} elseif (isModEnabled("service")) {
@@ -1053,7 +1053,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->owner_name), 0, 'L', false);
 						$posy = $pdf->GetY() + 1;
 
-						if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
+						if (!getDolGlobalBool('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
 							$pdf->SetXY($this->marge_gauche, $posy);
 							$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', false);
@@ -1066,7 +1066,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', false);
 						$posy = $pdf->GetY() + 1;
 
-						if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
+						if (!getDolGlobalBool('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
 							$pdf->SetXY($this->marge_gauche, $posy);
 							$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', false);
@@ -1191,9 +1191,9 @@ class pdf_azur extends ModelePDFPropales
 		$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 
 		$this->atleastoneratenotnull = 0;
-		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
+		if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
-			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
+			if (getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
 				//Local tax 1 before VAT
@@ -1497,7 +1497,7 @@ class pdf_azur extends ModelePDFPropales
 			//}
 		}
 
-		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
+		if (!getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalBool('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				// Not do -3 and +3 instead of -1 -1 to have more space for text 'Sales tax'
@@ -1642,7 +1642,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
 		}
 
-		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
+		if (getDolGlobalBool('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
@@ -1652,7 +1652,7 @@ class pdf_azur extends ModelePDFPropales
 			}
 		}
 
-		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
+		if (getDolGlobalBool('PDF_SHOW_PROJECT')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
@@ -1680,14 +1680,14 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateEndPropal")." : ".dol_print_date($object->fin_validite, $displaydate, false, $outputlangs, true), '', 'R');
 
-		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && $object->thirdparty->code_client) {
+		if (!getDolGlobalBool('MAIN_PDF_HIDE_CUSTOMER_CODE') && $object->thirdparty->code_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
-		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
+		if (!getDolGlobalBool('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -1695,7 +1695,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		// Get contact
-		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
+		if (getDolGlobalBool('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$usertmp = new User($this->db);
@@ -1739,13 +1739,13 @@ class pdf_azur extends ModelePDFPropales
 			// Show sender
 			$posy = 42 + $top_shift;
 			$posx = $this->marge_gauche;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 			$hautcadre = 40;
 
 			// Show sender frame
-			if (!getDolGlobalString('MAIN_PDF_NO_SENDER_FRAME')) {
+			if (!getDolGlobalBool('MAIN_PDF_NO_SENDER_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx, $posy - 5);
@@ -1757,7 +1757,7 @@ class pdf_azur extends ModelePDFPropales
 			}
 
 			// Show company name
-			if (!getDolGlobalString('MAIN_PDF_HIDE_SENDER_NAME')) {
+			if (!getDolGlobalBool('MAIN_PDF_HIDE_SENDER_NAME')) {
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetFont('', 'B', $default_font_size);
 				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
@@ -1797,12 +1797,12 @@ class pdf_azur extends ModelePDFPropales
 			}
 			$posy = 42 + $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
+			if (getDolGlobalBool('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 
 			// Show recipient frame
-			if (!getDolGlobalString('MAIN_PDF_NO_RECIPENT_FRAME')) {
+			if (!getDolGlobalBool('MAIN_PDF_NO_RECIPENT_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);

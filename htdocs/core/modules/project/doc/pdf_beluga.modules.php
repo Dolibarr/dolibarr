@@ -213,7 +213,7 @@ class pdf_beluga extends ModelePDFProjects
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -293,7 +293,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
-				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+				if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -312,7 +312,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -568,7 +568,7 @@ class pdf_beluga extends ModelePDFProjects
 											if (!empty($tplidx)) {
 												$pdf->useTemplate($tplidx);
 											}
-											if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+											if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 												$this->_pagehead($pdf, $object, 0, $outputlangs);
 											}
 											$pdf->setPage($pageposafter + 1);
@@ -593,7 +593,7 @@ class pdf_beluga extends ModelePDFProjects
 											if (!empty($tplidx)) {
 												$pdf->useTemplate($tplidx);
 											}
-											if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+											if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 												$this->_pagehead($pdf, $object, 0, $outputlangs);
 											}
 											$pdf->setPage($pageposafter + 1);
@@ -723,7 +723,7 @@ class pdf_beluga extends ModelePDFProjects
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation($this->orientation, true, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+						if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {

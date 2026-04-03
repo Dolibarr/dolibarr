@@ -146,7 +146,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$object->fetch_thirdparty();
 
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (getDolGlobalString('MAIN_USE_FPDF')) {
+		if (getDolGlobalBool('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -232,7 +232,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBookkeeping"));
-		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+		if (getDolGlobalBool('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
@@ -251,7 +251,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pdf->SetTextColor(0, 0, 0);
 
 		$tab_top = 40;	// position of top tab
-		$tab_top_newpage = (getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 10 : $tab_top);
+		$tab_top_newpage = (getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD') ? 10 : $tab_top);
 
 		$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -310,7 +310,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 				}
 
 				// Add the title line
-				if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+				if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES')) {
 					$this->addDashLine($pdf, $pdf->getPage(), $nexY);
 				}
 				$this->addTitleLine(
@@ -367,7 +367,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						//if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->setPage($pageposafter + 1);
 					}
 				} else {
@@ -445,7 +445,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this);
 
 			// Add line
-			if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
+			if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 				$this->addDashLine($pdf, $pageposafter, $nexY);
 			}
 
@@ -461,7 +461,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 				$pagenb++;
 				$pdf->setPage($pagenb);
 				$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+				if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 					$this->_pagehead($pdf, $object, 0, $outputlangs);
 				}
 				if (!empty($tplidx)) {
@@ -481,7 +481,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+				if (!getDolGlobalBool('MAIN_PDF_DONOTREPEAT_HEAD')) {
 					$this->_pagehead($pdf, $object, 0, $outputlangs);
 				}
 			}
@@ -490,7 +490,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		// Add total line for last group
 		if (!empty($journal)) {
 			// Add line
-			if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+			if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES')) {
 				$this->addDashLine($pdf, $pdf->getPage(), $nexY);
 			}
 			$this->addTotalLine(
@@ -506,7 +506,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		}
 
 		// Add grand total line
-		if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+		if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES')) {
 			$this->addDashLine($pdf, $pdf->getPage(), $nexY);
 		}
 		$this->addTotalLine(
@@ -962,7 +962,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$nexY = max($pdf->GetY(), $nexY);
 		}
 
-		if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+		if (getDolGlobalBool('MAIN_PDF_DASH_BETWEEN_LINES')) {
 			$this->addDashLine($pdf, $pageposafter, $nexY);
 		}
 	}
