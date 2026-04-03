@@ -1037,10 +1037,12 @@ class ExtraFields
 	 */
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		// phpcs:enable
 		global $conf,$hookmanager;
 
 		if (empty($elementtype)) {
+			dol_syslog(__METHOD__.'::empty elementtype', LOG_DEBUG);
 			return array();
 		}
 
@@ -1055,6 +1057,7 @@ class ExtraFields
 		}
 
 		if ($elementtype != 'all' && isset($this->attributes[$elementtype]) && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload && isset($this->attributes[$elementtype]['label'])) {
+			dol_syslog(__METHOD__.'::long if', LOG_DEBUG);
 			return $this->attributes[$elementtype]['label'];
 		}
 
@@ -1089,6 +1092,8 @@ class ExtraFields
 					// We can add this attribute to object. TODO Remove this and return $this->attributes[$elementtype]['label']
 					if ($tab->type != 'separate') {
 						$array_name_label[$tab->name] = $tab->label;
+					} else {
+						$array_name_label[$tab->name] = $tab->type;
 					}
 
 
