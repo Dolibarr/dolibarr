@@ -92,6 +92,11 @@ if ($action == 'presend') {
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
+		// When the email form is resubmitted (e.g. Apply button to select a template),
+		// lang_id is not in POST but langsmodels is. Use it to preserve the language selection.
+		if (empty($newlang) && GETPOST('langsmodels', 'aZ09')) {
+			$newlang = GETPOST('langsmodels', 'aZ09');
+		}
 	}
 
 	if (!empty($newlang)) {
