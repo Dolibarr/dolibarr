@@ -166,7 +166,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 			if ($action == 'login') {
 				$login = GETPOST('login', 'alphanohtml');
 				$password = GETPOST('password', 'password');
-				// $security_code = GETPOST('security_code', 'alphanohtml');
+				$security_code = GETPOST('security_code', 'alphanohtml');
 
 				if (empty($login)) {
 					$context->setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), 'errors');
