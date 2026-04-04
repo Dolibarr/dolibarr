@@ -189,12 +189,12 @@ function conferenceorboothProjectPrepareHead($object)
 /**
  * Prepare array of tabs for ConferenceOrBooth Thirdparty tab
  *
- * @param Thirdparty $object Thirdparty
+ * @param Societe $object Societe
  * @return array<array{0:string,1:string,2:string}>
  */
 function conferenceorboothThirdpartyPrepareHead($object)
 {
-	dol_syslog(__METHOD__, LOG_DEBUG);
+	dol_syslog('conferenceorboothThirdpartyPrepareHead', LOG_DEBUG);
 	global $db, $langs, $conf;
 
 	$langs->load("eventorganization");
