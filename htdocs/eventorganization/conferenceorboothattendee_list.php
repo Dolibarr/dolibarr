@@ -99,10 +99,8 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 if ($thirdpartyid > 0) {
 	$hookmanager->initHooks(array('thirdpartyattendee', 'globalcard'));
-} elseif (isset($contextpage) && !is_null($contextpage)) {
-	$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 } else {
-	$hookmanager->initHooks(array('conferenceorboothattendeelist')); // Note that conf->hooks_modules contains array
+	$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 }
 
 // Fetch optionals attributes and labels
