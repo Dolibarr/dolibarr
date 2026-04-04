@@ -1,0 +1,17 @@
+GET http://{{hostnport}}/public/ticket/list.php
+HTTP 200
+Content-Type: text/html; charset=UTF-8
+
+
+GET http://{{hostnport}}/public/ticket/list.php?projectid=42
+HTTP 200
+Content-Type: text/html; charset=UTF-8
+
+
+POST http://{{hostnport}}/public/ticket/list.php
+HTTP 403
+Content-Type: text/html; charset=UTF-8
+
+POST http://{{hostnport}}/public/ticket/list.php?projectid=42
+HTTP 403
+Content-Type: text/html; charset=UTF-8
