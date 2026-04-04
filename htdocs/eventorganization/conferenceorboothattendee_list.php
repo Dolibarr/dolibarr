@@ -426,7 +426,7 @@ if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 
 		if ($res > 0) {
 			$tmpobject = $object;
 			$object = $socstat; // $object must be of type Societe when calling societe_prepare_head
-			$head = societe_prepare_head($socstat);
+			$head = societe_prepare_head($socstat, 'attendees');
 			$object = $tmpobject;
 
 			print dol_get_fiche_head($head, 'eventorganization', $langs->trans("ThirdParty"), -1, 'company');

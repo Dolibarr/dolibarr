@@ -38,9 +38,10 @@
  * Return array of tabs to used on pages for third parties cards.
  *
  * @param 	Societe	$object		Object company shown
+ *	@param	string	$subtabs    Parameter for choosing subtab, currently used for either conferenceorbooth or attendee
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function societe_prepare_head(Societe $object)
+function societe_prepare_head(Societe $object, $subtabs='')
 {
 	dol_syslog('Company::societe_prepare_head', LOG_DEBUG);
 	global $db, $langs, $conf, $user;
@@ -365,7 +366,15 @@ function societe_prepare_head(Societe $object)
 	if (isModEnabled('eventorganization') && isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		dol_syslog('Company::societe_prepare_head::isModEnabled::eventorganization', LOG_DEBUG);
 		$langs->load('eventorganization');
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/eventorganization/conferenceorboothattendee_list.php', ['thirdpartyid' => $object->id, 'withthirdparty' => 1]);
+		if ($subtabs == 'attendees') {
+			$url_for_list = '/eventorganization/conferenceorboothattendee_list.php';
+		} elseif ($subtabs == 'conferenceorbooth') {
+			$url_for_list = '/eventorganization/conferenceorbooth_list.php';
+		} else {
+			// this seems to be the default elsewhere, so let's keep that
+			$url_for_list = '/eventorganization/conferenceorbooth_list.php';
+		}
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . $url_for_list, ['thirdpartyid' => $object->id, 'withthirdparty' => 1]);
 		$head[$h][1] = $langs->trans("EventOrganization");
 
 		// Enable caching of conf or booth count
