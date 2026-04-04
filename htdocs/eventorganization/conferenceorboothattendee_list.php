@@ -72,9 +72,11 @@ $withproject = GETPOSTINT('withproject');
 $fk_project = GETPOSTINT('fk_project') ? GETPOSTINT('fk_project') : GETPOSTINT('projectid');
 $projectid = $fk_project;
 $projectref = GETPOST('projectref');
+$withthirdparty = GETPOSTINT('withthirdparty');
 $thirdpartyid  = GETPOSTINT('thirdpartyid');
 
 $withProjectUrl = '';
+$withThirdpartyUrl = '';
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -411,59 +413,71 @@ if ($confOrBooth->id > 0) {
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
 // Copied almost verbertum from htdocs/ticket/list.php
-if ($thirdpartyid && !$projectid && $user->hasRight('societe', 'lire')) {
-	$socstat = new Societe($db);
-	$res = $socstat->fetch($thirdpartyid);
-	if ($res > 0) {
-		$tmpobject = $object;
-		$object = $socstat; // $object must be of type Societe when calling societe_prepare_head
-		$head = societe_prepare_head($socstat);
-		$object = $tmpobject;
+if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
+	$withThirdpartyUrl = '';
 
-		print dol_get_fiche_head($head, 'eventorganization', $langs->trans("ThirdParty"), -1, 'company');
+	if (!empty($withthirdparty)) {
+		// Tabs for thirdparty
+		$tab = 'eventorganisation';	// yes, it is called eventorganisation with s here and eventorganization with z elsewhere :-(
+		$withThirdpartyUrl = "&withthirdparty=1";
 
-		dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+		$socstat = new Societe($db);
+		$res = $socstat->fetch($thirdpartyid);
+		if ($res > 0) {
+			$tmpobject = $object;
+			$object = $socstat; // $object must be of type Societe when calling societe_prepare_head
+			$head = societe_prepare_head($socstat);
+			$object = $tmpobject;
 
-		print '<div class="fichecenter">';
+			print dol_get_fiche_head($head, 'eventorganization', $langs->trans("ThirdParty"), -1, 'company');
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield">';
+			dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-		// Type Prospect/Customer/Supplier
-		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
-		print $socstat->getTypeUrl(1);
-		print '</td></tr>';
+			print '<div class="fichecenter">';
 
-		// Customer code
-		if ($socstat->client && !empty($socstat->code_client)) {
-			print '<tr><td class="titlefield">';
-			print $langs->trans('CustomerCode').'</td><td>';
-			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
-			$tmpcheck = $socstat->check_codeclient();
-			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border centpercent tableforfield">';
+
+			// Type Prospect/Customer/Supplier
+			print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print $socstat->getTypeUrl(1);
+			print '</td></tr>';
+
+			// Customer code
+			if ($socstat->client && !empty($socstat->code_client)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('CustomerCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
+				$tmpcheck = $socstat->check_codeclient();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
 			}
-			print '</td>';
-			print '</tr>';
-		}
-		// Supplier code
-		if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
-			print '<tr><td class="titlefield">';
-			print $langs->trans('SupplierCode').'</td><td>';
-			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
-			$tmpcheck = $socstat->check_codefournisseur();
-			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+			// Supplier code
+			if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('SupplierCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
+				$tmpcheck = $socstat->check_codefournisseur();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
 			}
-			print '</td>';
-			print '</tr>';
+
+			print '</table>';
+			print '</div>';
+			print dol_get_fiche_end();
+
+			if (empty($confOrBooth->id)) {
+				$head = conferenceorboothThirdpartyPrepareHead($socstat);
+				$tab = 'attendees';
+				print dol_get_fiche_head($head, 'eventorganization', $langs->trans("ThirdParty"), -1, 'company', 0, '', 'reposition');
+			}
 		}
-
-		print '</table>';
-		print '</div>';
-		print dol_get_fiche_end();
-
-		print '<br>';
 	}
 }
 
