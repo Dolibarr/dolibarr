@@ -14,7 +14,7 @@ To report a vulnerability, for a private report, you can:
 
 - Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
 
-WARNING: This is a private vulnerability report process: Advisory is sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), not via public CVE reports.
+NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
 
 <!--
 - Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
@@ -23,7 +23,7 @@ WARNING: This is a private vulnerability report process: Advisory is sent to use
 
 - Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
 
-WARNING: This is also a private vulnerability report process: Advisory is sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), not via public CVE reports.
+NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
 
 
 ## Hunting vulnerabilities on Dolibarr

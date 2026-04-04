@@ -121,7 +121,7 @@ if (empty($release) && empty($checklock)) {
 
 $savrelease = $release;
 
-// If release is auto, we take current version
+// If $release is auto, we take current version
 $tmpver = explode('-', $release, 2);
 if ($tmpver[0] == 'auto') {
 	$release = DOL_VERSION;
@@ -129,13 +129,17 @@ if ($tmpver[0] == 'auto') {
 		$release .= '-'.$tmpver[1];
 	}
 }
-
 $releaseblockedlog = DOLCERT_VERSION;
 
-// If release is auto, we take current version to read checklock file
+
+// If $checklock is auto, we take current version to read checklock file
 $tmpver = explode('-', $checklock, 2);
 if ($tmpver[0] == 'auto') {
-	$checklock = DOL_VERSION;
+	if ($checksource == 'unalterable_files') {
+		$checklock = DOLCERT_VERSION;
+	} else {
+		$checklock = DOL_VERSION;
+	}
 	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
 		$checklock .= '-'.$tmpver[1];
 	}
@@ -201,8 +205,8 @@ if ($release) {
 }
 if ($checklock) {
 	print "Working on files into               : ".DOL_DOCUMENT_ROOT."\n";
-	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";
-	print "Check source                        : ".$checksource."\n";
+	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";		// For example 2.0.0
+	print "Check source                        : ".$checksource."\n";				// For example unalterable_files
 }
 
 if ($release) {
