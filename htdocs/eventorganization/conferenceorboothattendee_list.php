@@ -412,7 +412,7 @@ if ($confOrBooth->id > 0) {
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
-// Copied almost verbertum from htdocs/ticket/list.php
+// Copied almost verbertum from htdocs/ticket/list.php and modified based on the project one below
 if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
 	$withThirdpartyUrl = '';
 

@@ -41,7 +41,7 @@
  *	@param	string	$subtabs    Parameter for choosing subtab, currently used for either conferenceorbooth or attendee
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function societe_prepare_head(Societe $object, $subtabs='')
+function societe_prepare_head(Societe $object, $subtabs = '')
 {
 	dol_syslog('Company::societe_prepare_head', LOG_DEBUG);
 	global $db, $langs, $conf, $user;

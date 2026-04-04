@@ -600,7 +600,7 @@ class ConferenceOrBooth extends ActionComm
 			}
 			if ($option == 'thirdpartyid') {
 				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?thirdpartyid='.$this->id;
-				}
+			}
 		}
 
 		$linkclose = '';
