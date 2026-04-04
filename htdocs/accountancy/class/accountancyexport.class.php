@@ -226,7 +226,7 @@ class AccountancyExport
 		);
 
 		global $hookmanager;
-		$code = $formatcode[$type];
+		$code = $formatcode[$type] ?? '';
 		$parameters = array('type' => $type);
 		$reshook = $hookmanager->executeHooks('getFormatCode', $parameters, $code);
 
@@ -1172,7 +1172,12 @@ class AccountancyExport
 
 			$tab['end_line'] = $end_line;
 
-			print implode('|', $tab);
+			$output = implode('|', $tab);
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 
 			$index++;
 		}

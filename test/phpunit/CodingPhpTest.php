@@ -111,9 +111,20 @@ class CodingPhpTest extends CommonClassTest
 		 }
 		 ));
 		 */
-		return array_map(function ($value) {
-			return array($value);
-		}, $filesarray);
+		$returnlist = array_map(function ($value) {
+			return array($value); }, $filesarray);
+
+		// To process only 1 file, uncomment this
+		/*
+		foreach($returnlist as $key => $val) {
+			if ($val[0]['name'] != 'societe.class.php') {
+				unset($returnlist[$key]);
+			}
+		}
+		var_dump($returnlist);
+		*/
+
+		return $returnlist;
 	}
 
 	/**
@@ -352,9 +363,10 @@ class CodingPhpTest extends CommonClassTest
 		// Check bad casting on forge sql
 		$ok = true;
 		$matches = array();
-		preg_match_all('/\$sql\s*\.?=\s*[\"\'][a-z\s=_]+[\'\"]\s*\.\$([a-z->_]+)/', $filecontent, $matches, PREG_SET_ORDER);
+		preg_match_all('/\$sql\s*\.?=\s*[\"\'][a-z\s=_,]+[\'\"]\s*\.\$([a-z->_]+)/', $filecontent, $matches, PREG_SET_ORDER);
+		//var_dump($matches);
 		foreach ($matches as $key => $val) {
-			if (in_array($val[1], array('object->get', 'user', 'this->sanitize', 'this->db->sanitize', 'this->db->escape', 'this->db->encrypt', 'this->db->plimit', 'db->decrypt', 'db->sanitize', 'db->ifsql', 'this->db->prefix', 'clause', 'sqlwhere', 'sqlorder'))) {		// exclude $db->escape( and $this->
+			if (in_array($val[1], array('object->get', 'user', 'this->sanitize', 'this->db->sanitize', 'this->db->escape', 'this->db->encrypt', 'this->db->ifsql', 'this->db->plimit', 'db->decrypt', 'db->encrypt', 'db->sanitize', 'db->ifsql', 'this->db->prefix', 'clause', 'pk', 'sqlwhere', 'sqlorder'))) {		// exclude $db->escape( and $this->
 				continue;
 			}
 			//if ($val[1] != '\'"' && $val[1] != '\'\'') {

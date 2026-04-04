@@ -290,12 +290,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						$("#search_'.$htmlnamejquery.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
-						return $("<li>")
-						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
-						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
-						.appendTo(ul);
-					};
+					});
+					const widgetData = $("input#search_'.$htmlnamejquery.'").data("'.$dataforrenderITem.'");
+					if (widgetData) {
+						widgetData._renderItem = function( ul, item ) {
+							return $("<li>")
+							.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
+							.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
+							.appendTo(ul);
+						};
+					}
 
   				});';
 	$script .= '</script>';

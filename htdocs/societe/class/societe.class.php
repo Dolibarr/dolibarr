@@ -1500,9 +1500,9 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj = (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
-		$this->tva_intra = dol_sanitizeFileName($this->tva_intra ?? '', '');
-		$this->vat_reverse_charge = empty($this->vat_reverse_charge) ? 0 : 1;
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
+		$this->tva_intra			= trim((string) $this->tva_intra);
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1663,9 +1663,9 @@ class Societe extends CommonObject
 			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj != '' ? "'".$this->db->escape((string) $this->localtax2_assuj)."'" : "null");
 			if ($this->localtax1_assuj == 1) {
 				if ($this->localtax1_value != '') {
-					$sql .= ",localtax1_value =".$this->localtax1_value;
+					$sql .= ", localtax1_value = ".((float) $this->localtax1_value);
 				} else {
-					$sql .= ",localtax1_value =0.000";
+					$sql .= ", localtax1_value = 0.000";
 				}
 			} else {
 				$sql .= ",localtax1_value =0.000";
@@ -1673,12 +1673,12 @@ class Societe extends CommonObject
 
 			if ($this->localtax2_assuj == 1) {
 				if ($this->localtax2_value != '') {
-					$sql .= ",localtax2_value =".$this->localtax2_value;
+					$sql .= ",localtax2_value = ".((float) $this->localtax2_value);
 				} else {
-					$sql .= ",localtax2_value =0.000";
+					$sql .= ",localtax2_value = 0.000";
 				}
 			} else {
-				$sql .= ",localtax2_value =0.000";
+				$sql .= ",localtax2_value = 0.000";
 			}
 
 			$sql .= ",capital = ".($this->capital === null ? "null" : $this->capital);
@@ -1823,7 +1823,7 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
-					$sql .= ", ".$conf->entity;
+					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
 					$sql .= ", '".$this->db->escape($this->code_compta_client)."'";
@@ -2828,7 +2828,7 @@ class Societe extends CommonObject
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 		} else {
-			$sql .= " WHERE entity IN (0, ".$this->db->sanitize((string) $conf->entity).")";
+			$sql .= " WHERE entity IN (0, ".((int) $conf->entity).")";
 		}
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".((int) $this->id);
@@ -5179,6 +5179,8 @@ class Societe extends CommonObject
 	 */
 	public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 		$table = 'facture';
 		if ($mode == 'supplier') {
 			$table = 'facture_fourn';

@@ -417,11 +417,11 @@ class Recruitments extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->jobposition->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				$this->candidature->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->jobposition->$field = $this->_checkValForAPI($field, $value, $this->jobposition);
+			$this->candidature->$field = $this->_checkValForAPI($field, $value, $this->candidature);
 		}
 
 		// Clean data

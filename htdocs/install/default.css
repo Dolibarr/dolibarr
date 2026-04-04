@@ -45,7 +45,7 @@
 }
 
 .no-bottom {
-	padding-bottom: 0;
+	padding-bottom: 0 !important;
 }
 
 .small {

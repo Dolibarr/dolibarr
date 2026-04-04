@@ -1358,8 +1358,10 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
-							$tmpdate = $srcobject->delivery_date;
-							$object->setDeliveryDate($user, $tmpdate);
+							if (empty($object->delivery_date)) {
+								$tmpdate = $srcobject->delivery_date;
+								$object->setDeliveryDate($user, $tmpdate);
+							}
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1372,14 +1374,18 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
-								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0 || !in_array($lines[$i]->id, $selectedLines)) {
+								if (
+									empty($lines[$i]->subprice)
+									|| $lines[$i]->qty < 0
+									|| !in_array($lines[$i]->id, $selectedLines)
+									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE
+								) {
 									continue;
 								}
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (!empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
-
 								// Reset fk_parent_line for no child products and special product
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;

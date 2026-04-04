@@ -205,7 +205,7 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (1
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (140, '14','0','VAT rate - intermediary',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (140,  '8','0','VAT rate - reduced', 1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (140,  '3','0','VAT rate - super-reduced', 1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (140, '16','0','VAT rate - standard',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (140, '17','0','VAT rate - standard',1,__ENTITY__);
 
 -- MALI (id country=147)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (147,  '0','0','VAT rate 0', 1,__ENTITY__);

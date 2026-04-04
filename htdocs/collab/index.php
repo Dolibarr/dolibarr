@@ -114,7 +114,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$db->begin();
 
 	$objectpage->title = GETPOST('WEBSITE_TITLE');
-	$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+	$objectpage->pageurl = dol_sanitizeUrl(GETPOST('WEBSITE_PAGENAME'));
 	$objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
 	$objectpage->keywords = GETPOST('WEBSITE_KEYWORD');
 

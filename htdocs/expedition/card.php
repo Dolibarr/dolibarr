@@ -1344,7 +1344,7 @@ if ($action == 'create') {
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
 							$productChildrenNb = $product->hasFatherOrChild(1);
 						}
 						if ($productChildrenNb > 0) {
@@ -1549,13 +1549,13 @@ if ($action == 'create') {
 							$subj = 0;
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							if (is_object($product->stock_warehouse[$warehouse_id]) && !empty($product->stock_warehouse[$warehouse_id]->detail_batch)) {
 								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {
 									$nbofsuggested++;
 								}
 							}
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							if (is_object($product->stock_warehouse[$warehouse_id]) && !empty($product->stock_warehouse[$warehouse_id]->detail_batch)) {
 								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty; // To get a numeric
@@ -1797,7 +1797,7 @@ if ($action == 'create') {
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (!empty($stock_warehouse->detail_batch))) {
 									$nbofsuggested += count($stock_warehouse->detail_batch);
 								}
 							}
@@ -1810,7 +1810,7 @@ if ($action == 'create') {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (!empty($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
 										$batchStock = + $dbatch->qty; // To get a numeric
 										if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
@@ -3070,12 +3070,6 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
 					}
 				}
-			}
-
-			// This is just to generate a delivery receipt
-			//var_dump($object->linkedObjectsIds['delivery']);
-			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED) && $user->hasRight('expedition', 'delivery', 'creer') && empty($object->linkedObjectsIds['delivery'])) {
-				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
 
 			// Set Billed and Closed

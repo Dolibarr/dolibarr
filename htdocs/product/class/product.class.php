@@ -18,6 +18,7 @@
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -978,7 +979,7 @@ class Product extends CommonObject
 		if (empty($this->tva_npr)) {
 			$this->tva_npr = 0;
 		}
-		//Local taxes
+		// Local taxes
 		if (empty($this->localtax1_tx)) {
 			$this->localtax1_tx = 0;
 		}
@@ -990,6 +991,10 @@ class Product extends CommonObject
 		}
 		if (empty($this->localtax2_type)) {
 			$this->localtax2_type = '0';
+		}
+		// Price
+		if (empty($this->price_base_type) && getDolGlobalString('PRODUCT_PRICE_BASE_TYPE')) {
+			$this->price_base_type = getDolGlobalString('PRODUCT_PRICE_BASE_TYPE');
 		}
 		if (empty($this->price)) {
 			$this->price = 0;
@@ -5274,7 +5279,7 @@ class Product extends CommonObject
 		$sql .= ")";
 		$sql .= " SELECT";
 		$sql .= " entity";
-		$sql .= ", ".$toId;
+		$sql .= ", ".((int) $toId);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", price_level";
 		$sql .= ", price";
@@ -5290,7 +5295,7 @@ class Product extends CommonObject
 		$sql .= ", localtax1_type";
 		$sql .= ", localtax2_tx";
 		$sql .= ", localtax2_type";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", tosell";
 		$sql .= ", price_by_qty";
 		$sql .= ", fk_price_expression";
@@ -5329,7 +5334,7 @@ class Product extends CommonObject
 		$this->db->begin();
 
 		$sql = 'INSERT INTO '.$this->db->prefix().'product_association (fk_product_pere, fk_product_fils, qty, incdec)';
-		$sql .= " SELECT ".$toId.", fk_product_fils, qty, incdec FROM ".$this->db->prefix()."product_association";
+		$sql .= " SELECT ".((int) $toId).", fk_product_fils, qty, incdec FROM ".$this->db->prefix()."product_association";
 		$sql .= " WHERE fk_product_pere = ".((int) $fromId);
 
 		dol_syslog(get_class($this).'::clone_association', LOG_DEBUG);
@@ -5360,7 +5365,7 @@ class Product extends CommonObject
 		// les fournisseurs
 		/*$sql = "INSERT ".$this->db->prefix()."product_fournisseur ("
 		 . " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
-		 . " SELECT '".$this->db->idate($now)."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
+		 . " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, ref_fourn, fk_user_author"
 		 . " FROM ".$this->db->prefix()."product_fournisseur"
 		 . " WHERE fk_product = ".((int) $fromId);
 
