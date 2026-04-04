@@ -2061,6 +2061,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
 			'myobject_list.php' => strtolower($objectname).'_list.php',
 			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
+			'ajax/myobject.lib.php' => 'ajax/'.strtolower($objectname).'.php',
 			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 			'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
 			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
@@ -4078,7 +4079,7 @@ if ($module == 'initmodule') {
 				print '<div class="tagtr"><div class="tagtd">';
 				print '<span class="opacitymedium">'.$langs->trans("ObjectKey").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
-				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOSTISSET('objectname') ? GETPOST('objectname', 'alpha') : $modulename).'" autofocus>';
+				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOSTISSET('objectname') ? GETPOST('objectname', 'alpha') : $modulename).'" required autofocus>';
 				print $form->textwithpicto('', $langs->trans("Example").': MyObject, ACamelCaseName, ...');
 				print '</div></div>';
 

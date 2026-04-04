@@ -40,5 +40,6 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 define('DOL_MAJOR_VERSION', '24');
 define('DOL_MINOR_VERSION', '0.0-alpha');
 
+
 define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERSION'));
 // DOL_VERSION is now a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
