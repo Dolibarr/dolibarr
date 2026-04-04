@@ -72,6 +72,7 @@ $withproject = GETPOSTINT('withproject');
 $fk_project = GETPOSTINT('fk_project') ? GETPOSTINT('fk_project') : GETPOSTINT('projectid');
 $projectid = $fk_project;
 $projectref = GETPOST('projectref');
+$thirdpartyid  = GETPOSTINT('thirdpartyid');
 
 $withProjectUrl = '';
 
@@ -94,7 +95,13 @@ $project = new Project($db);
 $projectstatic = new Project($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('conferenceorboothattendeelist')); // Note that conf->hooks_modules contains array
+if ($thirdpartyid > 0) {
+	$hookmanager->initHooks(array('thirdpartyattendee', 'globalcard'));
+} elseif (isset($contextpage) && !is_null($contextpage)) {
+	$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
+} else {
+	$hookmanager->initHooks(array('conferenceorboothattendeelist')); // Note that conf->hooks_modules contains array
+}
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -306,6 +313,9 @@ if ($object->ismultientitymanaged == 1) {
 if (!empty($projectstatic->id)) {
 	$sql .= " AND t.fk_project = ".((int) $projectstatic->id);
 }
+if (!empty($thirdpartyid)) {
+	$sql .= " AND t.fk_soc = ".((int) $thirdpartyid);
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -400,7 +410,62 @@ if ($confOrBooth->id > 0) {
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
+// Copied almost verbertum from htdocs/ticket/list.php
+if ($thirdpartyid && !$projectid && $user->hasRight('societe', 'lire')) {
+	$socstat = new Societe($db);
+	$res = $socstat->fetch($thirdpartyid);
+	if ($res > 0) {
+		$tmpobject = $object;
+		$object = $socstat; // $object must be of type Societe when calling societe_prepare_head
+		$head = societe_prepare_head($socstat);
+		$object = $tmpobject;
 
+		print dol_get_fiche_head($head, 'eventorganization', $langs->trans("ThirdParty"), -1, 'company');
+
+		dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+
+		print '<div class="fichecenter">';
+
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent tableforfield">';
+
+		// Type Prospect/Customer/Supplier
+		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+		print $socstat->getTypeUrl(1);
+		print '</td></tr>';
+
+		// Customer code
+		if ($socstat->client && !empty($socstat->code_client)) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('CustomerCode').'</td><td>';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
+			$tmpcheck = $socstat->check_codeclient();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+			}
+			print '</td>';
+			print '</tr>';
+		}
+		// Supplier code
+		if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('SupplierCode').'</td><td>';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
+			$tmpcheck = $socstat->check_codefournisseur();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+			}
+			print '</td>';
+			print '</tr>';
+		}
+
+		print '</table>';
+		print '</div>';
+		print dol_get_fiche_end();
+
+		print '<br>';
+	}
+}
 
 if ($projectstatic->id > 0 || $confOrBooth > 0) {
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
