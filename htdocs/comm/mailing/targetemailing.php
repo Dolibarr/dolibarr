@@ -297,12 +297,14 @@ if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail
 		$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
 	} elseif ($action == 'setemail_errorsto') {		// Test on permission already done
 		$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
-		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
-	} elseif ($action == 'setemail_from' && empty($object->email_from)) {	// Test on permission already done
-		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 	} elseif ($action == 'setevenunsubscribe') {	// Test on permission already done
 		$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
+	}
+	if ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
+	}
+	if ($action == 'setemail_from' && empty($object->email_from)) {	// Test on permission already done
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 	}
 
 	if (!$mesg) {
