@@ -376,11 +376,9 @@ if ($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) {
 			print '</div>';
 			print dol_get_fiche_end();
 
-			if (empty($confOrBooth->id)) {
-				$head = conferenceorboothThirdpartyPrepareHead($socstat);
-				$tab = 'conferenceorbooth';
-				print dol_get_fiche_head($head, $tab, $langs->trans("ThirdParty"), -1, 'company', 0, '', 'reposition');
-			}
+			$head = conferenceorboothThirdpartyPrepareHead($socstat);
+			$tab = 'conferenceorbooth';
+			print dol_get_fiche_head($head, $tab, $langs->trans("ThirdParty"), -1, 'company', 0, '', 'reposition');
 		}
 	}
 }
