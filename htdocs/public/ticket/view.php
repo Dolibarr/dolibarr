@@ -72,6 +72,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 $action   = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
 
+$projectid = GETPOSTINT('projectid');
 $track_id = GETPOST('track_id', 'alpha');
 $email    = GETPOST('email', 'email');
 $suffix = "";
@@ -255,6 +256,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	if ($display_ticket) {
 		print '<!-- public view ticket -->';
 		print '<div class="ticketpublicarea ticketlargemargin">';
+		print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 
 		// Confirmation close
 		if ($action == 'close') {

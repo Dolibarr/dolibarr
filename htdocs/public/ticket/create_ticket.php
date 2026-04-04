@@ -82,6 +82,7 @@ $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 $id = GETPOSTINT('id');
 $msg_id = GETPOSTINT('msg_id');
 $socid = GETPOSTINT('socid');
+$projectid = GETPOSTINT('projectid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');
@@ -196,6 +197,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {	// Test on permission not required. This is a public form. Security is managed by mitigation.
+		dol_syslog('public::ticket::create_ticket::action::create_ticket', LOG_DEBUG);
 		$error = 0;
 		$cid = -1;
 		$origin_email = GETPOST('email', 'email');
@@ -344,7 +346,6 @@ if (empty($reshook)) {
 			$object->category_code = GETPOST("category_code", 'aZ09');
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
 
-			$projectid = GETPOSTINT('projectid');
 			if (isset($projectid) && !empty($projectid)) {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$realproject = new Project($db);
@@ -609,7 +610,12 @@ if ($action != "infos_success") {
 	$formticket->action = 'create_ticket';
 	$formticket->withcancel = 1;
 
-	$formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
+	if (isModEnabled('project') && isset($projectid) && empty($projectid)) {
+		$formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
+	} else {
+		$formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].'?projectid='.$projectid.($conf->entity > 1 ? '&entity='.$conf->entity : ''));
+	}
+
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, '', 'marginleftonly');
 

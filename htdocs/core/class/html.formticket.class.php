@@ -471,7 +471,6 @@ class FormTicket
 		if ($public) {
 			$filter = '(public:=:1)';
 			print '<input type="hidden" name="projectid" value="'.$projectid.'">';
-
 		}
 		$this->selectGroupTickets($category_code, 'category_code', $filter, 2, 'ifone', 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';
