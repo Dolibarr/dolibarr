@@ -95,7 +95,7 @@ class mailing_eventorganization extends MailingTargets
 			$sql .= " AND e.fk_project = ".(GETPOSTINT('filter_eventorganization'));
 		}
 		if (GETPOSTISSET('attendeeStatusList')) {
-			$attendeeStatusList = (GETPOST('attendeeStatusList'));
+			$attendeeStatusList = (GETPOST('attendeeStatusList', 'array'));
 			$attendeeStatusListStr = implode(", ", $attendeeStatusList);
 			$sql .= " AND e.status IN (".$attendeeStatusListStr.")";
 		}
