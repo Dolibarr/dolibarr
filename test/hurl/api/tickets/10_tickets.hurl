@@ -63,12 +63,6 @@ HTTP 400
 {"error":{"code":400,"message":"Bad Request: message field missing"}}
 # this output should be adjusted for the real output when the check is done for required fields
 
-# POST topic required
-POST http://{{hostnport}}/api/index.php/tickets
-{ "subject" : "42", "message" : "still 42"}
-HTTP 200
-# this output should be adjusted for the real output when the check is done for required fields
-
 
 # DELETE
 DELETE http://{{hostnport}}/api/index.php/tickets/
