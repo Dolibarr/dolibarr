@@ -344,6 +344,19 @@ if (empty($reshook)) {
 			$object->category_code = GETPOST("category_code", 'aZ09');
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
 
+			$projectid = GETPOSTINT('projectid');
+			if (isset($projectid) && !empty($projectid)) {
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$realproject = new Project($db);
+				$projectresult = $realproject->fetch($projectid);
+				if ($projectresult) {
+					$object->fk_project = $projectid;
+					dol_syslog('public::ticket::create_ticket::action::create_ticket::projectid='.$projectid, LOG_DEBUG);
+				} else {
+					dol_syslog('Someone at '.$object->ip.' tried to add nonexisting projectid='.$projectid.' to the ticket with tracking id='.$object->track_id, LOG_WARNING);
+				}
+			}
+
 			// create third-party with contact
 			$usertoassign = 0;
 			if ($with_contact && !($with_contact->id > 0)) {
@@ -543,7 +556,12 @@ if (empty($reshook)) {
 					setEventMessages($messagetoshow, null, 'warnings');
 					setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
 
-					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : ''));
+					if (isModEnabled('project') && isset($projectid) && empty($projectid)) {
+						header("Location: index.php".(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : ''));
+					} else {
+						header("Location: index.php?projectid=".$projectid.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : ''));
+					}
+
 					exit;
 				}
 			} else {
