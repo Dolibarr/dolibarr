@@ -165,6 +165,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
+
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 	$hookmanager = new HookManager($db);
@@ -400,18 +401,26 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				}
 
 				if (count($modulesfile)) {
+					$conf->setValues($db);	// Load conf so we knowmodules that are enabled
+
 					print '<tr><td colspan="2"><hr style="border-color: #ccc; border-top-style: none;"></td></tr>';
 
 					foreach ($modulesfile as $modulefilelong => $modulefileshort) {
 						if (in_array($modulefilelong, $listoffileprocessed)) {
 							continue;
 						}
+						$dirofmodule = preg_replace('/\//', '', preg_replace('/\/sql\/[a-z0-8_]+\.sql$/', '', $modulefileshort));
 
-						print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
+						if (isModEnabled($dirofmodule)) {
+							print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules '.$dirofmodule.')</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
 
-						// Run sql script
-						$okmodule = run_sql($modulefilelong, 0, 0, 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
-						$listoffileprocessed[$modulefilelong] = $modulefilelong;
+							// Run sql script
+							$okmodule = run_sql($modulefilelong, 0, 0, 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
+							$listoffileprocessed[$modulefilelong] = $modulefilelong;
+						} else {
+							print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules '.$dirofmodule.')</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
+							print '<tr><td class="nowrap">'.$langs->trans("ProcessMigrateScript").'</td><td class="right"><span class="opacitymedium">Ignored (module not enabled)</span></td></tr>'."\n";
+						}
 					}
 				}
 			}

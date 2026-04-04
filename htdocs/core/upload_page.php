@@ -206,7 +206,7 @@ if (isModEnabled('supplier_invoice')) {
 	$prodid = GETPOSTINT('prodid');
 	$prodtext = $langs->trans("RefOrLabel");
 
-	//$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', 0, 0, 1, 2, $prodtext, 0, array(), GETPOSTINT('socid'), '1', 0, 'maxwidth200 disableautoopen', 0, '', null, 1);
+	//$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', 0, 1, 2, $prodtext, 0, array(), GETPOSTINT('socid'), '1', 0, 'maxwidth200 disableautoopen', 0, '', null, 1);
 	$uploadform .= img_picto('', 'product', 'class="pictofixedwidth"');
 	$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
 

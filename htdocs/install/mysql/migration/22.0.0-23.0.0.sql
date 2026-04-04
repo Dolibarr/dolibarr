@@ -150,6 +150,10 @@ ALTER TABLE llx_oauth_token ADD COLUMN apicount_total BIGINT UNSIGNED DEFAULT 0;
 
 ALTER TABLE llx_webhook_target ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
+-- In case of table exists
+ALTER TABLE llx_webhook_history MODIFY COLUMN url varchar(255);
+
+-- In cas table does not exist
 CREATE TABLE llx_webhook_history(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,

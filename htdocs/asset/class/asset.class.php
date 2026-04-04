@@ -1015,8 +1015,8 @@ class Asset extends CommonObject
 				}
 
 				// Set last cumulative depreciation
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
-				$sql .= " SET total_amount_last_depreciation_ht = " . (empty($last_cumulative_depreciation_ht) ? 0 : $last_cumulative_depreciation_ht);
+				$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->sanitize($options->deprecation_options_fields[$mode_key]['table']);
+				$sql .= " SET total_amount_last_depreciation_ht = " . ((float) (empty($last_cumulative_depreciation_ht) ? 0 : $last_cumulative_depreciation_ht));
 				$sql .= " WHERE fk_asset = " . (int) $this->id;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -1260,8 +1260,8 @@ class Asset extends CommonObject
 			if ($obj = $this->db->fetch_object($resql)) {
 				$mode_key = $obj->depreciation_mode;
 				if (!empty($options->deprecation_options_fields[$mode_key])) {
-					$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
-					$sql .= " SET total_amount_last_depreciation_ht = " . $obj->cumulative_depreciation_ht;
+					$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->sanitize($options->deprecation_options_fields[$mode_key]['table']);
+					$sql .= " SET total_amount_last_depreciation_ht = " . ((float) $obj->cumulative_depreciation_ht);
 					$sql .= " WHERE fk_asset = " . (int) $obj->fk_asset;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
