@@ -1637,7 +1637,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 				$warning++;
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
 			} else {
-				$arrayofreplacement = array('/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */' => '/* BEGIN MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'.$stringtoadd."\n\t\t".'/* END MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'."\n\t\t".'/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */');
+				$arrayofreplacement = array(
+					'/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */' => '/* BEGIN MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'.$stringtoadd."\n\t\t".'/* END MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'."\n\t\t".'/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */'
+				);
 				dolReplaceInFile($moduledescriptorfile, $arrayofreplacement);
 			}
 		}
