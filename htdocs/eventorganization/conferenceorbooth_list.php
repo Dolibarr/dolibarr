@@ -315,7 +315,7 @@ if ($projectid > 0 || $projectref) {
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-list bodyforlist');
 
 // Copied almost verbertum from htdocs/ticket/list.php
-if ($thirdpartyid && !$projectid && $user->hasRight('societe', 'lire')) {
+if ($thirdpartyid && $user->hasRight('societe', 'lire')) {
 	$socstat = new Societe($db);
 	$res = $socstat->fetch($thirdpartyid);
 	if ($res > 0) {

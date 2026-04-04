@@ -365,7 +365,7 @@ function societe_prepare_head(Societe $object)
 	if (isModEnabled('eventorganization') && isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		dol_syslog('Company::societe_prepare_head::isModEnabled::eventorganization', LOG_DEBUG);
 		$langs->load('eventorganization');
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/eventorganization/conferenceorboothattendee_list.php', ['thirdpartyid' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/eventorganization/conferenceorboothattendee_list.php', ['thirdpartyid' => $object->id, 'withthirdparty' => 1]);
 		$head[$h][1] = $langs->trans("EventOrganization");
 
 		// Enable caching of conf or booth count
