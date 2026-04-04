@@ -100,12 +100,6 @@ if (empty($dolibarr_nocache)) {
 
 ?>
 
-div.mainmenu.mymodule::before {
-	content: "\f249";
-}
-div.mainmenu.mymodule {
-	background-image: none;
-}
 
 .myclasscss {
 	/* ... */
