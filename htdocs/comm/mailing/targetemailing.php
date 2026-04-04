@@ -288,7 +288,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontocreate) {
 	$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
-	$mesg = '';
 	if ($action == 'settitle') {					// Test on permission already done
 		$object->title = trim(GETPOST('title', 'alpha'));
 	} elseif ($action == 'setemail_from') {			// Test on permission already done
@@ -305,7 +304,7 @@ if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreply
 		$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 	}
 
-	if (!$mesg) {
+	if (isset($mesg) && !$mesg) {
 		$result = $object->update($user);
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
