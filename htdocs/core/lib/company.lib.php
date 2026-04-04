@@ -368,8 +368,6 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		$langs->load('eventorganization');
 		if ($subtabs == 'attendees') {
 			$url_for_list = '/eventorganization/conferenceorboothattendee_list.php';
-//		} elseif ($subtabs == 'conferenceorbooth') {
-//			$url_for_list = '/eventorganization/conferenceorbooth_list.php';
 		} else {
 			// this seems to be the default elsewhere, so let's keep that
 			$url_for_list = '/eventorganization/conferenceorbooth_list.php';
