@@ -243,6 +243,35 @@ function showDirectPublicLink($object)
 }
 
 /**
+ * Return string with full Url for creating a new ticket directly "assigned" to this project
+ *
+ * @param   Int	$projectid				Project ID for the new ticket
+ * @return	string						Url string
+ */
+function showDirectPublicCreateLink($projectid)
+{
+	global $conf, $langs;
+
+	$url = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 3)).'create_ticket.php?projectid='.$projectid;
+
+	$out = '';
+	if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+		$langs->load('errors');
+		$out .= '<span class="opacitymedium">'.$langs->trans("ErrorPublicInterfaceNotEnabled").'</span>';
+	} else {
+		$url = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 3)).'create_ticket.php?projectid='.$projectid;
+		$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("CreateTicket").' &#8212; '.$langs->trans("TicketPublicAccess").'</span>';
+		$out .= '<div class="urllink">';
+		$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" spellcheck="false" value="'.$url.'">';
+		$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
+		$out .= '</div>';
+		$out .= ajax_autoselect("directpubliclink", '');
+	}
+
+	return $out;
+}
+
+/**
  * Generate a random id
  *
  * @param  int     $car   Length of string to generate key
