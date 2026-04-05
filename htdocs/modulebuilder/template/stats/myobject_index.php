@@ -23,7 +23,7 @@
  */
 
 /**
- *	    \file       htdocs/modulebuilder/template/stats/index.php
+ *	    \file       htdocs/modulebuilder/template/stats/myobject_index.php
  *      \ingroup    order
  *		\brief      Page with statistics
  */
