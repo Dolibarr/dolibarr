@@ -20,13 +20,13 @@
  */
 
 /**
- *      \file       htdocs/admin/supplier_payment.php
+ *      \file       htdocs/supplier_invoice/admin/supplier_payment.php
  *		\ingroup    supplier
  *		\brief      Page to setup supplier invoices payments
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';

@@ -5,7 +5,9 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015 	    Claudio Aschieri 		<c.aschieri@19.coop>
+ * Copyright (C) 2023 	    Nick Fragoulis
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,13 +25,13 @@
  */
 
 /**
- *      \file       htdocs/admin/supplierorder_extrafields.php
+ *      \file       htdocs/supplier_invoice/admin/supplierinvoicedet_rec_extrafields.php
  *		\ingroup    fourn
- *		\brief      Page to setup extra fields of supplierorder line
+ *		\brief      Page to setup extra fields of recurring supplierinvoice line
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
@@ -47,7 +49,7 @@ if (!$user->admin) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'orders'));
+$langs->loadLangs(array('admin', 'other', 'bills', 'orders', 'suppliers'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -57,7 +59,8 @@ $type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'commande_fournisseurdet'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'facture_fourn_det_rec'; //Must be the $table_element of the class that manage extrafield
+
 
 
 /*
@@ -72,9 +75,9 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("SuppliersOrders");
+$textobject = $langs->transnoentitiesnoconv("BillsSuppliers");
 
-llxHeader('', $langs->trans("SuppliersSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-supplierorderdet_extrafields');
+llxHeader('', $langs->trans("SuppliersSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-supplierinvoicedet_rec_extrafields');
 
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
@@ -83,7 +86,7 @@ print "<br>\n";
 
 $head = supplierorder_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'supplierorderdet', $langs->trans("Suppliers"), -1, 'company');
+print dol_get_fiche_head($head, 'attributeslinesrec', $langs->trans("Suppliers"), -1, 'company');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
