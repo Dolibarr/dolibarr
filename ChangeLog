@@ -3,12 +3,10 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 23.0.0 compared to 22.0 *****
+***** ChangeLog for 24.0.0 compared to 23.0 *****
 
 For users:
 ----------
-NEW: Need PHP 7.2 as minimum version
-NEW: Module "Advanced stock transfer" is moved with status stable.
 
 
 For developers:
@@ -18,8 +16,63 @@ For developers:
 WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Permission on portal module has been fixed so hook run by this modules must be checked
+* UniversalSearch Syntax is required on all filter parameters of function. Non USF filters are no more allowed.
 
+
+
+***** ChangeLog for 23.0.2 compared to 23.0.1 *****
+
+FIX: #37412 Better fix
+FIX: #37461 #37511 Accountancy - Bank journal - Problem of cache (#37603)
+FIX: #37482
+FIX: #37551 Accounting - Use better rights on create / export entry (#37555)
+FIX: #37707
+FIX: #37707 Can pay supplier invoices with the same parent company
+FIX: Accountancy - Need more information about mandatory step in various journal (#37573)
+FIX: - Added user filtering for displaying leave in the calendar (#37385)
+FIX: Add http code 503 on deadlock
+FIX: Allow to include spaces in email filename (#37539)
+FIX: API Warehouse : Error 401 when getting warehouse by id (backport from 22)
+FIX: Backport/23 fix amount main currency (#37530)
+FIX: bad tab underlined in display setup (#37489)
+FIX: Bad value when entering price with multicurrency included tax.
+FIX: Better compatibility for module using condition object-> in tabs
+FIX: Closing td and showing options
+FIX: contrat update alias for postgres (#37524)
+FIX: CSS
+FIX: extrafield on pdf must not appears on doc if option off
+FIX: fatal error to create when no language set
+FIX: Fetch of lead status
+FIX: Fix doc preview in comm card
+FIX: Fix mandatory custom fields JS validation in printCommonFooter (#37469)
+FIX: Fix not manage deposit account when get accounting code to bind when you have not selected a default account for deposit (#37680)
+FIX: Fix the default filter dates (#37579)
+FIX: #GHSA-39vm-9q4p-6jjg - force disabling module possible on demo only (#37629)
+FIX: #GHSA-7hqv-pvw6-cw54
+FIX: #GHSA-8qh8-6h88-q46p
+FIX: #GHSA-crgg-h74r-2m8r (#37637)
+FIX: #GHSA-hh5p-m24x-fwx2 block ssrf when using webhooks (#37630)
+FIX: #GHSA-hq5j-39f9-qxcv
+FIX: #GHSA-ph29-326p-chw4 - disable+sanitize deprecated load/save files
+FIX: #GHSA-prg3-w5r4-h7g3
+FIX: #GHSA-qjj8-wpvx-p54j - test on hierarchy not done on some api
+FIX: #GHSA-v5fq-cf5m-vwv7 - Credit Grzegorz Tworek, Sec4check (#37632)
+FIX: height of confirm popup
+FIX: intervention API update line (#37607)
+FIX: Logic in isEditable(). Must not be exactly like in isErasable().
+FIX: Missing field in fetch
+FIX: option MAIN_USE_TITLE_FOR_USER was on update and not on create
+FIX: Order API: delete order returns wrong http response in case order could not be deleted (#37472)
+FIX: Pb with import of agendaevents. Date and import id not visible.
+FIX: product ref was not printed on supplier recurring invoice (#37535)
+FIX: read_supplier_price filter for stock complement (#37417)
+FIX: Reload page after check holiday for save param (#37410)
+FIX: restore use of user->id in dynamics conditions
+FIX: Several trouble with demo docker packages. More secured way to use
+FIX: Show correct shippable icon if order has multiple lines with same product (#37656)
+FIX: show export full documents checkbox on change format in accountancy export (#37468)
+FIX: translation on multiselect with rich label - Fix CSS public ticket
+FIX: update COPYRIGHT file to reflect removed libraries
 
 
 ***** ChangeLog for 23.0.1 compared to 23.0.0 *****
