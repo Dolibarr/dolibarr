@@ -20,14 +20,14 @@
  */
 
 /**
- *  \file       htdocs/eventorganization/conferenceorbooth_contact.php
+ *  \file       htdocs/eventorganization/conferenceorbooth/contact.php
  *  \ingroup    eventorganization
  *  \brief      Tab for contacts linked to ConferenceOrBooth
  */
 
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -396,7 +396,7 @@ if ($object->id) {
 
 	print dol_get_fiche_head($head, 'contact', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth/list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*

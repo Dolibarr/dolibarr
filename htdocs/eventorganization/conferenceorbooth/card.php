@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +20,23 @@
  */
 
 /**
- *    \file       htdocs/eventorganization/conferenceorboothattendee_card.php
+ *    \file       htdocs/eventorganization/conferenceorbooth/card.php
  *    \ingroup    eventorganization
- *    \brief      Page to create/edit/view conferenceorboothattendee
+ *    \brief      Page to create/edit/view conferenceorbooth
  */
 
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,57 +46,30 @@ require '../main.inc.php';
  *
  * @var string $dolibarr_main_url_root
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
+$langs->loadLangs(array('eventorganization', 'projects'));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'conferenceorboothattendeecard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'conferenceorboothcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$mode = GETPOST('mode', 'aZ');
+$mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-
-$lineid   = GETPOSTINT('lineid');
-
-$conf_or_booth_id = GETPOSTINT('conforboothid');
-$fk_project = GETPOSTINT('fk_project');
-$withproject = 1;
+$withproject = GETPOSTINT('withproject');
 
 // Initialize a technical objects
-$object = new ConferenceOrBoothAttendee($db);
+$object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage, 'globalcard')); // Note that conf->hooks_modules contains array
-
-$confOrBooth = null;
-if ($conf_or_booth_id > 0) {
-	$confOrBooth = new ConferenceOrBooth($db);	// Actioncomm
-	$result = $confOrBooth->fetch($conf_or_booth_id);
-	if ($result < 0) {
-		setEventMessages(null, $confOrBooth->errors, 'errors');
-	} else {
-		$object->fk_actioncomm = $confOrBooth->id;
-		$object->fk_project = $confOrBooth->fk_project;
-		$fk_project = $object->fk_project;
-	}
-}
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -106,25 +89,12 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array();
-foreach ($object->fields as $key => $val) {
-	if (!empty($val['searchall'])) {
-		$fieldstosearchall['t.'.$key] = $val['label'];
-	}
-}
-
 if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
-
-// Now we have loaded the attendee, we can force the project (in case value provided as parameter is wrong or value not provided)
-if ($object->fk_project > 0) {
-	$fk_project = $object->fk_project;
-}
 
 // Permissions
 $permissiontoread = $user->hasRight('project', 'read');
@@ -142,6 +112,7 @@ if ($user->socid > 0) {
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 
+
 /*
  * Actions
  */
@@ -153,34 +124,25 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	//if (!empty($withproject)) {
-	$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1&fk_project='.((int) $fk_project);
-	//} else {
-	//	$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php';
-	//}
+	$error = 0;
+
+	if (!empty($withproject)) {
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorbooth/list.php?withproject=1&fk_project='.((int) $object->id);
+	} else {
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorbooth/list.php';
+	}
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?fk_project='.((int) $fk_project).'&id='.($id > 0 ? $id : '__ID__').'&withproject=1';
+				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorbooth/card.php?fk_project='.((int) $object->id).'&id='.($id > 0 ? $id : '__ID__').($withproject ? '&withproject=1' : '');
 			}
 		}
 	}
 
-	if ($cancel) {
-		if (!empty($backtopageforcancel)) {
-			header("Location: ".$backtopageforcancel);
-			exit;
-		} elseif (!empty($backtopage)) {
-			header("Location: ".$backtopage);
-			exit;
-		}
-		$action = '';
-	}
-
-	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTH_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -205,13 +167,11 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$triggersendname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_SENTBYMAIL';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_CONFERENCEORBOOTHATTENDEE_TO';
-	$trackid = 'conferenceorboothattendee'.$object->id;
+	$triggersendname = 'EVENTORGANIZATION_CONFERENCEORBOOTH_SENTBYMAIL';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_CONFERENCEORBOOTH_TO';
+	$trackid = 'conferenceorbooth'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
-
-
 
 
 /*
@@ -222,15 +182,15 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("ConferenceOrBoothAttendee");
+$title = $langs->trans("ConferenceOrBooth");
 $help_url = 'EN:Module_Event_Organization';
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-attendee-card');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-card');
 
 if ($action == 'create') {
 	$result = $projectstatic->fetch(GETPOSTINT('fk_project'));
 } else {
-	$result = $projectstatic->fetch(($confOrBooth === null || empty($confOrBooth->fk_project)) ? $fk_project : $confOrBooth->fk_project);
+	$result = $projectstatic->fetch($object->fk_project);
 }
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 	$projectstatic->fetchComments();
@@ -383,42 +343,42 @@ if (!empty($withproject)) {
 	}
 
 	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td class="valuefield">';
 	print dol_htmlentitiesbr($projectstatic->description);
 	print '</td></tr>';
 
-	print '<tr><td class="ntitlefield owrap">';
+	print '<tr><td class="titlefield nowrap">';
 	$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
-	print '<tr><td>';
+	print '<tr><td class="valuefield">';
 	$typeofdata = 'checkbox:'.($projectstatic->accept_booth_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
-	print '<tr><td>';
+	print '<tr><td class="valuefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
-	print '<tr><td>';
+	print '<tr><td class="valuefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
-	print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $projectstatic, $permissiontoadd, 'integer:3', '', 0, 0, 'projectid');
+	print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $projectstatic, 0, 'integer:3', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', null, null, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, 0, 'integer:3', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	// Link to ICS for the event
@@ -454,7 +414,7 @@ if (!empty($withproject)) {
 	//print '</span>';
 	print '</td><td>';
 	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.((int) $projectstatic->id);
-	$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.((int) $projectstatic->id), 'md5');
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $projectstatic->id), 'md5');
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -471,7 +431,7 @@ if (!empty($withproject)) {
 	//print '</span>';
 	print '</td><td>';
 	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $projectstatic->id).'&type=global';
-	$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.((int) $projectstatic->id), 'md5');
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $projectstatic->id), 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -493,20 +453,17 @@ if (!empty($withproject)) {
 	print '<br>';
 }
 
-// Part to create an attendee
-if ($action == 'create' && $confOrBooth === null) {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBoothAttendee")), '', 'object_'.$object->picto);
+// Part to create a conference or booth
+if ($action == 'create') {
+	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBooth")), '', 'object_'.$object->picto);
 
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].(empty($withproject) ? '' : '?withproject=1').'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-
-	if ($projectstatic->id > 0) {
-		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';
-		print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
+	if ($withproject) {
+		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		print '<input type="hidden" name="fk_project" value="'.GETPOSTINT('fk_project').'">';
 	}
-
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
@@ -535,28 +492,22 @@ if ($action == 'create' && $confOrBooth === null) {
 	//dol_set_focus('input[name="ref"]');
 }
 
-// Part to edit attendee
+// Part to edit conference or booth
 if (($id || $ref) && $action == 'edit') {
-	print load_fiche_titre($langs->trans("ConferenceOrBoothAttendee"), '', 'object_'.$object->picto);
+	print load_fiche_titre($langs->trans("ConferenceOrBooth"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+	if (!empty($withProjectUrl)) {
+		print '<input type="hidden" name="withproject" value="1">';
+	}
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if (is_object($confOrBooth) && $confOrBooth->id > 0) {
-		print '<input type="hidden" name="conforboothid" value="'.$confOrBooth->id.'">';
-	}
-	if ($object->fk_actioncomm > 0) {
-		print '<input type="hidden" name="fk_actioncomm" value="'.$object->fk_actioncomm.'">';
-	}
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
 	if ($backtopageforcancel) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	}
-	if ($projectstatic->id > 0) {
-		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';
 	}
 
 	print dol_get_fiche_head();
@@ -578,40 +529,29 @@ if (($id || $ref) && $action == 'edit') {
 	print '</form>';
 }
 
-// Part to show attendee
+// Part to show conference or booth
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$object->fetch_optionals();
+	$res = $object->fetch_optionals();
 
-	$moreparam = '';
-	if ($withproject) {
-		$moreparam .= '&withproject=1';
-	}
-	if ($fk_project) {
-		$moreparam .= '&fk_project='.((int) $fk_project);
-	}
+	$head = conferenceorboothPrepareHead($object, $withproject);
 
-	$head = conferenceorboothAttendeePrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteConferenceOrBoothAttendee'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	}
-	// Confirmation to delete line
-	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl, $langs->trans('DeleteConferenceOrBooth'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 	}
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -624,13 +564,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.$moreparam.'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth/list.php', 1).'?projectid='.$object->fk_project.$withProjectUrl.'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-
 	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $moreparam);
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -645,6 +585,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
+	//var_dump($object);
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -669,15 +610,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.(is_object($confOrBooth) && !empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
-			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(is_object($confOrBooth) && !empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
+
+			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
 		}
 		print '</div>'."\n";
 	}
@@ -692,7 +634,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		$includedocgeneration = 0;
+		$includedocgeneration = 1;
 
 		// Documents
 		if ($includedocgeneration) {
@@ -700,22 +642,37 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->eventorganization->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->hasRight('project', 'conferenceorboothattendee', 'read'); // If you can read, you can build the PDF to read content
-			$delallowed = $user->hasRight('project', 'conferenceorboothattendee', 'write'); // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments('eventorganization:ConferenceOrBoothAttendee', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, (string) $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+			$genallowed = $user->hasRight('project', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('project', 'write'); // If you can create/edit, you can remove a file on card
+			print $formfile->showdocuments('eventorganization:ConferenceOrBooth', $object->element.'/'.$objref, $filedir, $urlsource, 0, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
 		// Show links to link elements
-		$tmparray = $form->showLinkToObjectBlock($object, array(), array('conferenceorboothattendee'), 1);
-		$linktoelem = $tmparray['linktoelem'];
-		$htmltoenteralink = $tmparray['htmltoenteralink'];
-		print $htmltoenteralink;
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'), 1);
+		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		$object->fetchObjectLinked();
 
+		if (is_array($object->linkedObjects) && count($object->linkedObjects) > 0 && array_key_exists("facture", $object->linkedObjects)) {
+			foreach ($object->linkedObjects["facture"] as $fac) {
+				if (empty($fac->paye)) {
+					$key = 'paymentlink_'.$fac->id;
+
+					print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $langs->transnoentitiesnoconv('Online')) . ' '. $fac->ref.'</span><br>';
+
+					$sourcetouse = 'boothlocation';
+					$reftouse = $fac->id;
+
+					$url = getOnlinePaymentUrl(0, $sourcetouse, (string) $reftouse);
+					$url .= '&booth='.$object->id;
+
+					print '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercent" value="'.$url.'">';
+					print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
+				}
+			}
+		}
 
 		print '</div><div class="fichehalfright">';
-
 		print '</div></div>';
 	}
 
@@ -725,10 +682,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Presend form
-	$modelmail = 'conferenceorboothattendee';
+	$modelmail = 'conferenceorbooth';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->eventorganization->dir_output;
-	$trackid = 'conferenceorboothattendee'.$object->id;
+	$trackid = 'conferenceorbooth'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

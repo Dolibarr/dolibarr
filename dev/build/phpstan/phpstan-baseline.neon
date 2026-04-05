@@ -6964,85 +6964,85 @@ parameters:
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/card.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/card.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/contact.php
 
 		-
 			message: '#^Variable \$mode might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/contact.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_document.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/document.php
 
 		-
 			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_list.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/list.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_list.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/list.php
 
 		-
 			message: '#^Right side of \|\| is always true\.$#'
 			identifier: booleanOr.rightAlwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_list.php
+			path: ../../../htdocs/eventorganization/conferenceorbooth/list.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
+			path: ../../../htdocs/eventorganization/attendee/card.php
 
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
+			path: ../../../htdocs/eventorganization/attendee/card.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
+			path: ../../../htdocs/eventorganization/attendee/card.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
+			path: ../../../htdocs/eventorganization/attendee/list.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
+			path: ../../../htdocs/eventorganization/attendee/list.php
 
 		-
 			message: '#^Right side of \|\| is always true\.$#'
 			identifier: booleanOr.rightAlwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
+			path: ../../../htdocs/eventorganization/attendee/list.php
 
 		-
 			message: '#^Property ExpeditionLigne\:\:\$detail_children \(array\<int, array\<int, float\|int\>\>\) on left side of \?\? is not nullable\.$#'

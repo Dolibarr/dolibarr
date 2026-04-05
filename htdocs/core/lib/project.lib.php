@@ -228,7 +228,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	if (isModEnabled('eventorganization') && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php', ['projectid' => $project->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/eventorganization/conferenceorbooth/list.php', ['projectid' => $project->id]);
 		$head[$h][1] = $langs->trans("EventOrganization");
 
 		// Enable caching of conf or booth count

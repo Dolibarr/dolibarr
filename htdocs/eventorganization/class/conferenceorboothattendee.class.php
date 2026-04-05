@@ -656,15 +656,15 @@ class ConferenceOrBoothAttendee extends CommonObject
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->eventorganization->dir_output.'/conferenceorboothattendee/'.$oldref;
-				$dirdest = $conf->eventorganization->dir_output.'/conferenceorboothattendee/'.$newref;
+				$dirsource = $conf->eventorganization->dir_output.'/attendee/'.$oldref;
+				$dirdest = $conf->eventorganization->dir_output.'/attendee/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->eventorganization->dir_output.'/conferenceorboothattendee/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($conf->eventorganization->dir_output.'/attendee/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -798,7 +798,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$label .= '<br><b>'.$langs->trans('DateOfRegistration').':</b> '.dol_print_date($this->date_subscription, 'dayhour');
 		$label .= '<br><b>'.$langs->trans('AmountPaid').':</b> '.$this->amount;
 
-		$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/eventorganization/attendee/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

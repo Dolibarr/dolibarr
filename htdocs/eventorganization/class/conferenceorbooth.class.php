@@ -584,7 +584,7 @@ class ConferenceOrBooth extends ActionComm
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
 
-		$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

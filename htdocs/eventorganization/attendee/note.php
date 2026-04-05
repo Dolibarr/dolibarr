@@ -18,14 +18,14 @@
  */
 
 /**
- *    \file       htdocs/eventorganization/conferenceorboothattendee_note.php
+ *    \file       htdocs/eventorganization/attendee/note.php
  *    \ingroup    eventorganization
  *    \brief      Tab for notes on ConferenceOrBoothAttendee
  */
 
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -100,7 +100,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/attendee/list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
