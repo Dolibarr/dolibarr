@@ -411,7 +411,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						}
 						$dirofmodule = preg_replace('/\//', '', preg_replace('/\/sql\/[a-z0-8_]+\.sql$/', '', $modulefileshort));
 
-						if (isModEnabled($dirofmodule)) {
+						if (!is_null($dirofmodule) && isModEnabled($dirofmodule)) {
 							print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules '.$dirofmodule.')</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
 
 							// Run sql script
