@@ -319,13 +319,6 @@ if (!empty($withproject)) {
 	print $projectstatic->location;
 	print '</td></tr>';
 
-	// Other attributes
-	$cols = 2;
-	$objectconf = $object;
-	$object = $projectstatic;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-	$object = $objectconf;
-
 	print '</table>';
 
 	print '</div>';
