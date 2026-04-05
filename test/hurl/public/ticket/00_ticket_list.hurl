@@ -18,7 +18,6 @@ body contains "form_view_ticket"
 body contains "form_view_ticketlist"
 body contains "/public/ticket/list.php"
 
-
 POST http://{{hostnport}}/public/ticket/list.php
 HTTP 403
 Content-Type: text/html; charset=UTF-8

@@ -23,6 +23,7 @@ GET http://{{hostnport}}/ticket/list.php
 HTTP 200
 [Asserts]
 body contains "mod-ticket page-list"
+body not contains "ticket_url_public_interface"
 
 # Check ticket list
 GET http://{{hostnport}}/ticket/stats/index.php
@@ -53,6 +54,13 @@ GET http://{{hostnport}}/ticket/list.php?projectid=
 HTTP 200
 [Asserts]
 body contains "mod-ticket page-list"
+body not contains "ticket_url_public_interface"
+
+# Check ticket list
+GET http://{{hostnport}}/ticket/list.php?projectid=1
+HTTP 200
+[Asserts]
+body contains "ticket_url_public_interface"
 
 # Check ticket list
 GET http://{{hostnport}}/ticket/list.php?socid=

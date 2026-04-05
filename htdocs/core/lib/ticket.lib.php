@@ -254,19 +254,21 @@ function showDirectPublicCreateLink($projectid)
 
 	$url = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 3)).'create_ticket.php?projectid='.$projectid;
 
-	$out = '';
+	$out = '<div id="ticket_url_public_interface">';
 	if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 		$langs->load('errors');
-		$out .= '<span class="opacitymedium">'.$langs->trans("ErrorPublicInterfaceNotEnabled").'</span>';
+		$out .= '<span class="opacitymedium">'.$langs->trans("ErrorPublicInterfaceNotEnabled").'</span><br>';
+		$url = '';
 	} else {
 		$url = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 3)).'create_ticket.php?projectid='.$projectid;
-		$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("CreateTicket").' &#8212; '.$langs->trans("TicketPublicAccess").'</span>';
-		$out .= '<div class="urllink">';
-		$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" spellcheck="false" value="'.$url.'">';
-		$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
-		$out .= '</div>';
-		$out .= ajax_autoselect("directpubliclink", '');
 	}
+	$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("CreateTicket").' &#8212; '.$langs->trans("TicketPublicAccess").'</span>';
+	$out .= '<div class="urllink">';
+	$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" spellcheck="false" value="'.$url.'">';
+	$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
+	$out .= '</div>';
+	$out .= ajax_autoselect("directpubliclink", '');
+	$out .= '</div>';
 
 	return $out;
 }
