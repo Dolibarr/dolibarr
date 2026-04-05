@@ -97,7 +97,7 @@ class mailing_eventorganization extends MailingTargets
 		if (GETPOSTISSET('attendeeStatusList')) {
 			$attendeeStatusList = (GETPOST('attendeeStatusList', 'array'));
 			$attendeeStatusListStr = implode(", ", $attendeeStatusList);
-			$sql .= " AND e.status IN (".$attendeeStatusListStr.")";
+			$sql .= " AND e.status IN (".$this->db->escape($attendeeStatusListStr).")";
 		}
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
