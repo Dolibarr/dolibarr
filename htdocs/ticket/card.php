@@ -48,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -1062,6 +1063,35 @@ if ($action == 'create' || $action == 'presend') {
 					$morehtmlref .= $object->project->getNomUrl(1);
 					if ($object->project->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($object->project->title).'</span>';
+					}
+				}
+			}
+		}
+
+		dol_syslog("ticket::card::member::pre", LOG_DEBUG);
+		// Member
+		if (isModEnabled('member') && $user->hasRight('adherent', 'lire')); {
+			dol_syslog("ticket::card::member::ismodule", LOG_DEBUG);
+			$langs->load("members");
+			$morehtmlref .= '<br>';
+			if ($permissiontoedit) {
+				dol_syslog("ticket::card::member::permissiontoedit::object->element=".$object->element, LOG_DEBUG);
+				$memberobj = new Adherent($db);
+				$memberresult = $memberobj->fetch($object->fk_member);
+				if ($memberresult) {
+					dol_syslog("ticket::card::if memberresult=".$memberresult, LOG_DEBUG);
+					$morehtmlref .= img_picto($langs->trans("Member"), $memberobj->picto, 'class="pictofixedwidth"');
+					if ($action != 'classify') {
+						dol_syslog("ticket::card::if action", LOG_DEBUG);
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->fk_member], true).'">'.img_edit($langs->transnoentitiesnoconv('SetMember')).'</a> ';
+					}
+					$morehtmlref .= $form->form_member($_SERVER['PHP_SELF'].'?id='.$object->id, (string)$object->fk_member, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+				} else {
+					dol_syslog("ticket::card::else memberresult=".$memberresult, LOG_DEBUG);
+					$morehtmlref .= $memberobj->getNomUrl(1);
+					if ($memberobj->fullname) {
+						dol_syslog("ticket::card::if fullname", LOG_DEBUG);
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($memberobj->fullname).'</span>';
 					}
 				}
 			}
