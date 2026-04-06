@@ -965,7 +965,7 @@ if ($action == 'create' || $action == 'presend') {
 		$morehtmlref = '<div class="refidno">';
 
 		if ($permissiontoadd && !$user->socid) {
-			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('SetTitle'), 0).'</a> ';
 		}
 		if ($action != 'editsubject') {
 			$morehtmlref .= '<span class="smallonsmartphone">'.dolPrintLabel($object->subject).'</span>';
