@@ -131,6 +131,31 @@ if (empty($reshook)) {
 		} else {
 			dol_print_error($db);
 		}
+	} elseif ($action == 'addmember' && $user->hasRight('propal', 'write')) {
+		$result = $object->fetch($id);
+
+		if ($result > 0 && $id > 0) {
+			$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			if (empty($newmember)) {
+				$newmember = $object->fk_member;
+			}
+
+			$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+			$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+		}
+
+		if ($result >= 0) {
+			header("Location: ".$url_page_current."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	}
 }
 
