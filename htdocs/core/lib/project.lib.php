@@ -278,7 +278,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	if (isModEnabled('mailing') && getDolGlobalInt('MAILING_ADD_TAB_ON_PROJECT') {		// Show this tab only in hidden option is on (we can already get the information from other view and we mustfight againstthe tabflation).
+	if (isModEnabled('mailing') && getDolGlobalInt('MAILING_ADD_TAB_ON_PROJECT')) {		// Show this tab only in hidden option is on (we can already get the information from other view and we mustfight againstthe tabflation).
 		$langs->load('mails');
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/comm/mailing/list.php', ['projectid' => $project->id]);
 		$head[$h][1] = $langs->trans("EMailings");
