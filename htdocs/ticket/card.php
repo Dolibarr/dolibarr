@@ -1070,7 +1070,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		dol_syslog("ticket::card::member::pre", LOG_DEBUG);
 		// Member
-		if (isModEnabled('member') && $user->hasRight('adherent', 'lire')); {
+		if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
 			dol_syslog("ticket::card::member::ismodule", LOG_DEBUG);
 			$langs->load("members");
 			$morehtmlref .= '<br>';

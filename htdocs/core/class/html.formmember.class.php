@@ -239,7 +239,7 @@ class FormMember extends Form
 							if ($disabled) {
 								print ' disabled';
 							}
-							print '>' .$showname. '</option>';							
+							print '>' .$showname. '</option>';
 						}
 						$i++;
 						//dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::firstMember='.$firstMember, LOG_DEBUG);
@@ -327,4 +327,3 @@ class FormMember extends Form
 		}
 	}
 }
-
