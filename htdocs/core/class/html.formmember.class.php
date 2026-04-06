@@ -265,7 +265,7 @@ class FormMember extends Form
 	 *  @param	?Object		$object         	Object to use to find type of contact
 	 *  @param  string		$selected       	Default selected value
 	 *  @param  string		$htmlname			HTML select name
-	 *  @param  string		$source				Source ('internal' or 'external')
+	 *  @param  string		$source				Source ('member' is currently the only supported)
 	 *  @param  string		$sortorder			Sort criteria ('position', 'code', ...)
 	 *  @param  int			$showempty      	1=Add en empty line
 	 *  @param  string      $morecss        	Add more css to select component
@@ -273,7 +273,7 @@ class FormMember extends Form
 	 *  @param	int<0,1>	$forcehidetooltip	Force hide tooltip for admin
 	 *  @return	string|void						Depending on $output param, return the HTML select list (recommended method) or nothing
 	 */
-	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
+	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'member', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
 	{
 		dol_syslog(get_class($this)."::selectMemberForNewContact::object->element=".$object->element, LOG_DEBUG);
 		global $user, $langs;
@@ -283,20 +283,29 @@ class FormMember extends Form
 			'@phan-var-force CommonObject $object';  // CommonObject has the method.
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 2, 1);	// List of types into c_type_contact for element=$object->element
 
+
 			$out .= '<select class="flat valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 			if ($showempty) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
-			foreach ($lesTypes as $key => $arrayvalue) {
-				$out .= '<option value="'.$key.'" data-code="'.$arrayvalue['code'].'"';
-				if ($key == $selected) {
-					$out .= ' selected';
+			if (count($lesTypes)) {
+				foreach ($lesTypes as $key => $arrayvalue) {
+					$out .= '<option value="'.$key.'" data-code="'.$arrayvalue['code'].'"';
+					if ($key == $selected) {
+						$out .= ' selected';
+					}
+					$out .= '>'.$arrayvalue['label'].'</option>';
 				}
-				$out .= '>'.$arrayvalue['label'].'</option>';
+			} else {
+				$out .= '<option value="-1" data-code="nosuchmembercontactrole"';
+				$out .= ' disabled';
+				$out .= '>AskYourAdminToDefineContactRolesForMembers</option>';
 			}
 			$out .= "</select>";
 			if ($user->admin && empty($forcehidetooltip)) {
 				$out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			} elseif (!$user->admin && empty($forcehidetooltip)) {
+				$out .= ' '.info($langs->trans("AskYourAdminToDefineContactRolesForMembers"), 1);
 			}
 
 			$out .= ajax_combobox($htmlname);

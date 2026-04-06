@@ -250,11 +250,12 @@ if ($permission) {
 		<div class="tagtd noborderbottom">
 			<?php
 			$tmpobject = $object;
+			dol_syslog('contacts.tpl.php::object->element'.$object->element, LOG_DEBUG);
 			if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
 				'@phan-var-force Commande|Facture $objectsrc';
 				$tmpobject = $objectsrc;
 			}
-			$formmember->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?>
+			$formmember->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'member', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">

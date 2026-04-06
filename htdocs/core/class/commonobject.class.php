@@ -1854,7 +1854,7 @@ abstract class CommonObject
 	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
 	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
-	public function liste_member_as_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
+	public function liste_member_as_contact($statusoflink = -1, $source = 'member', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
 		dol_syslog(get_class($this)."::liste_member_as_contact::", LOG_DEBUG);
 		// phpcs:enable
