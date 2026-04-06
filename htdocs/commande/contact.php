@@ -114,9 +114,9 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'addmember' && $user->hasRight("commande", "creer")) {
-		$result = $object->fetch($id, '', $track_id);
+		$result = $object->fetch($id);
 
-		if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
+		if ($result > 0 && $id > 0) {
 			$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			if (empty($newmember)) {

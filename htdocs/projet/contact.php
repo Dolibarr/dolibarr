@@ -286,9 +286,9 @@ if (empty($reshook)) {
 
 	// members as contacts
 	if ($action == 'addmember' && $user->hasRight('projet', 'write')) {
-		$result = $object->fetch($id, '', $track_id);
+		$result = $object->fetch($id);
 
-		if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
+		if ($result > 0 && $id > 0) {
 			$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			if (empty($newmember)) {
