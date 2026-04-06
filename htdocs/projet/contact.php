@@ -3,6 +3,7 @@
  * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,6 +281,34 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
+		}
+	}
+
+	// members as contacts
+	if ($action == 'addmember' && $user->hasRight('projet', 'write')) {
+		$result = $object->fetch($id, '', $track_id);
+
+		if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
+			$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			if (empty($newmember)) {
+				$newmember = $object->fk_member;
+			}
+
+			$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+			$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+		}
+
+		if ($result >= 0) {
+			header("Location: ".$url_page_current."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	}
 
