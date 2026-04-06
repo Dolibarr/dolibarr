@@ -1736,6 +1736,92 @@ class Form
 		return $out;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Output html form to select a member
+	 *  This call select_member_list() or ajax depending on setup. This component is not able to support multiple select.
+	 *
+	 * @param int|string 	$selected 				Preselected ID
+	 * @param string 		$htmlname 				Name of field in form
+	 * @param string 		$filter 				Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
+	 * @param string|int<1,1> 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectMember')
+	 * @param int<0,1>		$showtype 				Show third party type in combolist (customer, prospect or supplier)
+	 * @param int<0,1>		$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param int 			$limit 					Maximum number of elements
+	 * @param string 		$morecss 				Add more css styles to the SELECT component
+	 * @param string 		$moreparam 				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param int<0,3>		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder 'Search', 3 search icon after)
+	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
+	 * @param bool 			$multiple 				add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
+	 * @param string[] 		$excludeids 			Exclude IDs from the select combo
+	 * @param int<0,1>		$showcode 				Show code
+	 * @return string  		 	            		HTML string with select box for member.
+	 */
+	public function select_member($selected = '', $htmlname = 'memberid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
+	{
+		dol_syslog("select_member::", LOG_DEBUG);
+		// phpcs:enable
+		global $conf, $langs;
+
+		$out = '';
+
+		if (!empty($conf->use_javascript_ajax) && !$forcecombo) {
+			dol_syslog("select_member::use_javascript_ajax", LOG_DEBUG);
+			if (is_null($ajaxoptions)) {
+				dol_syslog("select_member::use_javascript_ajax::null ajaxoptions", LOG_DEBUG);
+				$ajaxoptions = array();
+			}
+
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+
+			// No immediate load of all database
+			$placeholder = '';
+			if ($selected && empty($selected_input_value)) {
+				dol_syslog("select_member::use_javascript_ajax::if selected", LOG_DEBUG);
+				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$membertmp = new Adherent($this->db);
+				$membertmp->fetch($selected);
+				$selected_input_value = $membertmp->fullname;
+				unset($membertmp);
+			}
+
+			// mode 1
+			$urloption = 'htmlname=' . urlencode((string) (str_replace('.', '_', $htmlname))) . '&outjson=1&filter=' . urlencode((string) ($filter)) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode((string) ($showtype)) : '') . ($showcode ? '&showcode=' . urlencode((string) ($showcode)) : '') . ($limit ? '&limit='.$limit : '');
+
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
+			if (empty($hidelabel)) {
+				dol_syslog("select_member::use_javascript_ajax::empty hidelabel", LOG_DEBUG);
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel == 1 && !is_numeric($showempty)) {
+				dol_syslog("select_member::use_javascript_ajax::hidelabel==1", LOG_DEBUG);
+				$placeholder = $langs->trans($showempty);
+			} elseif ($hidelabel > 1) {
+				dol_syslog("select_member::use_javascript_ajax::hidelabel>1", LOG_DEBUG);
+				$placeholder = $langs->trans("RefOrLabel");
+				if ($hidelabel == 2) {
+					dol_syslog("select_member::use_javascript_ajax::hidelabel==2", LOG_DEBUG);
+					$out .= img_picto($langs->trans("Search"), 'search');
+				}
+			}
+			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('MEMBER_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
+			if ($hidelabel == 3) {
+				dol_syslog("select_member::use_javascript_ajax::hidelabel==3", LOG_DEBUG);
+				$out .= img_picto($langs->trans("Search"), 'search');
+			}
+
+			$out .= ajax_event($htmlname, $events);
+
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalInt('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+		} else {
+			// Immediate load of all database
+			$out .= $this->select_member_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids, $showcode);
+		}
+
+		return $out;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
@@ -7485,6 +7571,66 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
+	 *  Output html select to select member
+	 *
+	 * @param string 	$page 					Page
+	 * @param string 	$selected 				Id preselected
+	 * @param string 	$htmlname 				Name of HTML select
+	 * @param string	$filter 				Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
+	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text key to use on empty line like 'SelectMember')
+	 * @param int<0,1>	$showtype 				Show member type in combolist
+	 * @param int<0,1>	$forcecombo 			Force to use combo box
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param int<0,1>	$nooutput 				No print output. Return it only.
+	 * @param int[] 	$excludeids 			Exclude IDs from the select combo
+	 * @param string 	$textifnomemberparty 	Text to show if no memberparty
+	 * @return    string                        HTML output or ''
+	 */
+	public function form_member($page, $selected = '', $htmlname = 'memberid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnomemberparty = '')
+	{
+		dol_syslog("form_member::", LOG_DEBUG);
+		// phpcs:enable
+		global $langs;
+
+		$out = '';
+		if ($htmlname != "none") {
+			dol_syslog("form_member::if htmlname", LOG_DEBUG);
+			$limit = getDolGlobalInt('MEMBER_LIMIT_SIZE');
+
+			$out .= '<form method="post" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="set_member">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			$out .= $this->select_member($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, $limit, 'minwidth100', '', '', 1, array(), false, $excludeids);
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+			$out .= '</form>';
+		} else {
+			dol_syslog("form_member::else htmlname", LOG_DEBUG);
+			if ($selected) {
+				dol_syslog("form_member::else htmlname::if selected", LOG_DEBUG);
+				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$member = new Adherent($this->db);
+				$member->fetch((int) $selected);
+				$out .= $member->getNomUrl(0, '');
+			} else {
+				dol_syslog("form_member::else htmlname::else selected", LOG_DEBUG);
+				$out .= '<span class="opacitymedium">' . $textifnomember . '</span>';
+			}
+		}
+
+		if ($nooutput) {
+			dol_syslog("form_member::if nooutput", LOG_DEBUG);
+			return $out;
+		} else {
+			dol_syslog("form_member::else nooutput", LOG_DEBUG);
+			print $out;
+		}
+
+		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
 	 *  Returns the list of currencies in the user's language
 	 *
 	 * @param string $selected preselected currency code
@@ -10620,6 +10766,7 @@ class Form
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
+		dol_syslog(get_class($this)."::showLinkedObjectBlock", LOG_DEBUG);
 		global $conf, $langs, $hookmanager;
 		global $action;
 		global $db, $user;	// Will be used into tpl
@@ -10797,6 +10944,7 @@ class Form
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array(), $nooutput = 0)
 	{
+		dol_syslog(get_class($this)."::showLinkToObjectBlock::object->element=".$object->element, LOG_DEBUG);
 		global $conf, $langs, $hookmanager, $form;
 		global $action;
 
@@ -10998,7 +11146,7 @@ class Form
 				}
 
 				$sql = $possiblelink['sql'];
-
+				dol_syslog(get_class($this)."::showLinkToObjectBlock::sql::possiblelink['label']=".$possiblelink['label'], LOG_DEBUG);
 				$resqllist = $this->db->query($sql);
 				if ($resqllist) {
 					$num = $this->db->num_rows($resqllist);
@@ -11114,10 +11262,13 @@ class Form
 
 		if ($nooutput) {
 			return array('linktoelem' => $linktoelem, 'htmltoenteralink' => $htmltoenteralink);
+			dol_syslog(get_class($this)."::showLinkToObjectBlock::return array", LOG_DEBUG);
 		} else {
+			dol_syslog(get_class($this)."::showLinkToObjectBlock::print htmltoenteralink", LOG_DEBUG);
 			print $htmltoenteralink;
 		}
 
+		dol_syslog(get_class($this)."::showLinkToObjectBlock::return linktoelem", LOG_DEBUG);
 		return $linktoelem;
 	}
 
