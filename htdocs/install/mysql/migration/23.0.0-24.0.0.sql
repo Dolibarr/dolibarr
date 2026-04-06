@@ -553,5 +553,6 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 --noqa:enable=PRS
 
 ALTER TABLE llx_ticket ADD COLUMN fk_member integer DEFAULT 0 AFTER fk_soc;
+ALTER TABLE llx_element_contact ADD COLUMN fk_member integer DEFAULT 0 AFTER fk_socpeople;
 
 -- end of migration
