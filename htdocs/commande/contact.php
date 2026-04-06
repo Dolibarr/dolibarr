@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

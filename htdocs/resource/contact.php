@@ -4,6 +4,7 @@
  * Copyright (C) 2012       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  */
 
