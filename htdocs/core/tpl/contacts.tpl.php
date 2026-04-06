@@ -411,6 +411,7 @@ if ($permission) {
 print "</tr>";
 
 foreach ($list as $entry) {
+	print '<!-- foreach entry->nature='.$entry->nature.' -->';
 	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
 
 	if ($entry->nature == 'member') {

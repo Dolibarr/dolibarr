@@ -107,7 +107,6 @@ trait CommonPeople
 	 */
 	public function getFullName($langs, $option = 0, $nameorder = -1, $maxlen = 0)
 	{
-		dol_syslog(get_class($this)."::getFullName::", LOG_DEBUG);
 		//print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;

@@ -1736,7 +1736,6 @@ abstract class CommonObject
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
-		dol_syslog(get_class($this)."::liste_contact::", LOG_DEBUG);
 		// phpcs:enable
 		global $langs;
 
@@ -2013,7 +2012,6 @@ abstract class CommonObject
 	 */
 	public function liste_type_contact($source = 'internal', $order = 'position', $option = 0, $activeonly = 0, $code = '')
 	{
-		dol_syslog(get_class($this)."::liste_type_contact::", LOG_DEBUG);
 		// phpcs:enable
 		global $langs;
 
