@@ -1769,9 +1769,7 @@ class Form
 		$out = '';
 
 		if (!empty($conf->use_javascript_ajax) && !$forcecombo) {
-			dol_syslog("select_member::use_javascript_ajax", LOG_DEBUG);
 			if (is_null($ajaxoptions)) {
-				dol_syslog("select_member::use_javascript_ajax::null ajaxoptions", LOG_DEBUG);
 				$ajaxoptions = array();
 			}
 
@@ -1780,7 +1778,6 @@ class Form
 			// No immediate load of all database
 			$placeholder = '';
 			if ($selected && empty($selected_input_value)) {
-				dol_syslog("select_member::use_javascript_ajax::if selected", LOG_DEBUG);
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$membertmp = new Adherent($this->db);
 				$membertmp->fetch($selected);
@@ -1793,22 +1790,17 @@ class Form
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
-				dol_syslog("select_member::use_javascript_ajax::empty hidelabel", LOG_DEBUG);
 				$out .= $langs->trans("RefOrLabel") . ' : ';
 			} elseif ($hidelabel == 1 && !is_numeric($showempty)) {
-				dol_syslog("select_member::use_javascript_ajax::hidelabel==1", LOG_DEBUG);
 				$placeholder = $langs->trans($showempty);
 			} elseif ($hidelabel > 1) {
-				dol_syslog("select_member::use_javascript_ajax::hidelabel>1", LOG_DEBUG);
 				$placeholder = $langs->trans("RefOrLabel");
 				if ($hidelabel == 2) {
-					dol_syslog("select_member::use_javascript_ajax::hidelabel==2", LOG_DEBUG);
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
 			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('MEMBER_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
 			if ($hidelabel == 3) {
-				dol_syslog("select_member::use_javascript_ajax::hidelabel==3", LOG_DEBUG);
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 
@@ -7594,7 +7586,6 @@ class Form
 
 		$out = '';
 		if ($htmlname != "none") {
-			dol_syslog("form_member::if htmlname", LOG_DEBUG);
 			$limit = getDolGlobalInt('MEMBER_LIMIT_SIZE');
 
 			$out .= '<form method="post" action="' . $page . '">';
@@ -7604,24 +7595,19 @@ class Form
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
-			dol_syslog("form_member::else htmlname", LOG_DEBUG);
 			if ($selected) {
-				dol_syslog("form_member::else htmlname::if selected", LOG_DEBUG);
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$member = new Adherent($this->db);
 				$member->fetch((int) $selected);
 				$out .= $member->getNomUrl(0, '');
 			} else {
-				dol_syslog("form_member::else htmlname::else selected", LOG_DEBUG);
 				$out .= '<span class="opacitymedium">' . $textifnomember . '</span>';
 			}
 		}
 
 		if ($nooutput) {
-			dol_syslog("form_member::if nooutput", LOG_DEBUG);
 			return $out;
 		} else {
-			dol_syslog("form_member::else nooutput", LOG_DEBUG);
 			print $out;
 		}
 
@@ -11146,7 +11132,6 @@ class Form
 				}
 
 				$sql = $possiblelink['sql'];
-				dol_syslog(get_class($this)."::showLinkToObjectBlock::sql::possiblelink['label']=".$possiblelink['label'], LOG_DEBUG);
 				$resqllist = $this->db->query($sql);
 				if ($resqllist) {
 					$num = $this->db->num_rows($resqllist);
@@ -11262,13 +11247,10 @@ class Form
 
 		if ($nooutput) {
 			return array('linktoelem' => $linktoelem, 'htmltoenteralink' => $htmltoenteralink);
-			dol_syslog(get_class($this)."::showLinkToObjectBlock::return array", LOG_DEBUG);
 		} else {
-			dol_syslog(get_class($this)."::showLinkToObjectBlock::print htmltoenteralink", LOG_DEBUG);
 			print $htmltoenteralink;
 		}
 
-		dol_syslog(get_class($this)."::showLinkToObjectBlock::return linktoelem", LOG_DEBUG);
 		return $linktoelem;
 	}
 

@@ -241,7 +241,6 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedMember = GETPOSTISSET("newmember") ? GETPOSTINT("newmember") : (empty($object->fk_member) ? 0 : $object->fk_member);
-			dol_syslog("contacts.tpl.php::selectedMember=".$selectedMember, LOG_DEBUG);
 			print '<input type="hidden" name="loadmember" value="'.$selectedMember.'">';
 			$selectedMember = $formmember->selectMemberForNewContact($object, 'id', $selectedMember, 'newmember', array(), 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
 		</div>
@@ -278,7 +277,6 @@ if ($permission) {
 // TODO: replace this with 1 single direct SQL (for both internal and external string to use $db->sort($sortfield, $sortorder)
 $list = array();
 foreach (array('internal', 'member', 'external') as $source) {
-	dol_syslog('contacts.tpl.php::source='.$source, LOG_DEBUG);
 	if ($source == 'member') {
 		$contactlist = $object->liste_member_as_contact(-1, 'member');
 	} else {
@@ -331,7 +329,6 @@ foreach (array('internal', 'member', 'external') as $source) {
 			$memberstatic->fetch($contact['memberid']);
 			$entry->member_id   = $memberstatic->id;
 			$entry->member_html = $memberstatic->getNomUrl(1);
-			dol_syslog("PRE::getFullName::contact['memberid']=".$contact['memberid'], LOG_DEBUG);
 			$entry->member_name = strtolower($memberstatic->getFullName($langs));
 		}
 

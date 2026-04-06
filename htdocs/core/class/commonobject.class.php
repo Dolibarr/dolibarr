@@ -1919,7 +1919,6 @@ abstract class CommonObject
 		// there is that global variable that decides firstname or lastname order
 		$sql .= " ORDER BY a.lastname ASC";
 
-		dol_syslog(get_class($this)."::liste_member_as_contact", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

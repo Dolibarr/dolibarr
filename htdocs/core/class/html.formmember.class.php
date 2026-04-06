@@ -52,26 +52,20 @@ class FormMember extends Form
 	public function selectMemberForNewContact($object, $var_id, $selected = 0, $htmlname = 'newcompany', $limitto = [], $forceid = 0, $moreparam = '', $morecss = '')
 	{
 		dol_syslog(get_class($this)."::selectMemberForNewContact::object->element=".$object->element, LOG_DEBUG);
-		dol_syslog(get_class($this)."::selectMemberForNewContact::object->fk_member=".$object->fk_member, LOG_DEBUG);
-		dol_syslog(get_class($this)."::selectMemberForNewContact::selected=".$selected, LOG_DEBUG);
 		global $conf, $user, $hookmanager;
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MEMBER_USE_SEARCH_TO_SELECT')) {
-			dol_syslog(get_class($this)."::selectMemberForNewContact::if conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT', LOG_DEBUG);
 			// Use Ajax search
 			$minLength = (is_numeric(getDolGlobalString('MEMBER_USE_SEARCH_TO_SELECT')) ? $conf->global->MEMBER_USE_SEARCH_TO_SELECT : 2);
 
 			$memid = 0;
 			$name = '';
 			if ($selected > 0) {
-				dol_syslog(get_class($this)."::selectMemberForNewContact::if selected > 0", LOG_DEBUG);
 				$tmpmember = new Adherent($this->db);
 				$result = $tmpmember->fetch($selected);
 				if ($result > 0) {
-					dol_syslog(get_class($this)."::selectMemberForNewContact::if selected > 0::if result > 0", LOG_DEBUG);
 					$memid = $selected;
 					$name = $tmpmember->fullname;
-					dol_syslog(get_class($this)."::selectMemberForNewContact::if selected > 0::if result > 0::name=".$name, LOG_DEBUG);
 				}
 			}
 
@@ -139,7 +133,6 @@ class FormMember extends Form
 			print ajax_autocompleter((string) ($memid ? $memid : -1), $htmlname, DOL_URL_ROOT . '/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
 			return $memid;
 		} else {
-			dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT', LOG_DEBUG);
 			// Search to list thirdparties
 			$sql = "SELECT a.rowid, a.firstname as firstname, a.lastname as lastname ";
 			if (getDolGlobalString('MEMBER_ADD_REF_IN_LIST')) {
@@ -195,10 +188,8 @@ class FormMember extends Form
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql', LOG_DEBUG);
 				print '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"';
 				if ($conf->use_javascript_ajax) {
-					dol_syslog(get_class($this)."::selectMemberForNewContact::conf->use_javascript_ajax=".$conf->use_javascript_ajax, LOG_DEBUG);
 					$javaScript = "window.location='" . dol_escape_js($_SERVER['PHP_SELF']) . "?" . $var_id . "=" . ($forceid > 0 ? $forceid : $object->id) . $moreparam . "&" . $htmlname . "=' + form." . $htmlname . ".options[form." . $htmlname . ".selectedIndex].value;";
 					print ' onChange="' . $javaScript . '"';
 				}
@@ -210,12 +201,9 @@ class FormMember extends Form
 				$firstMember = 0;  // For static analysis
 				if ($num) {
 					while ($i < $num) {
-						//	dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::rowid='.$obj->rowid, LOG_DEBUG);
 						$obj = $this->db->fetch_object($resql);
 						if ($i == 0) {
-							dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::if i==0', LOG_DEBUG);
 							$firstMember = $obj->rowid;
-							dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::if i==0::firstMember='.$firstMember, LOG_DEBUG);
 						}
 						$disabled = 0;
 						if (is_array($limitto) && count($limitto) && !in_array($obj->rowid, $limitto)) {
@@ -227,7 +215,6 @@ class FormMember extends Form
 							$showname = ''.dol_escape_htmltag($obj->firstname, 0, 0, '', 0, 1).' '.dol_escape_htmltag($obj->lastname, 0, 0, '', 0, 1);
 						}
 						if ($selected > 0 && $selected == $obj->rowid) {
-							dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::if selected && selected == obj->rowid', LOG_DEBUG);
 							print '<option value="' . $obj->rowid . '"';
 							if ($disabled) {
 								print ' disabled';
@@ -242,13 +229,9 @@ class FormMember extends Form
 							print '>' .$showname. '</option>';
 						}
 						$i++;
-						//dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::firstMember='.$firstMember, LOG_DEBUG);
 					}
-					dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::if num::firstMember='.$firstMember, LOG_DEBUG);
-					dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::if num::secondMember='.$firstMember, LOG_DEBUG);
 				}
 				if ($selected > 0 && $firstMember != $selected) {
-					dol_syslog(get_class($this)."::selectMemberForNewContact::else conf->use_javascript_ajax=".$conf->use_javascript_ajax.' && MEMBER_USE_SEARCH_TO_SELECT::if resql::if firstMember >= selected', LOG_DEBUG);
 					// This must mean that the preselected member was not found in the status above, so we should add it but disabled
 					// '<option value="'.$selected.">Foo Bar</option>'
 					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
