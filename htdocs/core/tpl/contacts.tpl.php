@@ -261,7 +261,7 @@ if ($permission) {
 		<div class="tagtd center noborderbottom">
 			<input type="submit" id="add-member-contact" class="button small" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) {
 				echo ' disabled';
-																					} ?>>
+																					 } ?>>
 		</div>
 	</form>
 
