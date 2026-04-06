@@ -54,6 +54,8 @@ if (empty($preselectedtypeofcontact)) {
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmember.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $module = $object->element;
 
@@ -95,8 +97,10 @@ if ($module == 'propal') {
 }
 
 $formcompany = new FormCompany($db);
+$formmember = new FormMember($db);
 $companystatic = new Societe($db);
 $contactstatic = new Contact($db);
+$memberstatic = new Adherent($db);
 $userstatic = new User($db);
 
 ?>
@@ -109,7 +113,7 @@ if ($permission) {
 	print '<div class="div-table-responsive-no-min">'."\n";
 	print '<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">'."\n"; ?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd liste_titre"><?php echo img_object('', 'company', 'class="optiongrey paddingright"').$langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo img_object('', 'company', 'class="optiongrey paddingright"').$langs->trans("ThirdParty"). ' | '.img_picto($langs->trans("Member"), 'member', 'class="optiongrey paddingright"').$langs->trans("Members"); ?></div>
 		<div class="tagtd liste_titre"><?php echo img_picto($langs->trans("Users"), 'user', 'class="optiongrey paddingright"').$langs->trans("Users").' | '.img_picto($langs->trans("Contacts"), 'contact', 'class="optiongrey paddingright"').$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
 		<div class="tagtd liste_titre">&nbsp;</div>
@@ -118,9 +122,10 @@ if ($permission) {
 
 	<?php
 
+	// Internal Users
 	if (empty($hideaddcontactforuser)) {
 		?>
-	<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+	<form id="internal users" class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
@@ -166,10 +171,11 @@ if ($permission) {
 		<?php
 	}
 
+	// Thirdparties and contacts
 	if (empty($hideaddcontactforthirdparty)) {
 		?>
 
-	<form class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+	<form id="thirdparties and contacts" class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
@@ -218,6 +224,50 @@ if ($permission) {
 		<?php
 	}
 
+	// Members
+	if (empty($hideaddcontactformember)) {
+		?>
+
+	<form id="members" class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
+		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
+		<input type="hidden" name="action" value="addmember" />
+		<input type="hidden" name="source" value="member" />
+		<input type="hidden" name="page_y" value="" />
+		<?php if (!empty($withproject)) {
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		} ?>
+
+		<div class="tagtd nowrap noborderbottom">
+			<?php
+			$selectedMember = GETPOSTISSET("newmember") ? GETPOSTINT("newmember") : (empty($object->fk_member) ? 0 : $object->fk_member);
+			dol_syslog("contacts.tpl.php::selectedMember=".$selectedMember, LOG_DEBUG);
+			print '<input type="hidden" name="loadmember" value="'.$selectedMember.'">';
+			$selectedMember = $formmember->selectMemberForNewContact($object, 'id', $selectedMember, 'newmember', array(), 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
+		</div>
+		<div class="tagtd noborderbottom minwidth500imp">
+			<small>(Members currently does not have contacts)</small>
+		</div>
+		<div class="tagtd noborderbottom">
+			<?php
+			$tmpobject = $object;
+			if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
+				'@phan-var-force Commande|Facture $objectsrc';
+				$tmpobject = $objectsrc;
+			}
+			$formmember->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?>
+		</div>
+		<div class="tagtd noborderbottom">&nbsp;</div>
+		<div class="tagtd center noborderbottom">
+			<input type="submit" id="add-member-contact" class="button small" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) {
+				echo ' disabled';
+																					   } ?>>
+		</div>
+	</form>
+
+		<?php
+	}
+
 	print "</div>";
 	print "</div>";
 
@@ -229,12 +279,17 @@ if ($permission) {
 
 // TODO: replace this with 1 single direct SQL (for both internal and external string to use $db->sort($sortfield, $sortorder)
 $list = array();
-foreach (array('internal', 'external') as $source) {
-	if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
-		'@phan-var-force Commande|Facture $objectsrc';
-		$contactlist = $objectsrc->liste_contact(-1, $source);
+foreach (array('internal', 'member', 'external') as $source) {
+	dol_syslog('contacts.tpl.php::source='.$source, LOG_DEBUG);
+	if ($source == 'member') {
+		$contactlist = $object->liste_member_as_contact(-1, 'member');
 	} else {
-		$contactlist = $object->liste_contact(-1, $source);
+		if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
+			'@phan-var-force Commande|Facture $objectsrc';
+			$contactlist = $objectsrc->liste_contact(-1, $source);
+		} else {
+			$contactlist = $object->liste_contact(-1, $source);
+		}
 	}
 
 	foreach ($contactlist as $contact) {
@@ -247,6 +302,9 @@ foreach (array('internal', 'external') as $source) {
 		$entry->thirdparty_id = 0;
 		$entry->thirdparty_html = "";
 		$entry->thirdparty_name = "";
+		$entry->member_id = 0;
+		$entry->member_html = "";
+		$entry->member_name = "";
 		$entry->contact_html = "";
 		$entry->contact_name = "";
 		$entry->status = 0;
@@ -255,9 +313,12 @@ foreach (array('internal', 'external') as $source) {
 		if ($contact['source'] == 'internal') {
 			$entry->nature = 'user';
 			$entry->nature_html = $langs->trans("User");
-		} elseif ($contact['source'] == 'external') {
+		} elseif ($contact['source'] == 'external' and $source != 'member') {
 			$entry->nature = 'thirdparty';
 			$entry->nature_html = $langs->trans("ThirdPartyContact");
+		} elseif ($source == 'member') {
+			$entry->nature = 'member';
+			$entry->nature_html = $langs->trans("Member");
 		}
 
 		if ($contact['socid'] > 0) {
@@ -268,6 +329,12 @@ foreach (array('internal', 'external') as $source) {
 		} elseif ($contact['socid'] < 0) {
 			$entry->thirdparty_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 			$entry->thirdparty_name = strtolower(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
+		} elseif ($source == 'member') {
+			$memberstatic->fetch($contact['memberid']);
+			$entry->member_id   = $memberstatic->id;
+			$entry->member_html = $memberstatic->getNomUrl(1);
+			dol_syslog("PRE::getFullName::contact['memberid']=".$contact['memberid'], LOG_DEBUG);
+			$entry->member_name = strtolower($memberstatic->getFullName($langs));
 		}
 
 		if ($contact['source'] == 'internal') {
@@ -276,7 +343,7 @@ foreach (array('internal', 'external') as $source) {
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
 			$entry->contact_warning = 0;
-		} elseif ($contact['source'] == 'external') {
+		} elseif ($contact['source'] == 'external' and $source != 'member') {
 			$contactstatic->fetch($contact['id']);
 			$entry->contact_id   = $contactstatic->id;
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
@@ -313,6 +380,7 @@ $list = dol_sort_array($list, $sortfield, $sortorder, 1, 0, 1);
 $arrayfields = array(
 	'rowid' 		=> array('label' => $langs->trans("Id"), 'checked' => 1),
 	'nature' 		=> array('label' => $langs->trans("NatureOfContact"), 'checked' => 1),
+	'member' 		=> array('label' => $langs->trans("Member"), 'checked' => 1),
 	'thirdparty' 	=> array('label' => $langs->trans("ThirdParty"), 'checked' => 1),
 	'contact' 		=> array('label' => $langs->trans("Users").' | '.$langs->trans("Contacts"), 'checked' => 1),
 	'type' 			=> array('label' => $langs->trans("ContactType"), 'checked' => 1),
@@ -337,6 +405,7 @@ print '<table class="tagtable nobottomiftotal liste noborder">';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($arrayfields['member']['label'], $_SERVER["PHP_SELF"], "member_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "nature", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
@@ -349,7 +418,13 @@ print "</tr>";
 foreach ($list as $entry) {
 	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
 
-	print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
+	if ($entry->nature == 'member') {
+		print '<td class="tdoverflowmax200" data-member_id="" data-member_name=""></td>';
+		print '<td class="tdoverflowmax200" data-member_id="' . ((int) $entry->member_id) . '" data-member_name="' . dol_escape_htmltag($entry->member_name) . '">'.$entry->member_html.'</td>';
+	} else {
+		print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
+		print '<td class="tdoverflowmax200" data-member_id="" data-member_name=""></td>';
+	}
 	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
 	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature_html).'</span>';
 	if ($entry->contact_warning > 0) {
