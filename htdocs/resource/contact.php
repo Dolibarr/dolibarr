@@ -106,7 +106,7 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 	} else {
 		dol_print_error($db);
 	}
-}elseif ($action == 'addmember' && $user->hasRight('resource', 'write')) {
+} elseif ($action == 'addmember' && $user->hasRight('resource', 'write')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0 ) {
