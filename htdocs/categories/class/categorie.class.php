@@ -1008,7 +1008,6 @@ class Categorie extends CommonObject
 
 		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
 		if (!empty($classnameforobj) && class_exists($classnameforobj)) {
-			$tmpobj = new $classnameforobj($this->db);
 			/** @var CommonObject $tmpobj */
 
 			$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." as fk_object";
@@ -1055,7 +1054,7 @@ class Categorie extends CommonObject
 					if ($onlyids) {
 						$objs[] = $rec['fk_object'];
 					} else {
-						$tmpobj->id = 0;
+						$tmpobj = new $classnameforobj($this->db);
 						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
 						// @phpstan-ignore-next-line
 						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
