@@ -774,6 +774,7 @@ class FormTicket
 			print '</tr>';
 		}
 
+		print '<!-- pre project -->';
 		if ($subelement != 'project') {
 			if (isModEnabled('project') && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
@@ -782,6 +783,7 @@ class FormTicket
 				print '</td></tr>';
 			}
 		}
+		print '<!-- post project -->';
 
 		if ($subelement != 'contract' && $subelement != 'contrat') {
 			if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
