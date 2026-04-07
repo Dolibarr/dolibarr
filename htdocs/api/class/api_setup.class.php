@@ -572,9 +572,9 @@ class Setup extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @param	int		$loadregions	Load also Regions for countries: 0 (default), 1 load regions
 	 * @param	int		$loadstates		Load also States for countries: 0 (default), 1 load states
-	 * @return array                List of Ccountry|CcountryExtended
-	 * @phan-return Ccountry|CcountryExtended
-	 * @phpstan-return Ccountry|CcountryExtended
+	 * @return list<Ccountry|CcountryExtended>
+	 * @phpstan-return list<Ccountry|CcountryExtended>
+	 * @phan-return list<Ccountry|CcountryExtended>
 	 *
 	 * @url     GET dictionary/countries
 	 *
