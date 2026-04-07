@@ -1116,38 +1116,6 @@ class Societe extends CommonObject
 
 				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
 
-				// update accountancy for this entity
-				if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
-
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
-					$sql .= " fk_soc";
-					$sql .= ", entity";
-					$sql .= ", vat_reverse_charge";
-					$sql .= ", accountancy_code_customer_general";
-					$sql .= ", accountancy_code_customer";
-					$sql .= ", accountancy_code_supplier_general";
-					$sql .= ", accountancy_code_supplier";
-					$sql .= ", accountancy_code_buy";
-					$sql .= ", accountancy_code_sell";
-					$sql .= ") VALUES (";
-					$sql .= $this->id;
-					$sql .= ", ".((int) $conf->entity);
-					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
-					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier_general)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
-					$sql .= ")";
-					$result = $this->db->query($sql);
-					if (!$result) {
-						$error++;
-						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
-					}
-				}
-
 				// Addition of the assigned sales representative
 				if ($this->commercial_id != '' && $this->commercial_id != -1) {
 					$this->add_commercial($user, $this->commercial_id);
@@ -5974,22 +5942,22 @@ class Societe extends CommonObject
 					'Societe' => '/societe/class/societe.class.php',
 					//'SocieteAccount', 'SocietePrice', 'SocieteRib',... are processed into the replaceThirdparty of Societe.
 				);
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'delivery')) {
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'delivery')) {
 					$objects['Delivery'] = '/delivery/class/delivery.class.php';
 				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'mrp_mo')) {
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'mrp_mo')) {
 					$objects['Mo'] = '/mrp/class/mo.class.php';
 				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'don')) {
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'don')) {
 					$objects['Don'] = '/don/class/don.class.php';
 				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'partnership')) {
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'partnership')) {
 					$objects['PartnerShip'] = '/partnership/class/partnership.class.php';
 				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'fichinter')) {
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'fichinter')) {
 					$objects['Fichinter'] = '/fichinter/class/fichinter.class.php';
 				}
-				if ($this->db->DDLListTables($conf->db->name, $this->db->prefix().'ticket')) {
+				if ($this->db->DDLListTables((string) $conf->db->name, $this->db->prefix().'ticket')) {
 					$objects['Ticket'] = '/ticket/class/ticket.class.php';
 				}
 
