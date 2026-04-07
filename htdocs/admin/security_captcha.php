@@ -244,6 +244,7 @@ if (isModEnabled('recruitment')) {
 	print '</td></tr>';
 }
 
+
 if (isModEnabled('webportal')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - WebPortal public form</td><td class="right" width="100">';
 	if (!empty($conf->use_javascript_ajax)) {
@@ -263,6 +264,7 @@ if (isModEnabled('webportal')) {
 
 print '</table>';
 print '</div>';
+
 
 $selectedcaptcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 

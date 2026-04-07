@@ -208,9 +208,9 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 			$product_static->label = $objp->product_label;
 			$product_static->status = !empty($objp->status) ? $objp->status : 0;
 			$product_static->status_buy = !empty($objp->status_buy) ? $objp->status_buy : 0;
-			$product_static->accountancy_code_sell = $objp->code_sell;
-			$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
-			$product_static->accountancy_code_sell_export = $objp->code_sell_export;
+			$product_static->accountancy_code_sell = !empty($objp->code_sell)? $objp->code_sell : "";
+			$product_static->accountancy_code_sell_intra = !empty($objp->code_sell_intra)? $objp->code_sell_intra : "";
+			$product_static->accountancy_code_sell_export = !empty($objp->code_sell_export)? $objp->code_sell_export : "";
 			$product_static->accountancy_code_buy = !empty($objp->code_buy) ? $objp->code_buy : "";
 			$product_static->accountancy_code_buy_intra = !empty($objp->code_buy_intra) ? $objp->code_buy_intra : "";
 			$product_static->accountancy_code_buy_export = !empty($objp->code_buy_export) ? $objp->code_buy_export : "";

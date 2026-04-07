@@ -185,7 +185,7 @@ if (empty($reshook)) {
 		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 			setEventMessages($langs->trans("Success"), null);
 		} else {
-			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to get URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to do the GET of URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 			setEventMessages($langs->trans($errormsg), null, 'errors');
 		}
 	}

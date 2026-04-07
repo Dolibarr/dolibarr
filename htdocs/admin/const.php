@@ -226,10 +226,10 @@ print "</tr>\n";
 print "\n";
 
 print '<tr class="oddeven nohover"><td>';
-print '<input type="text" class="flat minwidth300" name="constname" value="'.$constname.'">';
+print '<input type="text" class="flat minwidth300" name="constname" value="'.$constname.'" spellcheck="false">';
 print '</td>'."\n";
 print '<td>';
-print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'">';
+print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'" spellcheck="false">';
 print '</td>';
 print '<td>';
 print '<input type="text" class="flat minwidth100" name="constnote" value="'.$constnote.'">';
