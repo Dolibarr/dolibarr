@@ -331,7 +331,7 @@ if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 			$this->export_sql_end[$r] .= ' AND f.entity IN (' . getEntity('supplier_invoice') . ')';
 			if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
-				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ((int)$user->id);
+				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ((int) $user->id);
 			}
 
 			// Invoices and payments
@@ -414,7 +414,7 @@ if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 			$this->export_sql_end[$r] .= ' AND f.entity IN (' . getEntity('supplier_invoice') . ')';
 			if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
-				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ((int)$user->id);
+				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ((int) $user->id);
 			}
 
 			// Import Supplier Invoice
