@@ -634,6 +634,12 @@ class Conf extends stdClass
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								if ($modulename == 'supplierorder') {
+									$modulename = 'supplier_order';
+								}
+								if ($modulename == 'supplierinvoice') {
+									$modulename = 'supplier_invoice';
+								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
 
 								// deprecated in php 8.2
