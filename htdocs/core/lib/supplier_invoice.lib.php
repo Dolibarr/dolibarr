@@ -173,7 +173,7 @@ function supplierinvoice_prepare_head(FactureFournisseur $object)
  *
  *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
-function supplierinvoice_admin_prepare_head()
+function supplier_invoice_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
 
