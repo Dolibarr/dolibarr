@@ -62,5 +62,6 @@ FillEndOfMonth=End of month
 # Shortcuts
 PreviousMonthShort=Previous month
 CurrentMonthShort=Current month
+NextMonthShort=Next month
 PreviousWeekShort=Previous week
 CurrentWeekShort=Current week

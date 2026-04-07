@@ -24,13 +24,13 @@
  */
 
 /**
- *      \file       htdocs/admin/supplierinvoicedet_extrafields.php
+ *      \file       htdocs/supplier_invoice/admin/supplierinvoicedet_extrafields.php
  *		\ingroup    fourn
  *		\brief      Page to setup extra fields of supplierinvoice line
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 

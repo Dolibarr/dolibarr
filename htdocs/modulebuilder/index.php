@@ -1103,6 +1103,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 	dol_mkdir($destdir.'/scripts');
 	dol_mkdir($destdir.'/sql');
 	dol_mkdir($destdir.'/ajax');
+	dol_mkdir($destdir.'/stats');
 
 	// Scan dir class to find if an object with the same name already exists.
 	if (!$error) {
@@ -1385,7 +1386,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 		}
 	}
 
-	$filetogenerate = array();  // For static analysis
+	$filetogenerate = array();
 	if (!$error) {
 		// Copy some files
 		$filetogenerate = array(
@@ -1396,6 +1397,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
 			'myobject_list.php' => strtolower($objectname).'_list.php',
 			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
+			'ajax/myobject.php' => 'ajax/'.strtolower($objectname).'.php',
 			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 			//'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
 			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
@@ -1405,7 +1407,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 			//'scripts/mymodule.php' => 'scripts/'.strtolower($objectname).'.php',
 			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
 			//'class/api_mymodule.class.php' => 'class/api_'.strtolower($module).'.class.php',
-			'ajax/myobject.php' => 'ajax/'.strtolower($objectname).'.php',
+			'stats/myobject_index.php' => 'stats/'.strtolower($objectname).'_index.php',
 		);
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
@@ -1637,7 +1639,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 				$warning++;
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
 			} else {
-				$arrayofreplacement = array('/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */' => '/* BEGIN MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'.$stringtoadd."\n\t\t".'/* END MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'."\n\t\t".'/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */');
+				$arrayofreplacement = array(
+					'/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */' => '/* BEGIN MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'.$stringtoadd."\n\t\t".'/* END MODULEBUILDER LEFTMENU '.strtoupper($objectname).' */'."\n\t\t".'/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */'
+				);
 				dolReplaceInFile($moduledescriptorfile, $arrayofreplacement);
 			}
 		}
@@ -2061,6 +2065,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
 			'myobject_list.php' => strtolower($objectname).'_list.php',
 			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
+			'ajax/myobject.lib.php' => 'ajax/'.strtolower($objectname).'.php',
 			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 			'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
 			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
@@ -3217,12 +3222,9 @@ $morehtmlright = '<a href="'.DOL_URL_ROOT.'/admin/tools/ui/index.php" target="_b
 
 print load_fiche_titre($text, $morehtmlright, 'title_setup');
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development').'</span>';
-print '<br class="hideonsmartphone">';
-
-//print $textforlistofdirs;
-//print '<br>';
-
+print '<div class="info hideonsmartphone">';
+print $langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development').'</span>';
+print '</div>';
 
 
 $message = '';
@@ -3312,10 +3314,9 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		print '<!-- ErrorFailedToLoadModuleDescriptorForXXX -->';
 		print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
 		print $loadclasserrormessage;
+		print '<br>';
 	}
 }
-
-print '<br>';
 
 
 // Tabs for all modules
@@ -4078,7 +4079,7 @@ if ($module == 'initmodule') {
 				print '<div class="tagtr"><div class="tagtd">';
 				print '<span class="opacitymedium">'.$langs->trans("ObjectKey").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
-				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOSTISSET('objectname') ? GETPOST('objectname', 'alpha') : $modulename).'" autofocus>';
+				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOSTISSET('objectname') ? GETPOST('objectname', 'alpha') : $modulename).'" required autofocus>';
 				print $form->textwithpicto('', $langs->trans("Example").': MyObject, ACamelCaseName, ...');
 				print '</div></div>';
 
