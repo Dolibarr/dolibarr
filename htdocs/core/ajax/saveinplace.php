@@ -77,7 +77,7 @@ if (is_numeric($fk_element)) {
 	$id = 0;
 }
 $object = fetchObjectByElement($id, $element, $element_ref);
-if (! is_object($object)) {
+if (!is_object($object)) {
 	httponly_accessforbidden('Not allowed, bad combination of parameters for fetchObjectByElement');
 }
 

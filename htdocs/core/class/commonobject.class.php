@@ -8123,7 +8123,7 @@ abstract class CommonObject
 				// 2 : key fields name (if different of rowid)
 				// optional parameters...
 				// 3 : key field parent (for dependent lists). How this is used ?
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on a second line separated by "\n".
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field='value'. Or use USF on a second line separated by "\n".
 				// 5 : string category type. This replace the filter.
 				// 6 : ids categories list separated by comma for category root. This replace the filter.
 				// 7 : sort field
