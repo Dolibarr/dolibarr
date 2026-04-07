@@ -1049,7 +1049,7 @@ if (empty($reshook)) {
 								}
 							}
 						}
-						// $clone->clone_fournisseurs($object->id, $id);
+						$clone->clone_fournisseurs($object->id, $id);
 					} else {
 						if ($clone->error == 'ErrorProductAlreadyExists') {
 							$refalreadyexists++;
