@@ -10470,8 +10470,12 @@ class Form
 
 		if (!is_object($object->thirdparty)) {
 			if ($object->element == 'subscription' && isset($object->fk_adherent)) {
+				$subby = new Subscription($object->db);
+				$subby->fetch($object->id);
 				$adh = new Adherent($object->db);
-				$fk_adherent = $object->fk_adherent;
+				//$fk_adherent = $object->fk_adherent;
+				// creating new subscription object only to fetch the adherent which obviously exists given the if statement above are Inefficient, but else phan complains
+				$fk_adherent = $subby->fk_adherent;
 				$adh->fetch($fk_adherent);
 				$thirdparty_id = $adh->fetch_thirdparty();
 			}
