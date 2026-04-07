@@ -598,6 +598,9 @@ class ConferenceOrBooth extends ActionComm
 			if ($option == 'withproject') {
 				$url .= '&withproject=1';
 			}
+			if ($option == 'thirdpartyid') {
+				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?thirdpartyid='.$this->id;
+			}
 		}
 
 		$linkclose = '';

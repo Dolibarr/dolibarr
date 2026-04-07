@@ -38,10 +38,12 @@
  * Return array of tabs to used on pages for third parties cards.
  *
  * @param 	Societe	$object		Object company shown
+ *	@param	string	$subtabs    Parameter for choosing subtab, currently used for either conferenceorbooth or attendee
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function societe_prepare_head(Societe $object)
+function societe_prepare_head(Societe $object, $subtabs = '')
 {
+	dol_syslog('Company::societe_prepare_head', LOG_DEBUG);
 	global $db, $langs, $conf, $user;
 	global $hookmanager;
 
@@ -161,6 +163,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
+		dol_syslog('Company::societe_prepare_head::isModEnabled::project', LOG_DEBUG);
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
@@ -263,6 +266,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if ((isModEnabled('website') || isModEnabled('webportal')) && $user->hasRight('societe', 'lire')) {
+		dol_syslog('Company::societe_prepare_head::isModEnabled::website', LOG_DEBUG);
 		$site_filter_list = array();
 		if (isModEnabled('website')) {
 			$site_filter_list[] = 'dolibarr_website';
@@ -326,6 +330,7 @@ function societe_prepare_head(Societe $object)
 
 	// Notifications
 	if (isModEnabled('ticket') && $user->hasRight("ticket", "read")) {
+		dol_syslog('Company::societe_prepare_head::isModEnabled::ticket', LOG_DEBUG);
 		//$langs->load('ticket');
 		$nbTicket = 0;
 		// Enable caching of thirdparty count notifications
@@ -358,6 +363,65 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
+	if (isModEnabled('eventorganization') && isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
+		dol_syslog('Company::societe_prepare_head::isModEnabled::eventorganization', LOG_DEBUG);
+		$langs->load('eventorganization');
+		if ($subtabs == 'attendees') {
+			$url_for_list = '/eventorganization/conferenceorboothattendee_list.php';
+		} else {
+			// this seems to be the default elsewhere, so let's keep that
+			$url_for_list = '/eventorganization/conferenceorbooth_list.php';
+		}
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . $url_for_list, ['thirdpartyid' => $object->id, 'withthirdparty' => 1]);
+		$head[$h][1] = $langs->trans("EventOrganization");
+
+		// Enable caching of conf or booth count
+		$nbConfOrBooth = 0;
+		$nbAttendees = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_conferenceorbooth_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbConfOrBooth = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+			$conforbooth = new ConferenceOrBooth($db);
+			$result = $conforbooth->fetchAll('', '', 0, 0, '(t.fk_soc:=:'.((int) $object->id).")");
+			//,
+			if (!is_array($result) && $result < 0) {
+				setEventMessages($conforbooth->error, $conforbooth->errors, 'errors');
+			} else {
+				$nbConfOrBooth = count($result);
+			}
+			dol_setcache($cachekey, $nbConfOrBooth, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		$cachekey = 'count_attendees_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbAttendees = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+			$conforboothattendee = new ConferenceOrBoothAttendee($db);
+			$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_soc:=:'.((int) $object->id).')');
+
+			if (!is_array($result) && $result < 0) {
+				setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
+			} else {
+				$nbAttendees = count($result);
+			}
+			dol_setcache($cachekey, $nbAttendees, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		if ($nbConfOrBooth > 0 || $nbAttendees > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("ConferenceOrBooth")).'">'.$nbConfOrBooth.'</span>';
+			$head[$h][1] .= ' + ';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Attendees")).'">'.$nbAttendees.'</span>';
+			$head[$h][1] .= '</span>';
+		}
+		// why are the head eventorganisation with s and the module is eventorganization with z?
+		$head[$h][2] = 'eventorganization';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -450,6 +514,7 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/messaging.php', ['socid' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		dol_syslog('Company::societe_prepare_head::isModEnabled::agenda', LOG_DEBUG);
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';

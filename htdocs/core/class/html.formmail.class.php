@@ -622,7 +622,15 @@ class FormMail extends Form
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 
-				$out .= ' &nbsp; ';
+				// Language selector for predefined message templates (only when multilang is enabled)
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+					$formadmin = new FormAdmin($this->db);
+					$currentlang = (is_object($outputlangs) ? $outputlangs->defaultlang : $langs->defaultlang);
+					$out .= ' &nbsp; ';
+					$out .= $formadmin->select_language($currentlang, 'lang_id', 0, array(), 1, 0, 0, 'maxwidth150');
+				}
+
 				$out .= '<input type="submit" class="button reposition smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
