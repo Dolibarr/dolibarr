@@ -166,7 +166,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 			if ($action == 'login') {
 				$login = GETPOST('login', 'alphanohtml');
 				$password = GETPOST('password', 'password');
-				// $security_code = GETPOST('security_code', 'alphanohtml');
+				$security_code = GETPOST('security_code', 'alphanohtml');
 
 				if (empty($login)) {
 					$context->setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), 'errors');
@@ -181,13 +181,16 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 					$error++;
 				}
 				// check security graphic code
-				//if (!$error && (array_key_exists($anti_spam_session_key, $_SESSION) === false ||
-				//		(strtolower($_SESSION[$anti_spam_session_key]) !== strtolower($security_code)))
-				//) {
-				//	$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
-				//	if (empty($focus_element)) $focus_element = 'security_code';
-				//	$error++;
-				//}
+				if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) {
+					$ok = (array_key_exists($anti_spam_session_key, $_SESSION) && (strtolower($_SESSION[$anti_spam_session_key]) == strtolower($security_code)));
+					if (!$ok) {
+						$error++;
+						$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
+						if (empty($focus_element)) {
+							$focus_element = 'security_code';
+						}
+					}
+				}
 
 				if (!$error && (isModEnabled('societe') && !getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT'))) {
 					// fetch third-party account from login and account type

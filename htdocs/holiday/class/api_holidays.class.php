@@ -84,7 +84,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -262,10 +262,10 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
@@ -318,7 +318,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -363,7 +363,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -409,7 +409,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -452,10 +452,10 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -499,10 +499,10 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -549,10 +549,10 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

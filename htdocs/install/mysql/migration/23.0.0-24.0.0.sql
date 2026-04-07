@@ -179,6 +179,7 @@ UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
 UPDATE llx_document_model as dm SET nom = 'sponge' WHERE nom = 'crabe' AND type ='invoice' AND NOT EXISTS (SELECT nom FROM llx_document_model AS dm2 WHERE nom = 'sponge' AND type = 'invoice' and dm2.entity = dm.entity);
 
+ALTER TABLE llx_salary ADD COLUMN model_pdf varchar(255) DEFAULT NULL;
 
 ALTER TABLE llx_extrafields ADD COLUMN showintooltip integer DEFAULT 0;
 
@@ -189,13 +190,26 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN localtax1_type varchar(10)  NUL
 ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_tx double(7,4)  DEFAULT 0 NOT NULL AFTER localtax1_type;
 ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_type varchar(10)  NULL AFTER localtax2_tx;
 
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(HolidayHrInformationsPreviousMonthContent)__:<br>__ARRAY_EMPLOYEE_STARTDAY_ENDDAY_DAYS__', null, 0);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(Hello)__<br><br>__(HolidayHrInformationsPreviousMonthContent)__:<br>__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__<br><br>__SENDEREMAIL_SIGNATURE__', null, 0);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
+
+
+UPDATE llx_cronjob set test = 'isModEnabled("agenda")' WHERE test = '$conf->agenda->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("invoice")' WHERE test = '$conf->facture->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("holiday")' WHERE test = '$conf->holiday->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("member")' WHERE test = '$conf->adherent->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("partnership")' WHERE test = '$conf->partnership->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("emailcollector")' WHERE test = '$conf->emailcollector->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("project")' WHERE test = '$conf->projet->enabled';
+-- Work only with very recent version of mysql UPDATE llx_cronjob SET test = REGEXP_REPLACE(test, '\\$conf->([^ ]+)->enabled', 'isModEnabled("$1")');
+UPDATE llx_cronjob set test = 'isModEnabled("sellyoursaas")' WHERE test = '$conf->sellyoursaas->enabled';
+UPDATE llx_cronjob set test = 'isModEnabled("scaninvoices")' WHERE test = '$conf->scaninvoices->enabled';
+
 
 create table llx_product_lang_extrafields
 (

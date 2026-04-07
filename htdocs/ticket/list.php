@@ -1103,6 +1103,9 @@ while ($i < $imaxinloop) {
 			if (in_array($key, array('ref', 'fk_project'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
+			if (in_array($key, array('subject'))) {
+				$cssforfield = 'minwidth200 tdoverflowbydiv';
+			}
 
 			if ($key == 'fk_statut' || $key == 'severity_code') {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -1110,29 +1113,28 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
+					print ' title="'.dolPrintHTMLForAttribute((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'fk_statut') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'subject') {
-					$s = $obj->subject;
-					print '<span title="'.dol_escape_htmltag($s).'">';
-					print dol_escape_htmltag($s);
-					print '</span>';
+					print '<div class="small twolinesmax lineheightsmall minwidth150 maxwidth250 classfortooltip">';
+					print dolPrintHTML($obj->subject);
+					print '</div>';
 				} elseif ($key == 'type_code') {
 					$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
-					print '<span title="'.dol_escape_htmltag($s).'">';
+					print '<span title="'.dolPrintHTMLForAttribute($s).'">';
 					print $s;
 					print '</span>';
 				} elseif ($key == 'category_code') {
 					$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
-					print '<span title="'.dol_escape_htmltag($s).'">';
+					print '<span title="'.dolPrintHTMLForAttribute($s).'">';
 					print $s;
 					print '</span>';
 				} elseif ($key == 'severity_code') {
 					$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
-					print '<span title="'.dol_escape_htmltag($s).'">';
+					print '<span title="'.dolPrintHTMLForAttribute($s).'">';
 					print $s;
 					print '</span>';
 				} elseif ($key == 'tms') {
