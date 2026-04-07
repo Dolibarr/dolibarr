@@ -84,27 +84,30 @@ if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->const = array();
 			$r = 0;
 
-			$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "cornas";
-			$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
-			$this->const[$r][4] = 0;
-			$r++;
+			$this->const[$r] = [
+				"COMMANDE_SUPPLIER_ADDON_PDF",
+				"chaine",
+				"cornas",
+				"Name of the PDF purchase order generation manager",
+				0,
+			];
 
-			$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_NUMBER";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "mod_commande_fournisseur_muguet";
-			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes fournisseur';
-			$this->const[$r][4] = 0;
-			$r++;
+			$this->const[$r] = [
+				"COMMANDE_SUPPLIER_ADDON_NUMBER",
+				"chaine",
+				"mod_commande_fournisseur_muguet",
+				"Name of the supplier invoice numbering manager",
+				0,
+			];
 
 			// Add ability ODT for Supplier orders
-			$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_orders";
-			$this->const[$r][3] = '';
-			$this->const[$r][4] = 0;
-			$r++;
+			$this->const[$r] = [
+				"SUPPLIER_ORDER_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_orders",
+				"",
+				0,
+			];
 
 			// Boxes
 			$this->boxes = array(

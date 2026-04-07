@@ -175,7 +175,7 @@ function supplierorder_prepare_head(CommandeFournisseur $object)
  *
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function supplierorder_admin_prepare_head()
+function supplier_order_admin_prepare_head()
 {
 	global $langs, $conf, $user, $db;
 
