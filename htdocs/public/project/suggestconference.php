@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre				<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,9 +135,10 @@ if (!isModEnabled('eventorganization')) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -310,6 +311,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 		}
 		// From there we have a thirdparty, now looking for the contact
+		$contact = null;
 		if (!$error) {
 			$contact = new Contact($db);
 			$resultcontact = $contact->fetch(0, null, '', $email);
@@ -381,7 +383,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 		}
 
-		if (!$error) {
+		if (!$error && !is_null($contact)) {
 			// We have the contact and the thirdparty
 			$conforbooth = new ConferenceOrBooth($db);
 			$conforbooth->label = $label;
