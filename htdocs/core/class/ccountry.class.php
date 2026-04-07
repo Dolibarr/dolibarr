@@ -336,12 +336,12 @@ class Ccountry extends CommonDict
 class CcountryExtended extends Ccountry
 {
 	/**
-	 * @var Cstate
+	 * @var Cstate[]
 	 */
 	public $states;
 
 	/**
-	 * @var Cregion
+	 * @var Cregion[]
 	 */
 	public $regions;
 
