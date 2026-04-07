@@ -6500,9 +6500,10 @@ class Form
 	 * @param 	int<0,1>			$nooutput 			No print is done. String is returned.
 	 * @param 	string 				$textifnoproject 	Text to show if no project
 	 * @param 	string 				$morecss 			More CSS
+	 * @param	string				$option			    Variant where the link point to ('', 'nolink')
 	 * @return	string              		        	Return html content
 	 */
-	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '')
+	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '', $option = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -6525,11 +6526,11 @@ class Form
 		} else {
 			$out .= '<span class="project_head_block">';
 			if ($selected instanceof Project) {
-				$out .= $selected->getNomUrl(0, '', 1);
+				$out .= $selected->getNomUrl(0, $option, 1);
 			} elseif (is_numeric($selected)) {
 				$projet = new Project($this->db);
 				$projet->fetch((int) $selected);
-				$out .= $projet->getNomUrl(0, '', 1);
+				$out .= $projet->getNomUrl(0, $option, 1);
 			} else {
 				$out .= '<span class="opacitymedium">' . $textifnoproject . '</span>';
 			}

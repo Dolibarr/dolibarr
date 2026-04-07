@@ -818,6 +818,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 				$url .= '&fk_project='.((int) $this->fk_project).'&withproject=1';
 			}
 
+			if ($option == 'thirdpartyid') {
+				$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?thirdpartyid='.$this->id;
+			}
+
 			if ($option == 'conforboothidproject') {
 				$url .= '&conforboothid='.((int) $this->fk_actioncomm).'&withproject=1';
 			}
