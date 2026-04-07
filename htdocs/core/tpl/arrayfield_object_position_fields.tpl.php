@@ -16,6 +16,7 @@
 
 '
 @phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}> $arrayfields
+@phan-var-force string|array<string|int, mixed>			$contextpage
 ';
 
 // Protection to avoid direct call of template
