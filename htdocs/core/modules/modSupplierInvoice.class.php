@@ -93,20 +93,22 @@ if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$r++;
 			*/
 
-			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "mod_facture_fournisseur_cactus";
-			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des factures fournisseur';
-			$this->const[$r][4] = 0;
-			$r++;
+			$this->const[$r] = [
+				"INVOICE_SUPPLIER_ADDON_NUMBER",
+				"chaine",
+				"mod_facture_fournisseur_cactus",
+				"Name of the supplier invoice numbering manager",
+				0,
+			];
 
 			// Add ability ODT for Supplier Invoices
-			$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_invoices";
-			$this->const[$r][3] = "";
-			$this->const[$r][4] = 0;
-			$r++;
+			$this->const[$r] = [
+				"SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_invoices",
+				"",
+				0,
+			];
 
 			// Boxes
 			$this->boxes = array(
