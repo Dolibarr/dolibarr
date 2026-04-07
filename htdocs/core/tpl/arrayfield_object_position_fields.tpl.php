@@ -15,6 +15,7 @@
  */
 
 '
+@phan-var-force string|array<string|int, mixed>	$contextpage
 @phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}> $arrayfields
 ';
 
@@ -24,7 +25,7 @@ if (empty($user) || !is_object($user)) {
 	exit(1);
 }
 
-$tmpvar = "MAIN_POSITIONFIELDS_" . !empty($contextpage) ? $contextpage : ""; // To get list of saved position fields to show
+$tmpvar = "MAIN_POSITIONFIELDS_" . !empty($contextpage) ? $contextpage : ''; // To get list of saved position fields to show
 if (!empty($user->conf->$tmpvar)) {        // A list of fields was already customized for user
 	$tmparray = dolExplodeIntoArray($user->conf->$tmpvar, ',', ':');
 	foreach ($arrayfields as $key => $val) {
