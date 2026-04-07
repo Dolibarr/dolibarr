@@ -7281,7 +7281,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			}
 		}
 		if (!empty($draganddrop)) {
-			$out .= img_picto($langs->trans("MoveField", $name), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
+			$out .= img_picto($langs->trans("MoveField", !empty($name) ? $name : 'none'), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 		}
 	}
 
