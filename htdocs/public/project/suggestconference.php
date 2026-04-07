@@ -311,6 +311,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 		}
 		// From there we have a thirdparty, now looking for the contact
+		$contact = null;
 		if (!$error) {
 			$contact = new Contact($db);
 			$resultcontact = $contact->fetch(0, null, '', $email);
@@ -382,7 +383,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 		}
 
-		if (!$error) {
+		if (!$error && !is_null($contact)) {
 			// We have the contact and the thirdparty
 			$conforbooth = new ConferenceOrBooth($db);
 			$conforbooth->label = $label;
