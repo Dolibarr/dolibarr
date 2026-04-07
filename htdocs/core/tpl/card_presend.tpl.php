@@ -266,6 +266,7 @@ if ($action == 'presend') {
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
 		// For example if element is project
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		if (property_exists($object, 'socid') && !empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
