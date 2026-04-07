@@ -7012,37 +7012,37 @@ parameters:
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
+			path: ../../../htdocs/eventorganization/attendee_card.php
 
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
+			path: ../../../htdocs/eventorganization/attendee_card.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
+			path: ../../../htdocs/eventorganization/attendee_card.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
+			path: ../../../htdocs/eventorganization/attendee_list.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
+			path: ../../../htdocs/eventorganization/attendee_list.php
 
 		-
 			message: '#^Right side of \|\| is always true\.$#'
 			identifier: booleanOr.rightAlwaysTrue
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
+			path: ../../../htdocs/eventorganization/attendee_list.php
 
 		-
 			message: '#^Property ExpeditionLigne\:\:\$detail_children \(array\<int, array\<int, float\|int\>\>\) on left side of \?\? is not nullable\.$#'

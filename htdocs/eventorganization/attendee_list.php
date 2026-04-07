@@ -20,7 +20,7 @@
  */
 
 /**
- *    \file       htdocs/eventorganization/conferenceorboothattendee_list.php
+ *    \file       htdocs/eventorganization/attendee_list.php
  *    \ingroup    eventorganization
  *    \brief      List page for conferenceorboothattendee
  */
@@ -395,7 +395,7 @@ $num = $db->num_rows($resql);
 if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.((int) $id));
+	header("Location: ".DOL_URL_ROOT.'/eventorganization/attendee_card.php?id='.((int) $id));
 	exit;
 }
 
@@ -856,7 +856,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $params = array('morecss' => 'reposition');
 
-$urlnew = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl);
+$urlnew = DOL_URL_ROOT.'/eventorganization/attendee_card.php?action=create'.(!empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl);
 
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlnew, '', $permissiontoadd, $params);

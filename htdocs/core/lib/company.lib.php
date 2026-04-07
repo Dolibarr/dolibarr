@@ -367,7 +367,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		dol_syslog('Company::societe_prepare_head::isModEnabled::eventorganization', LOG_DEBUG);
 		$langs->load('eventorganization');
 		if ($subtabs == 'attendees') {
-			$url_for_list = '/eventorganization/conferenceorboothattendee_list.php';
+			$url_for_list = '/eventorganization/attendee_list.php';
 		} else {
 			// this seems to be the default elsewhere, so let's keep that
 			$url_for_list = '/eventorganization/conferenceorbooth_list.php';

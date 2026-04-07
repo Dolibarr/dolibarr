@@ -19,7 +19,7 @@
  */
 
 /**
- *    \file       htdocs/eventorganization/conferenceorboothattendee_card.php
+ *    \file       htdocs/eventorganization/attendee_card.php
  *    \ingroup    eventorganization
  *    \brief      Page to create/edit/view conferenceorboothattendee
  */
@@ -154,9 +154,9 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	//if (!empty($withproject)) {
-	$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?withproject=1&fk_project='.((int) $fk_project);
+	$backurlforlist = DOL_URL_ROOT.'/eventorganization/attendee_list.php?withproject=1&fk_project='.((int) $fk_project);
 	//} else {
-	//	$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php';
+	//	$backurlforlist = DOL_URL_ROOT.'/eventorganization/attendee_list.php';
 	//}
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
@@ -164,7 +164,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?fk_project='.((int) $fk_project).'&id='.($id > 0 ? $id : '__ID__').'&withproject=1';
+				$backtopage = DOL_URL_ROOT.'/eventorganization/attendee_card.php?fk_project='.((int) $fk_project).'&id='.($id > 0 ? $id : '__ID__').'&withproject=1';
 			}
 		}
 	}
@@ -624,7 +624,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.$moreparam.'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/attendee_list.php', 1).'?restore_lastsearch_values=1'.$moreparam.'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 

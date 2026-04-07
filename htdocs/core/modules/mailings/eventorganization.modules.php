@@ -220,7 +220,7 @@ class mailing_eventorganization extends MailingTargets
 	public function url($id, $sourcetype = 'thirdparty')
 	{
 		if ($sourcetype == 'project') {
-			return '<a href="'.DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.((int) $id).'">'.img_object('', "eventorganization").'</a>';
+			return '<a href="'.DOL_URL_ROOT.'/eventorganization/attendee_card.php?id='.((int) $id).'">'.img_object('', "eventorganization").'</a>';
 		}
 
 		return '';

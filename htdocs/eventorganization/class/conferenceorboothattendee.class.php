@@ -798,7 +798,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$label .= '<br><b>'.$langs->trans('DateOfRegistration').':</b> '.dol_print_date($this->date_subscription, 'dayhour');
 		$label .= '<br><b>'.$langs->trans('AmountPaid').':</b> '.$this->amount;
 
-		$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/eventorganization/attendee_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -819,7 +819,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 
 			if ($option == 'thirdpartyid') {
-				$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?thirdpartyid='.$this->id;
+				$url = DOL_URL_ROOT.'/eventorganization/attendee_list.php?thirdpartyid='.$this->id;
 			}
 
 			if ($option == 'conforboothidproject') {

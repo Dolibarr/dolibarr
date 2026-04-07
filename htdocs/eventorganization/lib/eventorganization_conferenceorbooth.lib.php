@@ -57,7 +57,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 	}
 
 	/*
-	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?conforboothid='.$object->id.$withProjectUrl;
+	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/attendee_list.php?conforboothid='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Attendees");
 	$head[$h][2] = 'attendees';
 	// Enable caching of conf or booth count attendees
@@ -154,7 +154,7 @@ function conferenceorboothProjectPrepareHead($object)
 	}
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorboothattendee_list.php?fk_project=' . $object->id . '&withproject=1';
+	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/attendee_list.php?fk_project=' . $object->id . '&withproject=1';
 	$head[$h][1] = $langs->trans("Attendees");
 	$head[$h][2] = 'attendees';
 	// Enable caching of conf or booth count attendees
@@ -229,7 +229,7 @@ function conferenceorboothThirdpartyPrepareHead($object)
 	}
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorboothattendee_list.php?thirdpartyid=' . $object->id . '&withthirdparty=1';
+	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/attendee_list.php?thirdpartyid=' . $object->id . '&withthirdparty=1';
 	$head[$h][1] = $langs->trans("Attendees");
 	$head[$h][2] = 'attendees';
 	// Enable caching of conf or booth count attendees
@@ -276,7 +276,7 @@ function conferenceorboothAttendeePrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . "/eventorganization/conferenceorboothattendee_card.php?id=" . ((int) $object->id) . ($object->fk_actioncomm > 0 ? '&conforboothid=' . ((int) $object->fk_actioncomm) : '') . ($object->fk_project > 0 ? '&withproject=1&fk_project=' . ((int) $object->fk_project) : '');
+	$head[$h][0] = DOL_URL_ROOT . "/eventorganization/attendee_card.php?id=" . ((int) $object->id) . ($object->fk_actioncomm > 0 ? '&conforboothid=' . ((int) $object->fk_actioncomm) : '') . ($object->fk_project > 0 ? '&withproject=1&fk_project=' . ((int) $object->fk_project) : '');
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
