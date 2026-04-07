@@ -3,6 +3,7 @@
  * Copyright (C) 2024-2025	MDW					    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke	        <charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,8 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 
 /**
  * 	Class to manage dictionary Countries (used by imports)
@@ -325,5 +327,104 @@ class Ccountry extends CommonDict
 	{
 		global $langs;
 		return $langs->trans($this->label);
+	}
+}
+
+/**
+ * 	Class to manage dictionary Countries (used by imports)
+ */
+class CcountryExtended extends Ccountry
+{
+	/**
+	 * @var Cstate
+	 */
+	public $states;
+
+	/**
+	 * @var Cregion
+	 */
+	public $regions;
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 *  Load object in memory from database
+	 *
+	 *  @param      int		$id    	  	Id object
+	 *  @param		string	$code	    Code
+	 *  @param		string	$code_iso	Code ISO
+	 *  @param		int		$loadregions	Load also Regions for countries: 1 (default) load regions, 0 do not
+	 *  @param		int		$loadstates		Load also States for countries: 1 (default) load states, 0 do not
+	 *  @return     int     >0 if OK, 0 if not found, <0 if KO
+	 */
+	public function fetch($id, $code = '', $code_iso = '', $loadregions = 1, $loadstates = 1)
+	{
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
+		$sql .= " t.code,";
+		$sql .= " t.code_iso,";
+		$sql .= " t.label,";
+		$sql .= " t.eec,";
+		$sql .= " t.active,";
+		$sql .= " t.favorite,";
+		$sql .= " t.numeric_code";
+		$sql .= " FROM ".$this->db->prefix()."c_country as t";
+		if ($id) {
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		} elseif ($code) {
+			$sql .= " WHERE t.code = '".$this->db->escape(strtoupper($code))."'";
+		} elseif ($code_iso) {
+			$sql .= " WHERE t.code_iso = '".$this->db->escape(strtoupper($code_iso))."'";
+		}
+
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
+
+				if ($obj) {
+					$this->id = (int) $obj->rowid;
+					$this->code = $obj->code;
+					$this->code_iso = $obj->code_iso;
+					$this->label = $obj->label;
+					$this->eec = $obj->eec;
+					$this->active = (int) $obj->active;
+					$this->favorite = $obj->favorite;
+					$this->numeric_code = $obj->numeric_code;
+				}
+
+				$this->db->free($resql);
+			} else {
+				return 0;
+			}
+
+			$regions = new Cregion($this->db);
+			$regionres = $regions->fetch(0,0, $this->id);
+			if (!$regionres) {
+				$this->error = "Error ".$regions->db->lasterror();
+				return -1;
+			}
+
+			$states = new Cstate($this->db);
+			$statesres = $states->fetch(0,0, $this->id);
+			if (!$statesres) {
+				$this->error = "Error ".$states->db->lasterror();
+				return -1;
+			}
+			return 1;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
 	}
 }

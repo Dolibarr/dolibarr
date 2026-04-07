@@ -572,9 +572,9 @@ class Setup extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @param	int		$loadregions	Load also Regions for countries: 0 (default), 1 load regions
 	 * @param	int		$loadstates		Load also States for countries: 0 (default), 1 load states
-	 * @return array                List of countries
-	 * @phan-return Ccountry[]
-	 * @phpstan-return Ccountry[]
+	 * @return array                List of Ccountry|CcountryExtended
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 *
 	 * @url     GET dictionary/countries
 	 *
@@ -616,20 +616,17 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$obj = $this->db->fetch_object($result);
-				$country = new Ccountry($this->db);
-				if ($country->fetch($obj->rowid) > 0) {
+				if ($loadregions || $loadstates) {
+					$country = new CcountryExtended($this->db);
+					$fetchres = $country->fetch($obj->rowid, '', '', $loadregions, $loadstates);
+				} else {
+					$country = new Ccountry($this->db);
+					$fetchres = $country->fetch($obj->rowid);
+				}
+				if ($fetchres > 0) {
 					// Translate the name of the country if needed
 					// and then apply the filter if there is one.
 					$this->translateLabel($country, $lang, 'Country');
-
-					if ($loadregions > 0) {
-						$regions = $this->getListOfRegions($sortfield = "code_region", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
-						$country->regions = $regions;
-					}
-					if ($loadstates > 0) {
-						$states = $this->getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
-						$country->states = $states;
-					}
 
 					if (empty($filter) || stripos((string) $country->label, $filter) !== false) {
 						$list[] = $this->_cleanObjectDatas($country);
@@ -651,8 +648,8 @@ class Setup extends DolibarrApi
 	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
 	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
-	 * @phan-return Ccountry
-	 * @phpstan-return Ccountry
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 *
 	 * @url     GET dictionary/countries/{id}
 	 *
@@ -675,9 +672,9 @@ class Setup extends DolibarrApi
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
 	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
 	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
-	* @return 	Object 					Object with cleaned properties
-	 * @phan-return Ccountry
-	 * @phpstan-return Ccountry
+	 * @return 	Object 					Object with cleaned properties
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 *
 	 * @url     GET dictionary/countries/byCode/{code}
 	 *
@@ -698,7 +695,8 @@ class Setup extends DolibarrApi
 	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
 	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
-	 *
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 * @url     GET dictionary/countries/byISO/{iso}
 	 *
 	 * @throws	RestException	400		Bad Request
@@ -770,15 +768,18 @@ class Setup extends DolibarrApi
 	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
 	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
-	 * @phan-return Ccountry
-	 * @phpstan-return Ccountry
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 *
 	 * @throws RestException
 	 */
 	private function _fetchCcountry($id, $code = '', $iso = '', $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		$country = new Ccountry($this->db);
-
+		if ($loadregions || $loadstates) {
+			$country = new CcountryExtended($this->db);
+		} else {
+			$country = new Ccountry($this->db);
+		}
 		$result = $country->fetch($id, $code, $iso);
 
 		if ($result < 0) {

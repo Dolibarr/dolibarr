@@ -69,7 +69,7 @@ jsonpath "$[*].active" exists
 jsonpath "$[*].code_iso" exists
 jsonpath "$[*].numeric_code" exists
 jsonpath "$[*].regions" exists
-jsonpath "$[*].states" count == 0
+jsonpath "$[*].regions" count > 0
 
 # GET list of countries with states
 GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?loadstates=1
@@ -82,8 +82,8 @@ jsonpath "$[*].label" exists
 jsonpath "$[*].active" exists
 jsonpath "$[*].code_iso" exists
 jsonpath "$[*].numeric_code" exists
-jsonpath "$[*].regions" count == 0
-jsonpath "$[*].states" exists
+jsonpath "$[*].regions" count > 0
+jsonpath "$[*].regions" exists
 
 # GET list of countries with both regions and states
 GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?loadregions=1&loadstates=1
@@ -169,7 +169,7 @@ jsonpath "$.active" exists
 jsonpath "$.code_iso" exists
 jsonpath "$.numeric_code" exists
 jsonpath "$.regions" exists
-jsonpath "$.states" not exists
+jsonpath "$.states" == null
 
 
 # GET with ID 1 - which should be France explicit loadstates=1
@@ -183,7 +183,7 @@ jsonpath "$.label" exists
 jsonpath "$.active" exists
 jsonpath "$.code_iso" exists
 jsonpath "$.numeric_code" exists
-jsonpath "$.regions" not exists
+jsonpath "$.regions" == null
 jsonpath "$.states" exists
 
 # GET with ID 1 - which should be France explicit loadregions=1 and loadstates=1
@@ -270,7 +270,7 @@ jsonpath "$.active" exists
 jsonpath "$.code_iso" exists
 jsonpath "$.numeric_code" exists
 jsonpath "$.regions" exists
-jsonpath "$.states" not exists
+jsonpath "$.states" == null
 
 
 # GET with ID 1 - which should be France explicit loadstates=1
@@ -284,7 +284,7 @@ jsonpath "$.label" exists
 jsonpath "$.active" exists
 jsonpath "$.code_iso" exists
 jsonpath "$.numeric_code" exists
-jsonpath "$.regions" not exists
+jsonpath "$.regions" == null
 jsonpath "$.states" exists
 
 # GET with ID 1 - which should be France explicit loadregions=1 and loadstates=1
@@ -371,7 +371,7 @@ jsonpath "$.active" exists
 jsonpath "$.code_iso" exists
 jsonpath "$.numeric_code" exists
 jsonpath "$.regions" exists
-jsonpath "$.states" not exists
+jsonpath "$.states" == null
 
 
 # GET with ID 1 - which should be France explicit loadstates=1
@@ -385,7 +385,7 @@ jsonpath "$.label" exists
 jsonpath "$.active" exists
 jsonpath "$.code_iso" exists
 jsonpath "$.numeric_code" exists
-jsonpath "$.regions" not exists
+jsonpath "$.regions" == null
 jsonpath "$.states" exists
 
 # GET with ID 1 - which should be France explicit loadregions=1 and loadstates=1
