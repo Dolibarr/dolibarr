@@ -63,7 +63,7 @@ if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->version = 'dolibarr';
 
 			$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-			$this->picto = 'company';
+			$this->picto = 'supplier_order';
 
 			// Data directories to create when module is enabled
 			$this->dirs = array(
