@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2015-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,12 +20,12 @@
 /**
  *	\file       htdocs/core/class/html.formmargin.class.php
  *  \ingroup    core
- *	\brief      Fichier de la class des functions predefinie de composants html autre
+ *	\brief      File of the class to manage "other" html components
  */
 
 
 /**
- *	Class permettant la generation de composants html autre
+ *	Class to manage "other" html components
  *	Only common components are here.
  */
 class FormMargin
@@ -99,7 +99,7 @@ class FormMargin
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
-			$pv = $line->total_ht;
+			$pv = (float) $line->total_ht;
 
 			// $line->pa_ht is always positive in database, so we guess the correct sign
 

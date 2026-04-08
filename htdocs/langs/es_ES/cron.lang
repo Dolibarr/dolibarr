@@ -29,8 +29,8 @@ CronExecute=Lanzar ahora
 CronConfirmExecute=¿Está seguro de querer ejecutar esta tarea programada ahora?
 CronInfo=Tareas programadas le permite ejecutar tareas que han sido programadas. Las tareas también pueden iniciarse manualmente.
 CronTask=Tarea
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Próxima ejecución de la tarea programada
+CronNotYetRan=Nunca ejecutado
 CronDtStart=No antes de
 CronDtEnd=No después de
 CronDtNextLaunch=Sig. ejec.
@@ -50,7 +50,7 @@ JobFinished=Tareas lanzadas y finalizadas
 Scheduled=Programada
 #Page card
 CronAdd=Tarea Nueva
-CronEvery=Run job every
+CronEvery=Ejecutar trabajo cada
 CronObject=Instancia/Objeto a crear
 CronArgs=Parametros
 CronSaveSucess=Guardado correctamente
@@ -77,6 +77,7 @@ CronType=Tipo de tarea
 CronType_method=Llamar a un método de clase Dolibarr
 CronType_command=Comando Shell
 CronCannotLoadClass=No se puede cargar el archivo de la clase %s (para usar la clase %s)
+CronModuleNotEnabledInThisEntity=Módulo Cron no habilitado en esta entidad (para usar el método %s del objeto %s)
 CronCannotLoadObject=El archivo de la clase %s ha sido cargado, pero no se ha encontrado en ella el objeto %s
 UseMenuModuleToolsToAddCronJobs=Vaya al menú "<a href="%s">Inicio - Herramientas de administración - Tareas programadas</a>" para ver y editar tareas programadas.
 JobDisabled=Tarea desactivada

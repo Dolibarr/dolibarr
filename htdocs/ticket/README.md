@@ -7,4 +7,3 @@ Offer your customers an easy to use interface to report and follow status of the
 your backoffice.
  
 By enabling the Email Collector module, you can also having your ticket created automatically from input emails.
-

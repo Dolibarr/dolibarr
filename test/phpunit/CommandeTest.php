@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ class CommandeTest extends CommonClassTest
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (!isModEnabled('commande')) {
+		if (!isModEnabled('order')) {
 			print __METHOD__." module customer order must be enabled.\n";
 			die(1);
 		}
@@ -87,7 +87,8 @@ class CommandeTest extends CommonClassTest
 		$this->assertLessThan($socid, 0, $soc->errorsToString());
 
 		$localobject = new Commande($db);
-		$localobject->initAsSpecimen();
+		$param = array('tosell' => 1);
+		$localobject->initAsSpecimen($param);
 		$localobject->socid = $socid;
 		$result = $localobject->create($user);
 
@@ -187,7 +188,7 @@ class CommandeTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$result = $localobject->cancel();
+		$result = $localobject->cancel($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);

@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,12 +118,12 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 *	Fonction to generate document on disk
 	 *
 	 *	@param	RemiseCheque	$object			Object RemiseCheque
+	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
-	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@return	int<-1,1>  						1=ok, 0=ko
 	 */
-	abstract public function write_file($object, $_dir, $number, $outputlangs);
+	abstract public function write_file($object, $outputlangs, $_dir, $number);
 	// phpcs:enable
 }
 

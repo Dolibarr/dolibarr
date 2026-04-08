@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,7 +385,7 @@ function getProject($authentication, $id = '', $ref = '')
 
 		if ($fuser->hasRight('projet', 'lire')) {
 			$project = new Project($db);
-			$result = $project->fetch($id, $ref);
+			$result = $project->fetch((int) $id, $ref);
 			if ($result > 0) {
 				$project_result_fields = array(
 					'id' => $project->id,
@@ -420,7 +420,7 @@ function getProject($authentication, $id = '', $ref = '')
 				foreach ($listofreferent as $key => $tablename) {
 					$elements[$key] = array();
 					$element_array = $project->get_element_list($key, $tablename);
-					if (count($element_array) > 0 && is_array($element_array)) {
+					if (is_array($element_array) && count($element_array) > 0) {
 						foreach ($element_array as $element) {
 							$tmp = explode('_', $element);
 							$idofelement = count($tmp) > 0 ? $tmp[0] : "";

@@ -93,6 +93,7 @@ AllOrders=Toate comenzile
 NbOfOrders=Număr comenzi
 OrdersStatistics=Statistici comenzi
 OrdersStatisticsSuppliers=Statistici privind comenzile de achiziție
+NumberOfOrders=Număr comenzi
 NumberOfOrdersByMonth=Număr comenzi pe luni
 AmountOfOrders=Valoare comenzi
 AmountOfOrdersHT=Valoare comenzi (fără TVA)

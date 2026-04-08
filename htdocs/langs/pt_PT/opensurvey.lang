@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s preencheu uma linha.\nVocê pode encontrar o seu inquérito
 ShowSurvey=Mostrar estudo
 UserMustBeSameThanUserUsedToVote=Você deve ter votado e usar o mesmo nome de usuário que aquele usado para votar, para postar um comentário
 ListOfOpenSurveys=Lista de pesquisas abrir
+AddTheVote=Clique para adicionar o voto

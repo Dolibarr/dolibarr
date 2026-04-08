@@ -17,6 +17,7 @@ AccountancyCodeAsset=كود المحاسبة (الأصول)
 AccountancyCodeDepreciationAsset=كود المحاسبة (حساب إهلاك الاصول)
 AccountancyCodeDepreciationExpense=كود المحاسبة (حساب مصاريف الإهلاك)
 AssetsLines=الأصول
+ConfirmValidateAsset=هل أنت متأكد من أنك تريد التحقق من صحة هذا الأصل باستخدام المرجع <b>%s</b>؟
 DeleteType=حذف
 DeleteAnAssetType=حذف نموذج أصل
 ConfirmDeleteAssetType=هل أنت متأكد أنك تريد حذف نموذج الأصول هذا؟
@@ -70,6 +71,7 @@ AssetDisposal=ازالة
 AssetConfirmDisposalAsk=هل أنت متأكد من أنك تريد التخلص من الأصل <b> %s </b>؟
 AssetConfirmReOpenAsk=هل أنت متأكد من أنك تريد إعادة فتح الأصل <b> %s </b>؟
 # Asset status
+AssetInDraft=حوالة مصرفية
 AssetInProgress=قيد التنفيذ
 AssetDisposed=استبعاده
 AssetRecorded=محسوب

@@ -64,10 +64,11 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
  * 	@param	mixed		$data			Data to save. It must not be a null value.
  *  @param 	int			$expire			ttl in seconds, 0 never expire
  *  @param 	int			$filecache		1 Enable file cache if no other session cache available, 0 Disabled (default)
+ *  @param 	int			$replace		add possibility to replace cache for memecached module if > 0
  * 	@return	int							Return integer <0 if KO, 0 if nothing is done, Nb of bytes written if OK
  *  @see dol_getcache()
  */
-function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0)
+function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0, $replace = 0)
 {
 	global $conf;
 
@@ -98,6 +99,14 @@ function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0)
 		$rescode = $dolmemcache->getResultCode();
 		if ($rescode == 0) {
 			return is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
+		} elseif (!empty($replace) && $rescode == Memcached::RES_NOTSTORED) {
+			$dolmemcache->replace($memoryid, $data, $expire); // This fails if key does not exists
+			$rescode = $dolmemcache->getResultCode();
+			if ($rescode == 0) {
+				return is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
+			} else {
+				return -$rescode;
+			}
 		} else {
 			return -$rescode;
 		}
@@ -145,8 +154,9 @@ function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0)
 
 		$cachedata = array("expire" => $expire, "data" => $data);
 		$cachejson = dolEncrypt(json_encode($cachedata));
-		if (!dol_is_file($pathcache.'/'.$memoryid.'.cache')) {
+		if (!dol_is_file($pathcache.'/'.$memoryid.'.cache') || $replace > 0) {
 			$result = file_put_contents($pathcache.'/'.$memoryid.'.cache', $cachejson);
+			dolChmod($pathcache.'/'.$memoryid.'.cache');
 		} else {
 			return 0;
 		}
@@ -195,11 +205,11 @@ function dol_getcache($memoryid, $filecache = 0)
 		//print "Get memoryid=".$memoryid;
 		$data = $m->get($memoryid);
 		$rescode = $m->getResultCode();
-		//print "memoryid=".$memoryid." - rescode=".$rescode." - count(response)=".count($data)."\n<br>";
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - count(response)=".json_encode($data)."\n<br>";
 		//var_dump($data);
 		if ($rescode == 0) {
 			return $data;
-		} elseif ($rescode == 16) {		// = Memcached::MEMCACHED_NOTFOUND but this constant doe snot exists.
+		} elseif ($rescode == 16) {		// = Memcached::MEMCACHED_NOTFOUND but this constant does not exists.
 			return null;
 		} else {
 			return -$rescode;
@@ -322,7 +332,7 @@ function dol_setshmop($memoryid, $data, $expire)
 		return 0; // No key reserved for this memoryid, we can't cache this memoryid
 	}
 
-	$newdata = serialize($data);
+	$newdata = json_encode($data);
 	$size = strlen($newdata);
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
 	$handle = shmop_open($shmkey, 'c', 0644, 6 + $size);
@@ -366,7 +376,7 @@ function dol_getshmop($memoryid)
 	if ($handle) {
 		$size = (int) trim(shmop_read($handle, 0, 6));
 		if ($size) {
-			$data = unserialize(shmop_read($handle, 6, $size));
+			$data = json_decode(shmop_read($handle, 6, $size), true);
 		} else {
 			return -1;
 		}

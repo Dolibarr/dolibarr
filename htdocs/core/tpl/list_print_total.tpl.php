@@ -1,5 +1,7 @@
 <?php
+
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +22,20 @@
  * @var DoliDB $db
  * @var Form $form
  * @var Translate $langs
+ *
+ * @var int			$trforbreaknobg
+ * @var int			$num
+ * @var ?int		$limit
+ * @var ?int		$offset
+ * @var string		$sqlfields
+ * @var string		$moreinfoontotal
+ * @var array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
  */
-'@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
-'@phan-var-force ?int $limit';
+'
+@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
+@phan-var-force ?string $sqlfields
+@phan-var-force ?int	$limit
+';
 
 if (!function_exists('printTotalValCell')) { // allow two list with total on same screen
 
@@ -71,19 +84,25 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 		$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0;
 	}
 }
+
 // Show total line
 if (isset($totalarray['pos'])) {
 	//print '<tfoot>';
-	print '<tr class="liste_total">';
+	print '<tr class="liste_total'.(empty($trforbreaknobg) ? '' : ' trforbreaknobg').'">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
-			printTotalValCell($totalarray['type'][$i] ?? '', empty($totalarray['val'][$totalarray['pos'][$i]]) ? 0 : $totalarray['val'][$totalarray['pos'][$i]]);
+			printTotalValCell($totalarray['type'][$i] ?? '', empty($totalarray['val'][$totalarray['pos'][$i]]) ? '0' : (string) $totalarray['val'][$totalarray['pos'][$i]]);
 		} else {
 			if ($i == 1) {
 				if ((!isset($limit) || $num < $limit) && empty($offset)) {
-					print '<td>'.$langs->trans("Total").'</td>';
+					print '<td>';
+					print $langs->trans("Total");
+					if (!empty($moreinfoontotal)) {
+						print $moreinfoontotal;
+					}
+					print '</td>';
 				} else {
 					print '<td>';
 					if (is_object($form)) {
@@ -99,6 +118,7 @@ if (isset($totalarray['pos'])) {
 		}
 	}
 	print '</tr>';
+
 	// Add grand total if necessary ie only if different of page total already printed above
 	if (getDolGlobalString('MAIN_GRANDTOTAL_LIST_SHOW') && (!(is_null($limit) || $num < $limit))) {
 		if (isset($totalarray['pos']) && is_array($totalarray['pos']) && count($totalarray['pos']) > 0) {

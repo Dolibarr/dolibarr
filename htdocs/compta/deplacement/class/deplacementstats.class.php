@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,9 +92,9 @@ class DeplacementStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par annee
+	 *	Return the number of invoices per year
 	 *
-	 * @return	array<array{0:int,1:int}>				Array of nb each year
+	 *	@return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
@@ -108,7 +108,7 @@ class DeplacementStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 *	Return the number of invoices for the given year
 	 *
 	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
@@ -140,7 +140,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -160,7 +160,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

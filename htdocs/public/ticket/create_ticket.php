@@ -2,8 +2,8 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var ?User $user
  */
 
 // Load translation files required by the page
@@ -84,7 +85,7 @@ $socid = GETPOSTINT('socid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 
 
 $backtopage = '';
@@ -106,6 +107,43 @@ if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
 
+if (!is_object($user)) {
+	$user = new User($db);
+}
+
+$captchaobj = null;
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(
+		array(
+			'main' => '/core/modules/security/captcha/'
+		),
+		is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array()
+	);
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+			/** @var ModeleCaptcha $captchaobj */
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
+}
 
 /*
  * Actions
@@ -153,12 +191,13 @@ if (empty($reshook)) {
 		$upload_dir_tmp = $vardir.'/temp/'.session_id();
 
 		// TODO Delete only files that was uploaded from form
-		dol_remove_file_process(GETPOST('removedfile'), 0, 0);
+		dol_remove_file_process(GETPOSTINT('removedfile'), 0, 0);
 		$action = 'create_ticket';
 	}
 
 	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {	// Test on permission not required. This is a public form. Security is managed by mitigation.
 		$error = 0;
+		$cid = -1;
 		$origin_email = GETPOST('email', 'email');
 		if (empty($origin_email)) {
 			$error++;
@@ -166,14 +205,16 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			// Search company saved with email
-			$searched_companies = $object->searchSocidByEmail($origin_email, '0');
+			$searched_companies = $object->searchSocidByEmail($origin_email, 0);
 
-			// Chercher un contact existent avec cette address email
-			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
+			// Look for an existing contact with this email address
+			// The first contact found is used to dtermine the tracking contact
 			$contacts = $object->searchContactByEmail($origin_email);
+			if (!is_array($contacts)) {
+				$contacts = array();
+			}
 
 			// Ensure that contact is active and select first active contact
-			$cid = -1;
 			foreach ($contacts as $key => $contact) {
 				if ((int) $contact->statut == 1) {
 					$cid = $key;
@@ -195,7 +236,7 @@ if (empty($reshook)) {
 		$contact_phone = '';
 		if ($with_contact) {
 			// set linked contact to add in form
-			if (is_array($contacts) && count($contacts) == 1) {
+			if (/* is_array($contacts) && */ count($contacts) == 1) {
 				$with_contact = current($contacts);
 			}
 
@@ -221,27 +262,35 @@ if (empty($reshook)) {
 		}
 
 
+		// Check value of input fields
 		$fieldsToCheck = [
 			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
 			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
 			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
 			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
-			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
 		];
-
+		if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+			$fieldsToCheck['message'] = ['check' => 'restricthtml', 'langs' => 'Message'];
+		} else {
+			$fieldsToCheck['message'] = ['check' => 'alphanohtml', 'langs' => 'Message'];
+		}
 		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
 		// Check email address
 		if (!empty($origin_email) && !isValidEmail($origin_email)) {
 			$error++;
-			array_push($object->errors, $langs->trans("ErrorBadEmailAddress", $langs->transnoentities("email")));
+			array_push($object->errors, $langs->trans("ErrorBadEmailAddress", $langs->transnoentities("Email")));
 			$action = '';
 		}
 
 		// Check Captcha code if is enabled
-		if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
-			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+		$ok = false;
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET') && is_object($captchaobj)) {
+			if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+				$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
+			} else {
+				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
+			}
 			if (!$ok) {
 				$error++;
 				array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
@@ -283,17 +332,17 @@ if (empty($reshook)) {
 			$object->db->begin();
 
 			$object->subject = GETPOST("subject", "alphanohtml");
-			$object->message = GETPOST("message", "restricthtml");
+			if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+				$object->message = GETPOST("message", "restricthtml");
+			} else {
+				$object->message = GETPOST("message", "alphanohtml");
+			}
 			$object->origin_email = $origin_email;
 			$object->email_from = $origin_email;
 
 			$object->type_code = GETPOST("type_code", 'aZ09');
 			$object->category_code = GETPOST("category_code", 'aZ09');
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
-
-			if (!is_object($user)) {
-				$user = new User($db);
-			}
 
 			// create third-party with contact
 			$usertoassign = 0;
@@ -309,7 +358,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					$errors = ($company->error ? array($company->error) : $company->errors);
-					array_push($object->errors, $errors);
+					$object->errors = array_merge($object->errors, $errors);
 					$action = 'create_ticket';
 				}
 
@@ -324,7 +373,7 @@ if (empty($reshook)) {
 					if ($result < 0) {
 						$error++;
 						$errors = ($with_contact->error ? array($with_contact->error) : $with_contact->errors);
-						array_push($object->errors, $errors);
+						$object->errors = array_merge($object->errors, $errors);
 						$action = 'create_ticket';
 					} else {
 						$contacts = array($with_contact);
@@ -336,7 +385,7 @@ if (empty($reshook)) {
 				$object->fk_soc = $searched_companies[0]->id;
 			}
 
-			if (is_array($contacts) && count($contacts) > 0 && $cid >= 0) {
+			if (/* is_array($contacts) && */ count($contacts) > 0 && $cid >= 0) {
 				$object->fk_soc = $contacts[$cid]->socid;
 				$usertoassign = $contacts[$cid]->id;
 			}
@@ -363,7 +412,9 @@ if (empty($reshook)) {
 				if ($id <= 0) {
 					$error++;
 					$errors = ($object->error ? array($object->error) : $object->errors);
-					array_push($object->errors, $object->error ? array($object->error) : $object->errors);
+					if ($object->error) {
+						array_push($object->errors, $object->error);
+					}
 					$action = 'create_ticket';
 				}
 			}
@@ -421,8 +472,8 @@ if (empty($reshook)) {
 						$sendtocc = '';
 						$deliveryreceipt = 0;
 
-						if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
-							$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+						$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+						if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 						}
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -432,7 +483,7 @@ if (empty($reshook)) {
 						} else {
 							$result = $mailfile->sendfile();
 						}
-						if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+						if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 						}
 
@@ -458,14 +509,14 @@ if (empty($reshook)) {
 							}
 							$message_admin .= '</ul>';
 
-							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.dolPrintText($object->message).'</p>';
 							$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 							$replyto = $from;
 
-							if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
-								$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+							$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
 							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -475,7 +526,7 @@ if (empty($reshook)) {
 							} else {
 								$result = $mailfile->sendfile();
 							}
-							if ((getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '')) {
+							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 							}
 						}
@@ -526,7 +577,7 @@ $arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/t
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+print '<div class="ticketpublicarea ticketlargemargin">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;

@@ -59,10 +59,17 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'payment';
+		$this->picto = 'salary';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
+
+		// Parts of module
+		$this->module_parts = array(
+			'models' => 1,
+			'triggers' => 0,
+			'substitutions' => 0,
+		);
 
 		// Config pages
 		$this->config_page_url = array('salaries.php@salaries');
@@ -98,7 +105,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 511;
-		$this->rights[$r][1] = 'Read employee salaries and payments (yours and your subordinates)';
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours only)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
@@ -106,6 +113,14 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 512;
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours and of your subordinates)';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'readchild';
+		$this->rights[$r][5] = '';
+
+		$r++;
+		$this->rights[$r][0] = 513;
 		$this->rights[$r][1] = 'Create/modify payments of empoyee salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -122,7 +137,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 517;
-		$this->rights[$r][1] = 'Read salaries and payments of all employees';
+		$this->rights[$r][1] = 'Read salaries and payments (of all employees)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'readall';
@@ -163,14 +178,13 @@ class modSalaries extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND s.entity IN ('.getEntity('salary').')';
 	}
 
-
 	/**
 	 *  Function called when module is enabled.
-	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *  It also creates data directories
+	 *  The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories and runs upgrade tasks if needed.
 	 *
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
+	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
+	 *  @return     int                 1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -179,7 +193,22 @@ class modSalaries extends DolibarrModules
 		// Clean before activation
 		$this->remove($options);
 
+		// Ensure data directory exists
+		$dirSalary = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/salaries/temp';
+		if (!is_dir($dirSalary)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirSalary);
+		}
+
+		// Register the PDF model
 		$sql = array();
+		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model
+			WHERE nom = 'standard_salary'
+			AND type = 'salary'
+			AND entity = ".((int) $conf->entity);
+
+		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity)
+			VALUES ('standard_salary', 'salary', ".((int) $conf->entity).")";
 
 		return $this->_init($sql, $options);
 	}

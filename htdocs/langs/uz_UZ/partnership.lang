@@ -74,3 +74,5 @@ NewPartnershipRequest=Yangi hamkorlik talabi
 NewPartnershipRequestDesc=Ushbu shakl sizga hamkorlik dasturimizning bir qismi bo'lish uchun so'rov yuborish imkonini beradi. Agar sizga ushbu shaklni to'ldirishda yordam kerak bo'lsa, <b> %s </b> elektron pochta orqali bog'laning.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Bu sahifada quyidagi domenlardan biriga kamida bitta havola boʻlishi kerak: %s
 IPOfApplicant=Ariza beruvchining IP
+PartnershipToReopen=Qayta ochish uchun
+PartnershipConfirmReOpenAsk=Are you sure you want to reopen this partnership <b> %s</b>?

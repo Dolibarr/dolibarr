@@ -46,7 +46,6 @@ class RestAPIContactTest extends AbstractRestAPITest
 	 */
 	public function testRestGetContact()
 	{
-		global $conf,$user,$langs,$db;
 		//fetch Non-Existent contact
 		$url = $this->api_url.'/contacts/123456789?api_key='.$this->api_key;
 		//$addheaders=array('Content-Type: application/json');
@@ -55,7 +54,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result for get on unexisting contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(404, $object['error']['code'], 'Error code is not 404');
@@ -67,7 +66,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result for get on an existing contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(1, $object['statut']);
@@ -83,7 +82,6 @@ class RestAPIContactTest extends AbstractRestAPITest
 	 */
 	public function testRestCreateContact()
 	{
-		global $conf,$user,$langs,$db;
 		// attempt to create without mandatory fields
 		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
 		$addheaders = array('Content-Type: application/json');
@@ -98,7 +96,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$result = getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 		//print __METHOD__." Result for creating incomplete contact".var_export($result, true)."\n";
 		//print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 		$this->assertNotNull($object, "Parsing of json result must no be null");
 		$this->assertEquals(400, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
@@ -119,7 +117,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 
 		$result = getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 		$this->assertNotNull($object, "Parsing of json result must not be null");
@@ -140,7 +138,6 @@ class RestAPIContactTest extends AbstractRestAPITest
 	 */
 	public function testRestUpdateContact($objid)
 	{
-		global $conf,$user,$langs,$db;
 		// attempt to create without mandatory fields
 		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
 		$addheaders = array('Content-Type: application/json');
@@ -155,7 +152,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$updateRequestBody = json_encode($updateBody);
 		$updateUrl = $this->api_url . '/contacts/' . $objid. '?api_key=' . $this->api_key;
 		$updateResult = getURLContent($updateUrl, 'PUTALREADYFORMATED', $updateRequestBody, 1, $addheaders, array('http', 'https'), 2);
-		$this->assertEquals($updateResult['curl_error_no'], '');
+		$this->assertEquals(0, $updateResult['curl_error_no']);
 
 		$updateResponse = json_decode($updateResult['content'], true);
 

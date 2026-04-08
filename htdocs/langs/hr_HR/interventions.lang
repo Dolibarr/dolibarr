@@ -86,4 +86,4 @@ TypeContact_fichinter_external_BILLING=Kontakt s kupcem za naplatu intervencije
 TypeContact_fichinter_external_CUSTOMER=Kontakt s kupcem za praćenje intervencije
 NotARecurringInterventionalTemplate=Nije predložak intervencije koji se ponavlja
 ShowInterventionModel=Prikaži model intervencije
-CreateRepeatableIntervention=Create recurring intervention
+CreateRepeatableIntervention=izradi ponavljajuća intervencija

@@ -3,7 +3,7 @@
  * Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017       Pierre-Henry Favre      <phf@atm-consulting.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				header('Location: ' . $_SERVER['PHP_SELF']);
+				header('Location: '.DOL_URL_ROOT.'/admin/expensereport_rules.php');
 				exit;
 			} else {
 				$action = '';
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 			dol_print_error($object->db);
 		}
 
-		header('Location: ' . $_SERVER['PHP_SELF']);
+		header('Location: ' . DOL_URL_ROOT.'/admin/expensereport_rules.php');
 		exit;
 	}
 
@@ -198,7 +198,8 @@ llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'm
 
 $form = new Form($db);
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
@@ -232,7 +233,7 @@ if ($action != 'edit') {
 	echo '<div id="group" class="float linecolgroup">' . $form->select_dolgroups(0, 'fk_usergroup') . '</div>';
 	echo '</td>';
 
-	echo '<td class="linecoltype">' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
+	echo '<td class="linecoltype">' . $form->selectExpenseFees('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
 	echo '<td class="linecoltyperule">' . $form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0) . '</td>';
 	echo '<td class="linecoldatestart">' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', 0, 0, 0, '', 1, 0) . '</td>';
 	echo '<td class="linecoldateend">' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', 0, 0, 0, '', 1, 0) . '</td>';
@@ -292,7 +293,7 @@ foreach ($rules as $rule) {
 
 	echo '<td class="linecoltype">';
 	if ($action == 'edit' && $object->id == $rule->id) {
-		echo $form->selectExpense($object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
+		echo $form->selectExpenseFees((string) $object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
 	} else {
 		if ($rule->fk_c_type_fees == -1) {
 			echo $langs->trans('AllExpenseReport');
@@ -340,7 +341,7 @@ foreach ($rules as $rule) {
 	if ($action == 'edit' && $object->id == $rule->id) {
 		echo '<input type="text" value="' . price2num($object->amount) . '" name="amount" class="amount width50 right" />';
 	} else {
-		echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		echo price($rule->amount, 0, $langs, 1, -1, -1, getDolCurrency());
 	}
 	echo '</td>';
 

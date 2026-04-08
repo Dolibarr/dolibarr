@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2022-2026	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2024	Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ if (!defined('NOLOGIN') && $forlogin) {
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,8 +44,11 @@ require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
+use OAuth\Common\Http\Uri\Uri;
 
 // Define $urlwithroot
 global $dolibarr_main_url_root;
@@ -102,40 +104,63 @@ $statewithanticsrfonly = '';
 
 $requestedpermissionsarray = array();
 if ($state) {
-	// 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
+	// 'state' parameter is standard to store a hash value and can also be used to retrieve some parameters back
 	$statewithscopeonly = preg_replace('/\-.*$/', '', preg_replace('/^forlogin-/', '', $state));
-	$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
-	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
-}
-
-// Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
-// but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
-	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
-	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
-	if (empty($backtourl)) {
-		$backtourl = DOL_URL_ROOT.'/';
+	if ($statewithscopeonly != 'none') {
+		$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
+		$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
+	} else {
+		$statewithscopeonly = '';
 	}
-	header('Location: '.$backtourl);
-	exit();
 }
 
-//var_dump($requestedpermissionsarray);exit;
+// Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback,
+// but NOT when callback was ok and we recall the page
+if ($action != 'delete' && !GETPOST('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray)) && !preg_match('/^none/', $state)) {
+	if (GETPOST('error') || GETPOST('error_description')) {
+		setEventMessages($langs->trans("Error").' '.GETPOST('error_description'), null, 'errors');
+	} else {
+		dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
+		setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
+		if (empty($backtourl)) {
+			$backtourl = DOL_URL_ROOT.'/';
+		}
+		header('Location: '.$backtourl);
+		exit();
+	}
+}
+
 
 
 // Dolibarr storage
 $storage = new DoliStorage($db, $conf, $keyforprovider);
 
-// Instantiate the Api service using the credentials, http client and storage mechanism for the token
-// ucfirst(strtolower($genericstring)) must be the name of a class into OAuth/OAuth2/Services/Xxxx
-$apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
+$keyforurl = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_URL';
+if (getDolGlobalString($keyforurl)) {
+	$baseApiUriInt = new Uri(getDolGlobalString($keyforurl));
+} else {
+	print 'Error, failed to get value for constant '.$keyforurl;
+	exit;
+}
 
+$apiService = null;
+$nameofservice = ucfirst(strtolower($genericstring));
+try {
+	// Instantiate the Api service using the credentials, http client and storage mechanism for the token
+	// ucfirst(strtolower($genericstring)) must be the name of a class into OAuth/OAuth2/Services/Xxxx
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray, $baseApiUriInt);
+	'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
+} catch (Exception $e) {
+	print 'Error, failed to create service for provider '.$nameofservice.($keyforprovider ? '-'.$keyforprovider : '').'. Message was: '.$e->getMessage();
+	exit;
+}
 /*
 var_dump($genericstring.($keyforprovider ? '-'.$keyforprovider : ''));
 var_dump($credentials);
 var_dump($storage);
 var_dump($requestedpermissionsarray);
 */
+
 
 if (empty($apiService) || !$apiService instanceof OAuth\OAuth2\Service\Generic) {
 	print 'Error, failed to create Generic serviceFactory';
@@ -181,6 +206,11 @@ if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('use
 if (!GETPOST('code') && !GETPOST('error')) {
 	dol_syslog("Page is called without the 'code' parameter defined");
 
+	if (empty($state) || $state == 'none') {
+		// Generate a random state value to prevent CSRF attack. Store it into session juste after to check it when we will receive the callback from provider.
+		$state = 'none-'.bin2hex(random_bytes(16));
+	}
+
 	// If we enter this page without 'code' parameter, it means we click on the link from login page ($forlogin is set) or from setup page and we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
@@ -205,15 +235,17 @@ if (!GETPOST('code') && !GETPOST('error')) {
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state, create record or just update column state of table llx_oauth_token (and create/update entry in llx_oauth_state) depending on the Provider used (see its constructor).
-	if ($state) {
-		$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code', 'state' => $state));
-	} else {
-		$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code')); // Parameter state will be randomly generated
-	}
+	//if ($state && $state != 'none') {
+	$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code', 'state' => $state));
+	//} else {
+	//	$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code')); // Parameter state will be randomly generated
+	//}
 	// The redirect_uri is included into this $url
 
 	// Add scopes
-	$url .= '&scope='.str_replace(',', '+', $statewithscopeonly);
+	if ($statewithscopeonly) {
+		$url .= '&scope='.str_replace(',', '+', $statewithscopeonly);
+	}
 
 	// Add more param
 	$url .= '&nonce='.bin2hex(random_bytes(64 / 8));
@@ -245,7 +277,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 		}
 	}
 
-	//var_dump($url);exit;
+	//var_dump($keyforurl, $url, $statewithscopeonly);exit;
 
 	// we go on oauth provider authorization page, we will then go back on this page but into the other branch of the if (!GETPOST('code'))
 	header('Location: '.$url);
@@ -269,18 +301,58 @@ if (!GETPOST('code') && !GETPOST('error')) {
 
 			$db->begin();
 
-			// This requests the token from the received OAuth code (call of the endpoint)
-			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
-			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			$token = null;
+			$last_insert_id = 0;
+			try {
+				// This requests the token from the received OAuth code (call of the endpoint)
+				// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
+				$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+				'@phan-var-force OAuth\Common\Token\AbstractToken $token';
 
-			'@phan-var-force OAuth\Common\Token\AbstractToken $token';
+				$storage = $apiService->getStorage();
+				/** @var OAuth\Common\Storage\DoliStorage $storage */
+				if (property_exists($storage, 'last_insert_id')) {		// @phan-suppress-current-line PhanUndeclaredProperty
+					$last_insert_id = $storage->last_insert_id;			// @phan-suppress-current-line PhanUndeclaredProperty
+				}
+			} catch (Exception $e) {
+				dol_syslog("Failed to get token with requestAccessToken: ".$e->getMessage(), LOG_ERR);
+				setEventMessages("Failed to get token with requestAccessToken: ".$e->getMessage(), null, 'errors');
+				$errorincheck++;
+			}
+
+			// The refresh token is inside the object token if the prompt was forced only. Otherwise, it may be found into extraParams section.
+			//$refreshtoken = $token->getRefreshToken();
+			//var_dump($refreshtoken);
+			dol_syslog("requestAccessToken complete");
 
 			// The refresh token is inside the object token if the prompt was forced only.
 			//$refreshtoken = $token->getRefreshToken();
 			//var_dump($refreshtoken);
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
-			$extraparams = $token->getExtraParams();
+			if ($token) {
+				$extraparams = $token->getExtraParams();
+
+				$scope = empty($extraparams['scope']) ? '' : $extraparams['scope'];
+				$tokenstring = $token->getAccessToken();
+				// Update entry in llx_oauth_token to store the scope associated to the token into field "state" (field should be renamed).
+				// It is not stored by default by DoliStorage.
+				// TODO Update using $scope and $tokenstring and $last_insert_id
+				$refreshtoken = empty($extraparams['refresh_token']) ? '' : $extraparams['refresh_token'];
+				if (empty($refreshtoken)) {
+					$refreshtoken = $token->getRefreshToken();
+				}
+
+				if ($last_insert_id) {
+					$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+					$sqlupdate .= " SET state = '".(empty($scope) ? '' : $db->escape($scope))."', tokenstring = '".$db->escape($tokenstring)."', tokenstring_refresh = '".$db->escape($refreshtoken)."'";
+					$sqlupdate .= " WHERE rowid = ".((int) $last_insert_id);
+
+					$db->query($sqlupdate);
+
+					//var_dump($scope, $token, $refreshtoken, $last_insert_id, $sqlupdate);exit;
+				}
+			}
 
 			$username = '';
 			$useremail = '';
@@ -292,7 +364,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-				dol_syslog("userinfo=".var_export($userinfo, true));
+				dol_syslog("userinfo=".formatLogObject($userinfo));
 
 				$useremail = $userinfo['email'];
 
@@ -382,7 +454,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['genericoauth_receivedlogin'] has been set to the key to validate the next test by function_genericoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=generic&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

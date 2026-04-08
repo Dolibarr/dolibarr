@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,13 @@ abstract class ModeleDon extends CommonDocGenerator
 	 *  @return	int<-1,1>					>0 if OK, <0 if KO
 	 */
 	abstract public function write_file($don, $outputlangs, $currency = '');
+
+	/**
+	 *  Return if a module can be used or not
+	 *
+	 *  @return boolean     true if module can be used
+	 */
+	abstract public function isEnabled();
 }
 
 

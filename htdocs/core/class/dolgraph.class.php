@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,9 @@ class DolGraph
 	private $_library; // Graphic library to use (jflot, chart, artichow)
 
 	/**
-	 * @var array<array{0:string,1:float,1:float}> Array of data
+	 * @var array<array<string|int|float>> Array of data
+	 * @phpstan-var array<array{0:string|int,1:float,2?:float,3?:float,...}>
+	 * @phan-var array<array{0:string|int,1:float,2?:float,3?:float,4?:float}>
 	 */
 	public $data; // Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
 	/**
@@ -114,6 +116,10 @@ class DolGraph
 	 * @var bool
 	 */
 	public $hideXValues = false;
+	/**
+	 * @var bool
+	 */
+	public $hideYValues = false;
 	/**
 	 * @var bool
 	 */
@@ -307,6 +313,18 @@ class DolGraph
 		return true;
 	}
 
+	/**
+	 * Hide Y Values
+	 *
+	 * @param	bool		$bool	YValues or not
+	 * @return	bool				true
+	 */
+	public function setHideYValues($bool)
+	{
+		$this->hideYValues = $bool;
+		return true;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Hide Y grid
@@ -364,7 +382,7 @@ class DolGraph
 	/**
 	 * Set data
 	 *
-	 * @param 	array<array{0:string,1:float,2:float}>	$data		Data
+	 * @param 	array<array{0:string|int,1:float,2?:float}>	$data		Data
 	 * @return	void
 	 * @see draw_jflot() for syntax of data array
 	 */
@@ -1317,8 +1335,8 @@ class DolGraph
 
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
-				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
-				$this->stringtoshow .= 'rotation: -Math.PI,' . "\n";
+				$this->stringtoshow .= 'circumference: 180,' . "\n";
+				$this->stringtoshow .= 'rotation: -90,' . "\n";
 			}
 			$this->stringtoshow .= 'elements: { arc: {' . "\n";
 			// Color of each arc
@@ -1468,24 +1486,20 @@ class DolGraph
 			}
 			$this->stringtoshow .= "}, \n";
 
-			/* For Chartjs v2.9 */
-			/*
-			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
-			if ($this->hideXValues) {
-				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
+			// Hide the X or Y values
+			if ($this->hideYValues || $this->hideXValues) {
+				$this->stringtoshow .= 'scales: { ';
+				if ($this->hideXValues) {
+					$this->stringtoshow .= 'x: { display: false }';
+				}
+				if ($this->hideYValues && $this->hideXValues) {
+					$this->stringtoshow .= ', ';
+				}
+				if ($this->hideYValues) {
+					$this->stringtoshow .= 'y: { display: false }';
+				}
+				$this->stringtoshow .= '}, ';
 			}
-			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
-			$this->stringtoshow .= 'distribution: \'linear\'';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }] }';
-			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
@@ -1670,7 +1684,7 @@ class DolGraph
 		global $langs;
 
 		if ($shownographyet) {
-			$s = '<div class="nographyet" style="width:' . (preg_match('/%/', $this->width) ? $this->width : $this->width . 'px') . '; height:' . (preg_match('/%/', $this->height) ? $this->height : $this->height . 'px') . ';"></div>';
+			$s = '<div class="nographyet" style="max-width: 400px; width:' . (preg_match('/%/', $this->width) ? $this->width : $this->width . 'px') . '; height:' . (preg_match('/%/', $this->height) ? $this->height : $this->height . 'px') . ';"></div>';
 			$s .= '<div class="nographyettext margintoponly">';
 			if (is_numeric($shownographyet)) {
 				$s .= $langs->trans("NotEnoughDataYet") . '...';

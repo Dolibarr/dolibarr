@@ -110,7 +110,7 @@ $documentation->showSidebar(); ?>
 			$lines = array(
 					'<?php',
 					'/**',
-					'* Function dolGetButtonAction',
+					'* Function setEventMessages',
 					'*',
 					'*  Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events',
 					'*  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function',
@@ -127,7 +127,7 @@ $documentation->showSidebar(); ?>
 					'setEventMessages("message", null);',
 					'setEventMessages(null, messages[]);',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Contextual variations -->
@@ -136,6 +136,10 @@ $documentation->showSidebar(); ?>
 			<p class="documentation-text"><?php echo $langs->trans('DocSetEventMessageContextualVariationsDescription'); ?></p>
 			<div class="documentation-example">
 				<?php
+				$params = [
+					'attr' => []
+				];
+
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
 				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayOKMessage');
@@ -163,13 +167,22 @@ $documentation->showSidebar(); ?>
 			<?php
 			$lines = array(
 				'<?php',
-				'setEventMessages("message", null)',
-				'setEventMessages("message", null, "warnings")',
-				'setEventMessages("message", null, "errors")'
+				'setEventMessages("message", null);',
+				'setEventMessages("message", null, "warnings");',
+				'setEventMessages("message", null, "errors");'
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
-		<!--  -->
+
+
+
+		<?php
+		$setEventMessageJsContextTitle = $langs->trans('DocSetEventMessageJsContext');
+		include __DIR__ . '/../dolibarr-context/inc_seteventmessage.php';
+		?>
+
+
+
 	</div>
 
 </div>

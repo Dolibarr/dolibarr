@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011	    Juanjo Menent        	<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +31,19 @@ global $user;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
+'@phan-var-force Fichinter[] $linkedObjectBlock';
+/** @var Fichinter[] $linkedObjectBlock */
 
 $langs->load("interventions");
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-'@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
+'@phan-var-force Fichinter[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Fichinter[] $linkedObjectBlock */
 
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {

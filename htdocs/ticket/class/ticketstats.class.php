@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Jean-François Ferry     <hello@librethic.io>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +79,9 @@ class TicketStats extends Stats
 	}
 
 	/**
-	 *     Renvoie le nombre de tickets par annee
+	 *	Return the number of tickets per year
 	 *
-	 *    @return array<array{0:int,1:int}>		Array of values
+	 *	@return array<array{0:int,1:int}>		Array of values
 	 */
 	public function getNbByYear()
 	{
@@ -125,7 +125,7 @@ class TicketStats extends Stats
 	{
 		$sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -145,7 +145,7 @@ class TicketStats extends Stats
 	{
 		$sql = "SELECT date_format(datec,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

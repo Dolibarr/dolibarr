@@ -17,6 +17,7 @@ AccountancyCodeAsset=Redovisningskod (tillgång)
 AccountancyCodeDepreciationAsset=Redovisningskod (avskrivningstillgångskonto)
 AccountancyCodeDepreciationExpense=Redovisningskod (avskrivningskostnadskonto)
 AssetsLines=Tillgångar
+ConfirmValidateAsset=Är du säker på att du vill validera den här tillgången med referensen <b>%s</b>?
 DeleteType=Radera
 DeleteAnAssetType=Ta bort en tillgångsmodell
 ConfirmDeleteAssetType=Är du säker på att du vill ta bort den här tillgångsmodellen?
@@ -34,7 +35,7 @@ AssetsTypeId=Tillgångsmodell-id
 AssetsTypeLabel=Tillgångsmodelletikett
 AssetsTypes=Tillgångsmodeller
 ASSET_ACCOUNTANCY_CATEGORY=Redovisningsgrupp för anläggningstillgångar
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportionell period i dagar för beräkning av amortering över ett år
 # Menu
 MenuAssets=Tillgångar
 MenuNewAsset=Ny tillgång
@@ -70,6 +71,7 @@ AssetDisposal=Förfogande
 AssetConfirmDisposalAsk=Är du säker på att du vill göra dig av med tillgången <b> %s </b>?
 AssetConfirmReOpenAsk=Är du säker på att du vill öppna tillgången <b> %s </b> igen?
 # Asset status
+AssetInDraft=Utkast
 AssetInProgress=Pågående
 AssetDisposed=Avyttrad
 AssetRecorded=Redovisad
