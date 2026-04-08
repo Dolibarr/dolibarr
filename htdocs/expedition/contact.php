@@ -193,7 +193,9 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+	if (isset($object->thirdparty)) {
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");

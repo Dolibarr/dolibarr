@@ -188,7 +188,9 @@ if ($id > 0 || !empty($ref)) {
 		//$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
 		//$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= $object->thirdparty->getNomUrl(1);
+		if (isset($object->thirdparty)) {
+			$morehtmlref .= $object->thirdparty->getNomUrl(1);
+		}
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
