@@ -54,6 +54,9 @@ $ref = GETPOST('ref', 'alpha');
 $lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 
+// Store current page url
+$url_page_current = DOL_URL_ROOT.'/comm/propal/contact.php';
+
 $object = new Propal($db);
 $error = 0;
 
@@ -139,12 +142,12 @@ if (empty($reshook)) {
 		if ($result > 0 && $id > 0) {
 			$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-			if (empty($newmember)) {
-				$newmember = $object->fk_member;
+			if (!empty($newmember)) {
+				$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+				$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+			} else {
+				setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
 			}
-
-			$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-			$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
 		}
 
 		if ($result >= 0) {
