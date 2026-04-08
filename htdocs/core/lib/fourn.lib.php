@@ -29,6 +29,8 @@
  *		\ingroup	supplier
  */
 
+require_once DOL_URL_ROOT.'/core/lib/supplier_rights.lib.php';
+
 /**
  * Prepare array with list of tabs
  *
