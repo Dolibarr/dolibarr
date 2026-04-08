@@ -161,14 +161,11 @@ $usercancreate = supplierOrderHasRight($user, 'creer');
 $usercandelete = (supplierOrderHasRight($user, 'supprimer') || ($usercancreate && isset($object->status) && $object->status == $object::STATUS_DRAFT));
 
 // Advanced permissions
-$usercanvalidate = (
-	(!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate))
-	|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && supplierOrderHasRight($user, 'validate'))
-);
+$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && supplierOrderHasRight($user, 'validate')));
 
 // Additional area permissions
 $usercanapprove = supplierOrderHasRight($user, 'approuver');
-$usercanapprovesecond = supplierOrderHasRight($user, 'validate');
+$usercanapprovesecond = supplierOrderHasRight($user, 'approve2');
 $usercanorder = supplierOrderHasRight($user, 'commander');
 
 if (!isModEnabled('reception')) {
