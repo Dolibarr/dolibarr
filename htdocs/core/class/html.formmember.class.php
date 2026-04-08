@@ -304,8 +304,6 @@ class FormMember extends Form
 			$out .= "</select>";
 			if ($user->admin && empty($forcehidetooltip)) {
 				$out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			} elseif (!$user->admin && empty($forcehidetooltip)) {
-				$out .= ' '.info($langs->trans("AreaForAdminOnly"), 1);
 			}
 
 			$out .= ajax_combobox($htmlname);

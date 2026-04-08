@@ -1856,7 +1856,7 @@ abstract class CommonObject
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
 	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
-	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
+	 *    @return array<int,array{parentId:int,source:string,memberid:int,id:int,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_member_as_contact($statusoflink = -1, $source = 'member', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
@@ -1894,10 +1894,8 @@ abstract class CommonObject
 			$sql .= " ".$this->db->prefix()."c_type_contact as tc,";
 		}
 		$sql .= " ".$this->db->prefix()."element_contact as ec";
-		if ($source == 'member') {
-			$sql .= " LEFT JOIN ".$this->db->prefix()."adherent as a on ec.fk_member = a.rowid";
-			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = a.country";
-		}
+		$sql .= " LEFT JOIN ".$this->db->prefix()."adherent as a on ec.fk_member = a.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = a.country";
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
 		if (empty($arrayoftcids)) {
 			$sql .= " AND ec.fk_c_type_contact = tc.rowid";
@@ -1905,9 +1903,7 @@ abstract class CommonObject
 			if ($code) {
 				$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 			}
-			if ($source == 'member') {
-				$sql .= " AND tc.source = '".$this->db->escape($source)."'";
-			}
+			$sql .= " AND tc.source = '".$this->db->escape($source)."'";
 			$sql .= " AND tc.active = 1";
 		} else {
 			$sql .= " AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', $arrayoftcids)).")";

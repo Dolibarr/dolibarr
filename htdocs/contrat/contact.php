@@ -56,6 +56,9 @@ $socid = GETPOSTINT('socid');
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
+// Store current page url
+$url_page_current = DOL_URL_ROOT.'/contrat/contact.php';
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -131,12 +134,12 @@ if (empty($reshook)) {
 		if ($result > 0 && $id > 0) {
 			$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-			if (empty($newmember)) {
-				$newmember = $object->fk_member;
+			if (!empty($newmember)) {
+				$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+				$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+			} else {
+				setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
 			}
-
-			$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-			$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
 		}
 
 		if ($result >= 0) {
