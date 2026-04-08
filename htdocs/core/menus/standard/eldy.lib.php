@@ -1461,9 +1461,9 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 		if (isModEnabled('supplier_order')) {
 			$langs->load("orders");
 
-			$permOrderRightRead = $user->hasRight('fournisseur', 'commande', 'lire') || $user->hasRight('supplier_order', 'lire');
-			$permOrderRightCreate = $user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer');
-			$permOrderRightExport = $user->hasRight('fournisseur', 'commande', 'export') || $user->hasRight('supplier_order', 'export');
+			(int) $permOrderRightRead = $user->hasRight('fournisseur', 'commande', 'lire') || $user->hasRight('supplier_order', 'lire');
+			(int) $permOrderRightCreate = $user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer');
+			(int) $permOrderRightExport = $user->hasRight('fournisseur', 'commande', 'export') || $user->hasRight('supplier_order', 'export');
 
 			$newmenu->add("/fourn/commande/index.php?leftmenu=orders_suppliers", $langs->trans("SuppliersOrders"), 0, $permOrderRightRead, '', $mainmenu, 'orders_suppliers', 400, '', '', '', img_picto('', 'supplier_order', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/fourn/commande/card.php?action=create&amp;leftmenu=orders_suppliers", $langs->trans("NewSupplierOrderShort"), 1, $permOrderRightCreate);
