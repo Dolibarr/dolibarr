@@ -598,4 +598,7 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('conferenceorbooth', 'member', 'RESPONSIBLE',  'Booth responsible', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'member', 'SALESREPTHIRD',  'Sales Representative', 1);
 
+ALTER TABLE llx_element_contact DROP INDEX idx_element_contact_idx1;
+ALTER TABLE llx_element_contact ADD UNIQUE INDEX idx_element_contact_idx1 (element_id, fk_c_type_contact, fk_socpeople, fk_member);
+
 -- end of migration
