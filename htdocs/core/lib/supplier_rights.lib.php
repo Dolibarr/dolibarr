@@ -80,39 +80,39 @@ function supplierOrderHasRight(User $user, $perm)
 		),
 		'creer' => array(
 			array('fournisseur', 'commande', 'creer'),
-			array('$supplier_order', 'creer'),
+			array('supplier_order', 'creer'),
 		),
 		'supprimer' => array(
 			array('fournisseur', 'commande', 'supprimer'),
-			array('$supplier_order', 'supprimer'),
+			array('supplier_order', 'supprimer'),
 		),
 		'approuver' => array(
 			array('fournisseur', 'commande', 'approuver'),
-			array('$supplier_order', 'approuver'),
+			array('supplier_order', 'approuver'),
 		),
 		'commander' => array(
 			array('fournisseur', 'commande', 'commander'),
-			array('$supplier_order', 'commander'),
+			array('supplier_order', 'commander'),
 		),
 		'receptionner' => array(
 			array('fournisseur', 'commande', 'receptionner'),
-			array('$supplier_order', 'receptionner'),
+			array('supplier_order', 'receptionner'),
 		),
 		'check' => array(
 			array('fournisseur', 'commandeadvance', 'check'),
-			array('$supplier_order', 'supplier_order_advance', 'check'),
+			array('supplier_order', 'supplier_order_advance', 'check'),
 		),
 		'validate' => array(
 			array('fournisseur', 'supplier_order_advance', 'validate'),
-			array('$supplier_order', 'supplier_order_advance', 'validate'),
+			array('supplier_order', 'supplier_order_advance', 'validate'),
 		),
 		'approve2' => array(
 			array('fournisseur', 'commande', 'approve2'),
-			array('$supplier_order', 'approve2'),
+			array('supplier_order', 'approve2'),
 		),
 		'export' => array(
 			array('fournisseur', 'commande', 'export'),
-			array('$supplier_order', 'export'),
+			array('supplier_order', 'export'),
 		),
 	);
 
