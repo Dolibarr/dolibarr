@@ -1530,7 +1530,7 @@ abstract class CommonObject
 		$already_added = false;
 		if (is_array($TListeContacts) && !empty($TListeContacts)) {
 			foreach ($TListeContacts as $array_contact) {
-				if ($array_contact['status'] == 4 && $array_contact['id'] == $memberid && $array_contact['fk_c_type_contact'] == $id_type_contact) {
+				if ($array_contact['statuslink'] == 4 && $array_contact['id'] == $memberid && $array_contact['fk_c_type_contact'] == $id_type_contact) {
 					$already_added = true;
 					break;
 				}
@@ -1741,7 +1741,7 @@ abstract class CommonObject
 
 		$tab = array();
 
-		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_member as memid, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user or llx_adherent
+		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_member as memid, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user or
 		if ($source == 'internal') {
 			$sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo, t.gender, t.fk_country as country_id";
 		}
