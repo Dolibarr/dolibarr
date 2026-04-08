@@ -97,8 +97,12 @@ ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_fk_mo_rowid FOREIGN 
 
 
 ALTER TABLE llx_facture ADD COLUMN fk_thirdparty_rib_id integer NULL;
-ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
+ALTER TABLE llx_facture ADD COLUMN amount_retained_warranty double(24,8) DEFAULT 0 NOT NULL AFTER retained_warranty;
+ALTER TABLE llx_facture ADD COLUMN prorata_account double(24,8) DEFAULT 0 NOT NULL AFTER amount_retained_warranty;
+ALTER TABLE llx_facture ADD COLUMN amount_prorata_account double(24,8) DEFAULT 0 NOT NULL AFTER prorata_account;
+ALTER TABLE llx_facture ADD COLUMN amount_price_review double(24,8) DEFAULT 0 NOT NULL AFTER amount_prorata_account;
 
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN payment_reference varchar(25);
 ALTER TABLE llx_facture_fourn ADD COLUMN dispute_status	integer DEFAULT 0;
 
