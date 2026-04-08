@@ -1078,7 +1078,7 @@ if ($action == 'create' || $action == 'presend') {
 				if ($memberresult) {
 					$morehtmlref .= img_picto($langs->trans("Member"), $memberobj->picto, 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->fk_member], true).'">'.img_edit($langs->transnoentitiesnoconv('SetMember')).'</a> ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->fk_member], true).'">'.img_edit($langs->transnoentitiesnoconv('SelectMember')).'</a> ';
 					}
 					$morehtmlref .= $form->form_member($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_member, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 				} else {
