@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2023 	    Nick Fragoulis
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2002  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Florian Henry               <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2018  Philippe Grand              <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +32,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 /**
  * @var Conf $conf
@@ -41,6 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/supplier_invoice.lib.php';
+} else {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
+}
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "bills", "orders", "suppliers"));
@@ -81,7 +87,11 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
 print "<br>\n";
 
-$head = supplierorder_admin_prepare_head();
+if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+	$head = supplier_invoice_admin_prepare_head();
+} else {
+	$head = supplierorder_admin_prepare_head();
+}
 
 print dol_get_fiche_head($head, 'attributesrec', $langs->trans("Suppliers"), -1, 'company');
 

@@ -316,14 +316,14 @@ function testAIConnection(string $service, string $key, string $url): array
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
- * @return  void
+ * @return  int									Return 0
  */
-function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = ''): void
+function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '')
 {
 	global $conf;
 
 	if (!getDolGlobalInt('AI_LOG_REQUESTS')) {
-		return;
+		return 0;
 	}
 
 	$tool = isset($response['tool']) ? (string) $response['tool'] : '';
@@ -356,10 +356,11 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= ")";
 
 	$resql = $db->query($sql);
-
 	if (!$resql) {
 		dol_print_error($db);
 	}
+
+	return 0;
 }
 
 /**

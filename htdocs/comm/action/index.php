@@ -1132,8 +1132,8 @@ if ($check_birthday) {
 
 			$event->contact_id = $obj->rowid;
 
-			$event->date_start_in_calendar = $db->jdate($event->datep);
-			$event->date_end_in_calendar = $db->jdate($event->datef);
+			$event->date_start_in_calendar = $event->datep;
+			$event->date_end_in_calendar = $event->datef;
 
 			// Add an entry in eventarray for each day
 			$daycursor = $event->datep;
