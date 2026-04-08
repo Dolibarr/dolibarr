@@ -1741,7 +1741,7 @@ abstract class CommonObject
 
 		$tab = array();
 
-		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
+		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_member as memid, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user or llx_adherent
 		if ($source == 'internal') {
 			$sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo, t.gender, t.fk_country as country_id";
 		}
@@ -1764,6 +1764,10 @@ abstract class CommonObject
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.fk_pays";
+		}
+		if ($source == 'member') {
+			$sql .= " LEFT JOIN ".$this->db->prefix()."adherent as t on ec.fk_member = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.country";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
 		if (empty($arrayoftcids)) {
