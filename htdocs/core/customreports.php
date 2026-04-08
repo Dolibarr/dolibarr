@@ -112,6 +112,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 }
 
+// In customreport context, we force the protection to avoid forging of criteria including bind SQL injection
+$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+
 if (empty($mode)) {
 	$mode = 'graph';
 }
@@ -452,19 +455,20 @@ if ($action == 'viewgraph') {
 if (count($search_groupby)) {
 	$fieldtocount = '';
 	foreach ($search_groupby as $gkey => $gval) {
-		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
+		$gvalwithoutprefix = preg_replace('/^[a-z]+\./i', '', $gval);
+		$gvalsanitized = preg_replace('/[^a-z0-9\._\-]+/i', '', $gval);
 
-		if (preg_match('/\-year$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-year$/', '', $search_groupby[$gkey]);
+		if (preg_match('/\-year$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-year$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y')";
-		} elseif (preg_match('/\-month$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-month$/', '', $search_groupby[$gkey]);
+		} elseif (preg_match('/\-month$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-month$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m')";
-		} elseif (preg_match('/\-day$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-day$/', '', $search_groupby[$gkey]);
+		} elseif (preg_match('/\-day$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-day$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d')";
 		} else {
-			$fieldtocount = $search_groupby[$gkey];
+			$fieldtocount = $gvalsanitized;
 		}
 
 		$sql = "SELECT DISTINCT ".$fieldtocount." as val";

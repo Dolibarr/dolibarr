@@ -1166,6 +1166,9 @@ class Facture extends CommonInvoice
 		// Source invoice load
 		$facture = new Facture($this->db);
 
+		// Avoid updating the row ranks
+		$facture->context['createfromclone'] = 1;
+
 		// Retrieve all extrafield
 		// fetch optionals attributes and labels
 		$this->fetch_optionals();

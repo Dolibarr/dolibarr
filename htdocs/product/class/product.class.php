@@ -1492,8 +1492,9 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
-				$this->oldcopy = dol_clone($this, 1); // 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
+			// Note that this->oldcopy must be object and not stdClass, if not the method hasbatch() will not work.
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
+				$this->oldcopy = dol_clone($this, 1);	// 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
 			}
 			// Test if batch management is activated on existing product
 			// If yes, we create missing entries into product_batch
@@ -5279,7 +5280,7 @@ class Product extends CommonObject
 		$sql .= ")";
 		$sql .= " SELECT";
 		$sql .= " entity";
-		$sql .= ", ".$toId;
+		$sql .= ", ".((int) $toId);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", price_level";
 		$sql .= ", price";
@@ -5295,7 +5296,7 @@ class Product extends CommonObject
 		$sql .= ", localtax1_type";
 		$sql .= ", localtax2_tx";
 		$sql .= ", localtax2_type";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", tosell";
 		$sql .= ", price_by_qty";
 		$sql .= ", fk_price_expression";
@@ -5334,7 +5335,7 @@ class Product extends CommonObject
 		$this->db->begin();
 
 		$sql = 'INSERT INTO '.$this->db->prefix().'product_association (fk_product_pere, fk_product_fils, qty, incdec)';
-		$sql .= " SELECT ".$toId.", fk_product_fils, qty, incdec FROM ".$this->db->prefix()."product_association";
+		$sql .= " SELECT ".((int) $toId).", fk_product_fils, qty, incdec FROM ".$this->db->prefix()."product_association";
 		$sql .= " WHERE fk_product_pere = ".((int) $fromId);
 
 		dol_syslog(get_class($this).'::clone_association', LOG_DEBUG);
@@ -5365,7 +5366,7 @@ class Product extends CommonObject
 		// les fournisseurs
 		/*$sql = "INSERT ".$this->db->prefix()."product_fournisseur ("
 		 . " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
-		 . " SELECT '".$this->db->idate($now)."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
+		 . " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, ref_fourn, fk_user_author"
 		 . " FROM ".$this->db->prefix()."product_fournisseur"
 		 . " WHERE fk_product = ".((int) $fromId);
 
@@ -6859,9 +6860,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Return if the object has a sell-by or eat-by date.
+	 * Return if the object has a batch management.
 	 *
-	 * @return boolean     True if the object has a sell-by or eat-by date, false otherwise.
+	 * @return boolean     True if the object has a batch management, false otherwise.
 	 */
 	public function hasbatch()
 	{

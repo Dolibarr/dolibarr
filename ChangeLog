@@ -1999,6 +1999,93 @@ The following changes may create regressions for some external modules, but were
 * The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
 * booking.class.php was removed, please have a look at calendar.class.php
 
+***** ChangeLog for 18.0.9 compared to 18.0.8 *****
+100 files changed, 2283 insertions(+), 591 deletions(-)
+
+FIX: product ref was not printed on supplier recurring invoice (#37535)
+FIX: show export full documents checkbox on change format in accountancy export (#37468)
+FIX: remove unused var
+FIX: API Warehouse : Error 401 when getting warehouse by id (backport from 22)
+FIX: - Fix doc preview in comm card
+FIX: Entity on group ticket insertion (#37370)
+FIX: display of DLC/DLUO in tooltip (#37164)
+FIX: Backport fix on v20 for result page of compta (/compta/resultat/index.php) (#37127)
+FIX: Backport fix on v20 for result page of compta (/compta/resultat/index.php). The expense report were not included when the module was activated
+FIX(API, thirdparties): get fixed amount discounts (#37068)
+FIX: #GHSA-w5j3-8fcr-h87w (#36868)
+FIX(ticket): check on TICKET_IMAGE_PUBLIC_INTERFACE (#36833)
+FIX: warning accountancy export from external module (#36832)
+FIX: php8.1 warning in syslog message
+FIX: TakePos sometimes thirdpartyid = undefined
+FIX: remove stock correctly when reception is deleted (like 82e092f)
+FIX: finished regex in product import (#36770)
+FIX: re-create API temp dir after purging temp files
+FIX: undefined variables on create invoice card from order (backport from v19)
+FIX: Missing Product ref in Bom stats
+FIX: fix #36401 (for v17.0) doesn't work in v18.0+ because of variable renaming
+FIX: propal shipping and availability update (v18+)
+FIX: PR#36401 fixed a missing GETPOSTISSET() but the check involves a variable ($taskid) that was renamed ($tmptaskid) in 18.0
+SEC: FIX: #36430 permissions not checked on other tabs of HRM evaluation card
+FIX: Remove <?=
+FIX: Implementation of multi-company compatibility with inventory/warehouse management
+FIX: remove useless condition to create credit on situation invoice …
+FIX: undefined variables on create invoice from shipment card (backport from v20)
+FIX: 18.0: `GETPOSTDATE()` and `buildParamDate()` assumed wrong HTTP param names
+SEC: permissions not checked on other tabs of HRM evaluation card
+FIX: 18.0: GETPOSTDATE and buildParamDate assumed HTTP param names 'minute' and 'second' instead of 'min' and 'sec'
+FIX: not remove value of others extra-fields on update extras action
+NEW: Automatically release docker image for each GitHub release
+FIX: getDolGlobalInt
+SEC: fix IDOR attack on employee evaluation. Missing permission test https://github.com/atm-florianm/dolibarr/commit/7ed0af2a138a34e7c7005b95c85ffc791976a6cf
+FIX: Implementation of multi-company compatibility with inventory/warehouse management
+FIX: 17.0: perweek.php resets task progress to 0% when: (#36401)
+FIX: DA027383: permissions not checked on HRM evaluation card (#36328) (#36399)
+FIX: undefined variables on create invoice from shipment card (backport from v20)
+FIX: php echo instead of <?
+FIX: Sometimes socid = undefined
+FIX: TakePOS Missing Thirdparty Id when getting more products (#36341)
+FIX: Multicompany compatibility with "project_task"
+FIX: remove situation invoice from cycle
+FIX: #36149 (#36150)
+FIX: keep user who validate proposal on update (#36257)
+FIX: create API temp directory in Dolibarr API constructor
+FIX: expense report card: do not show bank account if user cannot see them
+FIX: Email Collector Module
+FIX: dol_escape_htmltag in extrafields_view (#36136)
+FIX: re-create API temp dir after purging temp files
+FIX: use array_intersect instead in_array
+FIX: wrong check of hook return
+FIX: 16.0: extrafield of type link to category causes SQL error in selectForFormsList() (#36074)
+FIX: 16.0 (up to 19.0): extrafield of type link to category causes SQL error in selectForFormsList
+FIX: missing "printFieldListValue" hook (#35990)
+FIX: add action parameter
+FIX: remove duplicate object
+FIX: expense report card: use correct bank module designator for detection
+FIX: wrong check of hook return
+FIX: Email Collector Module: manage error when imap_fetchstructure return false. Previously it generated warning and fatal error because the returned value was not of type class
+FIX: notifications: correctly report email delivery errors (#35864)
+FIX: php8.1 warning in syslog message
+FIX: extra-field list depend on parent extra-filed list on direct edit (#35803)
+FIX: allow a situation with credit to be removed from cycle
+FIX: expense report card: do not show bank account if user cannot see them
+FIX: day of ticket on takePOS. Backport 6abdb6e. (#35745)
+FIX: Multicompany compatibility with "project_task"
+FIX: remove useless condition to create credit on situation invoice (#35786)
+FIX: create invoice from order using API and multi-entity (#35654)
+FIX: API not allow to access order in other entity on creating invoice from order
+FIX: sql syntax error (#35588)
+FIX: pgsql: error when calculating depreciations (#34213)
+FIX: asset deprectiation: optimize sql
+FIX: #35568 (#35569)
+FIX: clear "thirdparty" object before or during the fetch
+FIX: To have only the sender's entity when sending mail (#31053)
+FIX: php 8+ warnings when creating deposits (#35582)
+FIX: missing entity filter (#35517)
+FIX: api orders : forward database error on failure (backpot commit d9e81cb) (#35478)
+FIX: missing check constant PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS (#33277)
+FIX: 17.0: ContratLigne::fetch() returns 1 even if the line doesn't exist (#35324)
+FIX: extra field list depend on parent list when editing a card (#35165)
+
 ***** ChangeLog for 18.0.8 compared to 18.0.7 *****
 35 files changed, 647 insertions(+), 298 deletions(-)
 

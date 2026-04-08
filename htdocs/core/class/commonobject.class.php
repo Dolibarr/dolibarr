@@ -2311,9 +2311,9 @@ abstract class CommonObject
 
 		if ($fk_user_field) {
 			if (!empty($fuser) && is_object($fuser)) {
-				$sql .= ", ".$fk_user_field." = ".((int) $fuser->id);
+				$sql .= ", ".$this->db->sanitize($fk_user_field)." = ".((int) $fuser->id);
 			} elseif (empty($fuser) || $fuser != 'none') {
-				$sql .= ", ".$fk_user_field." = ".((int) $user->id);
+				$sql .= ", ".$this->db->sanitize($fk_user_field)." = ".((int) $user->id);
 			}
 		}
 
@@ -3833,8 +3833,8 @@ abstract class CommonObject
 			$fieldusermod = "fk_user_modif";
 		}
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET note".$newsuffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
-		$sql .= ", ".$fieldusermod." = ".((int) $user->id);
+		$sql .= " SET note".$this->db->sanitize($newsuffix)." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
+		$sql .= ", ".$this->db->sanitize($fieldusermod)." = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
@@ -3991,7 +3991,7 @@ abstract class CommonObject
 			$base_price_type = 'TTC';
 		}
 
-		$sql = "SELECT rowid, qty, ".$fieldup." as up, remise_percent, total_ht, ".$fieldtva." as total_tva, total_ttc, ".$fieldlocaltax1." as total_localtax1, ".$fieldlocaltax2." as total_localtax2,";
+		$sql = "SELECT rowid, qty, ".$this->db->sanitize($fieldup)." as up, remise_percent, total_ht, ".$this->db->sanitize($fieldtva)." as total_tva, total_ttc, ".$this->db->sanitize($fieldlocaltax1)." as total_localtax1, ".$this->db->sanitize($fieldlocaltax2)." as total_localtax2,";
 		$sql .= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
 		if ($this->table_element_line == 'facturedet') {
 			$sql .= ', situation_percent';
@@ -4050,7 +4050,7 @@ abstract class CommonObject
 					if ($diff_on_current_total) {
 						// This should not happen, we should always have in table: total_ttc = total_ht + total_vat + total_localtax1 + total_localtax2
 						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
-						$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+						$sqlfix .= " SET ".$this->db->sanitize($fieldtva)." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
 						$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
 						$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('Warn1: We found inconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
@@ -4071,7 +4071,7 @@ abstract class CommonObject
 
 							// This part of code must be called only to fix corrupted data due to the use of the feature to round total instead of rounding lines.
 							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
-							$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+							$sqlfix .= " SET ".$this->db->sanitize($fieldtva)." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
 							$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
 							$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
 							dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
@@ -4129,10 +4129,10 @@ abstract class CommonObject
 						}
 
 						if ($base_price_type == 'TTC') {
-							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldtva)." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
 							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
 						} else {
-							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldtva)." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
 							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 						}
 
@@ -6597,12 +6597,12 @@ abstract class CommonObject
 			$sql = "SELECT rowid";
 			foreach ($optionsArray as $name => $label) {
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'multipts', 'linestrg','polygon']))) {
-					$sql .= ", ".$name;
+					$sql .= ", ".$this->db->sanitize($name);
 				}
 				// use geo sql fonction to read as text
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
 					// TODO Add an abstraction method in the database driver
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+					$sql .= ", ST_AsWKT(".$name.") as ".$this->db->sanitize($name);
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";

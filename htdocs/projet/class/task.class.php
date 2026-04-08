@@ -1695,10 +1695,10 @@ class Task extends CommonObjectLine
 				} else {
 					$this->status = Task::STATUS_VALIDATED;
 				}
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			} else {
 				$this->status = Task::STATUS_ONGOING;
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2079,7 +2079,7 @@ class Task extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
 			$this->timespent_datehour = $this->timespent_date;
 		}
 		if (isset($this->timespent_note)) {
