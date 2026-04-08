@@ -497,8 +497,6 @@ class Memo extends CommonObject
 		$h = (int) $h;
 		$z = (int) $z;
 
-		$now = $this->db->idate(dol_now());
-
 		// CREATEUR
 		if ((int) $this->fk_user_creat === (int) $user->id) {
 			$this->pos_x = $x;
@@ -529,11 +527,11 @@ class Memo extends CommonObject
 		if ($this->db->num_rows($resql) > 0) {
 			// UPDATE
 			$sql = 'UPDATE '.$this->db->prefix().'quickmemo_memo_user SET';
-			$sql .= ' pos_x = '.$x.',';
-			$sql .= ' pos_y = '.$y.',';
-			$sql .= ' pos_w = '.$w.',';
-			$sql .= ' pos_h = '.$h.',';
-			$sql .= ' pos_z = '.$z;
+			$sql .= ' pos_x = '. (int) $x.',';
+			$sql .= ' pos_y = '. (int) $y.',';
+			$sql .= ' pos_w = '. (int) $w.',';
+			$sql .= ' pos_h = '. (int) $h.',';
+			$sql .= ' pos_z = '. (int) $z;
 			$sql .= ' WHERE fk_memo = '.((int) $this->id);
 			$sql .= ' AND fk_user = '.((int) $user->id);
 
@@ -554,12 +552,12 @@ class Memo extends CommonObject
 			$sql .= ') VALUES (';
 			$sql .= ((int) $this->id).',';
 			$sql .= ((int) $user->id).',';
-			$sql .= '\''.$now.'\',';
-			$sql .= $x.',';
-			$sql .= $y.',';
-			$sql .= $w.',';
-			$sql .= $h.',';
-			$sql .= $z;
+			$sql .= '\''. $this->db->idate(dol_now()) .'\',';
+			$sql .= (int) $x.',';
+			$sql .= (int) $y.',';
+			$sql .= (int) $w.',';
+			$sql .= (int) $h.',';
+			$sql .= (int) $z;
 			$sql .= ')';
 
 			if (!$this->db->query($sql)) {
