@@ -1577,8 +1577,8 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 		if (isModEnabled('societe') && isModEnabled('supplier_invoice') && !getDolGlobalString('SUPPLIER_INVOICE_MENU_DISABLED')) {
 			$langs->load("bills");
 
-			$permInvoiceRightRead = $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire');
-			$permInvoiceRightCreate = $user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer');
+			$permInvoiceRightRead = (int) ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire'));
+			$permInvoiceRightCreate = (int) ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'));
 
 			$newmenu->add("/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"), 0, $permInvoiceRightRead, '', $mainmenu, 'suppliers_bills', 0, '', '', '', img_picto('', 'supplier_invoice', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&action=create", $langs->trans("NewBill"), 1, $permInvoiceRightCreate, '', $mainmenu, 'suppliers_bills_create');
