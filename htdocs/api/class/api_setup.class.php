@@ -329,6 +329,7 @@ class Setup extends DolibarrApi
 
 		return $list;
 	}
+
 	/**
 	 * Get the list of regions.
 	 *
@@ -1714,6 +1715,7 @@ class Setup extends DolibarrApi
 	 */
 	public function updateExtrafields($attrname, $elementtype, $request_data = null)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if (!DolibarrApiAccess::$user->admin) {
 			throw new RestException(403, 'Only an admin user can create an extrafield');
 		}

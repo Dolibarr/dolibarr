@@ -634,6 +634,12 @@ class Conf extends stdClass
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								if ($modulename == 'supplierorder') {
+									$modulename = 'supplier_order';
+								}
+								if ($modulename == 'supplierinvoice') {
+									$modulename = 'supplier_invoice';
+								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
 
 								// deprecated in php 8.2
@@ -1381,11 +1387,6 @@ class Conf extends stdClass
 			}
 			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
-			}
-
-			if (!isset($this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER)) {
-				// Note value is always forced to 1 in API and customreport context to avoid bind SQL injection into user input filters.
-				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
 			}
 
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {

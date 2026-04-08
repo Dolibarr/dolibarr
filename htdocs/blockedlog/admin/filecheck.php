@@ -109,7 +109,6 @@ if (isALNERunningVersion()) {
 	print '</tr>';
 }
 
-
 print '</table>';
 print '</div>';
 

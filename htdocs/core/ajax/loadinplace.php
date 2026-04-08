@@ -18,8 +18,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/loadinplace.php
- *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
+ *       \file      htdocs/core/ajax/loadinplace.php
+ *       \brief     File to load (loadinplace.php) or update (saveinplace.php) a field value.
+ *       			Was used in past when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {

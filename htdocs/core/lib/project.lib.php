@@ -278,6 +278,39 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
+	if (isModEnabled('mailing') && getDolGlobalInt('MAILING_ADD_TAB_ON_PROJECT')) {		// Show this tab only in hidden option is on (we can already get the information from other view and we mustfight againstthe tabflation).
+		$langs->load('mails');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/comm/mailing/list.php', ['projectid' => $project->id]);
+		$head[$h][1] = $langs->trans("EMailings");
+
+		// Enable caching of mass mailing count
+		$nbMassMailing = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_mass_mailing_'.$project->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbMassMailing = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+			$massMailing = new Mailing($db);
+			$result = $massMailing->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $project->id).")");
+			//,
+			if (!is_array($result) && $result < 0) {
+				setEventMessages($massMailing->error, $massMailing->errors, 'errors');
+			} else {
+				$nbMassMailing = count($result);
+			}
+			dol_setcache($cachekey, $nbMassMailing, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		if ($nbMassMailing > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("EMailings")).'">'.$nbMassMailing.'</span>';
+			$head[$h][1] .= '</span>';
+		}
+		$head[$h][2] = 'mailing';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

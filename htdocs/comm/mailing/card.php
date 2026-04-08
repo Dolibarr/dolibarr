@@ -624,9 +624,11 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesg = $object->error;
+			setEventMessages($mesg, $mesgs, 'errors');
+		} else {
+			setEventMessages(null, $mesgs, 'errors');
 		}
 
-		setEventMessages($mesg, $mesgs, 'errors');
 		$action = "";
 	}
 
@@ -650,7 +652,7 @@ if (empty($reshook)) {
 			$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 		}
 
-		if (isset($mesg) && !$mesg) {
+		if (isset($mesg) && empty($mesg)) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -658,7 +660,6 @@ if (empty($reshook)) {
 			}
 			$mesg = $object->error;
 		}
-
 		setEventMessages($mesg, $mesgs, 'errors');
 		$action = "";
 	}
@@ -850,13 +851,22 @@ if ($action == 'create') {	// aaa
 
 	// Project
 	if (isModEnabled('project')) {
-			$langs->load("projects");
-			print '<tr class="field_projectid">';
-			print '<td class="titlefieldcreate">' . $langs->trans("Project") . '</td><td class="valuefieldcreate">';
-			print img_picto('', 'project', 'class="pictofixedwidth"') . $formproject->select_projects(-1, (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-			print ' <a href="' . DOL_URL_ROOT . '/projet/card.php?action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create') . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddProject") . '"></span></a>';
-			print '</td>';
-			print '</tr>';
+		// Link mailing to project
+		if (GETPOST('origin', 'alpha') == 'project') {
+			$projectid = GETPOSTINT('originid');
+		} else {
+			$projectid = GETPOSTINT('projectid');
+		}
+		if ($projectid > 0) {
+			$object->setProject($projectid);
+		}
+		$langs->load("projects");
+		print '<tr class="field_projectid">';
+		print '<td class="titlefieldcreate">' . $langs->trans("Project") . '</td><td class="valuefieldcreate">';
+		print img_picto('', 'project', 'class="pictofixedwidth"') . $formproject->select_projects(-1, (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+		print ' <a href="' . DOL_URL_ROOT . '/projet/card.php?action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create') . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddProject") . '"></span></a>';
+		print '</td>';
+		print '</tr>';
 	}
 
 	if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
@@ -1093,16 +1103,21 @@ if ($action == 'create') {	// aaa
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300', '');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= $proj->getNomUrl(1);
+						$morehtmlref .= $proj->getNomUrl(1, 'mailing');
 						if ($proj->title) {
 							$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
 						}
 					}
+				}
+				if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK')) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref .= ' <small>(<a href="' . DOL_URL_ROOT . '/comm/mailing/list.php?projectid='.$object->fk_project.'">' .$langs->trans("Other").' '.$langs->trans("EMailings").' for '.$langs->trans("Project").': '. $proj->title. '</a>)</small>';
 				}
 			}
 			$morehtmlref .= '</div>';
@@ -1472,16 +1487,22 @@ if ($action == 'create') {	// aaa
 				if ($permissiontocreate) {
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, -1, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, -1, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300', '');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= $proj->getNomUrl(1);
+						$morehtmlref .= $proj->getNomUrl(1, 'mailing');
 						if ($proj->title) {
 							$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
 						}
 					}
+				}
+				if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK')) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref .= '<!-- Edit mode, so we open url in new window -->';
+					$morehtmlref .= ' <small>(<a href="' . DOL_URL_ROOT . '/comm/mailing/list.php?projectid='.$object->fk_project.'" target="_blank">' .$langs->trans("Other").' '.$langs->trans("EMailings").' for '.$langs->trans("Project").': '. $proj->title. '</a>)</small>';
 				}
 			}
 

@@ -78,9 +78,25 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_archives.php".$param;
 	$head[$h][1] = $langs->trans("Archives");
-	// TODO Add number of archive files in badge
+	// Add badge on nb of files
+	$block_static = new BlockedLog($db);
+	$upload_dir = getMultidirOutput($block_static, 'blockedlog').'/archives';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = 0;
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'archives';
 	$h++;
+
+	if (userIsTaxAuditor()) {
+		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_control.php".$param;
+		$head[$h][1] = $langs->trans("OtherControl");
+		$head[$h][2] = 'control';
+		$h++;
+	}
 
 	if ($mysoc->country_code == 'FR') {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/documentation.php".$param;
@@ -369,14 +385,16 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 /**
  * Call remote API service to push the last counter and signature
  *
- * @param 	int		$id					Last counter ID/value
- * @param 	string	$signature			Signature
- * @param	int		$test				Add property test to 1 if it is for test
- * @param 	int		$previousid			Last counter ID/value
- * @param 	string	$previoussignature	Signature
- * @return	int							Return <0 if KO, 0 if nothing done, >0 if OK
+ * @param 	int		$id						Counter ID/value of ne record
+ * @param 	string	$signature				Signature of new record
+ * @param	int		$datecreation			Date creation of new record
+ * @param	int		$test					Add property test to 1 if it is for test
+ * @param 	int		$previousid				Counter ID/value of previous record
+ * @param 	string	$previoussignature		Signature of previous record
+ * @param	int		$previousdatecreation	Date creation of previous record
+ * @return	int								Return <0 if KO, 0 if nothing done, >0 if OK
  */
-function callApiToPushCounter($id, $signature, $test, $previousid, $previoussignature)
+function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid, $previoussignature, $previousdatecreation)
 {
 	global $mysoc, $conf;
 
@@ -391,7 +409,7 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 		$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
 
 		$t = microtime(true);
-		$micro = sprintf("%06d", (int) ($t - floor($t)) * 1000000);
+		$micro = sprintf("%06d", (int) (($t - floor($t)) * 1000000));
 
 		$data = '';
 		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
@@ -407,8 +425,10 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 
 		$data .= '&lastrowid='.(int) $id;
 		$data .= '&lastsignature='.urlencode($signature);
+		$data .= '&lastdatecreation='.urlencode(dol_print_date($datecreation, 'standard', 'gmt'));
 		$data .= '&previousrowid='.(int) $previousid;
 		$data .= '&previoussignature='.urlencode($previoussignature);
+		$data .= '&previousdatecreation='.urlencode(dol_print_date($previousdatecreation, 'standard', 'gmt'));
 		if ($test) {
 			$data .= '&test=1';
 		}
@@ -454,7 +474,9 @@ function callApiToPushCounter($id, $signature, $test, $previousid, $previoussign
 }
 
 /**
- * Return if user is a ta auditor
+ * Return if user is a tax auditor.
+ * Must be an external user and BLOCKEDLOG_FOR_TAX_AUDITOR must be set to 1 OR
+ * BLOCKEDLOG_FOR_TAX_AUDITOR must be set to 2
  *
  * @return	int		Return > 0 if user is an external user so must be restricted to archive control feature
  */
@@ -462,5 +484,65 @@ function userIsTaxAuditor()
 {
 	global $user;
 
-	return ((getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid) ? 1 : 0);
+	return (((getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && $user->socid) || getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') == '2') ? 1 : 0);
+}
+
+
+
+/**
+ *   	Add some information from the blockedlog module
+ *
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ * 		@param	float		$page_height	Height of page
+ * 		@param	Facture		$object			Object invoice
+ * 		@param	int			$w				Width for text
+ * 		@param	float		$posx			Pos x
+ * 		@param	float		$posy			Pos y
+ *      @return	void
+ */
+function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
+{
+	global $db;
+
+	// Transaction ID
+	if (isALNERunningVersion() && isModEnabled('blockedlog')) {
+		if ($object->status > $object::STATUS_DRAFT) {
+			$unalterablelogid = 'UNDEFINED';
+			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
+			$sql .= $db->order('rowid', 'DESC');
+			$sql .= $db->plimit(1);
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$unalterablelogid = $obj->signature;
+				}
+			}
+
+			if ($unalterablelogid != 'UNDEFINED') {
+				$posy += 5;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
+			}
+
+			$isADuplicata = ($object->pos_print_counter >= 2);
+			if ($isADuplicata) {
+				$posy += 3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, '*** '.$outputlangs->trans("DUPLICATA").(getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT') ? ' (no '.($object->pos_print_counter - 1).')' : '').' ***', '', 'R');
+			}
+		}
+
+		if ($object->status == $object::STATUS_DRAFT) {
+			$posy += 5;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, '*** '.strtoupper($outputlangs->trans("TemporaryReceipt")).' ***', '', 'R');
+		}
+	}
 }

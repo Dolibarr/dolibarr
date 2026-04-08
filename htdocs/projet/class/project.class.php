@@ -896,7 +896,7 @@ class Project extends CommonObject
 		} elseif ($type == 'loan') {
 			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} else {
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize((string) $ids).") AND entity IN (".getEntity($type).")";
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->db->sanitize($tablename)." WHERE ".$this->db->sanitize($projectkey)." IN (".$this->db->sanitize((string) $ids).") AND entity IN (".getEntity($type).")";
 		}
 
 		if (isDolTms($date_start) && $type == 'loan') {
@@ -1021,7 +1021,7 @@ class Project extends CommonObject
 			} else {
 				$fieldname = $value;
 			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$fieldname." = NULL where ".$fieldname." = ".((int) $this->id);
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($key)." SET ".$this->db->sanitize($fieldname)." = NULL WHERE ".$this->db->sanitize($fieldname)." = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1058,7 +1058,7 @@ class Project extends CommonObject
 			$elements = array('categorie_project'); // elements to delete. TODO Make goodway to delete
 			foreach ($elements as $table) {
 				if (!$error) {
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->db->sanitize($table);
 					$sql .= " WHERE fk_project = ".((int) $this->id);
 
 					$result = $this->db->query($sql);
@@ -1161,7 +1161,7 @@ class Project extends CommonObject
 		} elseif ($type == 'loan') {
 			$sql = "SELECT COUNT(l.rowid) as nb FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".((int) $this->id);
 		} else {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".((int) $this->id)." AND entity IN (".getEntity($type).")";
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$this->db->sanitize($tablename)." WHERE ".$this->db->sanitize($projectkey)." = ".((int) $this->id)." AND entity IN (".getEntity($type).")";
 		}
 
 		$result = $this->db->query($sql);
@@ -1462,6 +1462,8 @@ class Project extends CommonObject
 				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
 			} elseif ($option == 'eventorganization') {
 				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
+			} elseif ($option == 'mailing') {
+				$url = DOL_URL_ROOT.'/comm/mailing/list.php?projectid='.$this->id;
 			} else {
 				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
 			}
@@ -1775,8 +1777,12 @@ class Project extends CommonObject
 		$clone_project->id = 0;
 		if ($move_date) {
 			$clone_project->date_start = $now;
-			if (!(empty($clone_project->date_end))) {
-				$clone_project->date_end += ($now - $orign_dt_start);
+			if (!empty($clone_project->date_end)) {
+				if (!empty($orign_dt_start)) {
+					$clone_project->date_end += ($now - (int) $orign_dt_start);
+				} elseif (!empty($clone_project->date_c)) {
+					$clone_project->date_end += ($now - (int) $clone_project->date_c);
+				}
 			}
 		}
 
@@ -1974,7 +1980,7 @@ class Project extends CommonObject
 	 */
 	public function shiftTaskDate($old_project_dt_start)
 	{
-		global $user, $langs, $conf;
+		global $user;
 
 		$error = 0;
 		$result = 0;
@@ -2042,20 +2048,21 @@ class Project extends CommonObject
 	public function update_element($tableName, $elementSelectId)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
-			$sql .= " SET fk_project=".$this->id;
-			$sql .= " WHERE id=".((int) $elementSelectId);
-		} elseif (in_array($tableName, ["entrepot","mrp_mo","stocktransfer_stocktransfer"])) {
-			$sql .= " SET fk_project=".$this->id;
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET fk_project = ".((int) $this->id);
+			$sql .= " WHERE id = ".((int) $elementSelectId);
+		} elseif (in_array($tableName, ["entrepot", "mrp_mo", "stocktransfer_stocktransfer"])) {
+			$sql .= " SET fk_project = ".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		} else {
-			$sql .= " SET fk_projet=".$this->id;
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET fk_projet = ".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -2072,23 +2079,23 @@ class Project extends CommonObject
 	 *    @param	string	$tableName			Table of the element to update
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	 *    @param	string	$projectfield	    The column name that stores the link with the project
-	 *
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
 	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
-			$sql .= " SET fk_project=NULL";
-			$sql .= " WHERE id=".((int) $elementSelectId);
+			$sql .= " SET fk_project = NULL";
+			$sql .= " WHERE id = ".((int) $elementSelectId);
 		} else {
-			$sql .= " SET ".$projectfield."=NULL";
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();

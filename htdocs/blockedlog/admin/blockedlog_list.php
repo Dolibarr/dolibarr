@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
  * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -200,7 +200,7 @@ $morehtmlcenter = '';
 $texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-if (!userIsTaxAuditor()) {
+if (!userIsTaxAuditor()) { // @phpstan-ignore-line as it is already checked before
 	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 	if (!isRegistrationDataSavedAndPushed()) {
 		$texttop = '';
@@ -708,7 +708,8 @@ if (is_array($blocks)) {
 			if (empty($search_end) || $search_end == -1) {
 				$search_end = dol_now();
 			}
-			include_once DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+			global $foundoldformat, $firstrecorddate;
+			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 			if (empty($search_code) || in_array('BILL_VALIDATE', $search_code)) {
 				// Total

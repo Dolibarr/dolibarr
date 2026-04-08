@@ -123,7 +123,6 @@ ACCOUNTING_BANK_CONCILIATED=Transférer en comptabilité uniquement les lignes r
 BANK_DISABLE_DIRECT_INPUT=Désactiver l'enregistrement direct de la transaction dans le compte bancaire
 ACCOUNTANCY_ER_DATE_RECORD=Utiliser la date de fin de la période d'un rapport de dépenses comme date de transfert vers la comptabilité, au lieu de la date de la dépense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activer l'exportation du brouillon sur le journal
-ACCOUNTANCY_COMBO_FOR_AUX=Activer la liste déroulante pour le compte filiale (peut être lent si vous avez beaucoup de tiers, interrompre la possibilité de rechercher sur une partie de la valeur)
 ACCOUNTING_DATE_START_BINDING=Désactiver la liaison et le transfert en comptabilité lorsque la date est inférieure à cette date (les transactions antérieures à cette date seront exclues par défaut)
 ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=Lorsque la comptabilité est générée, l'étiquette d'opération par défaut
 ACCOUNTING_SELL_JOURNAL=Journal des ventes - ventes et retours

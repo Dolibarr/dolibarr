@@ -12,6 +12,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
  * Copyright (C) 2026		Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2026  		Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -831,7 +832,7 @@ if (!empty($hookmanager->resArray)) {
 }
 
 if ($action == "addelement") {
-	$tablename = GETPOST("tablename");
+	$tablename = GETPOST("tablename", "aZ09");
 	$elementselectid = GETPOSTINT("elementselect");
 	$result = $object->update_element($tablename, $elementselectid);
 	if ($result < 0) {
@@ -1466,6 +1467,8 @@ foreach ($listofreferent as $key => $value) {
 
 				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
 					print '<tr class="oddeven tr_canceled">';
+				} elseif ($key == "order_supplier" && ($element->billed)) {
+					print '<tr class="oddeven tr_paid">';
 				} else {
 					print '<tr class="oddeven" >';
 				}

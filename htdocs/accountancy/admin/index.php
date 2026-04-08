@@ -66,23 +66,40 @@ $nbletter = GETPOSTINT('ACCOUNTING_LETTERING_NBLETTERS');
 $formSetup = new FormSetup($db);
 
 // Main options
-$formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+$item = $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
-$formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
+// Auxiliary account select mode
+$arrval = array(
+	(string) 0 => $langs->trans("No").' - <span class="opacitymedium">'.$langs->trans("FreeInput").'</span>',
+	(string) 1 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("DropDownList").'</span>',
+	(string) 2 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+	(string) 3 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+	(string) 4 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
+);
+$item = $formSetup->newItem('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
+$item->setAsSelect($arrval);
+$item->helpText = $langs->trans('UseSearchToSelectAuxAccountTooltip');
+$item->cssClass = 'minwidth300 maxwidth400';
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 $item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
 $item->helpText = $langs->trans('ACCOUNTING_MANAGE_ZERO2');
 $item->fieldParams['helpText'] = 'noclick';
+$item->fieldParams['forcereload'] = 1;
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 
 if (!getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
 	$item = $formSetup->newItem('ACCOUNTING_LENGTH_GACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
-	$item->fieldAttr['class'] = 'maxwidth50 right';
+	$item->fieldAttr['class'] = 'maxwidth50';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
-	$item->fieldAttr['class'] = 'maxwidth50 right';
+	$item->fieldAttr['class'] = 'maxwidth50';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
 }
 
 // Parameters ACCOUNTING_* and others
