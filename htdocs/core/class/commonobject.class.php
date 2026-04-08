@@ -4545,7 +4545,6 @@ abstract class CommonObject
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
 		global $hookmanager, $action;
-		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Important for pdf generation time reduction
 		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
@@ -4648,6 +4647,7 @@ abstract class CommonObject
 		$sql .= " ORDER BY ".$orderby;
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
+		
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -4716,7 +4716,6 @@ abstract class CommonObject
 	 */
 	public function clearObjectLinkedCache()
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
 			unset($this->linkedObjectsFullLoaded[$this->id]);
 		}
