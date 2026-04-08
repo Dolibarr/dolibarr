@@ -1824,7 +1824,7 @@ class Adherent extends CommonObject
 	 *     @param  int<0,3>		$type    	Type of member (0=any, 1=individual, 2=legal entity)
 	 *     @param  array<string,mixed>	$filters 	Array of couple field name/value to filter the members with the same name
 	 *     @param  string 		$clause  	Clause for filters
-	 *     @return Member[]|int<-1,-1>		Array of Member object(s)
+	 *     @return Adherent[]|int<-1,-1>		Array of Adherent object(s)
 	 */
 	public function searchMemberidByEmail($email, $type = 0, $filters = array(), $clause = 'AND')
 	{
