@@ -885,7 +885,8 @@ function quickMemoIntefaceActionListModels($jsonResponse)
 	}
 
 	// GET all memo templates (tpl)
-	$sql = Memo::getTemplateMemosQuery($element_type, $context);
+	$memoStatic = new Memo($db);
+	$sql = $memoStatic->getTemplateMemosQuery($element_type, $context);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		$jsonResponse->result = 0;
@@ -929,9 +930,10 @@ function quickMemoIntefaceActionList($jsonResponse)
 		return;
 	}
 
+	$staticMemo = new Memo($db);
 
 	// GET all active memos
-	$sql = Memo::getMemosQuery($element_type, $element_id, $context);
+	$sql = $staticMemo->getMemosQuery($element_type, $element_id, $context);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		$jsonResponse->result = 0;
@@ -949,7 +951,7 @@ function quickMemoIntefaceActionList($jsonResponse)
 	$jsonResponse->data->memos = $memos;
 
 	// Count archived notes for display
-	$nbArchives = Memo::countArchivedMemoQuery($element_type, $element_id, $context);
+	$nbArchives = $staticMemo->countArchivedMemoQuery($element_type, $element_id, $context);
 	if ($nbArchives === false) {
 		$jsonResponse->result = 0;
 		$jsonResponse->msg = 'Error count archive';

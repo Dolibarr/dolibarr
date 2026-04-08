@@ -1350,17 +1350,15 @@ class Memo extends CommonObject
 	 *
 	 * @return int|false
 	 */
-	static public function countArchivedMemoQuery($element_type, $element_id, $context, $id = 0)
+	public function countArchivedMemoQuery($element_type, $element_id, $context, $id = 0)
 	{
-		global $user, $db;
-
-		$tmpMemo = new self($db);
+		global $user;
 
 		$sql = 'SELECT COUNT(m.rowid) nb
-			FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.' m
-			WHERE m.element_type = \''.$db->escape($element_type).'\'
+			FROM '.MAIN_DB_PREFIX.$this->table_element.' m
+			WHERE m.element_type = \''.$this->db->escape($element_type).'\'
 			  AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
-			  AND m.context_tab = \''.$db->escape($context).'\'
+			  AND m.context_tab = \''.$this->db->escape($context).'\'
 			  AND m.status = '.Memo::STATUS_ARCHIVED.'
 			  AND (m.private = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
@@ -1369,7 +1367,7 @@ class Memo extends CommonObject
 			$sql.= ' AND m.rowid = ' . (int) $id;
 		}
 
-		$obj = $db->getRow($sql);
+		$obj = $this->db->getRow($sql);
 		if (!$obj) {
 			return false;
 		}
@@ -1387,21 +1385,19 @@ class Memo extends CommonObject
 	 *
 	 * @return string
 	 */
-	static public function getMemosQuery($element_type, $element_id, $context, $id = 0)
+	public function getMemosQuery($element_type, $element_id, $context, $id = 0)
 	{
-		global $user, $db;
-
-		$tmpMemo = new self($db);
+		global $user;
 
 		$sql = 'SELECT m.rowid, m.quick_note, m.pos_x, m.pos_y, m.pos_w, m.pos_h, m.pos_z, m.color, m.fk_user_creat, m.fk_user_modif, m.shared_on_element, m.date_creation, m.tms, m.private,
                mu.pos_x as user_pos_x, mu.pos_y as user_pos_y, mu.pos_w as user_pos_w, mu.pos_h as user_pos_h, mu.pos_z as user_pos_z
-        FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.' m
-        LEFT JOIN '.MAIN_DB_PREFIX.$tmpMemo->table_element.'_user mu
+        FROM '.MAIN_DB_PREFIX.$this->table_element.' m
+        LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type = \''.$db->escape($element_type).'\'
+        WHERE m.element_type = \''.$this->db->escape($element_type).'\'
           AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
-          AND m.context_tab = \''.$db->escape($context).'\'
+          AND m.context_tab = \''.$this->db->escape($context).'\'
           AND m.status = '.self::STATUS_VALIDATED.'
           AND (COALESCE(m.private, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
@@ -1419,30 +1415,30 @@ class Memo extends CommonObject
 	 * Get template memos query
 	 *
 	 * @param     string $element_type  Type of element
-	 * @param     string $context       Context
+	 * @param     string $context_tab       Context tab
 	 * @param     int    $id            Id
 	 *
 	 * @return string
 	 */
-	static public function getTemplateMemosQuery($element_type, $context = '', $id = 0)
+	public function getTemplateMemosQuery($element_type, $context_tab = '', $id = 0)
 	{
-		global $user, $db;
-
-		$tmpMemo = new self($db);
+		global $user;
 
 		$sql = 'SELECT m.rowid, m.quick_note, m.pos_x, m.pos_y, m.pos_w, m.pos_h, m.color, m.pos_z,
        			m.fk_user_creat, m.fk_user_modif, m.shared_on_element, m.date_creation, m.tms, m.private, m.name_tpl,m.rank_tpl,
                	mu.pos_x as user_pos_x, mu.pos_y as user_pos_y, mu.pos_w as user_pos_w, mu.pos_h as user_pos_h, mu.pos_z as user_pos_z
-        FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.' m
-        LEFT JOIN '.MAIN_DB_PREFIX.$tmpMemo->table_element.'_user mu
+        FROM '.MAIN_DB_PREFIX.$this->table_element.' m
+        LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type IN (\''.$db->escape($element_type).'\', \'\')
+        WHERE m.element_type IN (\''.$this->db->escape($element_type).'\', \'\')
           AND m.status = '.self::STATUS_TPL.'
           AND (COALESCE(m.private_tpl, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
 
-		//  AND (m.context_tab = \''.$db->escape($context).'\' OR m.element_type = \'\' )
+		if (!empty($context_tab)) {
+			//$sql.= ' AND (m.context_tab = \''.$this->db->escape($context_tab).'\' OR m.element_type = \'\' ) ';
+		}
 
 		if ((int) $id > 0 ) {
 			$sql.= ' AND m.rowid = ' . (int) $id;
