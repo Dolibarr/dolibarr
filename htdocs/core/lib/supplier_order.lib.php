@@ -170,7 +170,7 @@ function supplierorder_prepare_head(CommandeFournisseur $object)
 }
 */
 
-require_once DOL_URL_ROOT.'/core/lib/supplier_rights.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_rights.lib.php';
 
 /**
  *  Return array head with list of tabs to view object information.
