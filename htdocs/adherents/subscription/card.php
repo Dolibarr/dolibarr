@@ -403,7 +403,7 @@ if ($rowid && $action != 'edit') {
 	$somethingshown = $formfile->numoffiles;
 	*/
 	// Show links to link elements
-	// Show links to link members thirdparty's elements
+	$object->fetchObjectLinked();
 
 	print '<!-- Show links to link members thirdpartys elements -->';
 	$tmparray = $form->showLinkToObjectBlock($object, array(), array('societe'), 1);
