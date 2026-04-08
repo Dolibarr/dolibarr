@@ -3,4 +3,7 @@
 namespace PHPUnit\Framework;
 
 class TestCase {
+	public function __construct()
+	{
+	}
 }
