@@ -253,7 +253,7 @@ $coldisplay++;
 	}
 
 	$coldisplay++;
-	print '<td class="right"><input type="text" class="flat right width50" id="price_ht" name="price_ht" value="'.(GETPOSTISSET('price_ht') ? GETPOST('price_ht', 'alpha') : (isset($line->pu_ht) ? price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0))).'"';
+	print '<td class="right"><input type="text" class="flat right width75" id="price_ht" name="price_ht" value="'.(GETPOSTISSET('price_ht') ? GETPOST('price_ht', 'alpha') : (isset($line->pu_ht) ? price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0))).'"';
 	if ($situationinvoicelinewithparent) {
 		print ' readonly';
 	}
@@ -270,7 +270,7 @@ $coldisplay++;
 		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
 			$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
 		}
-		print '<td class="right"><input type="text" class="flat right width50" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
+		print '<td class="right"><input type="text" class="flat right width75" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
@@ -293,7 +293,7 @@ $coldisplay++;
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : $line->qty).'"';
+		print '<input type="text" class="flat right width50" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : $line->qty).'"';
 		if ($situationinvoicelinewithparent) {	// Do not allow editing during a situation cycle
 			print ' readonly';
 		}
