@@ -690,20 +690,14 @@ if ($memberid && !$socid && !$projectid && !$project_ref && $user->hasRight('soc
 		$head = member_prepare_head($memberstat);
 		$object = $tmpobject;
 
-		print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'ticket', $langs->trans("Member"), -1, 'company');
 
 		dol_banner_tab($memberstat, 'memberid', '', ($memberid ? 0 : 1), 'rowid', 'fullname');
 
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield">';
-
-		print '<tr><td class="titlefield">'.$langs->trans('MemberNature').'</td><td>';
-		print $memberstat->getmorphylib('', 1);
-		print '</td></tr>';
-
-		print '</table>';
+		// making a nice thick black line in the bottom to visually distinguish the member info and the tickets
 		print '</div>';
 		print dol_get_fiche_end();
 
