@@ -992,6 +992,7 @@ if (empty($reshook)) {
 
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
+		$line = null;
 		if ($lineid) {
 			$line = new CommandeFournisseurLigne($db);
 			$res = $line->fetch($lineid);
@@ -1060,7 +1061,7 @@ if (empty($reshook)) {
 			$localtax2_rate,
 			$price_base_type,
 			0,
-			GETPOSTISSET("type") ? GETPOST("type") : $line->product_type,
+			GETPOSTISSET("type") ? GETPOST("type") : ($line instanceof CommandeFournisseurLigne ? $line->product_type : 0),
 			0,
 			$date_start,
 			$date_end,
@@ -2882,6 +2883,7 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
 				}
 				// Validate
+				$num = !empty($object->lines) ? count($object->lines) : 0;
 				if ($object->status == 0 && $num > 0) {
 					if ($usercanvalidate) {
 						$tmpbuttonlabel = $langs->trans('Validate');
