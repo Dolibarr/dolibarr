@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -350,6 +351,7 @@ $now = dol_now();
 
 $user_temp = new User($db);
 $socstatic = new Societe($db);
+$memberstatic = new Adherent($db);
 
 $help_url = '';
 
@@ -685,7 +687,7 @@ if ($memberid && !$socid && !$projectid && !$project_ref && $user->hasRight('soc
 	if ($res > 0) {
 		$tmpobject = $object;
 		$object = $memberstat; // $object must be of type Societe when calling societe_prepare_head
-		$head = societe_prepare_head($memberstat);
+		$head = member_prepare_head($memberstat);
 		$object = $tmpobject;
 
 		print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
@@ -697,9 +699,8 @@ if ($memberid && !$socid && !$projectid && !$project_ref && $user->hasRight('soc
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
-		// Type Prospect/Customer/Supplier
 		print '<tr><td class="titlefield">'.$langs->trans('MemberNature').'</td><td>';
-		print $memberstat->getTypeUrl(1);
+		print $memberstat->getmorphylib('', 1);
 		print '</td></tr>';
 
 		print '</table>';
