@@ -248,10 +248,9 @@ $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 //var_dump($modulepart.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
+// Fix for multi-entity on doctemplates
 if ($modulepart == 'doctemplates') {
-	// 1. On teste d'abord l'entité passée en paramètre ou celle de la session
 	$ent_to_test = ($entity > 1 ? $entity : $conf->entity);
-
 	if ($ent_to_test > 1) {
 		$path_with_entity = DOL_DATA_ROOT . '/' . $ent_to_test . '/doctemplates/' . $original_file;
 		if (file_exists(dol_osencode($path_with_entity))) {
