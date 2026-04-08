@@ -513,8 +513,8 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	// 1 Retrieve the moved model
 	$sql = 'SELECT rowid, element_type, context_tab
 	        FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
-	        WHERE rowid = '.$movedId.'
-	        AND status = '.Memo::STATUS_TPL;
+	        WHERE rowid = '. (int) $movedId.'
+	        AND status = '. (int) Memo::STATUS_TPL;
 
 	$res = $db->query($sql);
 	if (!$res || !$db->num_rows($res)) {
@@ -528,7 +528,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	// 2 Retrieve ALL compatible models
 	$sqlAll = 'SELECT rowid
 	           FROM '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
-	           WHERE status = '.Memo::STATUS_TPL.'
+	           WHERE status = '. (int) Memo::STATUS_TPL.'
 	           AND element_type IN (\''.$db->escape($movedModel->element_type).'\', \'\')
 	           ORDER BY rank_tpl DESC';
 
@@ -565,7 +565,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 		$sqlUp = 'UPDATE '.MAIN_DB_PREFIX.$tmpMemo->table_element.'
 		          SET rank_tpl = '.(int) $currentRank.'
 		          WHERE rowid = '.(int) $id.'
-		          AND status = '.Memo::STATUS_TPL.'
+		          AND status = '. (int) Memo::STATUS_TPL.'
 		          AND (private_tpl = 0 OR fk_user_creat = '.(int) $user->id.')';
 
 		if (!$db->query($sqlUp)) {
