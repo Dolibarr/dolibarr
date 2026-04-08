@@ -69,7 +69,7 @@ if ($userid != $user->id) {
 
 // Registering the new value of constant
 if (!empty($action) && !empty($contextpage)) {
-	if ($action == "listafterchangingpositionfields") {
+	if ($action == "listafterchangingpositionfields") { // Test on permission not required here. Done in security check
 		dol_syslog("Ajax changepositionfields contextpage=".$contextpage." postitionfields=".$postitionfields." userid=".$userid, LOG_DEBUG);
 		$tabparam = array();
 		if (!empty($postitionfields)) {
