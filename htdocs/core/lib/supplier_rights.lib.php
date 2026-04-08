@@ -29,7 +29,7 @@
  * - 3 levels: array('module', 'subperm', 'perm')
  *
  * @param User  $user    User object
- * @param array $rights  List of rights definitions
+ * @param array<int, array{0:string,1:string}|array{0:string,1:string,2:string}> $rights List of rights definitions
  * @return bool
  */
 function supplierRightsMatch(User $user, array $rights)
