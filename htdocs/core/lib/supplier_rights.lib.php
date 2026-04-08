@@ -18,7 +18,7 @@
 /**
  *  \file       htdocs/core/lib/supplier_rights.lib.php
  *  \ingroup    fournisseur
- *  \brief      Common helpers to manage supplier, supplier order and supplier invoice rights
+ *  \brief      Common helpers to manage supplier order and supplier invoice rights
  */
 
 /**
@@ -60,8 +60,12 @@ function supplierRightsMatch(User $user, array $rights)
  * - supplierOrderHasRight($user, 'creer')
  * - supplierOrderHasRight($user, 'supprimer')
  * - supplierOrderHasRight($user, 'approuver')
+ * - supplierOrderHasRight($user, 'commander')
  * - supplierOrderHasRight($user, 'receptionner')
  * - supplierOrderHasRight($user, 'check')
+ * - supplierOrderHasRight($user, 'validate')
+ * - supplierOrderHasRight($user, 'approve2')
+ * - supplierOrderHasRight($user, 'export')
  *
  * @param User   $user  User object
  * @param string $perm  Permission key
@@ -102,6 +106,14 @@ function supplierOrderHasRight(User $user, $perm)
 			array('fournisseur', 'supplier_order_advance', 'validate'),
 			array('$supplier_order', 'supplier_order_advance', 'validate'),
 		),
+		'approve2' => array(
+			array('fournisseur', 'commande', 'approve2'),
+			array('$supplier_order', 'approve2'),
+		),
+		'export' => array(
+			array('fournisseur', 'commande', 'export'),
+			array('$supplier_order', 'export'),
+		),
 	);
 
 	if (empty($map[$perm])) {
@@ -118,8 +130,10 @@ function supplierOrderHasRight(User $user, $perm)
  * Examples:
  * - supplierInvoiceHasRight($user, 'lire')
  * - supplierInvoiceHasRight($user, 'creer')
+ * - supplierInvoiceHasRight($user, 'validate')
  * - supplierInvoiceHasRight($user, 'supprimer')
- * - supplierInvoiceHasRight($user, 'valider')
+ * - supplierInvoiceHasRight($user, 'send')
+ * - supplierInvoiceHasRight($user, 'export')
  *
  * @param User   $user  User object
  * @param string $perm  Permission key
