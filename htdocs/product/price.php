@@ -289,7 +289,7 @@ if (empty($reshook)) {
 	if (($action == 'update_price' || $action == 'update_level_price') && !$cancel && $permissiontoadd) {
 		$error = 0;
 		$pricestoupdate = array();
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 1);	// when calling ->update later we need to call method on ->oldcopy so we clone using param 1
 
 		$psq = GETPOSTINT('psqflag');
 
