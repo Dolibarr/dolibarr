@@ -10283,6 +10283,7 @@ class Form
 		global $conf, $langs, $hookmanager;
 		global $action;
 		global $db, $user;	// Will be used into tpl
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$object->fetchObjectLinked();
@@ -10458,6 +10459,7 @@ class Form
 	{
 		global $conf, $langs, $hookmanager, $form;
 		global $action;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		if (empty($form)) {
@@ -10796,7 +10798,6 @@ class Form
 	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = 'yesno width75', $labelyes = 'Yes', $labelno = 'No')
 	{
 		global $langs;
-		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$yes = "yes";
 		$no = "no";
