@@ -1902,7 +1902,7 @@ abstract class CommonObject
 				$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 			}
 			if ($source == 'member') {
-				$sql .= " AND tc.source = 'external'";
+				$sql .= " AND tc.source = '".$this->db->escape($source)."'";
 			}
 			$sql .= " AND tc.active = 1";
 		} else {

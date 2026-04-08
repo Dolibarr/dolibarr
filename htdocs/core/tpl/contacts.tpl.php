@@ -311,10 +311,10 @@ foreach (array('internal', 'member', 'external') as $source) {
 		if ($contact['source'] == 'internal') {
 			$entry->nature = 'user';
 			$entry->nature_html = $langs->trans("User");
-		} elseif ($contact['source'] == 'external' and $source != 'member') {
+		} elseif ($contact['source'] == 'external') {
 			$entry->nature = 'thirdparty';
 			$entry->nature_html = $langs->trans("ThirdPartyContact");
-		} elseif ($source == 'member') {
+		} elseif ($contact['source'] == 'member') {
 			$entry->nature = 'member';
 			$entry->nature_html = $langs->trans("Member");
 		}
@@ -327,7 +327,7 @@ foreach (array('internal', 'member', 'external') as $source) {
 		} elseif ($contact['socid'] < 0) {
 			$entry->thirdparty_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 			$entry->thirdparty_name = strtolower(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
-		} elseif ($source == 'member') {
+		} elseif ($contact['source'] ==  'member') {
 			$memberstatic->fetch($contact['memberid']);
 			$entry->member_id   = $memberstatic->id;
 			$entry->member_html = $memberstatic->getNomUrl(1);
@@ -340,7 +340,7 @@ foreach (array('internal', 'member', 'external') as $source) {
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
 			$entry->contact_warning = 0;
-		} elseif ($contact['source'] == 'external' and $source != 'member') {
+		} elseif ($contact['source'] == 'external') {
 			$contactstatic->fetch($contact['id']);
 			$entry->contact_id   = $contactstatic->id;
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
