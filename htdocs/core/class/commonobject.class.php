@@ -1530,7 +1530,7 @@ abstract class CommonObject
 		$already_added = false;
 		if (is_array($TListeContacts) && !empty($TListeContacts)) {
 			foreach ($TListeContacts as $array_contact) {
-				if ($array_contact['statuslink'] == 4 && $array_contact['id'] == $memberid && $array_contact['fk_c_type_contact'] == $id_type_contact) {
+				if ($array_contact['statuslink'] == 4 && $array_contact['memberid'] == $memberid && $array_contact['fk_c_type_contact'] == $id_type_contact) {
 					$already_added = true;
 					break;
 				}

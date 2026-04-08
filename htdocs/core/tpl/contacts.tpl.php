@@ -327,9 +327,11 @@ foreach (array('internal', 'member', 'external') as $source) {
 			$entry->primobj_name = strtolower(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 		} elseif ($contact['source'] ==  'member') {
 			$memberstatic->fetch($contact['memberid']);
-			$entry->primobj_id   = $memberstatic->memid;
+			$entry->primobj_id   = $memberstatic->id;
 			$entry->primobj_html = $memberstatic->getNomUrl(1);
 			$entry->primobj_name = strtolower($memberstatic->getFullName($langs));
+			$entry->status = $contact['statuscontact'];
+			$entry->status_html = $memberstatic->getLibStatut($entry->status, 3);
 		}
 
 		if ($contact['source'] == 'internal') {
