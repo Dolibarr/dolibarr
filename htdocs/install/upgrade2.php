@@ -2672,11 +2672,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 	$db->begin();
 
-	$sql = "SELECT t1.rowid, t1.".$field1." as field";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
-	$sql .= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
-	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
-	$sql .= " WHERE t1.rowid = t2.".$field2.")";
+	$sql = "SELECT t1.rowid, t1.".$db->sanitize($field1)." as field";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table1)." as t1";
+	$sql .= " WHERE t1.".$db->sanitize($field1)." IS NOT NULL AND t1.".$db->sanitize($field1)." NOT IN";
+	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$db->sanitize($table2)." as t2";
+	$sql .= " WHERE t1.rowid = t2.".$db->sanitize($field2).")";
 
 	dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 1");
 	$resql = $db->query($sql);
@@ -2732,11 +2732,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 	$db->begin();
 
-	$sql = "SELECT t1.rowid, t1.".$field1." as field";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
-	$sql .= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
-	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
-	$sql .= " WHERE t1.rowid = t2.".$field2.")";
+	$sql = "SELECT t1.rowid, t1.".$db->sanitize($field1)." as field";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table1)." as t1";
+	$sql .= " WHERE t1.".$db->sanitize($field1)." IS NOT NULL AND t1.".$db->sanitize($field1)." NOT IN";
+	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$db->sanitize($table2)." as t2";
+	$sql .= " WHERE t1.rowid = t2.".$db->sanitize($field2).")";
 
 	dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 2");
 	$resql = $db->query($sql);
@@ -2966,7 +2966,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 
 		$db->begin();
 
-		$sqlSelect = "SELECT ".$fk_source.", ".$fk_target;
+		$sqlSelect = "SELECT ".$db->sanitize($fk_source).", ".$db->sanitize($fk_target);
 		$sqlSelect .= " FROM ".MAIN_DB_PREFIX.$table;
 
 		$resql = $db->query($sqlSelect);
@@ -2984,9 +2984,9 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 					$sqlInsert .= ", fk_target";
 					$sqlInsert .= ", targettype";
 					$sqlInsert .= ") VALUES (";
-					$sqlInsert .= $obj->$fk_source;
+					$sqlInsert .= ((int) $obj->$fk_source);
 					$sqlInsert .= ", '".$db->escape($sourcetype)."'";
-					$sqlInsert .= ", ".$obj->$fk_target;
+					$sqlInsert .= ", ".((int) $obj->$fk_target);
 					$sqlInsert .= ", '".$db->escape($targettype)."'";
 					$sqlInsert .= ")";
 
@@ -3003,7 +3003,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 			}
 
 			if ($error == 0) {
-				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$table;
+				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$db->sanitize($table);
 				if ($db->query($sqlDrop)) {
 					$db->commit();
 				} else {
@@ -3494,7 +3494,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 
 				if ($resqla && $resql) {
 					foreach ($elements['tables'] as $table) {
-						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
+						$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($table)." SET ";
 						$sql .= "fk_mode_reglement = ".((int) $elements['new_id'][$key]);
 						$sql .= " WHERE fk_mode_reglement = ".((int) $old_id);
 

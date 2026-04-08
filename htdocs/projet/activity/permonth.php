@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2010		François Legastelois		<flegastelois@teclib.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -777,7 +777,7 @@ if (count($tasksarray) > 0) {
 		$THolidays[$weekNb]["ids"] = array();
 		$THolidays[$weekNb]["days"] = 0;
 		foreach ($holiday->holiday as $key => $h) {
-			if (!empty($THolidays[$weekNb]["ids"]) && in_array($h->rowid, $THolidays[$weekNb]["ids"])) {
+			if (!empty($THolidays[$weekNb]["ids"]) && in_array($h["id"], $THolidays[$weekNb]["ids"])) {
 				continue;
 			}
 			$startweekholiday = (int) (($h["date_debut"] <= $weekstart) ? $weekstart : $h["date_debut"]);
@@ -785,7 +785,7 @@ if (count($tasksarray) > 0) {
 			$halfdays = (int) $h["halfday"];
 			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays, $usertoprocess->country_id);
 
-			$THolidays[$weekNb]["ids"][] = $h->rowid;
+			$THolidays[$weekNb]["ids"][] = $h["id"];
 			$THolidays[$weekNb]["days"] += $nbdays;
 			$totaldayholiday += $nbdays;
 		}

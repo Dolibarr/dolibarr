@@ -143,7 +143,7 @@ class Tasks extends DolibarrApi
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "projet AS p ON p.rowid = t.fk_projet";
 		$sql .= ' WHERE t.entity IN (' . getEntity('project') . ')';
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (" . $this->db->sanitize((string) $socids) . ")";
+			$sql .= " AND p.fk_soc IN (" . $this->db->sanitize((string) $socids) . ")";
 		}
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {

@@ -66,7 +66,8 @@ $nbletter = GETPOSTINT('ACCOUNTING_LETTERING_NBLETTERS');
 $formSetup = new FormSetup($db);
 
 // Main options
-$formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+$item = $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 // Auxiliary account select mode
 $arrval = array(
@@ -79,20 +80,26 @@ $arrval = array(
 $item = $formSetup->newItem('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
 $item->setAsSelect($arrval);
 $item->helpText = $langs->trans('UseSearchToSelectAuxAccountTooltip');
+$item->cssClass = 'minwidth300 maxwidth400';
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 $item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
 $item->helpText = $langs->trans('ACCOUNTING_MANAGE_ZERO2');
 $item->fieldParams['helpText'] = 'noclick';
+$item->fieldParams['forcereload'] = 1;
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 
 if (!getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
 	$item = $formSetup->newItem('ACCOUNTING_LENGTH_GACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
-	$item->fieldAttr['class'] = 'maxwidth50 right';
+	$item->fieldAttr['class'] = 'maxwidth50';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
-	$item->fieldAttr['class'] = 'maxwidth50 right';
+	$item->fieldAttr['class'] = 'maxwidth50';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
 }
 
 // Parameters ACCOUNTING_* and others

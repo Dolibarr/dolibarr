@@ -1291,7 +1291,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 			// Get counter in database
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
-			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
+			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
 			$maskrefclient_sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -2248,7 +2248,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 	$listofparentid = array();
 
 	// Get list of all id in array listofid and all parents in array listofparentid
-	$sql = "SELECT rowid, ".$fieldfkparent." as parent_id FROM ".MAIN_DB_PREFIX.$tabletocleantree;
+	$sql = "SELECT rowid, ".$fieldfkparent." as parent_id FROM ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -2269,7 +2269,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print 'Code requested to clean tree (may be to solve data corruption), so we check/clean orphelins and loops.'."<br>\n";
 
 		// Check loops on each other
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid"; // So we update only records linked to themself
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree)." SET ".$db->sanitize($fieldfkparent)." = 0 WHERE ".$db->sanitize($fieldfkparent)." = rowid"; // So we update only records linked to themself
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($resql);

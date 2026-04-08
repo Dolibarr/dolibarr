@@ -147,7 +147,7 @@ function formatLogObject($data)
  *
  * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
  * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int								$forobject	Return the more complete path for the given object instead of for the module only.
+ * @param	int								$forobject	Return the more complete path for the given object (including ref) instead of for the module only.
  * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
  * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
@@ -9280,7 +9280,9 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </>, so may changes string obfuscated with </> that pass the injection detection into a harmfull string
 
 	if ($cleanalsosomestyles) {		// Clean for remaining html tags
-		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		//$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$temp = preg_replace('/position\s*:\s*(absolute|fixed)/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$temp = preg_replace('/z-index\s*:/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 	if ($removeclassattribute) {	// Clean for remaining html tags
 		$temp = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
@@ -9584,7 +9586,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			}
 
 			// HTML sanitizer by DOMDocument
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
+			if (!empty($out) && getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
 					if (LIBXML_VERSION < 20900) {
@@ -9628,6 +9630,40 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					$dom->encoding = 'UTF-8';
 
+					// Add a layer to remove some styles
+					if (getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML') == 2) {
+						foreach ($dom->getElementsByTagName('*') as $el) {
+							if (!$el instanceof DOMElement) {
+								continue;
+							}
+
+							// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+							if ($el->hasAttribute('style')) {
+								// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+								$style = $el->getAttribute('style');
+
+								// delete some styles
+								$style = preg_replace('/z-index\s*:/i', '', $style);
+								$style = preg_replace('/position\s*:/i', '', $style);
+								$style = preg_replace('/top\s*:/i', '', $style);
+								$style = preg_replace('/left\s*:/i', '', $style);
+								$style = preg_replace('/background\s*:/i', '', $style);
+								/*
+								$style = preg_replace('/width\s*:/i', '', $style);
+								$style = preg_replace('/height\s*:/i', '', $style);
+								$style = preg_replace('/backdrop-filter\s*:/i', '', $style);
+								*/
+								if (trim($style) === '') {
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+									$el->removeAttribute('style');
+								} else {
+									// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+									$el->setAttribute('style', $style);
+								}
+							}
+						}
+					}
+
 					$out = trim($dom->saveHTML());
 
 					// Restore [ and ] that were protected before loadHTML
@@ -9663,7 +9699,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// HTML sanitizer by Tidy
 			// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
 			// Tidy can't be used for non html text content as it is corrupting the new lines fields.
-			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
+			if (!empty($out) && getDolGlobalInt('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && !in_array($check, array('restricthtmlallowunvalid', 'restricthtmlallowlinkscript')) && $outishtml) {
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
 					//var_dump($out);
@@ -9745,7 +9781,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			} elseif ($check == 'restricthtmlallowiframe') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1, 1);
 			} else {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);		// styles are allowed to allow rich text editor features of ckeditor managed by the "style=" attribute
 			}
 
 			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
@@ -10303,11 +10339,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
-
 			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature') && (empty($exclude) || !in_array('recruitment', $exclude)) && (empty($include) || in_array('recruitment', $include))) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
+			}
+			if (isModEnabled('holiday') && (!is_object($object) || $object->element == 'holiday') && (empty($exclude) || !in_array('holiday', $exclude)) && (empty($include) || in_array('holiday', $include))) {
+				$substitutionarray['__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__'] = '__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__';
 			}
 			if (isModEnabled('project') && (empty($exclude) || !in_array('project', $exclude)) && (empty($include) || in_array('project', $include))) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
@@ -10923,23 +10961,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__DAY_TEXT_SHORT__' => dol_trunc($daytext, 3, 'right', 'UTF-8', 1), // Mon
 			'__DAY_TEXT_MIN__' => dol_trunc($daytext, 1, 'right', 'UTF-8', 1), // M
 			'__MONTH__' => (string) $tmp['mon'],
-			'__MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp['mon'])),
-			'__MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp['mon'])),
-			'__MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp['mon'])),
 			'__YEAR__' => (string) $tmp['year'],
 			'__YEAR_PREVIOUS_MONTH__' => (string) $tmp3['year'],
 			'__YEAR_NEXT_MONTH__' => (string) $tmp5['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],
-			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp3['month'])),
-			'__PREVIOUS_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp3['month'])),
-			'__PREVIOUS_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp3['month'])),
 			'__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
 			'__NEXT_DAY__' => (string) $tmp4['day'],
 			'__NEXT_MONTH__' => (string) $tmp5['month'],
-			'__NEXT_MONTH_TEXT__' => $outputlangs->trans('Month' . sprintf("%02d", $tmp5['month'])),
-			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort' . sprintf("%02d", $tmp5['month'])),
-			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT__' => $outputlangs->transnoentitiesnoconv('Month' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->transnoentitiesnoconv('MonthShort' . sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->transnoentitiesnoconv('MonthVeryShort' . sprintf("%02d", $tmp5['month'])),
 			'__NEXT_YEAR__' => (string) ($tmp['year'] + 1),
 		));
 	}
@@ -10949,9 +10987,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if ((empty($exclude) || !in_array('system', $exclude)) && (empty($include) || in_array('user', $include))) {
 		$substitutionarray['__DOL_MAIN_URL_ROOT__'] = DOL_MAIN_URL_ROOT;
-		$substitutionarray['__(AnyTranslationKey)__'] = $outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__(AnyTranslationKey|langfile)__'] = $outputlangs->trans('TranslationOfKey') . ' (load also language file before)';
-		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->trans('ValueOfConstantKey');
+		$substitutionarray['__(AnyTranslationKey)__'] = $outputlangs->transnoentitiesnoconv('TranslationOfKey');
+		$substitutionarray['__(AnyTranslationKey|langfile)__'] = $outputlangs->transnoentitiesnoconv('TranslationOfKey') . ' (load also language file before)';
+		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->transnoentitiesnoconv('ValueOfConstantKey');
 	}
 
 	// Note: The lazyload variables are replaced only during the call by make_substitutions, and only if necessary
@@ -12474,9 +12512,14 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 							}
 						}
 					} else {
-						if ($reg[1] == 'ReflectionFunction') {
-							dol_syslog('Bad string syntax to evaluate: Class ReflectionFunction is not allowed. ' . $s, LOG_WARNING);
-							return 'Bad string syntax to evaluate. Class ReflectionFunction is not allowed. ' . $s;
+						if (!class_exists($reg[1])) {
+							dol_syslog('Bad string syntax to evaluate: Class "'.$reg[1].'" does not exist. ' . $s, LOG_WARNING);
+							return 'Bad string syntax to evaluate. Class "'.$reg[1].'" does not exist. ' . $s;
+						}
+						$parents = class_parents($reg[1]);	// Get list of parent classes of class we want to check
+						if (!in_array('CommonObject', $parents)) {	// Only classes that inherit CommonObject are ok. This forbid dangerous classes like ReflectionFunction, SplFileObject, ...
+							dol_syslog('Bad string syntax to evaluate: Class "'.$reg[1].'" is not allowed because only classes extended CommonObject can be used in dynamic evaluation. ' . $s, LOG_WARNING);
+							return 'Bad string syntax to evaluate. Class "'.$reg[1].'" is not allowed because only classes extended CommonObject can be used in dynamic evaluation. ' . $s;
 						}
 					}
 				}
@@ -13756,6 +13799,7 @@ function getLabelSpecialCode($idcode)
  * @param string	$addlink		Add a 'link to' after
  * @param string	$textonlink		Text to show on link or 'image'
  * @return string
+ * @see showValueWithClipboardCPButton()
  */
 function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
 {
@@ -16209,6 +16253,7 @@ function dolForgeSQLCriteriaCallback($matches)
  */
 function getTimelineIcon($actionstatic, &$histo, $key)
 {
+	dol_syslog('getTimelineIcon::begin', LOG_DEBUG);
 	global $langs;
 
 	$out = '<!-- timeline icon -->' . "\n";
@@ -16316,6 +16361,7 @@ function getActionCommEcmList($object)
  */
 function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
+	dol_syslog('show_actions_messaging::begin', LOG_DEBUG);
 	global $user, $conf;
 	global $form;
 
@@ -16968,7 +17014,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$link = dolGetElementUrl($histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);
 					$conf->cache['elementlinkcache'][$histo[$key]['elementtype']][$histo[$key]['fk_element']] = $link;
 				}
-				if ($link) {
+
+				// We do not show if link if on object we are filtering on (no need to show the link to ticket X when we are on page of events for the ticket X)
+				$showlink = 1;
+				if (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
+					if ($histo[$key]['elementtype'] == 'ticket') {
+						$showlink = 0;
+					}
+				}
+
+				if ($link && $showlink) {
 					$out .= ' - ' . $link;
 				}
 			}
@@ -16978,14 +17033,17 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$out .= '</h3>';
 
 			// Message
+			if ($actionstatic->code == 'AC_TICKET_CREATE') {
+				$newmess = $filterobj->message;
+			} else {
+				$newmess = $histo[$key]['message'];
+			}
 			if (
-				!empty($histo[$key]['message'] && $histo[$key]['message'] != $libelle)
-				&& $actionstatic->code != 'AC_TICKET_CREATE'
+				!empty($newmess && $newmess != $libelle)
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
 				$out .= '<div class="timeline-body wordbreak small">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
-				$newmess = $histo[$key]['message'];
 				$truncatedText = dolGetFirstLineOfText($newmess, $truncateLines);
 				if ($truncateLines > 0 && strlen($newmess) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
@@ -17001,9 +17059,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
-					$out .= dolPrintHTML($newmess, 0, array('pre', 'code'));
+					$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
 				}
-
 				$out .= '</div>';
 			}
 

@@ -44,6 +44,7 @@ function getListOfAIFeatures()
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
 		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
+		'textspellchecker' => array('label' => $langs->trans('TextSpellChecker'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER),
 
 		'textgenerationextrafield' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("ExtrafieldFiller").')', 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER),
 
@@ -315,14 +316,14 @@ function testAIConnection(string $service, string $key, string $url): array
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
- * @return  void
+ * @return  int									Return 0
  */
-function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = ''): void
+function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '')
 {
 	global $conf;
 
 	if (!getDolGlobalInt('AI_LOG_REQUESTS')) {
-		return;
+		return 0;
 	}
 
 	$tool = isset($response['tool']) ? (string) $response['tool'] : '';
@@ -355,10 +356,11 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= ")";
 
 	$resql = $db->query($sql);
-
 	if (!$resql) {
 		dol_print_error($db);
 	}
+
+	return 0;
 }
 
 /**
@@ -392,7 +394,8 @@ function getListForAIRephraseStyle()
 {
 	$arrayforaierephrasestyle = array(
 		'professional' => 'RephraseStyleProfessional',
-		'humouristic' => 'RephraseStyleHumouristic'
+		'humouristic' => 'RephraseStyleHumouristic',
+		'spellchecker' => 'RephraseSpellChecker'
 	);
 
 	return $arrayforaierephrasestyle;

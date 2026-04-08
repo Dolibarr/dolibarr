@@ -1582,7 +1582,7 @@ class BlockedLog
 			}
 			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
 			if (!preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
-				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.');
+				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
 			}
 			return hash_hmac('sha256', $clearstring, $hmac_secret_key);
 		} else {
@@ -1656,7 +1656,8 @@ class BlockedLog
 					$previousdatecreation = $this->db->jdate($obj->date_creation, $tz);
 				}
 			} else {
-				dol_print_error($this->db);
+				dol_print_error($this->db);		// can happen after a deadlock when too many requests do create into blocked log happen at the same time.
+				http_response_code(503);
 				exit;
 			}
 		}
@@ -1825,9 +1826,9 @@ class BlockedLog
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT = $fingerprint;
 		}
 
-		if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
+		/*if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
 			dolibarr_set_const($db, 'BLOCKEDLOG_LAST_RECORD_FINGERPRINT', '0:none', 'chaine', 0, 'Last record fingerprint', $conf->entity);
-		}
+		}*/
 
 		return getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT');
 	}

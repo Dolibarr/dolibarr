@@ -2949,6 +2949,11 @@ class Expedition extends CommonObject
 			return 0;
 		}
 
+		// We need to validate shipping before closing it
+		if ($this->status == self::STATUS_DRAFT) {
+			$this->valid($user);
+		}
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED;
