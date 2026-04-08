@@ -1046,11 +1046,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'status' && getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
 		$formquestion = array(
 			array('type' => 'select', 'name' => 'targetstatus', 'label' => '<span class="fieldrequired">'.$langs->trans("ChangeStatusTo").'</span>',
-			      'values' => array(
-				      $object::STATUS_DRAFT      => $object->LibStatut($object::STATUS_DRAFT),
-				      $object::STATUS_VALIDATED  => $object->LibStatut($object::STATUS_VALIDATED),
-				      $object::STATUS_INPROGRESS => $object->LibStatut($object::STATUS_INPROGRESS),
-			      ),
+				'values' => array(
+					$object::STATUS_DRAFT      => $object->LibStatut($object::STATUS_DRAFT),
+					$object::STATUS_VALIDATED  => $object->LibStatut($object::STATUS_VALIDATED),
+					$object::STATUS_INPROGRESS => $object->LibStatut($object::STATUS_INPROGRESS),
+				),
 			),
 		);
 		unset($formquestion[0]['values'][$object->status]);
