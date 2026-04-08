@@ -23,7 +23,7 @@ CREATE TABLE llx_quickmemo_memo(
 
     quick_note text,
 	date_creation datetime NOT NULL,
-    tms timestamp NULL DEFAULT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	fk_user_archived integer,
