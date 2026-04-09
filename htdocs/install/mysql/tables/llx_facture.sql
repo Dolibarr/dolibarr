@@ -44,12 +44,12 @@ create table llx_facture
   date_closing			datetime,								-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,			-- 1 if invoice is payed completely. Deprecated. Use instead statut = 2 and close_code is null or = ''
 
-  remise_percent		real     DEFAULT 0,						-- remise relative
-  remise_absolue		real     DEFAULT 0,						-- remise absolue
-  remise				real     DEFAULT 0,						-- remise totale calculee
+  remise_percent		real     DEFAULT 0,						-- remise relative (deprecated, not used)
+  remise_absolue		real     DEFAULT 0,						-- remise absolue (deprecated, not used)
+  remise				real     DEFAULT 0,						-- remise totale calculee (deprecated, not used)
 
   close_code			varchar(16),							-- Code for reason of closing without complete payment. '' if payment is complete.
-  close_missing_amount	double(24,8),							-- Amount missing when closing with a not complete payment. 0 if payment is complete.
+  close_missing_amount	double(24,8),							-- TODO Amount missing when closing with a not complete payment. 0 if payment is complete.
   close_note			varchar(128),							-- Comment on closing without complete payment
 
   total_tva				double(24,8)     DEFAULT 0,				-- amount total tva apres remise totale
