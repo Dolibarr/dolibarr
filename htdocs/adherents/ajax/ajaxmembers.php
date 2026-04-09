@@ -94,7 +94,7 @@ if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
 }
 // Filter on active members only (statut = 1) Closed members must not be selectable
 $sql .= " WHERE a.entity IN (".getEntity('member').")  AND a.statut = 1";
-if ($memberid) {
+if ($memberid > 1) {
 	$sql .= " AND (";
 	// Add criteria on name/code
 	if (getDolGlobalString('MEMBER_DONOTSEARCH_ANYWHERE')) {   // Can use index
@@ -133,9 +133,8 @@ if ($resql) {
 				$label .= ', '.$langs->trans('Country'.$row['country_code']);
 			}
 		}
-		if ($memberid) {
-			$label = preg_replace('/('.preg_quote($memberid, '/').')/i', '<strong>$1</strong>', $label, 1);
-		}
+		
+		$label = preg_replace('/('.preg_quote($memberid, '/').')/i', '<strong>$1</strong>', $label, 1);
 		$row_array = array();
 		$row_array['label'] = $label;
 
