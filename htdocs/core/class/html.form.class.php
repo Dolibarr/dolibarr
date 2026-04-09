@@ -1737,6 +1737,202 @@ class Form
 		return $out;
 	}
 
+	/**
+	 *  Output html form to select a third party.
+	 *  Note: you must use the select_member() to get the component to select a member. This function must only be called by select_member.
+	 *
+	 * @param string 			$selected 		Preselected type
+	 * @param string 			$htmlname 		Name of field in form
+	 * @param string 			$filter 		Optional filter criteria. WARNING: Must be a USF syntax.
+	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectMember')
+	 * @param int<0,1>			$showtype 		Show third party nature in combolist (customer, prospect or supplier)
+	 * @param int 				$forcecombo 	Force to use standard HTML select component without beautification
+	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param string 			$filterkey 		Filter on key value
+	 * @param int<0,1>			$outputmode 	0=HTML select string, 1=Array
+	 * @param int 				$limit 			Limit number of answers
+	 * @param string 			$morecss 		Add more css styles to the SELECT component
+	 * @param string 			$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
+	 * @param string[] 			$excludeids 	Exclude IDs from the select combo
+	 * @param int<0,1>			$showcode 		Show code in list
+	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
+	 * @see select_member()
+	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
+	 */
+	public function select_member_list($selected = '', $htmlname = 'memberid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
+	{
+		// phpcs:enable
+		global $user, $langs;
+		global $hookmanager;
+
+		$langs->loadLangs(array("companies", "suppliers"));
+
+		$out = '';
+		$num = 0;
+		$outarray = array();
+
+		if ($selected === '') {
+			$selected = array();
+		} elseif (!is_array($selected)) {
+			$selected = array($selected);
+		}
+
+		// Clean $filter that may contains sql conditions so sql code
+		if (function_exists('testSqlAndScriptInject')) {
+			if (testSqlAndScriptInject($filter, 3) > 0) {
+				$filter = '';
+				return 'SQLInjectionTryDetected';
+			}
+		}
+
+		if ($filter != '') {	// If a filter was provided
+			$errormsg = '';
+			$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
+
+			// Redo clean $filter that may contains sql conditions so sql code
+			if (function_exists('testSqlAndScriptInject')) {
+				if (testSqlAndScriptInject($filter, 3) > 0) {
+					$filter = '';
+					return 'SQLInjectionTryDetected';
+				}
+			}
+		}
+
+		// We search companies
+		$sql = "SELECT a.rowid, a.firstname as firstname, a.lastname as lastname, a.civility, a.gender, a.societe, a.fk_soc";
+		if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
+			$sql .= ", a.address, a.zip, a.town";
+			$sql .= ", dictp.code as country_code";
+		}
+		$sql .= " FROM " . $this->db->prefix() . "adherent as a";
+		if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "c_country as dictp ON dictp.rowid = a.country";
+		}
+		$sql .= " WHERE a.entity IN (" . getEntity('member') . ")";
+		if ($filter) {
+			// $filter is safe because, it has been tested by testSqlAndScriptInject() and sanitized by forgeSQLFromUniversalSearchCriteria()
+			$sqlwhere = $filter;
+			$sql .= " AND (" . $sqlwhere . ")";
+		}
+		if (getDolGlobalString('MEMBER_HIDE_INACTIVE_IN_COMBOBOX')) {
+			$sql .= " AND a.statut <> 0";
+		}
+		if (!empty($excludeids)) {
+			$sql .= " AND a.rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeids)) . ")";
+		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectMemberListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		// Add criteria
+		if ($filterkey && $filterkey != '') {
+			$sql .= " AND (";
+			$prefix = !getDolGlobalString('MEMBER_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if MEMBER_DONOTSEARCH_ANYWHERE is on
+			// For natural search
+			$search_crit = explode(' ', $filterkey);
+			$i = 0;
+			if (count($search_crit) > 1) {
+				$sql .= "(";
+			}
+			foreach ($search_crit as $crit) {
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
+				$sql .= "(s.nom LIKE '" . $this->db->escape($prefix . $crit) . "%')";
+				$i++;
+			}
+			if (count($search_crit) > 1) {
+				$sql .= ")";
+			}
+			$sql .= ")";
+		}
+		$sql .= $this->db->order("firstname", "ASC");
+		$sql .= $this->db->plimit($limit, 0);
+
+		// Build output string
+		dol_syslog(get_class($this)."::select_member_list", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Construct $out and $outarray
+			$out .= '<select id="' . $htmlname . '" class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($moreparam ? ' ' . $moreparam : '') . ' name="' . $htmlname . ($multiple ? '[]' : '') . '"' . ($multiple ? ' multiple' : '') . '>' . "\n";
+
+			$textifempty = (($showempty && !is_numeric($showempty)) ? $langs->trans($showempty) : '');
+			if (getDolGlobalString('MEMBER_USE_SEARCH_TO_SELECT')) {
+				// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+				//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				} else {
+					$textifempty .= $langs->trans("All");
+				}
+			}
+			if ($showempty) {
+				$out .= '<option value="-1" data-html="' . dol_escape_htmltag('<span class="opacitymedium">' . ($textifempty ? $textifempty : '&nbsp;') . '</span>') . '">' . $textifempty . '</option>' . "\n";
+			}
+
+			$membertemp = new Adherent($this->db);
+
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$label = $obj->firstname.' '.$obj->lastname;
+					$labelhtml = $label;
+
+					if ($showtype) {
+						$membertemp->id = $obj->rowid;
+						$membertemp->morphy = $obj->morphy;
+						$label .= ' (';
+						if ($obj->morphy == 'mor') {
+							$label .= $langs->trans("Moral");
+						}
+						if ($obj->morphy == 'phy') {
+							$label .= $langs->trans("Physical");
+						}
+						$label .= ')';
+					}
+
+					if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
+						$s = ($obj->address ? ' - ' . $obj->address : '') . ($obj->zip ? ' - ' . $obj->zip : '') . ($obj->town ? ' ' . $obj->town : '');
+						$label .= $s;
+						$labelhtml .= $s;
+					}
+
+					if (empty($outputmode)) {
+						if (in_array($obj->rowid, $selected)) {
+							$out .= '<option value="' . $obj->rowid . '" selected data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
+						} else {
+							$out .= '<option value="' . $obj->rowid . '" data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
+						}
+					} else {
+						array_push($outarray, array('key' => $obj->rowid, 'value' => $label, 'label' => $label, 'labelhtml' => $labelhtml));
+					}
+
+					$i++;
+					if (($i % 10) == 0) {
+						$out .= "\n";
+					}
+				}
+			}
+			$out .= '</select>' . "\n";
+			if (!$forcecombo) {
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("MEMBER_USE_SEARCH_TO_SELECT"));
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		$this->result = array('nbofthirdparties' => $num);
+
+		if ($outputmode) {
+			return $outarray;
+		}
+		return $out;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
