@@ -188,7 +188,7 @@ if ($permission) {
 
 		<div class="tagtd nowrap noborderbottom">
 			<?php
-			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : (empty($object->socid) ? 0 : $object->socid);
+			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : ((isset($object->socid) && empty($object->socid)) ? 0 : $object->socid);
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', array(), 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
@@ -200,7 +200,7 @@ if ($permission) {
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
-			if (!empty($object->socid) && $object->socid > 1 && $user->hasRight('societe', 'creer')) {
+			if (isset($object->socid) && !empty($object->socid) && $object->socid > 1 && $user->hasRight('societe', 'creer')) {
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$selectedCompany.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			print $newcardbutton; ?>
@@ -241,7 +241,7 @@ if ($permission) {
 
 		<div class="tagtd nowrap noborderbottom">
 			<?php
-			$selectedMember = GETPOSTISSET("newmember") ? GETPOSTINT("newmember") : (empty($object->fk_member) ? 0 : $object->fk_member);
+			$selectedMember = GETPOSTISSET("newmember") ? GETPOSTINT("newmember") : ((isset($object->fk_member) && (empty($object->fk_member)) ? 0 : $object->fk_member);
 			print '<input type="hidden" name="loadmember" value="'.$selectedMember.'">';
 			$selectedMember = $formmember->selectMemberForNewContact($object, 'id', $selectedMember, 'newmember', array(), 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
 		</div>
