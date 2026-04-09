@@ -7576,10 +7576,10 @@ class Form
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int<0,1>	$nooutput 				No print output. Return it only.
 	 * @param string[] 	$excludeids 			Exclude IDs from the select combo
-	 * @param string 	$textifnomemberparty 	Text to show if no memberparty
+	 * @param string 	$textifnomember 		Text to show if no member
 	 * @return    string                        HTML output or ''
 	 */
-	public function form_member($page, $selected = '', $htmlname = 'memberid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnomemberparty = '')
+	public function form_member($page, $selected = '', $htmlname = 'memberid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnomember = '')
 	{
 		dol_syslog("form_member::", LOG_DEBUG);
 		// phpcs:enable

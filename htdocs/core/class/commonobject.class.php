@@ -1882,9 +1882,7 @@ abstract class CommonObject
 		$tab = array();
 
 		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_member as id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
-		if ($source == 'member') {
-			$sql .= ", a.rowid as memberid, a.statut as statusmember, a.country as country_id";
-		}
+		$sql .= ", a.rowid as memberid, a.statut as statusmember, a.country as country_id";
 		$sql .= ", a.civility as civility, a.lastname as lastname, a.firstname, a.email, a.address, a.zip, a.town";
 		if (empty($arrayoftcids)) {
 			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label, co.label as country";
