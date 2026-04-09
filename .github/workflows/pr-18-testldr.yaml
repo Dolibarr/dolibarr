@@ -72,7 +72,7 @@ jobs:
           fi
         done
         echo "AUTHOR=$AUTHOR"
-        echo "reviewers=$(IFS=, ; echo "${FINAL_REVIEWERS[*]}")" >> $GITHUB_OUTPUT
+        echo reviewers=$(IFS=, ; echo "${FINAL_REVIEWERS[*]}") >> $GITHUB_OUTPUT
 
     - name: Assign reviewers
       if: steps.set-reviewers.outputs.reviewers != '' && ${{env.prid}} != ''
