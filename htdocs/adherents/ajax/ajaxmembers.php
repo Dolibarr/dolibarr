@@ -133,7 +133,7 @@ if ($resql) {
 				$label .= ', '.$langs->trans('Country'.$row['country_code']);
 			}
 		}
-	
+
 		$label = preg_replace('/('.preg_quote($memberid, '/').')/i', '<strong>$1</strong>', $label, 1);
 		$row_array = array();
 		$row_array['label'] = $label;
