@@ -1458,7 +1458,10 @@ abstract class CommonDocGenerator
 				}
 
 				$disableOnEmpty = 0;
-				$printable =  (int) $extrafields->attributes[$object->table_element]['printable'][$key];
+				$printable = 0;
+				if (isset($extrafields->attributes[$object->table_element]['printable'][$key])) {
+					$printable = (int) $extrafields->attributes[$object->table_element]['printable'][$key];
+				}
 				if ($enabled && !empty($printable)) {
 					if (in_array($printable, $params['printableEnable']) || in_array($printable, $params['printableEnableNotEmpty'])) {
 						$enabled = 1;
