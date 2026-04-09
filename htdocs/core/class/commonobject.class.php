@@ -1856,7 +1856,7 @@ abstract class CommonObject
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
 	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
-	 *    @return array<int,array{parentId:int,source:string,memberid:int,id:int,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
+	 *    @return array<int,array{parentId:int,source:string,memberid:int,id:int,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statusmember:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>|int<-1,-1>        	Array of members to be contacts, -1 if error
 	 */
 	public function liste_member_as_contact($statusoflink = -1, $source = 'member', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
@@ -1945,7 +1945,7 @@ abstract class CommonObject
 						'login' => (empty($obj->login) ? '' : $obj->login),
 						'photo' => (empty($obj->photo) ? '' : $obj->photo),
 						'gender' => (empty($obj->gender) ? '' : $obj->gender),
-						'statuscontact' => $obj->statuscontact,
+						'statusmember' => $obj->statusmember,
 						'rowid' => $obj->rowid,
 						'code' => $obj->code,
 						'libelle' => $libelle_type,
