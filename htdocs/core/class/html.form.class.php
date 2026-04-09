@@ -1737,6 +1737,8 @@ class Form
 		return $out;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
 	/**
 	 *  Output html form to select a third party.
 	 *  Note: you must use the select_member() to get the component to select a member. This function must only be called by select_member.
