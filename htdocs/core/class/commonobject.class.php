@@ -1929,7 +1929,6 @@ abstract class CommonObject
 					$tab[$i] = array(
 						'parentId' => $this->id,
 						'source' => $obj->source,
-						'socid' => $obj->socid,
 						'memberid' => $obj->memberid,
 						'id' => $obj->id,
 						'nom' => $obj->lastname, // For backward compatibility

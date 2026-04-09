@@ -141,7 +141,7 @@ if (empty($reshook) && $objectsrc !== null) {
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			if (!empty($newmember)) {
 				$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-				$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+				$result = $objectsrc->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
 			} else {
 				setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
 			}
