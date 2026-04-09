@@ -31,7 +31,7 @@ class Documentation
 	/**
 	 * Views
 	 *
-	 * @var array|array<int,string>
+	 * @var array{}|array<int,string>
 	 */
 	public $view = array();
 
@@ -76,9 +76,9 @@ class Documentation
 	}
 
 	/**
-	 *    Set Documentation Menu
+	 * Set Documentation Menu
 	 *
-	 * @return mixed false if error, void if no errors
+	 * @return boolean 		False if error, true if OK
 	 */
 	private function setMenu()
 	{
@@ -302,6 +302,8 @@ class Documentation
 		if ($reshook < 0) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -376,10 +378,10 @@ class Documentation
 	}
 
 	/**
-	 *    Recursive function to set Menu
+	 * Recursive function to set Menu
 	 *
-	 * @param array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>}> $menu Menu entry or submenu
-	 * @param int   $level level of menu
+	 * @param array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>}> 	$menu 	Menu entry or submenu
+	 * @param int   $level 		Level of menu
 	 * @return void
 	 */
 	private function displayMenu($menu, $level = 0)
@@ -471,10 +473,10 @@ class Documentation
 
 
 	/**
-	 *    Recursive function for Automatic Summary
+	 * Recursive function for Automatic Summary
 	 *
-	 * @param array{summary?: array<string,string>, submenu?: array<string,array>} $menu $this->menu or submenus
-	 * @param int   $level 					level of menu
+	 * @param array{summary?: array<string,string>, submenu?: array<string,array>} 	$menu 	Array $this->menu or submenus
+	 * @param int   $level 					Level of menu
 	 * @param int   $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int   $showsubmenu_summary 	Show summary of sub menus: 0 = No, 1 = Yes
 	 * @return void

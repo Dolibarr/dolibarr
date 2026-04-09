@@ -113,9 +113,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		// TODO Check on permission holiday->read only if all ID are inside the childids of user
-
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read') && !DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
 			throw new RestException(403);
 		}
 
@@ -125,11 +123,15 @@ class Holidays extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Link to extrafields is to allow to search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON t.fk_user = u.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('holiday').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user IN (".$this->db->sanitize($user_ids).")";
+		}
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user IN (".$this->db->sanitize(implode(',', $childids)).")";
 		}
 
 		// Add sql filters

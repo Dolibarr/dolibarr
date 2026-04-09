@@ -1546,9 +1546,7 @@ class Form
 	 *
 	 * @param string 			$selected 		Preselected type
 	 * @param string 			$htmlname 		Name of field in form
-	 * @param string 			$filter 		Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
-	 * 											If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
-	 * 											Do not use a filter coming from input of users.
+	 * @param string 			$filter 		Optional filter criteria. WARNING: Must be a USF syntax.
 	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * @param int<0,1>			$showtype 		Show third party nature in combolist (customer, prospect or supplier)
 	 * @param int 				$forcecombo 	Force to use standard HTML select component without beautification
@@ -1592,22 +1590,15 @@ class Form
 		}
 
 		if ($filter != '') {	// If a filter was provided
-			if (preg_match('/[\(\)]/', $filter)) {
-				// If there is one parenthesis inside the criteria, we assume it is an Universal Filter Syntax.
-				$errormsg = '';
-				$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
+			$errormsg = '';
+			$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
 
-				// Redo clean $filter that may contains sql conditions so sql code
-				if (function_exists('testSqlAndScriptInject')) {
-					if (testSqlAndScriptInject($filter, 3) > 0) {
-						$filter = '';
-						return 'SQLInjectionTryDetected';
-					}
+			// Redo clean $filter that may contains sql conditions so sql code
+			if (function_exists('testSqlAndScriptInject')) {
+				if (testSqlAndScriptInject($filter, 3) > 0) {
+					$filter = '';
+					return 'SQLInjectionTryDetected';
 				}
-			} else {
-				// If not, we do nothing. We already know that there is no parenthesis
-				// TODO Disallow this case in a future.
-				dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Syntax.", LOG_WARNING);
 			}
 		}
 
@@ -1629,9 +1620,9 @@ class Form
 			$sql .= " AND s.rowid = " . ((int) $user->socid);
 		}
 		if ($filter) {
-			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
-			// if not, by testSqlAndScriptInject() only.
-			$sql .= " AND (" . $filter . ")";
+			// $filter is safe because, it has been tested by testSqlAndScriptInject() and sanitized by forgeSQLFromUniversalSearchCriteria()
+			$sqlwhere = $filter;
+			$sql .= " AND (" . $sqlwhere . ")";
 		}
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " . ((int) $user->id);
@@ -3938,7 +3929,7 @@ class Form
 	 * @param 	string|int	$selected 						Preselected product
 	 * @param 	string 		$htmlname 						Name of HTML Select
 	 * @param 	string 		$filtertype 					Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param 	string 		$filtre 						For a SQL filter
+	 * @param 	string 		$filtre 						Deprecated. Not used.
 	 * @param 	array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
 	 * @param 	int<0,1>	$hidelabel 						Hide label (0=no, 1=yes)
 	 * @param 	int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
@@ -3993,7 +3984,7 @@ class Form
 	 * @param string 	$selected 			Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
 	 * @param string 	$htmlname 			Name of HTML select
 	 * @param ''|int<0,1> 	$filtertype 		Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string 	$filtre 			Generic filter. Data must not come from user input.
+	 * @param string 	$filtre 			Deprecated. Not used.
 	 * @param string 	$filterkey 			Filter of produdts
 	 * @param int 		$statut 			-1=Return all products, 0=Products not on buy, 1=Products on buy
 	 * @param int 		$outputmode 		0=HTML select string, 1=Array
@@ -4065,9 +4056,7 @@ class Form
 		if (strval($filtertype) != '') {
 			$sql .= " AND p.fk_product_type = " . ((int) $filtertype);
 		}
-		if (!empty($filtre)) {
-			$sql .= " " . $filtre;
-		}
+
 		// Add where from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -6511,9 +6500,10 @@ class Form
 	 * @param 	int<0,1>			$nooutput 			No print is done. String is returned.
 	 * @param 	string 				$textifnoproject 	Text to show if no project
 	 * @param 	string 				$morecss 			More CSS
+	 * @param	string				$option			    Variant where the link point to ('', 'nolink')
 	 * @return	string              		        	Return html content
 	 */
-	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '')
+	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '', $option = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -6536,11 +6526,11 @@ class Form
 		} else {
 			$out .= '<span class="project_head_block">';
 			if ($selected instanceof Project) {
-				$out .= $selected->getNomUrl(0, '', 1);
+				$out .= $selected->getNomUrl(0, $option, 1);
 			} elseif (is_numeric($selected)) {
 				$projet = new Project($this->db);
 				$projet->fetch((int) $selected);
-				$out .= $projet->getNomUrl(0, '', 1);
+				$out .= $projet->getNomUrl(0, $option, 1);
 			} else {
 				$out .= '<span class="opacitymedium">' . $textifnoproject . '</span>';
 			}
@@ -10294,6 +10284,8 @@ class Form
 		global $action;
 		global $db, $user;	// Will be used into tpl
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$object->fetchObjectLinked();
 
 		// Bypass the default method
@@ -10468,6 +10460,8 @@ class Form
 		global $conf, $langs, $hookmanager, $form;
 		global $action;
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		if (empty($form)) {
 			$form = new Form($this->db);
 		}
@@ -10477,23 +10471,34 @@ class Form
 		$listofidcompanytoscan = '';
 
 		if (!is_object($object->thirdparty)) {
-			$object->fetch_thirdparty();
+			if ($object->element == 'subscription' && isset($object->fk_adherent)) {
+				$subby = new Subscription($object->db);
+				$subby->fetch($object->id);
+				$adh = new Adherent($object->db);
+				//$fk_adherent = $object->fk_adherent;
+				// creating new subscription object only to fetch the adherent which obviously exists given the if statement above are Inefficient, but else phan complains
+				$fk_adherent = $subby->fk_adherent;
+				$adh->fetch($fk_adherent);
+				$thirdparty_id = $adh->fetch_thirdparty();
+			}
+		} else {
+			$thirdparty_id = $object->thirdparty->id;
 		}
 
 		$possiblelinks = array();
 
 		$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
 
-		if (is_object($object->thirdparty) && !empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-			$listofidcompanytoscan = (int) $object->thirdparty->id;
-			if (($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
+		if (!empty($thirdparty_id) && $thirdparty_id > 0) {
+			$listofidcompanytoscan = (int) $thirdparty_id;
+			if (is_object($object->thirdparty) && ($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
 				$listofidcompanytoscan .= ',' . (int) $object->thirdparty->parent;
 			}
 			if (($object->fk_project > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO')) {
 				include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 				$tmpproject = new Project($this->db);
 				$tmpproject->fetch((int) $object->fk_project);
-				if ($tmpproject->socid > 0 && ($tmpproject->socid != $object->thirdparty->id)) {
+				if ($tmpproject->socid > 0 && ($tmpproject->socid != $thirdparty_id)) {
 					$listofidcompanytoscan .= ',' . (int) $tmpproject->socid;
 				}
 				unset($tmpproject);

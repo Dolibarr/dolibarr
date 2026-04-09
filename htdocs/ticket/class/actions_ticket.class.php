@@ -200,6 +200,7 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public function viewTicketOriginalMessage($user, $action, $object)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		global $langs;
 
 		$closeStatuses = [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED];

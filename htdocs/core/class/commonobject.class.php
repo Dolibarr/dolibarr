@@ -4373,6 +4373,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		if (empty($this->origin_type) && !empty($this->origin)) {
 			$this->origin_type = $this->origin;
@@ -4646,6 +4647,7 @@ abstract class CommonObject
 		$sql .= " ORDER BY ".$orderby;
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -4739,6 +4741,7 @@ abstract class CommonObject
 		$updatesource = false;
 		$updatetarget = false;
 		$f_user = isset($f_user) ? $f_user : $user;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid) && empty($targettype)) {
 			$updatesource = true;
@@ -5958,7 +5961,7 @@ abstract class CommonObject
 		$this->tpl['strike'] = 0;
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
 			$this->tpl['strike'] = 1;
-		} elseif ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+		} elseif (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
 			$this->tpl['strike'] = 1;
 		}
 
@@ -8123,7 +8126,7 @@ abstract class CommonObject
 				// 2 : key fields name (if different of rowid)
 				// optional parameters...
 				// 3 : key field parent (for dependent lists). How this is used ?
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on a second line separated by "\n".
+				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field='value'. Or use USF on a second line separated by "\n".
 				// 5 : string category type. This replace the filter.
 				// 6 : ids categories list separated by comma for category root. This replace the filter.
 				// 7 : sort field

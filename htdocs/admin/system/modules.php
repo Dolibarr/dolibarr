@@ -133,7 +133,11 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							$info_admin .= info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							// Skip warning for modules being refactored (class split in progress)
+							$silentModules = array('modSupplierOrder', 'modSupplierInvoice', 'modFournisseur');
+							if (!in_array($modName, $silentModules)) {
+								$info_admin .= info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							}
 						}
 					}
 				}

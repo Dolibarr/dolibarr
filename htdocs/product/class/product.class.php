@@ -1509,8 +1509,9 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
-				$this->oldcopy = dol_clone($this, 1); // 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
+			// Note that this->oldcopy must be object and not stdClass, if not the method hasbatch() will not work.
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
+				$this->oldcopy = dol_clone($this, 1);	// 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
 			}
 			// Test if batch management is activated on existing product
 			// If yes, we create missing entries into product_batch
@@ -2346,8 +2347,12 @@ class Product extends CommonObject
 		$sql .= " WHERE fk_product_price = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 
+		$sql = "DELETE FROM ".$this->db->prefix()."product_price_extrafields";
+		$sql .= " WHERE fk_object = ".((int) $rowid);
+		$resql = $this->db->query($sql);
+
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price";
-		$sql .= " WHERE rowid=".((int) $rowid);
+		$sql .= " WHERE rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -6915,9 +6920,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Return if the object has a sell-by or eat-by date.
+	 * Return if the object has a batch management.
 	 *
-	 * @return boolean     True if the object has a sell-by or eat-by date, false otherwise.
+	 * @return boolean     True if the object has a batch management, false otherwise.
 	 */
 	public function hasbatch()
 	{

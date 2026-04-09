@@ -133,6 +133,24 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
+// Security
+if (!empty($user->socid)) {
+	accessforbidden();
+}
+
+$permissiontoadd = 1;
+$permissiontoedit = ($user->admin ? 1 : 0);
+$permissiontodelete = ($user->admin ? 1 : 0);
+
+$tmpmailtemplate = new CEmailTemplate($db);
+if ($rowid > 0) {
+	$result = $tmpmailtemplate->fetch($rowid);
+	if ($tmpmailtemplate->fk_user == $user->id) {
+		$permissiontoedit = 1;
+		$permissiontodelete = 1;
+	}
+}
+
 // Old way to define field.
 
 // Name of SQL tables of dictionaries
@@ -167,9 +185,11 @@ $tabfieldinsert[25] .= ',entity'; // Must be at end because not into other array
 // List of help for fields
 // Set MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES to allow edit of template for lines
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-$formmail = new FormMail($db);
 if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
-	$tmp = FormMail::getAvailableSubstitKey('formemail');
+	$targetobject = fetchObjectByElement(0, $tmpmailtemplate->type_template);
+
+	$tmp = FormMail::getAvailableSubstitKey('formemail', $targetobject);
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -178,7 +198,10 @@ if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 		$helpsubstitforlines .= $key.' -> '.$val.'<br>';
 	}
 } else {
-	$tmp = FormMail::getAvailableSubstitKey('formemailwithlines');
+	$targetobject = fetchObjectByElement(0, $tmpmailtemplate->type_template);
+
+	$tmp = FormMail::getAvailableSubstitKey('formemailwithlines', $targetobject);
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -219,6 +242,12 @@ if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
 }
 if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
+}
+if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendExpenseReport'));
+}
+if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
+	$elementList['holiday'] = img_picto('', 'holiday', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendLeaves'));
 }
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
@@ -266,9 +295,6 @@ if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
-if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
-	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToExpenseReport'));
-}
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
@@ -293,23 +319,6 @@ if ($reshook == 0) {
 $error = 0;
 
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
-
-// Security
-if (!empty($user->socid)) {
-	accessforbidden();
-}
-
-$permissiontoadd = 1;
-$permissiontoedit = ($user->admin ? 1 : 0);
-$permissiontodelete = ($user->admin ? 1 : 0);
-if ($rowid > 0) {
-	$tmpmailtemplate = new CEmailTemplate($db);
-	$tmpmailtemplate->fetch($rowid);
-	if ($tmpmailtemplate->fk_user == $user->id) {
-		$permissiontoedit = 1;
-		$permissiontodelete = 1;
-	}
-}
 
 
 /*

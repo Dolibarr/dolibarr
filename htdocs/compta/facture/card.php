@@ -1168,14 +1168,23 @@ if (empty($reshook)) {
 			}
 
 			if (empty($error)) {
-				// Set invoice as paid
-				$result = $object->setPaid($user);	// We can close the invoice. Even if we got an excess received, it is now into discounts.
-				if ($result >= 0) {
-					$object->fetch($object->id);	// Reload properties
+				// Set invoice as paid, unless it's a deposit converted to credit without any payment received
+				// (option DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID allows creating the discount/credit even if the deposit
+				// has not been paid yet; in that case we must NOT mark it as paid since no payment was actually received)
+				$skipSetPaid = ($object->type == Facture::TYPE_DEPOSIT && getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') && price2num($object->getSommePaiement(), 'MT') == 0);
+
+				if ($skipSetPaid) {
+					$object->fetch($object->id);    // Reload properties
 					$db->commit();
 				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-					$db->rollback();
+					$result = $object->setPaid($user);  // We can close the invoice. Even if we got an excess received, it is now into discounts.
+					if ($result >= 0) {
+						$object->fetch($object->id);    // Reload properties
+						$db->commit();
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$db->rollback();
+					}
 				}
 			} else {
 				setEventMessages($discount->error, $discount->errors, 'errors');
@@ -1256,8 +1265,6 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOSTINT('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account         = GETPOSTINT('fk_account');
-				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU', 2);
-				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1317,8 +1324,6 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= 0;		// No payment term for a credit note
 				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account         = GETPOSTINT('fk_account');
-				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1557,8 +1562,6 @@ if (empty($reshook)) {
 				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account         = GETPOSTINT('fk_account');
 				$object->amount             = price2num(GETPOST('amount'));
-				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1648,8 +1651,6 @@ if (empty($reshook)) {
 				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account         = GETPOSTINT('fk_account');
 				$object->amount             = price2num(GETPOST('amount'));
-				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -2233,8 +2234,6 @@ if (empty($reshook)) {
 				$object->fk_project = GETPOSTINT('projectid');
 				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
 				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
-				//$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
-				//$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_account = GETPOSTINT('fk_account');
 
 
@@ -2564,7 +2563,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($qty < 0) {
+		if ($qty < 0 && !getDolGlobalString('INVOICE_ENABLE_NEGATIVE_QTY')) {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
 			$error++;
@@ -2585,7 +2584,7 @@ if (empty($reshook)) {
 		}
 
 		$price_base_type = null;
-		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -3199,7 +3198,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 		}
-		if ($qty < 0) {
+		if ($qty < 0 && !getDolGlobalString('INVOICE_ENABLE_NEGATIVE_QTY')) {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
 			$error++;
@@ -3703,7 +3702,6 @@ if ($action == 'create') {
 
 	// Load objectsrc
 	$objectsrc = null;  // Initialise
-	//$remise_absolue = 0;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
