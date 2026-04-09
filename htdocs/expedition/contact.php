@@ -54,6 +54,9 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+// Store current page url
+$url_page_current = DOL_URL_ROOT.'/expedition/contact.php';
+
 $typeobject = null;
 $objectsrc = null;
 $object = new Expedition($db);
