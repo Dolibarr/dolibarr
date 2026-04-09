@@ -168,7 +168,7 @@ class FormMember extends Form
 			// Filter on active member only (status = 1) Closed member must not be selectable
 			$sql .= " WHERE a.entity IN (" . getEntity('member') . ")  AND a.statut = 1";
 			// For ajax search we limit here. For combo list, we limit later
-			if (is_array($limitto) && count($limitto)) {
+			if (count($limitto)) {
 				$sql .= " AND a.rowid IN (" . $this->db->sanitize(implode(',', $limitto)) . ")";
 			}
 			// Add where from hooks
@@ -206,7 +206,7 @@ class FormMember extends Form
 							$firstMember = $obj->rowid;
 						}
 						$disabled = 0;
-						if (is_array($limitto) && count($limitto) && !in_array($obj->rowid, $limitto)) {
+						if (count($limitto) && !in_array($obj->rowid, $limitto)) {
 							$disabled = 1;
 						}
 						if (getDolGlobalString('MEMBER_ORDER_LASTNAME')) {
