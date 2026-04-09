@@ -331,7 +331,7 @@ foreach (array('internal', 'member', 'external') as $source) {
 			$entry->primobj_html = $memberstatic->getNomUrl(1);
 			$entry->primobj_name = strtolower($memberstatic->getFullName($langs));
 			$entry->status = $contact['statuscontact'];
-			$entry->status_html = $memberstatic->getLibStatut($entry->status, 3);
+			$entry->status_html = $memberstatic->getLibStatut(5);
 		}
 
 		if ($contact['source'] == 'internal') {
