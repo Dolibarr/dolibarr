@@ -119,14 +119,13 @@ if ($user->socid > 0) {
 $limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: 1000;		// SEARCH_LIMIT_AJAX is a hidden option that has priority on option THIRDPARTY_LIMIT_SIZE if set.
 $sql .= $db->plimit($limit, 0);
 
-$sql .= " ORDER BY a.nom ASC";
+$sql .= " ORDER BY a.firstname ASC";
 
 //dol_syslog("ajaxmembers", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	while ($row = $db->fetch_array($resql)) {
-		$label = '';
-		$label .= $row['firstname'].' '$row['lastname'];
+		$label = $row['firstname']." ".$row['lastname'];
 
 		if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
 			$label .= ($row['address'] ? ' - '.$row['address'] : '').($row['zip'] ? ' - '.$row['zip'] : '').($row['town'] ? ' '.$row['town'] : '');
