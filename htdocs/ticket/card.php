@@ -531,6 +531,16 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set parent member
+	if ($action == 'set_member' && $permissiontoadd) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
+			$result = $object->setMember(GETPOSTINT('editmember'));
+			$url = $_SERVER["PHP_SELF"] . '?id=' . GETPOST('id', 'alpha');
+			header("Location: " . $url);
+			exit();
+		}
+	}
+
 	// Set progress status
 	if ($action == 'set_progression' && $permissiontoadd) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
@@ -1077,10 +1087,10 @@ if ($action == 'create' || $action == 'presend') {
 				$memberresult = $memberobj->fetch($object->fk_member);
 				if ($memberresult) {
 					$morehtmlref .= img_picto($langs->trans("Member"), $memberobj->picto, 'class="pictofixedwidth"');
-					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->fk_member], true).'">'.img_edit($langs->transnoentitiesnoconv('SelectMember')).'</a> ';
+					if ($action != 'editmember') {
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'editmember', 'id' => $object->id, 'fk_member' => $object->fk_member], true).'">'.img_edit($langs->transnoentitiesnoconv('SelectMember')).'</a> ';
 					}
-					$morehtmlref .= $form->form_member($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_member, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+					$morehtmlref .= $form->form_member($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_member, $action == 'editmember' ? 'editmember' : 'none', '', 1, 0, 0, array(), 1);
 				} else {
 					$morehtmlref .= $memberobj->getNomUrl(1);
 					if ($memberobj->fullname) {

@@ -130,7 +130,7 @@ class FormMember extends Form
 
 			print "\n" . '<!-- Input text for member with Ajax.Autocompleter ('.get_class($this)."::selectMemberForNewContact".') -->' . "\n";
 			print '<input type="text" size="30" id="search_' . $htmlname . '" name="search_' . $htmlname . '" value="' . $name . '" />';
-			print ajax_autocompleter((string) ($memid ? $memid : -1), $htmlname, DOL_URL_ROOT . '/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
+			print ajax_autocompleter((string) ($memid ? $memid : -1), $htmlname, DOL_URL_ROOT . '/adherents/ajax/ajaxmembers.php', '', $minLength, 0);
 			return $memid;
 		} else {
 			// Search to list thirdparties

@@ -1961,13 +1961,13 @@ class Form
 	 */
 	public function select_member($selected = '', $htmlname = 'memberid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
 	{
-		dol_syslog("select_member::", LOG_DEBUG);
+		dol_syslog("select_member::BEGIN", LOG_DEBUG);
 		// phpcs:enable
 		global $conf, $langs;
 
 		$out = '';
 
-		if (!empty($conf->use_javascript_ajax) && !$forcecombo) {
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MEMBER_USE_SEARCH_TO_SELECT') && !$forcecombo) {
 			if (is_null($ajaxoptions)) {
 				$ajaxoptions = array();
 			}
@@ -2005,12 +2005,13 @@ class Form
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalInt('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/adherents/ajax/member.php', $urloption, getDolGlobalInt('MEMBER_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
 			$out .= $this->select_member_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids, $showcode);
 		}
 
+		dol_syslog("select_member::END", LOG_DEBUG);
 		return $out;
 	}
 

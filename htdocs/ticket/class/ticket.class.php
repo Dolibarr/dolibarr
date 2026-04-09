@@ -2298,6 +2298,30 @@ class Ticket extends CommonObject
 	}
 
 	/**
+	 *    Define parent member of current ticket
+	 *
+	 *    @param  int $id		Id of member to set or '' to remove
+	 *    @return int           Return integer <0 if KO, >0 if OK
+	 */
+	public function setMember($id)
+	{
+		if ($this->id) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+			$sql .= " SET fk_member = ".($id > 0 ? (int) $id : "null");
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			dol_syslog(get_class($this).'::setMember sql='.$sql, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				return 1;
+			} else {
+				return -1;
+			}
+		} else {
+			return -1;
+		}
+	}
+
+	/**
 	 *    Define progression of current ticket
 	 *
 	 *    @param  int $percent Progression percent
