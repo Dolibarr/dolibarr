@@ -3,7 +3,8 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026  		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -933,7 +934,8 @@ class FormWebPortal extends Form
 				$value = '';
 			}
 		} elseif ($type == 'select') {
-			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
+			$langs->load($langfile);
+			$value = isset($param['options'][$value]) ? $langs->trans($param['options'][$value]) : '';
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -1027,13 +1029,14 @@ class FormWebPortal extends Form
 		} elseif ($type == 'radio') {
 			$value = (string) $param['options'][$value];
 		} elseif ($type == 'checkbox') {
+			$langs->load($langfile);
 			$value_arr = explode(',', $value);
 			$value = '';
 			if (is_array($value_arr) && count($value_arr) > 0) {
 				$toprint = array();
 				foreach ($value_arr as $valueval) {
 					if (!empty($valueval)) {
-						$toprint[] = '<li>' . $param['options'][$valueval] . '</li>';
+						$toprint[] = '<li>' . $langs->trans($param['options'][$valueval]) . '</li>';>';
 					}
 				}
 				if (!empty($toprint)) {
