@@ -53,6 +53,7 @@ class Fichinter extends CommonObject
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 15),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php', 'label' => 'Member', 'enabled' => 'isModEnabled("adherent")', 'visible' => 1, 'notnull' => 0, 'position' => 50),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 20),
 		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => 'isModEnabled("contract")', 'visible' => -1, 'position' => 25),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 30),
@@ -115,6 +116,11 @@ class Fichinter extends CommonObject
 	 * @var int Thirdparty Id
 	 */
 	public $socid;
+
+	/**
+	 * @var int Member ID
+	 */
+	public $fk_member;
 
 	/**
 	 * @var User User that created intervention
@@ -330,6 +336,7 @@ class Fichinter extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (";
 		$sql .= "fk_soc";
+		$sql .= "fk_member";
 		$sql .= ", datec";
 		$sql .= ", ref";
 		$sql .= ", ref_client";
@@ -347,6 +354,7 @@ class Fichinter extends CommonObject
 		$sql .= ") ";
 		$sql .= " VALUES (";
 		$sql .= $this->socid;
+		$sql .= $this->fk_member;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
@@ -503,7 +511,7 @@ class Fichinter extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
+		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_member, f.fk_statut as status, f.signed_status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
@@ -528,6 +536,7 @@ class Fichinter extends CommonObject
 				$this->ref_client   = $obj->ref_client;
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
+				$this->fk_membe     = $obj->fk_member;
 				$this->status       = $obj->status;
 				$this->statut       = $obj->status;	// deprecated
 				$this->signed_status = $obj->signed_status;
