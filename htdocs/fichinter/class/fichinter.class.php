@@ -354,7 +354,7 @@ class Fichinter extends CommonObject
 		$sql .= ") ";
 		$sql .= " VALUES (";
 		$sql .= $this->socid;
-		$sql .= $this->fk_member;
+		$sql .= ", '".$this->fk_member;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
