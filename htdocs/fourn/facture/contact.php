@@ -56,6 +56,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $socid = GETPOSTINT('socid');
 
+$url_page_current = DOL_URL_ROOT.'/fourn/facture/contact.php';
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;

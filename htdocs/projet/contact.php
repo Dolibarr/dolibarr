@@ -60,6 +60,8 @@ $action = GETPOST('action', 'aZ09');
 
 $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
 
+$url_page_current = DOL_URL_ROOT.'/projet/contact.php';
+
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'

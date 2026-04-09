@@ -51,6 +51,8 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$url_page_current = DOL_URL_ROOT.'/resource/contact.php';
+
 $object = new Dolresource($db);
 
 // Load object

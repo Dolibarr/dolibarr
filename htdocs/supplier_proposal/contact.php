@@ -55,6 +55,8 @@ $id		= GETPOSTINT('id');
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$url_page_current = DOL_URL_ROOT.'/supplier_proposal/contact.php';
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
