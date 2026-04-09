@@ -5806,6 +5806,7 @@ class Societe extends CommonObject
 						'code' => $obj->code,
 						'element' => $obj->element,
 						'libelle' => $libelle_type,
+						// where does this statuslink value come from? has the variable changed? above, but not here?
 						'status' => $obj->statuslink,
 						'fk_c_type_contact' => (int) $obj->fk_c_type_contact
 					);

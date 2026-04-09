@@ -53,7 +53,7 @@ class Fichinter extends CommonObject
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 15),
-		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php', 'label' => 'Member', 'enabled' => 'isModEnabled("adherent")', 'visible' => 1, 'notnull' => 0, 'position' => 50),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php', 'label' => 'Member', 'enabled' => 'isModEnabled("member")', 'visible' => 1, 'notnull' => 0, 'position' => 50),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 20),
 		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'enabled' => 'isModEnabled("contract")', 'visible' => -1, 'position' => 25),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 30),
@@ -354,7 +354,7 @@ class Fichinter extends CommonObject
 		$sql .= ") ";
 		$sql .= " VALUES (";
 		$sql .= $this->socid;
-		$sql .= ", '".$this->fk_member;
+		$sql .= ", '".((int) $this->fk_member);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
