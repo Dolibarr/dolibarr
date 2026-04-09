@@ -692,7 +692,7 @@ if ($memberid && !$socid && !$projectid && !$project_ref && $user->hasRight('soc
 
 		print dol_get_fiche_head($head, 'ticket', $langs->trans("Member"), -1, 'company');
 
-		dol_banner_tab($memberstat, 'memberid', '', ($memberid ? 0 : 1), 'rowid', 'fullname');
+		dol_banner_tab($memberstat, 'memberid', '', $memberid, 'rowid', 'fullname');
 
 		print '<div class="fichecenter">';
 
