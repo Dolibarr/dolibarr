@@ -39,7 +39,7 @@ FIX: 18.0: GETPOSTDATE and buildParamDate assumed HTTP param names 'minute' and 
 FIX: not remove value of others extra-fields on update extras action
 NEW: Automatically release docker image for each GitHub release
 FIX: getDolGlobalInt
-SEC: fix IDOR attack on employee evaluation. Missing permision test https://github.com/atm-florianm/dolibarr/commit/7ed0af2a138a34e7c7005b95c85ffc791976a6cf
+SEC: fix IDOR attack on employee evaluation. Missing permission test https://github.com/atm-florianm/dolibarr/commit/7ed0af2a138a34e7c7005b95c85ffc791976a6cf
 FIX: Implementation of multi-company compatibility with inventory/warehouse management
 FIX: 17.0: perweek.php resets task progress to 0% when: (#36401)
 FIX: DA027383: permissions not checked on HRM evaluation card (#36328) (#36399)
@@ -61,7 +61,7 @@ FIX: wrong check of hook return
 FIX: 16.0: extrafield of type link to category causes SQL error in selectForFormsList() (#36074)
 FIX: 16.0 (up to 19.0): extrafield of type link to category causes SQL error in selectForFormsList
 FIX: missing "printFieldListValue" hook (#35990)
-FIX: add action paramter
+FIX: add action parameter
 FIX: remove duplicate object
 FIX: expense report card: use correct bank module designator for detection
 FIX: wrong check of hook return
