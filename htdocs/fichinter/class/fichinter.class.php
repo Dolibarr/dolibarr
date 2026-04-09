@@ -536,7 +536,7 @@ class Fichinter extends CommonObject
 				$this->ref_client   = $obj->ref_client;
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
-				$this->fk_membe     = $obj->fk_member;
+				$this->fk_member     = $obj->fk_member;
 				$this->status       = $obj->status;
 				$this->statut       = $obj->status;	// deprecated
 				$this->signed_status = $obj->signed_status;
