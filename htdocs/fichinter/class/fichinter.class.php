@@ -336,7 +336,7 @@ class Fichinter extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (";
 		$sql .= "fk_soc";
-		$sql .= "fk_member";
+		$sql .= ", fk_member";
 		$sql .= ", datec";
 		$sql .= ", ref";
 		$sql .= ", ref_client";
