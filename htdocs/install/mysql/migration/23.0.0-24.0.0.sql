@@ -601,4 +601,9 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 ALTER TABLE llx_element_contact DROP INDEX idx_element_contact_idx1;
 ALTER TABLE llx_element_contact ADD UNIQUE INDEX idx_element_contact_idx1 (element_id, fk_c_type_contact, fk_socpeople, fk_member);
 
+ALTER TABLE llx_fichinter ADD COLUMN fk_member integer DEFAULT 0 AFTER fk_soc;
+ALTER TABLE llx_fichinter ADD INDEX idx_fichinter_fk_member (fk_member);
+ALTER TABLE llx_ticket ADD CONSTRAINT fk_ticket_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe (rowid);
+ALTER TABLE llx_ticket ADD CONSTRAINT fk_ticket_fk_project FOREIGN KEY (fk_project)  REFERENCES llx_projet (rowid);
+
 -- end of migration
