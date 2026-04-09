@@ -117,9 +117,8 @@ if (empty($reshook) && $objectsrc !== null) {
 				$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 			} else {
 				$mesg  = $objectsrc->error;
-				$mesgs = $objectsrc->errors;
 			}
-			setEventMessages($mesg, $mesgs, 'errors');
+			setEventMessages($mesg, $object->errors, 'errors');
 		}
 	} elseif ($action == 'swapstatut' && $user->hasRight('expedition', 'creer')) {
 		// bascule du statut d'un contact

@@ -128,14 +128,13 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	} elseif ($objectsrc !== null) {
 		$mesgs = array();
 	} else {
-		$mesgs = $objectsrc->errors;
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 		} else {
 			$mesg = $objectsrc->error;
 		}
-		setEventMessages($mesg, $mesgs, 'errors');
+		setEventMessages($mesg, $object->errors, 'errors');
 	}
 } elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer') && $objectsrc !== null) {
 	// bascule du statut d'un contact
