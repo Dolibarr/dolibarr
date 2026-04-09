@@ -248,18 +248,6 @@ $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 //var_dump($modulepart.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
-// Fix for multi-entity on doctemplates
-if ($modulepart == 'doctemplates') {
-	$ent_to_test = ($entity > 1 ? $entity : $conf->entity);
-	if ($ent_to_test > 1) {
-		$path_with_entity = DOL_DATA_ROOT . '/' . $ent_to_test . '/doctemplates/' . $original_file;
-		if (file_exists(dol_osencode($path_with_entity))) {
-			$fullpath_original_file = $path_with_entity;
-		}
-	}
-}
-$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file);
-
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
