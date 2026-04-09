@@ -127,13 +127,13 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 		exit;
 	} elseif ($objectsrc !== null) {
 		$mesgs = array();
+	} else {
+		$mesgs = $objectsrc->errors;
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-			$mesgs = $objectsrc->errors;
 		} else {
 			$mesg = $objectsrc->error;
-			$mesgs = $objectsrc->errors;
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
 	}
