@@ -241,7 +241,7 @@ if ($permission) {
 
 		<div class="tagtd nowrap noborderbottom">
 			<?php
-			$selectedMember = GETPOSTISSET("newmember") ? GETPOSTINT("newmember") : ((isset($object->fk_member) && (empty($object->fk_member)) ? 0 : $object->fk_member);
+			$selectedMember = GETPOSTISSET("newmember") ? GETPOSTINT("newmember") : ((isset($object->fk_member) && empty($object->fk_member)) ? 0 : $object->fk_member);
 			print '<input type="hidden" name="loadmember" value="'.$selectedMember.'">';
 			$selectedMember = $formmember->selectMemberForNewContact($object, 'id', $selectedMember, 'newmember', array(), 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
 		</div>
