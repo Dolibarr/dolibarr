@@ -116,7 +116,7 @@ if (isModEnabled("reception")) {
  */
 
 if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
-	if ($result > 0 && $id > 0) {
+	if (isset($result) && $result > 0 && $id > 0) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
