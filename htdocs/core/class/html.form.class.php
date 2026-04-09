@@ -7600,7 +7600,7 @@ class Form
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$member = new Adherent($this->db);
 				$member->fetch((int) $selected);
-				$out .= $member->getNomUrl(0, '');
+				$out .= $member->getNomUrl(0, 0, 'card', '');
 			} else {
 				$out .= '<span class="opacitymedium">' . $textifnomember . '</span>';
 			}
