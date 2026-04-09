@@ -4373,6 +4373,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		if (empty($this->origin_type) && !empty($this->origin)) {
 			$this->origin_type = $this->origin;
@@ -4646,6 +4647,7 @@ abstract class CommonObject
 		$sql .= " ORDER BY ".$orderby;
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -4739,6 +4741,7 @@ abstract class CommonObject
 		$updatesource = false;
 		$updatetarget = false;
 		$f_user = isset($f_user) ? $f_user : $user;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid) && empty($targettype)) {
 			$updatesource = true;

@@ -747,10 +747,6 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		//} elseif ($action == 'setremisepercent' && $usercancreate) {
-		//	$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
-		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
 	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 		if ($result < 0) {
@@ -2151,8 +2147,6 @@ if ($action == 'create' && $usercancreate) {
 		$res = $soc->fetch($socid);
 	}
 
-	//$remise_absolue = 0;
-
 	$currency_code = $conf->currency;
 
 	$cond_reglement_id = GETPOSTINT('cond_reglement_id');
@@ -2222,8 +2216,6 @@ if ($action == 'create' && $usercancreate) {
 			$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
 			$warehouse_id = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			// $remise_percent = (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-			// $remise_absolue = (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 			$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
@@ -2252,8 +2244,6 @@ if ($action == 'create' && $usercancreate) {
 		$shipping_method_id = $soc->shipping_method_id;
 		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
-		// $remise_percent = $soc->remise_percent;
-		// $remise_absolue = 0;
 		$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
@@ -2550,8 +2540,6 @@ if ($action == 'create' && $usercancreate) {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-				//$objectsrc->remise_absolue = $remise_absolue;
-				//$objectsrc->remise_percent = $remise_percent;
 				$objectsrc->update_price(1);
 			}
 
