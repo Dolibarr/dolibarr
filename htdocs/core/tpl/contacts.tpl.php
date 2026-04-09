@@ -281,7 +281,12 @@ if ($permission) {
 $list = array();
 foreach (array('internal', 'member', 'external') as $source) {
 	if ($source == 'member') {
-		$contactlist = $object->liste_member_as_contact(-1, 'member');
+		if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
+			'@phan-var-force Commande|Facture $objectsrc';
+			$contactlist = $objectsrc->liste_member_as_contact(-1, $source);
+		} else {
+			$contactlist = $object->liste_member_as_contact(-1, $source);
+		}
 	} else {
 		if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
 			'@phan-var-force Commande|Facture $objectsrc';
