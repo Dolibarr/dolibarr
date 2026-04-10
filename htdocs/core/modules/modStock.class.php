@@ -5,7 +5,7 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,42 +71,46 @@ class modStock extends DolibarrModules
 		$this->depends = array("modProduct"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array("modProductBatch"); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("stocks");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r] = array('STOCK_DISALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 0);
-
-		$r++;
-		$this->const[$r][0] = "STOCK_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard_stock";
-		$this->const[$r][3] = 'Name of PDF model of stock';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard_movement_stock";
-		$this->const[$r][3] = 'Name of PDF model of stock movement';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "STOCK_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks/movements";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
+		$this->const = [
+			[
+				'STOCK_DISALLOW_NEGATIVE_TRANSFER',
+				'chaine',
+				'1',
+				'',
+				0,
+			],
+			[
+				"STOCK_ADDON_PDF",
+				"chaine",
+				"standard_stock",
+				'Name of PDF model of stock',
+				0,
+			],
+			[
+				"MOUVEMENT_ADDON_PDF",
+				"chaine",
+				"standard_movement_stock",
+				'Name of PDF model of stock movement',
+				0,
+			],
+			[
+				"STOCK_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks",
+				"",
+				0,
+			],
+			[
+				"MOUVEMENT_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks/movements",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();
