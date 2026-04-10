@@ -3651,6 +3651,7 @@ if ($module == 'initmodule') {
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 			$pathtofilereadme = $modulelowercase.'/README.md';
 			$pathtochangelog = $modulelowercase.'/ChangeLog.md';
+			$pathtoindex = $modulelowercase.'/'.$modulelowercase.'index.php';
 
 			$realpathofmodule = realpath($dirread.'/'.$modulelowercase);
 
@@ -3670,6 +3671,10 @@ if ($module == 'initmodule') {
 				print '<tr><td>';
 				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong class="wordbreak">'.$pathtofile.'</strong>';
 				print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtofile).'&find=DESCRIPTION_FLAG">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+				print '</td></tr>';
+
+				print '<tr><td><span class="fa fa-file"></span> '.$langs->trans("Index").' : <strong class="wordbreak">'.$pathtoindex.'</strong>';
+				print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=markdown&file='.urlencode($pathtoindex).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '</td></tr>';
 
 				// List of setup pages
