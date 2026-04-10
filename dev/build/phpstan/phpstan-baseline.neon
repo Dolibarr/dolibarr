@@ -2023,6 +2023,12 @@ parameters:
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
+			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: ../../../htdocs/compta/cashcontrol/cashcontrol_list.php
+
+		-
 			message: '#^Call to function method_exists\(\) with \$this\(CashControl\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
