@@ -3522,9 +3522,9 @@ class BookKeeping extends CommonObject
 						while ($obj = $this->db->fetch_object($resql)) {
 							$docRef = $obj->doc_ref;
 							if (preg_match('/ \((\d+)\)$/', $docRef, $matches)) {
-								$docRef = preg_replace('/ \(\d+\)$/', ' (' . ($matches[1] + 1) . ')', $docRef);
+								$docRef = preg_replace('/ \(\d+\)$/', ' (' . (((int) $matches[1]) + 1) . ')', $docRef);
 							} else {
-								$docRef = $docRef . ' (2)';
+								$docRef .= ' (2)';
 							}
 
 							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -3629,9 +3629,9 @@ class BookKeeping extends CommonObject
 								while ($obj = $this->db->fetch_object($resql)) {
 									$docRef = $obj->doc_ref;
 									if (preg_match('/ \((\d+)\)$/', $docRef, $matches)) {
-										$docRef = preg_replace('/ \(\d+\)$/', ' (' . ($matches[1] + 1) . ')', $docRef);
+										$docRef = preg_replace('/ \(\d+\)$/', ' (' . (((int) $matches[1]) + 1) . ')', $docRef);
 									} else {
-										$docRef = $docRef . ' (2)';
+										$docRef .= ' (2)';
 									}
 
 									$sql_insert = "INSERT INTO ".$this->db->prefix()."accounting_bookkeeping (";
