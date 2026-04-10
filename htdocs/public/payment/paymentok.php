@@ -422,7 +422,13 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 				}
 
 				// Check amount and currency
-				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				// Handle zero-decimal currencies that don't use cents/subunits
+				$zeroDecimalCurrencies = ['JPY', 'KRW', 'CLP', 'VND', 'XAF', 'XOF', 'XPF', 'BIF', 'CLP', 'DJF', 'GNF', 'ISK', 'KMF', 'MGA', 'PYG', 'RWF', 'UGX', 'VUV'];
+				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
+					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
+				} else {
+					$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents for most currencies
+				}
 				$expectedCurrency = strtolower($currencyCodeType);
 
 				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
