@@ -313,7 +313,7 @@ class SupplierProposal extends CommonObject
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!$qty) {
 			$qty = 1;
@@ -955,7 +955,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $langs, $conf, $mysoc, $hookmanager;
+		global $conf, $mysoc, $hookmanager;
 		$error = 0;
 
 		$now = dol_now();
@@ -1184,7 +1184,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 		$now = dol_now();
@@ -1482,7 +1482,7 @@ class SupplierProposal extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 		$now = dol_now();
@@ -1654,8 +1654,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function reopen($user, $status, $note = '', $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
@@ -1791,9 +1789,8 @@ class SupplierProposal extends CommonObject
 	 */
 	public function updateOrCreatePriceFournisseur($user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
+
 		foreach ($this->lines as $product) {
 			if ($product->subprice <= 0) {
 				continue;
@@ -1855,8 +1852,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function createPriceFournisseur($product, $user)
 	{
-		global $conf;
-
 		$price = price2num($product->subprice * $product->qty, 'MU');
 		$qty = price2num($product->qty);
 		$unitPrice = price2num($product->subprice, 'MU');
@@ -1919,8 +1914,6 @@ class SupplierProposal extends CommonObject
 	public function setDraft($user)
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
 		$error = 0;
 
 		if ($this->status == self::STATUS_DRAFT) {
@@ -2050,7 +2043,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;

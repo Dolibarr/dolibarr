@@ -1330,15 +1330,13 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('BILL_SUPPLIER_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BILL_SUPPLIER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Commit or rollback

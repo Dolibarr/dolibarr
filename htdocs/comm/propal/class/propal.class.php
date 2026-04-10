@@ -1822,8 +1822,6 @@ class Propal extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters
