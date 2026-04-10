@@ -366,6 +366,7 @@ if (empty($reshook)) {
 						'Propal' => '/comm/propal/class/propal.class.php',
 						'Reception' => '/reception/class/reception.class.php',
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+						'MouvementStock' => '/product/stock/class/mouvementstock.class.php',
 					);
 
 					// First, all core objects must update their tables
@@ -410,6 +411,55 @@ if (empty($reshook)) {
 						$error++;
 					}
 					// End call triggers
+				}
+				
+				// Merge per-warehouse stock quantities from origin into destination
+				// This must happen before delete() which wipes product_stock of origin
+				if (!$error) {
+				  // Read stocks from DB before merge (stock_reel is not loaded by fetch())
+				  $origin_stock = 0;
+				  $dest_stock = 0;
+				  $sql = "SELECT fk_product, SUM(reel) as qty FROM ".MAIN_DB_PREFIX."product_stock";
+				  $sql .= " WHERE fk_product IN (".((int) $productOrigin->id).", ".((int) $object->id).")";
+				  $sql .= " GROUP BY fk_product";
+				  $resql = $db->query($sql);
+				  if ($resql) {
+					  while ($obj = $db->fetch_object($resql)) {
+						  if ((int) $obj->fk_product == (int) $productOrigin->id) {
+							  $origin_stock = max(0, (float) $obj->qty);
+						  } else {
+							  $dest_stock = max(0, (float) $obj->qty);
+						  }
+					  }
+				  }
+				
+				  // Merge stock quantities
+				  $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock (fk_product, fk_entrepot, reel)";
+				  $sql .= " SELECT ".((int) $object->id).", ps.fk_entrepot, ps.reel";
+				  $sql .= " FROM ".MAIN_DB_PREFIX."product_stock ps";
+				  $sql .= " WHERE ps.fk_product = ".((int) $productOrigin->id);
+				  $sql .= " ON DUPLICATE KEY UPDATE reel = reel + VALUES(reel)";
+				  if (!$db->query($sql)) {
+					  $error++;
+					  setEventMessages($db->lasterror(), null, 'errors');
+				  }
+				}
+				
+				// Recalculate PMP of destination as weighted average of both products
+				if (!$error) {
+				  $total_stock = $dest_stock + $origin_stock;
+				  if ($total_stock > 0 && ($productOrigin->pmp > 0 || $object->pmp > 0)) {
+					  $new_pmp = price2num(
+						  ($dest_stock * (float) $object->pmp + $origin_stock * (float) $productOrigin->pmp) / $total_stock,
+						  'MU'
+					  );
+					  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $new_pmp);
+					  $sql .= " WHERE rowid = ".((int) $object->id);
+					  if (!$db->query($sql)) {
+						  $error++;
+						  setEventMessages($db->lasterror(), null, 'errors');
+					  }
+				  }
 				}
 
 				if (!$error) {
