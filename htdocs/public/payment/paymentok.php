@@ -423,7 +423,7 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 
 				// Check amount and currency
 				// Handle zero-decimal currencies that don't use cents/subunits
-				$zeroDecimalCurrencies = ['JPY', 'KRW', 'CLP', 'VND', 'XAF', 'XOF', 'XPF', 'BIF', 'CLP', 'DJF', 'GNF', 'ISK', 'KMF', 'MGA', 'PYG', 'RWF', 'UGX', 'VUV'];
+				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
 					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
 				} else {
