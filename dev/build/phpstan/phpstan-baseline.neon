@@ -2227,12 +2227,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/prelevement.php
 
 		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/facture/stats/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -2678,12 +2672,6 @@ parameters:
 
 		-
 			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/stats/cabyprodserv.php
