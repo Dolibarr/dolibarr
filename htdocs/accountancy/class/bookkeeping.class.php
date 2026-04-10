@@ -3521,8 +3521,8 @@ class BookKeeping extends CommonObject
 					if ($resql) {
 						while ($obj = $this->db->fetch_object($resql)) {
 							$docRef = $obj->doc_ref;
-							if (preg_match('/ \((\d+)\) *$/', $docRef, $matches)) {
-								$docRef = preg_replace('/(\d+)\)$ */', ($matches[1] + 1) . ')', $docRef);
+							if (preg_match('/ \((\d+)\)$/', $docRef, $matches)) {
+								$docRef = preg_replace('/ \(\d+\)$/', ' (' . ($matches[1] + 1) . ')', $docRef);
 							} else {
 								$docRef = $docRef . ' (2)';
 							}
@@ -3628,8 +3628,8 @@ class BookKeeping extends CommonObject
 							if ($resql) {
 								while ($obj = $this->db->fetch_object($resql)) {
 									$docRef = $obj->doc_ref;
-									if (preg_match('/ \((\d+)\) *$/', $docRef, $matches)) {
-										$docRef = preg_replace('/(\d+)\)$ */', ($matches[1] + 1) . ')', $docRef);
+									if (preg_match('/ \((\d+)\)$/', $docRef, $matches)) {
+										$docRef = preg_replace('/ \(\d+\)$/', ' (' . ($matches[1] + 1) . ')', $docRef);
 									} else {
 										$docRef = $docRef . ' (2)';
 									}
