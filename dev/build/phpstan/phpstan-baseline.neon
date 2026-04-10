@@ -5695,30 +5695,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modEventOrganization.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''EXPENSEREPORT_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modExpenseReport.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''EXPENSEREPORT_ADDON…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modExpenseReport.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''MAIN_DELAY…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/modExpenseReport.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 4
-			path: ../../../htdocs/core/modules/modExpenseReport.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''FACTURE_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
 			identifier: assign.propertyType
 			count: 1

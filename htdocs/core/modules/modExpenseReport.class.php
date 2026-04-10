@@ -3,7 +3,7 @@
  * Copyright (C) 2015  		Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2023  		Alexandre Spangaro   		<aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,32 +76,40 @@ class modExpenseReport extends DolibarrModules
 		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 		$r = 0;
 
-		$this->const[$r][0] = "EXPENSEREPORT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
-		$this->const[$r][3] = 'Name of manager to build PDF expense reports documents';
-		$this->const[$r][4] = 0;
+		$this->const[$r] = [
+			'0' => "EXPENSEREPORT_ADDON_PDF",
+			'1' => "chaine",
+			'2' => "standard",
+			'3' => 'Name of manager to build PDF expense reports documents',
+			'4' => 0,
+		];
 		$r++;
 
-		$this->const[$r][0] = "EXPENSEREPORT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_expensereport_jade";
-		$this->const[$r][3] = 'Name of manager to generate expense report ref number';
-		$this->const[$r][4] = 0;
+		$this->const[$r] = [
+			'0' => "EXPENSEREPORT_ADDON",
+			'1' => "chaine",
+			'2' => "mod_expensereport_jade",
+			'3' => 'Name of manager to generate expense report ref number',
+			'4' => 0,
+		];
 		$r++;
 
-		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to approve';
-		$this->const[$r][4] = 0;
+		$this->const[$r] = [
+			'0' => "MAIN_DELAY_EXPENSEREPORTS",
+			'1' => "chaine",
+			'2' => "15",
+			'3' => 'Tolerance delay (in days) before alert for expense reports to approve',
+			'4' => 0,
+		];
 		$r++;
 
-		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS_TO_PAY";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to pay';
-		$this->const[$r][4] = 0;
+		$this->const[$r] = [
+			'0' => "MAIN_DELAY_EXPENSEREPORTS_TO_PAY",
+			'1' => "chaine",
+			'2' => "15",
+			'3' => 'Tolerance delay (in days) before alert for expense reports to pay',
+			'4' => 0,
+		];
 		$r++;
 
 		// Array to add new pages in new tabs
