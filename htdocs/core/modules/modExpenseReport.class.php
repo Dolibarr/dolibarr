@@ -57,20 +57,17 @@ class modExpenseReport extends DolibarrModules
 		$this->picto = 'trip';
 
 		// Data directories to create when module is enabled.
-		$this->dirs = array("/expensereport/temp");
-		$r = 0;
+		$this->dirs = ["/expensereport/temp"];
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array('expensereport.php');
+		$this->config_page_url = ['expensereport.php'];
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
-		// $this->conflictwith = array("modDeplacement"); // Deactivate for access on old information
-		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 7); // Minimum version of Dolibarr required by module
-		$this->langfiles = array("companies", "trips");
+		$this->depends = []; // List of module class names as string that must be enabled if this module is enabled
+		// $this->conflictwith = ["modDeplacement"]; // Deactivate for access on old information
+		$this->requiredby = []; // List of modules id to disable if this one is disabled
+		$this->langfiles = ["companies", "trips"];
 
 		// Constants
 		$this->const = [ // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
@@ -103,17 +100,16 @@ class modExpenseReport extends DolibarrModules
 				0,
 			],
 		];
-		$r++;
 
 		// Array to add new pages in new tabs
-		$this->tabs[] = array();
+		$this->tabs[] = [];
 
 		// Boxes
-		$this->boxes = array(); // List of boxes
+		$this->boxes = []; // List of boxes
 		$r = 0;
 
 		// Permissions
-		$this->rights = array(); // Permission array used by this module
+		$this->rights = []; // Permission array used by this module
 		$this->rights_class = 'expensereport';
 
 		$this->rights[$r][0] = 771;
@@ -262,10 +258,10 @@ class modExpenseReport extends DolibarrModules
 		// Remove permissions and default values
 		$this->remove($options);
 
-		$sql = array(
+		$sql = [
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_expensereport' AND type='expensereport' AND entity = ".((int) $conf->entity),
 			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_expensereport','expensereport',".((int) $conf->entity).")"
-		);
+		];
 
 		return $this->_init($sql, $options);
 	}
