@@ -178,7 +178,7 @@ $searchform .= '<br>';
 
 
 // Add search on URL
-if (!empty($conf->dol_use_jmobile) || 1) {
+if (!empty($conf->dol_use_jmobile)) {
 	$ret = '';
 	$ret .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="searchform nowraponall tagtr">';
 	$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
