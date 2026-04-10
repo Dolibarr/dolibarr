@@ -75,63 +75,51 @@ class modPropale extends DolibarrModules
 		$this->langfiles = array("propal", "bills", "companies", "sendings", "products");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r] = [
-			'0' => "PROPALE_ADDON_PDF",
-			'1' => "chaine",
-			'2' => "cyan",
-			'3' => 'Name of the proposal generation manager in PDF format',
-			'4' => 0,
-		];
-		$r++;
-
-		$this->const[$r] = [
-			'0' => "PROPALE_ADDON",
-			'1' => "chaine",
-			'2' => "mod_propale_marbre",
-			'3' => 'Name of proposal numbering manager',
-			'4' => 0,
-		];
-		$r++;
-
-		$this->const[$r] = [
-			'0' => "PROPALE_VALIDITY_DURATION",
-			'1' => "chaine",
-			'2' => "15",
-			'3' => 'Duration of validity of business proposals',
-			'4' => 0,
-		];
-		$r++;
-
-		$this->const[$r] = [
-			'0' => "PROPALE_ADDON_PDF_ODT_PATH",
-			'1' => "chaine",
-			'2' => "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals",
-			'3' => "",
-			'4' => 0,
-		];
-		$r++;
-
-		$this->const[$r] = [
-			'0' => "PROPOSAL_ALLOW_ONLINESIGN",
-			'1' => "chaine",
-			'2' => "1",
-			'3' => "",
-			'4' => 0,
-		];
-		$r++;
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$this->const[$r] = [
-			'0' => "PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN",
-			'1' => "chaine",
-			'2' => getRandomPassword(true),
-			'3' => "",
-			'4' => 0,
+		$this->const = [
+			[
+				"PROPALE_ADDON_PDF",
+				"chaine",
+				"cyan",
+				'Name of the proposal generation manager in PDF format',
+				0,
+			],
+			[
+				"PROPALE_ADDON",
+				"chaine",
+				"mod_propale_marbre",
+				'Name of proposal numbering manager',
+				0,
+			],
+			[
+				"PROPALE_VALIDITY_DURATION",
+				"chaine",
+				"15",
+				'Duration of validity of business proposals',
+				0,
+			],
+			[
+				"PROPALE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals",
+				"",
+				0,
+			],
+			[
+				"PROPOSAL_ALLOW_ONLINESIGN",
+				"chaine",
+				"1",
+				"",
+				0,
+			],
+			[
+				"PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN",
+				"chaine",
+				getRandomPassword(true),
+				"",
+				0,
+			],
 		];
-		$r++;
 
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
 		$this->const[$r][2] = "__(Draft)__";

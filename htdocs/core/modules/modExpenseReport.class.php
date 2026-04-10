@@ -73,42 +73,35 @@ class modExpenseReport extends DolibarrModules
 		$this->langfiles = array("companies", "trips");
 
 		// Constants
-		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r = 0;
-
-		$this->const[$r] = [
-			'0' => "EXPENSEREPORT_ADDON_PDF",
-			'1' => "chaine",
-			'2' => "standard",
-			'3' => 'Name of manager to build PDF expense reports documents',
-			'4' => 0,
-		];
-		$r++;
-
-		$this->const[$r] = [
-			'0' => "EXPENSEREPORT_ADDON",
-			'1' => "chaine",
-			'2' => "mod_expensereport_jade",
-			'3' => 'Name of manager to generate expense report ref number',
-			'4' => 0,
-		];
-		$r++;
-
-		$this->const[$r] = [
-			'0' => "MAIN_DELAY_EXPENSEREPORTS",
-			'1' => "chaine",
-			'2' => "15",
-			'3' => 'Tolerance delay (in days) before alert for expense reports to approve',
-			'4' => 0,
-		];
-		$r++;
-
-		$this->const[$r] = [
-			'0' => "MAIN_DELAY_EXPENSEREPORTS_TO_PAY",
-			'1' => "chaine",
-			'2' => "15",
-			'3' => 'Tolerance delay (in days) before alert for expense reports to pay',
-			'4' => 0,
+		$this->const = [ // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+			[
+				"EXPENSEREPORT_ADDON_PDF",
+				"chaine",
+				"standard",
+				'Name of manager to build PDF expense reports documents',
+				0,
+			],
+			[
+				"EXPENSEREPORT_ADDON",
+				"chaine",
+				"mod_expensereport_jade",
+				'Name of manager to generate expense report ref number',
+				0,
+			],
+			[
+				"MAIN_DELAY_EXPENSEREPORTS",
+				"chaine",
+				"15",
+				'Tolerance delay (in days) before alert for expense reports to approve',
+				0,
+			],
+			[
+				"MAIN_DELAY_EXPENSEREPORTS_TO_PAY",
+				"chaine",
+				"15",
+				'Tolerance delay (in days) before alert for expense reports to pay',
+				0,
+			],
 		];
 		$r++;
 
