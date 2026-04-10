@@ -259,6 +259,7 @@ $calcmode = '';
 $name = '';
 $period = '';
 $periodlink = '';
+$description = '';
 
 
 // Show report header
