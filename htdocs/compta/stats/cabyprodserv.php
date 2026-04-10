@@ -28,13 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("products", "categories", "errors", 'accountancy'));

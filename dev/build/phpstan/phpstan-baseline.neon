@@ -2671,12 +2671,6 @@ parameters:
 			path: ../../../htdocs/compta/stats/cabyprodserv.php
 
 		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -2743,12 +2737,6 @@ parameters:
 			path: ../../../htdocs/compta/stats/supplier_turnover.php
 
 		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/stats/supplier_turnover.php
-
-		-
 			message: '#^Variable \$sql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2761,12 +2749,6 @@ parameters:
 			path: ../../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
 
 		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/stats/supplier_turnover_by_prodserv.php
-
-		-
 			message: '#^Variable \$type might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2775,12 +2757,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
 
