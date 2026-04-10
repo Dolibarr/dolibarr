@@ -236,6 +236,7 @@ $namelink = "";
 $builddate = 0;
 $calcmode = '';
 $name = '';
+$description = '';
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {

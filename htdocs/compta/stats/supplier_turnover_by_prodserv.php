@@ -309,6 +309,7 @@ $name = array();
 $amount = array();
 $amount_ht = array();
 $qty = array();
+$type = [];
 
 // SQL request
 $catotal = 0;
