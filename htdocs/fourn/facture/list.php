@@ -172,7 +172,11 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$diroutputmassaction = $conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id;
+if (getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD')) {
+	$diroutputmassaction = $conf->supplier_invoice->dir_output.'/temp/massgeneration/'.$user->id;
+} else {
+	$diroutputmassaction = $conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id;
+}
 
 $now = dol_now();
 
@@ -354,7 +358,11 @@ if (empty($reshook)) {
 	$objectclass = 'FactureFournisseur';
 	$objectlabel = 'SupplierInvoices';
 
-	$uploaddir = $conf->fournisseur->facture->dir_output;
+	if (getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD')) {
+		$uploaddir = $conf->supplier_invoice->dir_output;
+	} else {
+		$uploaddir = $conf->fournisseur->facture->dir_output;
+	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -1879,7 +1887,11 @@ while ($i < $imaxinloop) {
 			print $facturestatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier').dol_sanitizeFileName($obj->ref);
+			if (getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD')) {
+				$filedir = $conf->supplier_invoice->dir_output . '/' . get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier') . dol_sanitizeFileName($obj->ref);
+			} else {
+				$filedir = $conf->fournisseur->facture->dir_output . '/' . get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier') . dol_sanitizeFileName($obj->ref);
+			}
 			$subdir = get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier').dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
 			print '</td></tr></table>';
