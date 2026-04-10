@@ -941,6 +941,40 @@ class User extends CommonObject
 			$module = $moduletomoduletouse[$module];
 		}
 
+		// Compatibility layer for the supplier module split transition (MAIN_USE_NEW_SUPPLIERMOD).
+		// Allows both old and new permission syntaxes to work in parallel during migration.
+		// - Old: $user->hasRight('fournisseur', 'commande', 'lire')
+		// - New: $user->hasRight('supplier_order', 'lire')
+		// External modules are also transparently supported without any change on their side.
+		if (getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD')) {
+			// New module names introduced by the split, mapped to their legacy equivalent.
+			// Format: 'new_module' => ['legacy_module', 'legacy_permlevel1']
+			$supplierNewToLegacy = array(
+				'supplier_order'   => array('fournisseur', 'commande'),
+				'supplier_invoice' => array('fournisseur', 'facture'),
+			);
+
+			if (isset($supplierNewToLegacy[$module])) {
+				// Caller used new syntax: rewrite to legacy so the rights object resolves correctly.
+				// e.g. hasRight('supplier_order', 'lire') -> hasRight('fournisseur', 'commande', 'lire')
+				$permlevel2 = $permlevel1;
+				$permlevel1 = $supplierNewToLegacy[$module][1];  // e.g. 'commande'
+				$module     = $supplierNewToLegacy[$module][0];  // e.g. 'fournisseur'
+			}
+		} else {
+			// Legacy mode: translate new module names back to old ones in case some
+			// updated code calls the new syntax while the option is not yet enabled.
+			$supplierLegacyCompat = array(
+				'supplier_order'   => 'fournisseur',
+				'supplier_invoice' => 'fournisseur',
+			);
+
+			if (isset($supplierLegacyCompat[$module])) {
+				// e.g. hasRight('supplier_order', 'lire') stays routed through 'fournisseur'
+				$module = $supplierLegacyCompat[$module];
+			}
+		}
+
 		$moduleRightsMapping = array(
 			'product' => 'produit',
 			'margin' => 'margins',
