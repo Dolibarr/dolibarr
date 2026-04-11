@@ -8,6 +8,7 @@
  * Copyright (C) 2020		Ahmad Jamaly Rabib		<rabib@metroworks.co.jp>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,39 +79,49 @@ class modPropale extends DolibarrModules
 		$this->const = array();
 		$r = 0;
 
-		$this->const[$r][0] = "PROPALE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "cyan";
-		$this->const[$r][3] = 'Name of the proposal generation manager in PDF format';
-		$this->const[$r][4] = 0;
+		$this->const[$r] = array(
+			0 => "PROPALE_ADDON_PDF",
+			1 => "chaine",
+			2 => "cyan",
+			3 => 'Name of the proposal generation manager in PDF format',
+			4 => 0
+		);
 		$r++;
 
-		$this->const[$r][0] = "PROPALE_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_propale_marbre";
-		$this->const[$r][3] = 'Name of proposal numbering manager';
-		$this->const[$r][4] = 0;
+		$this->const[$r] = array(
+			0 => "PROPALE_ADDON",
+			1 => "chaine",
+			2 => "mod_propale_marbre",
+			3 => 'Name of proposal numbering manager',
+			4 => 0
+		);
 		$r++;
 
-		$this->const[$r][0] = "PROPALE_VALIDITY_DURATION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Duration of validity of business proposals';
-		$this->const[$r][4] = 0;
+		$this->const[$r] = array(
+			0 => "PROPALE_VALIDITY_DURATION",
+			1 => "chaine",
+			2 => "15",
+			3 => 'Duration of validity of business proposals',
+			4 => 0
+		);
 		$r++;
 
-		$this->const[$r][0] = "PROPALE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
+		$this->const[$r] = array(
+			0 => "PROPALE_ADDON_PDF_ODT_PATH",
+			1 => "chaine",
+			2 => "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals",
+			3 => "",
+			4 => 0
+		);
 		$r++;
 
-		$this->const[$r][0] = "PROPOSAL_ALLOW_ONLINESIGN";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
+		$this->const[$r] = array(
+			0 => "PROPOSAL_ALLOW_ONLINESIGN",
+			1 => "chaine",
+			2 => "1",
+			3 => "",
+			4 => 0
+		);
 		$r++;
 
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
@@ -121,8 +132,8 @@ class modPropale extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(
-			0=>array('file'=>'box_graph_propales_permonth.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_propales.php', 'enabledbydefaulton'=>'Home'),
+			0 => array('file' => 'box_graph_propales_permonth.php', 'enabledbydefaulton' => 'Home'),
+			1 => array('file' => 'box_propales.php', 'enabledbydefaulton' => 'Home'),
 		);
 
 		// Permissions
@@ -131,64 +142,80 @@ class modPropale extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 21; // id de la permission
-		$this->rights[$r][1] = 'Read commercial proposals'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'lire';
+		$this->rights[$r] = array(
+			0 => 21, // id of the permission
+			1 => 'Read commercial proposals', // permission label
+			2 => 'r', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'lire'
+		);
 
 		$r++;
-		$this->rights[$r][0] = 22; // id de la permission
-		$this->rights[$r][1] = 'Create and update commercial proposals'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'creer';
+		$this->rights[$r] = array(
+			0 => 22, // id of the permission
+			1 => 'Create and update commercial proposals', // permission label
+			2 => 'w', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'creer'
+		);
 
 		$r++;
-		$this->rights[$r][0] = 24; // id de la permission
-		$this->rights[$r][1] = 'Validate commercial proposals'; // Validate proposal
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'propal_advance';
-		$this->rights[$r][5] = 'validate';
+		$this->rights[$r] = array(
+			0 => 24, // id of the permission
+			1 => 'Validate commercial proposals', // Validate proposal
+			2 => 'd', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'propal_advance',
+			5 => 'validate'
+		);
 
 		$r++;
-		$this->rights[$r][0] = 25; // id de la permission
-		$this->rights[$r][1] = 'Send commercial proposals to customers'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'propal_advance';
-		$this->rights[$r][5] = 'send';
+		$this->rights[$r] = array(
+			0 => 25, // id of the permission
+			1 => 'Send commercial proposals to customers', // permission label
+			2 => 'd', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'propal_advance',
+			5 => 'send'
+		);
 
 		$r++;
-		$this->rights[$r][0] = 26; // id de la permission
-		$this->rights[$r][1] = 'Close commercial proposals'; // Set proposal to signed or refused
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'propal_advance';
-		$this->rights[$r][5] = 'close';
+		$this->rights[$r] = array(
+			0 => 26, // id of the permission
+			1 => 'Close commercial proposals', // Set proposal to signed or refused
+			2 => 'd', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'propal_advance',
+			5 => 'close'
+		);
 
 		$r++;
-		$this->rights[$r][0] = 27; // id de la permission
-		$this->rights[$r][1] = 'Delete commercial proposals'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'supprimer';
+		$this->rights[$r] = array(
+			0 => 27, // id of the permission
+			1 => 'Delete commercial proposals', // permission label
+			2 => 'd', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'supprimer'
+		);
 
 		$r++;
-		$this->rights[$r][0] = 28; // id de la permission
-		$this->rights[$r][1] = 'Exporting commercial proposals and attributes'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'export';
+		$this->rights[$r] = array(
+			0 => 28, // id of the permission
+			1 => 'Exporting commercial proposals and attributes', // permission label
+			2 => 'r', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'export'
+		);
 
 		$r++;
-		$this->rights[$r][0] = 29; // id de la permission
-		$this->rights[$r][1] = 'Reopen commercial proposals'; // Set proposal to signed or refused
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
-		$this->rights[$r][4] = 'propal_advance';
-		$this->rights[$r][5] = 'reopen';
+		$this->rights[$r] = array(
+			0 => 29, // id of the permission
+			1 => 'Reopen commercial proposals', // Set proposal to signed or refused
+			2 => 'w', // type of the permission (deprecated)
+			3 => 0, // Is the permission a default permission
+			4 => 'propal_advance',
+			5 => 'reopen'
+		);
 
 		// Menus
 		//-------
@@ -204,11 +231,11 @@ class modPropale extends DolibarrModules
 		$this->export_label[$r] = 'ProposalsAndProposalsLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("propale", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'co.code'=>'CountryCode', 's.phone'=>'Phone',
-			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer",
-			'c.fk_soc'=>"IdCompany", 'c.datec'=>"DateCreation", 'c.datep'=>"DatePropal", 'c.fin_validite'=>"DateEndPropal",
-			'c.total_ht'=>"TotalHT", 'c.total_ttc'=>"TotalTTC",
-			'cir.label'=>'Source',
+			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'co.code' => 'CountryCode', 's.phone' => 'Phone',
+			's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 'c.rowid' => "Id", 'c.ref' => "Ref", 'c.ref_client' => "RefCustomer",
+			'c.fk_soc' => "IdCompany", 'c.datec' => "DateCreation", 'c.datep' => "DatePropal", 'c.fin_validite' => "DateEndPropal",
+			'c.total_ht' => "TotalHT", 'c.total_ttc' => "TotalTTC",
+			'cir.label' => 'Source',
 		);
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
@@ -218,18 +245,18 @@ class modPropale extends DolibarrModules
 			$this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array(
-			'c.fk_statut'=>'Status', 'c.note_public'=>"NotePublic", 'c.note_private'=>"NotePrivate", 'c.date_livraison'=>'DeliveryDate',
-			'c.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
-			'c.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin'));
+			'c.fk_statut' => 'Status', 'c.note_public' => "NotePublic", 'c.note_private' => "NotePrivate", 'c.date_livraison' => 'DeliveryDate',
+			'c.fk_user_author' => 'CreatedById', 'uc.login' => 'CreatedByLogin',
+			'c.fk_user_valid' => 'ValidatedById', 'uv.login' => 'ValidatedByLogin'));
 		if (isModEnabled("project")) {
 			$this->export_fields_array[$r]['pj.ref'] = 'ProjectRef';
 		}
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array(
-			'cd.rowid'=>'LineId', 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
-			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
+			'cd.rowid' => 'LineId', 'cd.description' => "LineDescription", 'cd.product_type' => 'TypeOfLineServiceOrProduct',
+			'cd.tva_tx' => "LineVATRate", 'cd.qty' => "LineQty", 'cd.total_ht' => "LineTotalHT", 'cd.total_tva' => "LineTotalVAT", 'cd.total_ttc' => "LineTotalTTC",
 		));
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array(
-			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
+			'p.rowid' => 'ProductId', 'p.ref' => 'ProductRef', 'p.label' => 'ProductLabel'
 		));
 		// Add multicompany field
 		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
@@ -246,27 +273,27 @@ class modPropale extends DolibarrModules
 		//	'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text'
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.nom'=>'Text', 'ps.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text',
-			's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_client'=>"Text", 'c.datec'=>"Date", 'c.datep'=>"Date", 'c.fin_validite'=>"Date",
-			'c.total_ht'=>"Numeric", 'c.total_ttc'=>"Numeric", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.note_private'=>"Text", 'c.date_livraison'=>'Date',
-			'pj.ref'=>'Text', 'cd.description'=>"Text", 'cd.product_type'=>'Boolean', 'cd.tva_tx'=>"Numeric", 'cd.qty'=>"Numeric", 'cd.total_ht'=>"Numeric",
-			'cd.total_tva'=>"Numeric", 'cd.total_ttc'=>"Numeric", 'p.ref'=>'Text', 'p.label'=>'Text',
-			'c.entity'=>'List:entity:label:rowid',
-			'cir.label'=>'Text',
+			's.nom' => 'Text', 'ps.nom' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'co.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text',
+			's.ape' => 'Text', 's.idprof4' => 'Text', 'c.ref' => "Text", 'c.ref_client' => "Text", 'c.datec' => "Date", 'c.datep' => "Date", 'c.fin_validite' => "Date",
+			'c.total_ht' => "Numeric", 'c.total_ttc' => "Numeric", 'c.fk_statut' => 'Status', 'c.note_public' => "Text", 'c.note_private' => "Text", 'c.date_livraison' => 'Date',
+			'pj.ref' => 'Text', 'cd.description' => "Text", 'cd.product_type' => 'Boolean', 'cd.tva_tx' => "Numeric", 'cd.qty' => "Numeric", 'cd.total_ht' => "Numeric",
+			'cd.total_tva' => "Numeric", 'cd.total_ttc' => "Numeric", 'p.ref' => 'Text', 'p.label' => 'Text',
+			'c.entity' => 'List:entity:label:rowid',
+			'cir.label' => 'Text',
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'co.code'=>'company', 's.phone'=>'company',
-			's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"propal", 'c.ref'=>"propal", 'c.ref_client'=>"propal",
-			'c.fk_soc'=>"propal", 'c.datec'=>"propal", 'c.datep'=>"propal", 'c.fin_validite'=>"propal", 'c.total_ht'=>"propal",
-			'c.total_ttc'=>"propal", 'c.fk_statut'=>"propal", 'c.note_public'=>"propal", 'c.note_private'=>"propal", 'c.date_livraison'=>"propal",
-			'c.fk_user_author'=>'user', 'uc.login'=>'user',
-			'c.fk_user_valid'=>'user', 'uv.login'=>'user',
-			'pj.ref'=>'project',
-			'cd.rowid'=>'propal_line',
-			'cd.description'=>"propal_line", 'cd.product_type'=>'propal_line', 'cd.tva_tx'=>"propal_line", 'cd.qty'=>"propal_line",
-			'cd.total_ht'=>"propal_line", 'cd.total_tva'=>"propal_line", 'cd.total_ttc'=>"propal_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
+			's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'co.code' => 'company', 's.phone' => 'company',
+			's.siren' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.siret' => 'company', 'c.rowid' => "propal", 'c.ref' => "propal", 'c.ref_client' => "propal",
+			'c.fk_soc' => "propal", 'c.datec' => "propal", 'c.datep' => "propal", 'c.fin_validite' => "propal", 'c.total_ht' => "propal",
+			'c.total_ttc' => "propal", 'c.fk_statut' => "propal", 'c.note_public' => "propal", 'c.note_private' => "propal", 'c.date_livraison' => "propal",
+			'c.fk_user_author' => 'user', 'uc.login' => 'user',
+			'c.fk_user_valid' => 'user', 'uv.login' => 'user',
+			'pj.ref' => 'project',
+			'cd.rowid' => 'propal_line',
+			'cd.description' => "propal_line", 'cd.product_type' => 'propal_line', 'cd.tva_tx' => "propal_line", 'cd.qty' => "propal_line",
+			'cd.total_ht' => "propal_line", 'cd.total_tva' => "propal_line", 'cd.total_ttc' => "propal_line", 'p.rowid' => 'product', 'p.ref' => 'product', 'p.label' => 'product'
 		);
-		$this->export_dependencies_array[$r] = array('propal_line'=>'cd.rowid', 'product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_dependencies_array[$r] = array('propal_line' => 'cd.rowid', 'product' => 'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		$keyforselect = 'propal';
 		$keyforelement = 'propal';
 		$keyforaliasextra = 'extra';
@@ -321,7 +348,7 @@ class modPropale extends DolibarrModules
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'propal', 'extra' => MAIN_DB_PREFIX.'propal_extrafields');
-		$this->import_tables_creator_array[$r] = array('c'=>'fk_user_author'); // Fields to store import user id
+		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
 			'c.ref' => 'Ref*',
 			'c.ref_client' => 'RefCustomer',
@@ -380,14 +407,14 @@ class modPropale extends DolibarrModules
 			'c.multicurrency_total_ttc' => '0'
 		];
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-		$this->import_updatekeys_array[$r] = array('c.ref'=>'Ref');
+		$this->import_updatekeys_array[$r] = array('c.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
-				'rule'=>'getrefifauto',
-				'class'=>(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
-				'path'=>"/core/modules/propale/".(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
-				'classobject'=>'Propal',
-				'pathobject'=>'/comm/propal/class/propal.class.php',
+				'rule' => 'getrefifauto',
+				'class' => (!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
+				'path' => "/core/modules/propale/".(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
+				'classobject' => 'Propal',
+				'pathobject' => '/comm/propal/class/propal.class.php',
 			),
 			'c.fk_soc' => array(
 				'rule' => 'fetchidfromref',
@@ -475,10 +502,10 @@ class modPropale extends DolibarrModules
 		$this->import_updatekeys_array[$r] = array('cd.fk_propal' => 'Quotation Id', 'cd.fk_product' => 'Product Id');
 		$this->import_convertvalue_array[$r] = array(
 			'cd.fk_propal' => array(
-				'rule'=>'fetchidfromref',
-				'file'=>'/comm/propal/class/propal.class.php',
-				'class'=>'Propal',
-				'method'=>'fetch'
+				'rule' => 'fetchidfromref',
+				'file' => '/comm/propal/class/propal.class.php',
+				'class' => 'Propal',
+				'method' => 'fetch'
 			)
 		);
 	}
