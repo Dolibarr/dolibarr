@@ -113,6 +113,16 @@ class modPropale extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$this->const[$r][0] = "PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = getRandomPassword(true);
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+
+
+
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
 		$this->const[$r][2] = "__(Draft)__";
 		$this->const[$r][3] = 'Watermark to show on draft proposals';

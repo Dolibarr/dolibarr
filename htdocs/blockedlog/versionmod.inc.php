@@ -31,5 +31,5 @@ define('DOLCERT_VERSION', '2.0.0');
 // Set to 0 for standard version or if you don't want to use the certification because you chosen to comply the law by using an attestation of an IT provider that guarantee
 //          the the software is compliant. WARNING: In this case, you must find an IT company that give you the attestation of conformity.
 if (!defined('CERTIF_LNE')) {
-	define('CERTIF_LNE', '1');
+	define('CERTIF_LNE', '2');
 }

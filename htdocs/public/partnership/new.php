@@ -430,11 +430,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN()) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE()) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paybox') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
@@ -445,11 +441,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paypal') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
@@ -460,11 +452,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'stripe') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.$partnership->ref;
@@ -475,11 +463,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} else {
 						dol_print_error(null, "Autosubscribe form is setup to ask an online payment for a not managed online payment");

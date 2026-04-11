@@ -486,13 +486,13 @@ class Expedition extends CommonObject
 		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
-		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
+		$sql .= ", ".($this->fk_delivery_address > 0 ? ((int) $this->fk_delivery_address) : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql .= ", ".(is_numeric($this->weight) ? $this->weight : 'NULL');
-		$sql .= ", ".(is_numeric($this->sizeS) ? $this->sizeS : 'NULL'); // TODO Should use this->trueDepth
-		$sql .= ", ".(is_numeric($this->sizeW) ? $this->sizeW : 'NULL'); // TODO Should use this->trueWidth
-		$sql .= ", ".(is_numeric($this->sizeH) ? $this->sizeH : 'NULL'); // TODO Should use this->trueHeight
+		$sql .= ", ".(is_numeric($this->weight) ? (float) $this->weight : 'NULL');
+		$sql .= ", ".(is_numeric($this->sizeS) ? (float) $this->sizeS : 'NULL'); // TODO Should use this->trueDepth
+		$sql .= ", ".(is_numeric($this->sizeW) ? (float) $this->sizeW : 'NULL'); // TODO Should use this->trueWidth
+		$sql .= ", ".(is_numeric($this->sizeH) ? (float) $this->sizeH : 'NULL'); // TODO Should use this->trueHeight
 		$sql .= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
 		$sql .= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -1397,6 +1397,7 @@ class Expedition extends CommonObject
 			$this->line->element_type = $element_type;
 			$this->line->fk_product = $fk_product;
 			$this->line->description = $description;
+			$this->line->desc = $description;
 			$this->line->fk_parent = $fk_parent;
 			$this->line->qty = (float) $qty;
 			$this->line->fk_unit = $fk_unit;
@@ -1684,24 +1685,24 @@ class Expedition extends CommonObject
 		$sql .= " ref = ".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext = ".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " ref_customer = ".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
-		$sql .= " fk_soc = ".(isset($this->socid) ? $this->socid : "null").",";
+		$sql .= " fk_soc = ".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " date_creation = ".(dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
-		$sql .= " fk_user_author = ".(isset($this->fk_user_author) ? $this->fk_user_author : "null").",";
+		$sql .= " fk_user_author = ".(isset($this->fk_user_author) ? ((int) $this->fk_user_author) : "null").",";
 		$sql .= " date_valid = ".(dol_strlen($this->date_valid) != 0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
-		$sql .= " fk_user_valid = ".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
+		$sql .= " fk_user_valid = ".(isset($this->fk_user_valid) ? ((int) $this->fk_user_valid) : "null").",";
 		$sql .= " date_expedition = ".(dol_strlen($this->date_shipping) != 0 ? "'".$this->db->idate($this->date_shipping)."'" : 'null').",";
 		$sql .= " date_delivery = ".(dol_strlen($this->date_delivery) != 0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
-		$sql .= " fk_address = ".(isset($this->fk_delivery_address) ? $this->fk_delivery_address : "null").",";
-		$sql .= " fk_shipping_method = ".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";
+		$sql .= " fk_address = ".(isset($this->fk_delivery_address) ? ((int) $this->fk_delivery_address) : "null").",";
+		$sql .= " fk_shipping_method = ".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? ((int) $this->shipping_method_id) : "null").",";
 		$sql .= " tracking_number = ".(isset($this->tracking_number) ? "'".$this->db->escape($this->tracking_number)."'" : "null").",";
-		$sql .= " fk_statut = ".(isset($this->status) ? $this->status : "null").",";
-		$sql .= " fk_projet = ".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " height = ".(($this->trueHeight != '') ? $this->trueHeight : "null").",";
-		$sql .= " width = ".(($this->trueWidth != '') ? $this->trueWidth : "null").",";
-		$sql .= " size_units = ".(isset($this->size_units) ? $this->size_units : "null").",";
-		$sql .= " size = ".(($this->trueDepth != '') ? $this->trueDepth : "null").",";
-		$sql .= " weight_units = ".(isset($this->weight_units) ? $this->weight_units : "null").",";
-		$sql .= " weight = ".(($this->trueWeight != '') ? $this->trueWeight : "null").",";
+		$sql .= " fk_statut = ".(isset($this->status) ? ((int) $this->status) : "null").",";
+		$sql .= " fk_projet = ".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " height = ".(($this->trueHeight != '') ? ((float) $this->trueHeight) : "null").",";
+		$sql .= " width = ".(($this->trueWidth != '') ? ((float) $this->trueWidth) : "null").",";
+		$sql .= " size_units = ".(isset($this->size_units) ? ((int) $this->size_units) : "null").",";
+		$sql .= " size = ".(($this->trueDepth != '') ? ((float) $this->trueDepth) : "null").",";
+		$sql .= " weight_units = ".(isset($this->weight_units) ? ((int) $this->weight_units) : "null").",";
+		$sql .= " weight = ".(($this->trueWeight != '') ? ((float) $this->trueWeight) : "null").",";
 		$sql .= " note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf = ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";

@@ -10284,6 +10284,8 @@ class Form
 		global $action;
 		global $db, $user;	// Will be used into tpl
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$object->fetchObjectLinked();
 
 		// Bypass the default method
@@ -10458,6 +10460,8 @@ class Form
 		global $conf, $langs, $hookmanager, $form;
 		global $action;
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		if (empty($form)) {
 			$form = new Form($this->db);
 		}
@@ -10467,23 +10471,34 @@ class Form
 		$listofidcompanytoscan = '';
 
 		if (!is_object($object->thirdparty)) {
-			$object->fetch_thirdparty();
+			if ($object->element == 'subscription' && isset($object->fk_adherent)) {
+				$subby = new Subscription($object->db);
+				$subby->fetch($object->id);
+				$adh = new Adherent($object->db);
+				//$fk_adherent = $object->fk_adherent;
+				// creating new subscription object only to fetch the adherent which obviously exists given the if statement above are Inefficient, but else phan complains
+				$fk_adherent = $subby->fk_adherent;
+				$adh->fetch($fk_adherent);
+				$thirdparty_id = $adh->fetch_thirdparty();
+			}
+		} else {
+			$thirdparty_id = $object->thirdparty->id;
 		}
 
 		$possiblelinks = array();
 
 		$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
 
-		if (is_object($object->thirdparty) && !empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-			$listofidcompanytoscan = (int) $object->thirdparty->id;
-			if (($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
+		if (!empty($thirdparty_id) && $thirdparty_id > 0) {
+			$listofidcompanytoscan = (int) $thirdparty_id;
+			if (is_object($object->thirdparty) && ($object->thirdparty->parent > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PARENT_IN_LINKTO')) {
 				$listofidcompanytoscan .= ',' . (int) $object->thirdparty->parent;
 			}
 			if (($object->fk_project > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO')) {
 				include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 				$tmpproject = new Project($this->db);
 				$tmpproject->fetch((int) $object->fk_project);
-				if ($tmpproject->socid > 0 && ($tmpproject->socid != $object->thirdparty->id)) {
+				if ($tmpproject->socid > 0 && ($tmpproject->socid != $thirdparty_id)) {
 					$listofidcompanytoscan .= ',' . (int) $tmpproject->socid;
 				}
 				unset($tmpproject);

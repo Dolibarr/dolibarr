@@ -16,22 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
- * $object (asset, assetmodel, ...)
- * $assetaccountancycodes
- * $action
- * $conf
- * $langs
- *
- * $parameters
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode.
  */
 
 /**
+ * @var Conf $conf
  * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
- * @var AssetDepreciationOptions $assetdepreciationoptions
  * @var Translate $langs
+ *
+ * @var Object $object		Asset, AssetModel, ...
+ * @var string $action
+ * @var array<string,mixed> $parameters
+ * @var AssetDepreciationOptions $assetdepreciationoptions
  */
 '
 @phan-var-force ?Form $form

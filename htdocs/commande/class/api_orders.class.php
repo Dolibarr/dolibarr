@@ -129,8 +129,8 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
 		}
-		if ($id == 0) {
-			throw new RestException(400, 'No order with id=0 can exist');
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
+			throw new RestException(400, 'No ID or Ref provided');
 		}
 		$result = $this->commande->fetch($id, $ref, $ref_ext);
 		if (!$result) {
