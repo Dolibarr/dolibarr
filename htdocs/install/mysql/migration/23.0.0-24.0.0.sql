@@ -177,7 +177,7 @@ UPDATE llx_rights_def SET perms = 'manage_advance' WHERE module = 'ticket' AND p
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
 UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
-UPDATE llx_document_model SET nom = 'sponge' WHERE nom = 'crabe' AND type = 'invoice'AND NOT EXISTS (SELECT nom, entity FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'sponge' AND type = 'invoice') as subquery WHERE subquery.entity = entity);
+UPDATE llx_document_model SET nom = 'sponge' WHERE nom = 'crabe' AND type = 'invoice' AND NOT EXISTS (SELECT nom, entity FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'sponge' AND type = 'invoice') as subquery WHERE subquery.entity = entity);
 
 ALTER TABLE llx_salary ADD COLUMN model_pdf varchar(255) DEFAULT NULL;
 

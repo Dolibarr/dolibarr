@@ -64,6 +64,11 @@ if (!$user->admin) {
  * Actions
  */
 
+if (getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR')) {	// If we are in mode for tax auditor
+	header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/blockedlog_archives.php');
+	exit;
+}
+
 if ($cancel && $origin == 'initmodule') {
 	header("Location: ".DOL_URL_ROOT."/admin/modules.php");
 	exit(0);
