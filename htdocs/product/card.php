@@ -419,7 +419,7 @@ if (empty($reshook)) {
 					$origin_stock = 0;
 					$dest_stock = 0;
 					$sql = "SELECT fk_product, SUM(reel) as qty FROM ".MAIN_DB_PREFIX."product_stock";
-					$sql .= " WHERE fk_product IN (".((int) $productOrigin->id).", ".((int) $object->id).")";
+					$sql .= " WHERE fk_product = ".((int) $productOrigin->id)." OR fk_product = ".((int) $object->id);
 					$sql .= " GROUP BY fk_product";
 					$resql = $db->query($sql);
 					if ($resql) {
