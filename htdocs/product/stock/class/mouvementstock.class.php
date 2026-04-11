@@ -1405,7 +1405,6 @@ class MouvementStock extends CommonObject
 
 		return $date;
 	}
-	
 	/**
 	 * Function used to replace a product id with another one.
 	 *

@@ -431,7 +431,6 @@ if (empty($reshook)) {
 							}
 						}
 					}
-				
 					// Merge stock quantities
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock (fk_product, fk_entrepot, reel)";
 					$sql .= " SELECT ".((int) $object->id).", ps.fk_entrepot, ps.reel";
@@ -443,7 +442,6 @@ if (empty($reshook)) {
 						setEventMessages($db->lasterror(), null, 'errors');
 					}
 				}
-				
 				// Recalculate PMP of destination as weighted average of both products
 				if (!$error) {
 					$total_stock = $dest_stock + $origin_stock;
