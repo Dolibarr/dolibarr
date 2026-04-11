@@ -1416,10 +1416,9 @@ class MouvementStock extends CommonObject
 	 */
 	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
 	{
-			$tables = array(
-					'stock_mouvement',
-			);
-
-			return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+		$tables = array(
+			'stock_mouvement',
+		);
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 }
