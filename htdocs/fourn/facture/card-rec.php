@@ -10,7 +10,7 @@
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1167,7 +1167,7 @@ if ($action == 'create') {
 		print $formconfirm;
 
 		$author = new User($db);
-		$author->fetch($object->user_author);
+		$author->fetch($object->user_creation_id);
 
 		$head = supplier_invoice_rec_prepare_head($object);
 
