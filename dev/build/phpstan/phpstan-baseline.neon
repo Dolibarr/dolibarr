@@ -2161,12 +2161,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/factureligne.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with non\-empty\-array\<mixed, mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/facture/list.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 2
