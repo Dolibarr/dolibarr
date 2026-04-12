@@ -1261,12 +1261,6 @@ parameters:
 			path: ../../../htdocs/comm/action/class/actioncomm.class.php
 
 		-
-			message: '#^Variable \$agenda_static might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/comm/action/class/actioncomm.class.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 2
