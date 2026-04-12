@@ -1,4 +1,4 @@
--- Copyright (C) 2024 Luca Fumagalli <luca.fuma@aol.it>
+-- Copyright (C) 2026		Luca Fumagalli				<luca.fuma@aol.it>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,15 +14,12 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_lezioni_pacchetto(
+CREATE TABLE llx_lezioni_pagamentiesterni(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	label varchar(255), 
-	amount double DEFAULT 25 NOT NULL, 
-	qty integer DEFAULT 5 NOT NULL, 
+	amount double NOT NULL, 
 	fk_soc integer, 
-	fk_project integer, 
 	description text, 
 	note_public text, 
 	note_private text, 
@@ -34,11 +31,8 @@ CREATE TABLE llx_lezioni_pacchetto(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	status integer NOT NULL, 
-	allievo integer NOT NULL, 
-	ore_usufruite integer NOT NULL, 
-	ore_rimanenti integer, 
-	stato_pacchetto integer NOT NULL, 
-	bank_account integer, 
-	bank_transaction integer
+	istruttore integer, 
+	datainizio date, 
+	datafine date
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

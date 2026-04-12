@@ -41,6 +41,10 @@ CREATE TABLE llx_lezioni_lezione(
 	compensoistruttore double DEFAULT 15 NOT NULL, 
 	numero_allievi integer DEFAULT 1 NOT NULL, 
 	bank_transaction integer, 
-	luogo varchar(99)
+	luogo varchar(99), 
+	bank_account integer, 
+	coordinatore integer, 
+	compenso_coordinatore double, 
+	fk_pacchetto integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

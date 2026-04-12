@@ -16,7 +16,7 @@
 
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_lezioni_pacchetto ADD INDEX idx_lezioni_pacchetto_rowid (rowid);
-ALTER TABLE llx_lezioni_pacchetto ADD INDEX idx_lezioni_pacchetto_ref (ref);
+ALTER TABLE llx_lezioni_pacchetto ADD UNIQUE INDEX uk_lezioni_pacchetto_ref (ref);
 ALTER TABLE llx_lezioni_pacchetto ADD INDEX idx_lezioni_pacchetto_fk_soc (fk_soc);
 ALTER TABLE llx_lezioni_pacchetto ADD INDEX idx_lezioni_pacchetto_fk_project (fk_project);
 ALTER TABLE llx_lezioni_pacchetto ADD INDEX idx_lezioni_pacchetto_status (status);

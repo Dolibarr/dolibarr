@@ -305,7 +305,21 @@ class modLezioni extends DolibarrModules
 		$this->rights[$r][4] = 'pacchetto';
 		$this->rights[$r][5] = 'delete';
 		$r++;
-		
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (2 * 10) + 0 + 1);
+		$this->rights[$r][1] = 'Read PagamentoEsterno object of Lezioni';
+		$this->rights[$r][4] = 'pagamentiesterni';
+		$this->rights[$r][5] = 'read';
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (2 * 10) + 1 + 1);
+		$this->rights[$r][1] = 'Create/Update PagamentoEsterno object of Lezioni';
+		$this->rights[$r][4] = 'pagamentiesterni';
+		$this->rights[$r][5] = 'write';
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', (2 * 10) + 2 + 1);
+		$this->rights[$r][1] = 'Delete PagamentoEsterno object of Lezioni';
+		$this->rights[$r][4] = 'pagamentiesterni';
+		$this->rights[$r][5] = 'delete';
+		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -330,22 +344,6 @@ class modLezioni extends DolibarrModules
 		);
 		/* END MODULEBUILDER TOPMENU */
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */
-		/* LEFTMENU HOME */
-		$this->menu[$r++]=array(
-			 'fk_menu' => 'fk_mainmenu=lezioni',
-			 'type' => 'left',
-			 'titre' => 'Home',
-			 'mainmenu' => 'lezioni',
-			 'leftmenu' => 'home',
-			 'url' => '/lezioni/lezioniindex.php?',
-			 'langs' => 'lezioni@lezioni',
-			 'position' => 1000,
-			 'enabled' => 'isModEnabled(\'lezioni\')',
-			 'perms' => '$user->hasRight(\'lezioni\', \'lezione\', \'read\')',
-			 'target' => '',
-			 'user' => 2,
-		);
-		/* END LEFTMENU HOME */
 		/* LEFTMENU LEZIONI */
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=lezioni',
@@ -353,7 +351,7 @@ class modLezioni extends DolibarrModules
 			 'titre' => 'Lezioni',
 			 'mainmenu' => 'lezioni',
 			 'leftmenu' => 'lezioni',
-			 'url' => '/lezioni/lezione_list.php?sortfield=t.datalezione&sortorder=desc&',
+			 'url' => '/lezioni/lezione_list.php?',
 			 'langs' => 'lezioni@lezioni',
 			 'position' => 1000,
 			 'enabled' => 'isModEnabled(\'lezioni\')',
@@ -369,7 +367,7 @@ class modLezioni extends DolibarrModules
 			 'titre' => 'Lista Lezioni',
 			 'mainmenu' => 'lezioni',
 			 'leftmenu' => 'lezione_list',
-			 'url' => '/lezioni/lezione_list.php?sortfield=t.datalezione&sortorder=desc',
+			 'url' => '/lezioni/lezione_list.php',
 			 'langs' => 'lezioni@lezioni',
 			 'position' => 1000,
 			 'enabled' => 'isModEnabled(\'lezioni\')',
@@ -401,7 +399,7 @@ class modLezioni extends DolibarrModules
 			 'titre' => 'Pacchetti Lezioni',
 			 'mainmenu' => 'lezioni',
 			 'leftmenu' => 'pacchetto',
-			 'url' => '/lezioni/pacchetto_list.php?sortfield=t.date_creation&sortorder=desc&',
+			 'url' => '/lezioni/pacchetto_list.php?',
 			 'langs' => 'lezioni@lezioni',
 			 'position' => 1000,
 			 'enabled' => 'isModEnabled(\'lezioni\')',
@@ -417,7 +415,7 @@ class modLezioni extends DolibarrModules
 			 'titre' => 'Lista Pacchetti',
 			 'mainmenu' => 'lezioni',
 			 'leftmenu' => 'lezioni_pacchetto_list',
-			 'url' => '/lezioni/pacchetto_list.php?sortfield=t.date_creation&sortorder=desc',
+			 'url' => '/lezioni/pacchetto_list.php',
 			 'langs' => 'lezioni@lezioni',
 			 'position' => 1000,
 			 'enabled' => 'isModEnabled(\'lezioni\')',
@@ -443,6 +441,54 @@ class modLezioni extends DolibarrModules
 		);
 		/* END LEFTMENU REGISTRA NUOVO PACCHETTO */
 
+		/* LEFTMENU PAGAMENTI ESTERNI */
+		$this->menu[$r++]=array(
+			 'fk_menu' => 'fk_mainmenu=lezioni',
+			 'type' => 'left',
+			 'titre' => 'Pagamenti Esterni',
+			 'mainmenu' => 'lezioni',
+			 'leftmenu' => 'pagamentiesterni',
+			 'url' => '/lezioni/pagamentiesterni_list.php?',
+			 'langs' => 'lezioni@lezioni',
+			 'position' => 1000,
+			 'enabled' => 'isModEnabled(\'lezioni\')',
+			 'perms' => '$user->hasRight(\'lezioni\', \'pagamentiesterni\', \'read\')',
+			 'target' => '',
+			 'user' => 2,
+		);
+		/* END LEFTMENU PAGAMENTI ESTERNI */
+		/* LEFTMENU LISTA PAGAMENTI ESTERNI */
+		$this->menu[$r++]=array(
+			 'fk_menu' => 'fk_mainmenu=lezioni,fk_leftmenu=pagamentiesterni',
+			 'type' => 'left',
+			 'titre' => 'Lista Pagamenti Esterni',
+			 'mainmenu' => 'lezioni',
+			 'leftmenu' => 'lezioni_pagamentiesterni_list',
+			 'url' => '/lezioni/pagamentiesterni_list.php',
+			 'langs' => 'lezioni@lezioni',
+			 'position' => 1000,
+			 'enabled' => 'isModEnabled(\'lezioni\')',
+			 'perms' => '$user->hasRight(\'lezioni\', \'pagamentiesterni\', \'read\')',
+			 'target' => '',
+			 'user' => 2,
+		);
+		/* END LEFTMENU LISTA PAGAMENTI ESTERNI */
+		/* LEFTMENU REGISTRA NUOVO PAGAMENTO ESTERNO */
+		$this->menu[$r++]=array(
+			 'fk_menu' => 'fk_mainmenu=lezioni,fk_leftmenu=pagamentiesterni',
+			 'type' => 'left',
+			 'titre' => 'Registra nuovo pagamento esterno',
+			 'mainmenu' => 'lezioni',
+			 'leftmenu' => 'lezioni_pagamentiesterni_new',
+			 'url' => '/lezioni/pagamentiesterni_card.php?action=create',
+			 'langs' => 'lezioni@lezioni',
+			 'position' => 1000,
+			 'enabled' => 'isModEnabled(\'lezioni\')',
+			 'perms' => '$user->hasRight(\'lezioni\', \'pagamentiesterni\', \'write\')',
+			 'target' => '',
+			 'user' => 2,
+		);
+		/* END LEFTMENU REGISTRA NUOVO PAGAMENTO ESTERNO */
 
 
 		/* END MODULEBUILDER LEFTMENU MYOBJECT */

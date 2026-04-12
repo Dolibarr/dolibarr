@@ -34,12 +34,12 @@ include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  * Warning: for the box to be detected correctly by dolibarr,
  * the filename should be the lowercase classname
  */
-class lezioniwidget1 extends ModeleBoxes
+class Lezioniwidget1 extends ModeleBoxes
 {
 	/**
 	 * @var string Alphanumeric ID. Populated by the constructor.
 	 */
-	public $boxcode = "lezionibox";
+	public $boxcode = "lezioni_widget1";
 
 	/**
 	 * @var string Box icon (in configuration page)
@@ -51,11 +51,21 @@ class lezioniwidget1 extends ModeleBoxes
 	 * @var string Box label (in configuration page)
 	 */
 	public $boxlabel;
+	/**
+	 * @var string Version of widget (helpful for admin list)
+	 */
+	public $version = 'dolibarr';
 
 	/**
 	 * @var string[] Module dependencies
 	 */
 	public $depends = array('lezioni');
+
+	/**
+	 * Visibility flags
+	 */
+	public $enabled = 1;
+	public $hidden = false;
 
 	/**
 	 * @var DoliDb Database handler

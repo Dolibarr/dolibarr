@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023  Frédéric France          <frederic.france@netlogic.fr>
- * Copyright (C) 2024 Luca Fumagalli <luca.fuma@aol.it>
+/* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2026		Luca Fumagalli				<luca.fuma@aol.it>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /**
- * \file        class/pacchetto.class.php
+ * \file        class/pagamentiesterni.class.php
  * \ingroup     lezioni
- * \brief       This file is a CRUD class file for Pacchetto (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for PagamentiEsterni (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -29,40 +29,51 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for Pacchetto
+ * Class for PagamentiEsterni
  */
-class Pacchetto extends CommonObject
+class PagamentiEsterni extends CommonObject
 {
 	/**
-	 * @var string ID of module.
+	 * @var string 		ID of module.
 	 */
 	public $module = 'lezioni';
 
 	/**
-	 * @var string ID to identify managed object.
+	 * @var string 		ID to identify managed object.
 	 */
-	public $element = 'pacchetto';
+	public $element = 'pagamentiesterni';
 
 	/**
-	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
 	 */
-	public $table_element = 'lezioni_pacchetto';
+	public $TRIGGER_PREFIX = 'LEZIONI_MYOBJECT';	// Will be used to build trgiger keys 'LEZIONI_MYOBJECT_MODIFY', ...
 
 	/**
-	 * @var int  	Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var string 		Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
 	 */
-	public $ismultientitymanaged = 0;
+	public $table_element = 'lezioni_pagamentiesterni';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 * @var string 		If permission must be checked with hasRight('lezioni', 'read') and not hasright('lezioni', 'pagamentiesterni', 'read'), you can uncomment this line
 	 */
-	public $isextrafieldmanaged = 1;
+	//public $element_for_permission = 'lezioni';
 
 	/**
-	 * @var string String with name of icon for pacchetto. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'pacchetto@lezioni' if picto is file 'img/object_pacchetto.png'.
+	 * @var string 		String with name of icon for pagamentiesterni. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'pagamentiesterni@lezioni' if picto is file 'img/object_pagamentiesterni.png'.
 	 */
 	public $picto = 'fa-file';
+
+	/**
+	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
+
+	/**
+	 * @var int<0,1>|string		Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
+	 */
+	public $ismultientitymanaged = 0;
 
 
 	const STATUS_DRAFT = 0;
@@ -72,7 +83,7 @@ class Pacchetto extends CommonObject
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
-	 *  	'select' (list of values are in 'options'),
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
 	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
 	 *  	'chkbxlst:...',
 	 *  	'varchar(x)',
@@ -80,29 +91,33 @@ class Pacchetto extends CommonObject
 	 *   	'double(24,8)', 'real', 'price', 'stock',
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
-	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *  	'email', 'phone', 'url', 'password', 'ip'
 	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
+	 *  'langfile' the key of the language file for translation.
+	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'placeholder' to set the placeholder of a varchar field.
 	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code like the constructor of the class.
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -115,16 +130,13 @@ class Pacchetto extends CommonObject
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "0", "noteditable" => "1", "index" => "1", "css" => "left", "comment" => "Id"),
-		"ref" => array("type" => "varchar(128)", "label" => "Ref", "enabled" => "1", 'position' => 20, 'notnull' => 1, "visible" => "4", "noteditable" => "1", "default" => "(PROV)", "index" => "1", "searchall" => "1", "showoncombobox" => "1", "validate" => "1", "comment" => "Reference of object"),
 		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "1", "alwayseditable" => "1", "searchall" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "help" => "Help text", "showoncombobox" => "2", "validate" => "1",),
-		"amount" => array("type" => "price", "label" => "Prezzo Totale", "enabled" => "1", 'position' => 40, 'notnull' => 1, "visible" => "1", "default" => "25", "isameasure" => "1", "help" => "Prezzo Totale Del Pacchetto", "validate" => "1",),
-		"qty" => array("type" => "integer", "label" => "Totale Ore", "enabled" => "1", 'position' => 45, 'notnull' => 1, "visible" => "1", "default" => "5", "isameasure" => "1", "css" => "maxwidth75imp", "help" => "Totale Ore Pacchetto", "validate" => "1",),
-		"fk_soc" => array("type" => "integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))", "label" => "ThirdParty", "picto" => "company", "enabled" => "isModEnabled('societe')", 'position' => 50, 'notnull' => -1, "visible" => "1", "index" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "help" => "OrganizationEventLinkToThirdParty", "validate" => "1",),
-		"fk_project" => array("type" => "integer:Project:projet/class/project.class.php:1", "label" => "Project", "picto" => "project", "enabled" => "isModEnabled('project')", 'position' => 52, 'notnull' => -1, "visible" => "-1", "index" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "validate" => "1",),
+		"amount" => array("type" => "price", "label" => "Amount", "enabled" => "1", 'position' => 40, 'notnull' => 1, "visible" => "1", "default" => "0", "isameasure" => "1", "help" => "Help text for amount", "validate" => "1",),
+		"fk_soc" => array("type" => "integer:societe:societe/class/societe.class.php:1:(status:=:1)", "label" => "Da", "enabled" => "isModEnabled('societe')", 'position' => 50, 'notnull' => -1, "visible" => "1", "index" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "help" => "Società che ha erogato il pagamento", "validate" => "1",),
 		"description" => array("type" => "text", "label" => "Description", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "3", "validate" => "1",),
 		"note_public" => array("type" => "html", "label" => "NotePublic", "enabled" => "1", 'position' => 61, 'notnull' => 0, "visible" => "0", "cssview" => "wordbreak", "validate" => "1",),
 		"note_private" => array("type" => "html", "label" => "NotePrivate", "enabled" => "1", 'position' => 62, 'notnull' => 0, "visible" => "0", "cssview" => "wordbreak", "validate" => "1",),
-		"date_creation" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "5",),
+		"date_creation" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "-2",),
 		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 501, 'notnull' => 0, "visible" => "-2",),
 		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", "enabled" => "1", 'position' => 510, 'notnull' => 1, "visible" => "-2", "csslist" => "tdoverflowmax150",),
 		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "picto" => "user", "enabled" => "1", 'position' => 511, 'notnull' => -1, "visible" => "-2", "csslist" => "tdoverflowmax150",),
@@ -132,20 +144,14 @@ class Pacchetto extends CommonObject
 		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 1000, 'notnull' => -1, "visible" => "-2",),
 		"model_pdf" => array("type" => "varchar(255)", "label" => "Model pdf", "enabled" => "1", 'position' => 1010, 'notnull' => -1, "visible" => "0",),
 		"status" => array("type" => "integer", "label" => "Status", "enabled" => "1", 'position' => 2000, 'notnull' => 1, "visible" => "1", "index" => "1", "arrayofkeyval" => array("0" => "Bozza", "1" => "Convalidato", "9" => "Annullato"), "validate" => "1",),
-		"allievo" => array("type" => "integer:member:adherents/class/adherent.class.php:1", "label" => "Allievo", "enabled" => "1", 'position' => 31, 'notnull' => 1, "visible" => "1", "index" => "1", "searchall" => "1",),
-		"ore_usufruite" => array("type" => "integer", "label" => "Ore Usufruite", "enabled" => "1", 'position' => 46, 'notnull' => 1, "visible" => "1", "isameasure" => "1", "help" => "Ore di lezione utilizzate",),
-		"ore_rimanenti" => array("type" => "integer", "label" => "Ore Rimanenti", "enabled" => "1", 'position' => 47, 'notnull' => 0, "visible" => "1", "noteditable" => "1", "searchall" => "1", "isameasure" => "1", "help" => "Ore di lezione rimanentii (campo auto-calcolato durante il salvataggio))",),
-		"stato_pacchetto" => array("type" => "integer", "label" => "Stato Pacchetto", "enabled" => "1", 'position' => 48, 'notnull' => 1, "visible" => "1", "noteditable" => "1", "index" => "1", "searchall" => "1", "help" => "Stato del pacchetto lezioni (Campo auto-calcolato durante il salvataggio)", "arrayofkeyval" => array("0" => "In Corso", "1" => "Terminato"), "comment" => "Stato del pacchetto lezioni"),
-		"bank_account" => array("type" => "integer", "label" => "bank_account", "enabled" => "1", 'position' => 53, 'notnull' => 0, "visible" => "0", "help" => "Id Conto Bancario", "comment" => "Riferimento al conto bancario del pagamento"),
-		"bank_transaction" => array("type" => "integer", "label" => "Transazione Bancaria", "enabled" => "1", 'position' => 54, 'notnull' => 0, "visible" => "0", "help" => "Id transazione bancaria del pagamento", "comment" => "Transazione bancaria associata al pagamento pacchetto"),
+		"istruttore" => array("type" => "integer:member:adherents/class/adherent.class.php:0:((fk_adherent_type:=:2) or (fk_adherent_type:=:3) or (fk_adherent_type:=:4))", "label" => "Istruttore", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "1", "searchall" => "1",),
+		"datainizio" => array("type" => "date", "label" => "Data Inizio", "enabled" => "1", 'position' => 32, 'notnull' => 0, "visible" => "1", "searchall" => "1", "help" => "Data inizio del pagamento esterno (solitamente il primo del mese))",),
+		"datafine" => array("type" => "date", "label" => "Data Fine", "enabled" => "1", 'position' => 33, 'notnull' => 0, "visible" => "1", "searchall" => "1", "help" => "Data di fine validità del pagamento esterno (solitamente la fine del mese))",),
 	);
 	public $rowid;
-	public $ref;
 	public $label;
 	public $amount;
-	public $qty;
 	public $fk_soc;
-	public $fk_project;
 	public $description;
 	public $note_public;
 	public $note_private;
@@ -157,12 +163,9 @@ class Pacchetto extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
-	public $allievo;
-	public $ore_usufruite;
-	public $ore_rimanenti;
-	public $stato_pacchetto;
-	public $bank_account;
-	public $bank_transaction;
+	public $istruttore;
+	public $datainizio;
+	public $datafine;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -171,32 +174,33 @@ class Pacchetto extends CommonObject
 	// /**
 	//  * @var string    Name of subtable line
 	//  */
-	// public $table_element_line = 'lezioni_pacchettoline';
+	// public $table_element_line = 'lezioni_pagamentiesterniline';
 
 	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
+	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
 	//  */
-	// public $fk_element = 'fk_pacchetto';
+	// public $fk_element = 'fk_pagamentiesterni';
 
 	// /**
 	//  * @var string    Name of subtable class that manage subtable lines
 	//  */
-	// public $class_element_line = 'Pacchettoline';
+	// public $class_element_line = 'PagamentiEsterniline';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
 	//  */
-	// protected $childtables = array('mychildtable' => array('name'=>'Pacchetto', 'fk_element'=>'fk_pacchetto'));
+	// protected $childtables = array('mychildtable' => array('name'=>'PagamentiEsterni', 'fk_element'=>'fk_pagamentiesterni'));
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
+	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
+	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
 	//  */
-	// protected $childtablesoncascade = array('lezioni_pacchettodet');
+	// protected $childtablesoncascade = array('lezioni_pagamentiesternidet');
 
 	// /**
-	//  * @var PacchettoLine[]     Array of subtable lines
+	//  * @var PagamentiEsterniLine[]     Array of subtable lines
 	//  */
 	// public $lines = array();
 
@@ -205,11 +209,11 @@ class Pacchetto extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param	DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -221,11 +225,11 @@ class Pacchetto extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('lezioni', 'pacchetto', 'read')) {
+		/*if ($user->hasRight('lezioni', 'pagamentiesterni', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
-	    $this->fields['ore_rimanenti']['noteditable'] = 1;
+
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
 			if (isset($val['enabled']) && empty($val['enabled'])) {
@@ -248,32 +252,30 @@ class Pacchetto extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param	User		$user		User that creates
+	 * @param	int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int<-1,max>				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
-	    //custom calculations
-		$this->ore_rimanenti = $this->qty - $this->ore_usufruite;
-		if($this->ore_rimanenti <=0)
-		{
-		    $this->stato_pacchetto = 1;
-		}
-		
-		$resultcreate = $this->createCommon($user, $notrigger);
+		$result = $this->createCommon($user, $notrigger);
 
-		//$resultvalidate = $this->validate($user, $notrigger);
+		// uncomment lines below if you want to validate object after creation
+		// if ($result > 0) {
+		// $this->fetch($this->id); // needed to retrieve some fields (ie date_creation for masked ref)
+		// $resultupdate = $this->validate($user, $notrigger);
+		// if ($resultupdate < 0) { return $resultupdate; }
+		// }
 
-		return $resultcreate;
+		return $result;
 	}
 
 	/**
 	 * Clone an object into another one
 	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @param	User 	$user		User that creates
+	 * @param	int 	$fromid		Id of object to clone
+	 * @return	self|int<-1,-1>		New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -348,7 +350,7 @@ class Pacchetto extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+			if (!empty($object->socid) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->socid)) || (property_exists($this, 'socid') && ($this->socid == $object->socid)))) {	// @phpstan-ignore-line
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -370,11 +372,11 @@ class Pacchetto extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int    	$id   			Id object
-	 * @param 	string 	$ref  			Ref
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
-	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int    		$id   			Id object
+	 * @param	string 		$ref  			Ref
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int<0,1>	$nolines		0=Default to load lines, 1=No lines
+	 * @return	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
@@ -382,40 +384,39 @@ class Pacchetto extends CommonObject
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
 		}
-		//custom calculations
-		$this->ore_rimanenti = $this->qty - $this->ore_usufruite;
-		
 		return $result;
 	}
 
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines($noextrafields = 0)
 	{
 		$this->lines = array();
 
 		$result = $this->fetchLinesCommon('', $noextrafields);
-
 		return $result;
 	}
 
 
 	/**
-	 * Load list of objects in memory from the database. Using a fetchAll is a bad practice, instead try to forge you optimized and limited SQL request.
+	 * Load list of objects in memory from the database.
+	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
+	 * your own loop with start and stop pagination.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('mystringfield'=>'value', 'myintfield'=>4, 'customsql'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param	string		$sortorder	Sort Order
+	 * @param	string		$sortfield	Sort field
+	 * @param	int<0,max>	$limit		Limit the number of lines returned
+	 * @param	int<0,max>	$offset		Offset
+	 * @param	string		$filter		Filter as an Universal Search string.
+	 *                                  Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param	string		$filtermode	No longer used
+	 * @return	array<int,self>|int<-1,-1>	 <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -424,59 +425,26 @@ class Pacchetto extends CommonObject
 		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
-		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
 			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+		if (!empty($this->ismultientitymanaged) && (int) $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
+		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $this->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$columnName = preg_replace('/^t\./', '', $key);
-				if ($key === 'customsql') {
-					// Never use 'customsql' with a value from user input since it is injected as is. The value must be hard coded.
-					$sqlwhere[] = $value;
-					continue;
-				} elseif (isset($this->fields[$columnName])) {
-					$type = $this->fields[$columnName]['type'];
-					if (preg_match('/^integer/', $type)) {
-						if (is_int($value)) {
-							// single value
-							$sqlwhere[] = $key . " = " . intval($value);
-						} elseif (is_array($value)) {
-							if (empty($value)) {
-								continue;
-							}
-							$sqlwhere[] = $key . ' IN (' . $this->db->sanitize(implode(',', array_map('intval', $value))) . ')';
-						}
-						continue;
-					} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $key . " = '" . $this->db->idate($value) . "'";
-						continue;
-					}
-				}
 
-				// when the $key doesn't fall into the previously handled categories, we do as if the column were a varchar/text
-				if (is_array($value) && count($value)) {
-					$value = implode(',', array_map(function ($v) {
-						return "'" . $this->db->sanitize($this->db->escape($v)) . "'";
-					}, $value));
-					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, true) . ')';
-				} elseif (is_scalar($value)) {
-					if (strpos($value, '%') === false) {
-						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
-					} else {
-						$sqlwhere[] = $key . " LIKE '%" . $this->db->escape($this->db->escapeforlike($value)) . "%'";
-					}
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -496,6 +464,10 @@ class Pacchetto extends CommonObject
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
 
+				if (!empty($record->isextrafieldmanaged)) {
+					$record->fetch_optionals();
+				}
+
 				$records[$record->id] = $record;
 
 				$i++;
@@ -505,40 +477,32 @@ class Pacchetto extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
-
 	}
 
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param	User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
-	    //custom calculations
-		$this->ore_rimanenti = $this->qty - $this->ore_usufruite;
-		if($this->ore_rimanenti <=0)
-		{
-		    $this->stato_pacchetto = 1;
-		}
-		
 		return $this->updateCommon($user, $notrigger);
 	}
 
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param	User		$user		User that deletes
+	 * @param	int<0,1> 	$notrigger	0=launch triggers, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -547,12 +511,12 @@ class Pacchetto extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param	User		$user		User that delete
+	 *  @param	int			$idline		Id of line to delete
+	 *  @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return	int<-2,1>				>0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -566,13 +530,13 @@ class Pacchetto extends CommonObject
 	/**
 	 *	Validate object
 	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
+	 *	@param	User		$user		User making status change
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int<-1,1>				Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -580,12 +544,12 @@ class Pacchetto extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
-		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('lezioni', 'pacchetto', 'write'))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('lezioni', 'pacchetto_advance', 'validate')))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('lezioni', 'pagamentiesterni', 'write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('lezioni', 'pagamentiesterni_advance', 'validate')))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -597,17 +561,20 @@ class Pacchetto extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
 		if (!empty($num)) {
 			// Validate
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($num)."',";
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET ";
+			if (!empty($this->fields['ref'])) {
+				$sql .= " ref = '".$this->db->escape($num)."',";
+			}
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
@@ -641,15 +608,15 @@ class Pacchetto extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'pacchetto/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'pacchetto/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'pagamentiesterni/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'pagamentiesterni/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'pacchetto/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'pacchetto/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'pagamentiesterni/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'pagamentiesterni/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -659,15 +626,15 @@ class Pacchetto extends CommonObject
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->lezioni->dir_output.'/pacchetto/'.$oldref;
-				$dirdest = $conf->lezioni->dir_output.'/pacchetto/'.$newref;
+				$dirsource = $conf->lezioni->dir_output.'/pagamentiesterni/'.$oldref;
+				$dirdest = $conf->lezioni->dir_output.'/pagamentiesterni/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->lezioni->dir_output.'/pacchetto/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($conf->lezioni->dir_output.'/pagamentiesterni/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -699,9 +666,9 @@ class Pacchetto extends CommonObject
 	/**
 	 *	Set draft status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User		$user		Object user that modify
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<0,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -723,9 +690,9 @@ class Pacchetto extends CommonObject
 	/**
 	 *	Set cancel status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user		Object user that modify
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>				Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -747,9 +714,9 @@ class Pacchetto extends CommonObject
 	/**
 	 *	Set back to validated status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -771,9 +738,9 @@ class Pacchetto extends CommonObject
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
+	 * @param	array<string,string> 	$params 	Params to construct tooltip data
 	 * @since 	v18
-	 * @return 	array
+	 * @return	array{optimize?:string,picto?:string,ref?:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -782,9 +749,9 @@ class Pacchetto extends CommonObject
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("ShowPacchetto")];
+			return ['optimize' => $langs->trans("ShowPagamentiEsterni")];
 		}
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Pacchetto").'</u>';
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("PagamentiEsterni").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
@@ -792,20 +759,20 @@ class Pacchetto extends CommonObject
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (property_exists($this, 'label')) {
-			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+			$datas['label'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
 		return $datas;
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param  string  $option                     On what the link point to ('nolink', ...)
-	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
-	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	string  $option                     On what the link point to ('nolink', ...)
+	 *  @param	int     $notooltip                  1=Disable tooltip
+	 *  @param	string  $morecss                    Add more css on link
+	 *  @param	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @return	string                              String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -818,7 +785,7 @@ class Pacchetto extends CommonObject
 
 		$result = '';
 		$params = [
-			'id' => $this->id,
+			'id' => (string) $this->id,
 			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
 			'option' => $option,
 		];
@@ -832,38 +799,39 @@ class Pacchetto extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/lezioni/pacchetto_card.php', 1).'?id='.$this->id;
-
+		$baseurl = dol_buildpath('/lezioni/pagamentiesterni_card.php', 1);
+		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+			if ($add_save_lastsearch_values) {
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowPacchetto");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$label = $langs->trans("ShowPagamentiEsterni");
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -923,9 +891,9 @@ class Pacchetto extends CommonObject
 	/**
 	 *	Return a thumb for kanban views
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -966,7 +934,7 @@ class Pacchetto extends CommonObject
 	/**
 	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLabelStatus($mode = 0)
@@ -977,8 +945,8 @@ class Pacchetto extends CommonObject
 	/**
 	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param	int<0,6>	$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string				Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -989,9 +957,9 @@ class Pacchetto extends CommonObject
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       Label of status
+	 *  @param	int			$status		Id status
+	 *  @param	int<0,6>	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string					Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -999,6 +967,12 @@ class Pacchetto extends CommonObject
 		if (is_null($status)) {
 			return '';
 		}
+
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-status' => (int) $status
+		)));
+
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
@@ -1017,32 +991,39 @@ class Pacchetto extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**
 	 *	Load the info information in the object
 	 *
-	 *	@param  int		$id       Id of object
+	 *	@param	int		$id       Id of object
 	 *	@return	void
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT rowid,";
-		$sql .= " date_creation as datec, tms as datem";
+		$sql = "SELECT t.rowid, t.date_creation as datec";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= ", GREATEST(t.tms, te.tms) as datem";
+		} else {
+			$sql .= ", t.tms as datem";
+		}
 		if (!empty($this->fields['date_validation'])) {
-			$sql .= ", date_validation as datev";
+			$sql .= ", t.date_validation as datev";
 		}
 		if (!empty($this->fields['fk_user_creat'])) {
-			$sql .= ", fk_user_creat";
+			$sql .= ", t.fk_user_creat";
 		}
 		if (!empty($this->fields['fk_user_modif'])) {
-			$sql .= ", fk_user_modif";
+			$sql .= ", t.fk_user_modif";
 		}
 		if (!empty($this->fields['fk_user_valid'])) {
-			$sql .= ", fk_user_valid";
+			$sql .= ", t.fk_user_valid";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
+		}
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -1061,10 +1042,10 @@ class Pacchetto extends CommonObject
 				if (!empty($this->fields['fk_user_valid'])) {
 					$this->user_validation_id = $obj->fk_user_valid;
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 				if (!empty($obj->datev)) {
-					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
+					$this->date_validation = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
 				}
 			}
 
@@ -1075,10 +1056,10 @@ class Pacchetto extends CommonObject
 	}
 
 	/**
-	 * Initialise object with example values
+	 * Initialize object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1086,20 +1067,20 @@ class Pacchetto extends CommonObject
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return	CommonObjectLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
 		$this->lines = array();
 
-		$objectline = new PacchettoLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_pacchetto = '.((int) $this->id)));
+		$objectline = new PagamentiEsterniLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_pagamentiesterni:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);
@@ -1113,7 +1094,7 @@ class Pacchetto extends CommonObject
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
-	 *  @return string      		Object free reference
+	 *  @return	string      		Object free reference
 	 */
 	public function getNextNumRef()
 	{
@@ -1121,7 +1102,7 @@ class Pacchetto extends CommonObject
 		$langs->load("lezioni@lezioni");
 
 		if (!getDolGlobalString('LEZIONI_MYOBJECT_ADDON')) {
-			$conf->global->LEZIONI_MYOBJECT_ADDON = 'mod_pacchetto_standard';
+			$conf->global->LEZIONI_MYOBJECT_ADDON = 'mod_pagamentiesterni_standard';
 		}
 
 		if (getDolGlobalString('LEZIONI_MYOBJECT_ADDON')) {
@@ -1136,16 +1117,17 @@ class Pacchetto extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/lezioni/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = $mybool || @include_once $dir.$file;
 			}
 
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+			if (!$mybool) {
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefPagamentiEsterni $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1168,17 +1150,17 @@ class Pacchetto extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param	int<0,1>	$hidedetails    Hide details of lines
+	 *  @param	int<0,1>	$hidedesc       Hide description
+	 *  @param	int<0,1>	$hideref        Hide ref
+	 *  @param	?array<string,string>  $moreparams     Array to provide more information
+	 *  @return	int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$includedocgeneration = 0;
@@ -1186,12 +1168,10 @@ class Pacchetto extends CommonObject
 		$langs->load("lezioni@lezioni");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_pacchetto';
-
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
+			} else {
+				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF', 'standard_pagamentiesterni');
 			}
 		}
 
@@ -1202,6 +1182,23 @@ class Pacchetto extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return validation test result for a field.
+	 * Need MAIN_ACTIVATE_VALIDATION_RESULT to be called.
+	 *
+	 * @param   array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:int<0,1>|string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  $fields Array of properties of field to show
+	 * @param	string  $fieldKey            Key of attribute
+	 * @param	string  $fieldValue          value of attribute
+	 * @return	bool 						Return false if fail, true on success, set $this->error for error message
+	 */
+	public function validateField($fields, $fieldKey, $fieldValue)
+	{
+		// Add your own validation rules here.
+		// ...
+
+		return parent::validateField($fields, $fieldKey, $fieldValue);
 	}
 
 	/**
@@ -1241,22 +1238,41 @@ class Pacchetto extends CommonObject
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
- * Class PacchettoLine. You can also remove this and generate a CRUD class for lines objects.
+ * Class PagamentiEsterniLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class PacchettoLine extends CommonObjectLine
+class PagamentiEsterniLine extends CommonObjectLine
 {
-	// To complete with content of an object PacchettoLine
-	// We should have a field rowid, fk_pacchetto and position
+	// To complete with content of an object PagamentiEsterniLine
+	// We should have a field rowid, fk_pagamentiesterni and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 * To overload
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = '';		// Example: '' or 'pagamentiesterni'
+
+	/**
+	 * To overload
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = '';	// Example: '' or 'fk_pagamentiesterni'
+
+	/**
+	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
 
 	/**
+	 * @var int<0,1>|string|null  	Does this object support multicompany module ?
+	 * 								0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
+	 */
+	public $ismultientitymanaged = 0;
+
+
+	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param	DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

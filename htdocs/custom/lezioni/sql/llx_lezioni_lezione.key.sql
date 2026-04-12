@@ -16,13 +16,14 @@
 
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_rowid (rowid);
-ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_ref (ref);
+ALTER TABLE llx_lezioni_lezione ADD UNIQUE INDEX uk_lezioni_lezione_ref (ref);
 ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_fk_soc (fk_soc);
 ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_fk_project (fk_project);
 ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_status (status);
 ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_istruttore (istruttore);
 ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_allievo (allievo);
 ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_bank_transaction (bank_transaction);
+ALTER TABLE llx_lezioni_lezione ADD INDEX idx_lezioni_lezione_fk_pacchetto (fk_pacchetto);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_lezioni_lezione ADD UNIQUE INDEX uk_lezioni_lezione_fieldxy(fieldx, fieldy);
