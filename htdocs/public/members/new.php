@@ -711,10 +711,14 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				jQuery("#tdfirstname").removeClass("fieldrequired");
 				if (jQuery(\'input[name="morphy"]:checked\').val() == \'mor\') {
 					jQuery("#tdcompany").addClass("fieldrequired");
+					jQuery("#phisicalinput").prop({disabled: true, checked: false});
+					jQuery("#moralinput").prop({disabled: false, checked: true});
 				}
 				if (jQuery(\'input[name="morphy"]:checked\').val() == \'phy\') {
 					jQuery("#tdlastname").addClass("fieldrequired");
 					jQuery("#tdfirstname").addClass("fieldrequired");
+					jQuery("#phisicalinput").prop({disabled: false, checked: true});
+					jQuery("#moralinput").prop({disabled: true, checked: false});
 				}
 			}
 			jQuery(\'input[name="morphy"]\').change(function() {
