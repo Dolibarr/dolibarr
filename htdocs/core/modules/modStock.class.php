@@ -75,7 +75,13 @@ class modStock extends DolibarrModules
 
 		// Constants
 		$this->const = [
-			['STOCK_DISALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 0],
+			[
+				'STOCK_DISALLOW_NEGATIVE_TRANSFER',
+				'chaine',
+				'1',
+				'',
+				0,
+			],
 			[
 				"STOCK_ADDON_PDF",
 				"chaine",
@@ -84,7 +90,6 @@ class modStock extends DolibarrModules
 				0,
 			],
 			[
-
 				"MOUVEMENT_ADDON_PDF",
 				"chaine",
 				"standard_movement_stock",

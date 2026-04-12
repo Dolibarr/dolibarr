@@ -380,7 +380,7 @@ class Documentation
 	/**
 	 * Recursive function to set Menu
 	 *
-	 * @param array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>}> 	$menu 	Menu entry or submenu
+	 * @param array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,mixed>}> 	$menu 	Menu entry or submenu
 	 * @param int   $level 		Level of menu
 	 * @return void
 	 */
@@ -475,7 +475,7 @@ class Documentation
 	/**
 	 * Recursive function for Automatic Summary
 	 *
-	 * @param array{summary?: array<string,string>, submenu?: array<string,array>} 	$menu 	Array $this->menu or submenus
+	 * @param array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,mixed>} 	$menu 	Menu entry or submenu
 	 * @param int   $level 					Level of menu
 	 * @param int   $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int   $showsubmenu_summary 	Show summary of sub menus: 0 = No, 1 = Yes

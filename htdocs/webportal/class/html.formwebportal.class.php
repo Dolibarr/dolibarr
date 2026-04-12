@@ -3,7 +3,8 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1156,6 +1157,8 @@ class FormWebPortal extends Form
 								$value = (string) $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
 								$value = (string) $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
+							} elseif (property_exists($object, 'ref')) {
+								$value = (string) $object->ref;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}
