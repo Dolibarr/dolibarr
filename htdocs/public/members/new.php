@@ -1217,7 +1217,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	$amountformuladescriptionbytype_json = json_encode($amountformuladescriptionbytype);
 	$currencysymbol = $langs->getCurrencySymbol($conf->currency);
 
-	if ($conf->use_javascript_ajax) {	
+	if ($conf->use_javascript_ajax) {
 		print '<script>
 				// ----- Shared data -----
 				var amountByType = ' . $amountbytype_json . ';
