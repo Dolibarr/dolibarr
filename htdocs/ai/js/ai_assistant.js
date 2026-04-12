@@ -354,13 +354,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Tesseract) {
                 const langList =
                     'afr+amh+ara+asm+aze+aze_cyrl+bel+ben+bod+bos+bre+bul+cat+ceb+ces+' +
-                    'chi_sim+chi_tra+chr+cos+cym+dan+dan_frak+deu+deu_frak+deu_latf+dzo+ell+eng+enm+' +
-                    'epo+equ+est+eus+fao+fas+fil+fin+fra+frk+frm+fry+gla+gle+glg+' +
+                    'chi_sim+chi_tra+chr+cos+cym+dan+deu+dzo+ell+eng+enm+' +
+                    'epo+est+eus+fao+fas+fil+fin+fra+frk+frm+fry+gla+gle+glg+' +
                     'grc+guj+hat+heb+hin+hrv+hun+hye+iku+ind+isl+ita+ita_old+jav+jpn+' +
-                    'kan+kat+kat_old+kaz+khm+kir+kmr+kor+kor_vert+kur+lao+lat+lav+lit+' +
+                    'kan+kat+kat_old+kaz+khm+kir+kmr+kor+kor_vert+lao+lat+lav+lit+' +
                     'ltz+mal+mar+mkd+mlt+mon+mri+msa+mya+nep+nld+nor+oci+ori+osd+' +
-                    'pan+pol+por+pus+que+ron+rus+san+sin+slk+slk_frak+slv+snd+spa+spa_old+' +
-                    'sqi+srp+srp_latn+sun+swa+swe+syr+tam+tat+tel+tgk+tgl+tha+tir+ton+' +
+                    'pan+pol+por+pus+que+ron+rus+san+sin+slk+slv+snd+spa+spa_old+' +
+                    'sqi+srp+srp_latn+sun+swa+swe+syr+tam+tat+tel+tgk+tha+tir+ton+' +
                     'tur+uig+ukr+urd+uzb+uzb_cyrl+vie+yid+yor';
 
                 const { data: { text } } = await Tesseract.recognize(
@@ -524,16 +524,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function processLocalFile(file) {
-        if (file.type === 'application/pdf') return await extractTextFromPDF(file);
-        else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.endsWith('.docx')) return await extractTextFromWord(file);
-        else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.name.endsWith('.xlsx')) return await extractTextFromExcel(file);
-        else if (file.type === 'application/vnd.ms-excel' || file.name.endsWith('.xls')) return await extractTextFromExcel(file);
-        else if (file.type === 'application/vnd.oasis.opendocument.text' || file.name.endsWith('.odt')) return await extractTextFromOdf(file);
-        else if (file.type === 'application/vnd.oasis.opendocument.spreadsheet' || file.name.endsWith('.ods')) return await extractTextFromOdf(file);
-        else if (file.type.startsWith('image/')) return await extractTextFromImage(file);
-        else if (file.type === 'text/xml' || file.type === 'application/xml' || file.name.endsWith('.xml')) return await extractTextFromXML(file);
-        else if (file.type === 'text/plain') return await file.text();
-        throw new Error(t('UnsupportedFileType'));
+        // PDF files
+        if (file.type === 'application/pdf') {
+            return await extractTextFromPDF(file);
+        }
+
+        // Word documents (.docx)
+        if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            || file.name.endsWith('.docx')) {
+            return await extractTextFromWord(file);
+        }
+
+        // Excel files (.xlsx)
+        if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            || file.name.endsWith('.xlsx')) {
+            return await extractTextFromExcel(file);
+        }
+
+        // Legacy Excel files (.xls)
+        if (file.type === 'application/vnd.ms-excel'
+            || file.name.endsWith('.xls')) {
+            return await extractTextFromExcel(file);
+        }
+
+        // OpenDocument Text (.odt)
+        if (file.type === 'application/vnd.oasis.opendocument.text'
+            || file.name.endsWith('.odt')) {
+            return await extractTextFromOdf(file);
+        }
+
+        // OpenDocument Spreadsheet (.ods)
+        if (file.type === 'application/vnd.oasis.opendocument.spreadsheet'
+            || file.name.endsWith('.ods')) {
+            return await extractTextFromOdf(file);
+        }
+
+        // Image files
+        if (file.type.startsWith('image/')
+            || file.name.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
+            return await extractTextFromImage(file);
+        }
+
+        // XML files
+        if (file.type === 'text/xml'
+            || file.type === 'application/xml'
+            || file.name.endsWith('.xml')) {
+            return await extractTextFromXML(file);
+        }
+
+        // Plain text files
+        if (file.type === 'text/plain') {
+            return await file.text();
+        }
+
+        // Unsupported file type
+        if (typeof dolibarr !== 'undefined' && typeof dolibarr.langs !== 'undefined') {
+            throw new Error(dolibarr.langs.trans('UnsupportedFileType'));
+        }
+        throw new Error('UnsupportedFileType');
     }
 
     async function extractTextFromPDF(file) {
