@@ -54,9 +54,8 @@ $confirm = GETPOST('confirm', 'aZ09');	// Used by the actions_linkedfiles.inc.ph
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$withtab = GETPOST('withtab', 'alpha');
 
-$withtab    = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 $search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
