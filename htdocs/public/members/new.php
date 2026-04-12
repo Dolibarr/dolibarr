@@ -1203,23 +1203,22 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	print '</div>';
 
 	// Add JS to manage the background of amount depending on type
-	if ($conf->use_javascript_ajax) {
-		$typeid = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', GETPOSTINT('typeid'));
-		$adht = new AdherentType($db);
-		$adht->fetch($typeid);
-		$caneditamountbytype = $adht->caneditamountByType(1);		// Load the array of caneditamount per type
-		$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
-		$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
-		$amountformuladescriptionbytype = $adht->amountformuladescriptionbytype(1); // Load the array of amount ormula description per type
-		// Common PHP → JS variables
-		$caneditamountbytype_json = json_encode($caneditamountbytype);
-		$minimumamountbytype_json = json_encode($minimumamountbytype);
-		$amountbytype_json = json_encode($amountbytype);
-		$amountformuladescriptionbytype_json = json_encode($amountformuladescriptionbytype);
-		$currencysymbol = $langs->getCurrencySymbol($conf->currency);
+	$typeid = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', GETPOSTINT('typeid'));
+	$adht = new AdherentType($db);
+	$adht->fetch($typeid);
+	$caneditamountbytype = $adht->caneditamountByType(1);		// Load the array of caneditamount per type
+	$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
+	$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+	$amountformuladescriptionbytype = $adht->amountformuladescriptionbytype(1); // Load the array of amount ormula description per type
+	// Common PHP → JS variables
+	$caneditamountbytype_json = json_encode($caneditamountbytype);
+	$minimumamountbytype_json = json_encode($minimumamountbytype);
+	$amountbytype_json = json_encode($amountbytype);
+	$amountformuladescriptionbytype_json = json_encode($amountformuladescriptionbytype);
+	$currencysymbol = $langs->getCurrencySymbol($conf->currency);
 
+	if ($conf->use_javascript_ajax) {	
 		print '<script>
-		jQuery(function($) {
 				// ----- Shared data -----
 				var amountByType = ' . $amountbytype_json . ';
 				var canEditAmountByType = ' . $caneditamountbytype_json . ';
@@ -1239,6 +1238,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 						}
 				};
 
+		jQuery(function($) {
 				// ----- Helpers -----
 				function getCurrentMin() {
 						let typeId = $("#typeid").val() || 0;
@@ -1274,12 +1274,12 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 								// Description formula or default text
 								if (amountFormulaDescription.trim() !== "") {
-										$("#amountdescription").html(" - " + amountFormulaDescription);
+										$(".hideifautoturnover").html(" - " + amountFormulaDescription);
 								} else {
 										if (amountVal > 0) {
-												$("#amountdescription").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
+												$(".hideifautoturnover").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
 										} else {
-												$("#amountdescription").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
+												$(".hideifautoturnover").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
 										}
 								}
 
@@ -1296,13 +1296,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$("#amounthidden").val(formattedAmount).prop("disabled", true).removeClass("hidden");
 								$("#amount").addClass("hidden");
 								$(".hideifautoturnover").addClass("hidden");
-
-								if (amountVal > 0) {
-										$("#amountdescription").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
-								} else {
-										$("#amountdescription").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
-								}
-
 								$("#minimumamount").addClass("hidden");
 						}
 
