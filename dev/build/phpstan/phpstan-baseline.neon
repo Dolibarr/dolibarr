@@ -493,12 +493,6 @@ parameters:
 			path: ../../../htdocs/admin/index.php
 
 		-
-			message: '#^Parameter \#12 \$localtaxes_array of function calcul_price_total expects array\{string, int\|string, string, int\|string, string, string\}\|array\{string, int\|string, string, string\}, array\{\} given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/admin/limits.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-list\<array\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -799,18 +793,6 @@ parameters:
 			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
 
 		-
-			message: '#^Method Documentation\:\:setMenu\(\) should return mixed but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
-
-		-
-			message: '#^Property Documentation\:\:\$view type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/admin/tools/ui/class/documentation.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 5
@@ -913,12 +895,6 @@ parameters:
 			path: ../../../htdocs/asset/admin/setup.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -989,48 +965,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../../../htdocs/asset/model/list.php
-
-		-
-			message: '#^Variable \$assetaccountancycodes might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
-			message: '#^Variable \$parameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/accountancy_codes_edit.tpl.php
-
-		-
-			message: '#^Variable \$assetaccountancycodes might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
-			message: '#^Variable \$parameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
-
-		-
-			message: '#^Variable \$parameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
-			message: '#^Variable \$parameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/depreciation_options_view.tpl.php
-
-		-
-			message: '#^Variable \$parameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/depreciation_view.tpl.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
@@ -2179,12 +2113,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
-			message: '#^Parameter \#12 \$localtaxes_array of function calcul_price_total expects array\{string, int\|string, string, int\|string, string, string\}\|array\{string, int\|string, string, string\}, array\{\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
 			message: '#^Result of \|\| is always true\.$#'
 			identifier: booleanOr.alwaysTrue
 			count: 1
@@ -2248,12 +2176,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 3
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Parameter \#12 \$localtaxes_array of function calcul_price_total expects array\{string, int\|string, string, int\|string, string, string\}\|array\{string, int\|string, string, string\}, array\{\} given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -8383,12 +8305,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
-			message: '#^Variable \$field might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
 			message: '#^Variable \$moduleobj might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
@@ -10570,12 +10486,6 @@ parameters:
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
-			path: ../../../htdocs/public/project/suggestconference.php
-
-		-
-			message: '#^Variable \$contact might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/public/project/suggestconference.php
 
 		-
