@@ -12,7 +12,7 @@
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@
  * @var CommonObject|Facture $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
- * @var ExtraFields $extrafields
+ * @var ?ExtraFields $extrafields
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
@@ -60,7 +60,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force CommonObject|Facture $this
 @phan-var-force CommonObject $object
 @phan-var-force CommonObjectLine $line
-@phan-var-force ExtraFields $extrafields
+@phan-var-force ?ExtraFields $extrafields
 @phan-var-force Societe $buyer
 @phan-var-force Societe $seller
 @phan-var-force int<0,1> $usehm
@@ -469,7 +469,7 @@ if ($nolinesbefore) {
 			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
 			echo '</div>';
 		}
-		if (is_object($objectline)) {
+		if (is_object($objectline) && $extrafields instanceof ExtraFields) {
 			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
 
 			if (!empty($temps)) {
@@ -708,8 +708,8 @@ $jsConf = [
 		'getSupplierPrices' => DOL_URL_ROOT . '/fourn/ajax/getSupplierPrices.php?bestpricefirst=1'
 	],
 	'mySoc' => [
-		'country_code' =>$mysoc->country_code,
-		'state_code' =>$mysoc->state_code,
+		'country_code' => $mysoc->country_code,
+		'state_code' => $mysoc->state_code,
 	],
 	'docObject' => [
 		'table_element_line' => $this->table_element_line,
@@ -732,7 +732,7 @@ $jsConf = [
 	]
 ];
 
-if ( !empty($object->thirdparty) ) {
+if (!empty($object->thirdparty)) {
 	$jsConf['docObject']['thirdparty'] = [
 		'state_code' => $object->thirdparty->state_code,
 		'country_code' => $object->thirdparty->country_code,
