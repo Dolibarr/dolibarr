@@ -182,7 +182,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Account';
 	$objectlabel = 'FinancialAccount';
-	$uploaddir = $conf->banque->dir_output;
+	$uploaddir = $conf->bank->dir_output;
 	include DOL_DOCUMENT_ROOT . '/core/actions_massactions.inc.php';
 }
 
