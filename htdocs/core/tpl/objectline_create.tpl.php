@@ -943,13 +943,19 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 									<?php
 								} ?>
 							}
-							// Set the VAT rate combo: try exact match first (rate + code), fallback to numeric match
-							if ($('#tva_tx option[value="' + stringforvatrateselection + '"]').length) {
-								$('#tva_tx').val(stringforvatrateselection);
+							// Set vat rate: handle both input box and combo cases
+							if ($('#tva_tx option').length) {
+								// It is a combo: try exact match first (rate + code), fallback to numeric match
+								if ($('#tva_tx option[value="' + stringforvatrateselection + '"]').length) {
+									$('#tva_tx').val(stringforvatrateselection);
+								} else {
+									$('#tva_tx option').filter(function () {
+										return parseFloat($(this).val()) === parseFloat(tva_tx);
+									}).first().prop('selected', true);
+								}
 							} else {
-								$('#tva_tx option').filter(function () {
-									return parseFloat($(this).val()) === parseFloat(tva_tx);
-								}).first().prop('selected', true);
+								// It is an input box
+								$('#tva_tx').val(tva_tx);
 							}
 
 								<?php
