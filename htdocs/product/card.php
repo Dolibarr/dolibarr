@@ -414,10 +414,10 @@ if (empty($reshook)) {
 				}
 				// Merge per-warehouse stock quantities from origin into destination
 				// This must happen before delete() which wipes product_stock of origin
-				if (!$error) {
-					// Read stocks from DB before merge (stock_reel is not loaded by fetch())
 					$origin_stock = 0;
 					$dest_stock = 0;
+					if (!$error) {
+					// Read stocks from DB before merge (stock_reel is not loaded by fetch())
 					$sql = "SELECT fk_product, SUM(reel) as qty FROM ".MAIN_DB_PREFIX."product_stock";
 					$sql .= " WHERE fk_product = ".((int) $productOrigin->id)." OR fk_product = ".((int) $object->id);
 					$sql .= " GROUP BY fk_product";
@@ -1412,6 +1412,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
+$formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
