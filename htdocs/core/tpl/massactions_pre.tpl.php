@@ -56,6 +56,7 @@
  * @var ?string $uploaddir
  * @var int[] $toselect
  * @var int[] $arrayofselected
+ * @var ?string $search_all
  */
 '
 @phan-var-force string $string
@@ -65,6 +66,12 @@
 @phan-var-force ?string $uploaddir
 @phan-var-force int<0,1> $withmaindocfilemail
 @phan-var-force string $sendto
+@phan-var-force string $massaction
+@phan-var-force int[] $arrayofselected
+@phan-var-force string $trackid
+@phan-var-force string $modelmail
+@phan-var-force ?string $search_all
+@phan-var-force ?Task $taskstatic
 ';
 
 if (!empty($sall) || !empty($search_all)) {

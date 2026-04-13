@@ -2251,7 +2251,7 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 
 						$ret = $object->fetch($id); // Reload to get new records
 
-						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						$result = $object->generateDocument($model, $outputlangs, (int) $hidedetails, (int) $hidedesc, (int) $hideref);
 						if ($result < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
@@ -2394,7 +2394,7 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 											}
 											$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
 
-											$result = $objecttmp->generateDocument($objecttmp->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+											$result = $objecttmp->generateDocument($objecttmp->model_pdf, $outputlangs, (int) $hidedetails, (int) $hidedesc, (int) $hideref);
 											if ($result < 0) {
 												setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 											}
