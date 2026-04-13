@@ -92,6 +92,7 @@
 @phan-var-force ?int $hidedetails
 @phan-var-force ?int $hidedesc
 @phan-var-force ?int $hideref
+@phan-var-force string $confirm
 ';
 
 
@@ -2349,7 +2350,7 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 							}
 						}
 
-						if (empty($error)) {
+						if (empty($error) && $id_discount > 0) {
 							// Set invoice as paid
 							$result = $object->setPaid($user);	// We can close the invoice.
 							if ($result >= 0) {
