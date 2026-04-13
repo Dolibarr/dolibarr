@@ -264,6 +264,12 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+				'UxDolibarrContextKnowsHooks' => array(
+					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/knows-hooks.php', 1),
+					'icon' => 'fa fa-anchor',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
