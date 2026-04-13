@@ -2,6 +2,8 @@
 /* Copyright (C) 2012 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2014 Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +19,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/reception/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	reception
+ *  \brief		Template to show objects linked to reception
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Reception[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -29,18 +49,15 @@ if (empty($conf) || !is_object($conf)) {
 
 <?php
 
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-
 // Load translation files required by the page
 $langs->load("receptions");
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
+'@phan-var-force Reception[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Reception[] $linkedObjectBlock */
 
-$total = 0; $ilink = 0;
+$total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
@@ -49,17 +66,17 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Reception"); ?>
-		<?php if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+		<td class="linkedcol-element tdoverflowmax125"><?php echo $langs->trans("Reception"); ?>
+		<?php if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 		} ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref tdoverflowmax100" title="<?php echo dol_escape_htmltag($objectlink->ref_supplier); ?>"><?php echo dol_escape_htmltag($objectlink->ref_supplier); ?></td>
+		<td class="linkedcol-ref tdoverflowmax150" title="<?php echo dol_escape_htmltag($objectlink->ref_supplier); ?>"><?php echo dol_escape_htmltag($objectlink->ref_supplier); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		if ($user->hasRight('reception', 'lire')) {
-			$total = $total + $objectlink->total_ht;
+			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
 		<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>

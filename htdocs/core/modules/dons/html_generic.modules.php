@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2015  		Benjamin Neumann <btdn@sigsoft.org>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,8 +96,8 @@ class html_generic extends ModeleDon
 		// prints the translation instead of returning it
 		$formclass->load_cache_types_paiements();
 
-		if ($don->mode_reglement_id) {
-			$paymentmode = $formclass->cache_types_paiements[$don->mode_reglement_id]['label'];
+		if ($don->mode_reglement_id > 0) {
+			$paymentmode = (string) $formclass->cache_types_paiements[(int) $don->mode_reglement_id]['label'];
 		} else {
 			$paymentmode = '';
 		}
@@ -159,7 +159,7 @@ class html_generic extends ModeleDon
 		if (getDolGlobalString('DONATION_MESSAGE')) {
 			$donationMessage = '<div id="donation-message"><p>' . getDolGlobalString('DONATION_MESSAGE').'</p></div>';
 		}
-		$form = str_replace('__DONATION_MESAGE__', $donationMessage, $form);
+		$form = str_replace('__DONATION_MESSAGE__', $donationMessage, $form);
 
 		return $form;
 	}
@@ -186,10 +186,10 @@ class html_generic extends ModeleDon
 	/**
 	 *  Write the object to document file to disk
 	 *
-	 *  @param	Don			$don	        Donation object
-	 *  @param	Translate	$outputlangs    Lang object for output language
+	 *  @param	Don			$don			Donation object
+	 *  @param	Translate	$outputlangs	Lang object for output language
 	 *  @param	string		$currency		Currency code
-	 *  @return	int             			>0 if OK, <0 if KO
+	 *  @return	int<-1,1>					>0 if OK, <0 if KO
 	 */
 	public function write_file($don, $outputlangs, $currency = '')
 	{

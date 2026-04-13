@@ -32,7 +32,7 @@ class GdEscposImage extends EscposImage
             /* Set to blank image */
             return parent::loadImageData($filename);
         }
-        
+
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         switch ($ext) {
             case "png":

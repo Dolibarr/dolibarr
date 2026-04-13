@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2005       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,7 +71,10 @@ class Bookmark extends CommonObject
 	 */
 	public $url;
 
-	public $target; // 0=replace, 1=new window
+	/**
+	 * @var string  '0'=replace, '1'=new window
+	 */
+	public $target;
 
 	/**
 	 * @var string title
@@ -316,9 +319,9 @@ class Bookmark extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBookmark");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

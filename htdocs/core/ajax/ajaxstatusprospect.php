@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +21,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/ajaxstatusprospect.php
- *       \brief      File to return Ajax response on third parties request
+ *       \file      htdocs/core/ajax/ajaxstatusprospect.php
+ *       \brief     File of service to update prospect status of a third party
+ *       			TODO Rename into updatestatusprospect.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -41,6 +44,13 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $idstatus = GETPOSTINT('id');
@@ -74,20 +84,27 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 	$prospectstatic->client = 2;
 	$prospectstatic->loadCacheOfProspStatus();
 
-	$response = '';
+	$response = "";
 
-	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-	$sql .= "fk_stcomm=".(int) $db->escape($idstatus);
-	$sql .= " WHERE rowid = ".(int) $db->escape($idprospect);
+	// Load thirdparty
+	$prospect = new Societe($db);
+	$result = $prospect->fetch($idprospect);
 
-	$resql = $db->query($sql);
+	if ($result >= 0) {
+		// Apply new status
+		$prospect->stcomm_id = $idstatus;
 
-	if (!$resql) {
-		dol_print_error($db);
+		// Update using business logic (fires COMPANY_MODIFY)
+		$updateResult = $prospect->update($prospect->id, $user);
+
+		if ($updateResult >= 0) {
+			$response = img_action('', $prospectstatic->cacheprospectstatus[$idstatus]['code'], $prospectstatic->cacheprospectstatus[$idstatus]['picto'], 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
+		} else {
+			dol_syslog('Failed to update prospect via update() method', LOG_ERR);
+			dol_print_error($db);
+		}
 	} else {
-		$num = $db->affected_rows($resql);
-		$response = img_action('', $prospectstatic->cacheprospectstatus[$idstatus]['code'], $prospectstatic->cacheprospectstatus[$idstatus]['picto'], 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
+		dol_print_error($db);
 	}
-
 	echo json_encode(array('img' => $response));
 }

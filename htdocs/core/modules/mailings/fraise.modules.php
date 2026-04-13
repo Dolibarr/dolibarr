@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +37,20 @@ class mailing_fraise extends MailingTargets
 	public $name = 'FundationMembers'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	public $desc = 'Foundation members with emails';
-	// Set to 1 if selector is available for admin users only
+
+	/**
+	 * @var int <0,1> Set to 1 if selector is available for admin users only
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array('adherent');
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("member")';
 
 	/**
@@ -212,10 +222,10 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
-	 *  @param    int        $id        ID
-	 *  @return     string      Url lien
+	 *  @param	int		$id		ID
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{
@@ -300,7 +310,7 @@ class mailing_fraise extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' =>
@@ -309,7 +319,7 @@ class mailing_fraise extends MailingTargets
 								($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
 								($langs->transnoentities("Company").'='.$obj->societe),
 								'source_url' => $this->url($obj->id),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => 'member'
 					);
 					$old = $obj->email;

@@ -98,6 +98,8 @@ class modGeneratePassNone extends ModeleGenPassword
 	 */
 	public function validatePassword($password)
 	{
+		dol_syslog("modGeneratePassNone::validatePassword");
+
 		return 1;
 	}
 }

@@ -5,7 +5,8 @@
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -36,8 +44,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 380);
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '380');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '160');
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
@@ -48,7 +56,7 @@ $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOSTINT('search_year');
 $search_categ  = GETPOSTINT('search_categ');
 $notab = GETPOSTINT('notab');
-$type = GETPOST('type', 'alpha');
+$type = GETPOST('type', 'alpha');	// Can be '' or '0' or '1'
 
 $error = 0;
 $mesg = '';
@@ -66,7 +74,7 @@ if ($socid < 0) {
 $fieldvalue = ($id > 0 ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatscard', 'globalcard'));
 
 $tmp = dol_getdate(dol_now());
@@ -102,8 +110,6 @@ if (!($id > 0) && empty($ref) || $notab) {
 	$notab = 1;
 
 	llxHeader("", $langs->trans("ProductStatistics"), '', '', 0, 0, '', '', '', 'mod-product page-stats_card_general');
-
-	$type = GETPOSTINT('type');
 
 	$helpurl = '';
 	if ($type == '0') {
@@ -190,7 +196,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 
 
 if ($result || !($id > 0)) {
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if (empty($id) || $notab) {
 		print '<input type="hidden" name="notab" value="1">';
@@ -209,7 +215,7 @@ if ($result || !($id > 0)) {
 		// Product
 		print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("ProductOrService").'</td><td>';
 		print img_picto('', 'product', 'class="pictofixedwidth"');
-		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', ($conf->dol_optimize_smallscreen ? 1 : 0), array(), 0, '1', 0, 'widthcentpercentminusx maxwidth400');
+		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', 0, array(), 0, $langs->trans("RefOrLabel"), 0, 'widthcentpercentminusx maxwidth400');
 		print '</td></tr>';
 
 		// Tag
@@ -229,19 +235,20 @@ if ($result || !($id > 0)) {
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Year").'</td><td>';
 	$arrayyears = array();
 	for ($year = $currentyear - 25; $year < $currentyear; $year++) {
-		$arrayyears[$year] = $year;
+		$arrayyears[$year] = (string) $year;
 	}
 	if (!in_array($year, $arrayyears)) {
-		$arrayyears[$year] = $year;
+		$arrayyears[$year] = (string) $year;
 	}
 	if (!in_array($currentyear, $arrayyears)) {
-		$arrayyears[$currentyear] = $currentyear;
+		$arrayyears[$currentyear] = (string) $currentyear;
 	}
 	arsort($arrayyears);
+	print img_picto('', 'calendar', 'class="pictofixedwidth"');
 	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
 
-	// thirdparty
+	// Third party
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth400');
@@ -270,9 +277,9 @@ if ($result || !($id > 0)) {
 	}
 
 	if ($mode != 'byunit') {
-		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
+		print '<a class="a-mesure-disabled marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
 	} else {
-		print '<span class="a-mesure marginleftonly marginrightonly">';
+		print '<span class="a-mesure marginrightonly">';
 	}
 	if ($type == '0') {
 		print $langs->trans("StatsByNumberOfUnitsProducts");
@@ -347,6 +354,7 @@ if ($result || !($id > 0)) {
 	$arrayforlabel = array('byunit' => 'NumberOfUnits', 'bynumber' => 'NumberOf', 'byamount' => 'AmountIn');
 
 	if (isModEnabled('propal')) {
+		$langs->load("propal");
 		$graphfiles['propal'] = array('modulepart' => 'productstats_proposals',
 			'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Proposals")));
@@ -403,13 +411,13 @@ if ($result || !($id > 0)) {
 		$mesg = $px->isGraphKo();
 		if (!$mesg) {
 			foreach ($graphfiles as $key => $val) {
-				if (!$graphfiles[$key]['file']) {
+				if (!$val['file']) {
 					continue;
 				}
 
 				$graph_data = array();
 
-				if (dol_is_file($dir.'/'.$graphfiles[$key]['file'])) {
+				if (dol_is_file($dir.'/'.$val['file'])) {
 					// TODO Load cachefile $graphfiles[$key]['file']
 				} else {
 					$morefilters = '';
@@ -463,8 +471,8 @@ if ($result || !($id > 0)) {
 					$px->SetShading(3);
 					//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.((int) $object->entity).'&file='.urlencode($graphfiles[$key]['file']).($notab ? '&notab='.$notab : '');
-					$px->draw($dir."/".$graphfiles[$key]['file'], $url);
+					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$val['modulepart'].'&entity='.((int) $object->entity).'&file='.urlencode($val['file']).($notab ? '&notab='.$notab : '');
+					$px->draw($dir."/".$val['file'], $url);
 
 					$graphfiles[$key]['total'] = $px->total();
 					$graphfiles[$key]['output'] = $px->show();
@@ -485,30 +493,30 @@ if ($result || !($id > 0)) {
 				continue;
 			}
 
-			if ($graphfiles == 'propal' && !$user->hasRight('propal', 'lire')) {
+			if ($key == 'propal' && !$user->hasRight('propal', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'order' && !$user->hasRight('commande', 'lire')) {
+			if ($key == 'order' && !$user->hasRight('commande', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'invoices' && !$user->hasRight('facture', 'lire')) {
+			if ($key == 'invoices' && !$user->hasRight('facture', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'proposals_suppliers' && !$user->hasRight('supplier_proposal', 'lire')) {
+			if ($key == 'proposals_suppliers' && !$user->hasRight('supplier_proposal', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
+			if ($key == 'invoices_suppliers' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && !$user->hasRight('fournisseur', 'commande', 'lire')) {
+			if ($key == 'orders_suppliers' && !$user->hasRight('fournisseur', 'commande', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'mrp' && !$user->hasRight('mrp', 'read')) {
+			if ($key == 'mrp' && !$user->hasRight('mrp', 'read')) {
 				continue;
 			}
 
 
-			if ($i % 2 == 0) {
+			if (($i % 2) == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
 				print "\n".'<div class="fichehalfright">'."\n";

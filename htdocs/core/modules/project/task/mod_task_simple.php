@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,10 +35,13 @@ class mod_task_simple extends ModeleNumRefTask
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'TK';
 
 	/**
@@ -100,9 +103,9 @@ class mod_task_simple extends ModeleNumRefTask
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(task.ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS task, ";
-		$sql .= MAIN_DB_PREFIX."projet AS project WHERE task.fk_projet=project.rowid";
+		$sql .= MAIN_DB_PREFIX."projet AS project WHERE task.fk_projet = project.rowid";
 		$sql .= " AND task.ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND project.entity = ".$conf->entity;
+		$sql .= " AND project.entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -130,7 +133,7 @@ class mod_task_simple extends ModeleNumRefTask
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;

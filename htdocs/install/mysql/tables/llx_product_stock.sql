@@ -28,4 +28,3 @@ create table llx_product_stock
   reel            real,           			-- physical stock
   import_key      varchar(14)               -- Import key
 )ENGINE=innodb;
-

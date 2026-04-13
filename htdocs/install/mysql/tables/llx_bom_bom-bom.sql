@@ -37,6 +37,7 @@ CREATE TABLE llx_bom_bom(
 	fk_user_valid integer,
 	import_key varchar(14),
 	model_pdf varchar(255),
+	last_main_doc varchar(255),                 -- relative filepath+filename of last main generated document
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

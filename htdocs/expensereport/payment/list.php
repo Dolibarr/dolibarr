@@ -9,10 +9,10 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017-2021  Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,19 @@
 
 /**
  *	\file		htdocs/expensereport/payment/list.php
-*	\ingroup	expensereport
+ *	\ingroup	expensereport
  *	\brief		Payment list for expense reports
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -93,7 +100,7 @@ if (!$sortfield) {
 	$sortfield = "pndf.datep";
 }
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -104,18 +111,17 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'pndf.rowid'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
-	'pndf.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
-	'u.login'				=> array('label' => "User", 'checked' => 1, 'position' => 30),
-	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
-	'pndf.num_payment'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enable' => (isModEnabled("bank"))),
-	'pndf.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 70),
+	'pndf.rowid'				=> array('label' => "RefPayment", 'checked' => '1', 'position' => 10),
+	'pndf.datep'			=> array('label' => "Date", 'checked' => '1', 'position' => 20),
+	'u.login'				=> array('label' => "User", 'checked' => '1', 'position' => 30),
+	'c.libelle'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
+	'pndf.num_payment'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'pndf.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentexpensereportlist'));
 $object = new PaymentExpenseReport($db);
 
@@ -180,6 +186,7 @@ $accountstatic = new Account($db);
 $userstatic = new User($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 
+$title = $langs->trans('ListPayment');
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -264,7 +271,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -291,7 +298,7 @@ $i = 0;
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $langs->trans('ListPayment'), '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -518,6 +525,7 @@ if (!empty($arrayfields['i']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pndf.rowid']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pndf.rowid']['label'], $_SERVER["PHP_SELF"], 'pndf.rowid', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

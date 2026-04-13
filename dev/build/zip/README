@@ -1,0 +1,8 @@
+README (English)
+##################################################
+ZIP Package tools
+##################################################
+
+This directory contains files used by makepack-dolibarr.pl
+script to build a package, ready to be distributed,
+with format .zip

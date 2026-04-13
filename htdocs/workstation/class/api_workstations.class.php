@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2024   Christian Humpel        <christian.humpel@gmail.com>
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
+ * Copyright (C) 2024		Christian Humpel		<christian.humpel@gmail.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 class Workstations extends DolibarrApi
 {
 	/**
-	 * @var Workstation $workstation {@type Workstation}
+	 * @var Workstation {@type Workstation}
 	 */
 	public $workstation;
 
@@ -46,7 +48,7 @@ class Workstations extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->workstation = new Workstation($this->db);
@@ -103,6 +105,8 @@ class Workstations extends DolibarrApi
 	 * @param  string $sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param string  $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array						Array of workstation objects
+	 * @phan-return Workstation[]|array{data:Workstation[],pagination:array{total:int,page:int,pagecount:int,limit:int}}
+	 * @phpstan-return Workstation[]|array{data:Workstation[],pagination:array{total:int,page:int,pagecount:int,limit:int}}
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
@@ -114,7 +118,7 @@ class Workstations extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$sql = "SELECT t.rowid, t.ref";
 		$sql .= " FROM ".$this->db->prefix()."workstation_workstation as t";
@@ -170,7 +174,7 @@ class Workstations extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total/$limit),
+				'page_count' => (int) ceil((int) $total / $limit),
 				'limit' => $limit
 			);
 		}
@@ -181,21 +185,25 @@ class Workstations extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param   Object	$object		Object to clean
+	 * @return  Object  			Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
+		/** @var Workstation $object */
 
 		unset($object->statut);
 
 		unset($object->regeximgext);
 		unset($object->price_by_qty);
 		unset($object->prices_by_qty_id);
-		unset($object->libelle);
 		unset($object->product_id_already_linked);
 		unset($object->reputations);
 		unset($object->db);
@@ -280,8 +288,6 @@ class Workstations extends DolibarrApi
 		unset($object->lines);
 		unset($object->fk_bank);
 		unset($object->fk_account);
-
-		unset($object->supplierprices);
 
 		unset($object->stock_reel);
 		unset($object->stock_theorique);

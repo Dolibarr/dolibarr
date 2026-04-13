@@ -1,6 +1,5 @@
 <?php
-/*
- * ================================================================================
+/* ================================================================================
  *
  * EvalMath - PHP Class to safely evaluate math expressions
  * Copyright (C) 2005 Miles Kaufmann <http://www.twmagic.com/>
@@ -57,6 +56,15 @@
  *
  * AUTHOR INFORMATION
  * Copyright 2005, Miles Kaufmann.
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * LICENSE
  * Redistribution and use in source and binary forms, with or without
@@ -96,22 +104,40 @@
  */
 class EvalMath
 {
+	/**
+	 * @var bool
+	 */
 	public $suppress_errors = false;
 
+	/**
+	 * @var ?string
+	 */
 	public $last_error = null;
 
+	/**
+	 * @var ?array{0:int,1:null|string|array{0:?mixed,1:int}}
+	 */
 	public $last_error_code = null;
 
+	/**
+	 * @var array<string,float|string>	variables (and constants)
+	 */
 	public $v = array('e' => 2.71, 'pi' => 3.14159);
 
-	// variables (and constants)
+	/**
+	 * @var array<string,array{args:string[],func:array<string|float>}>  user-defined functions
+	 */
 	public $f = array();
 
-	// user-defined functions
+	/**
+	 * @var string[] constants
+	 */
 	public $vb = array('e', 'pi');
 
-	// constants
-	public $fb = array( // built-in functions
+	/**
+	 * @var string[]	built-in functions
+	 */
+	public $fb = array(
 		'sin', 'sinh', 'arcsin', 'asin', 'arcsinh', 'asinh', 'cos', 'cosh', 'arccos', 'acos', 'arccosh', 'acosh', 'tan', 'tanh', 'arctan', 'atan', 'arctanh', 'atanh', 'sqrt', 'abs', 'ln', 'log', 'intval', 'ceil',
 	);
 
@@ -199,7 +225,7 @@ class EvalMath
 	/**
 	 * Function vars
 	 *
-	 * @return array	Output
+	 * @return array<string,float>	Output
 	 */
 	public function vars()
 	{
@@ -212,7 +238,7 @@ class EvalMath
 	/**
 	 * Function funcs
 	 *
-	 * @return array	Output
+	 * @return string[]	Output
 	 */
 	private function funcs() // @phpstan-ignore-line
 	{
@@ -229,7 +255,7 @@ class EvalMath
 	 * Convert infix to postfix notation
 	 *
 	 * @param 	string 			$expr		Expression
-	 * @return 	boolean|array 				Output
+	 * @return 	boolean|array<string|float>	Output
 	 */
 	private function nfx($expr)
 	{
@@ -314,7 +340,7 @@ class EvalMath
 				if (!preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches)) {
 					return $this->trigger(5, "unexpected ','", ",");
 				}
-				$stack->push($stack->pop() + 1); // increment the argument count
+				$stack->push((string) ($stack->pop() + 1)); // increment the argument count
 				$stack->push('('); // put the ( back on, we'll need to pop back to it again
 				$index++;
 				$expecting_op = false;
@@ -330,7 +356,7 @@ class EvalMath
 				if (preg_match("/^([a-z]\w*)\($/", $val, $matches)) { // may be func, or variable w/ implicit multiplication against parentheses...
 					if (in_array($matches[1], $this->fb) or array_key_exists($matches[1], $this->f)) { // it's a func
 						$stack->push($val);
-						$stack->push(1);
+						$stack->push('1');
 						$stack->push('(');
 						$expecting_op = false;
 					} else { // it's a var w/ implicit multiplication
@@ -360,11 +386,11 @@ class EvalMath
 				$index++; // into implicit multiplication if no operator is there)
 			}
 		}
-		while (!is_null($op = $stack->pop())) { // pop everything off the stack and push onto output
-			if ($op == '(') {
+		while (!is_null($ope = $stack->pop())) { // pop everything off the stack and push onto output
+			if ($ope == '(') {
 				return $this->trigger(11, "expecting ')'", ")"); // if there are (s on the stack, ()s were unbalanced
 			}
-			$output[] = $op;
+			$output[] = $ope;
 		}
 
 		return $output;
@@ -373,9 +399,9 @@ class EvalMath
 	/**
 	 * Evaluate postfix notation
 	 *
-	 * @param array $tokens      	Expression
-	 * @param array $vars       	Array
-	 * @return string|false			Output or false if error
+	 * @param string[]				$tokens      	Expression
+	 * @param array<string,string>	$vars       	Array
+	 * @return string|false							Output or false if error
 	 */
 	private function pfx($tokens, $vars = array())
 	{
@@ -393,27 +419,27 @@ class EvalMath
 				}
 				switch ($token) {
 					case '+':
-						$stack->push($op1 + $op2);
+						$stack->push((string) ($op1 + $op2));
 						break;
 					case '-':
-						$stack->push($op1 - $op2);
+						$stack->push((string) ($op1 - $op2));
 						break;
 					case '*':
-						$stack->push($op1 * $op2);
+						$stack->push((string) ($op1 * $op2));
 						break;
 					case '/':
 						if ($op2 == 0) {
 							return $this->trigger(14, "division by zero");
 						}
-						$stack->push($op1 / $op2);
+						$stack->push((string) ($op1 / $op2));
 						break;
 					case '^':
-						$stack->push(pow($op1, $op2));
+						$stack->push((string) pow($op1, $op2));
 						break;
 				}
 				// if the token is a unary operator, pop one value off the stack, do the operation, and push it back on
 			} elseif ($token == "_") {
-				$stack->push(-1 * $stack->pop());
+				$stack->push((string) (-1 * $stack->pop()));
 				// if the token is a function, pop arguments off the stack, hand them to the function, and push the result back on
 			} elseif (preg_match("/^([a-z]\w*)\($/", $token, $matches)) { // it's a function!
 				$fnn = $matches[1];
@@ -460,9 +486,9 @@ class EvalMath
 	/**
 	 * trigger an error, but nicely, if need be
 	 *
-	 * @param string $code		   	Code
-	 * @param string $msg			Msg
-	 * @param string|null $info		String
+	 * @param int		$code		   	Code
+	 * @param string	$msg			Msg
+	 * @param null|string|array{0:?mixed,1:int} $info		String
 	 * @return false
 	 */
 	public function trigger($code, $msg, $info = null)
@@ -481,8 +507,10 @@ class EvalMath
  */
 class EvalMathStack
 {
+	/** @var mixed[] */
 	public $stack = array();
 
+	/** @var int */
 	public $count = 0;
 
 	/**
@@ -500,7 +528,7 @@ class EvalMathStack
 	/**
 	 * pop
 	 *
-	 * @return mixed Stack
+	 * @return ?mixed	Stack element
 	 */
 	public function pop()
 	{

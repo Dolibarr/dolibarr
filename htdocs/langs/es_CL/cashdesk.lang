@@ -30,5 +30,4 @@ CashDeskBankAccountFor=Cuenta predeterminada para usar para pagos en
 EnableBarOrRestaurantFeatures=Habilitar características para bar o restaurante
 ConfirmDeletionOfThisPOSSale=¿Confirma usted la eliminación de esta venta actual?
 ConfirmDiscardOfThisPOSSale=¿Quieres descartar esta venta actual?
-History=Historia
 TerminalSelect=Seleccione el terminal que desea utilizar:

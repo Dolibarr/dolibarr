@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s telah mengisi satu baris.\nAnda dapat menemukan polling And
 ShowSurvey=Tampilkan survei
 UserMustBeSameThanUserUsedToVote=Anda sudah pernah memilih dan menggunakan nama pengguna yang sama dengan yang digunakan untuk memilih, untuk mengirim komentar
 ListOfOpenSurveys=Daftar survei terbuka
+AddTheVote=Klik untuk menambahkan suara

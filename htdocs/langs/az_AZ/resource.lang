@@ -1,39 +1,38 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
-ActionsOnResource=Events about this resource
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+MenuResourceIndex=Resurslar
+MenuResourceAdd=Yeni resurs
+DeleteResource=Resurs silin
+ConfirmDeleteResourceElement=Bu element üçün resursun silinməsini təsdiqləyin
+NoResourceInDatabase=Verilənlər bazasında resurs yoxdur.
+NoResourceLinked=Heç bir resurs əlaqələndirilməyib
+ActionsOnResource=Bu resurs haqqında hadisələr
+ResourcePageIndex=Resursların siyahısı
+ResourceSingular=Resurs
+ResourceCard=Resurs kartı
+NewResource=Yeni resurs
+AddResource=Resurs yaradın
+ResourceFormLabel_ref=Resurs adı
+ResourceFormLabel_description=Resursun təsviri
+ResourceType=Resurs növü
+ResourceTypeID=Resurs növü ID
+ResourceTypeLabel=Resurs növü etiketi
+ResourcesLinkedToElement=Elementlə əlaqəli resurslar
 
-ResourcesLinkedToElement=Resources linked to element
-
-ShowResource=Show resource
-
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
-
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
-
-ErrorResourcesAlreadyInUse=Some resources are in use
-ErrorResourceUseInEvent=%s used in %s event
+ShowResource=Resurs göstərin
+ResourceElementPage=Element resursları
+ResourceCreatedWithSuccess=Resurs uğurla yaradıldı
+RessourceLineSuccessfullyDeleted=Resurs xətti uğurla silindi
+RessourceLineSuccessfullyUpdated=Resurs xətti uğurla yeniləndi
+ResourceLinkedWithSuccess=Uğurla əlaqəli resurs
+ConfirmDeleteResource=Bu resursu silmək üçün təsdiq edin
+RessourceSuccessfullyDeleted=Resurs uğurla silindi
+DictionaryResourceType=Resursların növü
+SelectResource=Resurs seçin
+IdResource=İd resursu
+AssetNumber=Seriya nömrəsi
+ResourceTypeCode=Resurs növü kodu
+ImportDataset_resource_1=Resurslar
+ErrorResourcesAlreadyInUse=Bəzi resurslar istifadə olunur
+ErrorResourceUseInEvent=%s %s tədbirində istifadə edilib
+MaxUsers=Maksimum istifadəçilər (yerlər, oturacaqlar və s.)
+MaxUsersLabel=Maksimum istifadəçilər

@@ -1,5 +1,5 @@
 IntraCommReport=Intracomm jelentés
-IntraCommReports=Intracomm reports
+IntraCommReports=Intracomm jelentések
 
 Module68000Name = Intracomm jelentés
 Module68000Desc = Intracomm jelentéskezelés (a francia DEB/DES formátum támogatása)
@@ -35,4 +35,4 @@ IntracommReportTypeDeclaration=Deklaráció típusa
 IntracommReportDownload=XML fájl letöltése
 # Invoice
 IntracommReportTransportMode=A szállítás módja
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=IntraComm jelentés törlése

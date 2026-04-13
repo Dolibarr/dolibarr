@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2021 Laurent Destailleur <ldestailleur@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -64,8 +74,7 @@ $formproject = new FormProjets($db);
 
 $includeuserlist = array();
 
-
-llxHeader('', $langs->trans('Projects'));
+llxHeader('', $langs->trans('Projects'), '', '', 0, 0, '', '', '', 'mod-project page-stats');
 
 $title = $langs->trans("ProjectsStatistics");
 $dir = $conf->project->dir_output.'/temp';
@@ -125,6 +134,7 @@ if (!$mesg) {
 }
 
 
+$px2 = null;
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	// Build graphic amount of object
 	$data = $stats_project->getAmountByMonthWithPrevYear($endyear, $startyear);
@@ -161,6 +171,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	}
 }
 
+$px3 = null;
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	// Build graphic with transformation rate
 	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear, $startyear, 0, 0);
@@ -226,7 +237,7 @@ print dol_get_fiche_head($head, 'byyear', '', -1, '');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -256,6 +267,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
@@ -280,7 +292,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data_all_year as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {	// If we have empty year
+	while ($year && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
@@ -317,7 +329,7 @@ if ($mesg) {
 } else {
 	$stringtoshow .= $px1->show();
 	$stringtoshow .= "<br>\n";
-	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $px2 !== null && $px3 !== null) {
 		//$stringtoshow .= $px->show();
 		//$stringtoshow .= "<br>\n";
 		$stringtoshow .= $px2->show();

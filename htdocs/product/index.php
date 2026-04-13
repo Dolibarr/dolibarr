@@ -2,11 +2,12 @@
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2014-2025  Charlene BENKE           <charlene@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -47,7 +55,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects
@@ -68,8 +76,8 @@ $resultboxes = FormOther::getBoxesArea($user, "4");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -110,7 +118,7 @@ print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product')
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
-	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) { // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		// Ensure $listofsearchfields is set and array
 		$listofsearchfields = array();
 	}
@@ -195,7 +203,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	if ($conf->use_javascript_ajax) {
 		$graph .= '<div class="div-table-responsive-no-min">';
 		$graph .= '<table class="noborder centpercent">';
-		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").'</th></tr>';
+		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").' - '.$langs->trans("ProductStatus").'</th></tr>';
 		$graph .= '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
 
 		$SommeA = $prodser[0]['sell'];
@@ -308,11 +316,13 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
 /*
  * Latest modified products
  */
+$lastmodified = "";
 if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
-	$sql .= " p.tms as datem";
+	$sql .= " GREATEST(p.tms, pef.tms) as datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as pef ON pef.fk_object=p.rowid";
 	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 	/*if ($type != '') {
 		$sql .= " AND p.fk_product_type = ".((int) $type);
@@ -328,11 +338,10 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
-	$sql .= $db->order("p.tms", "DESC");
+	$sql .= $db->order("datem", "DESC");
 	$sql .= $db->plimit($max, 0);
 
 	//print $sql;
-	$lastmodified="";
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -646,7 +655,7 @@ if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
 		$db->free($resql);
 
 		if (empty($num)) {
-			$colspan = 4;
+			$colspan = 5;
 			if (isModEnabled('productbatch')) {
 				$colspan++;
 			}
@@ -723,7 +732,7 @@ function activitytrim($product_type)
 	global $conf, $langs, $db;
 
 	// We display the last 3 years
-	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as mnttot";
@@ -734,7 +743,7 @@ function activitytrim($product_type)
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND pf.fk_paiement = p.rowid";
 	$sql .= " AND fd.product_type = ".((int) $product_type);
-	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
+	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate, 1))."'";
 	$sql .= " GROUP BY annee, mois ";
 	$sql .= " ORDER BY annee, mois ";
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  *  @param      string  $format             "vcal" or "ical"
  *  @param      string  $title              Title of export
  *  @param      string  $desc               Description of export
- *  @param      array   $events_array       Array of events ("uid","startdate","duration","enddate","title","summary","category","email","url","desc","author")
+ *  @param      array<string,WebsitePage|array{uid:string,startdate:int,summary:string,desc:string,url?:?string,author:string,category?:?string,image?:?string,content?:?string}>	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
  *  @param      string  $outputfile         Output file
  *  @return     int                         Return integer < 0 if KO, Nb of events in file if OK
  */
@@ -72,9 +73,9 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
 		if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE') && getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE') > 60) {
-			$hh = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "hour");
-			$mm = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "min");
-			$ss = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "sec");
+			$hh = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "hour");
+			$mm = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "min");
+			$ss = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "sec");
 
 			fwrite($calfileh, "X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
 		}
@@ -107,8 +108,8 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			// Format
 			$summary     = format_cal($format, $summary);
 			$description = format_cal($format, $description);
-			$category    = format_cal($format, $category);
-			$location    = format_cal($format, $location);
+			$category    = format_cal($format, (string) $category);
+			$location    = format_cal($format, (string) $location);
 
 			// Output the vCard/iCal VEVENT object
 			/*
@@ -289,7 +290,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				fwrite($calfileh, "LOCATION:".$location."\n");
 				fwrite($calfileh, "TRANSP:OPAQUE\n");
 				fwrite($calfileh, "CLASS:CONFIDENTIAL\n");
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdatef, "dayhourxcard", 'gmt')."\n");
+				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdate, "dayhourxcard", 'gmt')."\n");
 
 				fwrite($calfileh, "END:VJOURNAL\n");
 			}
@@ -315,7 +316,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$format             "rss"
  *  @param      string	$title              Title of export
  *  @param      string	$desc               Description of export
- *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
+ *  @param      array<WebsitePage|array{uid:string,startdate:int,summary:string,desc:string,url?:?string,author:string,category?:?string,image?:?string,content?:?string}>	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
@@ -414,7 +415,6 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 					$event = $tmpevent;
 				}
-
 				$uid		  = $event["uid"];
 				$startdate	  = $event["startdate"];
 				$summary  	  = $event["summary"];
@@ -427,7 +427,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$image = $event["image"];
 				} else {
 					$reg = array();
-					// IF we found a link like <img alt="..." class="..." src="..."
+					// If we found a link into content like <img alt="..." class="..." src="..."
 					if (!empty($event["content"]) && preg_match('/<img\s*(?:alt="[^"]*"\s*)?(?:class="[^"]*"\s*)?src="([^"]+)"/m', $event["content"], $reg)) {
 						if (!empty($reg[0])) {
 							$image = $reg[1];

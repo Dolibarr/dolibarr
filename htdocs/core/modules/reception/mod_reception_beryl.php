@@ -31,8 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 class mod_reception_beryl extends ModelNumRefReception
 {
 	public $version = 'dolibarr';
+	/**
+	 * @var string
+	 */
 	public $prefix = 'RCP';
 	public $error = '';
+	/**
+	 * @var string
+	 */
 	public $nom = 'Beryl';
 
 
@@ -99,9 +105,9 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Reception	$reception	Reception object
-	 *	@return string|-1      			Value if OK, -1 if KO
+	 *	@param	Societe		$objsoc		Third party object
+	 *	@param	?Reception	$reception	Reception object
+	 *	@return string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{

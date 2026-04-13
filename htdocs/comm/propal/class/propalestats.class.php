@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (c) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +42,34 @@ class PropaleStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string sql from
+	 */
 	public $from;
+
+	/**
+	 * @var string sql fields
+	 */
 	public $field;
+
+	/**
+	 * @var string sql where
+	 */
 	public $where;
+
+	/**
+	 * @var string sql join
+	 */
 	public $join;
 
 
@@ -62,11 +85,12 @@ class PropaleStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer', $typentid = 0, $categid = 0)
 	{
+		global $hookmanager;
 		$this->db = $db;
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->join = '';
-
+		$object = null;
 		if ($mode == 'customer') {
 			$object = new Propal($this->db);
 
@@ -106,6 +130,10 @@ class PropaleStats extends Stats
 		if ($categid) {
 			$this->where .= ' AND EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'categorie_societe as cats WHERE cats.fk_soc = p.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $socid);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$this->where .= $hookmanager->resPrint;
 	}
 
 
@@ -114,7 +142,7 @@ class PropaleStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -130,7 +158,6 @@ class PropaleStats extends Stats
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
-
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
@@ -138,7 +165,7 @@ class PropaleStats extends Stats
 	/**
 	 * Return propals number per year
 	 *
-	 * @return	array	Array with number by year
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 *
 	 */
 	public function getNbByYear()
@@ -163,7 +190,7 @@ class PropaleStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with amount by month
+	 * @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -188,7 +215,7 @@ class PropaleStats extends Stats
 	 * Return the propals amount average by month for a year
 	 *
 	 * @param	int		$year	year for stats
-	 * @return	array			array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -211,7 +238,7 @@ class PropaleStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array	Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array with nb, total amount, average for each year
 	 */
 	public function getAllByYear()
 	{
@@ -231,13 +258,12 @@ class PropaleStats extends Stats
 	}
 
 
-
 	/**
 	 *	Return nb, amount of predefined product for year
 	 *
-	 *	@param	int		$year			Year to scan
-	 *  @param 	int     $limit      	Limit
-	 *	@return	array					Array of values
+	 *	@param	int		$year		Year to scan
+	 *  @param  int     $limit      Limit
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAllByProduct($year, $limit = 10)
 	{
