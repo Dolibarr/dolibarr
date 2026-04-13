@@ -92,3 +92,5 @@ phpstan_custom.neon
 
 # ignore .htaccess files
 .htaccess
+v20
+.ddev

@@ -427,7 +427,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								json["imgClicked"] = imgId;
 							}
 
-							$.post("'.DOL_URL_ROOT.'/compta/ajaxpayment.php", json, function(data)
+							$.post("'.DOL_URL_ROOT. '/compta/ajaxpayment.php", json, function(data)
 							{
 								json = $.parseJSON(data);
 
@@ -457,6 +457,17 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$("#payment_form").find("input.amount").keyup(function() {
 							callForResult();
 						});
+
+                        // Reduce posted variables: keep only non-empty entered invoice amounts.
+                        $("#payment_form").on("submit", function() {
+                            $(this).find("input.remain,input.multicurrency_remain").prop("disabled", true);
+
+                            $(this).find("input.amount,input.multicurrency_amount").each(function() {
+                                if ($.trim($(this).val()) === "") {
+                                    $(this).prop("disabled", true);
+                                }
+                            });
+                        });
 			';
 
 			print '	});'."\n";
