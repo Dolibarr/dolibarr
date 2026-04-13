@@ -967,8 +967,8 @@ class Facture extends CommonInvoice
 
 						if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 							$originid = $line->origin_id;
-							$origintype = $line->origin_type;
-						} else {
+							$origintype = empty($line->origin_type) ? $line->origin : $line->origin_type;
+						} else {	// old but bugged version (we store id of line and type of parent object)
 							$originid = $line->id;
 							$origintype = $this->element;
 						}
@@ -4418,8 +4418,10 @@ class Facture extends CommonInvoice
 
 			$this->line->special_code = $special_code;
 			$this->line->fk_parent_line = $fk_parent_line;
+
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
+
 			$this->line->situation_percent = $situation_percent;
 			$this->line->fk_prev_id = $fk_prev_id;
 			$this->line->fk_unit = $fk_unit;
@@ -4462,9 +4464,10 @@ class Facture extends CommonInvoice
 
 					$this->lines[] = $this->line;
 				} else {
-					foreach ($this->lines as $line) {
-						if ($line->id == $origin_id) {
-							$this->line->extraparams = $line->extraparams;
+					// Loop on all lines of parent object
+					foreach ($this->lines as $tmpline) {
+						if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
+							$this->line->extraparams = $tmpline->extraparams;
 							$this->line->setExtraParameters();
 						}
 					}

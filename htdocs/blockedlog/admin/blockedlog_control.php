@@ -54,6 +54,7 @@ $confirm     = GETPOST('confirm', 'aZ09');	// Used by the actions_linkedfiles.in
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 //$hmacexportkey = GETPOST('hmacexportkey', 'password');
 $inputregistrationnumber = GETPOST('inputregistrationnumber');
@@ -164,7 +165,7 @@ if (!userIsTaxAuditor()) {
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
-$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+$head = blockedlogadmin_prepare_head($withtab);
 
 print dol_get_fiche_head($head, 'control', '', -1);
 

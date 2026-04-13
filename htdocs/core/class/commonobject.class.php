@@ -6261,26 +6261,32 @@ abstract class CommonObject
 		// update model_pdf in object
 		$this->model_pdf = $saved_model;
 
-		if ($obj instanceof ModelePDFMember) {
-			if ($this instanceof Adherent) {
-				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
+		try {
+			if ($obj instanceof ModelePDFMember) {
+				if ($this instanceof Adherent) {
+					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
+				} else {
+					$resultwritefile = -1;
+					dol_syslog("Error generating document - Provided ".get_class($this)." to ".get_class($obj)."::write_file()", LOG_ERR);
+				}
+			} elseif ($obj instanceof ModeleDon) {
+				// Only 3 arguments
+				if ($this instanceof Don) {
+					$resultwritefile = $obj->write_file($this, $outputlangs /*, $currency */);
+				} else {
+					$resultwritefile = -1;
+					dol_syslog("Error generating document - Provided ".get_class($this)." to Don::write_file()", LOG_ERR);
+				}
 			} else {
-				$resultwritefile = -1;
-				dol_syslog("Error generating document - Provided ".get_class($this)." to ".get_class($obj)."::write_file()", LOG_ERR);
+				// TODO: Try to set type above again
+				'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
+				$this->context['moreparams'] = $moreparams;
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);  // @phan-suppress-line-PhanTypeMismatchArgument
 			}
-		} elseif ($obj instanceof ModeleDon) {
-			// Only 3 arguments
-			if ($this instanceof Don) {
-				$resultwritefile = $obj->write_file($this, $outputlangs /*, $currency */);
-			} else {
-				$resultwritefile = -1;
-				dol_syslog("Error generating document - Provided ".get_class($this)." to Don::write_file()", LOG_ERR);
-			}
-		} else {
-			// TODO: Try to set type above again
-			'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
-			$this->context['moreparams'] = $moreparams;
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);  // @phan-suppress-line-PhanTypeMismatchArgument
+		} catch (\Throwable $e) {
+			$resultwritefile = -1;
+			$this->error = $e->getMessage();
+			dol_syslog("Exception in write_file() for ".get_class($this).": ".$e->getMessage(), LOG_ERR);
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
@@ -6319,10 +6325,14 @@ abstract class CommonObject
 			return 1;
 		} else {
 			$outputlangs->charset_output = $sav_charset_output;
-			$this->error = $obj->error;
-			$this->errors = $obj->errors;
+			if (empty($this->error)) {
+				$this->error = $obj->error;
+			}
+			if (empty($this->errors)) {
+				$this->errors = $obj->errors;
+			}
 			$this->warnings = $obj->warnings;
-			dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
+			dol_syslog("Error generating document for ".__CLASS__.". Error: ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

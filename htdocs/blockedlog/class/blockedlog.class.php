@@ -1200,16 +1200,11 @@ class BlockedLog
 	 *
 	 * @param	?stdClass	$data	Data to serialize
 	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
-	 * @return 	string				Value serialized, an object (stdClass)
+	 * @return 	string				Value serialized, an object (stdClass).
 	 */
-	public function dolEncodeBlockedData($data, $mode = 0)
+	public function dolEncodeBlockedData($data, $mode = 1)
 	{
-		$aaa = '';
-		try {
-			$aaa = json_encode($data);
-		} catch (Exception $e) {
-			// print $e->getErrs);
-		}
+		$aaa = json_encode($data);
 
 		return $aaa;
 	}
@@ -1393,9 +1388,9 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "'".$this->db->escape($this->object_format)."',";
 		$sql .= "0,";
-		$sql .= $this->fk_user.",";
+		$sql .= ((int) $this->fk_user).",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
-		$sql .= ($this->entity ? $this->entity : $conf->entity).",";
+		$sql .= ((int) ($this->entity ? $this->entity : $conf->entity)).",";
 		$sql .= "'".$this->db->escape($this->debuginfo)."'";
 		$sql .= ")";
 

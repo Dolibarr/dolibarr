@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ function getBlockedLogVersionToShow()
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
- *  @param	string		$withtabsetup					Add also the tab "Setup"
+ *  @param	int		$withtabsetup					Add also the tab "Setup"
  *  @return	array<array{0:string,1:string,2:string}>	Array of head
  */
 function blockedlogadmin_prepare_head($withtabsetup)

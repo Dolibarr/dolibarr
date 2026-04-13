@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 		<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -122,12 +122,12 @@ class modStockTransfer extends DolibarrModules
 		$this->hidden = false;
 		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array('modStock', 'modProduct');
-		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
-		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+		$this->requiredby = []; // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+		$this->conflictwith = []; // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("stocktransfer@stocktransfer");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->warnings_activation = array();
-		$this->warnings_activation_ext = array();
+		$this->warnings_activation = [];
+		$this->warnings_activation_ext = [];
 		//$this->automatic_activation = array('FR'=>'StockTransferWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 
 		// Constants
@@ -135,7 +135,7 @@ class modStockTransfer extends DolibarrModules
 		// Example: $this->const=array(1 => array('STOCKTRANSFER_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('STOCKTRANSFER_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array();
+		$this->const = [];
 
 		if (!isset($conf->stocktransfer) || !isset($conf->stocktransfer->enabled)) {
 			$conf->stocktransfer = new stdClass();
@@ -143,7 +143,7 @@ class modStockTransfer extends DolibarrModules
 		}
 
 		// Array to add new pages in new tabs
-		$this->tabs = array();
+		$this->tabs = [];
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@stocktransfer:$user->rights->stocktransfer->read:/stocktransfer/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@stocktransfer:$user->rights->othermodule->read:/stocktransfer/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
@@ -171,7 +171,7 @@ class modStockTransfer extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 		// Dictionaries
-		$this->dictionaries = array();
+		$this->dictionaries = [];
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'stocktransfer@stocktransfer',
@@ -231,7 +231,7 @@ class modStockTransfer extends DolibarrModules
 		// );
 
 		// Permissions provided by this module
-		$this->rights = array();
+		$this->rights = [];
 		$r = 10;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
@@ -254,7 +254,7 @@ class modStockTransfer extends DolibarrModules
 
 		// Main menu entries to add
 		$langs->load('stocktransfer@stocktransfer');
-		$this->menu = array();
+		$this->menu = [];
 		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
@@ -433,7 +433,7 @@ class modStockTransfer extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		$sql = array();
+		$sql = [];
 
 		// Roles
 		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'internal'");
@@ -490,7 +490,7 @@ class modStockTransfer extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-		$sql = array();
+		$sql = [];
 		return $this->_remove($sql, $options);
 	}
 }

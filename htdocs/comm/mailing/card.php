@@ -1106,10 +1106,10 @@ if ($action == 'create') {	// aaa
 						}
 					}
 				}
-				if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK')) {
+				if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->fk_project > 0 && $action != 'classify') {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= ' <small>(<a href="' . DOL_URL_ROOT . '/comm/mailing/list.php?projectid='.$object->fk_project.'">' .$langs->trans("Other").' '.$langs->trans("EMailings").' for '.$langs->trans("Project").': '. $proj->title. '</a>)</small>';
+					$morehtmlref .= ' <small>(<a href="' . DOL_URL_ROOT . '/comm/mailing/list.php?projectid='.$object->fk_project.'">'.$langs->trans("OtherEMailingsForProject").'</a>)</small>';
 				}
 			}
 			$morehtmlref .= '</div>';

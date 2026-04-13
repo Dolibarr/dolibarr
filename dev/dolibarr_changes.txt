@@ -259,6 +259,19 @@ with
 with
 	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
 
+* Replace
+	public function Error($msg) {
+        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
+    }
+with
+	public function Error($msg) {
+        // Respect K_TCPDF_THROW_EXCEPTION_ERROR like TCPDF does
+        if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') && K_TCPDF_THROW_EXCEPTION_ERROR) {
+            throw new \Exception("TCPDI_PARSER ERROR [{$this->uniqueid}]: ".$msg);
+        }
+        // Default: exit program and print error
+        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
+    }
 
 
 PHP JQUERYFILETREE:
