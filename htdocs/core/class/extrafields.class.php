@@ -1820,6 +1820,10 @@ class ExtraFields
 					})
 				});
 				</script>";
+				// We need a hidden field because when using the multiselect, if we unselect all, there is no
+				// variable submitted at all, so no way to make a difference between variable not submitted and variable
+				// submitted to nothing.
+				$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_multiselect" value="1">';
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'[]" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').' multiple="multiple">';
 				foreach ($value_arr as $value) {
 					$out .= '	<option value="'.$value.'" selected>'.$this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey).'</option>';
