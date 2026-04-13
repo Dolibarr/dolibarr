@@ -79,7 +79,7 @@ class Contrat extends CommonObject
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
-	public $restrictiononfksoc = 1;
+	public $restrictiononfksoc = 0;
 
 	/**
 	 * {@inheritdoc}
