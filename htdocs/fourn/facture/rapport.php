@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017		ATM-Consulting  	 <support@atm-consulting.fr>
- * Copyright (C) 2020		Maxime DEMAREST  	 <maxime@indelog.fr>
+/* Copyright (C) 2017		ATM-Consulting          <support@atm-consulting.fr>
+ * Copyright (C) 2020		Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement_fourn.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 /**
  * @var Conf $conf
@@ -37,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement_fourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->loadLangs(array('bills'));
 
@@ -47,6 +49,8 @@ if (!empty($user->socid)) {
 }
 $result = restrictedArea($user, 'fournisseur', 0, 'facture_fourn', 'facture');
 
+$object = new FactureFournisseur($db);
+
 $action = GETPOST('action', 'aZ09');
 $fileToRemove = GETPOST('removefile', 'alpha');
 
@@ -56,7 +60,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$dir = $conf->fournisseur->facture->dir_output.'/payments';
+$dir = getMultidirOutput($object).'/payments';
 if (!$user->hasRight("societe", "client", "voir") || $socid) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
@@ -90,7 +94,7 @@ if ($action == 'builddoc' && $permissiontoread) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
-		dol_print_error($db, $obj->error);
+		dol_print_error($db, $object->error);
 	}
 
 	$year = GETPOSTINT("reyear");
