@@ -11,7 +11,7 @@ return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 390+ occurrences
     // PhanUndeclaredGlobalVariable : 50+ occurrences
-    // PhanTypeMismatchArgument : 45+ occurrences
+    // PhanTypeMismatchArgument : 35+ occurrences
     // PhanTypeMismatchProperty : 20+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
@@ -38,11 +38,9 @@ return [
         'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/compta/bank/class/account.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/bank/class/paymentvarious.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/bank/line.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/compta/bank/various_payment/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/bank/various_payment/document.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/compta/facture/card-rec.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/facture/class/facture.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/localtax/card.php' => ['PhanUndeclaredGlobalVariable'],
@@ -89,7 +87,6 @@ return [
         'htdocs/core/modules/cheque/modules_chequereceipts.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/commande/doc/pdf_einstein.modules.php' => ['PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/contract/doc/pdf_strato.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/delivery/mod_delivery_saphir.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/expedition/doc/pdf_espadon.modules.php' => ['PhanTypeMismatchArgument'],
@@ -135,8 +132,7 @@ return [
         'htdocs/filefunc.inc.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/commande/card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/fourn/facture/card-rec.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/fourn/facture/card.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/fourn/facture/card-rec.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/holiday/card_group.php' => ['PhanTypeMismatchArgument'],
         'htdocs/holiday/list.php' => ['PhanUndeclaredGlobalVariable'],
