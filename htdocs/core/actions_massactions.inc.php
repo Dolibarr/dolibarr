@@ -2317,6 +2317,7 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 						$discount->fk_facture_source = $object->id;
 
 						$error = 0;
+						$id_discount = 0;
 
 						foreach ($amount_ht as $tva_tx => $xxx) {
 							$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
