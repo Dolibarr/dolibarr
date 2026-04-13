@@ -84,6 +84,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$result = -1;
 // TODO Test on reception module on only
 $result = -1;
 if ($origin == 'reception') {
@@ -92,7 +93,6 @@ if ($origin == 'reception') {
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
 		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
 	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
-		$result = null;
 		accessforbidden();
 	}
 }
@@ -117,7 +117,7 @@ if (isModEnabled("reception")) {
  */
 
 if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
-	if (isset($result) && $result > 0 && $id > 0) {
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
