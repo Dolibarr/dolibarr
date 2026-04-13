@@ -571,7 +571,7 @@ UPDATE llx_c_country SET phone_code = 389 WHERE code = 'MK';
 UPDATE llx_c_country SET phone_code = 261 WHERE code = 'MG';
 UPDATE llx_c_country SET phone_code = 265 WHERE code = 'GH';
 UPDATE llx_c_country SET phone_code = 350 WHERE code = 'GI';
-UPDATE llx_c_country SET phone_code = 30 WWHERE code = 'MW';
+UPDATE llx_c_country SET phone_code = 30 WHERE code = 'MW';
 UPDATE llx_c_country SET phone_code = 60 WHERE code = 'MY';
 UPDATE llx_c_country SET phone_code = 960 WHERE code = 'MV';
 UPDATE llx_c_country SET phone_code = 223 WHERE code = 'ML';
