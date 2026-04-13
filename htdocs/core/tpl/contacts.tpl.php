@@ -423,9 +423,13 @@ foreach ($list as $entry) {
 
 	print '<td class="tdoverflowmax200" data-primobj_id="' . ((int) $entry->primobj_id) . '" data-primobj_name="' . dol_escape_htmltag($entry->primobj_name) . '">'.$entry->primobj_html.'</td>';
 
-	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
+	if ($entry->nature = 'member') {
+		print '<td class="tdoverflowmax200" data-contact_id=""></td>';
+	} else {
+		print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
+	}
 	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature_html).'</span>';
-	if ($entry->contact_warning > 0) {
+	if (isset($entry->contact_warning) && $entry->contact_warning > 0) {
 		$tmpuser = new User($db);
 		$tmpuser->fetch($entry->contact_warning);
 		print ($tmpuser->id > 0 ? img_picto($langs->trans("ThisContactHasAUser", $tmpuser->getFullName($langs), $entry->contact_name), 'info') : '');
