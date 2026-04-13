@@ -323,7 +323,14 @@ foreach (array('internal', 'member', 'external') as $source) {
 			//$entry->contact_html = '<small>(Members currently does not have contacts)</small>';
 		}
 
-		if ($contact['socid'] > 0) {
+		if ($contact['source'] ==  'member') {
+			$memberstatic->fetch($contact['memberid']);
+			$entry->primobj_id   = $memberstatic->id;
+			$entry->primobj_html = $memberstatic->getNomUrl(1);
+			$entry->primobj_name = strtolower($memberstatic->getFullName($langs));
+			$entry->status = $contact['statusmember'];
+			$entry->status_html = $memberstatic->getLibStatut(5);
+		} elseif ($contact['socid'] > 0) {
 			$companystatic->fetch($contact['socid']);
 			$entry->primobj_id   = $companystatic->id;
 			$entry->primobj_html = $companystatic->getNomUrl(1);
@@ -331,13 +338,6 @@ foreach (array('internal', 'member', 'external') as $source) {
 		} elseif ($contact['socid'] < 0) {
 			$entry->primobj_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 			$entry->primobj_name = strtolower(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
-		} elseif ($contact['source'] ==  'member') {
-			$memberstatic->fetch($contact['memberid']);
-			$entry->primobj_id   = $memberstatic->id;
-			$entry->primobj_html = $memberstatic->getNomUrl(1);
-			$entry->primobj_name = strtolower($memberstatic->getFullName($langs));
-			$entry->status = $contact['statuscontact'];
-			$entry->status_html = $memberstatic->getLibStatut(5);
 		}
 
 		if ($contact['source'] == 'internal') {
