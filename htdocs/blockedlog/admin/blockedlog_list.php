@@ -80,6 +80,7 @@ $search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_startmonth') && !GETPOSTISSET('begin')) {
 	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
@@ -170,7 +171,7 @@ if (userIsTaxAuditor()) {
 
 $form = new Form($db);
 
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
@@ -192,7 +193,7 @@ if (!is_array($blocks)) {
 }
 
 $linkback = '';
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
@@ -209,7 +210,7 @@ if (!userIsTaxAuditor()) { // @phpstan-ignore-line as it is already checked befo
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
-$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+$head = blockedlogadmin_prepare_head($withtab);
 
 print dol_get_fiche_head($head, 'fingerprints', '', -1);
 
@@ -289,8 +290,8 @@ if ($search_signature) {
 if ($search_showonlyerrors > 0) {
 	$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
 }
-if (GETPOST('withtab', 'alpha')) {
-	$param .= '&withtab='.urlencode(GETPOST('withtab', 'alpha'));
+if ($withtab) {
+	$param .= '&withtab='.((int) $withtab);
 }
 
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -305,7 +306,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+print '<input type="hidden" name="withtab" value="'.$withtab.'">';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent liste">';

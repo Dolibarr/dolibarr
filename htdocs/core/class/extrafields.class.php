@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
  * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
@@ -107,7 +107,7 @@ class ExtraFields
 		'stars' => 'ExtrafieldStars',
 	);
 
-	/** @var array<string,array<string,string>> $geoDataTypes */
+	/** @var array<string,array<string,string>> */
 	public static $geoDataTypes = array(
 		'point' => array(
 			'ST_Function' => 'ST_PointFromText',
@@ -800,7 +800,6 @@ class ExtraFields
 
 			dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
 			if ($type != 'separate') { // No table update when separate type
-				// TODO: Verify, adjust - field_desc has 'value' (not expected), and is missing 'label','enabled','position','visible'
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
@@ -1820,6 +1819,10 @@ class ExtraFields
 					})
 				});
 				</script>";
+				// We need a hidden field because when using the multiselect, if we unselect all, there is no
+				// variable submitted at all, so no way to make a difference between variable not submitted and variable
+				// submitted to nothing.
+				$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_multiselect" value="1">';
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'[]" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').' multiple="multiple">';
 				foreach ($value_arr as $value) {
 					$out .= '	<option value="'.$value.'" selected>'.$this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey).'</option>';
@@ -2115,7 +2118,7 @@ class ExtraFields
 			$objectdesc = $tmparray[0].(empty($tmparray[1]) ? "" : ":".$tmparray[1]);	// Example: 'ObjectName:classPath'					      To not propagate any filter (selectForForms do ajax call and propagating SQL filter is blocked by some WAF). Also we should use the filter into the definition in the ->fields of $elem if found.
 			$objectfield = $element.':options_'.$key;	// Example: 'actioncomm:options_fff'				To be used in priority to know object linked with all its definition (including filters)
 
-			$out = $form->selectForForms($objectdesc, $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $objectfield);
+			$out = $form->selectForForms($objectdesc, $keyprefix.$key.$keysuffix, (int) $value, $showempty, '', '', $morecss, '', 0, 0, '', $objectfield);
 		} elseif (in_array($type, ['point', 'multipts', 'linestrg', 'polygon'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 			$dolgeophp = new DolGeoPHP($this->db);

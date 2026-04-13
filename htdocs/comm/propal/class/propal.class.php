@@ -861,9 +861,10 @@ class Propal extends CommonObject
 
 					$this->lines[] = $this->line;
 				} else {
-					foreach ($this->lines as $line) {
-						if ($line->id == $origin_id) {
-							$this->line->extraparams = $line->extraparams;
+					// Loop on all lines of parent object
+					foreach ($this->lines as $tmpline) {
+						if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
+							$this->line->extraparams = $tmpline->extraparams;
 							$this->line->setExtraParameters();
 						}
 					}
@@ -1352,8 +1353,8 @@ class Propal extends CommonObject
 
 						if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 							$originid = $line->origin_id;
-							$origintype = $line->origin;
-						} else {
+							$origintype = empty($line->origin_type) ? $line->origin : $line->origin_type;
+						} else {	// old but bugged version (we store id of line and type of parent object)
 							$originid = $line->id;
 							$origintype = $this->element;
 						}

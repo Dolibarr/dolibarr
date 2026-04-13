@@ -5,7 +5,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
@@ -186,7 +186,7 @@ class ExpenseReport extends CommonObject
 
 	// Refus
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_refuse;
 
@@ -202,7 +202,7 @@ class ExpenseReport extends CommonObject
 
 	// Annulation
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_cancel;
 
@@ -1689,7 +1689,7 @@ class ExpenseReport extends CommonObject
 	{
 		// phpcs:enable
 		$error = 0;
-		$this->date_cancel = $this->db->idate(dol_now());
+		$this->date_cancel = dol_now();
 		if ($this->status != self::STATUS_CANCELED) {
 			$this->db->begin();
 

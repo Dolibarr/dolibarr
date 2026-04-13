@@ -1550,10 +1550,8 @@ class ActionComm extends CommonObject
 					$response->url .= '&filtert=-1';
 				}
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
-			}
-			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (empty($load_state_board)) {
+
+				while ($obj = $this->db->fetch_object($resql)) {
 					'@phan-var-force WorkboardResponse $response
 					 @phan-var-force ActionComm $agenda_static';
 					$response->nbtodo++;
@@ -1561,7 +1559,10 @@ class ActionComm extends CommonObject
 					if ($agenda_static->hasDelay()) {
 						$response->nbtodolate++;
 					}
-				} else {
+				}
+			} else {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
 					$this->nb["actionscomm"] = $obj->nb;
 				}
 			}
