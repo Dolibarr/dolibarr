@@ -6,6 +6,7 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	    Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,8 +63,8 @@ if ($action == "create" || $action == "add") {
 
 $object = new FactureFournisseurRec($db);
 // Load object
-if (($id > 0 || $title) && $action != 'create' && $action != 'add') {
-	$ret = $object->fetch($id, $title);
+if ($id > 0 || !empty($ref)) {
+	$ret = $object->fetch($id, $ref);
 	if (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
