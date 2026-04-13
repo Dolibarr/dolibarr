@@ -453,7 +453,7 @@ if ($result >= 0) {
 								json["imgClicked"] = imgId;
 							}
 
-							$.post("'.DOL_URL_ROOT.'/compta/ajaxpayment.php", json, function(data)
+							$.post("'.DOL_URL_ROOT. '/compta/ajaxpayment.php", json, function(data)
 							{
 								json = $.parseJSON(data);
 
@@ -483,6 +483,23 @@ if ($result >= 0) {
 						$("#payment_form").find("input.amount").keyup(function() {
 							callForResult();
 						});
+
+           // Reduce posted variables: keep only non-empty entered invoice amounts.
+            $("#payment_form").on("submit", function() {
+                    // Disable only empty remain fields
+                $(this).find("input.remain,input.multicurrency_remain").each(function() {
+                    if ($.trim($(this).val()) === "") {
+                        $(this).prop("disabled", true);
+                    }
+                });
+
+                // Disable only empty amount fields
+                $(this).find("input.amount,input.multicurrency_amount").each(function() {
+                    if ($.trim($(this).val()) === "") {
+                        $(this).prop("disabled", true);
+                    }
+                });
+            });
 						// Multicurrency LRR
 						$("#payment_form").find("input.multicurrency_amount").change(function() {
 							callForResult(null, 1);
