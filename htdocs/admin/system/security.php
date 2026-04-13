@@ -741,6 +741,7 @@ if (!$test) {
 print '<br>';
 
 // Modules for Payments
+/*
 $test = isModEnabled('stripe');
 if ($test) {
 	print '<br>';
@@ -766,6 +767,7 @@ if ($test) {
 		print '<br>';
 	}
 }
+*/
 
 print '</div>';
 

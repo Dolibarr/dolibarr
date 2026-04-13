@@ -662,10 +662,10 @@ class FormSetupItem
 	/** @var int  */
 	public $rank = 0;
 
-	/** @var array<string,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
+	/** @var array<int|string,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
 	public $fieldOptions = array();
 
-	/** @var array<string,string|int|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
+	/** @var array<int|string,string|int|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
 	public $fieldParams = array();
 
 	/** @var callable  */
@@ -1695,7 +1695,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a multiselect list.
 	 *
-	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
+	 * @param array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
 	 * @return self
 	 */
 	public function setAsMultiSelect($fieldOptions)
@@ -1711,7 +1711,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a select list.
 	 *
-	 * @param ?array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string,note:string}>  $fieldOptions  A table of field options
+	 * @param ?array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string,note:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)
@@ -1728,7 +1728,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a radio button.
 	 *
-	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
+	 * @param  ?array<int|string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsRadio($fieldOptions)

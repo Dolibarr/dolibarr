@@ -3520,7 +3520,12 @@ class BookKeeping extends CommonObject
 
 					if ($resql) {
 						while ($obj = $this->db->fetch_object($resql)) {
-							$docRef = $langs->trans('CloneOf', $obj->doc_ref);
+							$docRef = $obj->doc_ref;
+							if (preg_match('/ \((\d+)\)$/', $docRef, $matches)) {
+								$docRef = preg_replace('/ \(\d+\)$/', ' (' . (((int) $matches[1]) + 1) . ')', $docRef);
+							} else {
+								$docRef .= ' (2)';
+							}
 
 							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
@@ -3622,7 +3627,12 @@ class BookKeeping extends CommonObject
 							$resql = $this->db->query($sql);
 							if ($resql) {
 								while ($obj = $this->db->fetch_object($resql)) {
-									$docRef = $langs->trans("CloneOf", $obj->doc_ref);
+									$docRef = $obj->doc_ref;
+									if (preg_match('/ \((\d+)\)$/', $docRef, $matches)) {
+										$docRef = preg_replace('/ \(\d+\)$/', ' (' . (((int) $matches[1]) + 1) . ')', $docRef);
+									} else {
+										$docRef .= ' (2)';
+									}
 
 									$sql_insert = "INSERT INTO ".$this->db->prefix()."accounting_bookkeeping (";
 									$sql_insert .= " piece_num";

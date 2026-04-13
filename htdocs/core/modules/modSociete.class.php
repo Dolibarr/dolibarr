@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,61 +76,59 @@ class modSociete extends DolibarrModules
 		$this->langfiles = array("companies", 'bills', "compta", "admin", "banks");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "SOCIETE_CODECLIENT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_codeclient_monkey";
-		$this->const[$r][3] = 'Module to control third parties codes';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "SOCIETE_CODECOMPTA_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_codecompta_panicum";
-		$this->const[$r][3] = 'Module to control third parties codes';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Enter the month number of the first month of the fiscal year, e. g. 9 for September";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "COMPANY_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/thirdparties";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		/*
-		 $this->const[$r][0] = "COMPANY_HIDE_INACTIVE_IN_COMBOBOX";
-		 $this->const[$r][1] = "chaine";
-		 $this->const[$r][2] = "0";
-		 $this->const[$r][3] = "hide thirdparty customer inative in combobox";
-		 $this->const[$r][4] = 1;
-		 $r++;
-		 */
-
-		$this->const[$r][0] = "SOCIETE_ADD_REF_IN_LIST";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "Display customer ref into select list";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"SOCIETE_CODECLIENT_ADDON",
+				"chaine",
+				"mod_codeclient_monkey",
+				'Module to control third parties codes',
+				0,
+			],
+			[
+				"SOCIETE_CODECOMPTA_ADDON",
+				"chaine",
+				"mod_codecompta_panicum",
+				'Module to control third parties codes',
+				0,
+			],
+			[
+				"SOCIETE_FISCAL_MONTH_START",
+				"chaine",
+				"1",
+				"Enter the month number of the first month of the fiscal year, e. g. 9 for September",
+				0,
+			],
+			[
+				"COMPANY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/thirdparties",
+				"",
+				0,
+			],
+			// [
+			// 	"COMPANY_HIDE_INACTIVE_IN_COMBOBOX",
+			// 	"chaine",
+			// 	"0",
+			// 	"hide thirdparty customer inative in combobox",
+			// 	1,
+			// ],
+			[
+				"SOCIETE_ADD_REF_IN_LIST",
+				"yesno",
+				"0",
+				"Display customer ref into select list",
+				0,
+			],
+		];
 
 		// Boxes
-		$this->boxes = array(
-			0 => array('file' => 'box_clients.php', 'enabledbydefaulton' => 'Home'),
-			1 => array('file' => 'box_prospect.php', 'enabledbydefaulton' => 'Home'),
-			2 => array('file' => 'box_contacts.php', 'enabledbydefaulton' => 'Home'),
-			3 => array('file' => 'box_activity.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'),
-			4 => array('file' => 'box_goodcustomers.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'),
-		);
+		$this->boxes = [
+			['file' => 'box_clients.php', 'enabledbydefaulton' => 'Home'],
+			['file' => 'box_prospect.php', 'enabledbydefaulton' => 'Home'],
+			['file' => 'box_contacts.php', 'enabledbydefaulton' => 'Home'],
+			['file' => 'box_activity.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'],
+			['file' => 'box_goodcustomers.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'],
+		];
 
 		// Permissions
 		$this->rights = array();

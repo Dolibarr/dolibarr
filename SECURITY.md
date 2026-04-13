@@ -23,7 +23,9 @@ NOTE: This is a private vulnerability report process: Advisories are sent to use
 
 - Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
 
-NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
+NOTE: This is a private vulnerability report process: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourself (we have no CNA number), but you are free to do it yourself.
+
+Also, note that we are a project developed by volunteers and have no found for bounties.
 
 
 ## Hunting vulnerabilities on Dolibarr

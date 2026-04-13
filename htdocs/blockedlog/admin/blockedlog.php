@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024      Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $withtab    = GETPOSTINT('withtab');
 $origin     = GETPOST('origin');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 // Access Control
 if (!$user->admin || !isModEnabled('blockedlog')) {
@@ -114,7 +115,7 @@ if (!isRegistrationDataSavedAndPushed()) {
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
-	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+	$head = blockedlogadmin_prepare_head($withtab);
 	print dol_get_fiche_head($head, 'technicalinfo', '', -1);
 }
 

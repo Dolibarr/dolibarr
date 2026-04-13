@@ -25,9 +25,6 @@
  *       			This page is called by search forms when MAIN_SEARCH_FORM_ON_HOME_AREAS is set or from user area.
  */
 
-if (!defined('NOREQUIREDB')) {
-	define('NOREQUIREDB', '1');
-}
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }

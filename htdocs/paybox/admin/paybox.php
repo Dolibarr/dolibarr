@@ -107,10 +107,6 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
-		$error++;
-	}
 	$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
@@ -286,11 +282,6 @@ print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SE
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (!getDolGlobalString('PAYMENT_SECURITY_TOKEN') ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
 print '</td></tr>';
 
 print '</table>';
