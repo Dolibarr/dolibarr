@@ -1944,7 +1944,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	$complete = (string) (!empty($filters['search_complete']) ? $filters['search_complete']: '');	// Can be 'na', '0', '50', '100'
+	$complete = (string) (!empty($filters['search_complete']) ? $filters['search_complete'] : '');	// Can be 'na', '0', '50', '100'
 	$percent = $complete !== '' ? $complete : -1;
 	if ((string) $complete == '0') {
 		$percent = '0';
@@ -2207,7 +2207,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					break;
 				}
 			}
-		} else {
+		} elseif ($objcon !== null) {
 			$sql2 = addMailingEventTypeSQL($actioncode, $objcon, $filterobj);
 			if (!empty($sql) && !empty($sql2)) {
 				$sql = $sql . " UNION " . $sql2;
@@ -2841,7 +2841,7 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
  *  Add Mailing Event Type SQL
  *
  *  @param	string	    $actioncode		Action code
- *  @param	Object		$objcon		    objcon
+ *  @param	Contact		$objcon		    objcon
  *  @param	?Object		$filterobj      filterobj
  *  @return	string
  */

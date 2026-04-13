@@ -14,7 +14,7 @@
  * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019		Abbes Bahfir			<dolipar@dolipar.org>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2615,14 +2615,14 @@ class User extends CommonObject
 	/**
 	 *  Change password of a user
 	 *
-	 *  @param	User	$user             		Object user of user requesting the change (not the user for who we change the password). May be unknown.
-	 *  @param  string	$password         		New password, in clear text or already encrypted (to generate if not provided)
-	 *	@param	int		$changelater			0=Default, 1=Save password into pass_temp to change password only after clicking on confirm email
-	 *	@param	int		$notrigger				1=Does not launch triggers
-	 *	@param	int		$nosyncmember	        Do not synchronize linked member
-	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is encrypted value.
+	 *  @param	User		$user             		Object user of user requesting the change (not the user for who we change the password). May be unknown.
+	 *  @param  string		$password         		New password, in clear text or already encrypted (to generate if not provided)
+	 *	@param	int<0,1>	$changelater			0=Default, 1=Save password into pass_temp to change password only after clicking on confirm email
+	 *	@param	int<0,1>	$notrigger				1=Does not launch triggers
+	 *	@param	int<0,1>	$nosyncmember	        Do not synchronize linked member
+	 *  @param	int<0,1>	$passwordalreadycrypted 0=Value is cleartext password, 1=Value is encrypted value.
 	 *  @param	int		$flagdelsessionsbefore  1=Save also the current date to ask to invalidate all other session before this date.
-	 *  @return int|string		          		If OK return clear password, 0 if no change (warning, you may retrieve 1 instead of 0 even if password was same), < 0 if error
+	 *  @return int<-3,0>|string	          		If OK return clear password, 0 if no change (warning, you may retrieve 1 instead of 0 even if password was same), < 0 if error
 	 */
 	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0, $flagdelsessionsbefore = 1)
 	{
@@ -2636,11 +2636,13 @@ class User extends CommonObject
 		// If new password not provided, we generate one
 		if (!$password) {
 			$password = getRandomPassword(false);
+			$passwordalreadycrypted = 0;  // Just generated, so not crypted
 		}
 
-		$password_crypted = null;
 		// Check and encrypt the password
-		if (empty($passwordalreadycrypted)) {
+		if (!empty($passwordalreadycrypted)) {
+			$password_crypted = $password;  // Reuse crypted password
+		} else {
 			if (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 				// Add a check on rules for password syntax using the setup of the password generator
 				$modGeneratePassClass = 'modGeneratePass'.ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
@@ -2664,7 +2666,7 @@ class User extends CommonObject
 
 
 			// Now, we encrypt the new password
-			$password_crypted = dol_hash($password);
+			$password_crypted = (string) dol_hash($password);
 		}
 
 		// Update password

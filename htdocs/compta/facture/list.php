@@ -18,7 +18,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -121,17 +121,17 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_dispute_status = GETPOST('search_dispute_status', 'intcomma');
 $search_status = GETPOST('search_status', 'array:intcomma');
-if (empty($search_status) && GETPOSTISSET('search_status')) {
-	// The parameter exists in the URL but was not recognized as an array.
-	$search_status = GETPOST('search_status', 'intcomma');
-	if ($search_status !== '' && $search_status !== '-1') {
-		$search_status = array($search_status);
-	} else {
-		$search_status = '';
-	}
-} elseif (is_array($search_status) && count($search_status) == 0) {
-	$search_status = '';
-}
+// if (empty($search_status) && GETPOSTISSET('search_status')) {
+// 	// The parameter exists in the URL but was not recognized as an array.
+// 	$search_status = GETPOST('search_status', 'intcomma');
+// 	if ($search_status !== '' && $search_status !== '-1') {
+// 		$search_status = array($search_status);
+// 	} else {
+// 		$search_status = '';
+// 	}
+// } elseif (is_array($search_status) && count($search_status) == 0) {
+// 	$search_status = '';
+// }
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
 $search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
@@ -440,7 +440,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_multicurrency_montant_vat = '';
 	$search_multicurrency_montant_ttc = '';
 	$search_dispute_status = '';
-	$search_status = '';
+	$search_status = [];
 	$search_paymentmode = '';
 	$search_paymentterms = '';
 	$search_bankaccount = '';
@@ -1420,13 +1420,9 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_dispute_status != '') {
 	$param .= '&search_dispute_status='.urlencode($search_dispute_status);
 }
-if ($search_status != '') {
-	if (is_array($search_status)) {
-		foreach ($search_status as $key => $val) {
-			$param .= '&search_status[]='.urlencode($val);
-		}
-	} else {
-		$param .= '&search_status='.urlencode($search_status);
+if (count($search_status) > 0) {
+	foreach ($search_status as $key => $val) {
+		$param .= '&search_status[]='.urlencode($val);
 	}
 }
 if ($search_paymentmode > 0) {
@@ -1529,7 +1525,7 @@ if (!in_array($massaction, array('makepayment'))) {
 }
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="search_status" value="'.$search_status.'">';
+// print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="socid" value="'.$socid.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -1984,9 +1980,10 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		'0' => $langs->trans("BillShortStatusDraft"),
 		'1' => $langs->trans("BillShortStatusNotPaid"),
 		'2' => $langs->trans("BillShortStatusPaid"),
-		'3' => $langs->trans("BillShortStatusCanceled"));
+		'3' => $langs->trans("BillShortStatusCanceled")
+	);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'minwidth125', 1, 0);
+	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'minwidth125', 1, 0);
 	print '</td>';
 }
 // Action column
