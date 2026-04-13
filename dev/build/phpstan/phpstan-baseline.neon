@@ -6871,22 +6871,10 @@ parameters:
 			path: ../../../htdocs/fourn/facture/list.php
 
 		-
-			message: '#^Variable \$title might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/fourn/facture/note-rec.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with float will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/rapport.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
