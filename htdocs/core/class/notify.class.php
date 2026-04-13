@@ -7,7 +7,7 @@
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026      Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  *
@@ -677,7 +677,7 @@ class Notify
 
 		$sql = '';
 
-		// Check notification per third party
+		// Check notification per third party @phan-suppress-next-line PhanUndeclaredProperty
 		if (!empty($object->socid) && $object->socid > 0) {
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type";
@@ -693,6 +693,7 @@ class Notify
 			} else {
 				$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			}
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " AND s.rowid = ".((int) $object->socid);
 
 			$sql .= "\nUNION\n";
@@ -1032,9 +1033,11 @@ class Notify
 						if ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
 								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
+								// @phan-suppress-next-line PhanUndeclaredProperty
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							} else {
 								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
+								// @phan-suppress-next-line PhanUndeclaredProperty
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							}
 							if (!$this->db->query($sql)) {
@@ -1050,6 +1053,7 @@ class Notify
 					$i++;
 				}
 			} else {
+				// @phan-suppress-next-line PhanUndeclaredProperty
 				dol_syslog("No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = ".(empty($object->socid) ? '' : $object->socid));
 			}
 		} else {
@@ -1344,7 +1348,8 @@ class Notify
 
 					if ($mailfile->sendfile()) {
 						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
-						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($sendto)."')";
+						// @phan-suppress-next-line PhanUndeclaredProperty
+						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".((!empty($object->socid)  && $object->socid > 0) ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($sendto)."')";
 						if (!$this->db->query($sql)) {
 							dol_print_error($this->db);
 						}
@@ -1405,12 +1410,15 @@ class Notify
 
 		$author = null;
 
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		if (isset($object->user_author) && is_object($object->user_author) && !empty($object->user_author->email)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$author = $object->user_author;
 		} else {
 			$authorid = 0;
 			foreach (array('fk_user_author', 'user_author_id', 'fk_user_creat') as $fieldname) {
 				if (!empty($object->$fieldname)) {
+					// @phan-suppress-next-line PhanUndeclaredProperty
 					$authorid = (int) $object->$fieldname;
 					break;
 				}

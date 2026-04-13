@@ -671,6 +671,15 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 				migrate_blockedlog_add_hmac_key();
 			}
+
+			// Scripts for 23.0
+			$afterversionarray = explode('.', '23.0.9');
+			$beforeversionarray = explode('.', '24.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
+				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+			}
 		}
 
 		// Code executed only if migration is LAST ONE. Must always be done.
@@ -4207,6 +4216,9 @@ function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
 	if (is_dir(DOL_DATA_ROOT.$oldname) && !file_exists(DOL_DATA_ROOT.$newname)) {
 		dolibarr_install_syslog("upgrade2::migrate_rename_directories move ".DOL_DATA_ROOT.$oldname.' into '.DOL_DATA_ROOT.$newname);
 		@rename(DOL_DATA_ROOT.$oldname, DOL_DATA_ROOT.$newname);
+	} else {
+		// If new directory already exists, we copy content of old one intotnew one
+		dolCopyDir(DOL_DATA_ROOT.$oldname, DOL_DATA_ROOT.$newname, '0', 1);
 	}
 }
 

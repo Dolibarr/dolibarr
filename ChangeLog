@@ -19,7 +19,7 @@ The following changes may create regressions for some external modules, but were
 * UniversalSearch Syntax is required on all filter parameters of function. Non USF filters are no more allowed.
 * Old option PAYMENT_SECURITY_TOKEN_UNIQUE has been removed. Can edit the XXX_ONLINE_SIGNATURE_SECURITY_TOKEN from setup.
 * Now use a default salt for online signature securekey. Old links may be wrong if not salt was set before.
-
+* Renamed hidden var DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID into DOWN_PAYMENT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID
 
 ***** ChangeLog for 23.0.2 compared to 23.0.1 *****
 

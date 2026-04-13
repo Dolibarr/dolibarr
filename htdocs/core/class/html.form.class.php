@@ -4695,11 +4695,12 @@ class Form
 	 * @param 	''|int			$selected	Id for preselected delay typ
 	 * @param 	string			$htmlname	Name for the selected zone
 	 * @param 	string|int<0,1> $filtertype To add a filter
-	 * @param 	int<0,1> 		$addempty	Add empty entry
+	 * @param 	int<0,1>|string	$addempty	Add empty entry
 	 * @param 	string			$morecss	More CSS
-	 * @return  void
+	 * @param	int				$noouput	Use 1 to return the output and not print it.
+	 * @return  string
 	 */
-	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0, $morecss = '')
+	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0, $morecss = '', $noouput = 0)
 	{
 		global $langs, $user;
 
@@ -4707,24 +4708,31 @@ class Form
 
 		dol_syslog(__METHOD__ . " selected=" . $selected . ", htmlname=" . $htmlname, LOG_DEBUG);
 
-		print '<select id="' . $htmlname . '" class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
+		$out = '<select id="' . $htmlname . '" class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
 		if ($addempty) {
-			print '<option value="0">&nbsp;</option>';
+			$out .= '<option value="-1">'.(is_numeric($addempty) ? '&nbsp;' : $langs->trans($addempty)).'</option>';
 		}
 		foreach ($this->cache_availability as $id => $arrayavailability) {
 			if ($selected == $id) {
-				print '<option value="' . $id . '" selected>';
+				$out .= '<option value="' . $id . '" selected>';
 			} else {
-				print '<option value="' . $id . '">';
+				$out .= '<option value="' . $id . '">';
 			}
-			print dol_escape_htmltag($arrayavailability['label']);
-			print '</option>';
+			$out .= dol_escape_htmltag($arrayavailability['label']);
+			$out .= '</option>';
 		}
-		print '</select>';
+		$out .= '</select>';
 		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print ajax_combobox($htmlname);
+		$out .= ajax_combobox($htmlname);
+
+		if ($noouput) {
+			return $out;
+		} else {
+			print $out;
+			return '';
+		}
 	}
 
 	/**
@@ -6659,10 +6667,10 @@ class Form
 	/**
 	 *  Show a form to select a delivery delay
 	 *
-	 * @param 	string 		$page 		Page
-	 * @param 	string 		$selected 	Preselected I for condition
-	 * @param 	string 		$htmlname 	Name of select html field
-	 * @param 	int<0,1> 	$addempty 	Add an empty entry
+	 * @param 	string 				$page 		Page
+	 * @param 	string 				$selected 	Preselected I for condition
+	 * @param 	string 				$htmlname 	Name of select html field
+	 * @param 	int<0,1>|string 	$addempty 	Add an empty entry
 	 * @return  void
 	 */
 	public function form_availability($page, $selected = '', $htmlname = 'availability', $addempty = 0)
@@ -6673,7 +6681,7 @@ class Form
 			print '<form method="post" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setavailability">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$this->selectAvailabilityDelay($selected, $htmlname, '', $addempty);
+			print $this->selectAvailabilityDelay($selected, $htmlname, '', $addempty, '', 1);
 			print '<input type="submit" name="modify" class="button smallpaddingimp" value="' . $langs->trans("Modify") . '">';
 			print '<input type="submit" name="cancel" class="button smallpaddingimp" value="' . $langs->trans("Cancel") . '">';
 			print '</form>';

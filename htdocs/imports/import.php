@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -840,9 +840,9 @@ if ($step == 3 && $datatoimport) {
 		$isrequired = preg_match('/\*$/', $label);
 		if (!empty($isrequired)) {
 			$newlabel = substr($label, 0, -1);
-			$fieldstarget_tmp[$key] = array("label" => $newlabel, "required" => true);
+			$fieldstarget_tmp[$key] = array("label" => (string) $newlabel, "required" => true);
 		} else {
-			$fieldstarget_tmp[$key] = array("label" => $label, "required" => false);
+			$fieldstarget_tmp[$key] = array("label" => (string) $label, "required" => false);
 		}
 		if (!empty($array_match_database_to_file[$key])) {
 			$fieldstarget_tmp[$key]["imported"] = true;
@@ -1832,7 +1832,7 @@ if ($step == 4 && $datatoimport) {
 		print img_picto($langs->trans("Modify"), 'edit');
 		print '</a>';
 	} else {
-			print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
+		print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
 	}
 	if ($importtriggermode === 'fast_bulk') {
 		print '<br><span class="warning">';
