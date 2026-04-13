@@ -17,7 +17,7 @@
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
@@ -231,12 +231,12 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
-	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
+	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by OBJECT->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
 	private $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var ?static		To store a cloned copy of the object before editing it (to keep track of its former properties) by doing $object->oldcopy = dol_clone($object, 2);
+	 * @var ?static		To store a cloned copy of the object before editing it (to keep track of its former properties) by doing OBJECT->oldcopy = dol_clone($object, 2);
 	 */
 	public $oldcopy;
 
@@ -6281,7 +6281,7 @@ abstract class CommonObject
 				// TODO: Try to set type above again
 				'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
 				$this->context['moreparams'] = $moreparams;
-				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);  // @phan-suppress-line-PhanTypeMismatchArgument
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref); // @phan-suppress-current-line PhanTypeMismatchArgument
 			}
 		} catch (\Throwable $e) {
 			$resultwritefile = -1;
@@ -7251,7 +7251,7 @@ abstract class CommonObject
 		}
 
 		// Update also the user of last modification in parent table
-		if (!$error && !empty($this->fields['fk_user_modif'])) {
+		if (!$error && !empty($this->fields['fk_user_modif'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET fk_user_modif = ".(int) $user->id;
 			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
@@ -10185,8 +10185,9 @@ abstract class CommonObject
 			$links = array();
 			$link->fetchAll($links, 'product', $this->id);
 
-			if (count($links) > 0)
+			if (count($links) > 0) {
 				$useLinkPathPhoto = true;
+			}
 
 			if ($useLinkPathPhoto) {
 				// Start table or div based on nbbyrow
@@ -10206,12 +10207,12 @@ abstract class CommonObject
 						}
 
 						if ($nbbyrow > 0) {
-							$return .= '<td style="width:'.ceil(100/$nbbyrow).'%" class="photo">';
+							$return .= '<td style="width:'.ceil(100 / $nbbyrow).'%" class="photo">';
 						} else {
 							$return .= '<div class="inline-block">';
 						}
 
-						$return .= '<img class="photo photowithmargin'.($addphotorefcss?' '.$addphotorefcss:'').'"'.($maxHeight?' height="'.$maxHeight.'"':'').' src="'.$url.'" title="External image">';
+						$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ? ' height="'.$maxHeight.'"' : '').' src="'.$url.'" title="External image">';
 
 						if ($nbbyrow > 0) {
 							$return .= '</td>';
@@ -10226,7 +10227,7 @@ abstract class CommonObject
 
 				if ($nbbyrow > 0) {
 					while ($i % $nbbyrow) {
-						$return .= '<td style="width:'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$return .= '<td style="width:'.ceil(100 / $nbbyrow).'%">&nbsp;</td>';
 						$i++;
 					}
 					if ($nbphoto) {
