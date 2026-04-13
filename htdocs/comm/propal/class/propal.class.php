@@ -2399,19 +2399,19 @@ class Propal extends CommonObject
 	 *
 	 *  @param		User	$user		  	Object user that modify
 	 *  @param      int		$id				Availability id
-	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *  @param  	int		$notrigger		1=Does not execute triggers, 0=execute triggers
 	 *  @return     int           			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_availability($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->hasRight('propal', 'creer') && $this->status >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_availability = ".((int) $id);
+			$sql .= " SET fk_availability = ".((int) ($id > 0 ? $id : 0));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__.' availability('.$id.')', LOG_DEBUG);
