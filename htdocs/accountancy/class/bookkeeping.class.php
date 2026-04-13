@@ -2625,6 +2625,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount, $full = 0)
 	{
+		global $hookmanager;
 		$accountingLabelOperation = '';
 
 		if (!getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER')) {
@@ -2662,6 +2663,27 @@ class BookKeeping extends CommonObject
 			}
 		}
 
+		// Hook to allow overriding the label text
+		$parameters = [
+			'thirdpartyname'           => $thirdpartyname,
+			'reference'                => $reference,
+			'labelaccount'             => $labelaccount,
+			'accountingLabelOperation' => $accountingLabelOperation,
+		];
+		$action = '';
+		if (!isset($hookmanager->resPrint)) {
+			$hookmanager->resPrint = '';
+		}
+
+		$reshook = $hookmanager->executeHooks('accountingLabelForOperation', $parameters, $this, $action);
+
+		if ($reshook > 0) {
+			$accountingLabelOperation = $hookmanager->resPrint;
+		} elseif ($reshook == 0 && !empty($hookmanager->resPrint)) {
+			$accountingLabelOperation .= $hookmanager->resPrint;
+		}
+
+		dol_syslog(get_class($this) . "::accountingLabelForOperation: " . $accountingLabelOperation, LOG_DEBUG);
 		return $accountingLabelOperation;
 	}
 
