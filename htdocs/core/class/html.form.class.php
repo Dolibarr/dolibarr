@@ -1384,7 +1384,7 @@ class Form
 		$out .= '	jQuery("#'.dol_escape_js($countrySelectorId).'").on("change", function() {'."\n";
 		$out .= '		var country_id = jQuery(this).val();'."\n";
 		$out .= '		if (country_id) {'."\n";
-		$out .= '			jQuery.getJSON("'.DOL_URL_ROOT.'/core/ajax/getphonecode.php", {country_id: country_id}, function(data) {'."\n";
+		$out .= '			jQuery.getJSON("'.DOL_URL_ROOT.'/core/ajax/getphonecode.php", {country_id: country_id, token: "'.currentToken().'"}, function(data) {'."\n";
 		$out .= '				if (data.phone_code) {'."\n";
 		$out .= '					jQuery(".phone_code_select").each(function() {'."\n";
 		$out .= '						jQuery(this).val(data.phone_code).trigger("change");'."\n";

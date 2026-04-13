@@ -20,6 +20,9 @@
  * \brief      Returns JSON phone_code for a given country_id
  */
 
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // Force CSRF check
+}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
