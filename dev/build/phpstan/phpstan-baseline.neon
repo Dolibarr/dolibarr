@@ -8731,18 +8731,6 @@ parameters:
 			path: ../../../htdocs/product/class/productfournisseurprice.class.php
 
 		-
-			message: '#^Method ProductFournisseurPrice\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/productfournisseurprice.class.php
-
-		-
-			message: '#^Method ProductFournisseurPrice\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/productfournisseurprice.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
