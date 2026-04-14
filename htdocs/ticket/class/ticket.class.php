@@ -1893,7 +1893,7 @@ class Ticket extends CommonObject
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0, $external_contacts = [])
 	{
-		global $conf;
+		global $conf, $hookmanager;
 		$error = 0;
 
 		$now = dol_now();
@@ -1905,6 +1905,16 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
+		}
+
+		$socpeopleAssigned = [];
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('createTicketMessageExternalContacts', $parameters, $this);
+		if ($reshook > 0) {
+			$socpeopleAssigned = $hookmanager->resArray['result'];
+		} elseif ($reshook == 0) {
+			$socpeopleAssigned = $external_contacts + $hookmanager->resArray['result'];
 		}
 
 		$this->db->begin();
@@ -1927,7 +1937,7 @@ class Ticket extends CommonObject
 		$actioncomm->label = $this->subject;
 		$actioncomm->note_private = $this->message;
 		$actioncomm->userassigned = array($user->id => array('id' => $user->id,'transparency' => 0));
-		$actioncomm->socpeopleassigned = $external_contacts;
+		$actioncomm->socpeopleassigned = $socpeopleAssigned;
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
