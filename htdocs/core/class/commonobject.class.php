@@ -1390,6 +1390,7 @@ abstract class CommonObject
 			foreach ($TListeContacts as $array_contact) {
 				if ($array_contact['status'] == 4 && $array_contact['id'] == $fk_socpeople && $array_contact['fk_c_type_contact'] == $id_type_contact) {
 					$already_added = true;
+					$this->error = 'DB_ERROR_RECORD_ALREADY_EXISTS';
 					break;
 				}
 			}
@@ -1454,16 +1455,16 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::not hasRight adherent creer", LOG_ERR);
 			$langs->load("errors");
 			$this->error = $langs->trans("AddPermissions");
-			dol_syslog(get_class($this)."::add_member_as_contact ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::add_member_as_contact::no permission ".$this->error, LOG_ERR);
 			return -1;
 		}
 
-		dol_syslog(get_class($this)."::add_member_as_contact $memberid, $type_contact, $source, $notrigger");
+		dol_syslog(get_class($this)."::add_member_as_contact $memberid, $type_contact, $source, $notrigger", LOG_DEBUG);
 		if ($source != 'member') {
 			dol_syslog(get_class($this)."::wrong source, it (currently) has to be 'member'", LOG_ERR);
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "3");
-			dol_syslog(get_class($this)."::add_member_as_contact ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::add_member_as_contact::source not member ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1471,7 +1472,7 @@ abstract class CommonObject
 		if ($memberid <= 0) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "1");
-			dol_syslog(get_class($this)."::add_member_as_contact ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::add_member_as_contact::memberid <=0 ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1495,7 +1496,7 @@ abstract class CommonObject
 		if (!$type_contact) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "2");
-			dol_syslog(get_class($this)."::add_member_as_contact ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::add_member_as_contact::not type_contact ".$this->error, LOG_ERR);
 			return -2;
 		}
 
@@ -1532,6 +1533,7 @@ abstract class CommonObject
 			foreach ($TListeContacts as $array_contact) {
 				if ($array_contact['status'] == 4 && $array_contact['memberid'] == $memberid && $array_contact['fk_c_type_contact'] == $id_type_contact) {
 					$already_added = true;
+					$this->error = 'DB_ERROR_RECORD_ALREADY_EXISTS';
 					break;
 				}
 			}
