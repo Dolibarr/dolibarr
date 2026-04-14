@@ -34,6 +34,9 @@
 
 '
 @phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this
+@phan-var-force ?array<int,string> $depth_array
+@phan-var-force ?array<string,string> $titles
+@phan-var-force string $type
 ';
 
 $depth_array = $depth_array ?? array();
