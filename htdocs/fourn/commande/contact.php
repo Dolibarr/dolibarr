@@ -92,13 +92,22 @@ if (empty($reshook)) {
 			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
 
-		if ($result >= 0) {
+		if ($result > 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+				$conobj = new Contact($db);
+				$fetchresult = $conobj->fetch($contactid);
+				if ($fetchresult) {
+					$objname = $conobj->firstname.' '.$conobj->lastname;
+				} else {
+					$userobj = new User($db);
+					$userobj->fetch($contactid);
+					$objname = $userobj->firstname.' '.$userobj->lastname;
+				}
+				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType",$objname), null, 'errors');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -135,13 +144,16 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($result >= 0) {
+		if ($result > 0) {
 			header("Location: ".$url_page_current."?id=".$object->id);
 			exit;
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+				$adhobj = new Adherent($db);
+				$adhobj->fetch($newmember);
+				$objname = $adhobj->firstname.' '.$adhobj->lastname;
+				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType",$objname), null, 'errors');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}

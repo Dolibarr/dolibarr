@@ -301,13 +301,16 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($result >= 0) {
+		if ($result > 0) {
 			header("Location: ".$url_page_current."?id=".$object->id);
 			exit;
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+				$adhobj = new Adherent($db);
+				$adhobj->fetch($newmember);
+				$objname = $adhobj->firstname.' '.$adhobj->lastname;
+				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType",$objname), null, 'errors');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}

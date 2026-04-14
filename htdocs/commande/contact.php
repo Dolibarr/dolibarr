@@ -134,13 +134,13 @@ if (empty($reshook)) {
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			if (!empty($newmember)) {
 				$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-				$addresult = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+				$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
 			} else {
 				setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
 			}
 		}
 
-		if ($addresult > 0) {
+		if ($result > 0) {
 			header("Location: ".$url_page_current."?id=".$object->id);
 			exit;
 		} else {
