@@ -1,21 +1,21 @@
 <?php
-/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2026 Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
- * Copyright (C) 2024-2025 MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Nick Fragoulis
- * Copyright (C) 2025		   Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2026		William Mead		<william@m34d.com>
+/* Copyright (C) 2004-2006  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne                 <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2016  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2015  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2011-2022  Philippe Grand              <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2016  Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2013       Florian Henry               <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Ion Agorria                 <ion@agorria.com>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2022       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2026  Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Nick Fragoulis
+ * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       William Mead                <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,18 @@
  *    \brief      Card supplier order
  */
 
-
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -71,15 +80,6 @@ if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'products', 'stocks', 'productbatch'));
@@ -1492,7 +1492,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->fournisseur->commande->dir_output;
+	$upload_dir = getMultidirOutput($object);
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -3118,9 +3118,9 @@ if ($action == 'create') {
 
 			// Generated documents
 			$objref = dol_sanitizeFileName($object->ref);
-			$file = $conf->fournisseur->dir_output.'/commande/'.$objref.'/'.$objref.'.pdf';
+			$file = getMultidirOutput($object).'/'.$objref.'/'.$objref.'.pdf';
 			$relativepath = $objref.'/'.$objref.'.pdf';
-			$filedir = $conf->fournisseur->dir_output.'/commande/'.$objref;
+			$filedir = getMultidirOutput($object).'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;
@@ -3369,7 +3369,7 @@ if ($action == 'create') {
 		// Presend form
 		$modelmail = 'order_supplier_send';
 		$defaulttopic = 'SendOrderRef';
-		$diroutput = $conf->fournisseur->commande->dir_output;
+		$diroutput = getMultidirOutput($object);
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
 		$trackid = 'sord'.$object->id;
 

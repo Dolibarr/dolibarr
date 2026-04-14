@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2004-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2021  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2014       Cedric Gross            <c.gross@kreiz-it.fr>
- * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2006  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2023  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne                 <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2021  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2014       Cedric Gross                <c.gross@kreiz-it.fr>
+ * Copyright (C) 2016       Florian Henry               <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2017-2022  Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2020  Christophe Battarel	        <christophe@altairis.fr>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,22 @@
  */
 
 /**
- * \file htdocs/fourn/commande/dispatch.php
- * \ingroup supplier order
- * \brief Page to dispatch receiving
+ * \file        htdocs/fourn/commande/dispatch.php
+ * \ingroup     supplier order
+ * \brief       Page to dispatch receiving
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -45,14 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "products", "stocks", "receptions"));
@@ -1368,7 +1369,7 @@ if ($id > 0 || !empty($ref)) {
 					print $supplierorderdispatch->getLibStatut(5);
 					print '</td>';
 
-					// Add button to check/uncheck disaptching
+					// Add button to check/uncheck dispatching
 					print '<td class="center">';
 					if (!$permissiontocontrol) {
 						if (empty($objp->status)) {
