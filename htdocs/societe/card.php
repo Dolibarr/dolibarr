@@ -375,6 +375,7 @@ if (empty($reshook)) {
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOSTFLOAT('capital');
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
+			$object->fk_account				= GETPOSTINT('fk_account') > 0 ? GETPOSTINT('fk_account') : 0;
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 			$object->tva_assuj				= GETPOSTINT('assujtva_value');
@@ -1578,6 +1579,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
 			print $form->selectarray('status', array('1' => $langs->trans('InActivity'), '0' => $langs->trans('ActivityCeased')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
+
+			// Default bank account
+			if (isModEnabled('bank')) {
+				print '<tr><td>';
+				print $langs->trans('PaymentBankAccount');
+				print '</td>';
+				print '<td>';
+				$form->select_comptes(GETPOST('fk_account'), 'fk_account', 0, '', 1);
+				print "</td>";
+				print '</tr>';
+			}
 
 			// Barcode
 			if (isModEnabled('barcode')) {
