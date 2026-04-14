@@ -21,7 +21,6 @@ create table llx_fichinter
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc			integer NOT NULL,
-  fk_member			integer DEFAULT 0,
   fk_projet			integer DEFAULT 0,          -- projet auquel est rattache la fiche
   fk_contrat		integer DEFAULT 0,          -- contrat auquel est rattache la fiche
   ref				varchar(30) NOT NULL,       -- number
