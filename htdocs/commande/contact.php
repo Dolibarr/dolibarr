@@ -95,14 +95,14 @@ if (empty($reshook)) {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
 				if (isset($contactid)) {
-					$conobj = new Contact($db);
-					$fetchresult = $conobj->fetch((int) $contactid);
+					$contactstatic = new Contact($db);
+					$fetchresult = $contactstatic->fetch((int) $contactid);
 					if ($fetchresult) {
-						$objname = $conobj->firstname.' '.$conobj->lastname;
+						$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
 					} else {
-						$userobj = new User($db);
-						$userobj->fetch((int) $contactid);
-						$objname = $userobj->firstname.' '.$userobj->lastname;
+						$userstatic = new User($db);
+						$userstatic->fetch((int) $contactid);
+						$objname = $userstatic->firstname.' '.$userstatic->lastname;
 					}
 				} else {
 					$objname = '';
@@ -151,9 +151,9 @@ if (empty($reshook)) {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
 				if (isset($newmember)) {
-					$adhobj = new Adherent($db);
-					$adhobj->fetch($newmember);
-					$objname = $adhobj->firstname.' '.$adhobj->lastname;
+					$memberstatic = new Adherent($db);
+					$memberstatic->fetch($newmember);
+					$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 				} else {
 					$objname = '';
 				}
@@ -172,6 +172,7 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 $contactstatic = new Contact($db);
+$memberstatic = new Adherent($db);
 $userstatic = new User($db);
 
 
