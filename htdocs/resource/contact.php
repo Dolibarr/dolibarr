@@ -98,7 +98,7 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 				$userobj->fetch($contactid);
 				$objname = $userobj->firstname.' '.$userobj->lastname;
 			}
-			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType",$objname), null, 'errors');
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType",$objname), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -139,7 +139,7 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 			$adhobj = new Adherent($db);
 			$adhobj->fetch($newmember);
 			$objname = $adhobj->firstname.' '.$adhobj->lastname;
-			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType",$objname), null, 'errors');
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType",$objname), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
