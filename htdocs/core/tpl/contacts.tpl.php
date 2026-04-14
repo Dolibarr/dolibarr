@@ -252,7 +252,6 @@ if ($permission) {
 		<div class="tagtd noborderbottom">
 			<?php
 			$tmpobject = $object;
-			dol_syslog('contacts.tpl.php::object->element'.$object->element, LOG_DEBUG);
 			if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
 				'@phan-var-force Commande|Facture $objectsrc';
 				$tmpobject = $objectsrc;

@@ -2309,7 +2309,6 @@ class Ticket extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_member = ".($id > 0 ? (int) $id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			dol_syslog(get_class($this).'::setMember sql='.$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				return 1;

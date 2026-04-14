@@ -67,7 +67,6 @@ function member_prepare_head(Adherent $object)
 
 	// Tickets
 	if (isModEnabled('ticket') && $user->hasRight("ticket", "read")) {
-		dol_syslog('Adherent::member_prepare_head::isModEnabled::ticket', LOG_DEBUG);
 		//$langs->load('ticket');
 		$nbTicket = 0;
 		// Enable caching of member ticket count notifications

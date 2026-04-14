@@ -1455,7 +1455,6 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::not hasRight adherent creer", LOG_ERR);
 			$langs->load("errors");
 			$this->error = $langs->trans("AddPermissions");
-			dol_syslog(get_class($this)."::add_member_as_contact::no permission ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1464,7 +1463,6 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::wrong source, it (currently) has to be 'member'", LOG_ERR);
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "3");
-			dol_syslog(get_class($this)."::add_member_as_contact::source not member ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1870,14 +1868,12 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::not hasRight adherent read", LOG_ERR);
 			$langs->load("errors");
 			$this->error = $langs->trans("AddPermissions");
-			dol_syslog(get_class($this)."::add_member_as_contact ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if ($source != 'member') {
 			dol_syslog(get_class($this)."::wrong source, it (currently) has to be 'member'", LOG_ERR);
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "3");
-			dol_syslog(get_class($this)."::add_member_as_contact ".$this->error, LOG_ERR);
 			return -1;
 		}
 
