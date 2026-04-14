@@ -35,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 /**
  * @var Conf $conf

@@ -48,6 +48,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 $langs->loadLangs(array("bills", "other", "companies"));
 

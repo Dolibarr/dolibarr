@@ -42,6 +42,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('interventions', 'sendings', 'companies'));

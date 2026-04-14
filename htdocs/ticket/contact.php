@@ -42,6 +42,9 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 /**
  * @var Conf $conf
