@@ -95,12 +95,12 @@ if (empty($reshook)) {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
 				$conobj = new Contact($db);
-				$fetchresult = $conobj->fetch($contactid);
+				$fetchresult = $conobj->fetch((int) $contactid);
 				if ($fetchresult) {
 					$objname = $conobj->firstname.' '.$conobj->lastname;
 				} else {
 					$userobj = new User($db);
-					$userobj->fetch($contactid);
+					$userobj->fetch((int) $contactid);
 					$objname = $userobj->firstname.' '.$userobj->lastname;
 				}
 				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
