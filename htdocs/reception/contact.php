@@ -186,6 +186,7 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			if (isset($newmember)) {
+				$memberstatic = new Adherent($db);
 				$memberstatic->fetch((int) $newmember);
 				$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 			} else {
