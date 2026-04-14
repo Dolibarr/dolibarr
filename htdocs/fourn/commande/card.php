@@ -2211,6 +2211,8 @@ if ($action == 'create') {
 	$result = $object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
+	$num = 0;
+
 	$societe = $object->thirdparty;
 
 	$author = new User($db);
@@ -2813,7 +2815,6 @@ if ($action == 'create') {
 			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
 		}
 
-		$num = 0;
 		$num = count($object->lines);
 
 		// Form to add new line

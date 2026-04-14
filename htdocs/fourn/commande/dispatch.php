@@ -428,6 +428,8 @@ $entrepot = 0;
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive) {
 	$db->begin();
 
+	$comment = '';
+
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);
 	if ($result > 0) {
@@ -471,6 +473,8 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 // Update a dispatched line
 if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	$db->begin();
+
+	$comment = '';
 
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);
