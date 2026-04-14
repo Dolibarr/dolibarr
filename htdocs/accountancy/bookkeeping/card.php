@@ -59,7 +59,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $type = GETPOST('type', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 if (empty($backtopage)) {
-	$backtopage = '/accountancy/bookkeeping/list.php';
+	$backtopage = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php';
 }
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')

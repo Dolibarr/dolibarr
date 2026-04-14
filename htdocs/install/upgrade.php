@@ -288,7 +288,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				// Database prefix filter
 				if (preg_match('/^'.MAIN_DB_PREFIX.'/', $val)) {
 					//print "x".$val."<br>";
-					$sql = "SHOW CREATE TABLE ".$val;
+					$sql = "SHOW CREATE TABLE ".$db->sanitize($val);
 					$resql = $db->query($sql);
 					if ($resql) {
 						$values = $db->fetch_array($resql);

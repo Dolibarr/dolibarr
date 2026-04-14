@@ -761,12 +761,19 @@ class Conf extends stdClass
 			// Define default dir_output and dir_temp for directories of modules
 			foreach ($this->modules as $module) {
 				//var_dump($module);
+				$dirformodule = $module;
+				// Add code to manage compatibility for old module name
+				if ($dirformodule == 'banque') {
+					$dirformodule = 'bank';
+				}
+				// To complete...
+
 				// For multicompany sharings
-				$this->$module->multidir_output = array($this->entity => $rootfordata."/".$module);
-				$this->$module->multidir_temp = array($this->entity => $rootfortemp."/".$module."/temp");
+				$this->$dirformodule->multidir_output = array($this->entity => $rootfordata."/".$dirformodule);
+				$this->$dirformodule->multidir_temp = array($this->entity => $rootfortemp."/".$dirformodule."/temp");
 				// For backward compatibility
-				$this->$module->dir_output = $rootfordata."/".$module;
-				$this->$module->dir_temp = $rootfortemp."/".$module."/temp";
+				$this->$dirformodule->dir_output = $rootfordata."/".$dirformodule;
+				$this->$dirformodule->dir_temp = $rootfortemp."/".$dirformodule."/temp";
 			}
 
 			// External modules storage
@@ -900,13 +907,6 @@ class Conf extends stdClass
 			// For backward compatibility
 			$this->contrat->dir_output = $rootfordata."/contract";
 			$this->contrat->dir_temp = $rootfortemp."/contract/temp";
-
-			// Module bank
-			$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
-			$this->bank->multidir_temp = array($this->entity => $rootfortemp."/bank/temp");
-			// For backward compatibility
-			$this->bank->dir_output = $rootfordata."/bank";
-			$this->bank->dir_temp = $rootfortemp."/bank/temp";
 
 			// Set some default values
 			//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
@@ -1169,6 +1169,11 @@ class Conf extends stdClass
 			// By default, accept to create members with no login
 			if (!isset($this->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 				$this->global->ADHERENT_LOGIN_NOT_REQUIRED = 1;
+			}
+
+			// By default, we use this constant now
+			if (! isset($this->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+				$this->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION = 1;
 			}
 
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)

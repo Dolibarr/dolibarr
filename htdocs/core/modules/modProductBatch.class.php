@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,11 +101,11 @@ class modProductBatch extends DolibarrModules
 
 		$this->tabs = array();
 
-		// Dictionaries
 		if (!isset($conf->productbatch->enabled)) {
 			$conf->productbatch = new stdClass();
 			$conf->productbatch->enabled = 0;
 		}
+		// Dictionaries
 		$this->dictionaries = array();
 
 		// Boxes

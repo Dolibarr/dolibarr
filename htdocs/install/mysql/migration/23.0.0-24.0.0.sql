@@ -177,7 +177,8 @@ UPDATE llx_rights_def SET perms = 'manage_advance' WHERE module = 'ticket' AND p
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
 UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
-UPDATE llx_document_model as dm SET nom = 'sponge' WHERE nom = 'crabe' AND type ='invoice' AND NOT EXISTS (SELECT nom FROM llx_document_model AS dm2 WHERE nom = 'sponge' AND type = 'invoice' and dm2.entity = dm.entity);
+UPDATE llx_document_model SET nom = 'sponge' WHERE nom = 'crabe' AND type = 'invoice' AND NOT EXISTS (SELECT nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'sponge' AND type = 'invoice') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'crabe' AND type = 'invoice';
 
 ALTER TABLE llx_salary ADD COLUMN model_pdf varchar(255) DEFAULT NULL;
 
@@ -210,6 +211,9 @@ UPDATE llx_cronjob set test = 'isModEnabled("project")' WHERE test = '$conf->pro
 UPDATE llx_cronjob set test = 'isModEnabled("sellyoursaas")' WHERE test = '$conf->sellyoursaas->enabled';
 UPDATE llx_cronjob set test = 'isModEnabled("scaninvoices")' WHERE test = '$conf->scaninvoices->enabled';
 
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+
 
 create table llx_product_lang_extrafields
 (
@@ -219,5 +223,8 @@ create table llx_product_lang_extrafields
   import_key                varchar(14)                          -- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_fk_object(fk_object);
+
+ALTER TABLE llx_adherent_type ADD COLUMN minimumamount double(24,8) DEFAULT NULL AFTER caneditamount;
+ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text AFTER minimumamount;
 
 -- end of migration

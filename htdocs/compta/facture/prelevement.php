@@ -835,7 +835,7 @@ if ($object->id > 0) {
 					$selectedRib = $companyBankAccount->id;
 				}
 			}
-			$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
+			$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', '(fk_soc:=:'.$object->socid.")", $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
 			$defaultRibId = $object->thirdparty->getDefaultRib();
 			if ($defaultRibId) {
 				$companyBankAccount = new CompanyBankAccount($db);

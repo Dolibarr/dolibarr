@@ -371,19 +371,13 @@ if ($tmpsource == 'membersubscription') {
 $valid = true;
 if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 	$tokenisok = false;
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-		if ($tmpsource && $REF) {
-			// Use the source in the hash to avoid duplicates if the references are identical
-			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $tmpsource.$REF, $SECUREKEY, '2');
-			// Do a second test for retro-compatibility (token may have been hashed with membersubscription in external module)
-			if ($tmpsource != $source) {
-				$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $source.$REF, $SECUREKEY, '2');
-			}
-		} else {
-			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), $SECUREKEY, '2');
+	if ($tmpsource && $REF) {
+		// Use the source in the hash to avoid duplicates if the references are identical
+		$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $tmpsource.$REF, $SECUREKEY, '2');
+		// Do a second test for retro-compatibility (token may have been hashed with membersubscription in external module)
+		if ($tmpsource != $source) {
+			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $source.$REF, $SECUREKEY, '2');
 		}
-	} else {
-		$tokenisok = (getDolGlobalString('PAYMENT_SECURITY_TOKEN') == $SECUREKEY);
 	}
 
 	if (! $tokenisok) {

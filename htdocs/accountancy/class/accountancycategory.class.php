@@ -841,14 +841,14 @@ class AccountancyCategory // extends CommonObject
 	 * Get all accounting account of a given custom group (or a list of custom groups).
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
-	 * @param 	int 		$cat_id 				Id if personalized accounting group/category
-	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
-	 * 												Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
-	 * 												Example: "fk_accounting_category = 99"
+	 * @param 	int 		$cat_id 						Id if personalized accounting group/category
+	 * @param 	string 		$sanitizedpredefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
+	 * 														Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
+	 * 														Example: "fk_accounting_category = 99"
 	 * @return	never|array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
-	public function getCptsCat($cat_id, $predefinedgroupwhere = '')
+	public function getCptsCat($cat_id, $sanitizedpredefinedgroupwhere = '')
 	{
 		global $conf, $mysoc;
 		$sql = '';
@@ -875,7 +875,7 @@ class AccountancyCategory // extends CommonObject
 		} else {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
-			$sql .= " WHERE ".$predefinedgroupwhere;
+			$sql .= " WHERE ".$sanitizedpredefinedgroupwhere;
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= ' AND t.active = 1';
 			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";

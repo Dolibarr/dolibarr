@@ -8221,12 +8221,12 @@ function get_localtax_by_third($local)
 {
 	global $db, $mysoc;
 
-	$sql  = " SELECT t.localtax" . $local . " as localtax";
+	$sql  = " SELECT t.localtax" . $db->sanitize($local) . " as localtax";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t INNER JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = t.fk_pays";
 	$sql .= " WHERE c.code = '" . $db->escape($mysoc->country_code) . "' AND t.active = 1 AND t.entity IN (" . getEntity('c_tva') . ") AND t.taux = (";
 	$sql .= "SELECT MAX(tt.taux) FROM " . MAIN_DB_PREFIX . "c_tva as tt INNER JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = tt.fk_pays";
 	$sql .= " WHERE c.code = '" . $db->escape($mysoc->country_code) . "' AND t.entity IN (" . getEntity('c_tva') . ") AND tt.active = 1)";
-	$sql .= " AND t.localtax" . $local . "_type <> '0'";
+	$sql .= " AND t.localtax" . $db->sanitize($local) . "_type <> '0'";
 	$sql .= " ORDER BY t.rowid DESC";
 
 	$resql = $db->query($sql);
@@ -11851,12 +11851,12 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 
 	dol_syslog('dol_getIdFromCode (value for field ' . $fieldid . ' from key ' . $key . ' not found into cache)', LOG_DEBUG);
 
-	$sql = "SELECT " . $fieldid . " as valuetoget";
-	$sql .= " FROM " . MAIN_DB_PREFIX . $tablename;
+	$sql = "SELECT " . $db->sanitize($fieldid) . " as valuetoget";
+	$sql .= " FROM " . MAIN_DB_PREFIX . $db->sanitize($tablename);
 	if ($fieldkey == 'id' || $fieldkey == 'rowid') {
-		$sql .= " WHERE " . $fieldkey . " = " . ((int) $key);
+		$sql .= " WHERE " . $db->sanitize($fieldkey) . " = " . ((int) $key);
 	} else {
-		$sql .= " WHERE " . $fieldkey . " = '" . $db->escape($key) . "'";
+		$sql .= " WHERE " . $db->sanitize($fieldkey) . " = '" . $db->escape($key) . "'";
 	}
 	if (!empty($entityfilter)) {
 		$sql .= " AND entity IN (" . getEntity($tablename) . ")";
@@ -16155,6 +16155,7 @@ function dolForgeDummyCriteriaCallback($matches)
  * @param  string[]	$matches       	Array of found string by regex search.
  * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
  * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function dolForgeSQLCriteriaCallback($matches)
 {

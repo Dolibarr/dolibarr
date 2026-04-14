@@ -801,10 +801,10 @@ class Categorie extends CommonObject
 				if (empty($value['enabled'])) {
 					continue;
 				}
-				$value = $value['field'];
+				$sanitizedvalue = $value['field'];
 			}
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
-			$sql .= " WHERE ".$value." = ".((int) $this->id);
+			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
+			$sql .= " WHERE ".$sanitizedvalue." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);

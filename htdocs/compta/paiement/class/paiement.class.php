@@ -694,9 +694,9 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		// Verifier si paiement porte pas sur une facture classee
-		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('f.fk_statut > 1');
+		// Check if payment is completely paid, if payments are shared, we refuse deletion.
+		// TODO Check also if partially paid
+		$billsarray = $this->getBillsArray('f.fk_statut:>:1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
@@ -1185,7 +1185,7 @@ class Paiement extends CommonObject
 	/**
 	 *  Return list of invoices the payment is related to.
 	 *
-	 *  @param	string		$filter         Filter
+	 *  @param	string		$filter         Filter. Use USF syntax.
 	 *  @return int|int[]					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
@@ -1195,7 +1195,7 @@ class Paiement extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f'; // We keep link on invoice to allow use of some filters on invoice
 		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.((int) $this->id);
 		if ($filter) {
-			$sql .= ' AND '.$filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {

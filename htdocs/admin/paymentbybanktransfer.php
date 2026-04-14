@@ -173,7 +173,7 @@ print "</tr>";
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToPayCreditTransfer").'</td>';
 print '<td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-print $form->select_comptes(getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT'), 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200', 1);
+print $form->select_comptes(getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT'), 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "(courant:=:1)", 1, '', 0, 'minwidth200', 1);
 print '</td></tr>';
 
 /* Moved to bank account data

@@ -152,7 +152,7 @@ class FormProduct
 				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
-		$sql .= " ORDER BY ".$orderBy;
+		$sql .= $this->db->order($orderBy);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -196,8 +196,6 @@ class FormProduct
 	 */
 	public function loadWorkstations($fk_product = 0, $exclude = array(), $orderBy = 'w.ref')
 	{
-		global $conf, $langs;
-
 		if (empty($fk_product) && count($this->cache_workstations)) {
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
 		}
@@ -214,7 +212,7 @@ class FormProduct
 			$sql .= ' AND w.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
-		$sql .= " ORDER BY ".$orderBy;
+		$sql .= $this->db->order($orderBy);
 
 		dol_syslog(get_class($this).'::loadWorkstations', LOG_DEBUG);
 		$resql = $this->db->query($sql);

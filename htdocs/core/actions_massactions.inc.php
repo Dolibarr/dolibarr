@@ -92,6 +92,7 @@
 @phan-var-force ?int $hidedetails
 @phan-var-force ?int $hidedesc
 @phan-var-force ?int $hideref
+@phan-var-force string $confirm
 ';
 
 
@@ -1977,6 +1978,476 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		}
 	} else {
 		setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+	}
+}
+
+if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
+	// Security check to avoid creating credit note if stock calculation on bill is enabled
+	if (getDolGlobalInt('STOCK_CALCULATE_ON_BILL')) {
+		setEventMessages($langs->trans('CreditNoteNotCreatedStockCalculateOnBillEnabled'), null, 'errors');
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=compta&leftmenu=facture');
+		exit();
+	}
+
+	$objecttmp = new $objectclass($db);
+	if ($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') {
+		$nbok = 0;
+		$TMsg = array();
+
+		$unique_arr = array_unique($toselect);
+		foreach ($unique_arr as $toselectid) {
+			$sourceinvoice = $toselectid;
+			$result = $objecttmp->fetch($sourceinvoice);
+
+			// We check if invoice is available.
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedSourceInvoiceNotFound', $sourceinvoice);
+				continue;
+			}
+
+			// We check if invoice type is supported. If not, we refuse to create credit note.
+			$isSupportedType = false;
+			if ($objecttmp->type == Facture::TYPE_STANDARD) $isSupportedType = true;
+			if ($objecttmp->type == Facture::TYPE_PROFORMA) $isSupportedType = true;
+			if ($objecttmp->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) $isSupportedType = true;
+
+			if (!$isSupportedType) {
+				$listtype = array(
+					Facture::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
+					Facture::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
+					Facture::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
+					Facture::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
+					Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation")
+				);
+
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedInvoiceTypeNotSupported', $objecttmp->ref, $listtype[$objecttmp->type]);
+				continue;
+			}
+
+			// We check if invoice is validated. If not, we refuse to create credit note.
+			if ($objecttmp->status <= Facture::STATUS_DRAFT) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedInvoiceNotValidated', $objecttmp->ref);
+				continue;
+			}
+
+			// Test if there is at least one payment or credit note or deposit. If yes, we refuse.
+			$totalpaid				= $objecttmp->getSommePaiement();
+			$totalcreditnotes		= $objecttmp->getSumCreditNotesUsed();
+			$totaldeposits			= $objecttmp->getSumDepositsUsed();
+			if ($totalpaid > 0) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedPaymentAlreadyDone', $objecttmp->ref);
+				continue;
+			}
+			if ($totalcreditnotes > 0) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedCreditNoteAlreadyUsed', $objecttmp->ref);
+				continue;
+			}
+			if ($totaldeposits > 0) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedDepositAlreadyUsed', $objecttmp->ref);
+				continue;
+			}
+
+			$db->begin();
+
+			// Create credit note
+			$object = new Facture($db);
+			$object->entity 			= $objecttmp->entity;
+			$object->socid              = $objecttmp->socid;
+			$object->subtype            = $objecttmp->subtype;
+			$object->date               = dol_now();
+			// $object->note_public		= '';
+			// $object->note_private		= '';
+			$object->ref_client			= $objecttmp->ref_client;
+			$object->ref_customer		= $objecttmp->ref_customer;
+			$object->fk_project			= $objecttmp->fk_project;
+			$object->cond_reglement_id	= 0; // No payment term for a credit note
+			$object->fk_account         = $objecttmp->fk_account;
+			$object->fk_incoterms       = $objecttmp->fk_incoterms;
+			$object->location_incoterms = $objecttmp->location_incoterms;
+			$object->multicurrency_code = $objecttmp->multicurrency_code;
+			$object->multicurrency_tx   = $objecttmp->multicurrency_tx;
+
+			$object->fk_facture_source = $sourceinvoice;
+			$object->type = Facture::TYPE_CREDIT_NOTE;
+
+
+			if ($objecttmp->isSituationInvoice()) {
+				$object->situation_counter = $objecttmp->situation_counter;
+				$object->situation_cycle_ref = $objecttmp->situation_cycle_ref;
+				$objecttmp->fetchPreviousNextSituationInvoice();
+			}
+
+
+			$id = $object->create($user);
+			if ($id < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$TMsg[] = $langs->trans('CreditNoteNotCreated', $objecttmp->ref);
+				$db->rollback();
+				continue;
+			} else {
+				$facture_source = $objecttmp;
+
+				// Copy linked contacts
+				$object->copy_linked_contact($objecttmp, 'internal');
+				$object->copy_linked_contact($objecttmp, 'external');
+
+				// Copy lines
+				if (!empty($facture_source->lines)) {
+					$fk_parent_line = 0;
+
+					foreach ($facture_source->lines as $line) {
+						// Extrafields
+						if (method_exists($line, 'fetch_optionals')) {
+							// load extrafields
+							$line->fetch_optionals();
+						}
+
+						// Reset fk_parent_line for no child products and special product
+						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+							$fk_parent_line = 0;
+						}
+
+						if ($facture_source->isSituationInvoice()) {
+							$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
+							$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
+
+							if (!empty($facture_source->tab_previous_situation_invoice)) {
+								// search the last standard invoice in cycle and the possible credit note between this last and facture_source
+								// TODO Move this out of loop of $facture_source->lines
+								$tab_jumped_credit_notes = array();
+								$lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
+								$searchPreviousInvoice = true;
+								while ($searchPreviousInvoice) {
+									if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_SITUATION || $lineIndex < 1) {
+										$searchPreviousInvoice = false; // find, exit;
+										break;
+									} else {
+										if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
+											$tab_jumped_credit_notes[$lineIndex] = $facture_source->tab_previous_situation_invoice[$lineIndex]->id;
+										}
+										$lineIndex--; // go to previous invoice in cycle
+									}
+								}
+
+								$maxPrevSituationPercent = 0;
+								foreach ($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine) {
+									if ($prevLine->id == $source_fk_prev_id) {
+										$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
+
+										//$line->subprice  = $line->subprice - $prevLine->subprice;
+										$line->total_ht  -= $prevLine->total_ht;
+										$line->total_tva -= $prevLine->total_tva;
+										$line->total_ttc -= $prevLine->total_ttc;
+										$line->total_localtax1 -= $prevLine->total_localtax1;
+										$line->total_localtax2 -= $prevLine->total_localtax2;
+
+										$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+										$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+										$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+										$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+									}
+								}
+
+								// prorata
+								$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+
+								//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+
+								// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
+								$maxPrevSituationPercent = 0;
+								foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
+									foreach ($facture_source->tab_previous_situation_invoice[$index]->lines as $prevLine) {
+										if ($prevLine->fk_prev_id == $source_fk_prev_id) {
+											$maxPrevSituationPercent = $prevLine->situation_percent;
+
+											$line->total_ht  -= $prevLine->total_ht;
+											$line->total_tva -= $prevLine->total_tva;
+											$line->total_ttc -= $prevLine->total_ttc;
+											$line->total_localtax1 -= $prevLine->total_localtax1;
+											$line->total_localtax2 -= $prevLine->total_localtax2;
+
+											$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+											$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+											$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+											$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+										}
+									}
+								}
+
+								// prorata
+								$line->situation_percent += $maxPrevSituationPercent;
+
+								//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+							}
+						}
+
+						$line->fk_facture = $object->id;
+						$line->fk_parent_line = $fk_parent_line;
+
+						$line->subprice = -$line->subprice; // invert price for object
+						// $line->pa_ht = $line->pa_ht; // we chose to have buy/cost price always positive, so no revert of sign here
+						$line->total_ht = -$line->total_ht;
+						$line->total_tva = -$line->total_tva;
+						$line->total_ttc = -$line->total_ttc;
+						$line->total_localtax1 = -$line->total_localtax1;
+						$line->total_localtax2 = -$line->total_localtax2;
+
+						$line->multicurrency_subprice = -$line->multicurrency_subprice;
+						$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+						$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+						$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
+
+						$line->context['createcreditnotefrominvoice'] = 1;
+						$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount already linked
+
+						$object->lines[] = $line; // insert new line in current object
+
+						// Defined the new fk_parent_line
+						if ($result > 0 && $line->product_type == 9) {
+							$fk_parent_line = $result;
+						}
+					}
+
+					$object->update_price(1);
+				}
+
+				// Add link between credit note and origin
+				if (!empty($object->fk_facture_source) && $id > 0) {
+					$facture_source->fetch($object->fk_facture_source);
+					$facture_source->fetchObjectLinked();
+
+					if (!empty($facture_source->linkedObjectsIds)) {
+						foreach ($facture_source->linkedObjectsIds as $sourcetype => $TIds) {
+							$object->add_object_linked($sourcetype, current($TIds));
+						}
+					}
+				}
+
+				// We validate credit note
+				$result = $object->validate($user);
+				if ($result <= 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnValidation', $objecttmp->ref);
+					$db->rollback();
+					continue;
+				} else {
+					// We update PDF if not disabled
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						$model = $object->model_pdf;
+
+						$ret = $object->fetch($id); // Reload to get new records
+
+						$result = $object->generateDocument($model, $outputlangs, (int) $hidedetails, (int) $hidedesc, (int) $hideref);
+						if ($result < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					}
+
+					// Convert to reduction then apply reduction on source invoice
+					$object->fetch($id);
+					$object->fetch_thirdparty();
+
+					// Check if there is already a discount (protection)
+					$discountcheck = new DiscountAbsolute($db);
+					$result = $discountcheck->fetch(0, $object->id);
+
+					$canconvert = 0;
+					if (empty($discountcheck->id)) {
+						$canconvert = 1; // we can convert credit note into discount if there is no discount already linked to credit note
+					}
+
+					if ($canconvert) {
+						$amount_ht = $amount_tva = $amount_ttc = array();
+						$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+
+						// Loop on each vat rate
+						$i = 0;
+						foreach ($object->lines as $line) {
+							if ($line->product_type < 9 && $line->total_ht != 0) { // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
+								$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+
+								if (!isset($amount_ht[$keyforvatrate])) {
+									$amount_ht[$keyforvatrate] = 0;
+								}
+								$amount_ht[$keyforvatrate] += $line->total_ht;
+								if (!isset($amount_tva[$keyforvatrate])) {
+									$amount_tva[$keyforvatrate] = 0;
+								}
+								$amount_tva[$keyforvatrate] += $line->total_tva;
+								if (!isset($amount_ttc[$keyforvatrate])) {
+									$amount_ttc[$keyforvatrate] = 0;
+								}
+								$amount_ttc[$keyforvatrate] += $line->total_ttc;
+								if (!isset($multicurrency_amount_ht[$keyforvatrate])) {
+									$multicurrency_amount_ht[$keyforvatrate] = 0;
+								}
+								$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
+								if (!isset($multicurrency_amount_tva[$keyforvatrate])) {
+									$multicurrency_amount_tva[$keyforvatrate] = 0;
+								}
+								$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
+								if (!isset($multicurrency_amount_ttc[$keyforvatrate])) {
+									$multicurrency_amount_ttc[$keyforvatrate] = 0;
+								}
+								$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
+								$i++;
+							}
+						}
+
+						// Insert one discount by VAT rate category
+						$discount = new DiscountAbsolute($db);
+						$discount->description = '(CREDIT_NOTE)';
+						$discount->fk_soc = $object->socid;
+						$discount->socid = $object->socid;
+						$discount->socid = $object->socid;
+						$discount->fk_facture_source = $object->id;
+
+						$error = 0;
+						$id_discount = 0;
+
+						foreach ($amount_ht as $tva_tx => $xxx) {
+							$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
+							$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
+							$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
+							$discount->total_ht = -((float) $amount_ht[$tva_tx]);
+							$discount->total_tva = -((float) $amount_tva[$tva_tx]);
+							$discount->total_ttc = -((float) $amount_ttc[$tva_tx]);
+							$discount->multicurrency_amount_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+							$discount->multicurrency_amount_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+							$discount->multicurrency_amount_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+							$discount->multicurrency_total_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+							$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+							$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+
+							// Clean vat code
+							$reg = array();
+							$vat_src_code = '';
+							if (preg_match('/\((.*)\)/', $tva_tx, $reg)) {
+								$vat_src_code = $reg[1];
+								$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx); // Remove code into vatrate.
+							}
+
+							$discount->tva_tx = abs((float) $tva_tx);
+							$discount->vat_src_code = $vat_src_code;
+
+							$id_discount = $discount->create($user);
+							if ($id_discount < 0) {
+								$error++;
+								break;
+							}
+						}
+
+						if (empty($error) && $id_discount > 0) {
+							// Set invoice as paid
+							$result = $object->setPaid($user);	// We can close the invoice.
+							if ($result >= 0) {
+								$object->fetch($object->id);	// Reload properties
+
+								// Apply discount on source invoice
+								$discount = new DiscountAbsolute($db);
+								$discount->fetch($id_discount);
+								$result = $discount->link_to_invoice(0, $object->fk_facture_source);
+								if ($result < 0) {
+									setEventMessages($discount->error, $discount->errors, 'errors');
+									$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnDiscountLink', $objecttmp->ref);
+									$db->rollback();
+									continue;
+								}
+
+								// Set source invoice as paid if amount to pay is 0 after discount application
+								$objecttmp->fetch($objecttmp->id);	// Reload properties
+								if ($objecttmp->getRemainToPay(0) == 0) {
+									$result = $objecttmp->setPaid($user);
+									if ($result < 0) {
+										setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+										$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnSetPaidSourceInvoice', $objecttmp->ref);
+										$db->rollback();
+										continue;
+									} else {
+										if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+											$outputlangs = $langs;
+											$newlang = '';
+											if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) {
+												$newlang = GETPOST('lang_id', 'aZ09');
+											}
+											if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+												$objecttmp->fetch_thirdparty();
+												$newlang = $objecttmp->thirdparty->default_lang;
+											}
+											if (!empty($newlang)) {
+												$outputlangs = new Translate("", $conf);
+												$outputlangs->setDefaultLang($newlang);
+											}
+											$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
+
+											$result = $objecttmp->generateDocument($objecttmp->model_pdf, $outputlangs, (int) $hidedetails, (int) $hidedesc, (int) $hideref);
+											if ($result < 0) {
+												setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+											}
+										}
+									}
+								} else {
+									// We rollback because we want all or nothing.
+									$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnSourceInvoiceNotFullyPaidAfterDiscount', $objecttmp->ref);
+									$db->rollback();
+									continue;
+								}
+							} else {
+								setEventMessages($object->error, $object->errors, 'errors');
+								$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnSetPaid', $objecttmp->ref);
+								$db->rollback();
+								continue;
+							}
+						} else {
+							setEventMessages($discount->error, $discount->errors, 'errors');
+							$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnDiscount', $objecttmp->ref);
+							$db->rollback();
+							continue;
+						}
+					} else {
+						$TMsg[] = $langs->trans('CreditNoteNotCreatedAlreadyConverted', $objecttmp->ref);
+						$db->rollback();
+						continue;
+					}
+				}
+
+				$nbok++;
+				$db->commit();
+				$TMsg[] = $langs->trans('CreditNoteCreated', $object->ref, $objecttmp->ref);
+			}
+		}
+
+		// Show messages
+		foreach ($TMsg as $msg) {
+			setEventMessages($msg, null, 'warnings');
+		}
+
+		// Show success message
+		if ($nbok > 0) {
+			setEventMessages($langs->trans('CreditNotesCreated', $nbok), null, 'mesgs');
+		}
+
+		$toselect = array();
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=compta&leftmenu=facture');
+		exit();
+	} else {
+		setEventMessages($langs->trans('ThisMassActionIsOnlyForInvoices'), null, 'errors');
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=compta&leftmenu=facture');
+		exit();
 	}
 }
 
