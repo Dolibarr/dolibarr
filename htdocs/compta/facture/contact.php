@@ -150,6 +150,7 @@ if (empty($reshook)) {
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
+				$memberstatic = new Adherent($db);
 				$memberstatic->fetch((int) $newmember);
 				$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
