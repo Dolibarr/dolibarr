@@ -1888,9 +1888,10 @@ class Ticket extends CommonObject
 	 * @param	string[]	$mimefilename_list	List of attached file name in message
 	 * @param	bool		$send_email			Whether the message is sent by email
 	 * @param	int<0,1>	$public_area		0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
+	 * @param	array		$external_contacts	List of external contacts associated with the ticket
 	 * @return	int								Return integer <0 if KO, ID of actioncomm create if OK
 	 */
-	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
+	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0, $external_contacts = [])
 	{
 		global $conf;
 		$error = 0;
@@ -1926,6 +1927,7 @@ class Ticket extends CommonObject
 		$actioncomm->label = $this->subject;
 		$actioncomm->note_private = $this->message;
 		$actioncomm->userassigned = array($user->id => array('id' => $user->id,'transparency' => 0));
+		$actioncomm->socpeopleassigned = $external_contacts;
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
@@ -2798,10 +2800,22 @@ class Ticket extends CommonObject
 			$listofnames = $resarray['listofnames'];
 			$listofmimes = $resarray['listofmimes'];
 
+			// Retrieve internal contact datas
+			$internal_contacts = $object->getInfosTicketInternalContact(1);
+
+			// Retrieve email of all contacts (external)
+			$external_contacts = $object->getInfosTicketExternalContact(1);
+			$external_resources = [];
+			if ($this->socpeopleassigned == null && !empty($external_contacts)) {
+				foreach ($external_contacts as $eContact) {
+					$external_resources[$eContact['id']] = $eContact;
+				}
+			}
+
 			// Add the ticket message in database (even if email is requested, we store a simple record
 			// like a simple private message, with no information about emails) because
 			// information about emails sent will be fill later after email sending.
-			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email, $public_area);
+			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email, $public_area, $external_resources);
 
 			if ($id <= 0) {
 				$error++;
@@ -2821,9 +2835,6 @@ class Ticket extends CommonObject
 					 * Send emails to assigned users (public area notification)
 					 */
 					if (getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED')) {
-						// Retrieve internal contact datas
-						$internal_contacts = $object->getInfosTicketInternalContact(1);
-
 						$assigned_user_dont_have_email = '';
 
 						$sendto = array();
@@ -2918,9 +2929,6 @@ class Ticket extends CommonObject
 					 * Send emails to internal users (linked contacts) then, if private is not set, to external users (linked contacts or thirdparty email if no contact set)
 					 */
 					if ((int) $send_email > 0) {
-						// Retrieve internal contact datas
-						$internal_contacts = $object->getInfosTicketInternalContact(1);
-
 						$sendto = array();
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// Set default subject
@@ -2998,9 +3006,6 @@ class Ticket extends CommonObject
 						 * Send emails for externals users if not private (linked contacts)
 						 */
 						if (empty($object->private)) {
-							// Retrieve email of all contacts (external)
-							$external_contacts = $object->getInfosTicketExternalContact(1);
-
 							// If no contact, get email from thirdparty
 							if (is_array($external_contacts) && count($external_contacts) === 0) {
 								if (!empty($object->fk_soc)) {
