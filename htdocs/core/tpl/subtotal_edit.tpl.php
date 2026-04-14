@@ -32,6 +32,7 @@
 '
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal|Fichinter $object
 @phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne|FichinterLigne $line
+@phan-var-force int $i
 ';
 
 // Options for subtotal
