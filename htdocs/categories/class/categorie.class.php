@@ -806,7 +806,7 @@ class Categorie extends CommonObject
 				$sanitizedvalue = $value;
 			}
 			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
-			$sql .= " WHERE ".$sanitizedvalue." = ".((int) $this->id);
+			$sql .= " WHERE ".$this->db->sanitize($sanitizedvalue)." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
