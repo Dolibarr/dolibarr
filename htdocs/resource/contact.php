@@ -89,14 +89,14 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			$conobj = new Contact($db);
-			$fetchresult = $conobj->fetch($contactid);
+			$contactstatic = new Contact($db);
+			$fetchresult = $contactstatic->fetch($contactid);
 			if ($fetchresult) {
-				$objname = $conobj->firstname.' '.$conobj->lastname;
+				$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
 			} else {
-				$userobj = new User($db);
-				$userobj->fetch($contactid);
-				$objname = $userobj->firstname.' '.$userobj->lastname;
+				$userstatic = new User($db);
+				$userstatic->fetch($contactid);
+				$objname = $userstatic->firstname.' '.$userstatic->lastname;
 			}
 			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {
@@ -136,9 +136,9 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			$adhobj = new Adherent($db);
-			$adhobj->fetch($newmember);
-			$objname = $adhobj->firstname.' '.$adhobj->lastname;
+			$memberstatic = new Adherent($db);
+			$memberstatic->fetch($newmember);
+			$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -154,6 +154,7 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
+$memberstatic = new Adherent($db);
 $userstatic = new User($db);
 
 $help_url = '';
