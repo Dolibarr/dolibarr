@@ -192,7 +192,6 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 			} else {
 				$objname = '';
 			}
-			$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
