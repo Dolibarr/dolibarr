@@ -58,3 +58,13 @@ MyWidgetDescription = My widget description
 #
 ResetStuckCronJobs = Reset stuck cron jobs
 ResetStuckCronJobsDescription = Reset cron jobs that have been stuck in processing state for more than 30 minutes
+
+#
+# Open ticket status icon (contract/contact lists and cards)
+#
+AnexumOpenTicketStatus = Open ticket status
+AnexumOpenTicketOnContract = Open ticket: %s
+AnexumNoOpenTicket = No open ticket
+# Ticket CC monitoring setting
+ANEXUM_TICKET_CC_MONITORING = Default CC on outgoing ticket emails
+ANEXUM_TICKET_CC_MONITORINGTooltip = Email address automatically prefilled in the CC field when sending a ticket message. Leave empty to disable.

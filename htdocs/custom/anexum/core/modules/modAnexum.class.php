@@ -118,6 +118,7 @@ class modAnexum extends DolibarrModules
 				'data' => array(
 					'publicnewticketcard',
 					'ticketcard',
+					'ticketmessaging',
 					'agenda',
 					'agendalist',
 					'propallist',
@@ -126,7 +127,11 @@ class modAnexum extends DolibarrModules
 					'ordercard',
 					'invoicelist',
 					'invoicecard',
-					'contactlist'
+					'contactlist',
+					'contactcard',
+					'contractlist',
+					'contractcard',
+					'thirdpartycontract',
 				),
 				'entity' => '0',
 			),

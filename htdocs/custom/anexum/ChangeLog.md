@@ -1,5 +1,13 @@
 # CHANGELOG ANEXUM FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
+## 1.5.0
+ADD Contract / contact open-ticket status dot + tooltip on lists and cards (ClickUp 8694apzek)
+ADD Ticket "human-only" toggle on the messaging view, hides API-bot rows (internal cockpit subtask)
+ADD ticketcard presend hook that prefills the CC field with ANEXUM_TICKET_CC_MONITORING (default monitoring@anexum.at, ClickUp 869b7ck49)
+ADD completeSubstitutionsArray hook exposing `__EXTRAFIELD_<NAME>_LABEL__` for every sellist extrafield and `__ORDER_REF__` on contract templates (ClickUp 869ab3xx9)
+ADD bin/update_fertigstellung_template.php CLI script that tokenizes the Fertigstellungsmeldung template content
+ADD new hook contexts: contractlist, contractcard, contactcard, thirdpartycontract, ticketmessaging
+
 ## 1.4.0
 ADD CLI script to reset stuck cron jobs (bin/reset_stuck_cron.php)
 ADD CronjobAnexum class for internal Dolibarr cron scheduler (class/cronjob_anexum.class.php)
