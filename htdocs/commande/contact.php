@@ -94,14 +94,18 @@ if (empty($reshook)) {
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$conobj = new Contact($db);
-				$fetchresult = $conobj->fetch((int) $contactid);
-				if ($fetchresult) {
-					$objname = $conobj->firstname.' '.$conobj->lastname;
+				if (isset($contactid)) {
+					$conobj = new Contact($db);
+					$fetchresult = $conobj->fetch((int) $contactid);
+					if ($fetchresult) {
+						$objname = $conobj->firstname.' '.$conobj->lastname;
+					} else {
+						$userobj = new User($db);
+						$userobj->fetch((int) $contactid);
+						$objname = $userobj->firstname.' '.$userobj->lastname;
+					}
 				} else {
-					$userobj = new User($db);
-					$userobj->fetch((int) $contactid);
-					$objname = $userobj->firstname.' '.$userobj->lastname;
+					$objname = '';
 				}
 				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 			} else {
@@ -146,9 +150,13 @@ if (empty($reshook)) {
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$adhobj = new Adherent($db);
-				$adhobj->fetch($newmember);
-				$objname = $adhobj->firstname.' '.$adhobj->lastname;
+				if (isset($newmember)) {
+					$adhobj = new Adherent($db);
+					$adhobj->fetch($newmember);
+					$objname = $adhobj->firstname.' '.$adhobj->lastname;
+				} else {
+					$objname = '';
+				}
 				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
