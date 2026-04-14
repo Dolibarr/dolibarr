@@ -114,14 +114,18 @@ if (empty($reshook) && $objectsrc !== null) {
 			$mesgs = null;
 			if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$contactstatic = new Contact($db);
-				$fetchresult = $contactstatic->fetch($contactid);
-				if ($fetchresult) {
-					$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
+				if (isset($contactid)) {
+					$contactstatic = new Contact($db);
+					$fetchresult = $contactstatic->fetch((int) $contactid);
+					if ($fetchresult) {
+						$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
+					} else {
+						$userstatic = new User($db);
+						$userstatic->fetch((int) $contactid);
+						$objname = $userstatic->firstname.' '.$userstatic->lastname;
+					}
 				} else {
-					$userstatic = new User($db);
-					$userstatic->fetch((int) $contactid);
-					$objname = $userstatic->firstname.' '.$userstatic->lastname;
+					$objname = '';
 				}
 				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 			} else {
