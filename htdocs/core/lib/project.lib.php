@@ -58,7 +58,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	if (!is_null($dataretrieved)) {
 		$nbContacts = $dataretrieved;
 	} else {
-		$nbContacts = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
+		$nbContacts = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external')) + count($project->liste_member_as_contact(-1, 'member'));
 		dol_setcache($cachekey, $nbContacts, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 	}
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/projet/contact.php', ['id' => $project->id]).($moreparam ? '&'.$moreparam : '');

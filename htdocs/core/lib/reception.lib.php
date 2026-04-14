@@ -60,7 +60,7 @@ function reception_prepare_head(Reception $object)
 			$objectsrc = new CommandeFournisseur($db);
 			$objectsrc->fetch($object->origin_id);
 		}
-		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
+		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external')) + count($objectsrc->liste_member_as_contact(-1, 'member'));
 		$head[$h][0] = DOL_URL_ROOT."/reception/contact.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
