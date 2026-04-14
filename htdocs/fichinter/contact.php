@@ -125,9 +125,6 @@ if ($action == 'addcontact' && $user->hasRight('ficheinter', 'creer')) {
 	if ($result > 0 && $id > 0 ) {
 		$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		if (empty($newmember)) {
-			$newmember = $object->fk_member;
-		}
 
 		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
 		$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
