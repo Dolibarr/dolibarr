@@ -854,7 +854,10 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			// If in accountancy, we refuse
-			$ventilExportCompta = $this->getVentilExportCompta();
+			$ventilExportCompta = 0;
+			if (isModEnabled('accounting')) {
+				$ventilExportCompta = $this->getVentilExportCompta();
+			}
 			if ($ventilExportCompta != 0) {
 				return -1;
 			}

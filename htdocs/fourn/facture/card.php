@@ -1966,7 +1966,10 @@ if (empty($reshook)) {
 		$resteapayer = $object->total_ttc - $totalpaid;
 
 		// We check that lines of invoices are exported in accountancy
-		$ventilExportCompta = $object->getVentilExportCompta();
+		$ventilExportCompta = 0;
+		if (isModEnabled('accounting')) {
+			$ventilExportCompta = $object->getVentilExportCompta();
+		}
 
 		if (!$ventilExportCompta) {
 			// We verify that no payment was done
@@ -4168,7 +4171,10 @@ if ($action == 'create') {
 				// Modify a validated invoice with no payments
 				if ($object->status == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $usercancreate) {
 					// We check if lines of invoice are not already transferred into accountancy
-					$ventilExportCompta = $object->getVentilExportCompta(); // Should be 0 since the sum of payments are zero. But we keep the protection.
+					$ventilExportCompta = 0;
+					if (isModEnabled('accounting')) {
+						$ventilExportCompta = $object->getVentilExportCompta(); // Should be 0 since the sum of payments are zero. But we keep the protection.
+					}
 
 					if ($ventilExportCompta == 0) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
