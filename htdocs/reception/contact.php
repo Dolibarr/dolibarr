@@ -178,8 +178,12 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	} else {
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			$memberstatic = new Adherent($db);
-			$memberstatic->fetch((int) $newmember);
+			if (isset($newmember)) {
+				$memberstatic->fetch((int) $newmember);
+				$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
+			} else {
+				$objname = '';
+			}
 			$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {
