@@ -776,6 +776,7 @@ class Categorie extends CommonObject
 			}
 		}
 
+		$sanitizedvalue = null;
 		$arraydelete = array(
 			'categorie_account' => 'fk_categorie',
 			'categorie_actioncomm' => 'fk_categorie',
@@ -803,12 +804,14 @@ class Categorie extends CommonObject
 				}
 				$sanitizedvalue = $value['field'];
 			}
-			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
-			$sql .= " WHERE ".$sanitizedvalue." = ".((int) $this->id);
-			if (!$this->db->query($sql)) {
-				$this->errors[] = $this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
+			if (!empty($sanitizedvalue)) {
+				$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
+				$sql .= " WHERE ".$sanitizedvalue." = ".((int) $this->id);
+				if (!$this->db->query($sql)) {
+					$this->errors[] = $this->db->lasterror();
+					dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+					$error++;
+				}
 			}
 		}
 
