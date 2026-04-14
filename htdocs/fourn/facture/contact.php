@@ -101,12 +101,12 @@ if (empty($reshook)) {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
 				$contactstatic = new Contact($db);
-				$fetchresult = $contactstatic->fetch($contactid);
+				$fetchresult = $contactstatic->fetch((int) $contactid);
 				if ($fetchresult) {
 					$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
 				} else {
 					$userstatic = new User($db);
-					$userstatic->fetch($contactid);
+					$userstatic->fetch((int) $contactid);
 					$objname = $userstatic->firstname.' '.$userstatic->lastname;
 				}
 				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
@@ -153,7 +153,7 @@ if (empty($reshook)) {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
 				$memberstatic = new Adherent($db);
-				$memberstatic->fetch($newmember);
+				$memberstatic->fetch((int) $newmember);
 				$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 			} else {

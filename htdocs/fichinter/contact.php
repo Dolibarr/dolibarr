@@ -91,7 +91,7 @@ if ($action == 'addcontact' && $user->hasRight('ficheinter', 'creer')) {
 				$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
 			} else {
 				$userstatic = new User($db);
-				$userstatic->fetch($contactid);
+				$userstatic->fetch((int) $contactid);
 				$objname = $userstatic->firstname.' '.$userstatic->lastname;
 			}
 			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
@@ -133,7 +133,7 @@ if ($action == 'addcontact' && $user->hasRight('ficheinter', 'creer')) {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$memberstatic = new Adherent($db);
-			$memberstatic->fetch($newmember);
+			$memberstatic->fetch((int) $newmember);
 			$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {

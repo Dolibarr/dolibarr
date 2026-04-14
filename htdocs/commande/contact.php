@@ -152,7 +152,7 @@ if (empty($reshook)) {
 				$langs->load("errors");
 				if (isset($newmember)) {
 					$memberstatic = new Adherent($db);
-					$memberstatic->fetch($newmember);
+					$memberstatic->fetch((int) $newmember);
 					$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
 				} else {
 					$objname = '';
