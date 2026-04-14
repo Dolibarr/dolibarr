@@ -987,6 +987,7 @@ if (empty($reshook)) {
 
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
+		$line = null;
 		if ($lineid) {
 			$line = new CommandeFournisseurLigne($db);
 			$res = $line->fetch($lineid);
@@ -2812,6 +2813,7 @@ if ($action == 'create') {
 			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
 		}
 
+		$num = 0;
 		$num = count($object->lines);
 
 		// Form to add new line
@@ -3280,6 +3282,7 @@ if ($action == 'create') {
 
 						// Iterate each line and get the reference that uses the supplier of that product/service
 						$i = 0;
+						$line = null;
 						foreach ($object->lines as $line) {
 							$i += 1;
 							$ref_supplier = $line->ref_supplier;
