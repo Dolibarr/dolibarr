@@ -10273,7 +10273,9 @@ class Form
 					$sfortag .= ' title="' . dolPrintHTMLForAttribute($titlestring) . '"';
 					$sfortag .= '>';
 					if ($rendermode == 1) {
+						$sfortag .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $c->id).'&type='.urlencode($c->type).'" class="'.$forced_color.'">';
 						$sfortag .= img_picto('', 'category', 'class="paddingright"').$c->label;
+						$sfortag .= '</a>';
 					} else {
 						$sfortag .= $way;
 					}

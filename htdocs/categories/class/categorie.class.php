@@ -787,22 +787,24 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
-			'categorie_project_task' => 'fk_categorie',
+			'categorie_project_task' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('project')),
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
-			'categorie_warehouse' => 'fk_categorie',
+			'categorie_warehouse' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('stock')),
 			'categorie_website_page' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('website')),
 			'category_bankline' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
 		foreach ($arraydelete as $key => $value) {
+			$sanitizedvalue = $value;
 			if (is_array($value)) {
 				if (empty($value['enabled'])) {
 					continue;
 				}
 				$sanitizedvalue = $value['field'];
 			}
+
 			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
 			$sql .= " WHERE ".$sanitizedvalue." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {

@@ -135,18 +135,40 @@ class DolibarrApiAccess implements iAuthenticate
 			$token_rowid = 0;
 
 			if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
-				$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, u.api_key as api_key, u.entity as token_entity, 0 as token_rowid,";
-				$sql .= " u.tms as date_modification";
-				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-				$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.api_key as api_key, 0 as token_rowid,";
+					$sql .= " u.tms as date_modification,";
+					$sql .= " gu.entity, gu.entity as token_entity";
+					$sql .= " FROM ".$this->db->prefix()."user as u";
+					$sql .= " JOIN ".$this->db->prefix()."usergroup_user as gu ON u.rowid = gu.fk_user AND gu.entity = ".((int) $conf->entity);
+					$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				} else {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, u.api_key as api_key, u.entity as token_entity, 0 as token_rowid,";
+					$sql .= " u.tms as date_modification";
+					$sql .= " FROM ".$this->db->prefix()."user as u";
+					$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				}
 			} else {
-				$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
-				$sql .= " oat.tms as date_modification";
-				$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token AS oat";
-				$sql .= " JOIN ".MAIN_DB_PREFIX."user AS u ON u.rowid = oat.fk_user";
-				$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
-				$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
-				$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
+					$sql .= " oat.tms as date_modification,";
+					$sql .= " gu.entity";
+					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
+					$sql .= " JOIN ".$this->db->prefix()."user AS u ON u.rowid = oat.fk_user";
+					$sql .= " JOIN ".$this->db->prefix()."usergroup_user as gu ON u.rowid = gu.fk_user AND gu.entity = ".((int) $conf->entity);
+					$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
+					$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
+					$sql .= " AND gu.entity = oat.entity";
+					$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				} else {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
+					$sql .= " oat.tms as date_modification";
+					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
+					$sql .= " JOIN ".$this->db->prefix()."user AS u ON u.rowid = oat.fk_user";
+					$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
+					$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
+					$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				}
 			}
 
 			$result = $this->db->query($sql);
