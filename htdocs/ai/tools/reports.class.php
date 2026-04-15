@@ -174,7 +174,6 @@ class ToolReports extends McpTool
 		}
 	}
 
-
 	/**
 	 * Resolves a Thirdparty ID from either an ID or a name.
 	 *
@@ -183,9 +182,9 @@ class ToolReports extends McpTool
 	 * the Dolibarr societe table using a LIKE match and returns the first match.
 	 *
 	 * @param array $args {
-	 *     thirdparty_id?: int|string,
-	 *     thirdparty_name?: string
-	 * } Input arguments.
+	 *                    thirdparty_id?: int|string,
+	 *                    thirdparty_name?: string
+	 *                    } Input arguments.
 	 *
 	 * @return int|null Thirdparty ID if found, otherwise null.
 	 */
