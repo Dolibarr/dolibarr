@@ -121,7 +121,7 @@ function member_prepare_head(Adherent $object)
 	}
 
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/related.php', ['id' => $object->id]);
-	$head[$h][1] = $langs->trans("Referers");
+	$head[$h][1] = $langs->trans("RelatedObjects");
 	if ($nbAsContact > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbAsContact . '</span>';
 	}
