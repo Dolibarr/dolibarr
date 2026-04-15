@@ -23,19 +23,19 @@
  */
 
 if (!defined('NOTOKENRENEWAL')) {
-    define('NOTOKENRENEWAL', 1);
+	define('NOTOKENRENEWAL', 1);
 }
 if (!defined('NOREQUIREMENU')) {
-    define('NOREQUIREMENU', 1);
+	define('NOREQUIREMENU', 1);
 }
 if (!defined('NOREQUIREHTML')) {
-    define('NOREQUIREHTML', 1);
+	define('NOREQUIREHTML', 1);
 }
 if (!defined('NOREQUIREAJAX')) {
-    define('NOREQUIREAJAX', 1);
+	define('NOREQUIREAJAX', 1);
 }
 if (!defined('NOCSRFCHECK')) {
-    define('NOCSRFCHECK', 1);
+	define('NOCSRFCHECK', 1);
 }
 
 require '../../main.inc.php';
@@ -47,21 +47,21 @@ top_httphead('application/json');
 
 
 try {
-    $raw = file_get_contents('php://input');
-    $input = json_decode($raw, true);
+	$raw = file_get_contents('php://input');
+	$input = json_decode($raw, true);
 
-    if (!$input || empty($input['tool'])) {
-        throw new Exception("Invalid Request: No tool specified.");
-    }
+	if (!$input || empty($input['tool'])) {
+		throw new Exception("Invalid Request: No tool specified.");
+	}
 
-    // Initialize Handler
-    $mcp = new McpHandler($db, $user);
+	// Initialize Handler
+	$mcp = new McpHandler($db, $user);
 
-    $result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
+	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 
-    echo json_encode($result);
+	echo json_encode($result);
 } catch (Throwable $e) {
-    // Set HTTP response code to error (400 Bad Request)
-    http_response_code(400);
-    echo json_encode(["error" => $e->getMessage()]);
+	// Set HTTP response code to error (400 Bad Request)
+	http_response_code(400);
+	echo json_encode(["error" => $e->getMessage()]);
 }
