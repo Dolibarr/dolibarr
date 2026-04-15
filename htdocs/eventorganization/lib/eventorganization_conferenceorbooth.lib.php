@@ -265,7 +265,7 @@ function conferenceorboothThirdpartyPrepareHead($object)
 /**
  * Prepare array of tabs for ConferenceOrBooth member tab
  *
- * @param Societe $object Societe
+ * @param Adherent $object Adherent
  * @return array<array{0:string,1:string,2:string}>
  */
 function conferenceorboothMemberPrepareHead($object)
