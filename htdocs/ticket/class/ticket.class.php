@@ -2816,7 +2816,7 @@ class Ticket extends CommonObject
 			// Retrieve email of all contacts (external)
 			$external_contacts = $object->getInfosTicketExternalContact(1);
 			$external_resources = [];
-			if ($this->socpeopleassigned == null && !empty($external_contacts)) {
+			if (!empty($external_contacts)) {
 				foreach ($external_contacts as $eContact) {
 					$external_resources[$eContact['id']] = $eContact;
 				}
