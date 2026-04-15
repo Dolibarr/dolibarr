@@ -340,7 +340,7 @@ class ToolThirdParty extends McpTool
 	/**
 	 * Create a new third party (Societe).
 	 *
-	 * @param array{
+	 * @param array $args {
 	 *     name: string,
 	 *     email?: string,
 	 *     phone?: string,
@@ -354,7 +354,7 @@ class ToolThirdParty extends McpTool
 	 *     idprof4?: string,
 	 *     country_code?: string,
 	 *     type?: 'customer'|'prospect'|'supplier'|'both'
-	 * } $args Arguments array. 'name' is mandatory.
+	 * } Arguments array. 'name' is mandatory.
 	 *
 	 * @return array{error: string}|array{
 	 *     status: string,
@@ -364,7 +364,7 @@ class ToolThirdParty extends McpTool
 	 *     url: string
 	 * }
 	 */
-	private function create(array $args): array
+	private function create(array $args)
 	{
 		global $db, $conf;
 
@@ -455,7 +455,7 @@ class ToolThirdParty extends McpTool
 	/**
 	 * Update an existing thirdparty.
 	 *
-	 * @param array{
+	 * @param array $args {
 	 *     id: int|string,
 	 *     name?: string,
 	 *     email?: string,
@@ -464,16 +464,17 @@ class ToolThirdParty extends McpTool
 	 *     zip?: string,
 	 *     town?: string,
 	 *     country_code?: string
-	 * } $args Arguments array. ID is mandatory.
+	 * } Arguments array. ID is mandatory.
 	 *
-	 * @return array{error: string}|array{
-	 *     status: string,
-	 *     message: string,
-	 *     id: int,
-	 *     url: string
+	 * @return array{
+	 *     status?: string,
+	 *     message?: string,
+	 *     id?: int,
+	 *     url?: string,
+	 *     error?: string
 	 * }
 	 */
-	private function update(array $args): array
+	private function update(array $args)
 	{
 		global $db;
 		if (!$this->user->hasRight('societe', 'creer') && !$this->user->hasRight('societe', 'modifier')) {
@@ -553,7 +554,7 @@ class ToolThirdParty extends McpTool
 	 *              url: string
 	 *          }> Returns error array or list of contact data.
 	 */
-	private function listContacts(array $args): array
+	private function listContacts(array $args)
 	{
 		global $db, $langs;
 
@@ -627,23 +628,24 @@ class ToolThirdParty extends McpTool
 	/**
 	 * Add a new contact to a thirdparty.
 	 *
-	 * @param array{
+	 * @param array $args {
 	 *     thirdparty_identifier: int|string,
 	 *     firstname: string,
 	 *     lastname: string,
 	 *     email?: string,
 	 *     phone?: string,
 	 *     role?: string
-	 * } $args Arguments array. Identifier, firstname, and lastname are mandatory.
+	 * } Arguments array. Identifier, firstname, and lastname are mandatory.
 	 *
-	 * @return array{error: string}|array{
-	 *     status: string,
-	 *     message: string,
-	 *     id: int,
-	 *     url: string
+	 * @return array{
+	 *     status?: string,
+	 *     message?: string,
+	 *     id?: int,
+	 *     url?: string,
+	 *     error?: string
 	 * }
 	 */
-	private function addContact(array $args): array
+	private function addContact(array $args)
 	{
 		global $db;
 		if (!$this->user->hasRight('societe', 'creer')) {
