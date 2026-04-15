@@ -146,8 +146,7 @@ $form = new Form($db);
 
 
 if ($object->id > 0) {
-
-	$langs->load("companies");
+	$langs->load("members");
 
 	$title = $langs->trans("Member")." - ".$langs->trans("Referers");
 
@@ -246,10 +245,9 @@ if ($object->id > 0) {
 				];
 			}
 
-
 			echo '<div class="div-table-responsive">';
 			echo '<table class="liste">';
-			
+
 			echo '<thead>';
 			echo '<tr class="liste_titre">';
 			$headers = [
@@ -260,19 +258,18 @@ if ($object->id > 0) {
 				'Code' => 'code',
 				'Label' => 'libelle'
 			];
-			
+
 			foreach ($headers as $label => $key) {
 				echo '<th>'.$label.'</th>';
 			}
 			echo '</tr>';
 			echo '</thead>';
-			
 			echo '<tbody>';
-			
+
 			if (count($contactsArray) > 0) {
 				$i = 0;
 				foreach ($contactsArray as $row) {
-					$cssClass = ($i % 2) ? 'oddeven' : ''; 
+					$cssClass = ($i % 2) ? 'oddeven' : '';
 					echo '<tr class="'.$cssClass.'">';
 					echo '<td class="right">'.$row['rowid'].'</td>';
 					echo '<td>'.$row['datecreate'].'</td>';
