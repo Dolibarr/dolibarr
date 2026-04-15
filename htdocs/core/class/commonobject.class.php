@@ -153,8 +153,40 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-	 *
+	 * @var array<string,array<string,mixed>>
+	 * @phpstan-var array<string, array{
+	 * type: string,
+	 * label: string,
+	 * enabled: int<0, 2>|string,
+	 * position: int,
+	 * visible: int<-6, 6>|string,
+	 * langfile?: string,
+	 * notnull?: int<-1, 1>,
+	 * noteditable?: int<0, 1>,
+	 * alwayseditable?: int<0, 1>|string,
+	 * default?: string|int,
+	 * index?: int<0, 1>,
+	 * foreignkey?: string,
+	 * searchall?: int<0, 1>,
+	 * isameasure?: int<0, 1>,
+	 * css?: string,
+	 * cssview?: string,
+	 * csslist?: string,
+	 * help?: string,
+	 * helplist?: string,
+	 * showoncombobox?: int<0, 4>|string,
+	 * disabled?: int<0, 1>|string,
+	 * arrayofkeyval?: array<int|string, string>,
+	 * autofocusoncreate?: int<0, 1>,
+	 * comment?: string,
+	 * copytoclipboard?: int<1, 2>,
+	 * validate?: int<0, 1>|string,
+	 * showonheader?: int<0, 1>,
+	 * searchmulti?: int<0, 1>,
+	 * picto?: string,
+	 * required?: int<0, 1>,
+	 * placeholder?: string
+	 * }>
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
@@ -8702,13 +8734,13 @@ abstract class CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
-	 * @param  string  		$key            	Key of attribute
-	 * @param  string|int  	$value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  		$moreparam      	To add more parameters on html tag
-	 * @param  string  		$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  		$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   		$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>,noteditable?:int,default?:int|string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,cssview?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int,required?:int,picto?:string}	$val	Array of properties of field to show
+	 * @param  string  			$key            	Key of attribute
+	 * @param  string|int|null  $value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  			$moreparam      	To add more parameters on html tag
+	 * @param  string  			$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  			$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   			$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
 	 * @return string
 	 */
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
@@ -11794,7 +11826,7 @@ abstract class CommonObject
 		$fkname = 'fk_' . (empty($categorystatic->MAP_CAT_FK[$type]) ? $type : $categorystatic->MAP_CAT_FK[$type]);
 
 		$sql = "INSERT INTO ".$this->db->sanitize($tablename)." (fk_categorie, ".$this->db->sanitize($fkname).")";
-		$sql .= " SELECT fk_categorie, ".$this->db->sanitize($toId)." FROM ".$this->db->sanitize($tablename);
+		$sql .= " SELECT fk_categorie, ".((int) $toId)." FROM ".$this->db->sanitize($tablename);
 		$sql .= " WHERE ".$this->db->sanitize($fkname)." = ".((int) $fromId);
 
 		if (!$this->db->query($sql)) {

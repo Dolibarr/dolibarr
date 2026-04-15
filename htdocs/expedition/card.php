@@ -129,7 +129,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'inc
 if (empty($origin) && !empty($object->origin_type)) {
 	$origin = $object->origin_type;
 } elseif (empty($origin) && !empty($object->origin)) {
-	$origin = $object->origin;
+	$origin = (string) $object->origin;  // Cast to string because origin is type hinted as object too.
 }
 if (empty($origin_id) && !empty($object->origin_id)) {
 	$origin_id = $object->origin_id;
@@ -452,11 +452,11 @@ if (empty($reshook)) {
 							$qty = "qtyl" . $i . '_' . $j;
 						}
 
-							$batch_line[$i]['detail'] = $sub_qty; // array of details
-							$batch_line[$i]['qty'] = $subtotalqty;
-							$batch_line[$i]['ix_l'] = GETPOSTINT($idl);
+						$batch_line[$i]['detail'] = $sub_qty; // array of details
+						$batch_line[$i]['qty'] = $subtotalqty;
+						$batch_line[$i]['ix_l'] = GETPOSTINT($idl);
 
-							$totalqty += $subtotalqty;
+						$totalqty += $subtotalqty;
 					} else {
 						// No detail were provided for lots, so if a qty was provided, we can throw an error.
 						if (GETPOST($qty)) {
@@ -1629,7 +1629,7 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Note Public
-		$htmltext ='';
+		$htmltext = '';
 		print '<tr>';
 		print '<td class="tdtop">';
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
@@ -2657,7 +2657,7 @@ if ($action == 'create' && $usercancreate) {
 
 	if (!empty($object->origin) && $object->origin_id > 0) {
 		$typeobject = $object->origin;
-		$origin = $object->origin;
+		$origin = (string) $object->origin;  // Cast to string because origin is type hinted as object too.
 		$origin_id = $object->origin_id;
 
 		$object->fetch_origin(); // Load property $object->origin_object (old $object->commande, $object->propal, ...)
@@ -3273,10 +3273,10 @@ if ($action == 'create' && $usercancreate) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed";
 			$sql .= ", " . MAIN_DB_PREFIX . "expedition as e";
-			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize($origin) . "det as obj";
+			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize((string) $origin) . "det as obj";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
-			$sql .= " AND obj.fk_" . $db->sanitize($origin) . " = " . ((int) $origin_id);
+			$sql .= " AND obj.fk_" . $db->sanitize((string) $origin) . " = " . ((int) $origin_id);
 			$sql .= " AND obj.rowid = ed.fk_elementdet";
 			$sql .= " AND ed.fk_expedition = e.rowid";
 			//if ($filter) $sql.= $filter;
