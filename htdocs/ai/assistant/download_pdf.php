@@ -167,7 +167,6 @@ try {
 			}
 		}
 	}
-
 	// Simple list (e.g. search invoices)
 	elseif (isset($data[0]) && is_array($data[0])) {
 		$keys = array_keys($data[0]);
@@ -187,7 +186,6 @@ try {
 				if (is_array($val)) {
 					$val = count($val) . ' items';
 				}
-
 				if (is_string($val) && strpos($val, '<a href') !== false) {
 					$html .= '<td>' . $val . '</td>';
 				} else {
