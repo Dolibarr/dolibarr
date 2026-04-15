@@ -455,7 +455,7 @@ class ConferenceOrBooth extends ActionComm
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " status = ".self::STATUS_CONFIRMED;
-		$sql .= " WHERE id = ".$this->id;
+		$sql .= " WHERE id = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 		$resql = $this->db->query($sql);

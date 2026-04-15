@@ -801,10 +801,10 @@ class Categorie extends CommonObject
 				if (empty($value['enabled'])) {
 					continue;
 				}
-				$value = $value['field'];
+				$sanitizedvalue = $value['field'];
 			}
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
-			$sql .= " WHERE ".$value." = ".((int) $this->id);
+			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
+			$sql .= " WHERE ".$sanitizedvalue." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
@@ -1564,9 +1564,9 @@ class Categorie extends CommonObject
 	 *
 	 * @param	string		$sep	     Separator
 	 * @param	string		$url	     Url ('', 'none' or 'urltouse')
-	 * @param   int     	$nocolor     0
-	 * @param	int			$addpicto	 Add picto into link
-	 * @param	int			$notrunc	 Do not truncate names of parent categories
+	 * @param   int     	$nocolor     0=Default, 1=Disable colors
+	 * @param	int			$addpicto	 1=Add picto into link
+	 * @param	int			$notrunc	 1=Do not truncate names of parent categories
 	 * @return	string[]
 	 */
 	public function print_all_ways($sep = 'auto', $url = '', $nocolor = 0, $addpicto = 0, $notrunc = 0)
@@ -1578,7 +1578,7 @@ class Categorie extends CommonObject
 			$sep = '&gt;';
 		}
 
-		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
+		$all_ways = $this->get_all_ways(); // Load array of categories from database to reach this->id
 
 		foreach ($all_ways as $way) {	// It seems we always have 1 entry in this array.
 			$w = array();
@@ -1592,10 +1592,8 @@ class Categorie extends CommonObject
 					if ($i == count($way)) {	// Last category in hierarchy
 						// Check contrast with background and correct text color
 						$forced_color = 'categtextwhite'; // We want color white because the getNomUrl of a tag is always called inside a dark background like '<span color="bbb"></span>' to show it as a tag. TODO Add this in param to force when called outside of span.
-						if ($cat->color) {
-							if (colorIsLight($cat->color)) {
-								$forced_color = 'categtextblack';
-							}
+						if ($cat->color && colorIsLight($cat->color)) {
+							$forced_color = 'categtextblack';
 						}
 					}
 				}

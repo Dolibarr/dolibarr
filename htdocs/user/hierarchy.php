@@ -116,10 +116,10 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyfor
 
 $filters = [];
 if (($search_status != '' && $search_status >= 0)) {
-	$filters[] = "statut = ".((int) $search_status);
+	$filters[] = "(statut:=:".((int) $search_status).")";
 }
 if ($search_employee == 1) {
-	$filters[] = "employee = 1";
+	$filters[] = "(employee:=:1)";
 }
 $sqlfilter = '';
 if (!empty($filters)) {

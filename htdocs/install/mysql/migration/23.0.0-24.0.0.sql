@@ -211,6 +211,9 @@ UPDATE llx_cronjob set test = 'isModEnabled("project")' WHERE test = '$conf->pro
 UPDATE llx_cronjob set test = 'isModEnabled("sellyoursaas")' WHERE test = '$conf->sellyoursaas->enabled';
 UPDATE llx_cronjob set test = 'isModEnabled("scaninvoices")' WHERE test = '$conf->scaninvoices->enabled';
 
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+
 
 create table llx_product_lang_extrafields
 (

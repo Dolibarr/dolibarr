@@ -1891,7 +1891,8 @@ class Form
 		if ($filter) {
 			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
 			// if not, by testSqlAndScriptInject() only.
-			$sql .= " AND (" . $filter . ")";
+			$sanitizedfilter = $filter;
+			$sql .= " AND (" . $sanitizedfilter . ")";
 		}
 		// Add where from hooks
 		$parameters = array();
@@ -2079,7 +2080,7 @@ class Form
 	 *
 	 * @param	string	$selected	Id Fixed reduction preselected
 	 * @param	string	$htmlname	Name of the form field
-	 * @param	string	$filter		Optional filter criteria
+	 * @param	string	$filter		Optional filter criteria. Must be a sanitized string.
 	 * @param	int		$socid		Id of thirdparty
 	 * @param	int		$maxvalue	Max value for lines that can be selected
 	 * @return	int					Return number of qualifed lines in list
@@ -2094,9 +2095,10 @@ class Form
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
-		$sql .= " AND re.entity = " . $conf->entity;
+		$sql .= " AND re.entity = " . ((int) $conf->entity);
 		if ($filter) {
-			$sql .= " AND " . $filter;
+			$sanitizedfilter = $filter;
+			$sql .= " AND " . $sanitizedfilter;
 		}
 		$sql .= " ORDER BY re.description ASC";
 
@@ -3385,7 +3387,7 @@ class Form
 			$sql .= ')';
 		}
 		if (count($warehouseStatusArray)) {
-			$sql .= " GROUP BY " . $selectFields;	// To have the SUM on ps.reel working in the select.
+			$sql .= " GROUP BY " . $this->db->sanitize($selectFields, 0, 0, 1);	// To have the SUM on ps.reel working in the select.
 		}
 
 		// Sort by category
@@ -5336,7 +5338,7 @@ class Form
 	 *
 	 * @param string 	$selected 		Id shipping mode preselected
 	 * @param string 	$htmlname 		Name of select zone
-	 * @param string 	$filtre 		To filter list. This parameter must not come from input of users
+	 * @param string 	$filtre 		To filter list. This parameter must not come from input of users. Use USF syntax.
 	 * @param int 		$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @param string 	$moreattrib 	To add more attribute on select
 	 * @param int 		$noinfoadmin 	0=Add admin info, 1=Disable admin info
@@ -5353,11 +5355,12 @@ class Form
 		$sql .= " FROM " . $this->db->prefix() . "c_shipment_mode";
 		$sql .= " WHERE active > 0";
 		if ($filtre) {
-			$sql .= " AND " . $filtre;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filtre);
 		}
 		$sql .= " ORDER BY libelle ASC";
 
 		dol_syslog(get_class($this) . "::selectShippingMode", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -5544,7 +5547,7 @@ class Form
 	 * @param int|''	 	$selected 		Id account preselected
 	 * @param string 		$htmlname 		Name of select zone
 	 * @param int<0,2>		$status 		Status of searched accounts (0=open, 1=closed, 2=both)
-	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users
+	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users. Must use USF syntax.
 	 * @param int<0,2>|string	$useempty 	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @param string 		$moreattrib 	To add more attribute on select
 	 * @param int<0,1>		$showcurrency 	Show currency in label
@@ -5569,8 +5572,8 @@ class Form
 		if ($status != 2) {
 			$sql .= " AND clos = " . (int) $status;
 		}
-		if ($filtre) {	// TODO Support USF
-			$sql .= " AND " . $filtre;
+		if ($filtre) {
+			$sql .= forgeSQLFromUniversalSearchCriteria($filtre);
 		}
 		$sql .= " ORDER BY label";
 
@@ -5645,7 +5648,7 @@ class Form
 	 *
 	 * @param int|''	 	$selected 		Id account preselected
 	 * @param string 		$htmlname 		Name of select zone
-	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users
+	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users. Use USF syntax.
 	 * @param int|string	$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @param string 		$moreattrib 	To add more attribute on select
 	 * @param int 			$showibanbic 	Show iban/bic in label
@@ -5666,8 +5669,8 @@ class Form
 		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic";
 		$sql .= " FROM " . $this->db->prefix() . "societe_rib";
 		$sql .=  " WHERE type = 'ban'";
-		if ($filtre) {	// TODO Support USF
-			$sql .= " AND " . $filtre;
+		if ($filtre) {
+			$sql .= forgeSQLFromUniversalSearchCriteria($filtre);
 		}
 		$sql .= " ORDER BY label";
 		dol_syslog(get_class($this) . "::select_comptes", LOG_DEBUG);
@@ -5743,8 +5746,8 @@ class Form
 		if ($status != 2) {
 			$sql .= " AND status = " . (int) $status;
 		}
-		if ($filtre) {	// TODO Support USF
-			$sql .= " AND " . $filtre;
+		if ($filtre) {
+			$sql .= forgeSQLFromUniversalSearchCriteria($filtre);
 		}
 		$sql .= " ORDER BY name";
 
@@ -6983,14 +6986,16 @@ class Form
 	 * @param string 	$htmlname 		Name of SELECT component. If 'none', not changeable. Example 'remise_id'.
 	 * @param int 		$socid 			Third party id
 	 * @param float 	$amount 		Total amount available
-	 * @param string 	$filter 		SQL filter on discounts
+	 * @param string 	$filter 		SQL filter on discounts. TODO Replace this param with 2 params to add: $filterabsolutediscount = 1 or or $filtercreditnote = 1
 	 * @param int 		$maxvalue 		Max value for lines that can be selected
 	 * @param string 	$more 			More string to add
 	 * @param int 		$hidelist 		1=Hide list
 	 * @param int 		$discount_type 	0 => customer discount, 1 => supplier discount
+	 * @param int		$filterabsolutediscount		Filter absolute discount
+	 * @param int		$filtercreditnote			Filter credit note
 	 * @return    void
 	 */
-	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0)
+	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -7036,14 +7041,15 @@ class Form
 			print '</div>';
 			if (empty($hidelist)) {
 				print '<div class="inline-block" style="padding-right: 10px">';
-				$newfilter = 'discount_type=' . intval($discount_type);
+				$newfilter = 'discount_type = ' . intval($discount_type);
 				if (!empty($discount_type)) {
 					$newfilter .= ' AND fk_invoice_supplier IS NULL AND fk_invoice_supplier_line IS NULL'; // Supplier discounts available
 				} else {
 					$newfilter .= ' AND fk_facture IS NULL AND fk_facture_line IS NULL'; // Customer discounts available
 				}
 				if ($filter) {
-					$newfilter .= ' AND (' . $filter . ')';
+					$sanitizedfilter = $filter;
+					$newfilter .= ' AND (' . $sanitizedfilter . ')';
 				}
 				// output the combo of discounts
 				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue);
@@ -7266,7 +7272,7 @@ class Form
 		$sql = "SELECT code FROM " . $this->db->prefix() . "multicurrency";
 		$sql .= " WHERE entity IN ('" . getEntity('multicurrency') . "')";
 		if ($filter) {
-			$sql .= " AND " . $filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -8421,7 +8427,7 @@ class Form
 		$selectFields = " p.rowid, p.ref, p.message";
 
 		$sql = "SELECT ";
-		$sql .= $selectFields;
+		$sql .= $this->db->sanitize($selectFields, 0, 0, 1);
 		$sql .= " FROM " . $this->db->prefix() . "ticket as p";
 		$sql .= ' WHERE p.entity IN (' . getEntity('ticket') . ')';
 
@@ -8646,7 +8652,7 @@ class Form
 		$selectFields = " p.rowid, p.ref";
 
 		$sql = "SELECT ";
-		$sql .= $selectFields;
+		$sql .= $this->db->sanitize($selectFields, 0, 0, 1);
 		$sql .= " FROM " . $this->db->prefix() . "projet as p";
 		$sql .= ' WHERE p.entity IN (' . getEntity('project') . ')';
 
@@ -8882,7 +8888,7 @@ class Form
 		$selectFields = " p.rowid, p.ref, p.firstname, p.lastname, p.fk_adherent_type";
 
 		$sql = "SELECT ";
-		$sql .= $selectFields;
+		$sql .= $this->db->sanitize($selectFields, 0, 0, 1);
 		$sql .= " FROM " . $this->db->prefix() . "adherent as p";
 		$sql .= ' WHERE p.entity IN (' . getEntity('adherent') . ')';
 
@@ -9257,6 +9263,7 @@ class Form
 		}
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode) . '_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
+		$fieldstoshow = '';
 		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
@@ -9302,8 +9309,10 @@ class Form
 
 		$num = 0;
 
+		$sanitizedfieldstoshow = $fieldstoshow;
+
 		// Search data
-		$sql = "SELECT t.rowid, " . $fieldstoshow . " FROM " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . " as t";
+		$sql = "SELECT t.rowid, " . $sanitizedfieldstoshow . " FROM " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . " as t";
 		if (!empty($objecttmp->isextrafieldmanaged)) {
 			$extrafieldTable = $objecttmp->table_element;
 			if ($extrafieldTable == 'categorie') {
@@ -10234,7 +10243,7 @@ class Form
 	 *
 	 * @param int 		$id 		Id of object
 	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode using number (0, 1, 2, ...) is deprecated.
-	 * @param int<0,1>	$rendermode 0=Default, use multiselect (deprecated). 1=Emulate multiselect (recommended)
+	 * @param int<0,1>	$rendermode 0=Default, use multiselect (deprecated). 1=Emulate multiselect (short label, recommended), 2=Emulate multiselect (full path)
 	 * @param int<0,1> 	$nolink 	1=Do not add html links
 	 * @return string               String with categories
 	 */
@@ -10245,16 +10254,32 @@ class Form
 		$cat = new Categorie($this->db);
 		$categories = $cat->containing($id, $type);
 
-		if ($rendermode == 1) {
+		if ($rendermode == 1 || $rendermode == 2) {
 			$toprint = array();
 			foreach ($categories as $c) {
-				$ways = $c->print_all_ways('auto', ($nolink ? 'none' : ''), 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+				$ways = $c->print_all_ways('auto', ($nolink ? 'none' : ''), 0, 1, ($rendermode == 2 ? 0 : 1)); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 				foreach ($ways as $way) {
 					$color = $c->color;
-					$sfortag = '<li class="select2-search-choice-dolibarr noborderoncategories'.(empty($toprint) ? ' nomarginleft' : '').'"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
-					$sfortag .= $way;
+					$sfortag = '<li class="select2-search-choice-dolibarr noborderoncategories'.(empty($toprint) ? ' nomarginleft' : '');
+					$forced_color = 'categtextwhite'; // We want color white because the getNomUrl of a tag is always called inside a dark background like '<span color="bbb"></span>' to show it as a tag. TODO Add this in param to force when called outside of span.
+					if ($c->color && colorIsLight($c->color)) {
+						$forced_color = 'categtextblack';
+					}
+					$sfortag .= ' '.$forced_color;
+					$sfortag .= '"';
+					$sfortag .= ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"');
+					$titlestring = $ways[0];
+					$titlestring = str_replace('>', ' - ', dol_string_nohtmltag($titlestring));
+					$sfortag .= ' title="' . dolPrintHTMLForAttribute($titlestring) . '"';
+					$sfortag .= '>';
+					if ($rendermode == 1) {
+						$sfortag .= img_picto('', 'category', 'class="paddingright"').$c->label;
+					} else {
+						$sfortag .= $way;
+					}
 					$sfortag .= '</li>';
-					$toprint[] = $sfortag;
+
+					$toprint[] = $sfortag;	// Add tag in list of tag to show
 				}
 			}
 			if (empty($toprint)) {
@@ -11411,7 +11436,7 @@ class Form
 				$sql .= " WHERE ug.entity IS NOT NULL";
 			}
 		} else {
-			$sql .= " WHERE ug.entity IN (0, " . $conf->entity . ")";
+			$sql .= " WHERE ug.entity IN (0, " . ((int) $conf->entity) . ")";
 		}
 		if (is_array($exclude) && $excludeGroups) {
 			$sql .= " AND ug.rowid NOT IN (" . $this->db->sanitize($excludeGroups) . ")";
@@ -11678,7 +11703,7 @@ class Form
 
 		$out = '';
 		$sql = "SELECT rowid, range_ik FROM " . $this->db->prefix() . "c_exp_tax_range";
-		$sql .= " WHERE entity = " . $conf->entity . " AND active = 1";
+		$sql .= " WHERE entity = " . ((int) $conf->entity) . " AND active = 1";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -3029,7 +3029,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->db->begin();
 
 		$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur';
-		$sql .= " SET fk_statut = ".$status;
+		$sql .= " SET fk_statut = ".((int) $status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setStatus", LOG_DEBUG);
@@ -3423,10 +3423,10 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
-		$clause = "WHERE";
+		$sanitizedclause = "WHERE";
 
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as co";
@@ -3434,9 +3434,9 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
+			$sanitizedclause = "AND";
 		}
-		$sql .= " ".$clause." co.entity IN (".getEntity('supplier_order').")";
+		$sql .= " ".$sanitizedclause." co.entity IN (".getEntity('supplier_order').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
