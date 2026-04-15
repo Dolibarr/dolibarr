@@ -113,7 +113,7 @@ class ToolNavigation extends McpTool
 
 		$rawType = $args['object_type'] ?? '';
 		$view = $args['view'] ?? 'list';
-		$id = (int)($args['id'] ?? 0);
+		$id = (int) ($args['id'] ?? 0);
 		$ref = $args['ref'] ?? '';
 		$statusFilter = $args['status_filter'] ?? '';
 		$params = $args['params'] ?? [];
