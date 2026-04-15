@@ -1912,9 +1912,9 @@ class Ticket extends CommonObject
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('createTicketMessageExternalContacts', $parameters, $this);
 		if ($reshook > 0) {
-			$socpeopleAssigned = $hookmanager->resArray['result'];
+			$socpeopleAssigned = $hookmanager->resArray;
 		} elseif ($reshook == 0) {
-			$socpeopleAssigned = $external_contacts + $hookmanager->resArray['result'];
+			$socpeopleAssigned = $external_contacts + $hookmanager->resArray;
 		}
 
 		$this->db->begin();
