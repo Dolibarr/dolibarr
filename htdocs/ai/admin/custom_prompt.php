@@ -217,7 +217,6 @@ $title = "AiSetup";
 
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin_custom_prompt');
 
-// Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
@@ -250,8 +249,6 @@ if ($action == 'deleteproperty') {
 }
 
 if ($action == 'create') {
-	$out = '<br>';
-
 	$out .= '<div class="addcustomprompt">';
 
 	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -339,6 +336,9 @@ if ($action == 'create') {
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
 
+	$out .= "<br>";
+	$out .= "<br>";
+
 	$out .= '</div>';
 
 	print $out;
@@ -348,14 +348,16 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
 	if (empty($currentConfigurations)) {
-		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-		print '<br>';
-		print '<br>';
+		if ($action != 'create') {
+			print '<!-- no custom prompt-->'."\n";
+			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			print '<br>';
+			print '<br>';
+		}
 		print '<br>';
 	} else {
 		print '<br>';
-		print '<br>';
-		print '<br>';
+
 		foreach ($currentConfigurations as $confkey => $config) {
 			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;

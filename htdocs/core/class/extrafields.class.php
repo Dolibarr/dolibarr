@@ -1933,8 +1933,8 @@ class ExtraFields
 						}
 
 						$sqlwhere = '';
-						$sql = "SELECT ".$keyList;
-						$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+						$sql = "SELECT ".$this->db->sanitize($keyList, 0, 0, 1);
+						$sql .= ' FROM '.$this->db->prefix().$this->db->sanitize($InfoFieldList[0]);
 
 						// Add filter from 4th field
 						if (!empty($InfoFieldList[4])) {
@@ -2373,8 +2373,8 @@ class ExtraFields
 				}
 			}
 
-			$sql = "SELECT ".$keyList;
-			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+			$sql = "SELECT ".$this->db->sanitize($keyList, 0, 0, 1);
+			$sql .= ' FROM '.$this->db->prefix().$this->db->sanitize($InfoFieldList[0]);
 			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 				$sql .= ' as main';
 			}
@@ -2497,8 +2497,8 @@ class ExtraFields
 					}
 				}
 
-				$sql = "SELECT ".$keyList;
-				$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
+				$sql = "SELECT ".$this->db->sanitize($keyList, 0, 0, 1);
+				$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($InfoFieldList[0]);
 				if (strpos($InfoFieldList[4], 'extra.') !== false) {
 					$sql .= ' as main';
 				}

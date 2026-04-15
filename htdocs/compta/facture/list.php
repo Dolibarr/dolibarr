@@ -1488,6 +1488,11 @@ if ($user->hasRight('facture', 'supprimer')) {
 		$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Deletedraft");
 	}
 }
+if ($user->hasRight("facture", "creer")) {
+	if (!getDolGlobalInt('STOCK_CALCULATE_ON_BILL')) {
+		$arrayofmassactions['precreatecreditnote'] = img_picto('', 'undo', 'class="pictofixedwidth"').$langs->trans("cancelByCreditNote");
+	}
+}
 if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
 	$arrayofmassactions = array();
 }

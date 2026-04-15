@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Alexis LAURIER <contact@alexislaurier.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -409,13 +409,13 @@ class ProductFournisseurPrice extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      		$sortorder    	Sort Order
-	 * @param  string      		$sortfield    	Sort field
-	 * @param  int         		$limit        	Limit
-	 * @param  int         		$offset       	Offset
-	 * @param  string|array     $filter       	Filter USF.
-	 * @param  string      		$filtermode   	Filter mode (AND or OR)
-	 * @return array|int                 		int <0 if KO, array of pages if OK
+	 * @param  string      					$sortorder    	Sort Order
+	 * @param  string      					$sortfield    	Sort field
+	 * @param  int         					$limit        	Limit
+	 * @param  int         					$offset       	Offset
+	 * @param  string|array<string,string>  $filter       	Filter USF.
+	 * @param  string      					$filtermode   	Filter mode (AND or OR)
+	 * @return self[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{

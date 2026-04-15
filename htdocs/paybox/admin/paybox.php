@@ -237,7 +237,7 @@ print '</td></tr>';
 if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
-	$form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	$form->select_comptes(getDolGlobalInt('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS'), 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
 

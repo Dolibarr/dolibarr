@@ -2510,7 +2510,7 @@ if ($action == 'create') {
 		}
 		print '</td><td class="valuefieldcreate">';
 		print img_picto('', 'clock', 'class="pictofixedwidth"');
-		$form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOSTINT('availability_id') : ''), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		print $form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOSTINT('availability_id') : ''), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 
 		// Delivery date (or manufacturing)
@@ -3188,14 +3188,6 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
-		// Delivery date
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, (int) ($usercancreate && $caneditfield), 'datepicker');
-		print '</td><td class="valuefieldedit">';
-		print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate && $caneditfield, 'datepicker');
-		print '</td>';
-		print '</tr>';
-
 		// Delivery delay
 		print '<tr class="fielddeliverydelay"><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
@@ -3211,11 +3203,19 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
 		if ($action == 'editavailability' && $usercancreate && $caneditfield) {
-			$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->availability_id, 'availability_id', 1);
+			$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->availability_id, 'availability_id', $langs->trans("Delay"));
 		} else {
 			$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->availability_id, 'none', 1);
 		}
 
+		print '</td>';
+		print '</tr>';
+
+		// Delivery date
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, (int) ($usercancreate && $caneditfield), 'datepicker');
+		print '</td><td class="valuefieldedit">';
+		print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate && $caneditfield, 'datepicker');
 		print '</td>';
 		print '</tr>';
 

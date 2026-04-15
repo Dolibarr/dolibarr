@@ -191,10 +191,13 @@ if (!getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
+
+print '<div class="neutral">';
 print $enabledisablehtml;
 print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC" value="'.(!getDolGlobalString('MEMBER_ENABLE_PUBLIC') ? 0 : 1).'">';
+print '</div>';
 
-print '<br><br>';
+print '<br>';
 
 
 if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {

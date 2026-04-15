@@ -517,7 +517,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
-					print '<td class="center">'.dol_escape_htmltag($objp->amountformuladescription).'</td>';
+					print '<td class="center">'.dolPrintHTML($objp->amountformuladescription).'</td>';
 				}
 				if (!empty($arrayfields['t.vote']['checked'])) {
 					print '<td class="center">'.yn($objp->vote).'</td>';

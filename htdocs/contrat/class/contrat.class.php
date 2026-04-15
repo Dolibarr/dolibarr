@@ -1247,7 +1247,7 @@ class Contrat extends CommonObject
 			// Delete contratdet extrafields
 			$main = MAIN_DB_PREFIX.'contratdet';
 			$ef = $main."_extrafields";
-			$sql = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_contrat = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_contrat = ".((int) $this->id).")";
 
 			dol_syslog(get_class($this)."::delete contratdet_extrafields", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1260,7 +1260,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// Delete contratdet
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
-			$sql .= " WHERE fk_contrat=".((int) $this->id);
+			$sql .= " WHERE fk_contrat = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete contratdet", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2377,7 +2377,7 @@ class Contrat extends CommonObject
 		global $conf, $user;
 
 		$this->nb = array();
-		$clause = "WHERE";
+		$sanitizedclause = "WHERE";
 
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
@@ -2385,9 +2385,9 @@ class Contrat extends CommonObject
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
+			$sanitizedclause = "AND";
 		}
-		$sql .= " ".$clause." c.entity = ".$conf->entity;
+		$sql .= " ".$sanitizedclause." c.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
