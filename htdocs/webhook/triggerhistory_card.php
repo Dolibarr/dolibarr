@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		Alice Adminson				<myemail@mycompany.com>
+ * Copyright (C) 2025		Alice Adminson			<myemail@mycompany.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/webhook/class/triggerhistory.class.php');
-dol_include_once('/webhook/lib/webhook_triggerhistory.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/triggerhistory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_triggerhistory.lib.php';
 
 
 // Load translation files required by the page
