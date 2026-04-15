@@ -148,4 +148,46 @@ trait CommonIncoterm
 			return -1;
 		}
 	}
+
+	/**
+	 *  Load object in memory from database
+	 *
+	 *  @param      int		$id    	State ID
+	 *  @param		string	$code	State code
+	 *  @return     int          	Return integer <0 if KO, >0 if OK
+	 */
+	public function fetch($id, $code = '')
+	{
+		$sql = "SELECT";
+		$sql .= " i.rowid,";
+		$sql .= " i.code,";
+		$sql .= " i.label,";
+		$sql .= " i.libelle as description";
+		$sql .= " FROM ".$this->db->prefix()."c_incoterms as i";
+		if ($id) {
+			$sql .= " WHERE i.rowid = ".((int) $id);
+		} elseif ($code) {
+			$sql .= " WHERE i.code = '".$this->db->escape($code)."'";
+		}
+
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id = $obj->rowid;
+				$this->code = $obj->code;
+				$this->label = $obj->label;
+				$this->description = $obj->description;
+				$this->active = $obj->active;
+			}
+			$this->db->free($resql);
+
+			return 1;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
 }

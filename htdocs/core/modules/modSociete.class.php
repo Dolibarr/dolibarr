@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2003-2005  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio         <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2013  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2014  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +282,8 @@ class modSociete extends DolibarrModules
 			's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_private' => "NotePrivate",
 			's.note_public' => "NotePublic", 't.code' => "ThirdPartyType", 'ce.code' => "DictionaryStaff", "cfj.libelle" => "JuridicalStatus", 's.fk_prospectlevel' => 'ProspectLevel',
 			'st.code' => 'ProspectStatus', 'payterm.libelle' => 'PaymentConditions', 'paymode.libelle' => 'PaymentMode',
-			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount', 'incoterm.code' => 'IncotermLabel'
+			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount',
+			'incoterm.code' => 'IncotermLabel', 's.location_incoterms' => 'IncotermLocation'
 		);
 		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
@@ -319,7 +321,8 @@ class modSociete extends DolibarrModules
 			's.fk_prospectlevel' => 'List:c_prospectlevel:label:code',
 			'st.code' => 'List:c_stcomm:libelle:code',
 			'payterm.libelle' => 'Text', 'paymode.libelle' => 'Text',
-			's.outstanding_limit' => 'Numeric', 'pbacc.ref' => 'Text', 'incoterm.code' => 'Text',
+			's.outstanding_limit' => 'Numeric', 'pbacc.ref' => 'Text',
+			'incoterm.code' => 'Text', 's.location_incoterms' => 'Text',
 			'u.login' => 'Text', 'u.firstname' => 'Text', 'u.lastname' => 'Text',
 			's.entity' => 'List:entity:label:rowid', 's.price_level' => 'Numeric',
 			's.accountancy_code_sell' => 'Text', 's.accountancy_code_buy' => 'Text'
@@ -587,6 +590,7 @@ class modSociete extends DolibarrModules
 			's.outstanding_limit' => 'OutstandingBill',
 			's.fk_account' => 'PaymentBankAccount',
 			's.fk_incoterms' => 'IncotermLabel',
+			's.location_incoterms' => 'IncotermLocation',
 			's.tva_assuj' => 'VATIsUsed',
 			's.barcode' => 'BarCode',
 			's.default_lang' => 'DefaultLanguage',
@@ -689,15 +693,16 @@ class modSociete extends DolibarrModules
 			 'element' => 'c_prospectlevel',
 			 'table_element' => 'c_prospectlevel'
 			 ),*/
-			//          TODO
-			//          's.fk_incoterms' => array(
-			//              'rule' => 'fetchidfromcodeid',
-				//              'classfile' => '/core/class/cincoterm.class.php',
-				//              'class' => 'Cincoterm',
-				//              'method' => 'fetch',
-				//              'dict' => 'IncotermLabel'
-				//			)
-			);
+			's.fk_incoterms' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/commonincoterm.class.php',
+				'class' => 'CommonIncoterm',
+				'method' => 'fetch',
+				'dict' => 'IncotermLabel',
+				'element' => 'c_incoterms',
+				'table_element' => 'c_incoterms'
+			)
+		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
 			's.status' => '^[0|1]',
@@ -757,7 +762,8 @@ class modSociete extends DolibarrModules
 			's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
 			's.outstanding_limit' => "5000",
 			's.fk_account' => "rowid or ref",
-			's.fk_incoterms' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_incoterms"',
+			's.fk_incoterms' => 'incoterms code or 1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_incoterms"',
+			's.location_incoterms' => 'CAEN',
 			's.tva_assuj' => '0 (VAT not used) / 1 (VAT used)',
 			's.barcode' => '123456789',
 			's.default_lang' => 'en_US / es_ES etc...matches a language directory in htdocs/langs/',
