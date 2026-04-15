@@ -815,7 +815,6 @@ function calculateConfidence($intentJSON, $toolsSchema, $rawResponse)
 
 	// Ensure the tool exists in our known schema
 	if (isset($intentJSON['tool']) && isset($toolsSchema[$intentJSON['tool']])) {
-
 		// Support both 'parameters' and 'inputSchema'
 		$schema = $toolsSchema[$intentJSON['tool']]['parameters']
 			?? $toolsSchema[$intentJSON['tool']]['inputSchema']
