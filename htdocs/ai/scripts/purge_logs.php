@@ -24,61 +24,61 @@
  */
 
 if (php_sapi_name() === 'cli') {
-    if (!defined('NOLOGIN')) {
-        define('NOLOGIN', 1);
-    }
+	if (!defined('NOLOGIN')) {
+		define('NOLOGIN', 1);
+	}
 }
 if (!defined('NOTOKENRENEWAL')) {
-    define('NOTOKENRENEWAL', 1);
+	define('NOTOKENRENEWAL', 1);
 }
 if (!defined('NOREQUIREMENU')) {
-    define('NOREQUIREMENU', 1);
+	define('NOREQUIREMENU', 1);
 }
 if (!defined('NOREQUIREHTML')) {
-    define('NOREQUIREHTML', 1);
+	define('NOREQUIREHTML', 1);
 }
 
 require __DIR__ . '/../../main.inc.php';
 
 // Security check for web access
 if (php_sapi_name() !== 'cli' && empty($user->admin)) {
-    accessforbidden('Admin access required');
+	accessforbidden('Admin access required');
 }
 
 $retention = getDolGlobalInt('AI_LOG_RETENTION');
 
 if ($retention > 0) {
-    $limitDate = dol_now() - ($retention * 86400);
-    $chunkSize = 1000; // Delete 1000 rows at a time
-    $totalDeleted = 0;
+	$limitDate = dol_now() - ($retention * 86400);
+	$chunkSize = 1000; // Delete 1000 rows at a time
+	$totalDeleted = 0;
 
-    $db->begin();
+	$db->begin();
 
-    while (true) {
-        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
-        $sql .= " WHERE date_request < '" . $db->idate($limitDate) . "'";
-        $sql .= " AND entity IN (" . getEntity('airequestlog') . ")";
-        $sql .= " LIMIT " . ((int) $chunkSize);
+	while (true) {
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ai_request_log";
+		$sql .= " WHERE date_request < '" . $db->idate($limitDate) . "'";
+		$sql .= " AND entity IN (" . getEntity('airequestlog') . ")";
+		$sql .= " LIMIT " . ((int) $chunkSize);
 
-        $resql = $db->query($sql);
-        if (!$resql) {
-            $db->rollback();
-            print "ERROR: " . $db->lasterror() . "\n";
-            exit(1);
-        }
+		$resql = $db->query($sql);
+		if (!$resql) {
+			$db->rollback();
+			print "ERROR: " . $db->lasterror() . "\n";
+			exit(1);
+		}
 
-        $rowsAffected = $db->affected_rows($resql);
-        $totalDeleted += $rowsAffected;
+		$rowsAffected = $db->affected_rows($resql);
+		$totalDeleted += $rowsAffected;
 
-        // If no rows were deleted, we are done
-        if ($rowsAffected < 1) {
-            break;
-        }
+		// If no rows were deleted, we are done
+		if ($rowsAffected < 1) {
+			break;
+		}
 
-        // Sleep briefly to reduce server load
-        usleep(50000); // 0.05 seconds
-    }
+		// Sleep briefly to reduce server load
+		usleep(50000); // 0.05 seconds
+	}
 
-    $db->commit();
-    print "OK: Purged {$totalDeleted} log(s) older than {$retention} days.\n";
+	$db->commit();
+	print "OK: Purged {$totalDeleted} log(s) older than {$retention} days.\n";
 }
