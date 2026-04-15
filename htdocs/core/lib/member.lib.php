@@ -99,6 +99,36 @@ function member_prepare_head(Adherent $object)
 		$h++;
 	}
 
+	// Related Items
+	$nbAsContact = 0;
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+	$cachekey = 'count_consumption_member_' . $object->id;
+	$nbAsContactretreived = dol_getcache($cachekey);
+	if (!is_null($nbAsContactretreived)) {
+		$nbAsContact = $nbAsContactretreived;
+	} else {
+		$sql = "SELECT COUNT(ec.rowid) as nb";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "element_contact as ec";
+		$sql .= " WHERE ec.fk_member = " . ((int) $object->id);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			$nbAsContact = $obj->nb;
+		} else {
+			dol_print_error($db);
+		}
+		dol_setcache($cachekey, $nbAsContact, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+	}
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/related.php', ['id' => $object->id]);
+	$head[$h][1] = $langs->trans("Referers");
+	if ($nbAsContact > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbAsContact . '</span>';
+	}
+	$head[$h][2] = 'consumption';
+	$h++;
+
+
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if ($user->hasRight('partnership', 'read')) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
