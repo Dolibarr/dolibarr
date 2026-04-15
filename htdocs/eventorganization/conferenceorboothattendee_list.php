@@ -491,7 +491,7 @@ if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 
 	}
 }
 
-if (($memberid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
+if (($memberid > 0 && $user->hasRight('societe', 'lire'))) {
 	$withMemberUrl = '';
 
 	if (!empty($withmember)) {
@@ -509,7 +509,9 @@ if (($memberid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
 
 			print dol_get_fiche_head($head, 'eventorganization', $langs->trans("Member"), -1, 'member');
 
-			dol_banner_tab($memberstatic, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+			$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+			dol_banner_tab($memberstatic, 'memberid', $linkback, 1, 'rowid', 'nom');
 
 			print '<div class="fichecenter">';
 
@@ -520,11 +522,9 @@ if (($memberid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
 			print '</div>';
 			print dol_get_fiche_end();
 
-			if (empty($confOrBooth->id)) {
-				$head = conferenceorboothMemberPrepareHead($memberstatic);
-				$tab = 'attendees';
-				print dol_get_fiche_head($head, $tab, $langs->trans("Member"), -1, 'member', 0, '', 'reposition');
-			}
+			$head = conferenceorboothMemberPrepareHead($memberstatic);
+			$tab = 'attendees';
+			print dol_get_fiche_head($head, $tab, $langs->trans("Member"), -1, 'member', 0, '', 'reposition');
 		}
 	}
 }
