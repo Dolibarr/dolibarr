@@ -1907,16 +1907,6 @@ class Ticket extends CommonObject
 			$this->message = trim($this->message);
 		}
 
-		$socpeopleAssigned = [];
-
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('createTicketMessageExternalContacts', $parameters, $this);
-		if ($reshook > 0) {
-			$socpeopleAssigned = $hookmanager->resArray;
-		} elseif ($reshook == 0) {
-			$socpeopleAssigned = $external_contacts + $hookmanager->resArray;
-		}
-
 		$this->db->begin();
 
 		// Insert entry into agenda with code 'TICKET_MSG'
@@ -1937,7 +1927,15 @@ class Ticket extends CommonObject
 		$actioncomm->label = $this->subject;
 		$actioncomm->note_private = $this->message;
 		$actioncomm->userassigned = array($user->id => array('id' => $user->id,'transparency' => 0));
-		$actioncomm->socpeopleassigned = $socpeopleAssigned;
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('createTicketMessageExternalContacts', $parameters, $actioncomm);
+		if ($reshook < 0) {
+			$actioncomm->socpeopleassigned = $external_contacts;
+		} elseif ($reshook == 0) {
+			$actioncomm->socpeopleassigned += $external_contacts;
+		}
+
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
