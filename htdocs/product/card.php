@@ -2709,7 +2709,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (isModEnabled('productbatch')) {
 					if ($object->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 						print '<tr><td class="titlefieldmiddle">'.$langs->trans("ManageLotSerial").'</td><td>';
-						print $object->getLibStatut(0, 2);
+						if ($object->status_batch == 0) {
+							print '<span class="opacitymedium">'.yn(0).'</span>';
+						} else {
+							print $object->getLibStatut(0, 2);
+						}
 						print '</td></tr>';
 						if ((($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
 							|| ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')))) {
@@ -2720,7 +2724,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->transnoentities('SellByDate'), $langs->transnoentities('EatByDate')).'</td><td>';
-					print $object->getSellOrEatByMandatoryLabel();
+					if ($object->sell_or_eat_by_mandatory == $object::SELL_OR_EAT_BY_MANDATORY_ID_NONE) {
+						print '<span class="opacitymedium">'.yn(0).'</span>';
+					} else {
+						print $object->getSellOrEatByMandatoryLabel();
+					}
 					print '</td></tr>';
 				}
 
@@ -2907,6 +2915,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<table class="border tableforfield centpercent">';
 
+				// Categories
+				if (isModEnabled('category')) {
+					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
+					print "</td></tr>";
+				}
+
 				if ($object->isService()) {
 					// Duration
 					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
@@ -3046,13 +3061,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Other attributes
 				$parameters = array();
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
-				// Categories
-				if (isModEnabled('category')) {
-					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
-					print "</td></tr>";
-				}
 
 				// Note private
 				if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
