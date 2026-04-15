@@ -7657,18 +7657,6 @@ parameters:
 			path: ../../../htdocs/intracommreport/class/intracommreport.class.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 4
-			path: ../../../htdocs/intracommreport/lib/intracommreport.lib.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/intracommreport/list.php
-
-		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
