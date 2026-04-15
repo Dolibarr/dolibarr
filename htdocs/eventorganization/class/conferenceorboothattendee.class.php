@@ -2,6 +2,7 @@
 /* Copyright (C) 2017	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen        <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +98,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php', 'label' => 'Member', 'visible' => 1, 'enabled' => 'isModEnabled("adherent")', 'position' => 50, 'notnull' => -1, 'index' => 1, 'searchall' => 1, 'help' => "LinkedToDolibarrMember", 'css' => 'tdoverflowmax150 maxwidth150onsmartphone'),
 		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
 		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
 		'fk_invoice' => array('type' => 'integer:Facture:compta/facture/class/facture.class.php', 'label' => 'Invoice', 'enabled' => 'isModEnabled("invoice")', 'position' => 57, 'notnull' => 0, 'visible' => 1, 'index' => 0, 'picto' => 'bill', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
@@ -145,6 +147,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var int
 	 */
 	public $fk_soc;
+	/**
+	 * @var int Member ID
+	 */
+	public $fk_member;
 	/**
 	 * @var string
 	 */
@@ -463,7 +469,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
-					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
+					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_member' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
 						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
 					} elseif (!empty($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
