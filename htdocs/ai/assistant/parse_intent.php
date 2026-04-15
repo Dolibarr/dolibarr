@@ -24,13 +24,13 @@
  */
 
 if (!defined('NOTOKENRENEWAL')) {
-    define('NOTOKENRENEWAL', 1);
+	define('NOTOKENRENEWAL', 1);
 }
 if (!defined('NOREQUIREMENU')) {
-    define('NOREQUIREMENU', 1);
+	define('NOREQUIREMENU', 1);
 }
 if (!defined('NOREQUIREHTML')) {
-    define('NOREQUIREHTML', 1);
+	define('NOREQUIREHTML', 1);
 }
 if (!defined('NOREQUIREAJAX')) {
     define('NOREQUIREAJAX', 1);
@@ -74,11 +74,11 @@ $timeout = getDolGlobalInt('AI_REQUEST_TIMEOUT', 120);
 
 // Kill switch
 if (!$mcpEnabled) {
-    $response = [
-        "tool" => "respond_to_user",
-        "arguments" => [
-            "message" => "AI service is currently disabled. Please contact your administrator to enable it."
-        ]
+	$response = [
+		"tool" => "respond_to_user",
+		"arguments" => [
+			"message" => "AI service is currently disabled. Please contact your administrator to enable it."
+		]
     ];
     ob_end_clean();
     echo json_encode($response);
