@@ -341,20 +341,20 @@ class ToolThirdParty extends McpTool
 	 * Create a new third party (Societe).
 	 *
 	 * @param array $args {
-	 *     name: string,
-	 *     email?: string,
-	 *     phone?: string,
-	 *     address?: string,
-	 *     zip?: string,
-	 *     town?: string,
-	 *     code_client?: string,
-	 *     idprof1?: string,
-	 *     idprof2?: string,
-	 *     idprof3?: string,
-	 *     idprof4?: string,
-	 *     country_code?: string,
-	 *     type?: 'customer'|'prospect'|'supplier'|'both'
-	 * } Arguments array. 'name' is mandatory.
+	 *                    name: string,
+	 *                    email?: string,
+	 *                    phone?: string,
+	 *                    address?: string,
+	 *                    zip?: string,
+	 *                    town?: string,
+	 *                    code_client?: string,
+	 *                    idprof1?: string,
+	 *                    idprof2?: string,
+	 *                    idprof3?: string,
+	 *                    idprof4?: string,
+	 *                    country_code?: string,
+	 *                    type?: 'customer'|'prospect'|'supplier'|'both'
+	 *                    } Arguments array. 'name' is mandatory.
 	 *
 	 * @return array{error: string}|array{
 	 *     status: string,
@@ -456,15 +456,15 @@ class ToolThirdParty extends McpTool
 	 * Update an existing thirdparty.
 	 *
 	 * @param array $args {
-	 *     id: int|string,
-	 *     name?: string,
-	 *     email?: string,
-	 *     phone?: string,
-	 *     address?: string,
-	 *     zip?: string,
-	 *     town?: string,
-	 *     country_code?: string
-	 * } Arguments array. ID is mandatory.
+	 *                    id: int|string,
+	 *                    name?: string,
+	 *                    email?: string,
+	 *                    phone?: string,
+	 *                    address?: string,
+	 *                    zip?: string,
+	 *                    town?: string,
+	 *                    country_code?: string
+	 *                    } Arguments array. ID is mandatory.
 	 *
 	 * @return array{
 	 *     status?: string,
@@ -629,13 +629,13 @@ class ToolThirdParty extends McpTool
 	 * Add a new contact to a thirdparty.
 	 *
 	 * @param array $args {
-	 *     thirdparty_identifier: int|string,
-	 *     firstname: string,
-	 *     lastname: string,
-	 *     email?: string,
-	 *     phone?: string,
-	 *     role?: string
-	 * } Arguments array. Identifier, firstname, and lastname are mandatory.
+	 *                    thirdparty_identifier: int|string,
+	 *                    firstname: string,
+	 *                    lastname: string,
+	 *                    email?: string,
+	 *                    phone?: string,
+	 *                    role?: string
+	 *                    } Arguments array. Identifier, firstname, and lastname are mandatory.
 	 *
 	 * @return array{
 	 *     status?: string,
