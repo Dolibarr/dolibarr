@@ -119,7 +119,7 @@ class FormProjets extends Form
 		}
 		if ($discard_closed > 0) {
 			if (!empty($form)) {
-				$out .= $form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
+				$out .= $form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden").' Choosing 1 or more '.$langs->trans("Statut").' will add '.$langs->trans("EmailAttendee").' of the '.$langs->trans("Event").' '.$langs->trans("Attendees").' with the selected '.$langs->trans("Statut"));
 			}
 		}
 
@@ -157,7 +157,7 @@ class FormProjets extends Form
 	public function select_projects_list($socid = -1, $selected = 0, $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{
 		// phpcs:enable
-		global $user, $conf, $langs;
+		global $user, $conf, $langs, $form;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -296,6 +296,28 @@ class FormProjets extends Form
 			}
 
 			$this->db->free($resql);
+
+			$out .= '<!-- Begin statusFilter -->';
+			$out .= '<div class="tagtd left valignmiddle">';
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+			$attendeeforstatus = new ConferenceOrBoothAttendee($this->db);
+
+			$epreselected = array();
+			$ekey_in_label = 0;
+			$evalue_as_key = 0;
+			$emorecss = '';
+			$etranslate = 1;
+			$ewidth = '390';
+			$emoreattrib = '';
+			$enu = '';
+			$eplaceholder = $langs->trans("Attendees").' '.$langs->trans("Statut").' — '.$langs->trans("ExtrafieldCheckBox").' — '. $langs->trans("NoneOrSeveral");
+			$eaddjscombo = -1;
+			// Event attendees statuses to add from
+			$out .= '<span class="fas fa-users  em088 infobox-project pictofixedwidth" style="" title="Organized event attendees"></span>';
+			$out .= '<tr class="field_addattendees">';
+			$out .= $form->multiselectarray('attendeeStatusList', $attendeeforstatus->fields['status']['arrayofkeyval'], $epreselected, $ekey_in_label, $evalue_as_key, $emorecss, $etranslate, $ewidth, $emoreattrib, $enu, $eplaceholder, $eaddjscombo);
+			$out .= '</td></tr>';
+			$out .= '<!-- End statusFilter -->';
 
 			if (!$mode) {
 				if (empty($option_only)) {
