@@ -337,22 +337,23 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	/**
 	 * Create Document
 	 *
-	 * @param   array{
-	 *              object_type: string,
-	 *              header: array<string, mixed>,
-	 *              lines?: list<array<string, mixed>>
-	 *          } $args   Arguments including type, header data, and optional lines.
+	 * @param array $args {
+	 *     object_type: string,
+	 *     header: array<string, mixed>,
+	 *     lines?: array<array<string, mixed>>
+	 * } Arguments including type, header data, and optional lines.
 	 *
-	 * @return  array{error: string}|array{
-	 *              success: bool,
-	 *              id: int,
-	 *              ref: string,
-	 *              lines_added: int,
-	 *              line_errors: list<string>,
-	 *              url: string
-	 *          } Result array.
+	 * @return array{
+	 *     success?: bool,
+	 *     error?: string,
+	 *     id?: int,
+	 *     ref?: string,
+	 *     lines_added?: int,
+	 *     line_errors?: array<string>,
+	 *     url?: string
+	 * }
 	 */
-	private function createDocument(array $args): array
+	private function createDocument(array $args)
 	{
 		$type = (string) $args['object_type'];
 
@@ -457,8 +458,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Add a line to a document object.
 	 *
 	 * @param object $object The Dolibarr object (Propal, Commande, Facture, etc.).
-	 *
-	 * @param array{
+	 * @param array $args {
 	 *     product?: string,
 	 *     description?: string,
 	 *     qty?: float|int|string,
@@ -468,16 +468,16 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *     vat_rate?: float|int|string,
 	 *     discount?: float|int|string,
 	 *     object_type: string
-	 * } $args Line arguments.
+	 * } Line arguments.
 	 *
 	 * @return array{
 	 *     success: bool,
 	 *     error?: string,
 	 *     line_id?: int,
-	 *     debug?: array<string, mixed>
+	 *     debug?: array
 	 * } Result array.
 	 */
-	private function processAddLine(object $object, array $args): array
+	private function processAddLine(object $object, array $args)
 	{
 		global $mysoc, $conf;
 
@@ -634,7 +634,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Entry point for the 'add_line_item' tool. Adds line to an already existing object.
 	 * Instantiates the document and calls the line processing helper.
 	 *
-	 * @param array{
+	 * @param array $args {
 	 *     object_type: string,
 	 *     parent_id: int,
 	 *     product_id?: int,
@@ -642,7 +642,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *     quantity?: float|int,
 	 *     unit_price?: float|int,
 	 *     vat_rate?: float|int
-	 * } $args Tool arguments.
+	 * } Tool arguments.
 	 *
 	 * @return array{
 	 *     success: bool,
@@ -650,7 +650,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *     error?: string
 	 * } Result.
 	 */
-	private function addLineItem(array $args): array
+	private function addLineItem(array $args)
 	{
 		// Check Permissions
 		if (! $this->user->hasRight('societe', 'creer')) {
