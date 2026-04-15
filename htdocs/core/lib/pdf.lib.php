@@ -162,7 +162,12 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		define('K_SMALL_RATIO', 2 / 3);
 		define('K_THAI_TOPCHARS', true);
 		define('K_TCPDF_CALLS_IN_HTML', true);
-		if (getDolGlobalString('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE')) {
+		// Default: throw exceptions on TCPDF/TCPDI errors instead of die().
+		// A die() in a PDF library produces white pages on web requests and kills
+		// batch jobs on the first bad PDF. Exceptions can be caught and surfaced as
+		// normal Dolibarr errors. Users can opt out by setting
+		// TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = 0 to restore the legacy die() behavior.
+		if (getDolGlobalString('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE', '1')) {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
 		} else {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', false);

@@ -13,7 +13,7 @@
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -787,24 +787,26 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
-			'categorie_project_task' => 'fk_categorie',
+			'categorie_project_task' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('project')),
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
-			'categorie_warehouse' => 'fk_categorie',
+			'categorie_warehouse' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('stock')),
 			'categorie_website_page' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('website')),
 			'category_bankline' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
 		foreach ($arraydelete as $key => $value) {
+			$sanitizedvalue = $value;
 			if (is_array($value)) {
 				if (empty($value['enabled'])) {
 					continue;
 				}
-				$value = $value['field'];
+				$sanitizedvalue = $value['field'];
 			}
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
-			$sql .= " WHERE ".$value." = ".((int) $this->id);
+
+			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
+			$sql .= " WHERE ".$this->db->sanitize($sanitizedvalue)." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
@@ -1563,9 +1565,9 @@ class Categorie extends CommonObject
 	 *
 	 * @param	string		$sep	     Separator
 	 * @param	string		$url	     Url ('', 'none' or 'urltouse')
-	 * @param   int     	$nocolor     0
-	 * @param	int			$addpicto	 Add picto into link
-	 * @param	int			$notrunc	 Do not truncate names of parent categories
+	 * @param   int     	$nocolor     0=Default, 1=Disable colors
+	 * @param	int			$addpicto	 1=Add picto into link
+	 * @param	int			$notrunc	 1=Do not truncate names of parent categories
 	 * @return	string[]
 	 */
 	public function print_all_ways($sep = 'auto', $url = '', $nocolor = 0, $addpicto = 0, $notrunc = 0)
@@ -1577,7 +1579,7 @@ class Categorie extends CommonObject
 			$sep = '&gt;';
 		}
 
-		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
+		$all_ways = $this->get_all_ways(); // Load array of categories from database to reach this->id
 
 		foreach ($all_ways as $way) {	// It seems we always have 1 entry in this array.
 			$w = array();
@@ -1591,10 +1593,8 @@ class Categorie extends CommonObject
 					if ($i == count($way)) {	// Last category in hierarchy
 						// Check contrast with background and correct text color
 						$forced_color = 'categtextwhite'; // We want color white because the getNomUrl of a tag is always called inside a dark background like '<span color="bbb"></span>' to show it as a tag. TODO Add this in param to force when called outside of span.
-						if ($cat->color) {
-							if (colorIsLight($cat->color)) {
-								$forced_color = 'categtextblack';
-							}
+						if ($cat->color && colorIsLight($cat->color)) {
+							$forced_color = 'categtextblack';
 						}
 					}
 				}

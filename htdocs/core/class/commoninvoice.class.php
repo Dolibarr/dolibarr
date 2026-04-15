@@ -345,7 +345,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$sql = "SELECT sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount";
 		$sql .= " FROM ".$this->db->prefix().$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= " WHERE ".$this->db->sanitize($field)." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 
@@ -594,26 +594,31 @@ abstract class CommonInvoice extends CommonObject
 
 		$table = 'paiement_facture';
 		$table2 = 'paiement';
+
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
-		$field3 = ', p.ref_ext';
-		$field4 = ', p.fk_bank'; // Bank line id
+		$field3 = 'p.ref_ext';
+		$field4 = 'p.fk_bank'; // Bank line id
+
 		$sharedentity = 'facture';
+
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$table = 'paiementfourn_facturefourn';
 			$table2 = 'paiementfourn';
+
 			$field = 'fk_facturefourn';
 			$field2 = 'fk_paiementfourn';
 			$field3 = '';
+
 			$sharedentity = 'facture_fourn';
 		}
 
 		// List of payments
 		if (empty($mode) || $mode == 1) {
-			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3 . $field4;
+			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".($field3 ? ", ".$this->db->sanitize($field3) : "") . ($field4 ? ", ".$this->db->sanitize($field4) : "");
 			$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
-			$sql .= " WHERE pf.".$field." = ".((int) $this->id);
-			$sql .= " AND pf.".$field2." = p.rowid";
+			$sql .= " WHERE pf.".$this->db->sanitize($field)." = ".((int) $this->id);
+			$sql .= " AND pf.".$this->db->sanitize($field2)." = p.rowid";
 			$sql .= ' AND p.fk_paiement = t.id';
 			$sql .= ' AND p.entity IN ('.getEntity($sharedentity).')';
 			if ($filtertype) {

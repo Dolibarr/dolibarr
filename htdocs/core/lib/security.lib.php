@@ -1058,32 +1058,32 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 		// Check permission for objectid on entity only
 		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
-			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+			$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
 			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
 				if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
-						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+						$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND dbt.entity IS NOT NULL";
 					} else {
 						$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+						$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND ((ug.fk_user = dbt.rowid";
 						$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 						$sql .= " OR dbt.entity = 0)"; // Show always superadmin
 					}
 				} else {
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			} else {
 				$reg = array();
 				if ($parenttableforentity && preg_match('/(.*)@(.*)/', $parenttableforentity, $reg)) {
-					$sql .= ", ".MAIN_DB_PREFIX.$reg[2]." as dbtp";
-					$sql .= " WHERE dbt.".$reg[1]." = dbtp.rowid AND dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= ", ".MAIN_DB_PREFIX.$db->sanitize($reg[2])." as dbtp";
+					$sql .= " WHERE dbt.".$db->sanitize($reg[1])." = dbtp.rowid AND dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbtp.entity IN (".getEntity($sharedelement, 1).")";
 				} else {
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			}
@@ -1125,23 +1125,23 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if (in_array($feature, $checkparentsoc) && $objectid > 0) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
 			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)"; // Contact not linked to a company or to a company of user
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (isModEnabled('multicompany')) {
 				// If multicompany and internal users with all permissions, check user is in correct entity
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 
@@ -1160,9 +1160,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 			$checkonentitydone = 1;
@@ -1183,9 +1183,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				}
 			} else {
 				$sharedelement = 'project'; // for multicompany compatibility
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 
@@ -1199,10 +1199,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if (empty($dbt_keyfield)) {
 					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 				}
-				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_keyfield).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
+				$sql .= " AND dbt.".$db->sanitize($dbt_keyfield)." = ".((int) $user->socid);
 			} elseif (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
@@ -1210,11 +1210,11 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
-					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
+					$sql .= " AND sc.fk_soc = dbt.".$db->sanitize($dbt_keyfield);
 					$sql .= " AND (sc.fk_user = ".((int) $user->id);
 					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 						$userschilds = $user->getAllChildIds();
@@ -1223,18 +1223,18 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= ')';
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
-					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+					$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".((int) $user->id);
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$db->sanitize($dbt_keyfield)." AND sc.fk_user = ".((int) $user->id);
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
 				}
 			} elseif (isModEnabled('multicompany')) {
 				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}

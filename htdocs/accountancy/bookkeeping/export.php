@@ -679,17 +679,17 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 						// Update the line to set date_export and/or date_validated (if not already set !)
 						$now = dol_now();
 
-						$setfields = '';
+						$sanitizedsetfields = '';
 						if (!empty($notifiedexportdate) && empty($movement->date_export)) {
-							$setfields .= ($setfields ? "," : "")." date_export = '".$db->idate($now)."'";
+							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_export = '".$db->idate($now)."'";
 						}
 						if (!empty($notifiedvalidationdate) && empty($movement->date_validation)) {
-							$setfields .= ($setfields ? "," : "")." date_validated = '".$db->idate($now)."'";
+							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_validated = '".$db->idate($now)."'";
 						}
 
-						if ($setfields) {
+						if ($sanitizedsetfields) {
 							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-							$sql .= " SET ".$setfields;		// $setfields is already a sanitized SQL string
+							$sql .= " SET ".$sanitizedsetfields;		// $setfields is already a sanitized SQL string
 							$sql .= " WHERE rowid = ".((int) $movement->id);
 
 							$result = $db->query($sql);

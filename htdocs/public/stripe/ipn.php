@@ -897,6 +897,13 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		}
 
 		if (! $error) {
+			// Option: Force status of invoice to "dispute on"
+			//$invoice->dispute_status = 1;
+			//$invoice->update($user);
+
+			// Option: Sen email to customer
+			// TODO
+
 			$db->commit();
 		} else {
 			$db->rollback();

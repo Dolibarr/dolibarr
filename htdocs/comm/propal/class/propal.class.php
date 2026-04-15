@@ -861,9 +861,10 @@ class Propal extends CommonObject
 
 					$this->lines[] = $this->line;
 				} else {
-					foreach ($this->lines as $line) {
-						if ($line->id == $origin_id) {
-							$this->line->extraparams = $line->extraparams;
+					// Loop on all lines of parent object
+					foreach ($this->lines as $tmpline) {
+						if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
+							$this->line->extraparams = $tmpline->extraparams;
 							$this->line->setExtraParameters();
 						}
 					}
@@ -1352,8 +1353,8 @@ class Propal extends CommonObject
 
 						if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 							$originid = $line->origin_id;
-							$origintype = $line->origin;
-						} else {
+							$origintype = empty($line->origin_type) ? $line->origin : $line->origin_type;
+						} else {	// old but bugged version (we store id of line and type of parent object)
 							$originid = $line->id;
 							$origintype = $this->element;
 						}
@@ -1659,6 +1660,7 @@ class Propal extends CommonObject
 		$sql .= ", p.datec";
 		$sql .= ", p.date_signature as dates";
 		$sql .= ", p.date_valid as datev";
+		$sql .= ", p.date_cloture";
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
 		$sql .= ", p.date_livraison as delivery_date";
@@ -1745,6 +1747,7 @@ class Propal extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev); //Validation date
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 				$this->date_signature = $this->db->jdate($obj->dates); // Signature date
+				$this->date_cloture = $this->db->jdate($obj->date_cloture); // Closing date
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
@@ -1822,8 +1825,6 @@ class Propal extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters
@@ -2398,19 +2399,19 @@ class Propal extends CommonObject
 	 *
 	 *  @param		User	$user		  	Object user that modify
 	 *  @param      int		$id				Availability id
-	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *  @param  	int		$notrigger		1=Does not execute triggers, 0=execute triggers
 	 *  @return     int           			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_availability($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->hasRight('propal', 'creer') && $this->status >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_availability = ".((int) $id);
+			$sql .= " SET fk_availability = ".((int) ($id > 0 ? $id : 0));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__.' availability('.$id.')', LOG_DEBUG);

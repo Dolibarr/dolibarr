@@ -311,11 +311,11 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		}
 
 		if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
+			$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
+			$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";
 		} else {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
+			$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . MAIN_DB_PREFIX . "societe";
+			$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";
 		}
 		$sql .= " AND entity IN (".getEntity('societe').")";
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2024-2025	MDW	                <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,7 +285,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Action update description of emailing
-if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontocreate) {
+if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontocreate) {
 	$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
 	$mesg = '';
@@ -297,12 +297,14 @@ if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreply
 		$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
 	} elseif ($action == 'setemail_errorsto') {		// Test on permission already done
 		$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
-		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
-	} elseif ($action == 'setfrom' && empty($object->email_from)) {	// Test on permission already done
-		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 	} elseif ($action == 'setevenunsubscribe') {	// Test on permission already done
 		$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
+	}
+	if ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
+	}
+	if ($action == 'setemail_from' && empty($object->email_from)) {	// Test on permission already done
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 	}
 
 	if (!$mesg) {

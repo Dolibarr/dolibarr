@@ -172,14 +172,14 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$diroutputmassaction = $conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id;
-
 $now = dol_now();
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new FactureFournisseur($db);
 $hookmanager->initHooks(array('supplierinvoicelist'));
 $extrafields = new ExtraFields($db);
+
+$diroutputmassaction = getMultidirTemp($object).'/massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -354,7 +354,7 @@ if (empty($reshook)) {
 	$objectclass = 'FactureFournisseur';
 	$objectlabel = 'SupplierInvoices';
 
-	$uploaddir = $conf->fournisseur->facture->dir_output;
+	$uploaddir = getMultidirOutput($object);
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -1879,7 +1879,7 @@ while ($i < $imaxinloop) {
 			print $facturestatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier').dol_sanitizeFileName($obj->ref);
+			$filedir = getMultidirOutput($facturestatic) . '/' . get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier') . dol_sanitizeFileName($obj->ref);
 			$subdir = get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier').dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
 			print '</td></tr></table>';
@@ -2136,7 +2136,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['f.nb_docs']['checked'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-			$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice_supplier').$facturestatic->ref;
+			$upload_dir = getMultidirOutput($facturestatic).'/'.get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice_supplier').$facturestatic->ref;
 			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 			$nbLinks = Link::count($db, $facturestatic->element, $facturestatic->id);
 			$nbTotal = $nbFiles + $nbLinks;

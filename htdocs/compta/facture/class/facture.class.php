@@ -338,10 +338,6 @@ class Facture extends CommonInvoice
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateDue', 'enabled' => 1, 'visible' => 1, 'position' => 25),
 		'date_closing' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'paye' => array('type' => 'smallint(6)', 'label' => 'InvoicePaidCompletely', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
-		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
-		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>91),
-		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'close_code' => array('type' => 'varchar(16)', 'label' => 'EarlyClosingReason', 'enabled' => 1, 'visible' => -1, 'position' => 92),
 		'close_note' => array('type' => 'varchar(128)', 'label' => 'EarlyClosingComment', 'enabled' => 1, 'visible' => -1, 'position' => 93),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'AmountHT', 'enabled' => 1, 'visible' => 1, 'position' => 95, 'isameasure' => 1),
@@ -609,8 +605,6 @@ class Facture extends CommonInvoice
 			$this->total_ttc         = $_facrec->total_ttc;
 
 			// Fields always coming from template
-			//$this->remise_absolue    = $_facrec->remise_absolue;
-			//$this->remise_percent    = $_facrec->remise_percent;	// TODO deprecated
 			$this->fk_incoterms = $_facrec->fk_incoterms;
 			$this->location_incoterms = $_facrec->location_incoterms;
 
@@ -973,8 +967,8 @@ class Facture extends CommonInvoice
 
 						if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 							$originid = $line->origin_id;
-							$origintype = $line->origin_type;
-						} else {
+							$origintype = empty($line->origin_type) ? $line->origin : $line->origin_type;
+						} else {	// old but bugged version (we store id of line and type of parent object)
 							$originid = $line->id;
 							$origintype = $this->element;
 						}
@@ -1220,8 +1214,6 @@ class Facture extends CommonInvoice
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
-		//$facture->remise_absolue    = $this->remise_absolue;
-		//$facture->remise_percent    = $this->remise_percent;	// TODO deprecated
 
 		$facture->origin            = $this->origin;
 		$facture->origin_id         = $this->origin_id;
@@ -2257,9 +2249,9 @@ class Facture extends CommonInvoice
 
 				if ($type !== 'separate') {
 					if (in_array($type, array('point','multipts','linestrg','polygon'))) {
-						$sql .= ", ST_AsWKT(ef.".$key.") as ".$key;
+						$sql .= ", ST_AsWKT(ef.".$this->db->sanitize($key).") as ".$this->db->sanitize($key);
 					} else {
-						$sql .= ", ef.".$key;
+						$sql .= ", ef.".$this->db->sanitize($key);
 					}
 				}
 			}
@@ -2512,9 +2504,9 @@ class Facture extends CommonInvoice
 
 				if ($type !== 'separate') {
 					if (in_array($type, array('point','multipts','linestrg','polygon'))) {
-						$sql .= ", ST_AsWKT(ef.".$key.") as ".$key;
+						$sql .= ", ST_AsWKT(ef.".$this->db->sanitize($key).") as ".$this->db->sanitize($key);
 					} else {
-						$sql .= ", ef.".$key;
+						$sql .= ", ef.".$this->db->sanitize($key);
 					}
 				}
 			}
@@ -4426,8 +4418,10 @@ class Facture extends CommonInvoice
 
 			$this->line->special_code = $special_code;
 			$this->line->fk_parent_line = $fk_parent_line;
+
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
+
 			$this->line->situation_percent = $situation_percent;
 			$this->line->fk_prev_id = $fk_prev_id;
 			$this->line->fk_unit = $fk_unit;
@@ -4470,9 +4464,10 @@ class Facture extends CommonInvoice
 
 					$this->lines[] = $this->line;
 				} else {
-					foreach ($this->lines as $line) {
-						if ($line->id == $origin_id) {
-							$this->line->extraparams = $line->extraparams;
+					// Loop on all lines of parent object
+					foreach ($this->lines as $tmpline) {
+						if ($tmpline->id == $origin_id && $tmpline->element == $origin) {
+							$this->line->extraparams = $tmpline->extraparams;
 							$this->line->setExtraParameters();
 						}
 					}
@@ -5010,74 +5005,6 @@ class Facture extends CommonInvoice
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Set absolute discount
-	 *
-	 *	@param     	User	$user 		User that set discount
-	 *	@param     	double	$remise		Discount
-	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 				Return integer <0 if KO, >0 if OK
-	 */
-	/*
-	public function set_remise_absolue($user, $remise, $notrigger = 0)
-	{
-		// phpcs:enable
-		if (empty($remise)) {
-			$remise = 0;
-		}
-
-		if ($user->hasRight('facture', 'creer')) {
-			$error = 0;
-
-			$this->db->begin();
-
-			$remise = price2num($remise);
-
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_absolue = '.((float) $remise);
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
-
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->error();
-				$error++;
-			}
-
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->remise_absolue = $remise;
-				$this->update_price(1);
-			}
-
-			if (!$notrigger && empty($error)) {
-				// Call trigger
-				$result = $this->call_trigger('BILL_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			} else {
-				foreach ($this->errors as $errmsg) {
-					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-				}
-				$this->db->rollback();
-				return -1 * $error;
-			}
-		}
-
-		return 0;
-	}
-	*/
-
 	/**
 	 * Sets object to given categories.
 	 *
@@ -5470,16 +5397,16 @@ class Facture extends CommonInvoice
 		// phpcs:enable
 		global $conf, $langs;
 
-		$clause = " WHERE";
+		$sanitizedclause = " WHERE";
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut as status, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = " AND";
+			$sanitizedclause = " AND";
 		}
-		$sql .= $clause." f.paye=0";
+		$sql .= $sanitizedclause." f.paye=0";
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		if ($user->socid) {
@@ -5731,7 +5658,7 @@ class Facture extends CommonInvoice
 
 		$this->nb = array();
 
-		$clause = "WHERE";
+		$sanitizedclause = "WHERE";
 
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -5739,9 +5666,9 @@ class Facture extends CommonInvoice
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
+			$sanitizedclause = "AND";
 		}
-		$sql .= " ".$clause." f.entity IN (".getEntity('invoice').")";
+		$sql .= " ".$sanitizedclause." f.entity IN (".getEntity('invoice').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -6133,9 +6060,8 @@ class Facture extends CommonInvoice
 		dol_syslog(get_class($this).'::setRetainedWarranty('.$value.')');
 
 		if ($this->status >= 0) {
-			$fieldname = 'retained_warranty';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ".$fieldname." = ".((float) $value);
+			$sql .= " SET retained_warranty = ".((float) $value);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -6170,9 +6096,8 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this).'::setRetainedWarrantyDateLimit('.$timestamp.')');
 		if ($this->status >= 0) {
-			$fieldname = 'retained_warranty_date_limit';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ".$fieldname." = ".(strval($timestamp) != '' ? "'".$this->db->idate($timestamp)."'" : 'null');
+			$sql .= " SET retained_warranty_date_limit = ".(strval($timestamp) != '' ? "'".$this->db->idate($timestamp)."'" : 'null');
 			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			if ($this->db->query($sql)) {

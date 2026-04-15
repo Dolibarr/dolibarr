@@ -99,6 +99,11 @@ if ($action == 'presend') {
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
+		// When the email form is resubmitted (e.g. Apply button to select a template),
+		// lang_id is not in POST but langsmodels is. Use it to preserve the language selection.
+		if (empty($newlang) && GETPOST('langsmodels', 'aZ09')) {
+			$newlang = GETPOST('langsmodels', 'aZ09');
+		}
 	}
 
 	if (!empty($newlang)) {
@@ -261,7 +266,8 @@ if ($action == 'presend') {
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
 		// For example if element is project
-		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (property_exists($object, 'socid') && !empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
 		if (is_object($object->thirdparty)) {

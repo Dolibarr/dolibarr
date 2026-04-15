@@ -575,7 +575,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= 'jQuery(document).ready(function () {
             jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log("dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',

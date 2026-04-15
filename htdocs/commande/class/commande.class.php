@@ -634,15 +634,15 @@ class Commande extends CommonOrder
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->commande->multidir_output[$this->entity].'/'.$oldref;
-				$dirdest = $conf->commande->multidir_output[$this->entity].'/'.$newref;
+				$dirsource = getMultidirOutput($this).'/'.$oldref;
+				$dirdest = getMultidirOutput($this).'/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->commande->multidir_output[$this->entity].'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($dirdest.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -1046,7 +1046,7 @@ class Commande extends CommonOrder
 		$sql .= ", multicurrency_tx";
 		$sql .= ", import_key";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".((int) $user->id);
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".($user->id > 0 ? ((int) $user->id) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
@@ -1116,7 +1116,7 @@ class Commande extends CommonOrder
 					if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 						$originid = $line->origin_id;
 						$origintype = empty($line->origin_type) ? $line->origin : $line->origin_type;
-					} else {
+					} else {	// old but bugged version (we store id of line and type of parent object)
 						$originid = $line->id;
 						$origintype = $this->element;
 					}
@@ -1805,7 +1805,9 @@ class Commande extends CommonOrder
 				$this->line->special_code = 3;
 			}
 			$this->line->origin = $origin;
+			$this->line->origin_type = $origin;
 			$this->line->origin_id = $origin_id;
+
 			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->fk_unit = $fk_unit;
 
@@ -1852,9 +1854,10 @@ class Commande extends CommonOrder
 
 						$this->lines[] = $this->line;
 					} else {
-						foreach ($this->lines as $line) {
-							if ($line->id == $origin_id) {
-								$this->line->extraparams = $line->extraparams;
+						// Loop on all lines of parent object
+						foreach ($this->lines as $tmpline) {
+							if ($tmpline->id == $origin_id && $tmpline->element = $origin) {
+								$this->line->extraparams = $tmpline->extraparams;
 								$this->line->setExtraParameters();
 							}
 						}

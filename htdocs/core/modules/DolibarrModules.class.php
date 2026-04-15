@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,7 +114,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $boxes = array();
 
 	/**
-	 * @var	array<array{0:string,1:string,2:string|int,3:string,4?:int<0,1>,5?:string,6?:int<0,1>}> Module constants
+	 * @var	array<int,array{0:string,1:string,2:string|int,3:string,4?:int<0,1>,5?:string,6?:int<0,1>}> Module constants
 	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();

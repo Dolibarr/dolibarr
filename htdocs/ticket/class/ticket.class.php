@@ -298,7 +298,7 @@ class Ticket extends CommonObject
 		'subject' => array('type' => 'varchar(255)', 'label' => 'Subject', 'visible' => 1, 'enabled' => 1, 'position' => 19, 'notnull' => -1, 'searchall' => 1, 'help' => "", 'css' => 'maxwidth200 tdoverflowmax200', 'csslist' => 'tdoverflowmax250', 'autofocusoncreate' => 1),
 		'type_code' => array('type' => 'varchar(32)', 'label' => 'Type', 'visible' => 1, 'enabled' => 1, 'position' => 20, 'notnull' => -1, 'help' => "", 'csslist' => 'tdoverflowmax100'),
 		'category_code' => array('type' => 'varchar(32)', 'label' => 'TicketCategory', 'visible' => -1, 'enabled' => 1, 'position' => 21, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax200'),
-		'severity_code' => array('type' => 'varchar(32)', 'label' => 'Severity', 'visible' => 1, 'enabled' => 1, 'position' => 22, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100'),
+		'severity_code' => array('type' => 'varchar(32)', 'label' => 'Severity', 'visible' => 1, 'enabled' => 1, 'position' => 22, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax100'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'visible' => 1, 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'index' => 1, 'searchall' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'css' => 'tdoverflowmax150 maxwidth150onsmartphone'),
 		'notify_tiers_at_create' => array('type' => 'integer', 'label' => 'NotifyThirdparty', 'visible' => -1, 'enabled' => 0, 'position' => 51, 'notnull' => 1, 'index' => 1),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php', 'label' => 'Project', 'visible' => -1, 'enabled' => 'isModEnabled("project")', 'position' => 52, 'notnull' => -1, 'index' => 1, 'help' => "LinkToProject"),
@@ -2756,7 +2756,7 @@ class Ticket extends CommonObject
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
-		global $mysoc, $langs;
+		global $mysoc, $langs, $hookmanager;
 
 		$error = 0;
 
@@ -2866,6 +2866,14 @@ class Ticket extends CommonObject
 							if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 							}
+						}
+
+						$parameters = array('sendto' => $sendto);
+						$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if (empty($reshook)) {
+							$sendto = array_merge($sendto, $hookmanager->resArray);
+						} elseif ($reshook > 0) {
+							$sendto = $hookmanager->resArray;
 						}
 
 						if (!empty($sendto)) {
@@ -2979,6 +2987,14 @@ class Ticket extends CommonObject
 								}
 							}
 
+							$parameters = array('sendto' => $sendto);
+							$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+							if (empty($reshook)) {
+								$sendto = array_merge($sendto, $hookmanager->resArray);
+							} elseif ($reshook > 0) {
+								$sendto = $hookmanager->resArray;
+							}
+
 							$sendtocc = array();
 							if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
@@ -3090,6 +3106,14 @@ class Ticket extends CommonObject
 									if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 										$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 									}
+								}
+
+								$parameters = array('sendto' => $sendto);
+								$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+								if (empty($reshook)) {
+									$sendto = array_merge($sendto, $hookmanager->resArray);
+								} elseif ($reshook > 0) {
+									$sendto = $hookmanager->resArray;
 								}
 
 								$sendtocc = array();

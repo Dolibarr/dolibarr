@@ -126,7 +126,7 @@ class DonationStats extends Stats
 	public function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -144,7 +144,7 @@ class DonationStats extends Stats
 	public function getNbByYear()
 	{
 		$sql = "SELECT date_format(d.datedon,'%Y') as dm, COUNT(*) as nb, SUM(d.".$this->db->sanitize($this->field).")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -163,7 +163,7 @@ class DonationStats extends Stats
 	public function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, sum(d.".$this->db->sanitize($this->field).")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
@@ -182,7 +182,7 @@ class DonationStats extends Stats
 	public function getAverageByMonth($year)
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, avg(d.".$this->db->sanitize($this->field).")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
@@ -200,7 +200,7 @@ class DonationStats extends Stats
 	public function getAllByYear()
 	{
 		$sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->db->sanitize($this->field).") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";

@@ -1155,7 +1155,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string 		$desc 				Description of the invoice line
 	 * @param float			$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param float			$qty 				Quantity
-	 * @param int 			$remise_percent 	Percentage discount of the line
+	 * @param float			$remise_percent 	Percentage discount of the line
 	 * @param float|string	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 			$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 			$txlocaltax2 		Local tax 2 rate (deprecated)
