@@ -1888,7 +1888,7 @@ class Ticket extends CommonObject
 	 * @param	string[]	$mimefilename_list	List of attached file name in message
 	 * @param	bool		$send_email			Whether the message is sent by email
 	 * @param	int<0,1>	$public_area		0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
-	 * @param	array		$external_contacts	List of external contacts associated with the ticket
+	 * @param 	array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}|int>		$external_contacts	List of external contacts associated with the ticket
 	 * @return	int								Return integer <0 if KO, ID of actioncomm create if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0, $external_contacts = [])
