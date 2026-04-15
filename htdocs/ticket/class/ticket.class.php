@@ -2408,7 +2408,7 @@ class Ticket extends CommonObject
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
-		global $mysoc, $conf, $langs;
+		global $mysoc, $conf, $langs, $hookmanager;
 
 		$error = 0;
 
@@ -2526,6 +2526,14 @@ class Ticket extends CommonObject
 								$message .= '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$val;
 							}
 
+							$parameters = array('sendto' => $sendto);
+
+							$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+							if (empty($reshook)) {
+								$sendto = array_merge($sendto, $hookmanager->resArray);
+							} elseif ($reshook > 0) {
+								$sendto = $hookmanager->resArray;
+							}
 							// URL ticket
 							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id;
 							$message .= '<br><br>';
@@ -2598,6 +2606,14 @@ class Ticket extends CommonObject
 								if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
 									$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 								}
+							}
+
+							$parameters = array('sendto' => $sendto);
+							$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+							if (empty($reshook)) {
+								$sendto = array_merge($sendto, $hookmanager->resArray);
+							} elseif ($reshook > 0) {
+								$sendto = $hookmanager->resArray;
 							}
 
 							// dont try to send email if no recipient
@@ -2693,6 +2709,14 @@ class Ticket extends CommonObject
 									if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
 										$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 									}
+								}
+
+								$parameters = array('sendto' => $sendto);
+								$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+								if (empty($reshook)) {
+									$sendto = array_merge($sendto, $hookmanager->resArray);
+								} elseif ($reshook > 0) {
+									$sendto = $hookmanager->resArray;
 								}
 
 								// Dont try to send email when no recipient
