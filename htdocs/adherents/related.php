@@ -178,98 +178,96 @@ if ($object->id > 0) {
 	$sql .= " LEFT JOIN llx_c_type_contact tc ON ec.fk_c_type_contact = tc.rowid";
 	$sql .= " WHERE ec.fk_member = ".((int) $id);
 
-	if ($sql) {
-		$resql = $db->query($sql);
+	$resql = $db->query($sql);
 
-		if ($resql) {
-			$contactsArray = [];
+	if ($resql) {
+		$contactsArray = [];
 
-			while ($obj = $db->fetch_object($resql)) {
-				$contactsArray[] = [
-					'rowid'         => $obj->rowid,
-					'datecreate'    => $obj->datecreate,
-					'source'        => $obj->source,
-					'element'       => $obj->element,
-					'element_id'    => $obj->element_id,
-					'code'          => $obj->code,
-					'fk_c_type_contact' => $obj->fk_c_type_contact,
-					'libelle'       => $obj->libelle
-				];
-			}
-
-			echo '<div class="div-table-responsive">';
-			echo '<table class="liste">';
-
-			echo '<thead>';
-			echo '<tr class="liste_titre">';
-			$headers = [
-				'ID' => 'rowid',
-				'Date' => 'datecreate',
-				'Element' => 'element',
-				'Ref' => 'element_id',
-				'Code' => 'code',
-				'Label' => 'libelle'
+		while ($obj = $db->fetch_object($resql)) {
+			$contactsArray[] = [
+				'rowid'         => $obj->rowid,
+				'datecreate'    => $obj->datecreate,
+				'source'        => $obj->source,
+				'element'       => $obj->element,
+				'element_id'    => $obj->element_id,
+				'code'          => $obj->code,
+				'fk_c_type_contact' => $obj->fk_c_type_contact,
+				'libelle'       => $obj->libelle
 			];
-
-			foreach ($headers as $label => $key) {
-				echo '<th>'.$label.'</th>';
-			}
-			echo '</tr>';
-			echo '</thead>';
-			echo '<tbody>';
-
-			if (count($contactsArray) > 0) {
-				$i = 0;
-				foreach ($contactsArray as $row) {
-					$cssClass = ($i % 2) ? 'oddeven' : '';
-					echo '<tr class="'.$cssClass.'">';
-					echo '<td class="right">'.$row['rowid'].'</td>';
-					echo '<td>'.$row['datecreate'].'</td>';
-
-					if ($row['element'] == 'commande') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/commande/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'ticket') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/ticket/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'fichinter') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/fichinter/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'order_supplier') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/fourn/commande/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'supplier_proposal') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/supplier_proposal/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'project') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/projet/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'dolresource') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/resource/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'facture') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'invoice_supplier') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'propal') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/contact.php', ['id' => $row['element_id']]);
-					} elseif ($row['element'] == 'contrat') {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/contrat/contact.php', ['id' => $row['element_id']]);
-					} else {
-						$element_url = dolBuildUrl(DOL_URL_ROOT.'/unknown_element/contact.php', ['id' => $row['element_id']]);
-					}
-					echo '<td><a href="'.$element_url.'">'.$row['element'].'</a></td>';
-					echo '<td><a href="'.$element_url.'">'.$row['element_id'].'</a></td>';
-					echo '<td>'.$row['code'].'</td>';
-					echo '<td>'.$row['libelle'].'</td>';
-
-					echo '</tr>';
-					$i++;
-				}
-			} else {
-				// Empty state row
-				echo '<tr class="oddeven"><td colspan="8" class="opacitymedium">This member is not listed as a contact for any Dolibarr object.</td></tr>';
-			}
-
-			echo '</tbody>';
-			echo '</table>';
-			echo '</div>';
-		} else {
-			dol_print_error($db);
 		}
+
+		echo '<div class="div-table-responsive">';
+		echo '<table class="liste">';
+
+		echo '<thead>';
+		echo '<tr class="liste_titre">';
+		$headers = [
+			'ID' => 'rowid',
+			'Date' => 'datecreate',
+			'Element' => 'element',
+			'Ref' => 'element_id',
+			'Code' => 'code',
+			'Label' => 'libelle'
+		];
+
+		foreach ($headers as $label => $key) {
+			echo '<th>'.$label.'</th>';
+		}
+		echo '</tr>';
+		echo '</thead>';
+		echo '<tbody>';
+
+		if (count($contactsArray) > 0) {
+			$i = 0;
+			foreach ($contactsArray as $row) {
+				$cssClass = ($i % 2) ? 'oddeven' : '';
+				echo '<tr class="'.$cssClass.'">';
+				echo '<td class="right">'.$row['rowid'].'</td>';
+				echo '<td>'.$row['datecreate'].'</td>';
+
+				if ($row['element'] == 'commande') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/commande/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'ticket') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/ticket/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'fichinter') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/fichinter/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'order_supplier') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/fourn/commande/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'supplier_proposal') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/supplier_proposal/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'project') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/projet/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'dolresource') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/resource/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'facture') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'invoice_supplier') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'propal') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/contact.php', ['id' => $row['element_id']]);
+				} elseif ($row['element'] == 'contrat') {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/contrat/contact.php', ['id' => $row['element_id']]);
+				} else {
+					$element_url = dolBuildUrl(DOL_URL_ROOT.'/unknown_element/contact.php', ['id' => $row['element_id']]);
+				}
+				echo '<td><a href="'.$element_url.'">'.$row['element'].'</a></td>';
+				echo '<td><a href="'.$element_url.'">'.$row['element_id'].'</a></td>';
+				echo '<td>'.$row['code'].'</td>';
+				echo '<td>'.$row['libelle'].'</td>';
+
+				echo '</tr>';
+				$i++;
+			}
+		} else {
+			// Empty state row
+			echo '<tr class="oddeven"><td colspan="8" class="opacitymedium">This member is not listed as a contact for any Dolibarr object.</td></tr>';
+		}
+
+		echo '</tbody>';
+		echo '</table>';
+		echo '</div>';
+	} else {
+		dol_print_error($db);
 	}
 }
 // End of page
