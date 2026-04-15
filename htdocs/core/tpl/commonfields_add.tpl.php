@@ -122,6 +122,9 @@ foreach ($object->fields as $key => $val) {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
 			print $formadmin->select_language($value, $key, 0, array(), 1, 0, 0, 'minwidth300', 2);
 		} else {
+			if (isset($val['notnull']) && $val['notnull'] > 0 && empty($value)) {
+				// $value = 'ifone'; 	// TODO Implement this
+			}
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}
 	}

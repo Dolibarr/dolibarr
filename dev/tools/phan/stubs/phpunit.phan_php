@@ -6,4 +6,8 @@ class TestCase {
 	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
 	}
+
+	public function	onNotSuccessfulTest(Throwable $t)
+	{
+	}
 }
