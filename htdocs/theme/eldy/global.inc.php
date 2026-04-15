@@ -3017,7 +3017,7 @@ span.widthpictotitle.pictotitle {
 }
 .pictosubstatus {
 	padding: 4px;
-	border: 1px solid #ccc;
+	border: 1px solid #e8e8e8;
 	vertical-align: middle;
 	margin-right: 3px;
 	margin-left: 3px;
@@ -3026,6 +3026,9 @@ span.widthpictotitle.pictotitle {
 .pictosubstatus img {
 	vertical-align: text-bottom;
 	display: inline-block;
+}
+a.pictosubstatus:hover {
+	background-color: var(--colorbackhmenu1);
 }
 .pictostatus {
 	width: 15px;
