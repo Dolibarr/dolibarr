@@ -24,19 +24,19 @@
  */
 
 if (!defined('NOTOKENRENEWAL')) {
-    define('NOTOKENRENEWAL', 1);
+	define('NOTOKENRENEWAL', 1);
 }
 if (!defined('NOREQUIREMENU')) {
-    define('NOREQUIREMENU', 1);
+	define('NOREQUIREMENU', 1);
 }
 if (!defined('NOREQUIREHTML')) {
-    define('NOREQUIREHTML', 1);
+	define('NOREQUIREHTML', 1);
 }
 if (!defined('NOREQUIREAJAX')) {
-    define('NOREQUIREAJAX', 1);
+	define('NOREQUIREAJAX', 1);
 }
 if (!defined('NOCSRFCHECK')) {
-    define('NOCSRFCHECK', 1);
+	define('NOCSRFCHECK', 1);
 }
 define('NOLOGIN', 1);
 
@@ -44,7 +44,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/server/mcp_protocol.php';
 
 while (ob_get_level()) {
-    ob_end_clean();
+	ob_end_clean();
 }
 
 global $db, $conf, $user;
@@ -57,12 +57,12 @@ header('X-Content-Type-Options: nosniff');
 // Authentication
 $enabled = getDolGlobalString('AI_MCP_ENABLED');
 if (!$enabled) {
-    http_response_code(503);
-    echo json_encode([
-        "jsonrpc" => "2.0",
-        "error" => ["code" => -32000, "message" => "MCP Server Disabled"]
-    ]);
-    exit;
+	http_response_code(503);
+	echo json_encode([
+		"jsonrpc" => "2.0",
+		"error" => ["code" => -32000, "message" => "MCP Server Disabled"]
+	]);
+	exit;
 }
 
 $headers = function_exists('getallheaders') ? getallheaders() : [];
@@ -75,33 +75,32 @@ $storedKey    = getDolGlobalString('AI_MCP_API_KEY');
 $valid = false;
 
 if (!empty($storedKey)) {
+	// X-API-Key
+	if (!empty($apiKeyHeader)) {
+		$valid = hash_equals($storedKey, $apiKeyHeader);
+	}
 
-    // X-API-Key
-    if (!empty($apiKeyHeader)) {
-        $valid = hash_equals($storedKey, $apiKeyHeader);
-    }
-
-    // Authorization: Bearer <token>
-    if (!$valid && !empty($authHeader)) {
-        if (preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
-            $token = trim($matches[1]);
-            $valid = hash_equals($storedKey, $token);
-        }
-    }
+	// Authorization: Bearer <token>
+	if (!$valid && !empty($authHeader)) {
+		if (preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
+			$token = trim($matches[1]);
+			$valid = hash_equals($storedKey, $token);
+		}
+	}
 }
 
 if (!$valid) {
-    dol_syslog(
-        '[MCP Server] Unauthorized access attempt. IP=' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'),
-        LOG_WARNING
-    );
+	dol_syslog(
+		'[MCP Server] Unauthorized access attempt. IP=' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'),
+		LOG_WARNING
+	);
 
-    http_response_code(401);
-    echo json_encode([
-        "jsonrpc" => "2.0",
-        "error" => ["code" => -32000, "message" => "Unauthorized"]
-    ]);
-    exit;
+	http_response_code(401);
+	echo json_encode([
+		"jsonrpc" => "2.0",
+		"error" => ["code" => -32000, "message" => "Unauthorized"]
+	]);
+	exit;
 }
 
 // Load service user
@@ -109,94 +108,96 @@ $userId = getDolGlobalInt('AI_MCP_USER_ID');
 $serviceUser = new User($db);
 
 if ($userId > 0) {
-    $result = $serviceUser->fetch($userId);
+	$result = $serviceUser->fetch($userId);
 
-    if ($result > 0) {
-        $serviceUser->loadRights();
-    } else {
-        http_response_code(500);
-        echo json_encode([
-            "jsonrpc" => "2.0",
-            "error" => ["code" => -32000, "message" => "MCP Service User not found"]
-        ]);
-        exit;
-    }
+	if ($result > 0) {
+		$serviceUser->loadRights();
+	} else {
+		http_response_code(500);
+		echo json_encode([
+			"jsonrpc" => "2.0",
+			"error" => ["code" => -32000, "message" => "MCP Service User not found"]
+		]);
+		exit;
+	}
 } else {
-    http_response_code(503);
-    echo json_encode([
-        "jsonrpc" => "2.0",
-        "error" => ["code" => -32000, "message" => "MCP Server Misconfigured: AI_MCP_USER_ID not set"]
-    ]);
-    exit;
+	http_response_code(503);
+	echo json_encode([
+		"jsonrpc" => "2.0",
+		"error" => ["code" => -32000, "message" => "MCP Server Misconfigured: AI_MCP_USER_ID not set"]
+	]);
+	exit;
 }
 
 // Request handling
 try {
-    // Basic payload size limit
-    $rawInput = file_get_contents('php://input');
-    if ($rawInput === false || strlen($rawInput) > 1024 * 1024) {
-        throw new Exception("Invalid or too large request");
-    }
+	// Basic payload size limit
+	$rawInput = file_get_contents('php://input');
+	if ($rawInput === false || strlen($rawInput) > 1024 * 1024) {
+		throw new Exception("Invalid or too large request");
+	}
 
-    $request = json_decode($rawInput, true);
+	$request = json_decode($rawInput, true);
 
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new Exception("Parse Error");
-    }
+	if (json_last_error() !== JSON_ERROR_NONE) {
+		throw new Exception("Parse Error");
+	}
 
-    $server = new MCPServer($db, $conf, $serviceUser);
+	$server = new MCPServer($db, $conf, $serviceUser);
 
-    // Batch request handling
-    if (is_array($request) && array_keys($request) === range(0, count($request) - 1)) {
+	// Batch request handling
+	if (is_array($request) && array_keys($request) === range(0, count($request) - 1)) {
 
-        // Limit batch size
-        if (count($request) > 20) {
-            http_response_code(413);
-            echo json_encode([
-                "jsonrpc" => "2.0",
-                "error" => ["code" => -32000, "message" => "Batch too large"]
-            ]);
-            exit;
-        }
+		// Limit batch size
+		if (count($request) > 20) {
+			http_response_code(413);
+			echo json_encode([
+				"jsonrpc" => "2.0",
+				"error" => ["code" => -32000, "message" => "Batch too large"]
+			]);
+			exit;
+		}
 
-        $responses = [];
+		$responses = [];
 
-        foreach ($request as $req) {
-            if (!is_array($req)) continue;
+		foreach ($request as $req) {
+			if (!is_array($req)) {
+				continue;
+			}
 
-            $res = $server->handleRequest($req);
+			$res = $server->handleRequest($req);
 
-            if ($res !== null) {
-                $responses[] = $res;
-            }
-        }
+			if ($res !== null) {
+				$responses[] = $res;
+			}
+		}
 
-        echo json_encode($responses);
-    } else {
-        // Single request
-        if (!is_array($request)) {
-            throw new Exception("Invalid request format");
-        }
+		echo json_encode($responses);
+	} else {
+		// Single request
+		if (!is_array($request)) {
+			throw new Exception("Invalid request format");
+		}
 
-        $response = $server->handleRequest($request);
+		$response = $server->handleRequest($request);
 
-        if ($response !== null) {
-            echo json_encode($response);
-        }
-    }
+		if ($response !== null) {
+			echo json_encode($response);
+		}
+	}
 } catch (Exception $e) {
 
-    dol_syslog(
-        '[MCP Server] Fatal error: ' . $e->getMessage(),
-        LOG_ERR
-    );
+	dol_syslog(
+		'[MCP Server] Fatal error: ' . $e->getMessage(),
+		LOG_ERR
+	);
 
-    echo json_encode([
-        "jsonrpc" => "2.0",
-        "id" => null,
-        "error" => [
-            "code" => -32700,
-            "message" => "Parse error"
-        ]
-    ]);
+	echo json_encode([
+		"jsonrpc" => "2.0",
+		"id" => null,
+		"error" => [
+			"code" => -32700,
+			"message" => "Parse error"
+		]
+	]);
 }
