@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2026	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -166,9 +167,8 @@ try {
 				$html .= '</tbody></table>';
 			}
 		}
-	}
-	// Simple list (e.g. search invoices)
-	elseif (isset($data[0]) && is_array($data[0])) {
+	} elseif (isset($data[0]) && is_array($data[0])) {
+		// Simple list (e.g. search invoices)
 		$keys = array_keys($data[0]);
 		$keys = array_filter($keys, function (string $k) {
 			return $k !== 'url' && $k !== 'rowid';
@@ -195,10 +195,8 @@ try {
 			$html .= '</tr>';
 		}
 		$html .= '</tbody></table>';
-	}
-
-	// Simple object
-	else {
+	} else {
+		// Simple object
 		$html .= '<table cellpadding="5">';
 		foreach ($data as $key => $val) {
 			// Skip internal fields
