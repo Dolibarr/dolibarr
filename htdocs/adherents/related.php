@@ -148,7 +148,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$langs->load("members");
 
-	$title = $langs->trans("Member")." - ".$langs->trans("Referers");
+	$title = $langs->trans("Member")." - ".$langs->trans("NbOfObjectReferers");
 
 	$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
 
@@ -196,9 +196,9 @@ if ($object->id > 0) {
 		dol_setcache($cachekey, $nbAsContact, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 	}
 
-	$titlelist = $langs->trans("Referers").(is_numeric($nbAsContact) ? '<span class="opacitymedium colorblack paddingleft">('.$nbAsContact.')</span>' : '');
+	$titlelist = $langs->trans("NbOfObjectReferers").(is_numeric($nbAsContact) ? '<span class="opacitymedium colorblack paddingleft">('.$nbAsContact.')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
-		$titlelist = $langs->trans("Referers").(is_numeric($nbAsContact) ? '<span class="opacitymedium colorblack paddingleft">('.$nbAsContact.')</span>' : '');
+		$titlelist = $langs->trans("NbOfObjectReferers").(is_numeric($nbAsContact) ? '<span class="opacitymedium colorblack paddingleft">('.$nbAsContact.')</span>' : '');
 	}
 	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, '', '', 0, 1, 0);
 
@@ -273,7 +273,7 @@ if ($object->id > 0) {
 					echo '<tr class="'.$cssClass.'">';
 					echo '<td class="right">'.$row['rowid'].'</td>';
 					echo '<td>'.$row['datecreate'].'</td>';
-					
+
 					if ($row['element'] == 'commande') {
 						$element_url = dolBuildUrl(DOL_URL_ROOT.'/commande/contact.php', ['id' => $row['element_id']]);
 					} elseif ($row['element'] == 'ticket') {
@@ -303,7 +303,7 @@ if ($object->id > 0) {
 					echo '<td><a href="'.$element_url.'">'.$row['element_id'].'</a></td>';
 					echo '<td>'.$row['code'].'</td>';
 					echo '<td>'.$row['libelle'].'</td>';
-					
+
 					echo '</tr>';
 					$i++;
 				}
@@ -311,7 +311,7 @@ if ($object->id > 0) {
 				// Empty state row
 				echo '<tr class="oddeven"><td colspan="8" class="opacitymedium">This member is not listed as a contact for any Dolibarr object.</td></tr>';
 			}
-			
+
 			echo '</tbody>';
 			echo '</table>';
 			echo '</div>';
