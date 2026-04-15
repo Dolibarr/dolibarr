@@ -3273,10 +3273,10 @@ if ($action == 'create' && $usercancreate) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed";
 			$sql .= ", " . MAIN_DB_PREFIX . "expedition as e";
-			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize($origin) . "det as obj";
+			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize((string) $origin) . "det as obj";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
-			$sql .= " AND obj.fk_" . $db->sanitize($origin) . " = " . ((int) $origin_id);
+			$sql .= " AND obj.fk_" . $db->sanitize((string) $origin) . " = " . ((int) $origin_id);
 			$sql .= " AND obj.rowid = ed.fk_elementdet";
 			$sql .= " AND ed.fk_expedition = e.rowid";
 			//if ($filter) $sql.= $filter;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023	Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2023		Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -171,5 +171,6 @@ abstract class CommonNumRefGenerator
 	 *
 	 *	@return	string	Example
 	 */
-	abstract public function getExample();
+	// Comment this because the signature/declaration of getExample depends on object type, so method is declared in parent abstract class only.
+	//abstract public function getExample();
 }

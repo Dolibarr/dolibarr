@@ -452,6 +452,7 @@ define(
 		'fichinter' => 'intervention', // Has old directory
 		'ficheinter' => 'intervention',  // Backup for 'fichinter'
 		'propale' => 'propal', // Has old directory
+		'societe' => 'thirdparty',  // Has old directory
 		'socpeople' => 'contact', // Has old directory
 		'fournisseur' => 'supplier',  // Has old directory
 
@@ -8222,12 +8223,12 @@ function get_localtax_by_third($local)
 {
 	global $db, $mysoc;
 
-	$sql  = " SELECT t.localtax" . $db->sanitize($local) . " as localtax";
+	$sql  = " SELECT t.localtax" . $db->sanitize((string) $local) . " as localtax";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t INNER JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = t.fk_pays";
 	$sql .= " WHERE c.code = '" . $db->escape($mysoc->country_code) . "' AND t.active = 1 AND t.entity IN (" . getEntity('c_tva') . ") AND t.taux = (";
 	$sql .= "SELECT MAX(tt.taux) FROM " . MAIN_DB_PREFIX . "c_tva as tt INNER JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = tt.fk_pays";
 	$sql .= " WHERE c.code = '" . $db->escape($mysoc->country_code) . "' AND t.entity IN (" . getEntity('c_tva') . ") AND tt.active = 1)";
-	$sql .= " AND t.localtax" . $db->sanitize($local) . "_type <> '0'";
+	$sql .= " AND t.localtax" . $db->sanitize((string) $local) . "_type <> '0'";
 	$sql .= " ORDER BY t.rowid DESC";
 
 	$resql = $db->query($sql);

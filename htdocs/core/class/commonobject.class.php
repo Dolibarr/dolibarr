@@ -11794,7 +11794,7 @@ abstract class CommonObject
 		$fkname = 'fk_' . (empty($categorystatic->MAP_CAT_FK[$type]) ? $type : $categorystatic->MAP_CAT_FK[$type]);
 
 		$sql = "INSERT INTO ".$this->db->sanitize($tablename)." (fk_categorie, ".$this->db->sanitize($fkname).")";
-		$sql .= " SELECT fk_categorie, ".$this->db->sanitize($toId)." FROM ".$this->db->sanitize($tablename);
+		$sql .= " SELECT fk_categorie, ".$this->db->sanitize((string) (int) $toId)." FROM ".$this->db->sanitize($tablename);
 		$sql .= " WHERE ".$this->db->sanitize($fkname)." = ".((int) $fromId);
 
 		if (!$this->db->query($sql)) {
