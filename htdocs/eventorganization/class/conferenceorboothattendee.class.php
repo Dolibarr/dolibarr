@@ -98,7 +98,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
-		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php', 'label' => 'Member', 'visible' => 1, 'enabled' => 'isModEnabled("adherent")', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'help' => "LinkedToDolibarrMember", 'picto' => 'member', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php', 'label' => 'Member', 'enabled' => 'isModEnabled("adherent")', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'help' => "LinkedToDolibarrMember", 'picto' => 'member', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
 		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
 		'fk_invoice' => array('type' => 'integer:Facture:compta/facture/class/facture.class.php', 'label' => 'Invoice', 'enabled' => 'isModEnabled("invoice")', 'position' => 57, 'notnull' => 0, 'visible' => 1, 'index' => 0, 'picto' => 'bill', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
@@ -826,6 +826,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 			if ($option == 'thirdpartyid') {
 				$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?thirdpartyid='.$this->id;
+			}
+
+			if ($option == 'memberid') {
+				$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?memberid='.$this->id;
 			}
 
 			if ($option == 'conforboothidproject') {
