@@ -5955,6 +5955,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'supplier_invoice' => 'infobox-order_supplier',
 				'supplier_invoicea' => 'infobox-order_supplier',
 				'supplier_invoiced' => 'infobox-order_supplier',
+				'supplier_invoicer' => 'infobox-order_supplier',
 				'supplier' => 'infobox-order_supplier',
 				'supplier_order' => 'infobox-order_supplier',
 				'supplier_proposal' => 'infobox-supplier_proposal',
