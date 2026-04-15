@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * \file htdocs/ai/class/airequestlog.class.php
  * \ingroup ai
@@ -30,74 +30,74 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class AiRequestLog extends CommonObject
 {
-    /**
-     * @var string ID to identify managed object
-     *             Used by getEntity('airequestlog')
-     */
-    public $element = 'airequestlog';
+	/**
+	 * @var string ID to identify managed object
+	 *             Used by getEntity('airequestlog')
+	 */
+	public $element = 'airequestlog';
 
-    /**
-     * @var string Name of table without prefix
-     */
-    public $table_element = 'ai_request_log';
+	/**
+	 * @var string Name of table without prefix
+	 */
+	public $table_element = 'ai_request_log';
 
-    /**
-     * @var int Entity
-     */
-    public $entity;
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
 
-    /**
-     * @var int User ID
-     */
-    public $fk_user;
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
 
-    /**
-     * @var int|string Date of request
-     */
-    public $date_request;
+	/**
+	 * @var int|string Date of request
+	 */
+	public $date_request;
 
-    /**
-     * @var string Query text
-     */
-    public $query_text;
+	/**
+	 * @var string Query text
+	 */
+	public $query_text;
 
-    /**
-     * @var string Tool name
-     */
-    public $tool_name;
+	/**
+	 * @var string Tool name
+	 */
+	public $tool_name;
 
-    /**
-     * @var string Provider
-     */
-    public $provider;
+	/**
+	 * @var string Provider
+	 */
+	public $provider;
 
-    /**
-     * @var float Execution time
-     */
-    public $execution_time;
+	/**
+	 * @var float Execution time
+	 */
+	public $execution_time;
 
-    /**
-     * @var float Confidence
-     */
-    public $confidence;
+	/**
+	 * @var float Confidence
+	 */
+	public $confidence;
 
-    /**
-     * @var string Status
-     */
-    public $status;
+	/**
+	 * @var string Status
+	 */
+	public $status;
 
-    /**
-     * @var string Error message
-     */
-    public $error_msg;
+	/**
+	 * @var string Error message
+	 */
+	public $error_msg;
 
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handler
-     */
-    public function __construct(DoliDB $db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
 }
