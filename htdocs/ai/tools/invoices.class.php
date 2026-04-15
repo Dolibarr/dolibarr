@@ -270,7 +270,7 @@ class ToolInvoices extends McpTool
 			$lines[] = [
 				"product" => $prodRef,
 				"desc" => dol_html_entity_decode(strip_tags($l->desc), ENT_QUOTES),
-				"qty" => (float)$l->qty,
+				"qty" => (float) $l->qty,
 				"price" => price($l->subprice),
 				"total_line" => price($l->total_ht),
 				"vat" => $l->tva_tx . "%"
@@ -357,7 +357,7 @@ class ToolInvoices extends McpTool
 			return ["error" => "Invoice is already fully paid."];
 		}
 
-		$amount = isset($args['amount']) ? (float)$args['amount'] : $remaining;
+		$amount = isset($args['amount']) ? (float) $args['amount'] : $remaining;
 		if ($amount > $remaining) {
 			$amount = $remaining;
 		}
@@ -414,7 +414,7 @@ class ToolInvoices extends McpTool
 		}
 
 		if (is_numeric($identifier)) {
-			if ($customer->fetch((int)$identifier) > 0) {
+			if ($customer->fetch((int) $identifier) > 0) {
 				return $customer;
 			}
 		}
@@ -476,12 +476,12 @@ class ToolInvoices extends McpTool
 		$identifier = trim($identifier);
 
 		if (preg_match('/^\(?prov[-_]?(\d+)\)?$/i', $identifier, $matches)) {
-			if ($invoice->fetch((int)$matches[1]) > 0) {
+			if ($invoice->fetch((int) $matches[1]) > 0) {
 				return $invoice;
 			}
 		}
 		if (is_numeric($identifier)) {
-			if ($invoice->fetch((int)$identifier) > 0) {
+			if ($invoice->fetch((int) $identifier) > 0) {
 				return $invoice;
 			}
 		}
