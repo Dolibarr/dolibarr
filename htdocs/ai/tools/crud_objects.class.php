@@ -338,10 +338,10 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Create Document
 	 *
 	 * @param array $args {
-	 *     object_type: string,
-	 *     header: array<string, mixed>,
-	 *     lines?: array<array<string, mixed>>
-	 * } Arguments including type, header data, and optional lines.
+	 *                    object_type: string,
+	 *                    header: array<string, mixed>,
+	 *                    lines?: array<array<string, mixed>>
+	 *                    } Arguments including type, header data, and optional lines.
 	 *
 	 * @return array{
 	 *     success?: bool,
@@ -459,16 +459,16 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *
 	 * @param object $object The Dolibarr object (Propal, Commande, Facture, etc.).
 	 * @param array $args {
-	 *     product?: string,
-	 *     description?: string,
-	 *     qty?: float|int|string,
-	 *     quantity?: float|int|string,
-	 *     price?: float|int|string,
-	 *     unit_price?: float|int|string,
-	 *     vat_rate?: float|int|string,
-	 *     discount?: float|int|string,
-	 *     object_type: string
-	 * } Line arguments.
+	 *                    product?: string,
+	 *                    description?: string,
+	 *                    qty?: float|int|string,
+	 *                    quantity?: float|int|string,
+	 *                    price?: float|int|string,
+	 *                    unit_price?: float|int|string,
+	 *                    vat_rate?: float|int|string,
+	 *                    discount?: float|int|string,
+	 *                    object_type: string
+	 *                    } Line arguments.
 	 *
 	 * @return array{
 	 *     success: bool,
@@ -635,14 +635,14 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Instantiates the document and calls the line processing helper.
 	 *
 	 * @param array $args {
-	 *     object_type: string,
-	 *     parent_id: int,
-	 *     product_id?: int,
-	 *     description?: string,
-	 *     quantity?: float|int,
-	 *     unit_price?: float|int,
-	 *     vat_rate?: float|int
-	 * } Tool arguments.
+	 *                    object_type: string,
+	 *                    parent_id: int,
+	 *                    product_id?: int,
+	 *                    description?: string,
+	 *                    quantity?: float|int,
+	 *                    unit_price?: float|int,
+	 *                    vat_rate?: float|int
+	 *                    } Tool arguments.
 	 *
 	 * @return array{
 	 *     success: bool,
