@@ -803,8 +803,6 @@ class Categorie extends CommonObject
 					continue;
 				}
 				$sanitizedvalue = $value['field'];
-			} else {
-				$sanitizedvalue = $value;
 			}
 
 			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
