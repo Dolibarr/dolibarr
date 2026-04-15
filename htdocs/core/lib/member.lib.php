@@ -121,7 +121,7 @@ function member_prepare_head(Adherent $object, $subtabs = '')
 			}
 			dol_setcache($cachekey, $nbAttendees, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		if ($nbConfOrBooth > 0 || $nbAttendees > 0) {
+		if ($nbAttendees > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Attendees")).'">'.$nbAttendees.'</span>';
 			$head[$h][1] .= '</span>';
