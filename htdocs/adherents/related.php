@@ -106,36 +106,6 @@ if ($result > 0) {
 	$result = $adht->fetch($object->typeid);
 }
 
-
-/*
- *	Actions
- */
-
-$parameters = array('id' => $id, 'objcanvas' => $objcanvas);
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-
-if (empty($reshook)) {
-	// Cancel
-	if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
-		header("Location: ".$backtopage);
-		exit;
-	}
-
-	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
-		$actioncode = '';
-		$search_rowid = '';
-		$search_related_label = '';
-		$search_complete = '';
-		$search_filtert = '';
-	}
-}
-
-
-
 /*
  *	View
  */
@@ -200,7 +170,7 @@ if ($object->id > 0) {
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("NbOfObjectReferers").(is_numeric($nbAsContact) ? '<span class="opacitymedium colorblack paddingleft">('.$nbAsContact.')</span>' : '');
 	}
-	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, '', '', 0, 1, 0);
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, '', 0, '', '', 0, 1, 0);
 
 
 	$sql = "SELECT ec.rowid, ec.datecreate, tc.source, tc.element, ec.element_id, tc.code, ec.fk_c_type_contact, tc.libelle";
@@ -209,24 +179,6 @@ if ($object->id > 0) {
 	$sql .= " WHERE ec.fk_member = ".((int) $id);
 
 	if ($sql) {
-		$offset = 0;
-		$limit = $MAXWITHOUTPAGINATION;
-
-
-		$sortfield_list = explode(',', 'ec.datecreate');
-		$sortfield_label_list = array('a.id' => 'id', 'a.datep' => 'dp', 'a.percent' => 'percent');
-		$sortfield_new_list = array();
-		foreach ($sortfield_list as $sortfield_value) {
-			$sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];
-		}
-		$sortfield_new = implode(',', $sortfield_new_list);
-
-		// Complete request and execute it with limit
-		$sql .= $db->order($sortfield_new, 'ASC');
-		if ($limit) {	// @phpstan-ignore-line
-			$sql .= $db->plimit($limit + 1, $offset);
-		}
-
 		$resql = $db->query($sql);
 
 		if ($resql) {
