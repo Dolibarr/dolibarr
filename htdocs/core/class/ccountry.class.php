@@ -408,15 +408,16 @@ class CcountryExtended extends Ccountry
 				return 0;
 			}
 
+			$countryid = $this->id;
 			$regions = new Cregion($this->db);
-			$regionres = $regions->fetch(0, 0, $this->id);
+			$regionres = $regions->fetch(0, 0, $countryid);
 			if (!$regionres) {
 				$this->error = "Error ".$regions->db->lasterror();
 				return -1;
 			}
 
 			$states = new Cstate($this->db);
-			$statesres = $states->fetch(0, 0, $this->id);
+			$statesres = $states->fetch(0, 0, $countryid);
 			if (!$statesres) {
 				$this->error = "Error ".$states->db->lasterror();
 				return -1;
