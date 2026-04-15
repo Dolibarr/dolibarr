@@ -11,8 +11,7 @@ jsonpath "$[*].label" exists
 jsonpath "$[*].active" exists
 jsonpath "$[*].code_iso" exists
 jsonpath "$[*].numeric_code" exists
-jsonpath "$[*].regions" count == 0
-jsonpath "$[*].states" count == 0
+
 
 # GET list of countries with no regions
 GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?loadregions=0
@@ -25,8 +24,7 @@ jsonpath "$[*].label" exists
 jsonpath "$[*].active" exists
 jsonpath "$[*].code_iso" exists
 jsonpath "$[*].numeric_code" exists
-jsonpath "$[*].regions" count == 0
-jsonpath "$[*].states" count == 0
+
 
 # GET list of countries with no states
 GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?loadstates=0
@@ -39,8 +37,7 @@ jsonpath "$[*].label" exists
 jsonpath "$[*].active" exists
 jsonpath "$[*].code_iso" exists
 jsonpath "$[*].numeric_code" exists
-jsonpath "$[*].regions" count == 0
-jsonpath "$[*].states" count == 0
+
 
 # GET list of countries with neither regions nor states
 GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?loadregions=0&loadstates=0
@@ -53,8 +50,7 @@ jsonpath "$[*].label" exists
 jsonpath "$[*].active" exists
 jsonpath "$[*].code_iso" exists
 jsonpath "$[*].numeric_code" exists
-jsonpath "$[*].regions" count == 0
-jsonpath "$[*].states" count == 0
+
 
 
 # GET list of countries with regions

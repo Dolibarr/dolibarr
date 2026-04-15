@@ -616,7 +616,7 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$obj = $this->db->fetch_object($result);
-				$country = new Ccountry($this->db);
+				$country = new CcountryExtended($this->db);
 				$fetchres = $country->fetch($obj->rowid);
 				if ($fetchres && $loadregions) {
 					$country->regions = $this->getListOfRegions("code_region", 'ASC', 0, 0, $obj->rowid);
