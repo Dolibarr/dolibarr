@@ -24,19 +24,19 @@
  */
 
 if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
+    define('NOTOKENRENEWAL', 1);
 }
 if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
+    define('NOREQUIREMENU', 1);
 }
 if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
+    define('NOREQUIREHTML', 1);
 }
 if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', 1);
+    define('NOREQUIREAJAX', 1);
 }
 if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
+    define('NOCSRFCHECK', 1);
 }
 
 require '../../main.inc.php';
@@ -74,11 +74,11 @@ $timeout = getDolGlobalInt('AI_REQUEST_TIMEOUT', 120);
 
 // Kill switch
 if (!$mcpEnabled) {
-	$response = [
-		"tool" => "respond_to_user",
-		"arguments" => [
-			"message" => "AI service is currently disabled. Please contact your administrator to enable it."
-		]
+    $response = [
+        "tool" => "respond_to_user",
+        "arguments" => [
+            "message" => "AI service is currently disabled. Please contact your administrator to enable it."
+        ]
     ];
     ob_end_clean();
     echo json_encode($response);
@@ -148,7 +148,7 @@ try {
         }
     }
 
-    // Add common short English/French/Spanish commands that users often type 
+    // Add common short English/French/Spanish commands that users often type
     // regardless of the UI language.
     $commonCommands = ['show', 'find', 'search', 'list', 'get', 'voir', 'chercher', 'lista', 'buscar'];
     $dynamicStopWords = array_unique(array_merge($dynamicStopWords, $commonCommands));
@@ -164,9 +164,11 @@ try {
         $phrase = trim($phrase);
 
         // RULE 1: Minimum Length
-        // Filter out extremely short words (1-2 chars). 
+        // Filter out extremely short words (1-2 chars).
         // This catches "a", "le", "la", "de", "y", "to", "in", "von", "zu" in almost all languages.
-        if (mb_strlen($phrase) < 3) return false;
+        if (mb_strlen($phrase) < 3) {
+            return false;
+        }
 
         // RULE 2: First Word Check
         // If the phrase starts with a translated keyword (e.g. "Invoice Acme"), skip it.
@@ -495,13 +497,13 @@ function recursiveUnmaskValues($data, $guard)
 
 /**
  * Detects if the query uses Non-Latin Scripts.
- * 
+ *
  * Supports all Dolibarr Core Non-Latin languages:
  * - CJK (Chinese, Japanese, Korean)
  * - Cyrillic (Russian, Ukrainian, Serbian, Bulgarian)
  * - Greek, Arabic, Hebrew, Thai
- * 
- * 
+ *
+ *
  * @param string $text The input text to be checked.
  * @return bool True if the text contains complex scripts, false otherwise.
  */
@@ -586,15 +588,23 @@ function classifyIntentUniversal(string $query, Translate $langs)
         $keywords = [];
         foreach ($data['keys'] as $key) {
             $trans = $langs->trans($key);
-            if ($isLatin) $trans = strtolower(dol_string_unaccent($trans));
+            if ($isLatin) {
+                $trans = strtolower(dol_string_unaccent($trans));
+            }
             $keywords[] = $trans;
-            if (!$isLatin && $key !== $trans) $keywords[] = strtolower($key);
+            if (!$isLatin && $key !== $trans) {
+                $keywords[] = strtolower($key);
+            }
         }
         if ($isLatin) {
-            foreach ($data['synonyms'] as $syn) $keywords[] = dol_string_unaccent($syn);
+            foreach ($data['synonyms'] as $syn) {
+                $keywords[] = dol_string_unaccent($syn);
+            }
         }
         foreach ($keywords as $word) {
-            if (empty($word)) continue;
+            if (empty($word)) {
+                continue;
+            }
             if ($isLatin) {
                 if (preg_match('/\b' . preg_quote($word, '/') . 's?\b/u', $searchQuery)) {
                     $detectedCategories[] = $category;
@@ -678,7 +688,7 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
                 // -----------------------------------------------------------
                 // Remove Optional Parameters with Defaults
                 // -----------------------------------------------------------
-                // If a parameter is optional and has a default value defined in 
+                // If a parameter is optional and has a default value defined in
                 // the schema, we assume the backend will handle it. We remove it
                 // from the prompt entirely. This saves massive amounts of tokens
                 // on list/search functions (limit, sortorder, sqlfilters, etc).
@@ -704,7 +714,7 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
                 }
 
                 // Collapse Complex Objects
-                // If a parameter is a deep object (like a complex filter), replace the 
+                // If a parameter is a deep object (like a complex filter), replace the
                 // recursive properties definition with a generic string to save tokens.
                 if (isset($propData['type']) && $propData['type'] === 'object' && isset($propData['properties'])) {
                     unset($propData['properties']);
