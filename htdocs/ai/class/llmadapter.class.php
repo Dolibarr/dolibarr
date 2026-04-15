@@ -127,9 +127,11 @@ class UniversalLLMAdapter
 	 *
 	 * @param string $sys System prompt
 	 * @param string $msg User message
+	 * @param string $mode Response mode (default: text)
+	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callAnthropic(string $sys, string $msg, string $mode = 'text'): ?string
+	private function callAnthropic(string $sys, string $msg, string $mode = 'text')
 	{
 
 		$url = $this->baseUrl . (strpos($this->baseUrl, '/messages') === false ? '/messages' : '');
@@ -151,9 +153,11 @@ class UniversalLLMAdapter
 	 *
 	 * @param string $sys System prompt
 	 * @param string $msg User message
+	 * @param string $mode Response mode (default: text)
+	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callGoogle(string $sys, string $msg, string $mode = 'text'): ?string
+	private function callGoogle(string $sys, string $msg, string $mode = 'text')
 	{
 		$url = $this->baseUrl;
 
@@ -204,7 +208,7 @@ class UniversalLLMAdapter
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 
 		$res = curl_exec($ch);
-		$this->lastResponse = (string)$res;
+		$this->lastResponse = (string) $res;
 
 		if (curl_errno($ch)) {
 			$error = curl_error($ch);
@@ -213,7 +217,7 @@ class UniversalLLMAdapter
 		}
 		curl_close($ch);
 
-		$json = json_decode((string)$res, true);
+		$json = json_decode((string) $res, true);
 
 		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
 			return "Error: Invalid JSON response from API.";
