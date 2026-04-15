@@ -101,6 +101,12 @@ class ToolConversation extends McpTool
 		];
 	}
 
+	/**
+	 * Return categories this tool belongs to.
+	 * Used by the intent parser to filter available tools.
+	 *
+	 * @return array<string> List of categories (e.g., ['billing', 'commercial'])
+	 */
 	public function getCategories(): array
 	{
 		return ['global'];
