@@ -182,10 +182,10 @@ class ToolReports extends McpTool
 	 * Otherwise, if `thirdparty_name` is provided, the function searches
 	 * the Dolibarr societe table using a LIKE match and returns the first match.
 	 *
-	 * @param array{
+	 * @param array $args {
 	 *     thirdparty_id?: int|string,
 	 *     thirdparty_name?: string
-	 * } $args Input arguments.
+	 * } Input arguments.
 	 *
 	 * @return int|null Thirdparty ID if found, otherwise null.
 	 */
@@ -220,7 +220,7 @@ class ToolReports extends McpTool
 
 		$langs->loadLangs(array("main", "bills", "companies"));
 
-		$limit = isset($args['limit']) ? (int)$args['limit'] : 50;
+		$limit = isset($args['limit']) ? (int) $args['limit'] : 50;
 		$dateStart = dol_stringtotime($args['date_start']);
 		$dateEnd = dol_stringtotime($args['date_end']);
 		$socid = $this->resolveThirdparty($args);
@@ -237,7 +237,7 @@ class ToolReports extends McpTool
 		$sql .= " AND f.fk_statut IN (1, 2)";
 
 		if ($socid) {
-			$sql .= " AND f.fk_soc = " . (int)$socid;
+			$sql .= " AND f.fk_soc = " . (int) $socid;
 		}
 
 		$sql .= " ORDER BY f.datef DESC LIMIT " . ((int) $limit);
@@ -248,8 +248,7 @@ class ToolReports extends McpTool
 
 		if ($resql) {
 			while ($r = $db->fetch_object($resql)) {
-
-				$totalSum += (float)$r->total_ttc;
+				$totalSum += (float) $r->total_ttc;
 
 				// Determine Localized Status
 				$statusLabel = $langs->transnoentitiesnoconv("Unknown");
@@ -308,7 +307,7 @@ class ToolReports extends McpTool
 
 		$dateStart = dol_stringtotime($args['date_start']);
 		$dateEnd = dol_stringtotime($args['date_end']);
-		$type = isset($args['transaction_type']) ? (string)$args['transaction_type'] : 'all';
+		$type = isset($args['transaction_type']) ? (string) $args['transaction_type'] : 'all';
 
 		$socid = $this->resolveThirdparty($args);
 		if (!$socid) {
@@ -321,7 +320,7 @@ class ToolReports extends McpTool
 		if ($type == 'all' || $type == 'invoices') {
 			$queries[] = "SELECT 'Invoice' as source_type, rowid, ref, total_ttc as amount, datef as date_entry, fk_statut
 						  FROM " . MAIN_DB_PREFIX . "facture
-						  WHERE fk_soc = " . (int)$socid . " AND entity IN (" . getEntity('facture') . ")
+						  WHERE fk_soc = " . (int) $socid . " AND entity IN (" . getEntity('facture') . ")
 						  AND fk_statut IN (1, 2)";
 		}
 
@@ -329,7 +328,7 @@ class ToolReports extends McpTool
 		if ($type == 'all' || $type == 'orders') {
 			$queries[] = "SELECT 'Order' as source_type, rowid, ref, total_ttc as amount, date_commande as date_entry, fk_statut
 						  FROM " . MAIN_DB_PREFIX . "commande
-						  WHERE fk_soc = " . (int)$socid . " AND entity IN (" . getEntity('commande') . ")
+						  WHERE fk_soc = " . (int) $socid . " AND entity IN (" . getEntity('commande') . ")
 						  AND fk_statut > 0";
 		}
 
@@ -337,7 +336,7 @@ class ToolReports extends McpTool
 		if ($type == 'all' || $type == 'proposals') {
 			$queries[] = "SELECT 'Proposal' as source_type, rowid, ref, total_ttc as amount, datep as date_entry, fk_statut
 						  FROM " . MAIN_DB_PREFIX . "propal
-						  WHERE fk_soc = " . (int)$socid . " AND entity IN (" . getEntity('propal') . ")
+						  WHERE fk_soc = " . (int) $socid . " AND entity IN (" . getEntity('propal') . ")
 						  AND fk_statut > 0";
 		}
 
@@ -366,7 +365,7 @@ class ToolReports extends McpTool
 
 		if ($resql) {
 			while ($r = $db->fetch_object($resql)) {
-				$totalAmt += (float)$r->amount;
+				$totalAmt += (float) $r->amount;
 
 				$statusTxt = "";
 				$urlPath = "";
@@ -443,7 +442,7 @@ class ToolReports extends McpTool
 		$langs->loadLangs(array("main", "bills", "companies"));
 
 		$socid = $this->resolveThirdparty($args);
-		$groupBy = isset($args['group_by']) ? (string)$args['group_by'] : 'supplier';
+		$groupBy = isset($args['group_by']) ? (string) $args['group_by'] : 'supplier';
 		$dateStart = dol_stringtotime($args['date_start']);
 		$dateEnd = dol_stringtotime($args['date_end']);
 		$list = [];
@@ -455,7 +454,7 @@ class ToolReports extends McpTool
 					FROM " . MAIN_DB_PREFIX . "facture_fourn as f
 					LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid
 					WHERE f.entity IN (" . getEntity('facture_fourn') . ")
-					AND f.fk_soc = " . (int)$socid . "
+					AND f.fk_soc = " . (int) $socid . "
 					AND f.datef >= '" . $db->idate($dateStart) . "'
 					AND f.datef <= '" . $db->idate($dateEnd) . "'
 					AND f.fk_statut > 0
@@ -464,7 +463,7 @@ class ToolReports extends McpTool
 			$resql = $db->query($sql);
 			if ($resql) {
 				while ($r = $db->fetch_object($resql)) {
-					$totalSum += (float)$r->total_ttc;
+					$totalSum += (float) $r->total_ttc;
 
 					$url = DOL_URL_ROOT . "/fourn/facture/card.php?id=" . $r->rowid;
 					$refHtml = '<a href="' . $url . '">' . $r->ref . '</a>';
@@ -478,9 +477,7 @@ class ToolReports extends McpTool
 				}
 				$db->free($resql);
 			}
-		}
-		// Global Grouped Report
-		else {
+		} else {  // Global Grouped Report
 			$sqlGroup = "";
 			$colName = "";
 
@@ -505,7 +502,7 @@ class ToolReports extends McpTool
 			$resql = $db->query($sql);
 			if ($resql) {
 				while ($r = $db->fetch_object($resql)) {
-					$totalSum += (float)$r->total_amount;
+					$totalSum += (float) $r->total_amount;
 					$list[] = [
 						$colName => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
 						$langs->transnoentitiesnoconv("Number") => $r->count_inv,
@@ -550,9 +547,9 @@ class ToolReports extends McpTool
 
 		$langs->loadLangs(array("products", "stocks"));
 
-		$catId = isset($args['category_id']) ? (int)$args['category_id'] : 0;
-		$warehouseId = isset($args['warehouse_id']) ? (int)$args['warehouse_id'] : 0;
-		$includeZero = isset($args['include_zero_stock']) ? (bool)$args['include_zero_stock'] : false;
+		$catId = isset($args['category_id']) ? (int) $args['category_id'] : 0;
+		$warehouseId = isset($args['warehouse_id']) ? (int) $args['warehouse_id'] : 0;
+		$includeZero = isset($args['include_zero_stock']) ? (bool) $args['include_zero_stock'] : false;
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.pmp, ";
 
@@ -592,7 +589,7 @@ class ToolReports extends McpTool
 			while ($r = $db->fetch_object($resql)) {
 				$stockVal = $r->stock_level * $r->pmp;
 				$totalValuation += $stockVal;
-				$totalItems += (int)$r->stock_level;
+				$totalItems += (int) $r->stock_level;
 
 				$url = DOL_URL_ROOT . "/product/card.php?id=" . $r->rowid;
 				$refHtml = '<a href="' . $url . '">' . $r->ref . '</a>';
@@ -646,7 +643,7 @@ class ToolReports extends McpTool
 
 		$resIncome = $db->query($sqlIncome);
 		$objIncome = $db->fetch_object($resIncome);
-		$income = $objIncome && $objIncome->total ? (float)$objIncome->total : 0.0;
+		$income = $objIncome && $objIncome->total ? (float) $objIncome->total : 0.0;
 
 		// Expenses (Supplier Invoices - Validated, no Drafts)
 		$sqlExpense = "SELECT SUM(total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture_fourn
@@ -657,7 +654,7 @@ class ToolReports extends McpTool
 
 		$resExpense = $db->query($sqlExpense);
 		$objExpense = $db->fetch_object($resExpense);
-		$expense = $objExpense && $objExpense->total ? (float)$objExpense->total : 0.0;
+		$expense = $objExpense && $objExpense->total ? (float) $objExpense->total : 0.0;
 
 		$net = $income - $expense;
 
