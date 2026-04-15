@@ -147,7 +147,6 @@ try {
 
 	// Batch request handling
 	if (is_array($request) && array_keys($request) === range(0, count($request) - 1)) {
-
 		// Limit batch size
 		if (count($request) > 20) {
 			http_response_code(413);
@@ -186,7 +185,6 @@ try {
 		}
 	}
 } catch (Exception $e) {
-
 	dol_syslog(
 		'[MCP Server] Fatal error: ' . $e->getMessage(),
 		LOG_ERR
