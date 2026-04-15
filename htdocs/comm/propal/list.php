@@ -334,7 +334,7 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_user = '';
-		if ($user->hasRight('societe','client','voir')) {
+		if ($user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = '';
 		}
 		$search_ref = '';
@@ -412,11 +412,11 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if (!$user->hasRight('societe','client','voir')) {
-	if(!$user->hasRight('user', 'user', 'lire')){
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (!$user->hasRight('user', 'user', 'lire')) {
 		$search_login = $user->getFullName($langs);
 	}
-}elseif(!$user->hasRight('user', 'user', 'lire')){
+} elseif (!$user->hasRight('user', 'user', 'lire')) {
 	$search_login = $user->getFullName($langs);
 }
 
