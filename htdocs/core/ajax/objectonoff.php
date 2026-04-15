@@ -129,7 +129,6 @@ if (($action == 'set') && !empty($id)) {	// Test on permission already done in h
 		print $object->error."\n";
 		foreach ($object->errors as $msg) {
 			print $msg."\n";
-			;
 		}
 
 		$db->close();
