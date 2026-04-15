@@ -31,60 +31,60 @@
  */
 abstract class McpTool
 {
-    /** @var DoliDB Database handler */
-    protected $db;
+	/** @var DoliDB Database handler */
+	protected $db;
 
-    /** @var User User object */
-    protected $user;
+	/** @var User User object */
+	protected $user;
 
-    /** @var Conf Configuration object */
-    protected $conf;
+	/** @var Conf Configuration object */
+	protected $conf;
 
-    /**
-     * Constructor.
-     *
-     * @param DoliDB $db   Database handler object
-     * @param User   $user User object
-     * @param Conf   $conf Configuration object
-     */
-    public function __construct($db, $user, $conf)
-    {
-        $this->db = $db;
-        $this->user = $user;
-        $this->conf = $conf;
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param DoliDB $db   Database handler object
+	 * @param User   $user User object
+	 * @param Conf   $conf Configuration object
+	 */
+	public function __construct($db, $user, $conf)
+	{
+		$this->db = $db;
+		$this->user = $user;
+		$this->conf = $conf;
+	}
 
-    /**
-     * Return the list of tools provided by this class.
-     *
-     * This method must be implemented by child classes to define their capabilities.
-     * It should return an array of tool definitions, typically in a JSON schema format.
-     *
-     * @return list<array<string, mixed>> Array of tool definitions.
-     */
-    abstract public function getDefinitions(): array;
+	/**
+	 * Return the list of tools provided by this class.
+	 *
+	 * This method must be implemented by child classes to define their capabilities.
+	 * It should return an array of tool definitions, typically in a JSON schema format.
+	 *
+	 * @return list<array<string, mixed>> Array of tool definitions.
+	 */
+	abstract public function getDefinitions(): array;
 
-    /**
-     * Execute a specific tool.
-     *
-     * This method must be implemented by child classes to contain the logic for
-     * executing the tools defined in `getDefinitions`.
-     *
-     * @param string               $toolName The name of the tool to execute.
-     * @param array<string, mixed> $args     Associative array of arguments for the tool.
-     *
-     * @return mixed The result of the tool execution.
-     */
-    abstract public function execute(string $toolName, array $args);
+	/**
+	 * Execute a specific tool.
+	 *
+	 * This method must be implemented by child classes to contain the logic for
+	 * executing the tools defined in `getDefinitions`.
+	 *
+	 * @param string               $toolName The name of the tool to execute.
+	 * @param array<string, mixed> $args     Associative array of arguments for the tool.
+	 *
+	 * @return mixed The result of the tool execution.
+	 */
+	abstract public function execute(string $toolName, array $args);
 
-    /**
-     * Return categories this tool belongs to.
-     * Used by the intent parser to filter available tools.
-     * 
-     * @return array<string> List of categories (e.g., ['billing', 'commercial'])
-     */
-    public function getCategories(): array
-    {
-        return ['global']; // Default
-    }
+	/**
+	 * Return categories this tool belongs to.
+	 * Used by the intent parser to filter available tools.
+	 *
+	 * @return array<string> List of categories (e.g., ['billing', 'commercial'])
+	 */
+	public function getCategories(): array
+	{
+		return ['global']; // Default
+	}
 }
