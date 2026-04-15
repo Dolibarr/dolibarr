@@ -666,9 +666,9 @@ class ToolProducts extends McpTool
 				// Fallback: Cover deficit + (30 days of burn rate OR 10 units)
 				$suggestedQty = abs($virtual_stock) + max(10, $dailyBurnRate * 30);
 			}
-		}
-		// High Urgency: Below Alert Threshold
-		elseif ($min_stock_alert > 0 && $virtual_stock < $min_stock_alert) {
+		} elseif ($min_stock_alert > 0 && $virtual_stock < $min_stock_alert) {
+			// High Urgency: Below Alert Threshold
+
 			$replenish = true;
 			$urgency = "high";
 			$reasonParts[] = "Virtual stock ({$virtual_stock}) is below the alert threshold ({$min_stock_alert}).";
@@ -684,16 +684,14 @@ class ToolProducts extends McpTool
 			} else {
 				$suggestedQty = ($min_stock_alert * 1.5) - $virtual_stock;
 			}
-		}
-		// Low Urgency: Below Desired Level
-		elseif ($desired_stock > 0 && $virtual_stock < $desired_stock) {
+		} elseif ($desired_stock > 0 && $virtual_stock < $desired_stock) {
+			// Low Urgency: Below Desired Level
 			$replenish = true;
 			$urgency = "low";
 			$reasonParts[] = "Virtual stock ({$virtual_stock}) is below the desired stock level ({$desired_stock}).";
 			$suggestedQty = $desired_stock - $virtual_stock;
-		}
-		// Adequate Stock
-		else {
+		} else {
+			// Adequate Stock
 			$reasonParts[] = "Stock levels are adequate.";
 			if ($min_stock_alert > 0) {
 				$reasonParts[] = "Virtual stock ({$virtual_stock}) is above alert threshold ({$min_stock_alert}).";
@@ -849,21 +847,23 @@ class ToolProducts extends McpTool
 	/**
 	 * Retrieves a list of all defined supplier prices for a given product or service.
 	 *
-	 * @param array{
+	 * @param array $args {
 	 *   product_id?: int|string,
 	 *   product_name?: string,
 	 *   type?: int|string
-	 * } $args Array containing 'product_id' (int) or 'product_name' (string) and optional 'type'.
+	 * } Array containing 'product_id' (int) or 'product_name' (string) and optional 'type'.
 	 *
 	 * @return array{
-	 *   product_id: int,
-	 *   product_ref: string|null,
-	 *   product_label: string,
-	 *   supplier_prices_count: int,
-	 *   supplier_prices: list<array<string, mixed>>
-	 * }|array{error: string} Result array containing product metadata and list of prices, or an error.
+	 *   product_id?: int,
+	 *   product_ref?: string|null,
+	 *   product_label?: string,
+	 *   supplier_prices_count?: int,
+	 *   supplier_prices?: array<array>
+	 * }|array{
+	 *   error?: string
+	 * } Result array containing product metadata and list of prices, or an error.
 	 */
-	private function getSupplierPrices(array $args): array
+	private function getSupplierPrices(array $args)
 	{
 		global $db;
 
