@@ -588,7 +588,7 @@ class Setup extends DolibarrApi
 		// Note: The filter is not applied in the SQL request because it must
 		// be applied to the translated names, not to the names in database.
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country as t";
-		$sql .= " WHERE 1 = 1";
+		$sql .= " WHERE rowid > 0";
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -616,13 +616,15 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$obj = $this->db->fetch_object($result);
-				if ($loadregions || $loadstates) {
-					$country = new CcountryExtended($this->db);
-					$fetchres = $country->fetch($obj->rowid, '', '', $loadregions, $loadstates);
-				} else {
-					$country = new Ccountry($this->db);
-					$fetchres = $country->fetch($obj->rowid);
+				$country = new Ccountry($this->db);
+				$fetchres = $country->fetch($obj->rowid);
+				if ($fetchres && $loadregions) {
+					$country->regions = $this->getListOfRegions("code_region", 'ASC', 0, 0, $obj->rowid);
 				}
+				if ($fetchres && $loadstates) {
+					$country->states = $this->getListOfStates("code_departement", 'ASC', 0, 0, $obj->rowid);
+				}
+
 				if ($fetchres > 0) {
 					// Translate the name of the country if needed
 					// and then apply the filter if there is one.

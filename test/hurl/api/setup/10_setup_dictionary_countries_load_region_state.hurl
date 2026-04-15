@@ -82,8 +82,8 @@ jsonpath "$[*].label" exists
 jsonpath "$[*].active" exists
 jsonpath "$[*].code_iso" exists
 jsonpath "$[*].numeric_code" exists
-jsonpath "$[*].regions" count > 0
-jsonpath "$[*].regions" exists
+jsonpath "$[*].states" count > 0
+jsonpath "$[*].states" exists
 
 # GET list of countries with both regions and states
 GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?loadregions=1&loadstates=1
