@@ -33,10 +33,10 @@ if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', 1);
 }
 if (!defined('NOREQUIREAJAX')) {
-    define('NOREQUIREAJAX', 1);
+	define('NOREQUIREAJAX', 1);
 }
 if (!defined('NOCSRFCHECK')) {
-    define('NOCSRFCHECK', 1);
+	define('NOCSRFCHECK', 1);
 }
 
 require '../../main.inc.php';
