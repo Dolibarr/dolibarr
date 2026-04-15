@@ -16,6 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+
 /**
  * \file    htdocs/ai/assistant/parse_intent.php
  * \ingroup ai
@@ -474,8 +475,22 @@ try {
 
 
 /**
- * Helper function to recursively unmask values in an array.
- * Ensures no privacy placeholders reach the actual tool execution.
+ * Recursively unmask values in a dataset.
+ *
+ * This helper walks through an array structure and applies the appropriate
+ * unmasking method on all string values. It ensures that any masked or
+ * placeholder data is restored before being used in actual tool execution.
+ *
+ * Supported guard methods:
+ * - unmask(string $value): string
+ * - unmaskAiResponse(string $value): string
+ *
+ * If both methods exist, `unmask()` takes precedence.
+ *
+ * @param mixed $data  The input data (array, string, or scalar) to process.
+ * @param object $guard An object providing unmasking methods.
+ *
+ * @return mixed The data with all string values unmasked.
  */
 function recursiveUnmaskValues($data, $guard)
 {
@@ -544,9 +559,24 @@ function isComplexScript(string $text)
 /**
  * Detect intent categories from a user query.
  *
- * @param string    $query
- * @param Translate $langs
- * @return string[]
+ * This function analyzes a natural language query and attempts to classify it
+ * into one or more predefined intent categories (e.g., billing, commercial,
+ * thirdparty, stock, project, reporting).
+ *
+ * It leverages Dolibarr translations (`$langs->trans()`) to match localized
+ * keywords, and applies additional synonym matching for Latin-based queries.
+ * For non-Latin scripts, it performs a simpler substring search.
+ *
+ * Matching strategy:
+ * - Latin queries: normalized (lowercase + unaccent) and matched using regex word boundaries.
+ * - Non-Latin queries: matched using case-insensitive substring search.
+ *
+ * Each category is detected if at least one keyword or synonym matches.
+ *
+ * @param string    $query The user input query to analyze.
+ * @param Translate $langs The Dolibarr translation object used to resolve localized keywords.
+ *
+ * @return string[] Array of detected intent categories (e.g., ['billing', 'stock']).
  */
 function classifyIntentUniversal(string $query, Translate $langs)
 {
@@ -621,11 +651,24 @@ function classifyIntentUniversal(string $query, Translate $langs)
 }
 
 /**
- * Filter tools by categories.
+ * Filter a list of tools based on active intent categories.
  *
- * @param array $allTools
- * @param array $activeCategories
- * @return array
+ * This function narrows down the available tools by matching their assigned
+ * categories against the detected intent categories. Tools tagged as "global"
+ * are always considered, but may be excluded when more specific categories
+ * are active to avoid overly generic matches.
+ *
+ * Behavior:
+ * - If no categories are provided, or only "global" is present, all tools are returned.
+ * - Tools are included if they share at least one category with the target categories.
+ * - Tools with only the "global" category are excluded when specific categories are active.
+ * - If filtering results in fewer than 3 tools, the full tool list is returned as a fallback.
+ *
+ *
+ * @param array $allTools          List of all available tools.
+ * @param array $activeCategories  Detected intent categories (e.g., ['billing', 'stock']).
+ *
+ * @return array Filtered list of tools matching the active categories.
  */
 function filterToolsProfessional(array $allTools, array $activeCategories)
 {
