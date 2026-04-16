@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  *
@@ -8,7 +9,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY, without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -17,7 +18,7 @@
  */
 
 /**
- * \file htdocs/ai/tools/crud_objects.php
+ * \file htdocs/ai/tools/crud_objects.class.php
  * \ingroup ai
  * \brief MCP Server tool for CRUD operations on Dolibarr objects.
  */
@@ -35,14 +36,9 @@ class ToolCrudObjects extends McpTool
 	 * Configuration Map.
 	 *
 	 * Defines specific field names for each object type to ensure correct data mapping.
+	 * Each entry contains: class, path, card, date_field, soc_field
 	 *
-	 * @var array<string, array{
-	 *     class: string,
-	 *     path: string,
-	 *     card: string,
-	 *     date_field: string,
-	 *     soc_field: string
-	 * }>
+	 * @var array<string, array{class:string,path:string,card:string,date_field:string,soc_field:string}>
 	 */
 	private $map = [
 		// --- CUSTOMER OBJECTS ---
@@ -104,6 +100,23 @@ class ToolCrudObjects extends McpTool
 			'date_field' => 'date_reception',
 			'soc_field' => 'socid'
 		],
+	];
+
+	/**
+	 * Permission map for CRUD operations.
+	 * Maps object types to their required Dolibarr permission (module, permission).
+	 *
+	 * @var array<string, array{0:string, 1:string}>
+	 */
+	private const PERM_MAP = [
+		'proposal'          => ['propal', 'creer'],
+		'order'             => ['commande', 'creer'],
+		'invoice'           => ['facture', 'creer'],
+		'supplier_proposal' => ['supplier_proposal', 'creer'],
+		'supplier_order'    => ['fournisseur', 'commande'],
+		'supplier_invoice'  => ['fournisseur', 'facture'],
+		'shipment'          => ['expedition', 'creer'],
+		'reception'         => ['reception', 'creer'],
 	];
 
 	/**
@@ -285,6 +298,9 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	{
 		global $user, $langs, $conf, $db, $mysoc;
 
+		// Ensure $this->user is the authenticated global user
+		$this->user = $user;
+
 		if (!$user->id) {
 			return ["error" => "User not authenticated."];
 		}
@@ -355,6 +371,12 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			return ["error" => "Configuration not found for object type: " . $type];
 		}
 
+		// Check permissions
+		$permError = $this->checkPermission($type);
+		if ($permError !== null) {
+			return $permError;
+		}
+
 		/** @var array{class: string, path: string, card: string, date_field: string, soc_field: string} $confMap */
 		$confMap = $this->map[$type];
 
@@ -372,8 +394,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			}
 			// Map 'socid' to specific soc field
 			if ($key === 'socid' && isset($confMap['soc_field'])) {
-				$field = $confMap['soc_field'];
-				$obj->{$field} = $v;
+				$key = $confMap['soc_field'];
 				$obj->fk_soc = $v; // Standard Dolibarr field for thirdparty linkage
 			}
 
@@ -405,7 +426,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Attempt Creation
-		/** @var CommonObject $obj */
 		$id = $obj->create($this->user);
 
 		if ($id <= 0) {
@@ -450,7 +470,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	/**
 	 * Add a line to a document object.
 	 *
-	 * @param object $object The Dolibarr object (Propal, Commande, Facture, etc.).
+	 * @param CommonObject $object The Dolibarr object (Propal, Commande, Facture, etc.).
 	 * @param array<string, mixed> $args {
 	 *                                   product?: string,
 	 *                                   description?: string,
@@ -466,10 +486,9 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * @return array<string, mixed>
 	 *
 	 */
-	private function processAddLine(object $object, array $args)
+	private function processAddLine(CommonObject $object, array $args)
 	{
 		global $mysoc, $conf;
-		/** @var object $object */
 		// Check status (Dolibarr objects usually use 'statut' property, 0 = Draft)
 		if (isset($object->statut) && $object->statut != 0) {
 			return ["success" => false, "error" => "Document is not in draft status"];
@@ -477,7 +496,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Ensure Thirdparty is loaded
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
-			/** @phpstan-ignore-next-line */
 			$object->fetch_thirdparty();
 		}
 
@@ -504,7 +522,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Find product
-		/** @var object|null $prod */
+		/** @var Product|null $prod */
 		$prod = null;
 
 		if ($productIdentifier !== '') {
@@ -560,22 +578,22 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		$prodType = ($prod && isset($prod->type)) ? (int) $prod->type : 0;
 
 		if ($docType === 'invoice') {
-			/** @phpstan-ignore-next-line */
+			/** @var Facture $object */
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, '', '', 0, 0, '', 'HT', 0, $prodType, -1, 0, '', 0);
 		} elseif ($docType === 'order') {
-			/** @phpstan-ignore-next-line */
+			/** @var Commande $object */
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, 'HT', 0, '', '', $prodType);
 		} elseif ($docType === 'proposal') {
-			/** @phpstan-ignore-next-line */
+			/** @var Propal $object */
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 'HT', 0, 0, $prodType);
 		} elseif ($docType === 'supplier_invoice') {
-			/** @phpstan-ignore-next-line */
+			/** @var FactureFournisseur $object */
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, '', 0, 'HT', 0, $prodType);
 		} elseif ($docType === 'supplier_order') {
-			/** @phpstan-ignore-next-line */
+			/** @var CommandeFournisseur $object */
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, 'HT', 0, '', '', $prodType);
 		} elseif ($docType === 'supplier_proposal') {
-			/** @phpstan-ignore-next-line */
+			/** @var SupplierProposal $object */
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, 'HT', 0, '', '', $prodType);
 		} elseif ($docType === 'shipment') {
 			// Shipment Logic
@@ -583,7 +601,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 				return ["success" => false, "error" => "Shipment standalone mode required to add lines manually."];
 			}
 			// addlinefree(qty, type, fk_product, fk_unit, weight, desc, weight_units)
-			/** @phpstan-ignore-next-line */
+			/** @var Expedition $object */
 			$res = $object->addlinefree($qty, 'shipping', $fkProduct, $fk_unit, 0, $desc, 0);
 		} elseif ($docType === 'reception') {
 			// Reception Logic
@@ -592,7 +610,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			}
 			require_once DOL_DOCUMENT_ROOT . '/reception/class/receptionlinebatch.class.php';
 			// addlinefree(qty, type, fk_product, fk_unit, weight, desc, weight_units)
-			/** @phpstan-ignore-next-line */
+			/** @var Reception $object */
 			$res = $object->addlinefree($qty, 'reception', $fkProduct, $fk_unit, 0, $desc, 0);
 		} else {
 			return ["success" => false, "error" => "Type $docType not supported for lines"];
@@ -642,12 +660,14 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	private function addLineItem(array $args)
 	{
+		$type = (string) $args['object_type'];
+
 		// Check Permissions
-		if (! $this->user->hasRight('societe', 'creer')) {
-			return ["success" => false, "error" => "Permission Denied"];
+		$permError = $this->checkPermission($type);
+		if ($permError !== null) {
+			return $permError;
 		}
 
-		$type = (string) $args['object_type'];
 		$parentId = (int) $args['parent_id'];
 
 		// Instantiate and Fetch the Parent Document
@@ -661,7 +681,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			return ["success" => false, "error" => "Object does not support fetching"];
 		}
 
-		// @phpstan-ignore-next-line
 		$result = $obj->fetch($parentId);
 		if ($result <= 0) {
 			return ["success" => false, "error" => "Parent document not found with ID: " . $parentId];
@@ -674,7 +693,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Call the helper logic
-		// processAddLine(object $object, array $args)
+		// processAddLine(CommonObject $object, array $args)
 		return $this->processAddLine($obj, $args);
 	}
 
@@ -783,13 +802,14 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		$type = (string) $args['object_type'];
 		$id = (int) $args['id'];
 
+		// Check permissions
+		$permError = $this->checkPermission($type);
+		if ($permError !== null) {
+			return $permError;
+		}
+
 		// Instantiate generic object based on type
 		$obj = $this->instantiate($type);
-
-		// TYPE HINTING:
-		// By telling PHPStan that $obj is a Dolibarr 'CommonObject',
-		// we no longer need to suppress errors for fetch(), delete(), or properties.
-		/** @var \CommonObject $obj */
 
 		// Fetch object
 		if ($obj->fetch($id) <= 0) {
@@ -816,14 +836,33 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	}
 
 	/**
+	 * Check if the current user has permission for the given object type.
+	 *
+	 * @param   string $type  Object type key.
+	 *
+	 * @return  array{error: string}|null  Null if allowed, error array if denied.
+	 */
+	private function checkPermission(string $type): ?array
+	{
+		if (! isset(self::PERM_MAP[$type])) {
+			return ["error" => "Unknown type for permission check: " . $type];
+		}
+		[$module, $perm] = self::PERM_MAP[$type];
+		if (! $this->user->hasRight($module, $perm)) {
+			return ["error" => "Permission denied for action on " . $type];
+		}
+		return null;
+	}
+
+	/**
 	 * Factory Helper to instantiate Dolibarr objects.
 	 *
 	 * @param   string $type  Object type key (e.g., 'proposal', 'invoice').
 	 *
-	 * @return  object        New instance of the specific Dolibarr class.
+	 * @return  CommonObject  New instance of the specific Dolibarr class.
 	 * @throws  Exception     If the type is unknown or class not found.
 	 */
-	private function instantiate(string $type): object
+	private function instantiate(string $type): CommonObject
 	{
 		global $db;
 		if (! isset($this->map[$type])) {
@@ -834,7 +873,8 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		$path = (string) $config['path'];
 		$className = (string) $config['class'];
 
-		// Include the class file
+		// Include the base class and the specific class file
+		require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 		require_once DOL_DOCUMENT_ROOT . $path;
 
 		if (! class_exists($className)) {
