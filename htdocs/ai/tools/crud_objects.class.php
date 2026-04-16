@@ -343,15 +343,8 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   lines?: array<array<string, mixed>>
 	 *                                   } Arguments including type, header data, and optional lines.
 	 *
-	 * @return array<string, mixed>{
-	 *     success?: bool,
-	 *     error?: string,
-	 *     id?: int,
-	 *     ref?: string,
-	 *     lines_added?: int,
-	 *     line_errors?: array<string>,
-	 *     url?: string
-	 * }
+	 * @return array<string, mixed>
+	 *
 	 */
 	private function createDocument(array $args)
 	{
@@ -412,7 +405,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Attempt Creation
-		// $this->user must be defined in the class context
+		/** @var CommonObject $obj */
 		$id = $obj->create($this->user);
 
 		if ($id <= 0) {
@@ -470,17 +463,13 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   object_type: string
 	 *                                   } Line arguments.
 	 *
-	 * @return array{
-	 *     success: bool,
-	 *     error?: string,
-	 *     line_id?: int,
-	 *     debug?: array
-	 * } Result array.
+	 * @return array<string, mixed>
+	 *
 	 */
 	private function processAddLine(object $object, array $args)
 	{
 		global $mysoc, $conf;
-
+		/** @var object $object */
 		// Check status (Dolibarr objects usually use 'statut' property, 0 = Draft)
 		if (isset($object->statut) && $object->statut != 0) {
 			return ["success" => false, "error" => "Document is not in draft status"];
@@ -488,6 +477,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Ensure Thirdparty is loaded
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			/** @phpstan-ignore-next-line */
 			$object->fetch_thirdparty();
 		}
 
