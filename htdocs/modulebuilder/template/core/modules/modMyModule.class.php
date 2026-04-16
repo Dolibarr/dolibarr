@@ -71,7 +71,7 @@ class modMyModule extends DolibarrModules
 		$this->descriptionlong = "MyModuleDescription";
 
 		// Enables the module for all entities (Multicompany)
-		// Can be enabled / disabled only in the main company with superadmin account
+		// Can be enabled / disabled only from the main company with superadmin account
 		// $this->core_enabled = 1;
 
 		// Author
