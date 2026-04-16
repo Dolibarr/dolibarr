@@ -47,23 +47,21 @@ while (ob_get_level()) {
 	ob_end_clean();
 }
 
-global $db, $conf, $user;
+// Security check
+if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+    http_response_code(503);
+    echo json_encode([
+        "jsonrpc" => "2.0",
+        "error" => ["code" => -32000, "message" => "MCP Server Disabled"]
+    ]);
+    exit;
+}
 
+global $db, $conf, $user;
 
 // Headers
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
-
-// Authentication
-$enabled = getDolGlobalString('AI_MCP_ENABLED');
-if (!$enabled) {
-	http_response_code(503);
-	echo json_encode([
-		"jsonrpc" => "2.0",
-		"error" => ["code" => -32000, "message" => "MCP Server Disabled"]
-	]);
-	exit;
-}
 
 $headers = function_exists('getallheaders') ? getallheaders() : [];
 $headers = array_change_key_case($headers, CASE_LOWER);
