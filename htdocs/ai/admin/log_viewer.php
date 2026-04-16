@@ -84,7 +84,7 @@ $search_array = array(
 );
 
 // Access Control
-if (!$user->admin) {
+if (!$user->admin || !isModEnabled('ai')) {
 	accessforbidden();
 }
 
