@@ -181,6 +181,13 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
+	if (isset($_POST['fk_secondary_validator_user'])) {
+		$res3 = dolibarr_set_const($db, "EXPENSEREPORT_SECONDARY_VALIDATOR_USER", GETPOST('fk_secondary_validator_user', 'int'), 'chaine', 0, '', $conf->entity);
+		if (!($res3 > 0)) {
+			$error++;
+		}
+	}
+
 	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -524,6 +531,15 @@ print '</td><td class="right">';
 print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
 print '</td></tr>';
 
+// secondary validator for expensereport request
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("SecondaryValidatorUser").'</td>';
+print '<td class="center">';
+$secondaryValidator = getDolGlobalString('EXPENSEREPORT_SECONDARY_VALIDATOR_USER');
+print $form->select_dolusers(
+	$secondaryValidator, 'fk_secondary_validator_user', 1, array(), 0, '', '', (string) $conf->entity, 0, 0, '', 0, '', 'maxwidth400');
+print '</td>';
+print "</tr>\n";
 print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');
