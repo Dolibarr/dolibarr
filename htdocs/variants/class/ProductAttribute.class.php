@@ -493,8 +493,8 @@ class ProductAttribute extends CommonObject
 
 		if (!$error) {
 			// Delete values
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element_line;
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element_line);
+			$sql .= " WHERE " . $this->db->sanitize($this->fk_element) . " = " . ((int) $this->id);
 
 			dol_syslog(__METHOD__ . ' - Delete values', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -555,8 +555,8 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT td.rowid, td.fk_product_attribute, td.ref, td.value, td.position";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element_line . " AS td";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->table_element . " AS t ON t.rowid = td." . $this->fk_element;
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element_line) . " AS td";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element) . " AS t ON t.rowid = td." . $this->db->sanitize($this->fk_element);
 		$sql .= " WHERE t.rowid = " . ((int) $this->id);
 		$sql .= " AND t.entity IN (" . getEntity('product') . ")";
 		if ($filters) {
@@ -777,8 +777,8 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT COUNT(*) AS count";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element_line;
-		$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE " . $this->db->sanitize($this->fk_element) . " = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -915,7 +915,7 @@ class ProductAttribute extends CommonObject
 			// We first search all attributes
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= " WHERE entity IN (" . getEntity('product') . ")";
-			$sql .= " ORDER BY position ASC, rowid " . $rowidorder;
+			$sql .= " ORDER BY position ASC, rowid " . preg_replace('/[^a-zA-Z]/', '', $rowidorder); // We want to keep the order of lines that have same position, so we use rowid as second sort criteria
 
 			dol_syslog(__METHOD__ . " search all attributes", LOG_DEBUG);
 			$resql = $this->db->query($sql);

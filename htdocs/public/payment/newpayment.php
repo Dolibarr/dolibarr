@@ -1178,6 +1178,10 @@ if ($source == 'order') {
 	}
 	$object = $order;
 
+	if ($object->billed) {
+		$action = "";
+	}
+
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $order->total_ttc;
 		if (GETPOST("amount", 'alpha')) {

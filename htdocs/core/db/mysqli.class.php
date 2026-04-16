@@ -806,9 +806,9 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		$infotables = array();
 
-		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+		$sanitizedtmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
 
-		$sql = "SHOW FULL COLUMNS FROM ".$tmptable.";";
+		$sql = "SHOW FULL COLUMNS FROM ".$sanitizedtmptable.";";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);

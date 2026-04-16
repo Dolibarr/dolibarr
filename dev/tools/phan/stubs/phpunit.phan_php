@@ -6,4 +6,21 @@ class TestCase {
 	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
 	}
+
+	/*
+    public function assertTrue($condition, string $message = ''): void {}
+    public function assertFalse($condition, string $message = ''): void {}
+    public function assertEquals($expected, $actual, string $message = ''): void {}
+    public function assertSame($expected, $actual, string $message = ''): void {}
+    public function assertNotNull($actual, string $message = ''): void {}
+    public function assertNull($actual, string $message = ''): void {}
+    public function assertCount(int $expectedCount, $haystack, string $message = ''): void {}
+    public function assertEmpty($actual, string $message = ''): void {}
+    public function assertNotEmpty($actual, string $message = ''): void {}
+    public function fail(string $message = ''): void {}
+	*/
+
+	public function	onNotSuccessfulTest(\PHPUnit\Framework\Throwable $t): void
+	{
+	}
 }

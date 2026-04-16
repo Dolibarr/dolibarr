@@ -1327,7 +1327,7 @@ if ($action == 'create') {
 		// Customer Bank Account
 		print "<tr><td>".$langs->trans('DebitBankAccount')."</td><td>";
 		$defaultRibId = $sourceInvoice->thirdparty->getDefaultRib();
-		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $defaultRibId, 'accountcustomerid', 'fk_soc='.$sourceInvoice->socid, 1, '', 1);
+		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $defaultRibId, 'accountcustomerid', '(fk_soc:=:'.$sourceInvoice->socid.")", 1, '', 1);
 		print "</td></tr>";
 
 		print '<script>

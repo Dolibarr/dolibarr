@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015  Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Christophe Battarel  	<christophe.battarel@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -843,7 +843,9 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     }
                 }).fail(
 					function(response) {
-						alert(response.responseText);
+						//alert(response.responseText);
+						console.warn(response.responseText);
+						Dolibarr.tools.setEventMessage(response.responseText, "errors");
 					}
 				);
             });
@@ -886,7 +888,9 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     }
                 }).fail(
 					function(response) {
-						alert(response.responseText);
+						//alert(response.responseText);
+						console.warn(response.responseText);
+						Dolibarr.tools.setEventMessage(response.responseText, "errors");
 					}
 				);
             });
@@ -918,12 +922,12 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($conf->use_javascript_ajax) || $forcenojs) {
 		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
 		if ($readonly) {
-			$url ='#';
+			$url = '#';
 		}
 		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</a>';
 		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
 		if ($readonly) {
-			$url ='#';
+			$url = '#';
 		}
 		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</a>';
 	} else {

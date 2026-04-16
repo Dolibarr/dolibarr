@@ -86,7 +86,7 @@ class TicketStats extends Stats
 	public function getNbByYear()
 	{
 		$sql = "SELECT YEAR(datec) as dm, count(*)";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= " GROUP BY dm DESC";
 		$sql .= " WHERE ".$this->where;
 
@@ -103,7 +103,7 @@ class TicketStats extends Stats
 	public function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT MONTH(datec) as dm, count(*)";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= " WHERE YEAR(datec) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -124,7 +124,7 @@ class TicketStats extends Stats
 	public function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -144,7 +144,7 @@ class TicketStats extends Stats
 	public function getAverageByMonth($year)
 	{
 		$sql = "SELECT date_format(datec,'%m') as dm, avg(".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -161,7 +161,7 @@ class TicketStats extends Stats
 	public function getAllByYear()
 	{
 		$sql = "SELECT date_format(datec,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');

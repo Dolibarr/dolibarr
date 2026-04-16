@@ -639,8 +639,8 @@ class FormWebPortal extends Form
 					}
 
 					$sqlwhere = '';
-					$sql = "SELECT " . $keyList;
-					$sql .= " FROM " . $this->db->prefix() . $InfoFieldList[0];
+					$sql = "SELECT " . $this->db->sanitize($keyList, 0, 0, 1);
+					$sql .= " FROM " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -652,8 +652,8 @@ class FormWebPortal extends Form
 
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sql .= " as main, " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]) . "_extrafields as extra";
+							$sqlwhere .= " WHERE extra.fk_object=main." . $this->db->sanitize($InfoFieldList[2]) . " AND " . $InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
@@ -964,17 +964,17 @@ class FormWebPortal extends Form
 				}
 			}
 
-			$sql = "SELECT " . $keyList;
+			$sql = "SELECT " . $this->db->sanitize($keyList);
 			$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE " . $selectkey . " = 0";
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE " . $selectkey . " = " . ((int) $value);
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = " . ((int) $value);
 			} else {
-				$sql .= " WHERE " . $selectkey . " = '" . $this->db->escape($value) . "'";
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = '" . $this->db->escape($value) . "'";
 			}
 
 			dol_syslog(__METHOD__ . ' type=sellist', LOG_DEBUG);
@@ -1072,8 +1072,8 @@ class FormWebPortal extends Form
 				}
 			}
 
-			$sql = "SELECT " . $keyList;
-			$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+			$sql = "SELECT " . $this->db->sanitize($keyList);
+			$sql .= ' FROM ' . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1232,9 +1232,9 @@ class FormWebPortal extends Form
 		$out = "
 					<script>
 					$(document).ready(function () {
-						$('#" . $htmlName . "').select2({
+						$('#" . dol_escape_js($htmlName) . "').select2({
 							ajax: {
-								url: '" . $ajaxUrl . "',
+								url: '" . dol_escape_js($ajaxUrl) . "',
 								dataType: 'json',
 								delay: 250, // wait 250 milliseconds before triggering the request
 								data: function (params) {
@@ -1243,7 +1243,7 @@ class FormWebPortal extends Form
 										page: params.page || 1";
 		if (!empty($ajaxData) && is_array($ajaxData)) {
 			foreach ($ajaxData as $key => $value) {
-				$out .= ", " . $key . ": '" . $value . "'";
+				$out .= ", " . preg_replace('/[^a-z0-9_]/i', '', $key) . ": '" . dol_escape_js($value) . "'";
 			}
 		}
 		$out .= "

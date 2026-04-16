@@ -1179,7 +1179,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$sql .= $where;
 	}
 	if ($sqlwhere) {
-		$sql .= " AND ".$sqlwhere;
+		$sanitizedsqlwhere = $sqlwhere;
+		$sql .= " AND ".$sanitizedsqlwhere;
 	}
 
 	//print $sql.'<br>';
@@ -2248,7 +2249,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 	$listofparentid = array();
 
 	// Get list of all id in array listofid and all parents in array listofparentid
-	$sql = "SELECT rowid, ".$fieldfkparent." as parent_id FROM ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+	$sql = "SELECT rowid, ".$db->sanitize($fieldfkparent)." as parent_id FROM ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
