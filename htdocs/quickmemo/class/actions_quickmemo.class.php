@@ -86,9 +86,14 @@ class ActionsQuickMemo extends CommonHookActions
 	 */
 	public function llxFooter($parameters, &$object, &$action, $hookmanager)
 	{
+		if (!isModEnabled('quickmemo')) {
+			return 0;
+		}
 
 		$context = Memo::getMemoContext($parameters['context']??'');
-		if (empty($context)) { return 0; }
+		if (empty($context)) {
+			return 0;
+		}
 
 		$jsConfVars = [
 			'context' => $context,
@@ -119,6 +124,9 @@ class ActionsQuickMemo extends CommonHookActions
 	 */
 	public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
+		if (!isModEnabled('quickmemo')) {
+			return 0;
+		}
 
 		if (empty($object) || !is_object($object) || !isset($object->element)) {
 			return 0;
