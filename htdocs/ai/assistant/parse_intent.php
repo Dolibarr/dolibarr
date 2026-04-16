@@ -507,10 +507,16 @@ function recursiveUnmaskValues($data, ?PrivacyGuard $guard)
 	}
 
 	if (is_array($data)) {
-		// @phan-param mixed $item @phan-return mixed
-		return array_map(function ($item) use ($guard) {
-			return recursiveUnmaskValues($item, $guard);
-		}, $data);
+		return array_map(
+			/**
+			* @param mixed $item
+			* @return mixed
+			*/
+			function ($item) use ($guard) {
+				return recursiveUnmaskValues($item, $guard);
+			},
+			$data
+		);
 	} elseif (is_string($data)) {
 		if (method_exists($guard, 'unmask')) {
 			return $guard->unmask($data);
