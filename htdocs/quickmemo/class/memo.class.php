@@ -1430,7 +1430,8 @@ class Memo extends CommonObject
 
 		// Security check
 		return array_filter($list, function ($k) {
-			return strlen($k) <= 64 && preg_match('/^[a-zA-Z0-9_]+$/', $k);
+			if (!is_string($k)) { return false; }
+			return strlen((string) $k) <= 64 && preg_match('/^[a-zA-Z0-9_]+$/', (string) $k);
 		}, ARRAY_FILTER_USE_KEY);
 	}
 
