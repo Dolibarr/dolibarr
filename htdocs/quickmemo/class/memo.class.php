@@ -1408,7 +1408,7 @@ class Memo extends CommonObject
 	/**
 	 * Get available memo context
 	 *
-	 * @return mixed|mixed[]|string[]
+	 * @return string[]
 	 */
 	public static function getAvailableMemoContext()
 	{
@@ -1425,19 +1425,16 @@ class Memo extends CommonObject
 		$object = null;
 		$reshook = $hookmanager->executeHooks('getAvailableMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
-			return $hookmanager->resArray;
+			$list = $hookmanager->resArray;
 		}
 
 		// Security check
-		/** @var array<string, mixed> $list */
 		$result = [];
-
 		foreach ($list as $k => $v) {
-			if (!is_string($k)) { continue; }
-			if (strlen($k) > 64) { continue; }
+			if (!is_string($v)) { continue; }
+			if (strlen($v) > 64) { continue; }
 			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) { continue; }
-
-			$result[$k] = $v;
+			$result[] = $v;
 		}
 
 		return $result;
