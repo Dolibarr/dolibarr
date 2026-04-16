@@ -2321,18 +2321,21 @@ class ExpenseReport extends CommonObject
 				$this->db->free($resql);
 			}
 
-			// Select des information du projet
-			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-			$sql .= " WHERE p.rowid = ".((int) $projet_id);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$objp_projet = $this->db->fetch_object($resql);
-				$this->line->projet_ref          = $objp_projet->ref_projet;
-				$this->line->projet_title        = $objp_projet->title_projet;
-				$this->db->free($resql);
+			if ($projet_id > 0) {
+				// Select des information du projet
+				$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
+				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+				$sql .= " WHERE p.rowid = ".((int) $projet_id);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					if ($this->db->num_rows($resql) > 0) {
+						$objp_projet = $this->db->fetch_object($resql);
+						$this->line->projet_ref          = $objp_projet->ref_projet;
+						$this->line->projet_title        = $objp_projet->title_projet;
+					}
+					$this->db->free($resql);
+				}
 			}
-
 			$this->applyOffset();
 			$this->checkRules();
 
