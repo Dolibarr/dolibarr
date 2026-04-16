@@ -99,7 +99,7 @@ class modQuickMemo extends DolibarrModules
 		$compatibleHooks = array_unique($compatibleHooks);
 		// Security check
 		$compatibleHooks = array_filter($compatibleHooks, function (string $k) {
-			return is_string($k) && preg_match('/^[a-zA-Z0-9_]+$/', $k);
+			return preg_match('/^[a-zA-Z0-9_]+$/', $k);
 		});
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
