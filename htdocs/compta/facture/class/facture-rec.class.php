@@ -1503,9 +1503,10 @@ class FactureRec extends CommonInvoice
 					if (!$errorforinvoice && ($facturerec->generate_pdf || $facturerec->auto_validate == 2)) {	// ->generate_pdf is 1 by default (can be edited if INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION is set to 1)
 						// We reload the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
+						$facture->fetch_thirdparty();
+
 						$outputlangs = $langs;
 						if (getDolGlobalInt('MAIN_MULTILANGS')) {
-							$facture->fetch_thirdparty();
 							if (!empty($facture->thirdparty->default_lang)) {
 								$outputlangs = new Translate('', $conf);
 								$outputlangs->setDefaultLang($facture->thirdparty->default_lang);
@@ -1513,6 +1514,7 @@ class FactureRec extends CommonInvoice
 							}
 						}
 
+						$result = 1;
 						if ($facturerec->generate_pdf) {
 							$result = $facture->generateDocument($facturerec->model_pdf, $outputlangs);
 							if ($result <= 0) {
@@ -1527,14 +1529,6 @@ class FactureRec extends CommonInvoice
 							require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 							require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 							$formmail = new FormMail($this->db);
-
-							$outputlangs = new Translate('', $conf);
-							if ($facture->thirdparty->default_lang) {
-								$outputlangs->setDefaultLang($facture->thirdparty->default_lang);
-								$outputlangs->loadLangs(array("main", "bills"));
-							} else {
-								$outputlangs = $langs;
-							}
 
 							// Select email template according to language of recipient
 							$template = $facturerec->fk_email_template;
