@@ -165,7 +165,7 @@ try {
 	$candidates = array();
 
 	// Helper function to validate a phrase without a dictionary
-	$isValidPhrase = function ($phrase) use ($dynamicStopWords) {
+	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): bool {
 		$phrase = trim($phrase);
 
 		// RULE 1: Minimum Length
@@ -507,6 +507,7 @@ function recursiveUnmaskValues($data, ?PrivacyGuard $guard)
 	}
 
 	if (is_array($data)) {
+		// @phan-param mixed $item @phan-return mixed
 		return array_map(function ($item) use ($guard) {
 			return recursiveUnmaskValues($item, $guard);
 		}, $data);
@@ -707,7 +708,7 @@ function filterToolsProfessional(array $allTools, array $activeCategories)
 		return $allTools;
 	}
 
-	return array_values($filtered);
+	return $filtered;
 }
 
 /**
