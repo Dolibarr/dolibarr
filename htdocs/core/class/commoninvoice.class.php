@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -615,7 +615,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// List of payments
 		if (empty($mode) || $mode == 1) {
-			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".($field3 ? ", ".$this->db->sanitize($field3) : "") . ($field4 ? ", ".$this->db->sanitize($field4) : "");
+			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".($field3 ? ", ".$this->db->sanitize($field3) : "") . ", ".$this->db->sanitize($field4);
 			$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
 			$sql .= " WHERE pf.".$this->db->sanitize($field)." = ".((int) $this->id);
 			$sql .= " AND pf.".$this->db->sanitize($field2)." = p.rowid";
