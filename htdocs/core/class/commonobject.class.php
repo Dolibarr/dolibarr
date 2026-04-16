@@ -12,7 +12,7 @@
  * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
  * Copyright (C) 2017-2026  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
@@ -153,40 +153,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array<string,mixed>>
-	 * @phpstan-var array<string, array{
-	 * type: string,
-	 * label: string,
-	 * enabled: int<0, 2>|string,
-	 * position: int,
-	 * visible: int<-6, 6>|string,
-	 * langfile?: string,
-	 * notnull?: int<-1, 1>,
-	 * noteditable?: int<0, 1>,
-	 * alwayseditable?: int<0, 1>|string,
-	 * default?: string|int,
-	 * index?: int<0, 1>,
-	 * foreignkey?: string,
-	 * searchall?: int<0, 1>,
-	 * isameasure?: int<0, 1>,
-	 * css?: string,
-	 * cssview?: string,
-	 * csslist?: string,
-	 * help?: string,
-	 * helplist?: string,
-	 * showoncombobox?: int<0, 4>|string,
-	 * disabled?: int<0, 1>|string,
-	 * arrayofkeyval?: array<int|string, string>,
-	 * autofocusoncreate?: int<0, 1>,
-	 * comment?: string,
-	 * copytoclipboard?: int<1, 2>,
-	 * validate?: int<0, 1>|string,
-	 * showonheader?: int<0, 1>,
-	 * searchmulti?: int<0, 1>,
-	 * picto?: string,
-	 * required?: int<0, 1>,
-	 * placeholder?: string
-	 * }>
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string|int,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),

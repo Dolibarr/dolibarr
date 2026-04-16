@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -249,7 +249,7 @@ if ($action == 'deleteproperty') {
 }
 
 if ($action == 'create') {
-	$out .= '<div class="addcustomprompt">';
+	$out = '<div class="addcustomprompt">';
 
 	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
