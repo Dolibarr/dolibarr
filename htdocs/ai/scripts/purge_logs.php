@@ -43,8 +43,13 @@ require __DIR__ . '/../../main.inc.php';
 /** @var DoliDB $db */
 
 // Security check for web access
-if (php_sapi_name() !== 'cli' && empty($user->admin)) {
-	accessforbidden('Admin access required');
+if (php_sapi_name() !== 'cli') {
+	if (!isModEnabled('ai')) {
+		accessforbidden('Module not allowed');
+	}
+	if (empty($user->admin)) {
+		accessforbidden('Admin access required');
+	}
 }
 
 $retention = getDolGlobalInt('AI_LOG_RETENTION');
