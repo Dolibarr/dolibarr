@@ -345,9 +345,12 @@ class PrivacyGuard
 
 		// Create the Regex string: "January|Feb|Μάρτιος|Page..."
 		// We use preg_quote to ensure no special characters break the regex (though rare in months).
-		$excluded_words_regex = implode('|', array_map(function ($word) {
-			return preg_quote($word, '/');
-		}, $all_excludes_array));
+		$excluded_words_regex = implode('|', array_map(
+			function (string $word): string {
+				return preg_quote($word, '/');
+			},
+			$all_excludes_array
+		));
 
 
 		// Define address keywords
