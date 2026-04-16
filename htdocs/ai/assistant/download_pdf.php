@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2026	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +33,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/tecnickcom/tcpdf/tcpdf.php';
+
+// Security check
+if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+	accessforbidden('Module or feature not allowed');
+}
 
 global $user, $langs;
 $langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'reports@reports'));
