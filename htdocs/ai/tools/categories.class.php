@@ -407,7 +407,9 @@ class ToolCategories extends McpTool
 			&& !$this->user->hasRight('produit', 'lire')
 			&& !$this->user->hasRight('societe', 'lire')
 		) {
-			return ["error" => "Permission Denied: User does not have read access to categories."];
+			return [[
+				"error" => "Permission Denied: User does not have read access to categories."
+			]];
 		}
 
 		$query = !empty($args['query']) ? trim($args['query']) : '';
@@ -429,7 +431,9 @@ class ToolCategories extends McpTool
 
 		if (!empty($scope_filter)) {
 			if (!isset($cat_type_map[$scope_filter])) {
-				return ["error" => "Invalid category scope '{$scope_filter}'. Valid scopes: " . implode(', ', array_keys($cat_type_map))];
+				return [[
+					"error" => "Invalid category scope '{$scope_filter}'. Valid scopes: " . implode(', ', array_keys($cat_type_map))
+				]];
 			}
 			$sql .= " AND c.type = " . ((int) $cat_type_map[$scope_filter]);
 		}
@@ -494,7 +498,9 @@ class ToolCategories extends McpTool
 			if (!empty($scope_filter)) {
 				$msg .= " in scope '{$scope_filter}'";
 			}
-			return ["info" => $msg . "."];
+			return [[
+				"info" => $msg . "."
+			]];
 		}
 
 		return $list;
