@@ -40,6 +40,8 @@ if (!defined('NOREQUIREHTML')) {
 
 require __DIR__ . '/../../main.inc.php';
 
+/** @var DoliDB $db */
+
 // Security check for web access
 if (php_sapi_name() !== 'cli' && empty($user->admin)) {
 	accessforbidden('Admin access required');
