@@ -815,6 +815,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$morInput.prop({disabled: true, checked: false}); */
 								$span1.addClass("member-individual-back").removeClass("nonature-back");
 								$span2.removeClass("member-company-back").addClass("nonature-back");
+								$("#phisicalinput").prop("checked", true);
 								$tdLast.addClass("fieldrequired");
 								$tdFirst.addClass("fieldrequired");
 								$tdCompany.removeClass("fieldrequired");
@@ -825,6 +826,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$morInput.prop({disabled: false, checked: true}); */
 								$span2.addClass("member-company-back").removeClass("nonature-back");
 								$span1.removeClass("member-individual-back").addClass("nonature-back");
+								$("#moralinput").prop("checked", true);
 								$tdCompany.addClass("fieldrequired");
 								$tdLast.removeClass("fieldrequired");
 								$tdFirst.removeClass("fieldrequired");
