@@ -94,7 +94,7 @@ class modMyModule extends DolibarrModules
 		$this->picto = 'generic';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
-		// If your module use the parameter "core_enabled" and you would activate the parts in all entities (Multicompany):
+		// If your module use the parameter "core_enabled" and you would like to activate the parts in all entities (Multicompany):
 		// 'xxxxxx' => array(
 		//		'data' => 1 or '/mymodule/xxx/mymodule.xxx.php',
 		//		'entity' => '0'
