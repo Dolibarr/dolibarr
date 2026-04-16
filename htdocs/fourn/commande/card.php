@@ -2034,7 +2034,8 @@ if ($action == 'create') {
 		}
 
 		// Ref supplier
-		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
+		$refsupplier = GETPOSTISSET('refsupplier') ? GETPOST('refsupplier', 'alphanohtml') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '');
+		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text" value="'.dol_escape_htmltag($refsupplier).'"></td>';
 		print '</tr>';
 
 		// Payment term
