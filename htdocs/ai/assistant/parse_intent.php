@@ -235,13 +235,14 @@ try {
 	// AI Execution
 	$intentJSON = null;
 	$confidence = 0.0;
+	$allToolsSchema = [];
 
 	if ($serviceKey && $serviceKey !== '-1') {
 		$providerUsed = $serviceKey;
 		$mcp = new McpHandler($db, $user);
 
 		// Fetch all tools
-		$allToolsSchema = $mcp->getToolsSchema();
+		$allToolsSchema = $mcp->getToolsSchema() ?? [];
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
 		$isComplex = isComplexScript($query);
@@ -388,7 +389,9 @@ try {
 
 	// Handle confirmation
 	if ($needsConfirmation) {
-		$allToolsMap = array_column($allToolsSchema, null, 'name');
+		$allToolsMap = !empty($allToolsSchema)
+			? array_column($allToolsSchema, null, 'name')
+			: [];
 		$toolDescription = $allToolsMap[$toolName]['description'] ?? 'No description available';
 		$arguments = $intentJSON['arguments'] ?? [];
 
@@ -464,8 +467,8 @@ try {
 			0.0,
 			'error',
 			$realErrorForLog,
-			$rawRequestLog ?? null,
-			$rawResponseLog ?? null
+			$rawRequestLog ?? '',
+			$rawResponseLog ?? ''
 		);
 	}
 
@@ -488,16 +491,18 @@ try {
  * If both methods exist, `unmask()` takes precedence.
  *
  * @param mixed $data  The input data (array, string, or scalar) to process.
- * @param object $guard An object providing unmasking methods.
+ * @param PrivacyGuard|null $guard An object providing unmasking methods.
  *
  * @return mixed The data with all string values unmasked.
  */
-function recursiveUnmaskValues($data, $guard)
+function recursiveUnmaskValues($data, ?PrivacyGuard $guard)
 {
+	if ($guard === null) {
+		return $data;
+	}
+
 	if (is_array($data)) {
-		return array_map(function ($item) use ($guard) {
-			return recursiveUnmaskValues($item, $guard);
-		}, $data);
+		return array_map(fn (mixed $item) => recursiveUnmaskValues($item, $guard), $data);
 	} elseif (is_string($data)) {
 		if (method_exists($guard, 'unmask')) {
 			return $guard->unmask($data);
@@ -506,6 +511,7 @@ function recursiveUnmaskValues($data, $guard)
 			return $guard->unmaskAiResponse($data);
 		}
 	}
+
 	return $data;
 }
 
@@ -665,10 +671,10 @@ function classifyIntentUniversal(string $query, Translate $langs)
  * - If filtering results in fewer than 3 tools, the full tool list is returned as a fallback.
  *
  *
- * @param array $allTools          List of all available tools.
- * @param array $activeCategories  Detected intent categories (e.g., ['billing', 'stock']).
+ * @param array<int,array<string,mixed>> $allTools          List of all available tools.
+ * @param string[] $activeCategories  Detected intent categories (e.g., ['billing', 'stock']).
  *
- * @return array Filtered list of tools matching the active categories.
+ * @return array<int,array<string,mixed>> Filtered list of tools matching the active categories.
  */
 function filterToolsProfessional(array $allTools, array $activeCategories)
 {
