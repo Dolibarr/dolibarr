@@ -96,7 +96,7 @@ class modMyModule extends DolibarrModules
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		// If your module use the parameter "core_enabled" and you would activate the parts in all entities (Multicompany):
 		// 'xxxxxx' => array(
-		//		'data' => 1 or /mymodule/xxx/mymodule.xxx.php,
+		//		'data' => 1 or '/mymodule/xxx/mymodule.xxx.php',
 		//		'entity' => '0'
 		//	),
 		// 'hooks' => array(
@@ -125,6 +125,7 @@ class modMyModule extends DolibarrModules
 			'printing' => 0,
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
+			// Set this to relative path of css file if module has its own css file
 			'css' => array(
 				//    '/mymodule/css/mymodule.css.php',
 			),
