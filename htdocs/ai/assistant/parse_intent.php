@@ -47,6 +47,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/privacy_guard.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 
+// Security check
+if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+	accessforbidden('Module or feature not allowed');
+}
+
 global $db, $user, $conf, $langs;
 
 ob_start();
