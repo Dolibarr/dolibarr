@@ -44,7 +44,7 @@ class ToolCrudObjects extends McpTool
 	 *     soc_field: string
 	 * }>
 	 */
-	private $map = [ = [
+	private $map = [
 		// --- CUSTOMER OBJECTS ---
 		'proposal' => [
 			'class' => 'Propal',
