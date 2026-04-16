@@ -502,7 +502,9 @@ function recursiveUnmaskValues($data, ?PrivacyGuard $guard)
 	}
 
 	if (is_array($data)) {
-		return array_map(fn (mixed $item) => recursiveUnmaskValues($item, $guard), $data);
+		return array_map(function ($item) use ($guard) {
+			return recursiveUnmaskValues($item, $guard);
+		}, $data);
 	} elseif (is_string($data)) {
 		if (method_exists($guard, 'unmask')) {
 			return $guard->unmask($data);
