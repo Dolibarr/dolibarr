@@ -65,6 +65,54 @@ class FormProjets extends Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
+	 * Output a combo list with the different status a ConferenceOrBoothAttendee can have
+	 * 2026 - copy of public static function multiselectarray
+	 *
+	 * @param 	string 		$htmlname 		Name of select
+	 * @param 	string[]	$selected 		Array of keys preselected
+	 * @param 	int<0,1>	$key_in_label 	1 to show key like in "[key] value"
+	 * @param 	int<0,1>	$value_as_key 	1 to use value as key
+	 * @param 	string 		$morecss 		Add more css style
+	 * @param 	int<0,1> 	$translate 		Translate and encode value
+	 * @param 	int|string 	$width 			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
+	 * @param 	string 		$moreattrib 	Add more options on select component. Example: 'disabled'
+	 * @param 	string 		$nu		 		Not used
+	 * @param 	string 		$placeholder 	String to use as placeholder
+	 * @param 	int<-1,1> 	$addjscombo 	Add js combo
+	 * @param int 			$nooutput 		No print output. Return it only.
+	 * @return string               		Return html content
+	 */
+	public function select_attendee_status_list($htmlname = 'attendeeStatusList', $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = 'maxwidth500', $translate = 0, $width = 390, $moreattrib = '', $nu = '', $placeholder = '', $addjscombo = -1, $nooutput = 0)
+	{
+		// phpcs:enable
+		global $langs, $conf, $form;
+
+		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+		$attendeestatic = new ConferenceOrBoothAttendee($this->db);
+		$statusarray = $attendeestatic->fields['status']['arrayofkeyval'];
+		$placeholder = $langs->trans("Attendees").' '.$langs->trans("Statut").' — '.$langs->trans("ExtrafieldCheckBox").' — '. $langs->trans("NoneOrSeveral");
+		$translate = 1;
+
+		$out = '';
+
+		$out .= '<!-- Begin select_attendee_status_list -->';
+		// Event attendees statuses to add from
+		$out .= '<span class="fas fa-users  em088 infobox-attendee-status pictofixedwidth" style="" title="Organized event attendee status"></span>';
+		$out .= $form->multiselectarray($htmlname, $statusarray, $selected, $key_in_label, $value_as_key, $morecss, $translate, $width, $moreattrib, $nu, $placeholder, $addjscombo);
+		$out .= $form->textwithpicto('', 'Choosing 1 or more '.$langs->trans("Statut").' will add '.$langs->trans("EmailAttendee").' of the '.$langs->trans("Event").' '.$langs->trans("Attendees").' with the selected '.$langs->trans("Statut"));
+		$out .= '<!-- End select_attendee_status_list -->';
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		} else {
+			return $out;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
 	 * Output a combo list with projects qualified for a third party / user
 	 *
 	 * @param int 					$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
