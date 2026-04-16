@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
@@ -133,6 +133,24 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
+// Security
+if (!empty($user->socid)) {
+	accessforbidden();
+}
+
+$permissiontoadd = 1;
+$permissiontoedit = ($user->admin ? 1 : 0);
+$permissiontodelete = ($user->admin ? 1 : 0);
+
+$tmpmailtemplate = new CEmailTemplate($db);
+if ($rowid > 0) {
+	$result = $tmpmailtemplate->fetch($rowid);
+	if ($tmpmailtemplate->fk_user == $user->id) {
+		$permissiontoedit = 1;
+		$permissiontodelete = 1;
+	}
+}
+
 // Old way to define field.
 
 // Name of SQL tables of dictionaries
@@ -167,9 +185,11 @@ $tabfieldinsert[25] .= ',entity'; // Must be at end because not into other array
 // List of help for fields
 // Set MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES to allow edit of template for lines
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-$formmail = new FormMail($db);
 if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
-	$tmp = FormMail::getAvailableSubstitKey('formemail');
+	$targetobject = fetchObjectByElement(0, $tmpmailtemplate->type_template);
+
+	$tmp = FormMail::getAvailableSubstitKey('formemail', $targetobject);
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -178,7 +198,10 @@ if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 		$helpsubstitforlines .= $key.' -> '.$val.'<br>';
 	}
 } else {
-	$tmp = FormMail::getAvailableSubstitKey('formemailwithlines');
+	$targetobject = fetchObjectByElement(0, $tmpmailtemplate->type_template);
+
+	$tmp = FormMail::getAvailableSubstitKey('formemailwithlines', $targetobject);
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -219,6 +242,12 @@ if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
 }
 if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
+}
+if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendExpenseReport'));
+}
+if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
+	$elementList['holiday'] = img_picto('', 'holiday', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendLeaves'));
 }
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
@@ -266,9 +295,6 @@ if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
-if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
-	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToExpenseReport'));
-}
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
@@ -293,23 +319,6 @@ if ($reshook == 0) {
 $error = 0;
 
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
-
-// Security
-if (!empty($user->socid)) {
-	accessforbidden();
-}
-
-$permissiontoadd = 1;
-$permissiontoedit = ($user->admin ? 1 : 0);
-$permissiontodelete = ($user->admin ? 1 : 0);
-if ($rowid > 0) {
-	$tmpmailtemplate = new CEmailTemplate($db);
-	$tmpmailtemplate->fetch($rowid);
-	if ($tmpmailtemplate->fk_user == $user->id) {
-		$permissiontoedit = 1;
-		$permissiontodelete = 1;
-	}
-}
 
 
 /*
@@ -410,7 +419,7 @@ if (empty($reshook)) {
 		// If previous test is ok action is add, we add the line
 		if ($ok && GETPOST('actionadd')) {
 			// Add new entry
-			$sql = "INSERT INTO ".$tabname[25]." (";
+			$sql = "INSERT INTO ".$db->sanitize($tabname[25])." (";
 			// List of fields
 			$sql .= $tabfieldinsert[25];
 			$sql .= ", active, enabled)";
@@ -504,7 +513,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Modify entry
-				$sql = "UPDATE ".$tabname[25]." SET ";
+				$sql = "UPDATE ".$db->sanitize($tabname[25])." SET ";
 				// Modify value of fields
 				$i = 0;
 				foreach ($listfieldmodify as $field) {
@@ -592,7 +601,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {       // delete
 		$rowidcol = "rowid";
 
-		$sql = "DELETE from ".$tabname[25]." WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql = "DELETE from ".$db->sanitize($tabname[25])." WHERE rowid = ".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
 			$sql .= " AND fk_user = ".((int) $user->id);
 		}
@@ -611,7 +620,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -623,7 +632,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -790,8 +799,8 @@ if ($action == 'create') {
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$css = "left";

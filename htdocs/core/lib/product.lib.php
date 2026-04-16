@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +26,15 @@
  */
 
 /**
- * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de functions de base pour le module produit et service
- * \ingroup	product
+ * \file       	htdocs/core/lib/product.lib.php
+ * \brief      	Set of functions for the module product and service
+ * \ingroup		product
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Product	$object		Object related to tabs
+ * @param   Product				$object					Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
@@ -111,9 +111,18 @@ function product_prepare_head($object)
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/composition/card.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 
-		$nbFatherAndChild = $object->hasFatherOrChild();
-		if ($nbFatherAndChild > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
+		$nbFather = $object->hasFatherOrChild(-1);
+		$nbChild = $object->hasFatherOrChild(1);
+		if ($nbFather > 0 || $nbChild > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			if ($nbFather) {
+				$head[$h][1] .= $nbFather;
+			}
+			$head[$h][1] .= ($nbFather && $nbChild) ? '+' : '';
+			if ($nbChild) {
+				$head[$h][1] .= $nbChild;
+			}
+			$head[$h][1] .= '</span>';
 		}
 		$head[$h][2] = 'subproduct';
 		$h++;
@@ -163,14 +172,14 @@ function product_prepare_head($object)
 			$h++;
 		}
 	}
-	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+	if (getDolGlobalString('MAIN_ENABLE_PRODUCTS_CONTACTS_TAB')) {
 		$objectsrc = $object;
-		if ($object->origin == 'product' && $object->origin_id > 0) {
+		if ($object->origin_type == 'product' && $object->origin_id > 0) {
 			$objectsrc = new Product($db);
 			$objectsrc->fetch($object->origin_id);
 		}
 		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT."/product/contact.php?id=".$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -250,8 +259,33 @@ function product_prepare_head($object)
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/messaging.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of product count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_product_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_element = ".((int) $object->id);
+			$sql .= " AND elementtype = 'product'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
@@ -353,6 +387,7 @@ function product_admin_prepare_head()
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
+	$extrafields->fetch_name_optionals_label('product_lang');
 	$extrafields->fetch_name_optionals_label('product_price');
 	$extrafields->fetch_name_optionals_label('product_customer_price');
 	$extrafields->fetch_name_optionals_label('product_fournisseur_price');
@@ -389,6 +424,18 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	// Multilangs Extrafields
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lang_extrafields.php');
+		$head[$h][1] = $langs->trans("TranslationsExtrafields");
+		$nbExtrafields = isset($extrafields->attributes['product_lang']['count']) ? $extrafields->attributes['product_lang']['count'] : 0;
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'translationAttributes';
+		$h++;
+	}
+
 	// Extrafields for price levels
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_price_extrafields.php');
@@ -401,7 +448,7 @@ function product_admin_prepare_head()
 		$h++;
 	}
 
-	//Extrafields for price per customer
+	// Extrafields for price per customer
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php');
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");

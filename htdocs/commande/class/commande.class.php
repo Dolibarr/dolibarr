@@ -13,7 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,12 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var ?int Thirdparty ID
+	 * @var string 	Ref of order
+	 */
+	public $ref;
+
+	/**
+	 * @var ?int 	Thirdparty ID
 	 */
 	public $socid;
 
@@ -115,7 +120,7 @@ class Commande extends CommonOrder
 	public $ref_customer;
 
 	/**
-	 * @var int Contact ID
+	 * @var int 	Contact ID
 	 */
 	public $contactid;
 
@@ -629,15 +634,15 @@ class Commande extends CommonOrder
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->commande->multidir_output[$this->entity].'/'.$oldref;
-				$dirdest = $conf->commande->multidir_output[$this->entity].'/'.$newref;
+				$dirsource = getMultidirOutput($this).'/'.$oldref;
+				$dirdest = getMultidirOutput($this).'/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->commande->multidir_output[$this->entity].'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($dirdest.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -1041,7 +1046,7 @@ class Commande extends CommonOrder
 		$sql .= ", multicurrency_tx";
 		$sql .= ", import_key";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".((int) $user->id);
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".($user->id > 0 ? ((int) $user->id) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
@@ -1111,7 +1116,7 @@ class Commande extends CommonOrder
 					if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 						$originid = $line->origin_id;
 						$origintype = empty($line->origin_type) ? $line->origin : $line->origin_type;
-					} else {
+					} else {	// old but bugged version (we store id of line and type of parent object)
 						$originid = $line->id;
 						$origintype = $this->element;
 					}
@@ -1715,14 +1720,14 @@ class Commande extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpproduct = new Product($this->db);
 				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
+				if (abs((float) $qty) < $tmpproduct->packaging) {
 					$qty = (float) $tmpproduct->packaging;
-					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
-						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+					if (!empty($tmpproduct->packaging) && (float) price2num(fmod((float) $qty, (float) $tmpproduct->packaging), 'MS')) {
+						$coeff = intval(abs((float) $qty) / $tmpproduct->packaging) + 1;
 						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
-						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 					}
 				}
 			}
@@ -1796,8 +1801,13 @@ class Commande extends CommonOrder
 			$this->line->total_localtax2 = (float) $total_localtax2;
 			$this->line->total_ttc = (float) $total_ttc;
 			$this->line->special_code = $special_code;
+			if (empty($qty) && empty($special_code)) {
+				$this->line->special_code = 3;
+			}
 			$this->line->origin = $origin;
+			$this->line->origin_type = $origin;
 			$this->line->origin_id = $origin_id;
+
 			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->fk_unit = $fk_unit;
 
@@ -1844,9 +1854,10 @@ class Commande extends CommonOrder
 
 						$this->lines[] = $this->line;
 					} else {
-						foreach ($this->lines as $line) {
-							if ($line->id == $origin_id) {
-								$this->line->extraparams = $line->extraparams;
+						// Loop on all lines of parent object
+						foreach ($this->lines as $tmpline) {
+							if ($tmpline->id == $origin_id && $tmpline->element = $origin) {
+								$this->line->extraparams = $tmpline->extraparams;
 								$this->line->setExtraParameters();
 							}
 						}
@@ -2146,7 +2157,7 @@ class Commande extends CommonOrder
 		$result = $remise->fetch($idremise);
 
 		if ($result > 0) {
-			if ($remise->fk_facture) {	// Protection against multiple submission
+			if ($remise->fk_facture) {	// Protection against multiple submissions
 				$this->error = $langs->trans("ErrorDiscountAlreadyUsed");
 				$this->db->rollback();
 				return -5;
@@ -2156,7 +2167,7 @@ class Commande extends CommonOrder
 
 			$line->fk_commande = $this->id;
 			$line->fk_remise_except = $remise->id;
-			$line->desc = $remise->description; // Description ligne
+			$line->desc = $remise->description; // Description for the order line
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
 			$line->subprice = -(float) $remise->amount_ht;
@@ -3157,8 +3168,11 @@ class Commande extends CommonOrder
 			if (empty($remise_percent)) {
 				$remise_percent = 0;
 			}
-			if (empty($special_code) || $special_code == 3) {
-				$special_code = 0;
+			if (empty($qty) && empty($special_code)) {
+				$special_code = 3; // Set option tag
+			}
+			if (!empty($qty) && $special_code == 3) {
+				$special_code = 0; // Remove option tag
 			}
 			if (empty($ref_ext)) {
 				$ref_ext = '';
@@ -3277,14 +3291,15 @@ class Commande extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
+					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
 					if (!empty($this->line->packaging)
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
+						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
 			}
@@ -4307,5 +4322,165 @@ class Commande extends CommonOrder
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
 	{
 		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
+	}
+
+	/**
+	 * Compute shippable status and tooltip/icon for the order.
+	 *
+	 * @param array<mixed> $options Extra options (reserved for future use)
+	 * @return  array<string,mixed>        Array with keys: has_product, shippable, texticon, textinfo, warning
+	 * /
+	 */
+	public function getShippableInfos(array $options = array()) : array
+	{
+		global $conf, $langs;
+
+		$langs->loadLangs(array('orders', 'sendings', 'stocks', 'products'));
+
+		$result = array(
+			'has_product' => false,
+			'shippable'   => false,
+			'texticon'    => '',
+			'textinfo'    => '',
+			'warning'     => false,
+		);
+
+		// Requested naming for statuses
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_CLOSED) {
+			return $result;
+		}
+
+
+		$genericCommande = $this;
+		$genericProduct = new Product($this->db);
+
+
+		$productstatcache = array();
+		$productstatcachevirtual = array();
+
+
+		$genericCommande->getLinesArray();     // Load array ->lines
+		$genericCommande->loadExpeditions();   // Load array ->expeditions
+
+		$notshippable = 0;
+		$has_reliquat = 0;
+		$warning = 0;
+		$textinfo = '';
+		$textwarning = '';
+		$nbprod = 0;
+
+		$genericProduct = new Product($this->db);
+
+		$numlines = count($genericCommande->lines);
+		for ($lig = 0; $lig < $numlines; $lig++) {
+			$orderLine = $genericCommande->lines[$lig]; // @phan-var-force OrderLine $orderLine
+
+			if (isset($genericCommande->expeditions[$orderLine->id])) {
+				$reliquat = $orderLine->qty - $genericCommande->expeditions[$orderLine->id];
+			} else {
+				$reliquat = $orderLine->qty;
+			}
+
+			if ($orderLine->product_type == 0 && $orderLine->fk_product > 0) { // product, not service
+				$nbprod = 1;
+
+				if (empty($productstatcache[$orderLine->fk_product])) {
+					$genericProduct->fetch($orderLine->fk_product);
+					$genericProduct->load_stock('nobatch,warehouseopen'); // loadvirtualstock included
+
+					$productstatcache[$orderLine->fk_product]['stockreel'] = $genericProduct->stock_reel;
+					$productstatcachevirtual[$orderLine->fk_product]['stockreel'] = $genericProduct->stock_theorique;
+				}
+
+				$genericProduct->stock_reel      = $productstatcache[$orderLine->fk_product]['stockreel'];
+				$genericProduct->stock_theorique = $productstatcachevirtual[$orderLine->fk_product]['stockreel'];
+
+				if ($reliquat > 0) {
+					$has_reliquat = 1;
+					if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {
+						$textinfo .= $reliquat . ' x ' . $orderLine->product_ref . '&nbsp;' . dol_trunc($orderLine->product_label, 20);
+						$textinfo .= ' - ' . $langs->trans("Stock") . ': <span class="' . ($genericProduct->stock_reel >= $reliquat ? 'ok' : 'error') . '">' . $genericProduct->stock_reel . '</span>';
+						$textinfo .= ' - ' . $langs->trans("VirtualStock") . ': <span class="' . ($genericProduct->stock_theorique >= $reliquat ? 'ok' : 'error') . '">' . $genericProduct->stock_theorique . '</span>';
+						if ($reliquat != $orderLine->qty) {
+							$textinfo .= ' <span class="opacitymedium">' . $langs->trans("QtyInOtherShipments") . ' ' . ($orderLine->qty - $reliquat) . '</span>';
+						}
+						$textinfo .= '<br>';
+					} else {
+						// BUGGED CODE (kept for backward compatibility and hidden conf)
+						$stockorder = 0;
+						$stockordersupplier = 0;
+
+						if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+							if (isModEnabled('order')) {
+								if (empty($productstatcache[$orderLine->fk_product]['statsordercustomer'])) {
+									$genericProduct->fetch($orderLine->fk_product);
+									$genericProduct->load_stats_commande(0, '1,2');
+									$productstatcache[$orderLine->fk_product]['statsordercustomer'] = $genericProduct->stats_commande['qty'];
+								}
+								$genericProduct->stats_commande['qty'] = $productstatcache[$orderLine->fk_product]['statsordercustomer'];
+								$stockorder = $genericProduct->stats_commande['qty'];
+
+								if (isModEnabled('supplier_order')) {
+									if (empty($productstatcache[$orderLine->fk_product]['statsordersupplier'])) {
+										$genericProduct->load_stats_commande_fournisseur(0, '3');
+										$productstatcache[$orderLine->fk_product]['statsordersupplier'] = $genericProduct->stats_commande_fournisseur['qty'];
+									}
+									$genericProduct->stats_commande_fournisseur['qty'] = $productstatcache[$orderLine->fk_product]['statsordersupplier'];
+									$stockordersupplier = $genericProduct->stats_commande_fournisseur['qty'];
+								}
+							}
+						}
+
+						$textinfo .= $reliquat . ' x ' . $orderLine->ref . '&nbsp;' . dol_trunc($orderLine->product_label, 20);
+						$textinfo .= ' ' . $langs->trans("Available") . '&nbsp;&nbsp;' . $genericProduct->stock_reel . '..' . $stockorder;
+
+						if ($stockorder && $genericProduct->stock_reel < ($genericProduct->stock_reel - $stockorder + $reliquat)) {
+							$warning++;
+							$textwarning .= '<span class="warning">' . $langs->trans("Available") . '&nbsp;&nbsp;' . $genericProduct->stock_reel . '..' . $stockorder . '</span>';
+						} else {
+							if ($reliquat > $genericProduct->stock_reel) {
+								$textinfo .= ' <span class="warning">' . $langs->trans("Available") . '&nbsp;&nbsp;' . $genericProduct->stock_reel . '</span>';
+							} else {
+								$textinfo .= ' <span class="ok">' . $langs->trans("Available") . '&nbsp;&nbsp;' . $genericProduct->stock_reel . '</span>';
+							}
+						}
+
+						if (isModEnabled('supplier_order')) {
+							$textinfo .= '&nbsp;' . $langs->trans("SupplierOrder") . '&nbsp;&nbsp;' . $stockordersupplier;
+						}
+						if ($reliquat != $orderLine->qty) {
+							$textinfo .= ' <span class="opacitymedium">' . $langs->trans("QtyInOtherShipments") . ' ' . ($orderLine->qty - $reliquat) . '</span>';
+						}
+						$textinfo .= '<br>';
+					}
+
+					if ($reliquat > $genericProduct->stock_reel) {
+						$notshippable++;
+					}
+				}
+			}
+		}
+
+		if ($nbprod) {
+			if (!$has_reliquat) {
+				$texticon = img_picto('', 'statut5', '', 0, 0, 0, '', 'paddingleft');
+				$textinfo = $texticon . ' ' . $langs->trans("Shipped");
+				$result['shippable'] = true;
+			} elseif ($notshippable) {
+				$texticon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
+				$textinfo = $texticon . ' ' . $langs->trans("NonShippable") . '<br>' . $textinfo;
+				$result['shippable'] = false;
+			} else {
+				$texticon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
+				$textinfo = $texticon . ' ' . $langs->trans("Shippable") . '<br>' . $textinfo;
+				$result['shippable'] = true;
+			}
+			$result['has_product'] = true;
+			$result['texticon'] = $texticon;
+			$result['textinfo'] = $textinfo;
+			$result['warning'] = !empty($warning);
+		}
+
+		return $result;
 	}
 }

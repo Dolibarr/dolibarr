@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
- *  Renvoi une version en chaine depuis une version en tableau
+ *  Return a version in a string from a version into an array
  *
- *  @param		array<int<0,2>,int|string>		$versionarray		Tableau de version (vermajeur,vermineur,autre)
- *  @return     string        			      	Chaine version
+ *  @param		array<int<0,2>,int|string>		$versionarray		Array of version (vermajeur,vermineur,autre)
+ *  @return     string        			      						String version
  *  @see versioncompare()
  */
 function versiontostring($versionarray)
@@ -553,7 +553,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		});
 		</script>';
 		if (count($arraysql)) {
-			print ' - <a class="trforrunsqlshowhide'.$keyforsql.' reposition" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
+			print ' - <a class="reposition trforrunsqlshowhide'.$keyforsql.' reposition" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
 		} else {
 			print ' - <span class="opacitymedium">'.$langs->trans("ScriptIsEmpty").'</span>';
 		}
@@ -580,7 +580,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			Return integer <0 if KO, >0 if OK
  *
- *	@see		dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
+ *	@see		getDolGlobalString(), dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_del_const($db, $name, $entity = 1)
 {
@@ -627,25 +627,26 @@ function dolibarr_del_const($db, $name, $entity = 1)
 }
 
 /**
- *	Get the value of a setup constant from database
+ *	Get the value of a setup constant from database.
+ *  This method is used only when you need toget a constant and can't use getDolGlobalXXX method because you need a constant that is saved
+ *  into another entity.
  *
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    int			$entity		Multi company id
  *	@return     string      			Value of constant
  *
- *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
+ *	@see		getDolGlobalString(), dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_get_const($db, $name, $entity = 1)
 {
 	$value = '';
 
-	$sql = "SELECT ".$db->decrypt('value')." as value";
+	$sql = "SELECT ".$db->sanitize($db->decrypt('value'))." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name);
+	$sql .= " WHERE name = '".$db->escape($db->encrypt($name, 0))."'";
 	$sql .= " AND entity = ".((int) $entity);
 
-	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -670,7 +671,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    int			$entity		Multi company id (0 means all entities)
  *	@return     int         			-1 if KO, 1 if OK
  *
- *	@see		dolibarr_del_const(), dolibarr_get_const(), dol_set_user_param()
+ *	@see		getDolGlobalString(), dolibarr_del_const(), dolibarr_get_const(), dol_set_user_param()
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
@@ -1189,10 +1190,11 @@ function purgeSessions($mysessionid)
  *
  *  @param      string		$value      			Name of module to activate (modModuleName)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
- * 	@param		int			$noconfverification		Remove verification of $conf variable for module
+ * 	@param		int			$noconfverification		Remove verification of $conf->global->MODULE_NAME variable for module
+ *  @param		string		$options				Option for init
  *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value, $withdeps = 1, $noconfverification = 0)
+function activateModule($value, $withdeps = 1, $noconfverification = 0, $options = '')
 {
 	global $db, $langs, $conf, $mysoc;
 
@@ -1255,7 +1257,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		}
 	}
 
-	$result = $objMod->init(); // Enable module
+	$result = $objMod->init($options); // Enable module
 
 	if ($result <= 0) {
 		$ret['errors'][] = $objMod->error;
@@ -1280,7 +1282,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 						$activateerr = '';
 						foreach ($modulesdir as $dir) {
 							if (file_exists($dir.$modulestring.".class.php")) {
-								$resarray = activateModule($modulestring);
+								$resarray = activateModule($modulestring, 1, 0, $options);
 								if (empty($resarray['errors'])) {
 									$activate = true;
 								} else {
@@ -1341,6 +1343,8 @@ function unActivateModule($value, $requiredby = 1, $options = '')
 {
 	global $db;
 
+	dol_syslog("unActivateModule value=".$value, LOG_INFO);
+
 	// Check parameters
 	if (empty($value)) {
 		return 'ErrorBadParameter';
@@ -1368,6 +1372,7 @@ function unActivateModule($value, $requiredby = 1, $options = '')
 		$objMod = new $modName($db);
 		'@phan-var-force DolibarrModules $objMod';
 		/** @var DolibarrModules $objMod */
+
 		$result = $objMod->remove($options);
 		if ($result <= 0) {
 			$ret = $objMod->error;
@@ -1629,7 +1634,7 @@ function activateModulesRequiredByCountry($country_code)
 						if ($modulequalified) {
 							// Load languages files of module
 							if (isset($objMod->automatic_activation[$country_code])) {
-								activateModule($modName);
+								activateModule($modName, 1, 0);
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
@@ -2284,7 +2289,7 @@ function GetContentPolicyToArray($forceCSP)
 	foreach ($sourceCSPArr as $key => $arr) {
 		$sourceCSPArrflatten = array_merge($sourceCSPArrflatten, array_keys($arr));
 	}
-	// Gerer le problème avec data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D qui est split + problème avec button ajouter
+	// Manage the issue where the data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D string is getting split, as well as the issue with the "add" button.
 	$forceCSP = preg_replace('/;base64,/', "__semicolumnbase64__", $forceCSP);
 	$securitypolicies = explode(";", $forceCSP);
 

@@ -62,6 +62,7 @@ require_once 'filefunc.inc.php';
  * @var string $dolibarr_main_url_root
  * @var string $dolibarr_main_url_root_alt
  * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_allow_unsecured_select_in_extrafields_filter;
  * @var string|string[] $dolibarr_main_stream_to_disable
  */
 '
@@ -145,7 +146,7 @@ $conf->db->port = empty($dolibarr_main_db_port) ? '' : $dolibarr_main_db_port;
 $conf->db->name = empty($dolibarr_main_db_name) ? '' : $dolibarr_main_db_name;
 $conf->db->user = empty($dolibarr_main_db_user) ? '' : $dolibarr_main_db_user;
 $conf->db->pass = empty($dolibarr_main_db_pass) ? '' : $dolibarr_main_db_pass;
-$conf->db->type = $dolibarr_main_db_type;
+$conf->db->type = empty($dolibarr_main_db_type) ? '' : $dolibarr_main_db_type;
 $conf->db->prefix = $dolibarr_main_db_prefix;
 $conf->db->character_set = $dolibarr_main_db_character_set;
 $conf->db->dolibarr_main_db_collation = $dolibarr_main_db_collation;

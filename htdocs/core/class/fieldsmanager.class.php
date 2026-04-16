@@ -455,11 +455,10 @@ class FieldsManager
 	 */
 	public function getFieldsInfos($key, &$object, &$extrafields = null, $mode = 'view', $params = array())
 	{
-		global $langs;
-
 		$fieldInfos = null;
 
 		$patternObjectPrefix = getDolGlobalInt('MAIN_FIELDS_NEW_OBJECT_KEY_PREFIX') ? 'object_' : '';
+		$matches = array();
 		if (preg_match('/^options_(.*)/i', $key, $matches)) {
 			$fieldKey = $matches[1];
 			$fieldInfos = $this->getFieldInfosFromExtraField($object, $extrafields, $fieldKey, $mode, $params);
@@ -599,6 +598,7 @@ class FieldsManager
 		$fieldInfos->emptyOnClone = !empty($attributes['emptyonclone'][$key]);
 		$fieldInfos->langFile = $attributes['langfile'][$key] ?? '';
 		$fieldInfos->printable = !empty($attributes['printable'][$key]);
+		$fieldInfos->showintooltip = !empty($attributes['showintooltip'][$key]);
 		$fieldInfos->aiPrompt = $attributes['aiprompt'][$key] ?? '';
 		$fieldInfos->viewCss = $attributes['cssview'][$key] ?? '';
 		$fieldInfos->listCss = $attributes['csslist'][$key] ?? '';

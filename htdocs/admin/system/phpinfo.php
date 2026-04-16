@@ -53,10 +53,7 @@ if (!$user->admin) {
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_phpinfo');
 
 $title = 'InfoPHP';
-
-if (isset($title)) {
-	print load_fiche_titre($langs->trans($title), '', 'title_setup');
-}
+print load_fiche_titre($langs->trans($title), '', 'title_setup');
 
 
 // Check PHP setup is OK

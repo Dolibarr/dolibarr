@@ -152,7 +152,7 @@ class FactureStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(f.datef,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -178,7 +178,7 @@ class FactureStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(f.datef,'%Y') as dm, COUNT(*), SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -203,7 +203,7 @@ class FactureStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -229,7 +229,7 @@ class FactureStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -252,7 +252,7 @@ class FactureStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -276,8 +276,8 @@ class FactureStats extends Stats
 		global $user;
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql .= " FROM ".$this->from;
-		$sql .= " INNER JOIN ".$this->from_line." ON f.rowid = tl.fk_facture";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 0, 1)." ON f.rowid = tl.fk_facture";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -305,7 +305,7 @@ class FactureStats extends Stats
 		$endYear = (int) date('Y');
 		$startYear = $endYear - $numberYears;
 		$sql = "SELECT date_format(datef,'%Y') as dm, SUM(f.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}

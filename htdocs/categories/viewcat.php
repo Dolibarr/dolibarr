@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("categories", "compta", "mrp"));
+$langs->loadLangs(array("categories", "compta", "mrp", "stocks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -313,10 +313,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 $arrayofjs = array(
-	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
-	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js'
+	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js'
 );
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 $help_url = '';
 
@@ -606,7 +606,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			}
 
 			print '<table class="noborder centpercent">'."\n";
-			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Ref").'</td></tr>'."\n";
+			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($prods) > 0) {
 				$i = 0;
@@ -620,7 +620,22 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					print '<td class="nowrap tdtop">';
 					print $prod->getNomUrl(1);
 					print "</td>\n";
-					print '<td class="tdtop">'.dolPrintHTML($prod->label)."</td>\n";
+
+					$product_thumbnail_html = '';
+					if (!empty($prod->entity)) {
+						$product_thumbnail = $prod->show_photos('product', $conf->product->multidir_output[(int) $prod->entity], 1, 1, 0, 0, 0, 80);
+						if ($prod->nbphoto > 0) {
+							$product_thumbnail_html = $product_thumbnail;
+						}
+					}
+					print '<td class="left">' . $product_thumbnail_html . '</td>';
+					$product_stock_info = "";
+					if (isModEnabled("stock") && ($user->hasRight("stock", "read"))) {
+						$product_stock_info = "<br>" . $langs->trans("Stock") . ": " . $prod->stock_reel;
+					}
+
+					print '<td class="tdtop">' . dolPrintHTML($prod->label) . "<br>" . dolPrintHTML($prod->description) . $product_stock_info . "</td>\n";
+
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
@@ -1358,7 +1373,7 @@ if ($type == Categorie::TYPE_TICKET) {
 					print '<td class="nowrap tdtop">';
 					print $ticket->getNomUrl(1);
 					print "</td>\n";
-					print '<td class="tdtop">'.$ticket->label."</td>\n";
+					print '<td class="tdtop">'.$ticket->track_id."</td>\n";
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {

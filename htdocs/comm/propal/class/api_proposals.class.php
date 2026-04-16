@@ -136,8 +136,8 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
 		}
-		if ($id == 0) {
-			throw new RestException(400, 'No proposal with id=0 can exist');
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
+			throw new RestException(400, 'No ID or Ref provided');
 		}
 		$result = $this->propal->fetch($id, $ref, $ref_ext);
 		if (!$result) {

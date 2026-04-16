@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -1270,7 +1270,7 @@ if ($action == 'create') {
 	print '</tr>'."\n";
 
 	if ($socid > 0) {
-		// Ligne info remises tiers
+		// Third-party discount info
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 		if ($soc->remise_percent) {
 			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent).' ';
@@ -1390,10 +1390,10 @@ if ($action == 'create') {
 
 
 		if ($action == 'delete') {
-			//Confirmation de la suppression du contrat
+			// Confirm contract deletion
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("DeleteAContract"), $langs->trans("ConfirmDeleteAContract"), "confirm_delete", '', 0, 1);
 		} elseif ($action == 'valid') {
-			//Confirmation de la validation
+			// Confirm contract validation
 			$ref = substr($object->ref, 1, 4);
 			if ($ref == 'PROV' && !empty($modCodeContract->code_auto)) {
 				$numref = $object->getNextNumRef($object->thirdparty);
@@ -1403,7 +1403,7 @@ if ($action == 'create') {
 			$text = $langs->trans('ConfirmValidateContract', $numref);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ValidateAContract"), $text, "confirm_valid", '', 0, 1);
 		} elseif ($action == 'close') {
-			// Confirmation de la fermeture
+			// Confirm closing contract
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CloseAContract"), $langs->trans("ConfirmCloseContract"), "confirm_close", '', 0, 1);
 		} elseif ($action == 'activate') {
 			$formquestion = array(
@@ -1712,12 +1712,12 @@ if ($action == 'create') {
 							$description = $objp->description;
 
 							if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : '') . $text;
 								if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
 									print $form->textwithpicto('', $description);
 								}
 							} else {
-								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : ''));
 							}
 
 							// Add description in form
@@ -1831,7 +1831,7 @@ if ($action == 'create') {
 						}
 					} else {
 						// Line in mode update
-						// Ligne carac
+						// Line carac
 						print '<tr class="oddeven">';
 						print '<td>';
 						$currentLineProductId = GETPOSTISSET('idprod') ? GETPOST('idprod') : (!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0);
@@ -2015,7 +2015,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Activate");
 							if ($objp->statut == 4) {
 								$tmpaction = 'unactivateline';
-								$tmpactionpicto = 'playstop';
+								$tmpactionpicto = 'playstop.png';
 								$tmpactiontext = $langs->trans("Disable");
 							}
 							if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {
@@ -2284,7 +2284,6 @@ if ($action == 'create') {
 				$arrayofcreatebutton = array();
 				if (isModEnabled('propal') && $object->status > 0 && $soc->client > 0) {
 					$arrayofcreatebutton[] = array(
-						'attr' => array('style' => 'text-align: left;'),
 						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
 						'label' => $langs->trans('AddProp'),
 						'lang' => 'propal',

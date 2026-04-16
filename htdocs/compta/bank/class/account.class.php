@@ -10,7 +10,7 @@
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,13 @@ class Account extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';
+
+	/**
+	 * Ref
+	 *
+	 * @var string
+	 */
+	public $ref;
 
 	/**
 	 * @var	int
@@ -1403,7 +1410,6 @@ class Account extends CommonObject
 		if ($filteraccountid) {
 			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
-
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
@@ -1420,11 +1426,10 @@ class Account extends CommonObject
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
+				if ((int) $this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
 					$response->nbtodolate++;
 				}
 			}
-
 			return $response;
 		} else {
 			dol_print_error($this->db);
@@ -2572,7 +2577,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= " rappro = ".((int) $conciliated);
 		$sql .= ", num_releve = '".$this->db->escape($this->num_releve)."'";
 		if ($conciliated) {
-			$sql .= ", fk_user_rappro = ".$user->id;
+			$sql .= ", fk_user_rappro = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2621,7 +2626,7 @@ class AccountLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$newdate = $this->db->jdate($obj->datev) + (3600 * 24 * $sign);
+			$newdate = (int) $this->db->jdate($obj->datev) + (3600 * 24 * $sign);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " datev = '".$this->db->idate($newdate)."'";
@@ -2684,7 +2689,7 @@ class AccountLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$newdate = $this->db->jdate($obj->dateo) + (3600 * 24 * $sign);
+			$newdate = (int) $this->db->jdate($obj->dateo) + (3600 * 24 * $sign);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " dateo = '".$this->db->idate($newdate)."'";

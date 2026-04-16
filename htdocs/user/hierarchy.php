@@ -107,19 +107,19 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$title = $langs->trans("Users");
 }
 $arrayofjs = array(
-	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
-	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
 );
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist mod-user page-hierarchy');
 
 $filters = [];
 if (($search_status != '' && $search_status >= 0)) {
-	$filters[] = "statut = ".((int) $search_status);
+	$filters[] = "(statut:=:".((int) $search_status).")";
 }
 if ($search_employee == 1) {
-	$filters[] = "employee = 1";
+	$filters[] = "(employee:=:1)";
 }
 $sqlfilter = '';
 if (!empty($filters)) {

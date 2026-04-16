@@ -165,6 +165,17 @@ if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	unset($arrayfields['pl.eatby']);
 }
 
+if (!getDolGlobalString('STOCK_SUPPORT_SERVICES')) {
+	$usercanreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+} elseif (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$usercanreadsupplierprice = $user->hasRight('product', 'product_advance', 'read_supplier_prices') || $user->hasRight('product', 'service_advance', 'read_supplier_prices');
+} else {
+	$usercanreadsupplierprice = $user->hasRight('product', 'lire') || $user->hasRight('service', 'lire');
+}
+
+if (!$usercanreadsupplierprice) {
+	unset($arrayfields['m.price']);
+}
 
 $tmpwarehouse = new Entrepot($db);
 if ($id > 0 || !empty($ref)) {
@@ -172,6 +183,10 @@ if ($id > 0 || !empty($ref)) {
 	$id = $tmpwarehouse->id;
 }
 
+$socid = 0;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 
 // Security check
 //$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
@@ -461,22 +476,22 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 	if (!(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (empty($product_id)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if (!GETPOSTFLOAT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 	if ($id == GETPOSTINT("id_entrepot_destination")) {
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
-		$action = 'transfert';
+		$action = 'transfer';
 	}
 
 	if (isModEnabled('productbatch')) {
@@ -486,7 +501,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 		if ($product->hasbatch() && !GETPOST("batch_number")) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
 			$error++;
-			$action = 'transfert';
+			$action = 'transfer';
 		}
 	}
 
@@ -609,7 +624,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 			} else {
 				setEventMessages($product->error, $product->errors, 'errors');
 				$db->rollback();
-				$action = 'transfert';
+				$action = 'transfer';
 			}
 		}
 	}
@@ -871,7 +886,7 @@ if ($warehouse->id > 0) {
 	// Project
 	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
+		$morehtmlref .= '<br>'.img_picto('', 'project', 'class="pictofixedwidth"').$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$warehouse->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
@@ -944,9 +959,11 @@ if ($warehouse->id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Value
-	print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-	print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
-	print "</td></tr>";
+	if ($usercanreadsupplierprice) {
+		print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
+		print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+		print "</td></tr>";
+	}
 
 	// Last movement
 	$sql = "SELECT MAX(m.datem) as datem";
@@ -998,7 +1015,7 @@ if ($action == "correction") {
 }
 
 // Transfer of units
-if ($action == "transfert") {
+if ($action == "transfer") {
 	$d_eatby = GETPOSTDATE('eatby');	// used by the tpl
 	$d_sellby = GETPOSTDATE('sellby');	// used by the tpl
 	include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
@@ -1015,7 +1032,7 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	// modified by hook
 	if (empty($reshook)) {
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfer&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
@@ -1531,9 +1548,7 @@ while ($i < $imaxinloop) {
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
 			print '<td class="nowraponall">';
-			//print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 			print $object->getNomUrl(1);
-			;
 			print '</td>'; // This is primary not movement id
 		}
 		// Date
@@ -1542,8 +1557,9 @@ while ($i < $imaxinloop) {
 		}
 		// Product ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall tdoverflowmax150 cell2linesheight">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
+			print '<br><span class="opacitymedium">'.$productstatic->label.'</span>';
 			print "</td>\n";
 		}
 		// Product label
@@ -1630,12 +1646,13 @@ while ($i < $imaxinloop) {
 		}
 		// Price
 		if (!empty($arrayfields['m.price']['checked'])) {
-			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+			// Product and service differentiation, if we have permissions for only one of them
+			$displayprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
 			if ($productstatic->isService()) {
-				$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
+				$displayprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
 			}
 			print '<td class="right">';
-			if ($obj->price != 0 && $usercancreadsupplierprice) {
+			if ($obj->price != 0 && $displayprice) {
 				print price($obj->price);
 			}
 			print '</td>';
@@ -1693,7 +1710,7 @@ print '</div>'."\n";
 print '</form>'."\n";
 
 // Add number of product when there is a filter on period
-if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
+if (count($arrayofuniqueproduct) == 1 && !empty($search_date_startyear) && is_numeric($search_date_startyear)) {
 	print "<br>";
 
 	$productidselected = 0;
@@ -1701,8 +1718,8 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 1, true);
-	$dateafter = dol_get_last_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 12, true);
+	$datebefore = dol_get_first_day($search_date_startyear ? $search_date_startyear : dol_print_date(time(), "%Y"), $search_date_startmonth ? $search_date_startmonth : 1, true);
+	$dateafter = dol_get_last_day($search_date_endyear ? $search_date_endyear : dol_print_date(time(), "%Y"), $search_date_endmonth ? $search_date_endmonth : 12, true);
 	$balancebefore = $object->calculateBalanceForProductBefore($productidselected, $datebefore);
 	$balanceafter = $object->calculateBalanceForProductBefore($productidselected, $dateafter);
 

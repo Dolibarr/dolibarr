@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017-2025  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW				      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -807,7 +807,7 @@ class FactureFournisseurRec extends CommonInvoice
 		*/
 
 		$sql = 'SELECT l.rowid,';
-		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref, l.label, l.description as line_desc,';
+		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref as ref_supplier, l.label, l.description as line_desc,';
 		$sql .= ' l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except, l.vat_src_code, l.tva_tx,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc, total_localtax1, total_localtax2,';
@@ -836,7 +836,11 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->fk_facture_fourn         = $objp->fk_facture_fourn;
 				$line->fk_parent                = $objp->fk_parent_line;
 				$line->fk_product               = $objp->fk_product;
-				$line->ref_supplier             = $objp->ref;
+				$line->ref                		= $objp->product_ref; // Ref of product
+				$line->product_ref         		= $objp->product_ref; // Ref of product
+				$line->product_label       		= $objp->product_label;
+				$line->product_desc       		= $objp->product_desc;
+				$line->ref_supplier             = $objp->ref_supplier;
 				$line->label                    = $objp->label;
 				$line->description              = $objp->line_desc;
 				$line->desc                     = $objp->line_desc;
@@ -960,7 +964,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 			$fk_product 	Product/Service ID predefined
 	 * @param string 		$ref			Ref
 	 * @param string 		$label			Label
-	 * @param string 		$desc 			Description de la ligne
+	 * @param string 		$desc 			Description of the invoice line
 	 * @param float			$pu_ht			Unit price
 	 * @param float			$pu_ttc			Unit price with tax
 	 * @param float			$qty 			Quantity
@@ -1148,10 +1152,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 			$fk_product 		Product/Service ID predefined
 	 * @param string		$ref				Ref
 	 * @param string 		$label 				Label of the line
-	 * @param string 		$desc 				Description de la ligne
+	 * @param string 		$desc 				Description of the invoice line
 	 * @param float			$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param float			$qty 				Quantity
-	 * @param int 			$remise_percent 	Percentage discount of the line
+	 * @param float			$remise_percent 	Percentage discount of the line
 	 * @param float|string	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 			$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 			$txlocaltax2 		Local tax 2 rate (deprecated)

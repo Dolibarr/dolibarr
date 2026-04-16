@@ -455,7 +455,7 @@ class ConferenceOrBooth extends ActionComm
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " status = ".self::STATUS_CONFIRMED;
-		$sql .= " WHERE id = ".$this->id;
+		$sql .= " WHERE id = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -502,13 +502,6 @@ class ConferenceOrBooth extends ActionComm
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
-
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->eventorganization_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'CONFERENCEORBOOTH_UNVALIDATE');
 	}
@@ -604,6 +597,9 @@ class ConferenceOrBooth extends ActionComm
 			}
 			if ($option == 'withproject') {
 				$url .= '&withproject=1';
+			}
+			if ($option == 'thirdpartyid') {
+				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?thirdpartyid='.$this->id;
 			}
 		}
 

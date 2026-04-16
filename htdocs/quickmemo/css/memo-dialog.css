@@ -1,0 +1,276 @@
+dialog.quickmemo-modal {
+	--default-padding: 10px;
+	color: #121c2f;
+	border: none;
+	outline: none;
+	background: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	max-width: 400px;
+	max-height: 90vh;
+	width: 90%;
+	box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+dialog.quickmemo-modal.dialog-lg {
+	max-width: 800px;
+}
+
+dialog.quickmemo-modal.dialog-xl {
+	max-width: 80%;
+}
+
+dialog.quickmemo-modal.dialog-full-screen {
+	width: 80vw;
+	max-width: 95vw;
+	height: 90vh;
+	max-height: 95vh;
+}
+
+.dialog-content{
+	display: flex;
+	flex-direction: column; /* Stack header, body, and footer vertically */
+	max-height: 90vh;       /* Inherit the max-height constraint */
+}
+
+
+dialog.quickmemo-modal::backdrop {
+	background: rgba(0,0,0,0.5);
+}
+
+dialog.quickmemo-modal.--dialog-danger::backdrop {
+	background: rgba(30, 0, 0, 0.5);
+	backdrop-filter: blur(5px);
+}
+
+.quickmemo-modal-actions {
+	margin-top: 16px;
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+.quickmemo-modal-input-group{
+	margin-bottom: 10px;
+}
+.quickmemo-modal-text-input {
+	width: 100%;
+}
+
+.quickmemo-modal header{
+	flex-shrink: 0;         /* Prevent header from being squashed */
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
+
+	padding: 0;
+	margin-bottom: 20px;
+}
+
+.quickmemo-modal-title{
+	padding: 0;
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	text-align: left;
+	word-break: break-word;
+}
+
+.header-actions {
+	display: flex;
+	gap: 5px;
+	transform: translateY( calc(-1 * var(--default-padding))) translateX(calc(var(--default-padding)));
+	flex-shrink: 0; /* Empêche le bouton de s'écraser */
+}
+
+/* Scrollable Body */
+.dialog-body {
+	flex: 1 1 auto;         /* Take up all remaining vertical space */
+	overflow-y: auto;       /* Enable vertical scrolling only for this section */
+	line-height: 1.6;
+
+	/* Subtle inner shadows to indicate more content is available */
+	/* 1. Shadow that scrolls with the content (hides the fixed shadow) */
+	/* 2. Fixed shadow that stays at the top/bottom */
+	background:
+			linear-gradient(white 30%, rgba(255,255,255,0)),
+			linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+			radial-gradient(farthest-side at 50% 0, rgba(0,0,0,0.2), rgba(0,0,0,0)),
+			radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,0.2), rgba(0,0,0,0)) 0 100%;
+
+	background-repeat: no-repeat;
+	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+	background-attachment: local, local, scroll, scroll;
+}
+
+/* Custom scrollbar for a cleaner look  */
+.dialog-body::-webkit-scrollbar {
+	width: 6px;
+}
+
+.dialog-body::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,0.1);
+	border-radius: 10px;
+}
+
+.quickmemo-modal-confirm-text{
+	font-size: .875rem;
+	line-height: calc(1.25 / .875);
+}
+
+
+.dialog-btn {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+
+	height: 36px;
+	padding: 0 16px;
+
+	font-family: InterVariable, system-ui, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+
+	border-radius: 6px;
+	border: 0;
+
+	box-shadow:
+			inset 0 0 0 1px transparent,
+			0 1px 2px rgba(0, 0, 0, 0.05);
+
+	cursor: pointer;
+	transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* CANCEL */
+
+.dialog-btn.dialog-btn-secondary {
+	background: #ffffff;
+	color: #1f2433;
+
+	box-shadow:
+			inset 0 0 0 1px #d9dee6,
+			0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.dialog-btn.dialog-btn-secondary:hover {
+	background: #f5f7fa;
+}
+
+/* PRIMARY */
+
+.dialog-btn.dialog-btn-primary {
+	position: relative;
+	background: var(--colortextlink);
+	color: #fff;
+}
+
+.dialog-btn.dialog-btn-primary::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgba(0,0,0,0);
+	transition: background 0.15s;
+}
+
+.dialog-btn.dialog-btn-primary:hover::after {
+	background: rgba(0,0,0,0.1); /* léger assombrissement */
+}
+
+/* DANGER */
+
+.dialog-btn.dialog-btn-destructive {
+	background: #dc2626;
+	color: #ffffff;
+}
+
+.dialog-btn.dialog-btn-destructive:hover {
+	background: #b91c1c;
+}
+
+
+@media (min-width: 40rem) {
+	dialog.quickmemo-modal {
+		max-width: 32rem;
+	}
+}
+
+@media (min-width: 40rem) {
+	dialog.quickmemo-modal {
+		width: 100%;
+	}
+}
+
+.dialog-content footer{
+	flex-shrink: 0;         /* Keep footer size constant */
+}
+
+
+
+
+/* close btn */
+
+   /* The Close Button Design */
+.dialog-close-icon {
+   /* Reset default button styles */
+   appearance: none;
+   background: transparent;
+   border: none;
+   padding: 0;
+   cursor: pointer;
+
+   /* Perfect Circle Shape */
+   width: 28px;
+   height: 28px;
+   border-radius: 50%; /* Makes it round */
+
+   /* Content Alignment (centering the ×) */
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   /* Typography for the '×' character */
+   font-size: 20px;
+   line-height: 1;
+   font-family: Arial, sans-serif; /* Clean font for the multiplication sign */
+   color: #888; /* Subtle default color */
+
+   /* Smooth Transitions */
+   transition:
+		   background-color 0.2s ease,
+		   color 0.2s ease,
+		   transform 0.1s ease;
+
+   /* Ensure it doesn't shrink in flex headers */
+   flex-shrink: 0;
+}
+
+/* --- Interactive States --- */
+
+/* Hover State */
+.dialog-close-icon:hover {
+	background-color: rgba(0, 174, 255, 0.08);
+	color: #3599dc;
+}
+
+/* Active State (Clicking) */
+.dialog-close-icon:active {
+	transform: scale(0.92);
+	background-color: rgba(0, 0, 255, 0.15);
+}
+
+/* Focus State (Accessibility - when tabbing) */
+.dialog-close-icon:focus-visible {
+	outline: 2px solid #3599dc;
+	outline-offset: 1px;
+}

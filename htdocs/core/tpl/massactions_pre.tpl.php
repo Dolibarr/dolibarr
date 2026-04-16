@@ -56,6 +56,7 @@
  * @var ?string $uploaddir
  * @var int[] $toselect
  * @var int[] $arrayofselected
+ * @var ?string $search_all
  */
 '
 @phan-var-force string $string
@@ -65,6 +66,12 @@
 @phan-var-force ?string $uploaddir
 @phan-var-force int<0,1> $withmaindocfilemail
 @phan-var-force string $sendto
+@phan-var-force string $massaction
+@phan-var-force int[] $arrayofselected
+@phan-var-force string $trackid
+@phan-var-force string $modelmail
+@phan-var-force ?string $search_all
+@phan-var-force ?Task $taskstatic
 ';
 
 if (!empty($sall) || !empty($search_all)) {
@@ -453,6 +460,24 @@ if ($massaction == 'unsetcommercial') {
 
 if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
+}
+
+if ($massaction == 'precreatecreditnote') {
+	$text = '<br>';
+	$text .= $langs->trans("ConfirmMassCreateCreditNoteQuestion", count($toselect)) . '<br>';
+
+	// Credit note validation may trigger notifications, so display them in confirmation dialog
+	if (isModEnabled('notification')) {
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+				$notify = new Notify($db);
+				$text .= $notify->confirmMessage('BILL_VALIDATE', $objecttmp->socid, $objecttmp) . '<br>';
+			}
+		}
+	}
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassCreateCreditNote"), $text, "createcreditnote", null, 'yes', 0, 200, 500, 1);
 }
 
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)

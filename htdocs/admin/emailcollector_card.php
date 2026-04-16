@@ -178,7 +178,7 @@ if ($action == 'deletefilter') {
 if (GETPOST('addoperation', 'alpha')) {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype', 'aZ09');
-	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'restricthtml');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'alphawithlgt');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
 	$emailcollectoroperation->position = 50;
@@ -662,6 +662,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'cc' => array('label' => 'Cc', 'data-placeholder' => $langs->trans('SearchString')),
 		'bcc' => array('label' => 'Bcc', 'data-placeholder' => $langs->trans('SearchString')),
 		'replyto' => array('label' => 'ReplyTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'excludeemail' => array('label' => 'EmailCollectorExcludeEmails', 'data-placeholder' => $langs->trans('EmailCollectorExcludeEmailsPlaceholder')),
+		'excludedomain' => array('label' => 'EmailCollectorExcludeDomains', 'data-placeholder' => $langs->trans('EmailCollectorExcludeDomainsPlaceholder')),
 		'subject' => array('label' => 'Subject', 'data-placeholder' => $langs->trans('SearchString')),
 		'body' => array('label' => 'Body', 'data-placeholder' => $langs->trans('SearchString')),
 		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
