@@ -34,6 +34,11 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+// Security check
+if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+	accessforbidden('Module or feature not allowed');
+}
+
 global $langs;
 $langs->loadLangs(array("main", "other", "dict"));
 
