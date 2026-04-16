@@ -1303,12 +1303,6 @@ parameters:
 			path: ../../../htdocs/comm/action/index.php
 
 		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/action/info.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -4177,12 +4171,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formother.class.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formprojet.class.php
-
-		-
 			message: '#^Variable \$labeltoshow might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -6757,18 +6745,6 @@ parameters:
 			path: ../../../htdocs/fourn/commande/card.php
 
 		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/fourn/commande/card.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/commande/card.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
@@ -6778,12 +6754,6 @@ parameters:
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 2
-			path: ../../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: '#^Variable \$comment might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/fourn/commande/dispatch.php
 
 		-
@@ -8535,12 +8505,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/partnership/partnership_card.php
-
-		-
-			message: '#^Variable \$adht might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/partnership/partnership_card.php
 
