@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024       AWeerWolf
  * Copyright (C) 2026       Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,6 +237,10 @@ if ($object->ismultientitymanaged == 1) {
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
+			continue;
+		}
+		$field_spec = $object->fields[$key];
+		if ($field_spec === null) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
