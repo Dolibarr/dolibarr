@@ -504,7 +504,7 @@ class ToolCategories extends McpTool
 	 * Retrieves comprehensive details for a specific category.
 	 *
 	 * @param array<string, mixed> $args Array containing 'category_id' (int) or 'category_name' (string) and optional 'scope'.
-	 * @return array<string, mixed> Category details or an error array.
+	 * @return array<int, array<string, mixed>>|array<string, mixed> Category details or an error array.
 	 */
 	private function getCategoryDetails($args)
 	{
@@ -624,9 +624,15 @@ class ToolCategories extends McpTool
 		if (!empty($parents)) {
 			$path_parts = array_reverse($parents);
 			$path_parts[] = ["label" => $cat->label];
-			$full_path = implode(' > ', array_map(function ($p) {
-				return $p['label'];
-			}, $path_parts));
+			$full_path = implode(' > ', array_map(
+				/**
+				* @param array{label:string} $p
+				*/
+				function ($p) {
+					return $p['label'];
+				},
+				$path_parts
+			));
 		}
 
 		$result = [
@@ -634,7 +640,7 @@ class ToolCategories extends McpTool
 			"label" => $cat->label,
 			"description" => $cat->description,
 			"scope" => $scope_str ?? "unknown",
-			"scope_label" => $type_labels[$scope_str] ?? $scope_str ?? "Unknown",
+			"scope_label" => (isset($scope_str) && isset($type_labels[$scope_str])) ? $type_labels[$scope_str] : ($scope_str ?? "Unknown"),
 			"type_id" => $type_id,
 			"color" => $cat->color,
 			"visible" => (int) $cat->visible,
@@ -705,7 +711,7 @@ class ToolCategories extends McpTool
 		$cat = new Categorie($db);
 		$cat->label = $label;
 		$cat->description = $description;
-		$cat->type = $category_type; // Set integer type ID
+		$cat->type = (string) $category_type;
 		$cat->visible = 1;
 
 		// Set color if provided (remove # prefix if present for storage)
