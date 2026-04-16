@@ -44,7 +44,7 @@ class ToolCrudObjects extends McpTool
 	 *     soc_field: string
 	 * }>
 	 */
-	private array $map = [
+	private $map = [ = [
 		// --- CUSTOMER OBJECTS ---
 		'proposal' => [
 			'class' => 'Propal',
@@ -337,13 +337,13 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	/**
 	 * Create Document
 	 *
-	 * @param array $args {
-	 *                    object_type: string,
-	 *                    header: array<string, mixed>,
-	 *                    lines?: array<array<string, mixed>>
-	 *                    } Arguments including type, header data, and optional lines.
+	 * @param array<string, mixed> $args {
+	 *                                   object_type: string,
+	 *                                   header: array<string, mixed>,
+	 *                                   lines?: array<array<string, mixed>>
+	 *                                   } Arguments including type, header data, and optional lines.
 	 *
-	 * @return array{
+	 * @return array<string, mixed>{
 	 *     success?: bool,
 	 *     error?: string,
 	 *     id?: int,
@@ -458,17 +458,17 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Add a line to a document object.
 	 *
 	 * @param object $object The Dolibarr object (Propal, Commande, Facture, etc.).
-	 * @param array $args {
-	 *                    product?: string,
-	 *                    description?: string,
-	 *                    qty?: float|int|string,
-	 *                    quantity?: float|int|string,
-	 *                    price?: float|int|string,
-	 *                    unit_price?: float|int|string,
-	 *                    vat_rate?: float|int|string,
-	 *                    discount?: float|int|string,
-	 *                    object_type: string
-	 *                    } Line arguments.
+	 * @param array<string, mixed> $args {
+	 *                                   product?: string,
+	 *                                   description?: string,
+	 *                                   qty?: float|int|string,
+	 *                                   quantity?: float|int|string,
+	 *                                   price?: float|int|string,
+	 *                                   unit_price?: float|int|string,
+	 *                                   vat_rate?: float|int|string,
+	 *                                   discount?: float|int|string,
+	 *                                   object_type: string
+	 *                                   } Line arguments.
 	 *
 	 * @return array{
 	 *     success: bool,
