@@ -82,7 +82,7 @@ class AiRequestLog extends CommonObject
 	public $confidence;
 
 	/**
-	 * @var string Status
+	 * @var int Status
 	 */
 	public $status;
 
