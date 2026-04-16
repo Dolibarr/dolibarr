@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY, without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -91,6 +91,12 @@ class MCPServer
 		$this->requestId = $request['id'] ?? null;
 		$method = $request['method'] ?? '';
 		$params = $request['params'] ?? [];
+
+		// Per JSON-RPC 2.0 spec, the Server MUST NOT reply to a Notification (no ID).
+		// MCP explicitly requires responses for most methods, so we drop any other notifications.
+		if ($this->requestId === null && !in_array($method, ['notifications/initialized', 'ping'])) {
+			return null;
+		}
 
 		try {
 			switch ($method) {
@@ -298,11 +304,10 @@ class MCPServer
 		$args = $params['arguments'] ?? [];
 
 		// 2. Inventory Health Workflow
-		// 2. Inventory Health Workflow (secured)
 		if ($name === 'inventory_health') {
 			$prodRaw = $args['product_name'] ?? 'the product';
 
-			// anitize input (strict: allow only safe chars)
+			// Sanitize input (strict: allow only safe chars)
 			$prod = preg_replace('/[^a-zA-Z0-9_\-\. ]/', '', (string) $prodRaw);
 
 			// Fallback if empty after sanitization
@@ -354,8 +359,8 @@ class MCPServer
 	 */
 	private function successResponse($result): ?array
 	{
-		if ($this->requestId === null && in_array($method, ['tools/call'])) {
-			return $this->errorResponse(-32600, 'Notifications not allowed for this method');
+		if ($this->requestId === null) {
+			return null;
 		}
 
 		return [
@@ -375,12 +380,12 @@ class MCPServer
 	 */
 	private function errorResponse(int $code, string $message, $data = null): ?array
 	{
-		if ($this->requestId === null && in_array($method, ['tools/call'])) {
-			return $this->errorResponse(-32600, 'Notifications not allowed for this method');
+		if ($this->requestId === null) {
+			return null;
 		}
 
 		$error = ["code" => $code, "message" => $message];
-		if ($data) {
+		if ($data !== null) {
 			$error['data'] = $data;
 		}
 
