@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2011-2019      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026	    Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2025      Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	    MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +156,13 @@ if ($action == 'updateMask') {
 
 	if (!($res1 > 0) || !($res2 > 0)) {
 		$error++;
+	}
+
+	if (isset($_POST['fk_secondary_validator_user'])) {
+		$res3 = dolibarr_set_const($db, "HOLIDAY_SECONDARY_VALIDATOR_USER", GETPOST('fk_secondary_validator_user', 'int'), 'chaine', 0, '', $conf->entity);
+		if (!($res3 > 0)) {
+			$error++;
+		}
 	}
 
 	if (!$error) {
@@ -569,6 +576,16 @@ if ($conf->use_javascript_ajax) {
 }
 print "</td>";
 print "</tr>";
+
+// secondary validator for holiday request
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("SecondaryValidatorUser").'</td>';
+print '<td class="center">';
+$secondaryValidator = getDolGlobalString('HOLIDAY_SECONDARY_VALIDATOR_USER');
+print $form->select_dolusers(
+	$secondaryValidator, 'fk_secondary_validator_user', 1, array(), 0, '', '', (string) $conf->entity, 0, 0, '', 0, '', 'maxwidth400');
+print '</td>';
+print "</tr>\n";
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
