@@ -41,6 +41,11 @@ if (!defined('NOCSRFCHECK')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp.class.php';
 
+// Security check
+if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+	accessforbidden('Module or feature not allowed');
+}
+
 global $db, $user;
 
 top_httphead('application/json');
