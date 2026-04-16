@@ -49,12 +49,12 @@ while (ob_get_level()) {
 
 // Security check
 if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
-    http_response_code(503);
-    echo json_encode([
-        "jsonrpc" => "2.0",
-        "error" => ["code" => -32000, "message" => "MCP Server Disabled"]
-    ]);
-    exit;
+	http_response_code(503);
+	echo json_encode([
+		"jsonrpc" => "2.0",
+		"error" => ["code" => -32000, "message" => "MCP Server Disabled"]
+	]);
+	exit;
 }
 
 global $db, $conf, $user;
