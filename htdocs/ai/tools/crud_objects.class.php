@@ -641,7 +641,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Entry point for the 'add_line_item' tool. Adds line to an already existing object.
 	 * Instantiates the document and calls the line processing helper.
 	 *
-	 * @param array{object_type:string,parent_id:int,product_id?:int,description?:string,quantity?:float|int,unit_price?:float|int,vat_rate?:float|int} $args
+	 * @param array{object_type:string,parent_id:int,product_id?:int,description?:string,quantity?:float|int,unit_price?:float|int,vat_rate?:float|int} $args Tool arguments for adding a line item
 	 *
 	 * @return array{success:bool,line_id?:int,error?:string}
 	 *
