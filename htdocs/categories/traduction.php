@@ -3,7 +3,7 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2016  Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,6 +164,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $permissiontoadd
 		if ($key == $current_lang) {
 			$object->label       = $libelle;
 			$object->description = dol_htmlcleanlastbr($desc);
+			$object->update($user);
 		} else {
 			$object->multilangs[$key]["label"]       = $libelle;
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($desc);
