@@ -2205,7 +2205,7 @@ class Categorie extends CommonObject
 				}
 
 				// We do not save if main fields are empty
-				if ($this->multilangs[$key]["label"] || $this->multilangs[$key]["description"] || $this->multilangs[$key]["note"]) {
+				if ($this->multilangs[$key]["label"] || $this->multilangs[$key]["description"]) {
 					dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 				}
 				if (!$this->db->query($sql2)) {
