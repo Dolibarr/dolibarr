@@ -1750,7 +1750,7 @@ class Facture extends CommonInvoice
 		$deposit->multicurrency_tx = $origin->multicurrency_tx;
 		$deposit->module_source = $origin->module_source;
 		$deposit->pos_source = $origin->pos_source;
-		$deposit->model_pdf = 'crabe';
+		$deposit->model_pdf = 'sponge';
 
 		$modelByTypeConfName = 'FACTURE_ADDON_PDF_' . $deposit->type;
 
@@ -1766,6 +1766,7 @@ class Facture extends CommonInvoice
 		}
 
 		$deposit->origin = $origin->element;
+		$deposit->origin_type = $origin->element;
 		$deposit->origin_id = $origin->id;
 
 		$origin->fetch_optionals();
@@ -1774,7 +1775,7 @@ class Facture extends CommonInvoice
 			$deposit->array_options[$extrakey] = $value;
 		}
 
-		$deposit->linked_objects[$deposit->origin] = $deposit->origin_id;
+		$deposit->linked_objects[$deposit->origin_type] = $deposit->origin_id;
 
 		foreach ($overrideFields as $key => $value) {
 			$deposit->$key = $value;
@@ -5697,20 +5698,20 @@ class Facture extends CommonInvoice
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
-	 *	@param	Translate	$outputlangs	Object lang to use for translation
-	 *  @param  int<0,1>			$hidedetails    Hide details of lines
-	 *  @param  int<0,1>	$hidedesc       Hide description
-	 *  @param  int<0,1>	$hideref        Hide ref
-	 *  @param  ?array<string,mixed>	$moreparams	Array to provide more information
-	 *	@return int<-1,1>					Return integer <0 if KO, >0 if OK
+	 *	@param	string					$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
+	 *	@param	Translate				$outputlangs	Object lang to use for translation
+	 *  @param  int<0,1>				$hidedetails    Hide details of lines
+	 *  @param  int<0,1>				$hidedesc       Hide description
+	 *  @param  int<0,1>				$hideref        Hide ref
+	 *  @param  ?array<string,mixed>	$moreparams		Array to provide more information
+	 *	@return int<-1,1>								Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		$outputlangs->loadLangs(array("bills", "products"));
 
 		if (!dol_strlen($modele)) {
-			$modele = 'crabe';
+			$modele = 'sponge';
 			$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$this->type;
 
 			if (!empty($this->model_pdf)) {

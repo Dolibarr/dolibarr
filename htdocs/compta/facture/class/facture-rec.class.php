@@ -1385,9 +1385,10 @@ class FactureRec extends CommonInvoice
 	 *  @param	int<0,max>	$restrictioninvoiceid	0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int<0,1>	$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
 	 *	@param	int<0,1> 	$notrigger				Disable the trigger
+	 *  @param	int<0,1>	$forcebuilddoc			1=Force generation of PDF whatever is template generate_pdf flag.
 	 *  @return	int									0 if OK, > 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0)
+	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0, $forcebuilddoc = 0)
 	{
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1403,7 +1404,7 @@ class FactureRec extends CommonInvoice
 
 		$this->output = '';
 
-		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation);
+		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation, " forcebuilddoc=".$forcebuilddoc);
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
@@ -1501,7 +1502,7 @@ class FactureRec extends CommonInvoice
 							$errorforinvoice++;
 						}
 					}
-					if (!$errorforinvoice && ($facturerec->generate_pdf || $facturerec->auto_validate == 2)) {	// ->generate_pdf is 1 by default (can be edited if INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION is set to 1)
+					if (!$errorforinvoice && ($facturerec->generate_pdf || $forcebuilddoc || $facturerec->auto_validate == 2)) {	// ->generate_pdf is 1 by default (can be edited if INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION is set to 1)
 						// We reload the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
 						$facture->fetch_thirdparty();
@@ -1516,7 +1517,7 @@ class FactureRec extends CommonInvoice
 						}
 
 						$result = 1;
-						if ($facturerec->generate_pdf) {
+						if ($facturerec->generate_pdf || $forcebuilddoc) {
 							$result = $facture->generateDocument($facturerec->model_pdf, $outputlangs);
 							if ($result <= 0) {
 								$this->setErrorsFromObject($facture);

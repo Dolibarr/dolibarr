@@ -112,7 +112,7 @@ class ReceptionStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
@@ -135,8 +135,8 @@ class ReceptionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
@@ -158,8 +158,8 @@ class ReceptionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
@@ -182,8 +182,8 @@ class ReceptionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
@@ -204,8 +204,8 @@ class ReceptionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).") as total, AVG(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}

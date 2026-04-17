@@ -1205,10 +1205,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.".$db->sanitize($dbt_keyfield)." = ".((int) $user->socid);
 			} elseif (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
+				if (empty($dbt_keyfield)) {
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
+				}
 				if ($feature != 'ticket') {
-					if (empty($dbt_keyfield)) {
-						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
-					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1228,7 +1228,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$db->sanitize($dbt_keyfield)." AND sc.fk_user = ".((int) $user->id);
 					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
+					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR dbt.".$dbt_keyfield." IS NULL OR dbt.".$dbt_keyfield." = 0)";
 				}
 			} elseif (isModEnabled('multicompany')) {
 				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
