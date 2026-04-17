@@ -17,7 +17,7 @@
  */
 
 /**
- * \file htdocs/ai/tools/thirdparty.php
+ * \file htdocs/ai/tools/thirdparty.class.php
  * \ingroup ai
  * \brief MCP Server tool for Dolibarr categories.
  */
@@ -183,18 +183,10 @@ class ToolThirdParty extends McpTool
 	 *                                                                           - query: Search string or ID
 	 *                                                                           - type: 'customer', 'prospect', 'supplier'
 	 *                                                                           - limit: Limit results (default 5)
-	 * @return  array{error:string}|list<array{
-	 *              id: int,
-	 *              name: string,
-	 *              alias: string,
-	 *              code_cust: string,
-	 *              code_sup: string,
-	 *              email: string,
-	 *              type: string,
-	 *              url: string
-	 *          }> Array of results or error array
+	 * @return array{error:string}|array<string,mixed>
+	 *
 	 */
-	private function search(array $args): array
+	private function search(array $args)
 	{
 		global $db;
 		if (!$this->user->hasRight('societe', 'lire')) {
@@ -286,19 +278,8 @@ class ToolThirdParty extends McpTool
 	 *
 	 * @param   array{id: int|string} $args   Arguments array containing the thirdparty ID.
 	 *
-	 * @return  array{error: string}|array{
-	 *              id: int,
-	 *              name: string,
-	 *              address: string,
-	 *              zip: string,
-	 *              city: string,
-	 *              country: string,
-	 *              email: string,
-	 *              phone: string,
-	 *              vat: string,
-	 *              status: string,
-	 *              url: string
-	 *          } Returns an error array or the formatted data array.
+	 * @return array{error:string}|array<string,mixed>
+	 *
 	 */
 	private function getDetails(array $args): array
 	{
@@ -340,29 +321,10 @@ class ToolThirdParty extends McpTool
 	/**
 	 * Create a new third party (Societe).
 	 *
-	 * @param array $args {
-	 *                    name: string,
-	 *                    email?: string,
-	 *                    phone?: string,
-	 *                    address?: string,
-	 *                    zip?: string,
-	 *                    town?: string,
-	 *                    code_client?: string,
-	 *                    idprof1?: string,
-	 *                    idprof2?: string,
-	 *                    idprof3?: string,
-	 *                    idprof4?: string,
-	 *                    country_code?: string,
-	 *                    type?: 'customer'|'prospect'|'supplier'|'both'
-	 *                    } Arguments array. 'name' is mandatory.
+	 * @param array<string,mixed> $args Arguments array. 'name' is mandatory.
 	 *
-	 * @return array{error: string}|array{
-	 *     status: string,
-	 *     message: string,
-	 *     id: int,
-	 *     name: string,
-	 *     url: string
-	 * }
+	 * @return array{error:string}|array<string,mixed>
+	 *
 	 */
 	private function create(array $args)
 	{
@@ -398,7 +360,7 @@ class ToolThirdParty extends McpTool
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			// getCountry returns an array or false/0.
 			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], 'code');
+			$info = getCountry($args['country_code'], 0);
 			if ($info && isset($info['id'])) {
 				$soc->country_id = (int) $info['id'];
 			}
@@ -416,24 +378,24 @@ class ToolThirdParty extends McpTool
 		if ($type === 'customer') {
 			$soc->client = 1;
 			if (empty($soc->code_client)) {
-				$soc->code_client = -1;
+				$soc->code_client = '-1';
 			}
 		} elseif ($type === 'prospect') {
 			$soc->client = 2;
 			if (empty($soc->code_client)) {
-				$soc->code_client = -1;
+				$soc->code_client = '-1';
 			}
 		} elseif ($type === 'both') {
 			$soc->client = 3; // Prospect + Customer
 			if (empty($soc->code_client)) {
-				$soc->code_client = -1;
+				$soc->code_client = '-1';
 			}
 		}
 
 		if ($type === 'supplier' || $type === 'both') {
 			$soc->fournisseur = 1;
 			if (empty($soc->code_fournisseur)) {
-				$soc->code_fournisseur = -1;
+				$soc->code_fournisseur = '-1';
 			}
 		}
 
