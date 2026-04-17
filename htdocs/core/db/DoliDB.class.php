@@ -339,6 +339,7 @@ abstract class DoliDB implements Database
 			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
 
+
 			foreach ($fields as $val) {
 				// Sanitized fieldname
 				$fieldname = preg_replace('/[^0-9a-z_\.]/i', '', $val);
