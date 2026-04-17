@@ -80,11 +80,12 @@ class FormProduct
 	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
 	 * @param	int[]       $exclude            warehouses ids to exclude
 	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
-	 * @param   string      $orderBy            [='e.ref'] Order by
+	 * @param	string		$sortfield			List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb' or 't1.fielda,concat(a,b,c) as abc,t2.fieldb'
+	 * @param	string		$sortorder			Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity for sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
 	 */
-	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = array(), $stockMin = false, $orderBy = 'e.ref')
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = array(), $stockMin = false, $sortfield = ['e.ref'], $sortorder = ['ASC'])
 	{
 		global $conf, $langs;
 
@@ -152,7 +153,7 @@ class FormProduct
 				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
-		$sql .= $this->db->order($orderBy);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -292,13 +293,14 @@ class FormProduct
 	 *  @param	int[]	    $exclude            Warehouses ids to exclude
 	 *  @param  int<0,1>    $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
-	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 *  @param	int<0,1>	$multiselect		1=Allow multiselect
+	 *  @param	string		$sortfield			List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb' or 't1.fielda,concat(a,b,c) as abc,t2.fieldb'
+	 *  @param	string		$sortorder			Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity for sortorder values is lower than sortfield, we used the last value for missing values.
 	 * 	@return string					        HTML select
 	 *
 	 *  @throws Exception
 	 */
-	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref', $multiselect = 0)
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $multiselect = 0, $sortfield = ['e.ref'], $sortorder = ['ASC'])
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -312,7 +314,7 @@ class FormProduct
 			$this->cache_warehouses = array();
 		}
 
-		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
+		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $sortfield, $sortorder);
 		$nbofwarehouses = count($this->cache_warehouses);
 
 		if ($conf->use_javascript_ajax && !$forcecombo) {
