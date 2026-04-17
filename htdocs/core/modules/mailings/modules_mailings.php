@@ -516,4 +516,20 @@ class MailingTargets // This can't be abstract as it is used for some method
 		dol_syslog($msg, LOG_ERR);
 		return -1;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Delete recipients from the targets table
+	 *
+	 *  @param  int     $mailing_id     Id of emailing
+	 *  @return int                     Return integer < 0 on error, count of added when ok
+	 */
+	public function delete_from_target($mailing_id)
+	{
+		// phpcs:enable
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return -1;
+	}
 }
