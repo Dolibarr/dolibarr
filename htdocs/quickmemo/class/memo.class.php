@@ -1349,7 +1349,7 @@ class Memo extends CommonObject
 	 * @param null $object the common Dolibarr object
 	 * @param bool $onlyActiveModules on true return only
 	 *
-	 * @return array|string[]
+	 * @return array<string, array<string>>
 	 */
 	public static function getAvailableMemoContextMapping($object = null, $onlyActiveModules = true)
 	{
