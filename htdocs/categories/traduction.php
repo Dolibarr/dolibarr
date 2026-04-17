@@ -327,7 +327,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode((string) $key);
 			print '<table class="border centpercent">';
-			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete', 'langtodelete' => $key, 'type' => $type], 1).'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.($object->multilangs[$key]["description"] ?? '').'</td></tr>';
 			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
@@ -346,7 +346,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+if ($action == 'add' && $permissiontoadd) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
