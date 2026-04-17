@@ -2151,10 +2151,10 @@ if ($action == 'create' && $usercancreate) {
 											$stockMin = 0;
 										}
 										if ($productChildrenNb > 0) {
-											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, $stockMin, ['stock', 'e.ref'], ['DESC', 'ASC']);
+											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, $stockMin, 0, 'stock, e.ref', 'DESC, ASC');
 										} else {
 											if ($product->stockable_product == Product::ENABLED_STOCK) {
-												print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, ['stock', 'e.ref'], ['DESC', 'ASC']);
+												print $formproduct->selectWarehouses($tmpentrepot_id, 'entl' . $indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 0, 'stock, e.ref', 'DESC, ASC');
 											} else {
 												print img_warning() . ' ' . $langs->trans('StockDisabled');
 											}

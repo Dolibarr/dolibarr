@@ -332,25 +332,14 @@ abstract class DoliDB implements Database
 			$oldsortorder = '';
 			$return = '';
 
-			dol_syslog('sortfield='.$sortfield, LOG_DEBUG);
-			dol_syslog('sortorder='.$sortorder, LOG_DEBUG);
-
 			// If text is "field1, f(a,b,c) as xxx, field2", we must convert string into 'field1,xxx,field2'
 			$sortfield = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $sortfield);
-			dol_syslog('fields='.$sortfield, LOG_DEBUG);
 
 			$fields = explode(',', $sortfield);
 			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
 
-			dol_syslog('fields='.$fields, LOG_DEBUG);
-			dol_syslog('orders='.$orders, LOG_DEBUG);
-
 			foreach ($fields as $val) {
-				dol_syslog('foreach val='.$val, LOG_DEBUG);
-				dol_syslog('foreach return='.$return, LOG_DEBUG);
-				dol_syslog('foreach oldsortorder='.$oldsortorder, LOG_DEBUG);
-				dol_syslog('foreach tmpsortorder='.$tmpsortorder, LOG_DEBUG);
 				// Sanitized fieldname
 				$fieldname = preg_replace('/[^0-9a-z_\.]/i', '', $val);
 				if (!$fieldname) {
@@ -365,7 +354,6 @@ abstract class DoliDB implements Database
 
 				// Add field
 				$return .= $fieldname;
-				dol_syslog('foreach add field fieldname='.$fieldname, LOG_DEBUG);
 
 				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 
@@ -382,7 +370,6 @@ abstract class DoliDB implements Database
 
 				$i++;
 			}
-			dol_syslog('final return='.$return, LOG_DEBUG);
 			return $return;
 		} else {
 			return '';

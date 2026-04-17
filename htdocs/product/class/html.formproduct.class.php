@@ -85,7 +85,7 @@ class FormProduct
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
 	 */
-	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = array(), $stockMin = false, $sortfield = ['e.ref'], $sortorder = ['ASC'])
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = array(), $stockMin = false, $sortfield = 'e.ref', $sortorder = 'ASC')
 	{
 		global $conf, $langs;
 
@@ -300,7 +300,7 @@ class FormProduct
 	 *
 	 *  @throws Exception
 	 */
-	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $multiselect = 0, $sortfield = ['e.ref'], $sortorder = ['ASC'])
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $multiselect = 0, $sortfield = 'e.ref', $sortorder = 'ASC')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -393,7 +393,8 @@ class FormProduct
 			'exclude' => $exclude,
 			'showfullpath' => $showfullpath,
 			'stockMin' => $stockMin,
-			'orderBy' => $orderBy
+			'sortfield' => $sortfield,
+			'sortorder' => $sortorder
 		);
 
 		$reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
