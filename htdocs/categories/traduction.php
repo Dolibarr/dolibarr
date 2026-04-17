@@ -63,6 +63,11 @@ if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
+$extrafields = new ExtraFields($db);
+$extralabels = $extrafields->fetch_name_optionals_label("categorie_lang");
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('categorietranslationcard', 'globalcard'));
 
 $type = $object->type;
 if (is_numeric($type)) {
@@ -73,7 +78,7 @@ if (is_numeric($type)) {
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $permissiontoadd = $user->hasRight('categorie', 'creer');
-
+$permissiontodelete = $user->hasRight('categorie', 'supprimer');
 
 /*
  * Actions
@@ -87,7 +92,7 @@ if ($cancel == $langs->trans("Cancel")) {
 }
 
 // delete a translation
-if ($action == 'delete' && $langtodelete && $user->hasRight('categorie', 'creer')) {
+if ($action == 'delete' && $langtodelete && $permissiontodelete) {
 	$res = $object->delMultiLangs($langtodelete, $user);
 	if ($res < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -262,8 +267,10 @@ print dol_get_fiche_end();
 
 print "\n<div class=\"tabsAction\">\n";
 
-if ($action == '') {
-	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+if (empty($reshook)) {
+	if ($action == '' && $permissiontoadd) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
 		if ($cnt_trans > 0) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
@@ -272,7 +279,6 @@ if ($action == '') {
 }
 
 print "\n</div>\n";
-
 
 
 if ($action == 'edit') {
