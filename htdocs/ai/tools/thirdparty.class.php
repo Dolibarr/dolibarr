@@ -183,7 +183,7 @@ class ToolThirdParty extends McpTool
 	 *                                                                           - query: Search string or ID
 	 *                                                                           - type: 'customer', 'prospect', 'supplier'
 	 *                                                                           - limit: Limit results (default 5)
-	 * @return array{error:string}|array<int, array<string, mixed>>
+	 * @return array{error:string}|list<array>
 	 *
 	 */
 	private function search(array $args)
@@ -360,7 +360,7 @@ class ToolThirdParty extends McpTool
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			// getCountry returns an array or false/0.
 			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], 0);
+			$info = getCountry($args['country_code'], '1');
 			if ($info && isset($info['id'])) {
 				$soc->country_id = (int) $info['id'];
 			}
@@ -415,26 +415,21 @@ class ToolThirdParty extends McpTool
 	}
 
 	/**
-	 * Update an existing thirdparty.
+	 * Update a thirdparty record.
 	 *
-	 * @param array $args {
-	 *                    id: int|string,
-	 *                    name?: string,
-	 *                    email?: string,
-	 *                    phone?: string,
-	 *                    address?: string,
-	 *                    zip?: string,
-	 *                    town?: string,
-	 *                    country_code?: string
-	 *                    } Arguments array. ID is mandatory.
+	 * @param array{
+	 *     id:int|string,
+	 *     name?:string,
+	 *     email?:string,
+	 *     phone?:string,
+	 *     address?:string,
+	 *     zip?:string,
+	 *     town?:string,
+	 *     country_code?:string
+	 * } $args
 	 *
-	 * @return array{
-	 *     status?: string,
-	 *     message?: string,
-	 *     id?: int,
-	 *     url?: string,
-	 *     error?: string
-	 * }
+	 * @return array{status:string,message:string,id:int,url:string}
+	 *         |array{error:string}
 	 */
 	private function update(array $args)
 	{
@@ -480,7 +475,7 @@ class ToolThirdParty extends McpTool
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], 'all');
+			$info = getCountry($args['country_code'], '1');
 
 			if ($info && isset($info['id'])) {
 				$soc->country_id = (int) $info['id'];
@@ -579,11 +574,18 @@ class ToolThirdParty extends McpTool
 	}
 
 	/**
-	 * Add a new contact to a thirdparty.
+	 * Add a contact linked to a thirdparty.
 	 *
-	 * @param array $args Arguments array. Identifier, firstname, and lastname are mandatory.
+	 * @param array{
+	 *     thirdparty_identifier:int|string,
+	 *     firstname:string,
+	 *     lastname:string,
+	 *     email?:string,
+	 *     phone?:string
+	 * } $args Arguments array. Identifier, firstname, and lastname are mandatory.
 	 *
-	 * @return array
+	 * @return array{status:string,message:string,id:int}
+	 *         |array{error:string}
 	 *
 	 */
 	private function addContact(array $args)
