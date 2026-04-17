@@ -116,7 +116,7 @@ if ($object->element == 'mo') {
 
 		$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
 		$refWithThirdparty .= !empty($objectlink->thirdparty) ? $objectlink->thirdparty->getNomUrl(1) : '';
-		$refWithThirdparty .= '</small>';
+		$refWithThirdparty .= '</span>';
 
 		$trclass = 'oddeven';
 		if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
