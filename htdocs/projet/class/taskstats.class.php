@@ -220,8 +220,8 @@ class TaskStats extends Stats
 	 */
 	protected function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
