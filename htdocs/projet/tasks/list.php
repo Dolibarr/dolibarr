@@ -861,23 +861,23 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" size="4">';
+	print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" class="width75">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" size="4">';
+	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" class="maxwidth75">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.label']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" size="8">';
+	print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" class="maxwidth75">';
 	print '</td>';
 }
 // Task Description
 if (!empty($arrayfields['t.description']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_description" value="'.dol_escape_htmltag($search_task_description).'" size="8">';
+	print '<input type="text" class="flat" name="search_task_description" value="'.dol_escape_htmltag($search_task_description).'" class="maxwidth75">';
 	print '</td>';
 }
 // Start date
