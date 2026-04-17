@@ -282,6 +282,56 @@ class MailingTargets // This can't be abstract as it is used for some method
 		return $j;
 	}
 
+	/**
+	 * Delete a list of targets from the database
+	 *
+	 * @param	int		$mailing_id    Id of emailing
+	 * @param	array<array{fk_contact?:int,lastname:string,firstname:string,email:string,other:string,source_url:string,source_id?:int,source_type:string,id?:int}>		$cibles		Array with targets
+	 * @return  int      			   Return integer < 0 if error, nb added if OK
+	 */
+	public function deleteTargetsFromDatabase($mailing_id, $cibles)
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		// Insert emailing targets from array into database
+		$j = 0;
+		$num = count($cibles);
+		foreach ($cibles as $targetarray) {
+			if (!empty($targetarray['email'])) {
+				$sql = "DELETE FROM ".$this->db->prefix()."mailing_cibles WHERE";
+				$sql .= " fk_mailing = ".((int) $mailing_id);
+				$sql .= " AND ";
+				$sql .= " email = '".((string) $targetarray['email'])."'";
+				$sql .= " AND ";
+				$sql .= " firstname = '".((string) $targetarray['firstname'])."'";
+				$sql .= " AND ";
+				$sql .= " lastname = '".((string) $targetarray['lastname'])."'";
+				$sql .= " AND ";
+				$sql .= " source_type = '".((string) $targetarray['source'])."'";
+
+				dol_syslog(__METHOD__, LOG_DEBUG);
+				$result = $this->db->query($sql);
+				if ($result) {
+					$j++;
+				} else {
+					if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+						// Si erreur autre que doublon
+						dol_syslog($this->db->error().' : '.$targetarray['email']);
+						$this->error = $this->db->error().' : '.$targetarray['email'];
+						$this->db->rollback();
+						return -1;
+					}
+				}
+			}
+		}
+
+		$this->db->commit();
+
+		return $j;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Supprime tous les destinataires de la table des cibles

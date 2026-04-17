@@ -113,7 +113,6 @@ if (empty($action) && empty($object->id)) {
 $permissiontoread = $user->hasRight('mailing', 'lire');
 $permissiontocreate = $user->hasRight('mailing', 'creer');
 $permissiontovalidatesend = $user->hasRight('mailing', 'valider');
-$permissiontodelete = $user->hasRight('mailing', 'supprimer');
 
 
 /*
@@ -126,9 +125,8 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
 }
-
-if ($action == 'add' && $permissiontocreate) {		// Add recipients
-	$module = GETPOST("module", 'alpha');
+$module = GETPOST("module", 'alpha');
+if ($action == 'change' && $permissiontocreate) {		// Change recipients
 	$result = -1;
 	$obj = null;
 
@@ -140,12 +138,12 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 		// Loading Class
 		$file = $dir."/".$module.".modules.php";
 		$classname = "mailing_".$module;
+		$buttonaction = GETPOST('button_'.$module, 'aZ09');
 
 		if (file_exists($file)) {
 			include_once $file;
 
 			// Add targets into database
-			dol_syslog("Call add_to_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
 
 			$obj = null;
 			if (class_exists($classname)) {
@@ -153,7 +151,18 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 				'@phan-var-force MailingTargets $obj';
 				$obj->evenunsubscribe = $object->evenunsubscribe;
 
-				$result = $obj->add_to_target($id);
+				if ($buttonaction == 'Add') {
+					dol_syslog("Call add_to_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
+					$result = $obj->add_to_target($id);
+				} elseif ($buttonaction == 'Delete') {
+					dol_syslog("Call delete_from_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
+					$result = $obj->delete_from_target($id);
+				} else {
+					dol_syslog("targetmailing.php::action::add::unknown buttonaction=".$buttonaction, LOG_ERR);
+					setEventMessages($langs->trans("Unknown").' buttonaction='.$buttonaction, null, 'errors');
+					$result -1;
+					break;
+				}
 
 				$sqlmessage = $obj->sql;
 			} else {
@@ -162,20 +171,38 @@ if ($action == 'add' && $permissiontocreate) {		// Add recipients
 			}
 		}
 	}
-	if ($result > 0) {
-		// If status of emailing is sent completely, change to to send partially
-		if ($object->status == $object::STATUS_SENTCOMPLETELY) {
-			$object->setStatut($object::STATUS_SENTPARTIALY);
-		}
+	if ($buttonaction == 'Add') {
+		if ($result > 0) {
+			// If status of emailing is sent completely, change to to send partially
+			if ($object->status == $object::STATUS_SENTCOMPLETELY) {
+				$object->setStatut($object::STATUS_SENTPARTIALY);
+			}
 
-		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-		$action = '';
-	}
-	if ($result == 0) {
-		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
-	}
-	if ($result < 0 && is_object($obj)) {
-		setEventMessages($langs->trans("Error").($obj->error ? ' '.$obj->error : ''), null, 'errors');
+			setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
+			$action = '';
+		}
+		if ($result == 0) {
+			setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
+		}
+		if ($result < 0 && is_object($obj)) {
+			setEventMessages($langs->trans("Error").($obj->error ? ' '.$obj->error : ''), null, 'errors');
+		}
+	} elseif ($buttonaction == 'Delete') {
+		if ($result > 0) {
+			// If status of emailing is sent completely, change to to send partially
+			if ($object->status == $object::STATUS_SENTCOMPLETELY) {
+				$object->setStatut($object::STATUS_SENTPARTIALY);
+			}
+
+			setEventMessages($langs->trans("RemoveRecipient").': '.$result.' '.$langs->trans("ItemsCount"), null, 'mesgs');
+			$action = '';
+		}
+		if ($result == 0) {
+			setEventMessages($langs->trans("NothingToDelete", $result), null, 'warnings');
+		}
+		if ($result < 0 && is_object($obj)) {
+			setEventMessages($langs->trans("Error").($obj->error ? ' '.$obj->error : ''), null, 'errors');
+		}
 	}
 }
 
@@ -506,6 +533,7 @@ if ($object->fetch($id) >= 0) {
 
 	$newcardbutton = '';
 	$allowaddtarget = ($object->status == $object::STATUS_DRAFT);
+	$allowdeletetarget = ($object->status == $object::STATUS_DRAFT);
 	if (GETPOST('allowaddtarget')) {
 		$allowaddtarget = 1;
 	}
@@ -594,7 +622,7 @@ if ($object->fetch($id) >= 0) {
 					if ($allowaddtarget) {
 						print '<form class="oddeven trforbreakperms trforbreaknobg impair tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
-						print '<input type="hidden" name="action" value="add">';
+						print '<input type="hidden" name="action" value="change">';
 						print '<input type="hidden" name="page_y" value="'.newToken().'">';
 					} else {
 						print '<div class="oddeven trforbreakperms trforbreaknobg impair tagtr">';
@@ -647,9 +675,15 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd right valignmiddle">';
 					if ($allowaddtarget) {
-						print '<input type="submit" class="button button-add small reposition" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="butAction button-add small reposition" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						if ($allowdeletetarget && $modulename == 'eventorganization') {
+							print '<input type="submit" class="butActionDelete button-delete small reposition" name="button_'.$modulename.'" value="'.$langs->trans("Delete").'">';
+						}
 					} else {
-						print '<input type="submit" class="button small disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="butAction small disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						if ($allowdeletetarget && $modulename == 'eventorganization') {
+							print '<input type="submit" class="butActionDelete button-delete small disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Delete").'">';
+						}
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
