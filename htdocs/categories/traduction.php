@@ -85,14 +85,18 @@ $permissiontodelete = $user->hasRight('categorie', 'supprimer');
  */
 
 $error = 0;
-
+$parameters = array('id'=>$id, 'ref'=>$ref);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 // return to translation view if cancelled
-if ($cancel == $langs->trans("Cancel")) {
+if (empty($reshook) && $cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
 // delete a translation
-if ($action == 'delete' && $langtodelete && $permissiontodelete) {
+if (empty($reshook) && $action == 'delete' && $langtodelete && $permissiontodelete) {
 	$res = $object->delMultiLangs($langtodelete, $user);
 	if ($res < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -104,7 +108,7 @@ if ($action == 'delete' && $langtodelete && $permissiontodelete) {
 }
 
 // validation of addition
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
+if (empty($reshook) && $action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -153,7 +157,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd)
 }
 
 // validation of the edition
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
+if (empty($reshook) && $action == 'vedit' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
