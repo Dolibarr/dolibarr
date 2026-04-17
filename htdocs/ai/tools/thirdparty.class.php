@@ -417,16 +417,7 @@ class ToolThirdParty extends McpTool
 	/**
 	 * Update a thirdparty record.
 	 *
-	 * @param array{
-	 *     id:int|string,
-	 *     name?:string,
-	 *     email?:string,
-	 *     phone?:string,
-	 *     address?:string,
-	 *     zip?:string,
-	 *     town?:string,
-	 *     country_code?:string
-	 * } $args
+	 * @param array{id:int|string,name?:string,email?:string,phone?:string,address?:string,zip?:string,town?:string,country_code?:string} $args Thirdparty fields to update (ID required).
 	 *
 	 * @return array{status:string,message:string,id:int,url:string}
 	 *         |array{error:string}
@@ -576,13 +567,7 @@ class ToolThirdParty extends McpTool
 	/**
 	 * Add a contact linked to a thirdparty.
 	 *
-	 * @param array{
-	 *     thirdparty_identifier:int|string,
-	 *     firstname:string,
-	 *     lastname:string,
-	 *     email?:string,
-	 *     phone?:string
-	 * } $args Arguments array. Identifier, firstname, and lastname are mandatory.
+	 * @param array{thirdparty_identifier:int|string,firstname:string,lastname:string,email?:string,phone?:string} $args Arguments array (identifier, firstname, lastname required).
 	 *
 	 * @return array{status:string,message:string,id:int}
 	 *         |array{error:string}
