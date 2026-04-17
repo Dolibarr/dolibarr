@@ -2186,7 +2186,7 @@ class Categorie extends CommonObject
 					$sql2 .= ", '".$this->db->escape($this->description)."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
-				if ($sql2 && !$this->db->query($sql2)) {
+				if (!$this->db->query($sql2)) {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
