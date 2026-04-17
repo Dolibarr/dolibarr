@@ -458,7 +458,7 @@ if ($ext == 'csv') {
 		print img_picto('', 'stock', 'class="pictofixedwidth"').$langs->trans("Warehouse").' :';
 		print '</span> ';
 		$selected = ((GETPOSTISSET('search_fk_warehouse') || GETPOSTISSET('fk_warehouse')) ? $search_fk_warehouse : 'ifonenodefault');
-		print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, array(), 'minwidth200', array(), 1, false, 1, ['e.ref']);
+		print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, array(), 'minwidth200', array(), 1, false, 1, 'e.ref');
 	}
 
 	print '</div>';
