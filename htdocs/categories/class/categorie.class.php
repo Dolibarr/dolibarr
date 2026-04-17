@@ -2190,6 +2190,8 @@ class Categorie extends CommonObject
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
+				$this->multilangs[$key]["label"] = $this->label;
+				$this->multilangs[$key]["description"] = $this->description;
 			} elseif (isset($this->multilangs[$key])) { // if there is already a description line for this language
 				if ($this->db->num_rows($result)) {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
