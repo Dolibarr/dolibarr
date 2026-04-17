@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 	Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2021		NextGestion				<contact@nextgestion.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -884,7 +884,7 @@ foreach ($all_fields_list as $key => $val) {
 	}
 }
 // End of subscription date
-if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('members'))) {
+if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('member'))) {
 	$key = 'datefin';
 	$cssforfield = 'center';
 	print getTitleFieldOfList('SubscriptionEndDate', 0, $_SERVER['PHP_SELF'], 'd.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
