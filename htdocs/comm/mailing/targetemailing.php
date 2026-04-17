@@ -126,6 +126,7 @@ if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
 }
 $module = GETPOST("module", 'alpha');
+$buttonaction = GETPOST('button_'.$module, 'aZ09');
 if ($action == 'change' && $permissiontocreate) {		// Change recipients
 	$result = -1;
 	$obj = null;
@@ -138,7 +139,6 @@ if ($action == 'change' && $permissiontocreate) {		// Change recipients
 		// Loading Class
 		$file = $dir."/".$module.".modules.php";
 		$classname = "mailing_".$module;
-		$buttonaction = GETPOST('button_'.$module, 'aZ09');
 
 		if (file_exists($file)) {
 			include_once $file;
@@ -160,7 +160,7 @@ if ($action == 'change' && $permissiontocreate) {		// Change recipients
 				} else {
 					dol_syslog("targetmailing.php::action::add::unknown buttonaction=".$buttonaction, LOG_ERR);
 					setEventMessages($langs->trans("Unknown").' buttonaction='.$buttonaction, null, 'errors');
-					$result -1;
+					$result = -1;
 					break;
 				}
 

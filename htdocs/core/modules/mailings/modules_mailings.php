@@ -286,7 +286,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 * Delete a list of targets from the database
 	 *
 	 * @param	int		$mailing_id    Id of emailing
-	 * @param	array<array{fk_contact?:int,lastname:string,firstname:string,email:string,other:string,source_url:string,source_id?:int,source_type:string,id?:int}>		$cibles		Array with targets
+	 * @param	array<array{lastname:string,firstname:string,email:string,source_type:string}>		$cibles		Array with targets
 	 * @return  int      			   Return integer < 0 if error, nb added if OK
 	 */
 	public function deleteTargetsFromDatabase($mailing_id, $cibles)
@@ -309,7 +309,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= " AND ";
 				$sql .= " lastname = '".((string) $targetarray['lastname'])."'";
 				$sql .= " AND ";
-				$sql .= " source_type = '".((string) $targetarray['source'])."'";
+				$sql .= " source_type = '".((string) $targetarray['source_type'])."'";
 
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$result = $this->db->query($sql);

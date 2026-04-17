@@ -157,7 +157,7 @@ class mailing_eventorganization extends MailingTargets
 		$addDescription = '';
 
 		$sql = "SELECT p.ref, p.entity, e.rowid as id, e.fk_project, e.email as email, e.email_company as company_name, e.firstname as firstname, e.lastname as lastname,";
-		$sql .= " 'eventorganizationattendee' as source";
+		$sql .= " 'eventorganizationattendee' as source_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p,";
 		$sql .= " ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles as mc ON e.email = mc.email";
@@ -187,7 +187,7 @@ class mailing_eventorganization extends MailingTargets
 								'email' => $obj->email,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
-								'source' => $obj->source
+								'source_type' => $obj->source_type
 					);
 					$old = $obj->email;
 					$j++;
