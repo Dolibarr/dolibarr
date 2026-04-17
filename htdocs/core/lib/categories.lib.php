@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011       Regis Houssin     	<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW				    <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,9 +86,12 @@ function categories_prepare_head(Categorie $object, $type)
  */
 function categoriesadmin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $extrafields, $db;
 
-	$extrafields = new ExtraFields($db);
+	if (!is_object($extrafields)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($db);
+	}
 	$extrafields->fetch_name_optionals_label('categorie');
 
 	$langs->load("categories");
