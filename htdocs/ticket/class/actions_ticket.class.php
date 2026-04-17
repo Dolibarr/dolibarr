@@ -220,15 +220,19 @@ class ActionsTicket extends CommonHookActions
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="border tableforfield centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
-		print $langs->trans("InitialMessage");
+
+		print '<table class="nobordernopadding centpercent"><tr><td class="none noborder">';
+		print $langs->trans('InitialMessage');
+		if ($action != 'edit_message_init' && $permissiontoadd && !in_array($object->status, $closeStatuses)) {
+			print '</td><td class="right noborder">';
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+		}
+		print '</td></tr></table>';
+
 		print '</td><td>';
-		if ($permissiontoadd && !in_array($object->status, $closeStatuses)) {
-			if ($action != 'edit_message_init') {
-				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
-			} else {
-				print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
-				print ' <input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.$langs->trans("Cancel").'">';
-			}
+		if ($action == 'edit_message_init' && $permissiontoadd && !in_array($object->status, $closeStatuses)) {
+			print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</td></tr>';
 
