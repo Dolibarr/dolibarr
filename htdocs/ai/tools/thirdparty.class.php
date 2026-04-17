@@ -183,7 +183,7 @@ class ToolThirdParty extends McpTool
 	 *                                                                           - query: Search string or ID
 	 *                                                                           - type: 'customer', 'prospect', 'supplier'
 	 *                                                                           - limit: Limit results (default 5)
-	 * @return array{error:string}|array<string,mixed>
+	 * @return array{error:string}|array<int, array<string, mixed>>
 	 *
 	 */
 	private function search(array $args)
@@ -476,13 +476,11 @@ class ToolThirdParty extends McpTool
 		}
 
 		// Handle Country update
-		if (! empty($args['country_code'])) {
+		if (!empty($args['country_code'])) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
-			// getCountry returns array|false|0|string depending on version/context.
-			// We use @var to hint the structure we expect if successful.
 			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], 'code');
+			$info = getCountry($args['country_code'], 'all');
 
 			if ($info && isset($info['id'])) {
 				$soc->country_id = (int) $info['id'];
@@ -506,15 +504,8 @@ class ToolThirdParty extends McpTool
 	 *
 	 * @param   array{id: int|string} $args   Arguments array containing the thirdparty ID.
 	 *
-	 * @return  array{error: string}|list<array{
-	 *              id: int,
-	 *              firstname: string,
-	 *              lastname: string,
-	 *              email: string,
-	 *              phone: string,
-	 *              role: string,
-	 *              url: string
-	 *          }> Returns error array or list of contact data.
+	 * @return  array{error: string}|list<array>
+	 *
 	 */
 	private function listContacts(array $args)
 	{
@@ -590,22 +581,10 @@ class ToolThirdParty extends McpTool
 	/**
 	 * Add a new contact to a thirdparty.
 	 *
-	 * @param array $args {
-	 *                    thirdparty_identifier: int|string,
-	 *                    firstname: string,
-	 *                    lastname: string,
-	 *                    email?: string,
-	 *                    phone?: string,
-	 *                    role?: string
-	 *                    } Arguments array. Identifier, firstname, and lastname are mandatory.
+	 * @param array $args Arguments array. Identifier, firstname, and lastname are mandatory.
 	 *
-	 * @return array{
-	 *     status?: string,
-	 *     message?: string,
-	 *     id?: int,
-	 *     url?: string,
-	 *     error?: string
-	 * }
+	 * @return array
+	 *
 	 */
 	private function addContact(array $args)
 	{
