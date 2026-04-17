@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ?Extrafields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -63,7 +64,9 @@ if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
-$extrafields = new ExtraFields($db);
+if (!is_object($extrafields)) {
+	$extrafields = new ExtraFields($db);
+}
 $extralabels = $extrafields->fetch_name_optionals_label("categorie_lang");
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
