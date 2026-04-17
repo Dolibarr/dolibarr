@@ -49,6 +49,12 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/subaccount.php
 
 		-
+			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: ../../../htdocs/accountancy/admin/template/list.php
+
+		-
 			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
