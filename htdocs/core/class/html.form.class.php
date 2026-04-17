@@ -11053,7 +11053,7 @@ class Form
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe') {
-			$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->name).'</span>';
+			$ret .= '<span class="valignmiddle">'.dolPrintHTML((string) $object->name).'</span>';
 
 			// List of extra languages
 			$arrayoflangcode = array();
@@ -11090,12 +11090,12 @@ class Form
 			$ret .= $object->ref . '<br>';
 			$fullname = $object->getFullName($langs);
 			if ($object->morphy == 'mor' && $object->societe) {
-				$ret .= '<span class="valignmiddle">'.dol_htmlentities((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '').'</span>';
+				$ret .= '<span class="valignmiddle">'.dolPrintHTML((string) $object->societe) . ((!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '').'</span>';
 			} else {
-				$ret .= '<span class="valignmiddle">'.dol_htmlentities($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '').'</span>';
+				$ret .= '<span class="valignmiddle">'.dolPrintHTML($fullname) . $addgendertxt . ((!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '').'</span>';
 			}
 		} elseif (in_array($object->element, array('contact', 'user'))) {
-			$ret .= '<span class="valignmiddle">'.dol_htmlentities($object->getFullName($langs)).'</span>'.$addgendertxt;
+			$ret .= '<span class="valignmiddle">'.dolPrintHTML($object->getFullName($langs)).'</span>'.$addgendertxt;
 		} elseif ($object->element == 'usergroup') {
 			$ret .= dol_htmlentities((string) $object->name);
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
@@ -11107,8 +11107,13 @@ class Form
 			$ret .= '';
 		} elseif ($object->element == 'accountingbookkeeping' && !empty($object->context['mode']) && $object->context['mode'] == '_tmp') {
 			$ret .= '<span class="valignmiddle">'.$langs->trans("Draft").'</span>';
+		} elseif ($object instanceOf Ticket) {
+			'@phan-var-force Ticket $object';
+			$ret .= '<span class="valignmiddle">'.dolPrintHTML(!empty($object->$fieldref) ? $object->$fieldref : "").'</span>';
+			$ret .= ' &nbsp; <span class="nobold small" title="'.dolPrintHTMLForAttribute($langs->trans("TicketTrackId")).'">('.$object->track_id.')</span>';
 		} elseif ($fieldref != 'none') {
-			$ret .= '<span class="valignmiddle">'.dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "").'</span>';
+			// Generic case
+			$ret .= '<span class="valignmiddle">'.dolPrintHTML(!empty($object->$fieldref) ? $object->$fieldref : "").'</span>';
 		}
 		if ($morehtmlref) {
 			// don't add a additional space, when "$morehtmlref" starts with a HTML div tag
@@ -11137,8 +11142,6 @@ class Form
 	 */
 	public function showbarcode(&$object, $width = 100, $morecss = '')
 	{
-		global $conf;
-
 		//Check if barcode is filled in the card
 		if (empty($object->barcode)) {
 			return '';
