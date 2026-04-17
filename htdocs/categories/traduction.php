@@ -271,9 +271,9 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 if (empty($reshook)) {
 	if ($action == '' && $permissiontoadd) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
+		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'add', 'id' => $object->id, 'type' => $type], true).'">'.$langs->trans('Add').'</a>';
 		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
+			print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'id' => $object->id, 'type' => $type], true).'">'.$langs->trans('Update').'</a>';
 		}
 	}
 }
@@ -327,7 +327,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode((string) $key);
 			print '<table class="border centpercent">';
-			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete', 'langtodelete' => $key, 'type' => $type], 1).'">'.img_delete('', '').'</a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete', 'langtodelete' => $key, 'type' => $type], true).'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.($object->multilangs[$key]["description"] ?? '').'</td></tr>';
 			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
@@ -351,7 +351,7 @@ if ($action == 'add' && $permissiontoadd) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<br>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
