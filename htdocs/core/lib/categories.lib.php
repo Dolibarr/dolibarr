@@ -113,6 +113,18 @@ function categoriesadmin_prepare_head()
 	$head[$h][2] = 'attributes_categories';
 	$h++;
 
+	// Multilangs Extrafields
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/admin/categorie_lang_extrafields.php');
+		$head[$h][1] = $langs->trans("CategoriesTranslationsExtrafields");
+		$nbExtrafields = isset($extrafields->attributes['categorie_lang']['count']) ? $extrafields->attributes['categorie_lang']['count'] : 0;
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'translationAttributes';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

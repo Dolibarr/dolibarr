@@ -81,7 +81,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 $textobject = $langs->transnoentitiesnoconv("Category");
 
 $help_url = '';
-$page_name = "CategoryLangExtrafieldsSetup";
+$page_name = "CategoriesTranslationsExtrafields";
 
 llxHeader('', $langs->trans($page_name), $help_url);
 
