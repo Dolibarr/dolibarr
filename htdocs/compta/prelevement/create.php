@@ -321,7 +321,7 @@ if ($nb) {
 
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
-		print $form->select_comptes(getDolGlobalInt($default_account), 'id_bankaccount', 0, "courant=1", 0, '', 0, 'widthcentpercentminusx maxwidth300', 1);
+		print $form->select_comptes(getDolGlobalInt($default_account), 'id_bankaccount', 0, "(courant:=:1)", 0, '', 0, 'widthcentpercentminusx maxwidth300', 1);
 		print ' &nbsp; &nbsp; ';
 
 		if (empty($executiondate)) {

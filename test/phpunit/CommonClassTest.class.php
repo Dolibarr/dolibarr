@@ -486,6 +486,7 @@ abstract class CommonClassTest extends TestCase
 		'productsupplierprice' => null,
 		'project' => 'Projet',
 		'propal' => 'Propale',
+		'quickmemo' => 'QuickMemo',
 		'receiptprinter' => 'ReceiptPrinter',
 		'reception' => 'Reception',
 		'recruitment' => 'Recruitment',

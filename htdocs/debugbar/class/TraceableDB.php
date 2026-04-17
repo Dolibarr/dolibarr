@@ -116,7 +116,7 @@ class TraceableDB extends DoliDB
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
+	 *   @param	    int|''		$param      Date TMS to convert
 	 *	 @param		'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
@@ -574,7 +574,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
-	 * @param    array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 	Array with description of field format
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)

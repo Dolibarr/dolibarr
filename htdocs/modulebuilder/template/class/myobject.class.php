@@ -1256,7 +1256,7 @@ class MyObject extends CommonObject
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
-		$now = dol_now();
+		//$now = dol_now();
 
 		$this->db->begin();
 

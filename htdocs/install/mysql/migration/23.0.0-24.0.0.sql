@@ -35,6 +35,11 @@
 
 -- V23 forgotten
 
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+-- VMYSQL4.1 DROP INDEX idx_categorie_project_fk_task ON llx_categorie_project_task;
+-- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
 
 -- V24 migration
 
@@ -210,6 +215,9 @@ UPDATE llx_cronjob set test = 'isModEnabled("project")' WHERE test = '$conf->pro
 -- Work only with very recent version of mysql UPDATE llx_cronjob SET test = REGEXP_REPLACE(test, '\\$conf->([^ ]+)->enabled', 'isModEnabled("$1")');
 UPDATE llx_cronjob set test = 'isModEnabled("sellyoursaas")' WHERE test = '$conf->sellyoursaas->enabled';
 UPDATE llx_cronjob set test = 'isModEnabled("scaninvoices")' WHERE test = '$conf->scaninvoices->enabled';
+
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
 
 
 create table llx_product_lang_extrafields

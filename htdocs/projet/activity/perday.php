@@ -572,12 +572,12 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 print '<tr class="liste_titre_filter">';
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="maxwidth75"  name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 }
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="maxwidth75"  name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 }
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 // TASK fields
 $search_options_pattern = 'search_task_options_';
 $extrafieldsobjectkey = 'projet_task';
@@ -587,7 +587,7 @@ if (!empty($arrayfields['t.planned_workload']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="width50" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
 if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<td class="liste_titre"></td>';

@@ -1261,12 +1261,6 @@ parameters:
 			path: ../../../htdocs/comm/action/class/actioncomm.class.php
 
 		-
-			message: '#^Variable \$agenda_static might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/comm/action/class/actioncomm.class.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 2
@@ -6877,22 +6871,10 @@ parameters:
 			path: ../../../htdocs/fourn/facture/list.php
 
 		-
-			message: '#^Variable \$title might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/fourn/facture/note-rec.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with float will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/rapport.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
@@ -7673,18 +7655,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 4
-			path: ../../../htdocs/intracommreport/lib/intracommreport.lib.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/intracommreport/list.php
 
 		-
 			message: '#^Left side of && is always false\.$#'
@@ -8745,18 +8715,6 @@ parameters:
 		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/product/class/productfournisseurprice.class.php
-
-		-
-			message: '#^Method ProductFournisseurPrice\:\:fetchAll\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/productfournisseurprice.class.php
-
-		-
-			message: '#^Method ProductFournisseurPrice\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/product/class/productfournisseurprice.class.php
 

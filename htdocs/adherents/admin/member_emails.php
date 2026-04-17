@@ -33,9 +33,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -77,7 +76,6 @@ $constantes = array(
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=> array('type'=>'string', 'label'=>''),
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=> array('type'=>'html', 'tooltip' => $helptext, 'label' => '')
 );
-
 
 
 /*
@@ -173,7 +171,7 @@ $tableau = $constantes;
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="">'.$langs->trans("Description").'</td>';
+print '<td class="">'.$langs->trans("Parameter").'</td>';
 print '<td>';
 print '</td>';
 print "</tr>\n";
@@ -223,19 +221,18 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 		}
 
 		if (!empty($tableau[$key]['tooltip'])) {
-			print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
+			print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip'] . $help);
 		} else {
+			print '<span class="valignmiddle">';
 			print($label ? $label : $langs->trans('Desc'.$const));
+			print '</span>';
+			if ($help) {
+				print $form->textwithpicto('', $help);
+			}
 		}
 
 		if (in_array($const, ['ADHERENT_MAIL_FROM', 'ADHERENT_CC_MAIL_FROM'])) {
 			print ' '.img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
-		}
-		if ($help) {
-			print '<br><span class="opacitymedium">';
-			//print $langs->trans("MEMBER_REMINDER_EMAILHelp");
-			print $help;
-			print '</span>';
 		}
 
 		print "</td>\n";

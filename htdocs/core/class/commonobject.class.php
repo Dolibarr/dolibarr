@@ -17,7 +17,7 @@
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
@@ -153,8 +153,40 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-	 *
+	 * @var array<string,array<string,mixed>>
+	 * @phpstan-var array<string, array{
+	 * type: string,
+	 * label: string,
+	 * enabled: int<0, 2>|string,
+	 * position: int,
+	 * visible: int<-6, 6>|string,
+	 * langfile?: string,
+	 * notnull?: int<-1, 1>,
+	 * noteditable?: int<0, 1>,
+	 * alwayseditable?: int<0, 1>|string,
+	 * default?: string|int,
+	 * index?: int<0, 1>,
+	 * foreignkey?: string,
+	 * searchall?: int<0, 1>,
+	 * isameasure?: int<0, 1>,
+	 * css?: string,
+	 * cssview?: string,
+	 * csslist?: string,
+	 * help?: string,
+	 * helplist?: string,
+	 * showoncombobox?: int<0, 4>|string,
+	 * disabled?: int<0, 1>|string,
+	 * arrayofkeyval?: array<int|string, string>,
+	 * autofocusoncreate?: int<0, 1>,
+	 * comment?: string,
+	 * copytoclipboard?: int<1, 2>,
+	 * validate?: int<0, 1>|string,
+	 * showonheader?: int<0, 1>,
+	 * searchmulti?: int<0, 1>,
+	 * picto?: string,
+	 * required?: int<0, 1>,
+	 * placeholder?: string
+	 * }>
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
@@ -231,12 +263,12 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
-	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
+	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by OBJECT->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
 	private $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var ?static		To store a cloned copy of the object before editing it (to keep track of its former properties) by doing $object->oldcopy = dol_clone($object, 2);
+	 * @var ?static		To store a cloned copy of the object before editing it (to keep track of its former properties) by doing OBJECT->oldcopy = dol_clone($object, 2);
 	 */
 	public $oldcopy;
 
@@ -2002,7 +2034,7 @@ abstract class CommonObject
 		}
 
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
-		$sql .= " WHERE ".$this->table_ref_field." LIKE '".$this->db->escape($ref)."'";	// no escapeforlike here
+		$sql .= " WHERE ".$this->db->sanitize($this->table_ref_field)." LIKE '".$this->db->escape($ref)."'";	// no escapeforlike here
 		$sql .= " LIMIT 1";
 
 		$query = $this->db->query($sql);
@@ -2222,7 +2254,7 @@ abstract class CommonObject
 		$result = false;
 
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$table;
-		$sql .= " WHERE ".$field." = '".$this->db->escape($key)."'";
+		$sql .= " WHERE ".$this->db->sanitize($field)." = '".$this->db->escape($key)."'";
 		if (!empty($element)) {
 			$sql .= " AND entity IN (".getEntity($element).")";
 		} else {
@@ -2503,11 +2535,11 @@ abstract class CommonObject
 			$aliastablesociete = 'te'; // te as table_element
 		}
 		$restrictiononfksoc = empty($this->restrictiononfksoc) ? 0 : $this->restrictiononfksoc;
-		$sql = "SELECT MAX(te.".$fieldid.")";
+		$sql = "SELECT MAX(te.".$this->db->sanitize($fieldid).")";
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
-			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
+			$sql .= ", ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
 		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe as s"; // If we need to link to societe to limit select to socid
 		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -2517,11 +2549,11 @@ abstract class CommonObject
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
 		if ($fieldid == 'rowid') {
-			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
+			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
-			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->label)."'";
+			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
-			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
@@ -2546,7 +2578,7 @@ abstract class CommonObject
 
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
-			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
+			$sql .= " AND te.".$this->db->sanitize($tmparray[0])." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
 		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
@@ -2584,7 +2616,7 @@ abstract class CommonObject
 		$row = $this->db->fetch_row($result);
 		$this->ref_previous = $row[0];
 
-		$sql = "SELECT MIN(te.".$fieldid.")";
+		$sql = "SELECT MIN(te.".$this->db->sanitize($fieldid).")";
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2598,11 +2630,11 @@ abstract class CommonObject
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
 		if ($fieldid == 'rowid') {
-			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
+			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
-			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->label)."'";
+			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
-			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id);
@@ -2634,7 +2666,7 @@ abstract class CommonObject
 
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
-			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
+			$sql .= " AND te.".$this->db->sanitize($tmparray[0])." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
 		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
@@ -2857,10 +2889,8 @@ abstract class CommonObject
 	{
 		dol_syslog(get_class($this).'::setMulticurrencyCode('.$code.')');
 		if ($this->status >= 0 || $this->element == 'societe') {
-			$fieldname = 'multicurrency_code';
-
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$fieldname." = '".$this->db->escape($code)."'";
+			$sql .= " SET multicurrency_code = '".$this->db->escape($code)."'";
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2895,10 +2925,8 @@ abstract class CommonObject
 	{
 		dol_syslog(get_class($this).'::setMulticurrencyRate('.$rate.', '.$mode.')');
 		if ($this->status >= 0 || $this->element == 'societe') {
-			$fieldname = 'multicurrency_tx';
-
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((float) $rate);
+			$sql .= " SET multicurrency_tx = ".((float) $rate);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -3173,11 +3201,11 @@ abstract class CommonObject
 			}
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
 			if (in_array($this->table_element, array('propal', 'commande', 'supplier_proposal', 'commande_fournisseur', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
 			}
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->cond_reglement_id = $id;
@@ -3218,7 +3246,7 @@ abstract class CommonObject
 			}
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -3253,7 +3281,7 @@ abstract class CommonObject
 			$fieldname = 'retained_warranty_fk_cond_reglement';
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$fieldname." = ".((int) $id);
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((int) $id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -3285,7 +3313,7 @@ abstract class CommonObject
 			$fieldname = 'fk_address';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET ".$fieldname." = ".((int) $id);
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET ".$this->db->sanitize($fieldname)." = ".((int) $id);
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = 0";
 
 		if ($this->db->query($sql)) {
@@ -3517,13 +3545,13 @@ abstract class CommonObject
 
 		// Count number of lines to reorder (according to choice $renum)
 		$nl = 0;
-		$sql = "SELECT count(rowid) FROM ".$this->db->prefix().$this->table_element_line;
-		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql = "SELECT count(rowid) FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 		if (!$renum) {
-			$sql .= " AND " . $fieldposition . " = 0";
+			$sql .= " AND " . $this->db->sanitize($fieldposition) . " = 0";
 		}
 		if ($renum) {
-			$sql .= " AND " . $fieldposition . " <> 0";
+			$sql .= " AND " . $this->db->sanitize($fieldposition) . " <> 0";
 		}
 
 		dol_syslog(get_class($this)."::line_order", LOG_DEBUG);
@@ -3539,12 +3567,12 @@ abstract class CommonObject
 			$rows = array();
 
 			// We first search all lines that are parent lines (for multilevel details lines)
-			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+			$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 			if ($fk_parent_line) {
 				$sql .= ' AND fk_parent_line IS NULL';
 			}
-			$sql .= " ORDER BY " . $fieldposition . " ASC, rowid " . $rowidorder;
+			$sql .= " ORDER BY " . $this->db->sanitize($fieldposition) . " ASC, rowid " . $this->db->sanitize($rowidorder);
 
 			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3595,10 +3623,10 @@ abstract class CommonObject
 
 		$rows = array();
 
-		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
-		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 		$sql .= ' AND fk_parent_line = '.((int) $id);
-		$sql .= " ORDER BY " . $fieldposition . " ASC";
+		$sql .= " ORDER BY " . $this->db->sanitize($fieldposition) . " ASC";
 
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 
@@ -3674,7 +3702,7 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldposition)." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
@@ -3723,15 +3751,15 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
-		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-		$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element_line)." SET ".$this->db->sanitize($fieldposition)." = ".((int) $rang);
+		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$sql .= " AND " . $this->db->sanitize($fieldposition) . " = " . ((int) ($rang - 1));
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldposition)." = ".((int) ($rang - 1));
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
@@ -3760,15 +3788,15 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
-		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-		$sql .= " AND " . $fieldposition . " = " . ((int) ($rang + 1));
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element_line)." SET ".$this->db->sanitize($fieldposition)." = ".((int) $rang);
+		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$sql .= " AND " . $this->db->sanitize($fieldposition) . " = " . ((int) ($rang + 1));
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang + 1));
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldposition)." = ".((int) ($rang + 1));
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
@@ -3791,7 +3819,7 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = "SELECT " . $fieldposition . " FROM ".$this->db->prefix().$this->table_element_line;
+		$sql = "SELECT " . $this->db->sanitize($fieldposition) . " FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
@@ -3817,9 +3845,9 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
-		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-		$sql .= " AND " . $fieldposition . " = ".((int) $rang);
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$sql .= " AND " . $this->db->sanitize($fieldposition) . " = ".((int) $rang);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			return 0;
@@ -3844,8 +3872,8 @@ abstract class CommonObject
 			$positionfield = 'position';
 		}
 
-		$sql = "SELECT max(".$positionfield.") FROM ".$this->db->prefix().$this->table_element_line;
-		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql = "SELECT max(".$this->db->sanitize($positionfield).") FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line) {
@@ -4109,15 +4137,15 @@ abstract class CommonObject
 			$sql .= ', situation_percent';
 		}
 		$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
-		$sql .= " FROM ".$this->db->prefix().$this->table_element_line;
-		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 		if ($exclspec) {
 			$product_field = 'product_type';
 			if ($this->table_element_line == 'contratdet') {
 				$product_field = ''; // contratdet table has no product_type field
 			}
 			if ($product_field) {
-				$sql .= " AND ".$product_field." <> 9";
+				$sql .= " AND ".$this->db->sanitize($product_field)." <> 9";
 			}
 		}
 		$sql .= ' ORDER by rowid'; // We want to be certain to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
@@ -4644,7 +4672,7 @@ abstract class CommonObject
 				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
 		}
-		$sql .= " ORDER BY ".$orderby;
+		$sql .= $this->db->order($orderby);
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
 
@@ -4899,7 +4927,7 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = "SELECT ".$field_select." FROM ".$db->prefix().$table_element." WHERE ".$field_where." = ".((int) $fk_object_where);
+		$sql = "SELECT ".$db->sanitize($field_select)." FROM ".$db->prefix().$db->sanitize($table_element)." WHERE ".$db->sanitize($field_where)." = ".((int) $fk_object_where);
 		$resql = $db->query($sql);
 
 		$TRes = array();
@@ -4928,7 +4956,7 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = "SELECT COUNT(*) as nb FROM ".$db->prefix().$table_element." WHERE ".$field_where." = ".((int) $fk_object_where);
+		$sql = "SELECT COUNT(*) as nb FROM ".$db->prefix().$db->sanitize($table_element)." WHERE ".$db->sanitize($field_where)." = ".((int) $fk_object_where);
 		$resql = $db->query($sql);
 		$n = 0;
 		if ($resql) {
@@ -4957,7 +4985,7 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = "DELETE FROM ".$db->prefix().$table_element." WHERE ".$field_where." = ".((int) $fk_object_where);
+		$sql = "DELETE FROM ".$db->prefix().$table_element." WHERE ".$db->sanitize($field_where)." = ".((int) $fk_object_where);
 		$resql = $db->query($sql);
 
 		if (empty($resql)) {
@@ -5170,7 +5198,7 @@ abstract class CommonObject
 	 */
 	public function getSpecialCode($lineid)
 	{
-		$sql = "SELECT special_code FROM ".$this->db->prefix().$this->table_element_line;
+		$sql = "SELECT special_code FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
 		$sql .= " WHERE rowid = ".((int) $lineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -5225,20 +5253,20 @@ abstract class CommonObject
 
 			// Check if element can be deleted
 			$sql = "SELECT COUNT(*) as nb";
-			$sql .= " FROM ".$this->db->prefix().$table." as c";
+			$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($table)." as c";
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
-				$sql .= ", ".$this->db->prefix().$element['parent']." as p";
+				$sql .= ", ".$this->db->prefix().$this->db->sanitize($element['parent'])." as p";
 			}
 			if (!empty($element['fk_element'])) {
-				$sql .= " WHERE c.".$element['fk_element']." = ".((int) $id);
+				$sql .= " WHERE c.".$this->db->sanitize($element['fk_element'])." = ".((int) $id);
 			} else {
-				$sql .= " WHERE c.".$this->fk_element." = ".((int) $id);
+				$sql .= " WHERE c.".$this->db->sanitize($this->fk_element)." = ".((int) $id);
 			}
 			if (!empty($element['parent']) && !empty($element['parentkey'])) {
-				$sql .= " AND c.".$element['parentkey']." = p.rowid";
+				$sql .= " AND c.".$this->db->sanitize($element['parentkey'])." = p.rowid";
 			}
 			if (!empty($element['parent']) && !empty($element['parenttypefield']) && !empty($element['parenttypevalue'])) {
-				$sql .= " AND c.".$element['parenttypefield']." = '".$this->db->escape($element['parenttypevalue'])."'";
+				$sql .= " AND c.".$this->db->sanitize($element['parenttypefield'])." = '".$this->db->escape($element['parenttypevalue'])."'";
 			}
 			if (!empty($entity)) {
 				if (!empty($element['parent']) && !empty($element['parentkey'])) {
@@ -5326,7 +5354,7 @@ abstract class CommonObject
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
 			$sql .= " FROM ".$this->db->prefix().$this->table_element_line;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+			$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 
 			dol_syslog(get_class($this).'::getTotalDiscount', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -6281,7 +6309,7 @@ abstract class CommonObject
 				// TODO: Try to set type above again
 				'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
 				$this->context['moreparams'] = $moreparams;
-				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);  // @phan-suppress-line-PhanTypeMismatchArgument
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref); // @phan-suppress-current-line PhanTypeMismatchArgument
 			}
 		} catch (\Throwable $e) {
 			$resultwritefile = -1;
@@ -7251,7 +7279,7 @@ abstract class CommonObject
 		}
 
 		// Update also the user of last modification in parent table
-		if (!$error && !empty($this->fields['fk_user_modif'])) {
+		if (!$error && !empty($this->fields['fk_user_modif'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET fk_user_modif = ".(int) $user->id;
 			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
@@ -8210,8 +8238,8 @@ abstract class CommonObject
 					}
 
 					$sqlwhere = '';
-					$sql = "SELECT " . $keyList;
-					$sql .= " FROM " . $this->db->prefix() . $InfoFieldList[0];
+					$sql = "SELECT " . $this->db->sanitize($keyList, 0, 0, 1);
+					$sql .= " FROM " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
@@ -8457,8 +8485,8 @@ abstract class CommonObject
 					}
 
 					$sqlwhere = '';
-					$sql = "SELECT " . $keyList;
-					$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+					$sql = "SELECT " . $this->db->sanitize($keyList, 0, 0, 1);
+					$sql .= ' FROM ' . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
@@ -8706,13 +8734,13 @@ abstract class CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
-	 * @param  string  		$key            	Key of attribute
-	 * @param  string|int  	$value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  		$moreparam      	To add more parameters on html tag
-	 * @param  string  		$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  		$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   		$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>,noteditable?:int,default?:int|string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,cssview?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int,required?:int,picto?:string}	$val	Array of properties of field to show
+	 * @param  string  			$key            	Key of attribute
+	 * @param  string|int|null  $value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  			$moreparam      	To add more parameters on html tag
+	 * @param  string  			$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  			$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   			$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
 	 * @return string
 	 */
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
@@ -8962,17 +8990,17 @@ abstract class CommonObject
 				}
 			}
 
-			$sql = "SELECT ".$keyList;
-			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+			$sql = "SELECT ".$this->db->sanitize($keyList, 0, 0, 1);
+			$sql .= ' FROM '.$this->db->prefix().$this->db->sanitize($InfoFieldList[0]);
 			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE ".$selectkey." = 0";
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE ".$selectkey." = ".((int) $value);
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey." = '".$this->db->escape((string) $value)."'";
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = '".$this->db->escape((string) $value)."'";
 			}
 
 			//$sql.= ' AND entity = '.$conf->entity;
@@ -9072,8 +9100,8 @@ abstract class CommonObject
 				}
 			}
 
-			$sql = "SELECT ".$keyList;
-			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+			$sql = "SELECT ".$this->db->sanitize($keyList, 0, 0, 1);
+			$sql .= ' FROM '.$this->db->prefix().$this->db->sanitize($InfoFieldList[0]);
 			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -10185,8 +10213,9 @@ abstract class CommonObject
 			$links = array();
 			$link->fetchAll($links, 'product', $this->id);
 
-			if (count($links) > 0)
+			if (count($links) > 0) {
 				$useLinkPathPhoto = true;
+			}
 
 			if ($useLinkPathPhoto) {
 				// Start table or div based on nbbyrow
@@ -10206,12 +10235,12 @@ abstract class CommonObject
 						}
 
 						if ($nbbyrow > 0) {
-							$return .= '<td style="width:'.ceil(100/$nbbyrow).'%" class="photo">';
+							$return .= '<td style="width:'.ceil(100 / $nbbyrow).'%" class="photo">';
 						} else {
 							$return .= '<div class="inline-block">';
 						}
 
-						$return .= '<img class="photo photowithmargin'.($addphotorefcss?' '.$addphotorefcss:'').'"'.($maxHeight?' height="'.$maxHeight.'"':'').' src="'.$url.'" title="External image">';
+						$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ? ' height="'.$maxHeight.'"' : '').' src="'.$url.'" title="External image">';
 
 						if ($nbbyrow > 0) {
 							$return .= '</td>';
@@ -10226,7 +10255,7 @@ abstract class CommonObject
 
 				if ($nbbyrow > 0) {
 					while ($i % $nbbyrow) {
-						$return .= '<td style="width:'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$return .= '<td style="width:'.ceil(100 / $nbbyrow).'%">&nbsp;</td>';
 						$i++;
 					}
 					if ($nbphoto) {
@@ -10728,7 +10757,7 @@ abstract class CommonObject
 						continue;
 					}
 				}
-				$keys_with_alias[] = $alias . '.' . $fieldname;
+				$keys_with_alias[] = $this->db->sanitize($alias . '.' . $fieldname);
 			}
 			return implode(', ', $keys_with_alias);
 		} else {
@@ -10987,7 +11016,7 @@ abstract class CommonObject
 			return 0;
 		}
 
-		$sql = "SELECT ".$fieldlist;
+		$sql = "SELECT ".$this->db->sanitize($fieldlist, 0, 0, 1);
 		$sql .= " FROM ".$this->db->prefix().$this->table_element.' as t';
 
 		if (!empty($id)) {
@@ -11237,7 +11266,7 @@ abstract class CommonObject
 
 		if ($forcechilddeletion) {	// Force also delete of childtables that should lock deletion in standard case when option force is off
 			foreach ($this->childtables as $table) {
-				$sql = "DELETE FROM ".$this->db->prefix().$table." WHERE ".$this->fk_element." = ".((int) $this->id);
+				$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($table)." WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->error = $this->db->lasterror();
@@ -11292,7 +11321,7 @@ abstract class CommonObject
 					}
 				} else {
 					// Delete record in child table
-					$sql = "DELETE FROM ".$this->db->prefix().$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id);
+					$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($tabletodelete)." WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -11539,7 +11568,7 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET ".$statusfield." = ".((int) $status);
+		$sql .= " SET ".$this->db->sanitize($statusfield)." = ".((int) $status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
@@ -11796,9 +11825,9 @@ abstract class CommonObject
 		$tablename = $this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
 		$fkname = 'fk_' . (empty($categorystatic->MAP_CAT_FK[$type]) ? $type : $categorystatic->MAP_CAT_FK[$type]);
 
-		$sql = "INSERT INTO ".$tablename." (fk_categorie, ".$fkname.")";
-		$sql .= " SELECT fk_categorie, $toId FROM ".$tablename;
-		$sql .= " WHERE ".$fkname." = ".((int) $fromId);
+		$sql = "INSERT INTO ".$this->db->sanitize($tablename)." (fk_categorie, ".$this->db->sanitize($fkname).")";
+		$sql .= " SELECT fk_categorie, ".((int) $toId)." FROM ".$this->db->sanitize($tablename);
+		$sql .= " WHERE ".$this->db->sanitize($fkname)." = ".((int) $fromId);
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
