@@ -848,7 +848,7 @@ class ToolProducts extends McpTool
 	 * Retrieves a list of all defined supplier prices for a given product or service.
 	 *
 	 * @param array<string, mixed> $args Input parameters (product_id, product_name, type)
-	 * @return array<int, array<string, mixed>>|array<string, string>
+	 * @return array<string, mixed>|array<string, string>
 	 *
 	 */
 	private function getSupplierPrices(array $args)
