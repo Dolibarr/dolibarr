@@ -152,11 +152,8 @@ class ToolInvoices extends McpTool
 	/**
 	 * Search invoices based on filters.
 	 *
-	 * @param array<string, mixed> $args {
-	 *     @var int    $limit
-	 *     @var string $status  draft|paid|unpaid|all
-	 *     @var string $customer
-	 * }
+	 * @param array<string, mixed> $args
+	 *
 	 * @return array<int, array<string, mixed>>|array<string, string>
 	 */
 	private function searchInvoices($args)
@@ -242,14 +239,12 @@ class ToolInvoices extends McpTool
 	}
 
 	/**
-	 * Get full invoice details.
-	 *
-	 * @param array<string, mixed> $args {
-	 *     @var string|int $ref Invoice ref or ID
-	 *     @var string|int $id  Invoice ID (alternative)
-	 * }
-	 * @return array<string, mixed>
-	 */
+ 	* Get full invoice details.
+ 	*
+ 	* @param array<string, mixed> $args
+ 	*
+ 	* @return array<string, mixed>
+ 	*/
 	private function getInvoice($args)
 	{
 		global $db;
@@ -293,9 +288,8 @@ class ToolInvoices extends McpTool
 	/**
 	 * Validate a draft invoice.
 	 *
-	 * @param array<string, mixed> $args {
-	 *     @var string|int $invoice Invoice ref or ID
-	 * }
+	 * @param array<string, mixed> $args
+	 *
 	 * @return array<string, mixed>
 	 */
 	private function validateInvoice($args)
@@ -311,7 +305,7 @@ class ToolInvoices extends McpTool
 		}
 
 		if ($invoice->validate($user) < 0) {
-			return ["error" => "Validation failed: " . join(', ', $invoice->errors)];
+			return ["error" => "Validation failed: " . implode(', ', $invoice->errors)];
 		}
 
 		$invoice->fetch($invoice->id);
@@ -326,12 +320,8 @@ class ToolInvoices extends McpTool
 	/**
 	 * Register a payment on an invoice.
 	 *
-	 * @param array<string, mixed> $args {
-	 *     @var string|int $invoice
-	 *     @var float      $amount
-	 *     @var string     $payment_mode
-	 *     @var string|int $bank_account
-	 * }
+	 * @param array<string, mixed> $args
+	 *
 	 * @return array<string, mixed>
 	 */
 	private function payInvoice($args)
@@ -375,7 +365,7 @@ class ToolInvoices extends McpTool
 		$paymentId = $payment->create($user, 1);
 		if ($paymentId < 0) {
 			$db->rollback();
-			return ["error" => "Payment creation failed: " . join(', ', $payment->errors)];
+			return ["error" => "Payment creation failed: " . implode(', ', $payment->errors)];
 		}
 		$payment->fetch($paymentId);
 		if ($payment->addPaymentToBank($user, 'payment', '(Payment via AI)', $bank->rowid, '', '') < 0) {
@@ -421,10 +411,11 @@ class ToolInvoices extends McpTool
 
 		// Exact
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe
-			WHERE (nom = ? OR code_client = ?)
+			WHERE (nom = '" . $db->escape($identifier) . "'
+			OR code_client = '" . $db->escape($identifier) . "')
 			AND entity IN (" . getEntity('societe') . ")";
 
-		$resql = $db->query($sql, [$identifier, $identifier]);
+		$resql = $db->query($sql);
 
 		if ($resql && $db->num_rows($resql) > 0) {
 			$obj = $db->fetch_object($resql);
@@ -434,13 +425,15 @@ class ToolInvoices extends McpTool
 		}
 
 		// Like
+		$like = '%' . $db->escape($identifier) . '%';
+
 		$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe
-			WHERE (nom LIKE ? OR code_client LIKE ?)
+			WHERE (nom LIKE '" . $like . "'
+			OR code_client LIKE '" . $like . "')
 			AND entity IN (" . getEntity('societe') . ")
 			LIMIT 5";
 
-		$like = '%' . $identifier . '%';
-		$resql = $db->query($sql, [$like, $like]);
+		$resql = $db->query($sql);
 
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -485,7 +478,7 @@ class ToolInvoices extends McpTool
 				return $invoice;
 			}
 		}
-		if ($invoice->fetch('', $identifier) > 0) {
+		if ($invoice->fetch(0, $identifier) > 0) {
 			return $invoice;
 		}
 
@@ -512,12 +505,11 @@ class ToolInvoices extends McpTool
 		if (is_numeric($identifier)) {
 			$sql .= " AND rowid = " . ((int) $identifier);
 		} elseif (!empty($identifier)) {
-			$sql .= " AND (ref = ? OR label LIKE ?)";
-			$params[] = $identifier;
-			$params[] = '%' . $identifier . '%';
+			$sql .= " AND (ref = '" . $db->escape($identifier) . "'
+						OR label LIKE '%" . $db->escape($identifier) . "%')";
 		}
 
-		$resql = $db->query($sql, $params);
+		$resql = $db->query($sql);
 
 		if ($resql && $db->num_rows($resql) > 0) {
 			$obj = $db->fetch_object($resql);
