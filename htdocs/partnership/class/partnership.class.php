@@ -110,8 +110,6 @@ class Partnership extends CommonObject
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 'isModEnabled("multicompany")', 'position' => 15, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
 		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label' => 'Type', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'csslist' => 'tdoverflowmax100', 'help' => 'YouCanChangeValuesForThisListFromDictionarySetup'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax125',),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0,),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax125'),
@@ -119,23 +117,25 @@ class Partnership extends CommonObject
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
-		'date_partnership_start' => array('type' => 'date', 'label' => 'DatePartnershipStart', 'enabled' => 1, 'position' => 52, 'notnull' => 1, 'visible' => 1,),
-		'date_partnership_end' => array('type' => 'date', 'label' => 'DatePartnershipEnd', 'enabled' => 1, 'position' => 53, 'notnull' => 0, 'visible' => 1,),
+		'date_partnership_start' => array('type' => 'date', 'label' => 'DatePartnershipStart', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1,),
+		'date_partnership_end' => array('type' => 'date', 'label' => 'DatePartnershipEnd', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => 1,),
 		'url_to_check' => array('type' => 'url', 'label' => 'UrlToCheck', 'enabled' => 'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position' => 70, 'notnull' => 0, 'visible' => -1, 'csslist' => 'tdoverflowmax150'),
 		'count_last_url_check_error' => array('type' => 'integer', 'label' => 'CountLastUrlCheckError', 'enabled' => 'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position' => 71, 'notnull' => 0, 'visible' => -4, 'default' => '0',),
 		'last_check_backlink' => array('type' => 'datetime', 'label' => 'LastCheckBacklink', 'enabled' => 'getDolGlobalString("PARTNERSHIP_BACKLINKS_TO_CHECK")', 'position' => 72, 'notnull' => 0, 'visible' => -4, 'csslist' => 'nowraponall'),
 		'reason_decline_or_cancel' => array('type' => 'text', 'label' => 'ReasonDeclineOrCancel', 'enabled' => 1, 'position' => 73, 'notnull' => 0, 'visible' => -2,),
 		'ip' => array('type' => 'ip', 'label' => 'IPOfApplicant', 'enabled' => 1, 'position' => 74, 'notnull' => 0, 'visible' => -2,),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => 0,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 81, 'notnull' => 0, 'visible' => 0,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 2, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Approved', 3 => 'Refused', 9 => 'Terminated'),),
 	);
 
 	/**
-	 * @var int
+	 * @var int ID
 	 */
 	public $rowid;
 
 	/**
-	 * @var string
+	 * @var string Ref
 	 */
 	public $ref;
 
@@ -283,7 +283,7 @@ class Partnership extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @return 	self|int<-1,-1>		New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -345,8 +345,7 @@ class Partnership extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -358,7 +357,7 @@ class Partnership extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+			if (!empty($object->socid) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->socid)) || (property_exists($this, 'socid') && ($this->socid == $object->socid)))) {	// @phpstan-ignore-line
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -475,19 +474,22 @@ class Partnership extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLines()
+	public function fetchLines($noextrafields = 0)
 	{
 		$this->lines = array();
 
-		$result = $this->fetchLinesCommon();
+		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
 
 
 	/**
 	 * Load list of objects in memory from the database.
+	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
+	 * your own loop with start and stop pagination.
 	 *
 	 * @param  string      		$sortorder    	Sort Order
 	 * @param  string      		$sortfield    	Sort field
@@ -503,13 +505,13 @@ class Partnership extends CommonObject
 
 		$records = array();
 
-		$sql = 'SELECT ';
+		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
-			$sql .= ' WHERE 1 = 1';
+			$sql .= " WHERE 1 = 1";
 		}
 
 		// Manage filter
@@ -529,7 +531,7 @@ class Partnership extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -561,6 +563,8 @@ class Partnership extends CommonObject
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
 
+				$record->fetch_optionals();
+
 				$records[$record->id] = $record;
 
 				$i++;
@@ -579,9 +583,9 @@ class Partnership extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User 		$user      User that modifies
+	 * @param  int<0,1> 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int          		   Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -599,9 +603,9 @@ class Partnership extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User 	$user       User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param 	User 		$user       User that deletes
+	 * @param	int<0,1> 	$notrigger	0=launch triggers, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -612,10 +616,10 @@ class Partnership extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param  User		$user       User that delete
+	 *  @param	int			$idline		Id of line to delete
+	 *  @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return	int<-2,1>				>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -631,9 +635,9 @@ class Partnership extends CommonObject
 	/**
 	 *	Validate object
 	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
+	 *	@param	User	$user     		User making status change
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int<-1,1>				Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -649,9 +653,9 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->partnership_advance->validate))))
-		 {
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject', 'write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject_advance', 'validate')))
+		{
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 		 return -1;
@@ -662,7 +666,7 @@ class Partnership extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = (string) $this->ref;
@@ -942,9 +946,9 @@ class Partnership extends CommonObject
 	/**
 	 *	Set cancel status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user		Object user that modify
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>				Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -953,9 +957,9 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership_advance->validate))))
-		 {
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','mymodule_advance','validate'))))
+		{
 		 $this->error='Permission denied';
 		 return -1;
 		 }*/
@@ -966,9 +970,9 @@ class Partnership extends CommonObject
 	/**
 	 *	Set back to validated status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -977,9 +981,9 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership_advance->validate))))
-		 {
+		/*if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','mymodule_advance','validate'))))
+		{
 		 $this->error='Permission denied';
 		 return -1;
 		 }*/
@@ -1000,6 +1004,7 @@ class Partnership extends CommonObject
 		$langs->load('partnership');
 
 		$datas = [];
+
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Partnership").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
@@ -1029,7 +1034,7 @@ class Partnership extends CommonObject
 
 		$result = '';
 		$params = [
-			'id' => $this->id,
+			'id' => (string) $this->id,
 			'objecttype' => $this->element,
 			'option' => $option,
 		];
@@ -1084,7 +1089,7 @@ class Partnership extends CommonObject
 
 		if (empty($this->showphoto_on_popup)) {
 			if ($withpicto) {
-				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 			}
 		} else {
 			if ($withpicto) {
@@ -1106,7 +1111,7 @@ class Partnership extends CommonObject
 
 					$result .= '</div>';
 				} else {
-					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 				}
 			}
 		}
@@ -1168,11 +1173,14 @@ class Partnership extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-
-		// if $status is null or undefined, return empty string
 		if (is_null($status)) {
 			return '';
 		}
+
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-status' => (int) $status
+		)));
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
@@ -1200,7 +1208,7 @@ class Partnership extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**
@@ -1211,10 +1219,10 @@ class Partnership extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid, date_creation as datec, tms as datem,";
+		$sql .= " fk_user_creat, fk_user_modif";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -1235,7 +1243,7 @@ class Partnership extends CommonObject
 	}
 
 	/**
-	 * Initialise object with example values
+	 * Initialize object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
 	 * @return int
@@ -1337,7 +1345,7 @@ class Partnership extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$includedocgeneration = 0;
@@ -1378,7 +1386,7 @@ class Partnership extends CommonObject
 		$this->output = '';
 		$this->error = '';
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		//$now = dol_now();
 
@@ -1387,6 +1395,8 @@ class Partnership extends CommonObject
 		// ...
 
 		$this->db->commit();
+
+		dol_syslog(__METHOD__." end", LOG_INFO);
 
 		return $error;
 	}

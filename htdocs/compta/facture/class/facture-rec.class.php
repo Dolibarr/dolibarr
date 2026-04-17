@@ -1404,7 +1404,7 @@ class FactureRec extends CommonInvoice
 
 		$this->output = '';
 
-		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation, " forcebuilddoc=".$forcebuilddoc);
+		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation." forcebuilddoc=".$forcebuilddoc, LOG_DEBUG);
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
