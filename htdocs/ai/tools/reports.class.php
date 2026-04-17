@@ -181,10 +181,7 @@ class ToolReports extends McpTool
 	 * Otherwise, if `thirdparty_name` is provided, the function searches
 	 * the Dolibarr societe table using a LIKE match and returns the first match.
 	 *
-	 * @param array $args {
-	 *                    thirdparty_id?: int|string,
-	 *                    thirdparty_name?: string
-	 *                    } Input arguments.
+	 * @param array<string, mixed> $args Input parameters (thirdparty_id, thirdparty_name)
 	 *
 	 * @return int|null Thirdparty ID if found, otherwise null.
 	 */
