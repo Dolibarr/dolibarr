@@ -282,7 +282,8 @@ if ($action == 'edit') {
 
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
-			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
+			$s = picto_from_langcode((string) $key);
+			print '<br><b><u>'.($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b> ' . $langs->trans('Language_'.$key).' :</u></b><br>';
 			print '<table class="border centpercent">';
 
 			// Label
@@ -315,7 +316,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode((string) $key);
 			print '<table class="border centpercent">';
-			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.($object->multilangs[$key]["description"] ?? '').'</td></tr>';
 			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
