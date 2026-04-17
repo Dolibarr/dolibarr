@@ -293,6 +293,8 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 	$listUserAssignedUpdated = true;
 }
 
+// Add users from selected group to assigned list
+if (empty($reshook) && (GETPOST('addassignedtogroup') || GETPOST('updateassignedtogroup'))) {
 	$groups = GETPOST('assignedtogroup', 'array');
 	if (!is_array($groups)) {
 		$groups = [GETPOSTINT('assignedtogroup')];
@@ -1777,6 +1779,10 @@ if ($action == 'create') {
 	print '</div>';
 	print '</td></tr>';
 
+	print '<tr><td class="nowrap titlefieldcreate"><span>' . $langs->trans('Add user by tags') . '</span></td><td>';
+	print img_picto('', 'tags', 'class="pictofixedwidth"');
+	print '<div class="divaddgroup">';
+	print $form->selectCategories(Categorie::TYPE_USER, 'assignedtousertags', null);
 	print '<script nonce="' . getNonce() . '" type="text/javascript">jQuery(document).ready(function() { jQuery("#assignedtousertags").on("change", function() { var value = jQuery(this).val(); if (value && (Array.isArray(value) ? value.length : value > 0)) { jQuery("#' . ($action == 'create' ? 'add' : 'update') . 'assignedtousertags").attr("disabled", false); } else { jQuery("#' . ($action == 'create' ? 'add' : 'update') . 'assignedtousertags").attr("disabled", true); } }); });</script>';
 	print ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="'.($action == 'create' ? 'add' : 'update').'assignedtousertags" name="'.($action == 'create' ? 'add' : 'update').'assignedtousertags" value="'.dol_escape_htmltag($langs->trans('Add')).'">';
 	print '</div>';
