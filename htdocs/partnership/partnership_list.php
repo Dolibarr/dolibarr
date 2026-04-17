@@ -943,12 +943,12 @@ while ($i < $imaxinloop) {
 		$object->thirdparty = $companyobj;
 	}
 
-	$adherent->id = 0;
 	if ($managedfor == 'member' && $obj->fk_member > 0) {
 		$result = $adherent->fetch($obj->fk_member);
-	}
-	if ($managedfor == 'thirdparty' && isModEnabled('member') && $obj->fk_soc) {
+	} elseif ($managedfor == 'thirdparty' && isModEnabled('member') && $obj->fk_soc) {
 		$result = $adherent->fetch(0, '', $obj->fk_soc);
+	} else {
+		$adherent->id = 0;
 	}
 
 	if ($mode == 'kanban' || $mode == 'kanbangroupby') {

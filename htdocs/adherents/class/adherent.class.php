@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART			<support@ptibogxiv.net>
@@ -1590,6 +1590,8 @@ class Adherent extends CommonObject
 	 * 	@param	string	$ref_ext				External reference
 	 *  @param	bool	$fetch_optionals		To load optionals (extrafields)
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
+	 *
+	 *  @phpstan-assert int<0,max> $this->id
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
 	public function fetch($rowid, $ref = '', $socid = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
@@ -1639,7 +1641,7 @@ class Adherent extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->entity = $obj->entity;
-				$this->id = $obj->rowid;
+				$this->id = (int) $obj->rowid;
 				$this->ref = $obj->ref;
 				$this->ref_ext = $obj->ref_ext;
 
