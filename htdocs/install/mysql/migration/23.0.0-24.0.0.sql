@@ -229,6 +229,15 @@ create table llx_product_lang_extrafields
 ) ENGINE=innodb;
 ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_fk_object(fk_object);
 
+CREATE TABLE llx_categorie_lang_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_categorie_lang_extrafields ADD INDEX idx_categorie_lang_fk_object(fk_object);
+
 ALTER TABLE llx_adherent_type ADD COLUMN minimumamount double(24,8) DEFAULT NULL AFTER caneditamount;
 ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text AFTER minimumamount;
 
