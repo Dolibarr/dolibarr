@@ -86,9 +86,14 @@ class ActionsQuickMemo extends CommonHookActions
 	 */
 	public function llxFooter($parameters, &$object, &$action, $hookmanager)
 	{
+		if (!isModEnabled('quickmemo')) {
+			return 0;
+		}
 
 		$context = Memo::getMemoContext($parameters['context']??'');
-		if (empty($context)) { return 0; }
+		if (empty($context)) {
+			return 0;
+		}
 
 		$jsConfVars = [
 			'context' => $context,
@@ -119,6 +124,9 @@ class ActionsQuickMemo extends CommonHookActions
 	 */
 	public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
+		if (!isModEnabled('quickmemo')) {
+			return 0;
+		}
 
 		if (empty($object) || !is_object($object) || !isset($object->element)) {
 			return 0;
@@ -128,7 +136,7 @@ class ActionsQuickMemo extends CommonHookActions
 			'archivesUrlParams' => '&search_fk_element='. (int) $object->id .'&search_element_type='.$object->element,
 			'elementId' => (int) $object->id,
 			'elementType' => $object->element,
-			'context' => Memo::getMemoContext($parameters['context']??''),
+			'context' => Memo::getMemoContext($parameters['context']??'', $object),
 		];
 
 		Memo::loadQuickMemoJsInterface($jsConfVars);

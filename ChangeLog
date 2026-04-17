@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 23.0.3 compared to 23.0.2 *****
+FIX: IDOR on messaging.php - credit Aksoum Abderrahmane
+
 
 ***** ChangeLog for 24.0.0 compared to 23.0 *****
 

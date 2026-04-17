@@ -64,6 +64,11 @@ Replace
 With
 	protected $connector;
 
+Replace
+	if (!is_resource($im)) {
+With
+	if (!is_resource($im) && !($im instanceof \GdImage)) {
+
 
 
 PHP SABRE:

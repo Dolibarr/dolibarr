@@ -1279,23 +1279,33 @@ class Memo extends CommonObject
 	 * Get memo context
 	 *
 	 * @param string|array<string> $context Context
+	 * @param CommonObject|null    $object the common Dolibarr object
+	 *
 	 * @return mixed|string
 	 */
-	public static function getMemoContext($context)
+	public static function getMemoContext($context, $object = null)
 	{
 		global $db,$action, $hookmanager;
+
+		if (!isModEnabled('quickmemo')) {
+			return '';
+		}
 
 		if (!is_array($context)) {
 			$context = explode(':', $context);
 		}
 
-		$memoContext = '';
-		if (in_array('index', $context)) {
-			$memoContext = 'index';
-		} elseif (in_array('globalcard', $context)) {
-			$memoContext = 'card';
-		}
+		$contextMapping = self::getAvailableMemoContextMapping();
 
+		$memoContext = '';
+		foreach ($contextMapping as $key => $values) {
+			$values = (array) $values;
+
+			if (array_intersect($context, $values)) {
+				$memoContext = $key;
+				break;
+			}
+		}
 
 		$staticMemo = new self($db);
 
@@ -1303,7 +1313,7 @@ class Memo extends CommonObject
 		$parameters = array(
 			'memoContext' =>& $memoContext
 		);
-		$object = null;
+
 		$reshook = $hookmanager->executeHooks('getMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
@@ -1315,13 +1325,97 @@ class Memo extends CommonObject
 	/**
 	 * Get available memo context
 	 *
-	 * @return mixed|mixed[]|string[]
+	 * @param null $object the common Dolibarr object
+	 * @param bool $onlyActiveModules on true return only
+	 *
+	 * @return array|string[]
+	 */
+	public static function getAvailableMemoContextMapping($object = null, $onlyActiveModules = true)
+	{
+		global $db,$action, $hookmanager;
+
+		$contextTabMapping = [];
+
+		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats'];
+		foreach ($commonCardContext as $context) {
+			// init common contexts
+			$contextTabMapping[$context] = [];
+		}
+
+		// Start Correction of no standard Dolibarr context and special context
+		if (isModEnabled('propal') || !$onlyActiveModules) {
+			$contextTabMapping['contactcard'][] = 'proposalcontactcard';
+		}
+
+		if (isModEnabled('supplier_order') || !$onlyActiveModules) {
+			$contextTabMapping['contactcard'][] = 'ordersuppliercontactcard';
+			$contextTabMapping['document'][] = 'ordersuppliercarddocument';
+			$contextTabMapping['agenda'][] = 'ordersuppliercardinfo';
+			$contextTabMapping['ordersupplierdispatch'][] = 'ordersupplierdispatch';
+		}
+
+		if (isModEnabled('contract') || !$onlyActiveModules) {
+			$contextTabMapping['agenda'][] = 'agendacontract';
+		}
+
+		if (isModEnabled('order') || !$onlyActiveModules) {
+			$contextTabMapping['ordershipmentcard'][] = 'ordershipmentcard';
+		}
+
+		// End of corrections
+
+		// Generate standard context
+		foreach (['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract'] as $module) {
+			if (!isModEnabled($module) && $onlyActiveModules) {
+				continue;
+			}
+
+			$moduleClean = str_replace('_', '', $module);
+
+			foreach ($commonCardContext as $context) {
+				$contextTabMapping[$context][] = $moduleClean.$context;
+			}
+		}
+
+		if (!empty($object) && !empty($object->element)) {
+			foreach ($commonCardContext as $context) {
+				$contextTabMapping[$context][] = $object->element.$context;
+			}
+		}
+
+		$contextTabMapping = array_replace_recursive($contextTabMapping, [
+			// Need to by at end of tests
+			'index' => 'index',
+			'card' => 'globalcard'
+		]);
+
+		$staticMemo = new self($db);
+		$hookmanager->initHooks(array($staticMemo->element.'dao'));
+		$parameters = array(
+			'contextTabMapping' =>& $contextTabMapping,
+			'onlyActiveModules' => $onlyActiveModules
+		);
+
+		$reshook = $hookmanager->executeHooks('getAvailableMemoContextMapping', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return $hookmanager->resArray;
+		}
+
+		return $contextTabMapping;
+	}
+
+
+	/**
+	 * Get available memo context
+	 *
+	 * @return string[]
 	 */
 	public static function getAvailableMemoContext()
 	{
 		global $db,$action, $hookmanager;
 
-		$list = ['card', 'index'];
+		$contextMapping = self::getAvailableMemoContextMapping();
+		$list = array_keys($contextMapping);
 
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
@@ -1331,10 +1425,19 @@ class Memo extends CommonObject
 		$object = null;
 		$reshook = $hookmanager->executeHooks('getAvailableMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
-			return $hookmanager->resArray;
+			$list = $hookmanager->resArray;
 		}
 
-		return $list;
+		// Security check
+		$result = [];
+		foreach ($list as $k => $v) {
+			if (!is_string($v)) { continue; }
+			if (strlen($v) > 64) { continue; }
+			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) { continue; }
+			$result[] = $v;
+		}
+
+		return $result;
 	}
 
 
@@ -1485,6 +1588,10 @@ class Memo extends CommonObject
 	public static function loadQuickMemoJsInterface($jsConfVars)
 	{
 		global $user;
+
+		if (!isModEnabled('quickmemo')) {
+			return false;
+		}
 
 		// DO NOT LOAD TWICE
 		if (defined('QUICKMEMOJS')) {
