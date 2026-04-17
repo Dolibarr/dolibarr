@@ -113,7 +113,7 @@ if (empty($action) && empty($object->id)) {
 $permissiontoread = $user->hasRight('mailing', 'lire');
 $permissiontocreate = $user->hasRight('mailing', 'creer');
 $permissiontovalidatesend = $user->hasRight('mailing', 'valider');
-
+$permissiontodelete = $user->hasRight('mailing', 'supprimer');
 
 /*
  * Actions
