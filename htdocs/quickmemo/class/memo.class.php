@@ -1414,11 +1414,9 @@ class Memo extends CommonObject
 			}
 		}
 
-		$contextTabMapping = array_replace_recursive($contextTabMapping, [
-			// Need to by at end of tests
-			'index' => ['index'],
-			'card' => ['globalcard']
-		]);
+		// Need to by at end of tests
+		self::completeMemoContextMapping($contextTabMapping, 'index');
+		self::completeMemoContextMapping($contextTabMapping, 'card', 'globalcard');
 
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
