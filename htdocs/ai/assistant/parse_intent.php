@@ -72,7 +72,7 @@ $rawResponseLog = "";
 $providerUsed = "offline";
 $errorDetails = "";
 
-$mcpEnabled = getDolGlobalString('AI_MCP_ENABLED');
+$mcpEnabled = getDolGlobalInt('AI_MCP_ENABLED', 0);
 $serviceKey = getDolGlobalString('AI_API_SERVICE');
 $doRedact = getDolGlobalInt('AI_PRIVACY_REDACTION', 0);
 $timeout = getDolGlobalInt('AI_REQUEST_TIMEOUT', 120);
