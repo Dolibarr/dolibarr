@@ -96,7 +96,7 @@ $error = 0;
 $managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 if ($sortfield == 'd.datefin') {
-	if ($managedfor != 'member' || !isModEnabled('member')) {
+	if ($managedfor != 'member' && !isModEnabled('member')) {
 		$sortfield = '';
 	}
 }
@@ -106,7 +106,9 @@ $non_object_fields = array(
 	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'searchall' => 1,),
 	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 52, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'searchall' => 1,),
 	// Field to add member when link is through thirdparty membership then member link
-	'fk_soc_member' => array('type' => 'varchar', 'label' => 'Member', 'visible' => -1, 'enabled' => ($managedfor != 'member' && isModEnabled('member')), 'picto' => 'member', 'csslist' => 'tdoverflowmax125', 'position' => 54)
+	'fk_soc_member' => array('type' => 'custom', 'label' => 'Member', 'visible' => -1, 'enabled' => ($managedfor != 'member' && isModEnabled('member')), 'picto' => 'member', 'csslist' => 'tdoverflowmax125', 'position' => 54),
+	// Field to show when partnership linked to member or thirdparty
+	'fk_soc_dateend' => array('type' => 'custom', 'label' => 'DateEndSubscription', 'visible' => -1, 'enabled' => ($managedfor == 'member' || isModEnabled('member')), 'picto' => 'member', 'csslist' => 'center', 'position' => 55)
 );
 //$arrayfields['fk_soc_member'] = array('type' => 'varchar', 'label' => 'Member', 'checked' => -1, 'enabled' => 1, 'picto' => 'member', 'csslist' => 'tdoverflowmax125', 'position' => 51);
 //var_dump($arrayfields);
@@ -827,18 +829,14 @@ foreach ($all_fields_list as $key => $val) {
 			print $form->select_country(in_array($key, $search) ? $search[$key] : 0, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 		} elseif ($key == 'fk_soc_member') {
 			print '';
+		} elseif ($key == 'fk_soc_dateend') {	// End of subscription date
+			$selectarray = array('-1' => '', 'withoutsubscription' => $langs->trans("WithoutSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
+			print $form->selectarray('search_filter', $selectarray, $search_filter);
 		} else {
 			print '<input type="text" class="flat maxwidth'.(in_array($val['type'], array('integer', 'price')) ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
-}
-// End of subscription date
-if ($managedfor == 'member') {
-	print '<td class="liste_titre center">';
-	$selectarray = array('-1' => '', 'withoutsubscription' => $langs->trans("WithoutSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
-	print $form->selectarray('search_filter', $selectarray, $search_filter);
-	print '</td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -879,15 +877,16 @@ foreach ($all_fields_list as $key => $val) {
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
-		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
+		$tmpfield = 't.'.$key;
+		if ($key == 'fk_soc_member') {
+			$tmpfield = '';
+		} elseif ($key == 'fk_soc_dateend') {	// End of subscription date
+			$tmpfield = 'd.datefin';
+			$cssforfield = 'center';
+		}
+		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $tmpfield, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
 		$totalarray['nbfield']++;
 	}
-}
-// End of subscription date
-if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('members'))) {
-	$key = 'datefin';
-	$cssforfield = 'center';
-	print getTitleFieldOfList('SubscriptionEndDate', 0, $_SERVER['PHP_SELF'], 'd.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1039,6 +1038,26 @@ while ($i < $imaxinloop) {
 					print $adherent->getNomUrl(1);
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
+				} elseif ($key == 'fk_soc_dateend') {
+					if ($adherent->id > 0) {
+						$datefin = $adherent->datefin;
+						if ($datefin) {
+							print dol_print_date($datefin, 'day');
+							if ($adherent->hasDelay()) {
+								$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->member->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->member->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+								print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
+							}
+						} else {
+							if ($adherent->subscription == 'yes') {
+								print $langs->trans("SubscriptionNotReceived");
+								if ($adherent->status > 0) {
+									print " ".img_warning();
+								}
+							} else {
+								print '&nbsp;';
+							}
+						}
+					}
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}
@@ -1059,31 +1078,6 @@ while ($i < $imaxinloop) {
 					$totalarray['val']['t.'.$key] += $object->$key;
 				}
 			}
-		}
-		// End of subscription date
-		if ($managedfor == 'member') {
-			print '<td class="nowrap center endofsubscriptiondate">';
-			$result = $adherent->fetch($object->fk_member);
-			if ($result) {
-				$datefin = $adherent->datefin;
-				if ($datefin) {
-					print dol_print_date($datefin, 'day');
-					if ($adherent->hasDelay()) {
-						$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
-						print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
-					}
-				} else {
-					if ($adherent->subscription == 'yes') {
-						print $langs->trans("SubscriptionNotReceived");
-						if ($adherent->status > 0) {
-							print " ".img_warning();
-						}
-					} else {
-						print '&nbsp;';
-					}
-				}
-			}
-			print '</td>';
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -1112,9 +1106,6 @@ while ($i < $imaxinloop) {
 
 	$i++;
 }
-if ($managedfor != 'member') {
-	$totalarray['nbfield']++; // End of subscription date
-}
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
@@ -1127,7 +1118,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	if ($managedfor == 'member') {
+	if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('member'))) {
 		$colspan++; // End of subscription date
 	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
