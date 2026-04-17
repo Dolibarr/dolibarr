@@ -152,7 +152,7 @@ class ToolInvoices extends McpTool
 	/**
 	 * Search invoices based on filters.
 	 *
-	 * @param array<string, mixed> $args
+	 * @param array<string, mixed> $args Input filters (limit, status, customer)
 	 *
 	 * @return array<int, array<string, mixed>>|array<string, string>
 	 */
@@ -239,12 +239,12 @@ class ToolInvoices extends McpTool
 	}
 
 	/**
- 	* Get full invoice details.
- 	*
- 	* @param array<string, mixed> $args
- 	*
- 	* @return array<string, mixed>
- 	*/
+	 * Get full invoice details.
+	 *
+	 * @param array<string, mixed> $args Input parameters (ref or id)
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function getInvoice($args)
 	{
 		global $db;
@@ -288,7 +288,7 @@ class ToolInvoices extends McpTool
 	/**
 	 * Validate a draft invoice.
 	 *
-	 * @param array<string, mixed> $args
+	 * @param array<string, mixed> $args  Input parameters (invoice ref or id)
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -320,7 +320,7 @@ class ToolInvoices extends McpTool
 	/**
 	 * Register a payment on an invoice.
 	 *
-	 * @param array<string, mixed> $args
+	 * @param array<string, mixed> $args Input parameters (invoice, amount, payment_mode, bank_account)
 	 *
 	 * @return array<string, mixed>
 	 */
