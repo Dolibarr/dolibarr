@@ -1327,7 +1327,7 @@ class Memo extends CommonObject
 	 * @param string $tabContext memo context
 	 * @param string $dolibarrContext Dolibarr context
 	 *
-	 * @return null
+	 * @return void
 	 */
 	static public function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
 	{
@@ -1395,7 +1395,9 @@ class Memo extends CommonObject
 		// End of corrections
 
 		// Generate standard context
-
+		// TODO : Common contexts such as document, agenda, contact card, and stat, which are used across most Dolibarr objects, are not defined as standard global contexts.
+		//  Instead of having dedicated contexts like global_document, global_agenda, global_contactcard, or global_stat (similar to global_card), pages currently mix global_card with object-specific contexts (e.g. product_document, propal_agenda, etc.).
+		//  This creates inconsistent context handling. These contexts should include both their object-specific context and a proper global context (e.g. global_document or global_agenda) depending on the active tab.
 		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats']; // for common object
 		$modules = ['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract', 'product', 'shipping'];
 		foreach ($modules as $module) {
