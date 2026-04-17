@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  *
@@ -495,7 +494,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Ensure Thirdparty is loaded
-		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+		if (empty($object->thirdparty)) {
 			$object->fetch_thirdparty();
 		}
 
@@ -642,21 +641,10 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Entry point for the 'add_line_item' tool. Adds line to an already existing object.
 	 * Instantiates the document and calls the line processing helper.
 	 *
-	 * @param array $args {
-	 *                    object_type: string,
-	 *                    parent_id: int,
-	 *                    product_id?: int,
-	 *                    description?: string,
-	 *                    quantity?: float|int,
-	 *                    unit_price?: float|int,
-	 *                    vat_rate?: float|int
-	 *                    } Tool arguments.
+	 * @param array{object_type:string,parent_id:int,product_id?:int,description?:string,quantity?:float|int,unit_price?:float|int,vat_rate?:float|int} $args
 	 *
-	 * @return array{
-	 *     success: bool,
-	 *     line_id?: int,
-	 *     error?: string
-	 * } Result.
+	 * @return array{success:bool,line_id?:int,error?:string}
+	 *
 	 */
 	private function addLineItem(array $args)
 	{
@@ -665,7 +653,10 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		// Check Permissions
 		$permError = $this->checkPermission($type);
 		if ($permError !== null) {
-			return $permError;
+			return [
+				'success' => false,
+				'error'   => $permError['error'] ?? 'Permission denied'
+			];
 		}
 
 		$parentId = (int) $args['parent_id'];
@@ -725,7 +716,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Try to Fetch by Ref
-		if ($product->fetch('', $searchString) > 0) {
+		if ($product->fetch(0, $searchString) > 0) {
 			return $product;
 		}
 
