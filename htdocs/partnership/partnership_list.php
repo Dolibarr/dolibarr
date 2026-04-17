@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+/* Copyright (C) 2007-2017 	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		NextGestion				<contact@nextgestion.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -63,7 +63,7 @@ $memberid = GETPOSTINT('rowid');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -72,7 +72,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize a technical objects
+// Initialize technical objects
 $object = new Partnership($db);
 $extrafields = new ExtraFields($db);
 $adherent = new Adherent($db);
@@ -95,15 +95,22 @@ $error = 0;
 
 $managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
-if ($managedfor != 'member' && $sortfield == 'd.datefin') {
-	$sortfield = '';
+if ($sortfield == 'd.datefin') {
+	if ($managedfor != 'member' || !isModEnabled('member')) {
+		$sortfield = '';
+	}
 }
 
 // Add non object fields to fields for list
 $non_object_fields = array(
-	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1,),
-	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'searchall' => 1,)
+	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'searchall' => 1,),
+	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 52, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'searchall' => 1,),
+	// Field to add member when link is through thirdparty membership then member link
+	'fk_soc_member' => array('type' => 'varchar', 'label' => 'Member', 'visible' => -1, 'enabled' => ($managedfor != 'member' && isModEnabled('member')), 'picto' => 'member', 'csslist' => 'tdoverflowmax125', 'position' => 54)
 );
+//$arrayfields['fk_soc_member'] = array('type' => 'varchar', 'label' => 'Member', 'checked' => -1, 'enabled' => 1, 'picto' => 'member', 'csslist' => 'tdoverflowmax125', 'position' => 51);
+//var_dump($arrayfields);
+
 
 // All fields in list
 $all_fields_list = array_merge($object->fields, $non_object_fields);
@@ -118,7 +125,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criteria
-$search_all = GETPOST('search_all', 'alphanohtml');
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search = array();
 foreach ($all_fields_list as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -143,16 +150,17 @@ foreach ($non_object_fields as $key => $val) {
 	}
 }
 
-// Definition of array of fields for columns
+// Definition of array of fields for columns from ->fields
+$tableprefix = 't';
 $arrayfields = array();
 foreach ($all_fields_list as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
-		$arrayfields['t.'.$key] = array(
+		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -328,7 +336,10 @@ $morecss = array();
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
 if ($managedfor == 'member') {
-	$sql .= ', d.datefin, d.fk_adherent_type, dty.subscription';
+	$sql .= ', d.rowid as memberid, d.lastname, d.firstname, d.datefin, d.fk_adherent_type, dty.subscription';
+}
+if ($managedfor == 'thirdparty' && isModEnabled('member')) {
+	$sql .= ', d.rowid as memberid, d.lastname, d.firstname, d.datefin, d.fk_adherent_type, dty.subscription';
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -352,8 +363,13 @@ if ($managedfor == 'member') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.rowid = t.fk_member)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 } else {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as d on (d.rowid = t.fk_soc)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = t.fk_soc)";
+	if ($managedfor == 'thirdparty' && isModEnabled('member')) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.fk_soc = s.rowid)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
+	}
 }
+
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -367,13 +383,13 @@ if ($managedfor == 'member') {
 	if ($memberid > 0) {
 		$sql .= " AND t.fk_member = ".((int) $memberid);
 	} else {
-		$sql .= " AND fk_member > 0";
+		$sql .= " AND t.fk_member > 0";
 	}
 } else {
 	if ($socid > 0) {
 		$sql .= " AND t.fk_soc = ".((int) $socid);
 	} else {
-		$sql .= " AND fk_soc > 0";
+		$sql .= " AND t.fk_soc > 0";
 	}
 }
 foreach ($search as $key => $val) {
@@ -407,16 +423,19 @@ foreach ($search as $key => $val) {
 			if ($managedfor == 'member') {
 				$sql .= " AND d.country = '".$db->escape($val)."'";
 			} else {
-				$sql .= " AND d.fk_pays = '".$db->escape($val)."'";
+				$sql .= " AND s.fk_pays = '".$db->escape($val)."'";
 			}
-			//$sql .= natural_search("d.fk_pays", $val);
 		}
 		if ($key == 'town' && $search[$key] != '') {
-			$sql .= natural_search("d.town", $val);
+			if ($managedfor == 'member') {
+				$sql .= natural_search("d.town", $val);
+			} else {
+				$sql .= natural_search("s.town", $val);
+			}
 		}
 	}
 }
-if ($managedfor == 'member') {
+if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('member'))) {
 	if ($search_filter == 'withoutsubscription') {
 		$sql .= " AND (d.datefin IS NULL)";
 	}
@@ -473,7 +492,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -496,7 +515,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$id);
@@ -744,11 +763,12 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste noborder'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
 if ($managedfor == 'member') {
@@ -756,12 +776,14 @@ if ($managedfor == 'member') {
 } else {
 	$arrayfields['t.fk_soc']['checked'] = 1;
 }
+
+
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -781,7 +803,11 @@ foreach ($all_fields_list as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			if (empty($val['searchmulti'])) {
+				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 1, 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			} else {
+				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 0, 0, 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			}
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -794,11 +820,15 @@ foreach ($all_fields_list as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+		} elseif ($val['type'] === 'boolean') {
+			print $form->selectyesno('search_' . $key, $search[$key] ?? '', 1, false, 1);
 		} elseif ($key == 'country') {
 			print $form->select_country(in_array($key, $search) ? $search[$key] : 0, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+		} elseif ($key == 'fk_soc_member') {
+			print '';
 		} else {
-			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.(in_array($val['type'], array('integer', 'price')) ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
@@ -854,7 +884,7 @@ foreach ($all_fields_list as $key => $val) {
 	}
 }
 // End of subscription date
-if ($managedfor == 'member') {
+if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('members'))) {
 	$key = 'datefin';
 	$cssforfield = 'center';
 	print getTitleFieldOfList('SubscriptionEndDate', 0, $_SERVER['PHP_SELF'], 'd.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
@@ -868,7 +898,7 @@ print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-	$totalarray['nbfield']++;	// For the column action
+	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
 
@@ -914,13 +944,15 @@ while ($i < $imaxinloop) {
 		$object->thirdparty = $companyobj;
 	}
 
-	if ($managedfor == 'member') {
-		if ($obj->fk_member > 0) {
-			$result = $adherent->fetch($obj->fk_member);
-		}
+	$adherent->id = 0;
+	if ($managedfor == 'member' && $obj->fk_member > 0) {
+		$result = $adherent->fetch($obj->fk_member);
+	}
+	if ($managedfor == 'thirdparty' && isModEnabled('member') && $obj->fk_soc) {
+		$result = $adherent->fetch(0, '', $obj->fk_soc);
 	}
 
-	if ($mode == 'kanban') {
+	if ($mode == 'kanban' || $mode == 'kanbangroupby') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
@@ -939,7 +971,7 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		// Show here line of result
+		// Show line of result
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
@@ -957,6 +989,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Fields
 		foreach ($all_fields_list as $key => $val) {
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -966,24 +999,26 @@ while ($i < $imaxinloop) {
 			}
 
 			if (in_array($val['type'], array('timestamp'))) {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
 
-			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
+			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'right';
 			}
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
-				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
-				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
+				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
+				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key) && !in_array($key, array('ref'))) {
 					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'rowid') {
+					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} elseif ($key == 'country') {
 					if ($managedfor == 'member') {
 						if (!empty($adherent->country_code)) {
@@ -1000,6 +1035,8 @@ while ($i < $imaxinloop) {
 					} else {
 						print $object->thirdparty->town;
 					}
+				} elseif ($key == 'fk_soc_member' && $adherent->id > 0) {
+					print $adherent->getNomUrl(1);
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {

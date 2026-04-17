@@ -27,6 +27,7 @@
  *  \brief      Description and activation file for module QuickMemo
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/quickmemo/class/memo.class.php';
 
 
 /**
@@ -87,6 +88,20 @@ class modQuickMemo extends DolibarrModules
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
 		$this->picto = 'fa-sticky-note_far_#9bdb07';
 
+		// Define hooks
+		$contextTabMapping = Memo::getAvailableMemoContextMapping(null, false);
+		$compatibleHooks = [];
+		foreach ($contextTabMapping as $values) {
+			foreach ((array) $values as $value) {
+				$compatibleHooks[] = (string) $value;
+			}
+		}
+		$compatibleHooks = array_unique($compatibleHooks);
+		// Security check
+		$compatibleHooks = array_filter($compatibleHooks, function (string $k) {
+			return preg_match('/^[a-zA-Z0-9_]+$/', $k);
+		});
+
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
@@ -117,10 +132,7 @@ class modQuickMemo extends DolibarrModules
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 
-			'hooks' => array(
-				'globalcard',
-				'index'
-			),
+			'hooks' => $compatibleHooks,
 
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,

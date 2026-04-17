@@ -112,7 +112,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -136,7 +136,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, 0";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -159,7 +159,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -183,7 +183,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -205,7 +205,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, 0 as total, 0 as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -226,7 +226,9 @@ class FichinterStats extends Stats
 	public function getAllByProduct($year, $limit = 0)
 	{
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, 0 as total, 0 as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1).", ".$this->db->sanitize($this->from_line, 0, 0, 1).", ".MAIN_DB_PREFIX."product as product";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1).",";
+		$sql .= " ".$this->db->sanitize($this->from_line, 0, 1, 1).",";
+		$sql .= " ".MAIN_DB_PREFIX."product as product";
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " AND c.rowid = tl.fk_fichinter AND tl.fk_product = product.rowid";

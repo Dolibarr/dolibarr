@@ -118,8 +118,8 @@ class ExpenseReportStats extends Stats
 	 */
 	public function getNbByYear()
 	{
-		$sql = "SELECT YEAR(".$this->db->ifsql("e.".$this->datetouse." IS NULL", "e.date_create", "e.".$this->datetouse).") as dm, count(*)";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT YEAR(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).") as dm, count(*)";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " GROUP BY dm DESC";
 		$sql .= " WHERE ".$this->where;
 
@@ -136,8 +136,8 @@ class ExpenseReportStats extends Stats
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
-		$sql = "SELECT MONTH(".$this->db->ifsql("e.".$this->datetouse." IS NULL", "e.date_create", "e.".$this->datetouse).") as dm, count(*)";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT MONTH(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).") as dm, count(*)";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE YEAR(e.".$this->datetouse.") = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -158,9 +158,9 @@ class ExpenseReportStats extends Stats
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->datetouse." IS NULL", "e.date_create", "e.".$this->datetouse).",'%m') as dm, sum(".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
-		$sql .= " WHERE date_format(".$this->db->ifsql("e.".$this->datetouse." IS NULL", "e.date_create", "e.".$this->datetouse).",'%Y') = '".$this->db->escape((string) $year)."'";
+		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%m') as dm, sum(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " WHERE date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -178,9 +178,9 @@ class ExpenseReportStats extends Stats
 	 */
 	public function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->datetouse." IS NULL", "e.date_create", "e.".$this->datetouse).",'%m') as dm, avg(".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
-		$sql .= " WHERE date_format(".$this->db->ifsql("e.".$this->datetouse." IS NULL", "e.date_create", "e.".$this->datetouse).",'%Y') = '".$this->db->escape((string) $year)."'";
+		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%m') as dm, avg(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " WHERE date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -195,8 +195,8 @@ class ExpenseReportStats extends Stats
 	 */
 	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->datetouse." IS NULL", "e.date_create", "e.".$this->datetouse).",'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%Y') as year, count(*) as nb, sum(".$this->db->sanitize($this->field).") as total, avg(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
