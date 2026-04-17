@@ -17,7 +17,7 @@
  */
 
 /**
- * \file htdocs/ai/tools/products.php
+ * \file htdocs/ai/tools/products.class.php
  * \ingroup ai
  * \brief MCP Server tool for products and services.
  *
@@ -226,7 +226,7 @@ class ToolProducts extends McpTool
 		}
 
 		// Try Fetch by Ref (Standard fetch second argument)
-		if ($product->fetch('', $searchString) > 0) {
+		if ($product->fetch(0, $searchString) > 0) {
 			// If type was explicitly requested, validate it matches
 			if ($type !== null) {
 				$expectedType = ($type === 'service') ? 1 : 0;
@@ -521,7 +521,7 @@ class ToolProducts extends McpTool
 
 			// Financials
 			"price_ht"        => (float) ($prod->price),
-			"price_ttc"       => (float) ($prod->price_tt),
+			"price_ttc"       => (float) ($prod->price_ttc),
 			"vat_rate"        => (float) ($prod->tva_tx),
 
 			// Physical Specs
@@ -847,21 +847,9 @@ class ToolProducts extends McpTool
 	/**
 	 * Retrieves a list of all defined supplier prices for a given product or service.
 	 *
-	 * @param array $args {
-	 *                    product_id?: int|string,
-	 *                    product_name?: string,
-	 *                    type?: int|string
-	 *                    } Array containing 'product_id' (int) or 'product_name' (string) and optional 'type'.
+	 * @param array<string, mixed> $args Input parameters (product_id, product_name, type)
+	 * @return array<int, array<string, mixed>>
 	 *
-	 * @return array{
-	 *                      product_id?: int,
-	 *                      product_ref?: string|null,
-	 *                      product_label?: string,
-	 *                      supplier_prices_count?: int,
-	 *                      supplier_prices?: array<array>
-	 * }|array{
-	 *                      error?: string
-	 * } Result array containing product metadata and list of prices, or an error.
 	 */
 	private function getSupplierPrices(array $args)
 	{
