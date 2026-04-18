@@ -270,7 +270,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$field_spec = $object->fields[$key];
-		if ($field_spec === null) {
+		if ($field_spec === null) { // @phpstan-ignore-line
 			continue;
 		}
 		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);

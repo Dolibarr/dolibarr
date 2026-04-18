@@ -235,16 +235,20 @@ if ($object->ismultientitymanaged == 1) {
 }
 
 foreach ($search as $key => $val) {
-	if (isset($object->fields[$key])) {
+	if (!empty($object->fields[$key])) {
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
-		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
+		$field_spec = $object->fields[$key];
+		if ($field_spec === null) { // @phpstan-ignore-line
+			continue;
+		}
+		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);
+		if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
 			if ($search[$key] == '-1') {
 				$search[$key] = '';
 				$modesearch = 2;
-			} elseif ($search[$key] === '0' && (!isset($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval']))) {
+			} elseif ($search[$key] === '0' && (!isset($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval']))) {
 				$search[$key] = '';
 				$modesearch = 2;
 			}

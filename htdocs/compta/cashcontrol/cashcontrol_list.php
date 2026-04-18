@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2024 	Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -266,7 +266,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$field_spec = $object->fields[$key];
-		if ($field_spec === null) {
+		if ($field_spec === null) { // @phpstan-ignore-line
 			continue;
 		}
 		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);

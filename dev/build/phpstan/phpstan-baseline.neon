@@ -1165,12 +1165,6 @@ parameters:
 			path: ../../../htdocs/categories/categorie_list.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/categories/categorie_list.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -1973,12 +1967,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 3
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/cashcontrol/cashcontrol_list.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(CashControl\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -7285,12 +7273,6 @@ parameters:
 			path: ../../../htdocs/hrm/job_card.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/hrm/job_list.php
-
-		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -8193,12 +8175,6 @@ parameters:
 		-
 			message: '#^Path in include\(\) "\.\./main\.inc\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/myobject_list.php
 
@@ -11537,12 +11513,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/webhook/target_card.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webhook/triggerhistory_list.php
 
 		-
 			message: '#^Result of && is always false\.$#'
