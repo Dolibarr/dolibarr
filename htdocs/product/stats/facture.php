@@ -85,6 +85,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "f.datef";
 }
+$toselect = GETPOST('toselect', 'array:int');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
 
 $option = '';
 
@@ -138,6 +140,25 @@ $societestatic = new Societe($db);
 
 $form = new Form($db);
 $formother = new FormOther($db);
+
+$arrayfields = array(
+	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 50),
+	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => '-1', 'position' => 52),
+	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 60),
+	'd.qty' => array('label' => "Qty", 'checked' => '1', 'position' => 65),
+	'd.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 70),
+	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
+);
+
+$arrayofmassactions = array(
+	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+);
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
+$totalarray = array();
+$totalarray['nbfield'] = 0;
 
 if ($id > 0 || !empty($ref)) {
 	$product = new Product($db);
@@ -311,7 +332,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-				print_barre_liste($langs->trans("CustomersInvoices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+				print_barre_liste($langs->trans("CustomersInvoices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, $massactionbutton, $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 				if (!empty($page)) {
 					$option .= '&page='.urlencode((string) ($page));
@@ -333,10 +354,16 @@ if ($id > 0 || !empty($ref)) {
 				print '</div>';
 				print '</div>';
 
+				if ($massactionbutton) {
+					$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+				}
+
 				$i = 0;
 				print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
+				// Action column
+				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
@@ -366,7 +393,24 @@ if ($id > 0 || !empty($ref)) {
 						$societestatic->fetch($objp->socid);
 						$paiement = $invoicestatic->getSommePaiement();
 
-						print '<tr class="oddeven">';
+						print '<tr data-row-id="'.$invoicestatic->id.'" class="oddeven row-with-select status2">';
+
+						// Action column
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center">';
+							if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+								$selected = 0;
+								if (in_array($invoicestatic->id, $arrayofselected)) {
+									$selected = 1;
+								}
+								print '<input id="cb'.$invoicestatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$invoicestatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+							}
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+
 						print '<td>';
 						print $invoicestatic->getNomUrl(1);
 						print "</td>\n";
