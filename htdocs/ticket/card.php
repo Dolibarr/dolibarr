@@ -8,6 +8,7 @@
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
+ * Copyright (C) 2026		Jon Bendtsen        <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1600,6 +1601,9 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->withsubstit = 1;
 			$formticket->substit = $substitutionarray;
 			$formticket->backtopage = $backtopage;
+
+			$formticket->withtitletopic = 1;
+			$formticket->topic_title = $langs->trans('Message').' '.$langs->trans('Summary');
 
 			$formticket->showMessageForm('100%');
 			print '</div>';

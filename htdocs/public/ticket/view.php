@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -406,6 +407,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
+			$formticket->withtitletopic = 1;
+			$formticket->topic_title = $langs->trans('Summary').' '.$langs->trans('CreatedByPublicPortal');
 
 			$formticket->showMessageForm('100%');
 		}
