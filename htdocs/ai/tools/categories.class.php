@@ -319,7 +319,7 @@ class ToolCategories extends McpTool
 
 		$sql = "SELECT c.rowid, c.label, c.type";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie as c";
-		$sql .= " WHERE c.entity IN (" . getEntity('categorie') . ")";
+		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
 		$sql .= " AND LOWER(c.label) = '" . $db->escape($search_lower) . "'";
 
 		if (!empty($scope)) {
@@ -365,7 +365,7 @@ class ToolCategories extends McpTool
 			// Try to find partial matches to help the user
 			$hint_sql = "SELECT c.rowid, c.label, c.type";
 			$hint_sql .= " FROM " . MAIN_DB_PREFIX . "categorie as c";
-			$hint_sql .= " WHERE c.entity IN (" . getEntity('categorie') . ")";
+			$hint_sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
 			$hint_sql .= " AND LOWER(c.label) LIKE '%" . $db->escape($search_lower) . "%'";
 			$hint_sql .= " LIMIT 5";
 
@@ -421,7 +421,7 @@ class ToolCategories extends McpTool
 
 		$sql = "SELECT c.rowid, c.label, c.description, c.type, c.color, c.fk_parent";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie as c";
-		$sql .= " WHERE c.entity IN (" . getEntity('categorie') . ")";
+		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
 
 		if (!empty($query)) {
 			$query_lower = strtolower($query);
@@ -746,7 +746,7 @@ class ToolCategories extends McpTool
 		$existing_sql = "SELECT COUNT(*) as cnt FROM " . MAIN_DB_PREFIX . "categorie";
 		$existing_sql .= " WHERE LOWER(label) = '" . $db->escape($label_lower) . "'";
 		$existing_sql .= " AND type = " . ((int) $category_type);
-		$existing_sql .= " AND entity IN (" . getEntity('categorie') . ")";
+		$existing_sql .= " AND entity IN (" . getEntity('category') . ")";
 
 		$existing_res = $db->query($existing_sql);
 		if ($existing_res) {
