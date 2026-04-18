@@ -38,7 +38,7 @@ class WebPortalOrder extends Commande
 	public $module = 'webportal';
 
 	/**
-	 * Status list (short label)
+	 * @var array<int|string,string>  Status list (short label)
 	 */
 	const ARRAY_STATUS_LABEL = array(
 		Commande::STATUS_DRAFT => 'StatusOrderDraftShort',
