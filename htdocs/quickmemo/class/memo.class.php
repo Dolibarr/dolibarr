@@ -1416,7 +1416,7 @@ class Memo extends CommonObject
 			}
 		}
 
-		// Need to by at end of tests
+		// Need to be at end of tests
 		self::completeMemoContextMapping($contextTabMapping, 'index');
 		self::completeMemoContextMapping($contextTabMapping, 'card', 'globalcard');
 
