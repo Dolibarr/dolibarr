@@ -29,6 +29,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ?ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -395,7 +396,7 @@ if ($managedfor == 'member') {
 	}
 }
 foreach ($search as $key => $val) {
-	if (isset($object->fields[$key])) {
+	if (!empty($object->fields[$key])) {
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
