@@ -1168,10 +1168,10 @@ if (empty($reshook)) {
 			}
 
 			if (empty($error)) {
-				// Set invoice as paid, unless it's a deposit converted to credit without any payment received
-				// (option DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID allows creating the discount/credit even if the deposit
+				// Set invoice as paid, unless it's a down payment converted to credit without any payment received
+				// (option DEPOSIT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID allows creating the discount/credit even if the down payment
 				// has not been paid yet; in that case we must NOT mark it as paid since no payment was actually received)
-				$skipSetPaid = ($object->type == Facture::TYPE_DEPOSIT && getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') && price2num($object->getSommePaiement(), 'MT') == 0);
+				$skipSetPaid = ($object->type == Facture::TYPE_DEPOSIT && getDolGlobalInt('DEPOSIT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID') && price2num($object->getSommePaiement(), 'MT') == 0);
 
 				if ($skipSetPaid) {
 					$object->fetch($object->id);    // Reload properties
@@ -6761,8 +6761,8 @@ if ($action == 'create') {
 
 				// For down payment invoice (deposit)
 				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->status > Facture::STATUS_DRAFT && empty($discount->id)) {
-					// We can close a down payment only if paid amount is same than amount of down payment (by definition). We can bypass this if hidden and unstable option DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID is set.
-					if (price2num($object->total_ttc, 'MT') <= price2num($sumofpaymentall, 'MT') || getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
+					// We can close a down payment only if paid amount is same than amount of down payment (by definition). We can bypass this if hidden and unstable option DEPOSIT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID is set.
+					if (price2num($object->total_ttc, 'MT') <= price2num($sumofpaymentall, 'MT') || getDolGlobalInt('DEPOSIT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=converttoreduc&token='.newToken().'">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';

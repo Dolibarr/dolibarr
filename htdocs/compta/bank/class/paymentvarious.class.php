@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -853,7 +853,7 @@ class PaymentVarious extends CommonObject
 			$return .= ' | <span class="info-box-status ">'.$bankline->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'datep')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'day').'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->datep, 'day').'</span>';
 			if ($this->type_payment) {
 				$return .= ' - <span class="info-box-label">'.$this->type_payment.'</span>';
 			}

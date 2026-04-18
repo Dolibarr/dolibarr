@@ -1393,9 +1393,9 @@ class ModeleImports
 
 									// Load content of field@table into cache array
 									if (!is_array($this->cachefieldtable[$cachekey])) { // If content of field@table not already loaded into cache
-										$sql = "SELECT ".$field." as aliasfield FROM ".$table;
+										$sql = "SELECT ".$this->db->sanitize($field)." as aliasfield FROM ".$this->db->sanitize($table);
 										if (!empty($filter)) {
-											$sql .= ' WHERE '.$filter;
+											$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 										}
 
 										$resql = $this->db->query($sql);

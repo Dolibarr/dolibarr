@@ -10,7 +10,7 @@
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,16 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -45,15 +55,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'products', 'banks', 'suppliers'));
@@ -1167,7 +1168,7 @@ if ($action == 'create') {
 		print $formconfirm;
 
 		$author = new User($db);
-		$author->fetch($object->user_author);
+		$author->fetch($object->user_creation_id);
 
 		$head = supplier_invoice_rec_prepare_head($object);
 

@@ -155,11 +155,11 @@ class AssetModel extends CommonObject
 	 */
 	public $status;
 	/**
-	 * @var AssetDepreciationOptions
+	 * @var ?AssetDepreciationOptions
 	 */
 	public $asset_depreciation_options;
 	/**
-	 * @var AssetAccountancyCodes
+	 * @var ?AssetAccountancyCodes
 	 */
 	public $asset_accountancy_codes;
 
@@ -186,7 +186,7 @@ class AssetModel extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -457,8 +457,6 @@ class AssetModel extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		// Protection
@@ -483,6 +481,7 @@ class AssetModel extends CommonObject
 		$sql .= " WHERE rowid = " . ((int) $this->id);
 
 		dol_syslog(get_class($this) . "::validate()", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			dol_print_error($this->db);

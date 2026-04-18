@@ -3017,7 +3017,7 @@ span.widthpictotitle.pictotitle {
 }
 .pictosubstatus {
 	padding: 4px;
-	border: 1px solid #ccc;
+	border: 1px solid #e8e8e8;
 	vertical-align: middle;
 	margin-right: 3px;
 	margin-left: 3px;
@@ -3026,6 +3026,9 @@ span.widthpictotitle.pictotitle {
 .pictosubstatus img {
 	vertical-align: text-bottom;
 	display: inline-block;
+}
+a.pictosubstatus:hover {
+	background-color: var(--colorbackhmenu1);
 }
 .pictostatus {
 	width: 15px;
@@ -3192,7 +3195,8 @@ img.photorefnoborder {
 	border-bottom: 1px solid var(--colorbackgrey);
 	box-shadow: 0 0 3px var(--colorbackgrey);
 	<?php } else { ?>
-	<?php } } ?>
+	<?php }
+} ?>
 }
 
 div#tmenu_tooltip {
@@ -3470,80 +3474,80 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
 	<?php
-	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+		// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-	$moduletomainmenu = array(
-		'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
-		'produit' => 'products', 'service' => 'products', 'stock' => 'products',
-		'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
-		'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
-		'fournisseur' => 'companies',
-		'barcode' => '', 'fckeditor' => '', 'categorie' => '',
-	);
-	$mainmenuused = 'home';
-	foreach ($conf->modules as $val) {
-		$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-	}
-	$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
-
-	$generic = 1;
-	// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-	// Put here list of menu entries we are sure we don't want
-	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-
-	foreach ($mainmenuusedarray as $val) {
-		if (empty($val) || in_array($val, $divalreadydefined)) {
-			continue;
+		$moduletomainmenu = array(
+			'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
+			'produit' => 'products', 'service' => 'products', 'stock' => 'products',
+			'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
+			'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
+			'fournisseur' => 'companies',
+			'barcode' => '', 'fckeditor' => '', 'categorie' => '',
+		);
+		$mainmenuused = 'home';
+		foreach ($conf->modules as $val) {
+			$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
 		}
-		if (in_array($val, $divnotrequired)) {
-			continue;
-		}
+		$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-		$found = 0;
-		$url = '';
-		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
-		$iconformodule = getDolGlobalString($constformoduleicon);
-		if ($iconformodule) {
-			if (preg_match('/^fa\-/', $iconformodule)) {
-				// This is a fa icon
-			} else {
-				$url = dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+		$generic = 1;
+		// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+		$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+		// Put here list of menu entries we are sure we don't want
+		$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+
+		foreach ($mainmenuusedarray as $val) {
+			if (empty($val) || in_array($val, $divalreadydefined)) {
+				continue;
 			}
-			$found = 1;
-		} else {
-			// Search img file in module dir
-			foreach ($conf->file->dol_document_root as $dirroot) {
-				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-					$found = 1;
-					break;
+			if (in_array($val, $divnotrequired)) {
+				continue;
+			}
+
+			$found = 0;
+			$url = '';
+			$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+			$iconformodule = getDolGlobalString($constformoduleicon);
+			if ($iconformodule) {
+				if (preg_match('/^fa\-/', $iconformodule)) {
+					// This is a fa icon
+				} else {
+					$url = dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+				}
+				$found = 1;
+			} else {
+				// Search img file in module dir
+				foreach ($conf->file->dol_document_root as $dirroot) {
+					if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+						$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+						$found = 1;
+						break;
+					}
+				}
+			}
+			//print "XXX".$val."->".$found."\n";
+
+			// Output entry for menu icon in CSS
+			if (!$found) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				print 'div.mainmenu.'.$val.' span::before {'."\n";
+				print 'content: "\f249";'."\n";
+				print '}'."\n";
+				$generic++;
+			} else {
+				if ($url) {
+					print "div.mainmenu.".$val." {\n";
+					print "	background-image: url(".$url.");\n";
+					print " background-position-y: 3px;\n";
+					print " filter: saturate(0);\n";
+					print "}\n";
+				} else {
+					print '/* icon for module '.$val.' is a fa icon */'."\n";
 				}
 			}
 		}
-		//print "XXX".$val."->".$found."\n";
-
-		// Output entry for menu icon in CSS
-		if (!$found) {
-			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-			print 'div.mainmenu.'.$val.' span::before {'."\n";
-			print 'content: "\f249";'."\n";
-			print '}'."\n";
-			$generic++;
-		} else {
-			if ($url) {
-				print "div.mainmenu.".$val." {\n";
-				print "	background-image: url(".$url.");\n";
-				print " background-position-y: 3px;\n";
-				print " filter: saturate(0);\n";
-				print "}\n";
-			} else {
-				print '/* icon for module '.$val.' is a fa icon */'."\n";
-			}
-		}
-	}
-	// End of part to add more div class css
-	?>
+		// End of part to add more div class css
+		?>
 <?php } // End test if $dol_hide_topmenu?>
 
 .tmenuimage {
@@ -4603,7 +4607,7 @@ td.border, div.tagtable div div.border {
 table.noborder {
 	background: var(--colorbacktabcard1);
 }
-<?php if (getDolGlobalString('THEME_ELDY_SHADOW_ON_SMALL_BOXES')) { // TODO Disable on smartphone ?>
+<?php if (getDolGlobalString('THEME_ELDY_SHADOW_ON_SMALL_BOXES')) { // TODO Disable on smartphone?>
 .firstcolumn .div-table-responsive-no-min, .secondcolumn .div-table-responsive-no-min {
 	overflow-x: unset;
 }
@@ -5284,7 +5288,7 @@ div.tabBar .noborder {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 
-#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td:not(.noborder), .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 #tablelines tr td, #tablelinesservice tr td {
@@ -5731,7 +5735,7 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #665511 !important; }
+.warning { color: #776611 !important; }
 .error   { color: #660000 !important; font-weight: bold; }
 .green   { color: #118822 !important; }
 .neutral { color: #444 !important; }
@@ -6102,6 +6106,8 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding-right: 5px;
 	padding-top: 5px;
 	padding-bottom: 5px;
+	min-width: 300px;
+	max-width: 70%;
 }
 .ui-widget-header {
 	padding: 8px !important;
@@ -7370,7 +7376,7 @@ div#ecm-layout-center {
 	bottom: 4px !important;
 <?php } ?>
 	<?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_UNDER_MENU')) { ?>
-	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
+	top: <?php print $disableimages ? '32' : ($heightmenu + 4); ?>px;
 	<?php } ?>
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
@@ -9428,12 +9434,18 @@ table.jPicker {
 	body {
 		font-size: 0.91em;
 	}
+
+	.ui-dialog {
+		min-width: 280px;
+		max-width: 95%;
+	}
+
 	.pictofixedwidth {
 		text-align: start;
 		width: 1.5em;
 		/* padding-right: 0; */
 	}
-	table.titlemodulehelp tr td img.widthpictotitle {
+	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}
 

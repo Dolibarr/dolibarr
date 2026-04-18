@@ -1081,9 +1081,9 @@ class Translate
 		}
 
 		// Not found in loaded language file nor in cache. So we will take the label into database.
-		$sql = "SELECT " . $fieldlabel . " as label";
+		$sql = "SELECT " . $db->sanitize($fieldlabel) . " as label";
 		$sql .= " FROM " . $db->prefix() . $tablename;
-		$sql .= " WHERE " . $fieldkey . " = '" . $db->escape($keyforselect ? $keyforselect : $key) . "'";
+		$sql .= " WHERE " . $db->sanitize($fieldkey) . " = '" . $db->escape($keyforselect ? $keyforselect : $key) . "'";
 		if ($filteronentity) {
 			$sql .= " AND entity IN (" . getEntity($tablename) . ')';
 		}

@@ -419,7 +419,7 @@ if (empty($reshook)) {
 		// If previous test is ok action is add, we add the line
 		if ($ok && GETPOST('actionadd')) {
 			// Add new entry
-			$sql = "INSERT INTO ".$tabname[25]." (";
+			$sql = "INSERT INTO ".$db->sanitize($tabname[25])." (";
 			// List of fields
 			$sql .= $tabfieldinsert[25];
 			$sql .= ", active, enabled)";
@@ -513,7 +513,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Modify entry
-				$sql = "UPDATE ".$tabname[25]." SET ";
+				$sql = "UPDATE ".$db->sanitize($tabname[25])." SET ";
 				// Modify value of fields
 				$i = 0;
 				foreach ($listfieldmodify as $field) {
@@ -601,7 +601,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {       // delete
 		$rowidcol = "rowid";
 
-		$sql = "DELETE from ".$tabname[25]." WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql = "DELETE from ".$db->sanitize($tabname[25])." WHERE rowid = ".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
 			$sql .= " AND fk_user = ".((int) $user->id);
 		}
@@ -620,7 +620,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -632,7 +632,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {

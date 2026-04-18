@@ -6,7 +6,7 @@
  * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Ahmad Jamaly Rabib   <rabib@metroworks.co.jp>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,22 +82,52 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->config_page_url = array("supplier_order.php@supplier_order");
 
 			// Constants
-			$this->const = array();
-			$r = 0;
-
-			$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "cornas";
-			$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
-			$this->const[$r][4] = 0;
-			$r++;
-
-			$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_NUMBER";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "mod_commande_fournisseur_muguet";
-			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes fournisseur';
-			$this->const[$r][4] = 0;
-			$r++;
+			// 0:name
+			// 1:type
+			// 2:val
+			// 3:note
+			// 4:visible
+			// 5:entity
+			// 6:deleteonunactive
+			$this->const = [
+				[
+					"COMMANDE_SUPPLIER_ADDON_PDF",
+					"chaine",
+					"cornas",
+					'Nom du gestionnaire de generation des bons de commande en PDF',
+					0,
+				],
+				[
+					"COMMANDE_SUPPLIER_ADDON_NUMBER",
+					"chaine",
+					"mod_commande_fournisseur_muguet",
+					'Nom du gestionnaire de numerotation des commandes fournisseur',
+					0,
+				],
+				[
+					"INVOICE_SUPPLIER_ADDON_NUMBER",
+					"chaine",
+					"mod_facture_fournisseur_cactus",
+					'Nom du gestionnaire de numerotation des factures fournisseur',
+					0,
+				],
+				[
+					// Add ability ODT for Supplier orders
+					"SUPPLIER_ORDER_ADDON_PDF_ODT_PATH",
+					"chaine",
+					"DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_orders",
+					'',
+					0,
+				],
+				[
+					// Add ability ODT for Supplier Invoices
+					"SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH",
+					"chaine",
+					"DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_invoices",
+					"",
+					0,
+				],
+			];
 
 			/* For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
 			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
@@ -108,39 +138,16 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$r++;
 			*/
 
-			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "mod_facture_fournisseur_cactus";
-			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des factures fournisseur';
-			$this->const[$r][4] = 0;
-			$r++;
-
-			// Add ability ODT for Supplier orders
-			$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_orders";
-			$this->const[$r][3] = '';
-			$this->const[$r][4] = 0;
-			$r++;
-
-			// Add ability ODT for Supplier Invoices
-			$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
-			$this->const[$r][1] = "chaine";
-			$this->const[$r][2] = "DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_invoices";
-			$this->const[$r][3] = "";
-			$this->const[$r][4] = 0;
-			$r++;
-
 			// Boxes
-			$this->boxes = array(
-				0 => array('file' => 'box_graph_invoices_supplier_permonth.php', 'enabledbydefaulton' => 'Home'),
-				1 => array('file' => 'box_graph_orders_supplier_permonth.php', 'enabledbydefaulton' => 'Home'),
-				2 => array('file' => 'box_fournisseurs.php', 'enabledbydefaulton' => 'Home'),
-				3 => array('file' => 'box_factures_fourn_imp.php', 'enabledbydefaulton' => 'Home'),
-				4 => array('file' => 'box_factures_fourn.php', 'enabledbydefaulton' => 'Home'),
-				5 => array('file' => 'box_supplier_orders.php', 'enabledbydefaulton' => 'Home'),
-				6 => array('file' => 'box_supplier_orders_awaiting_reception.php', 'enabledbydefaulton' => 'Home'),
-			);
+			$this->boxes = [
+				['file' => 'box_graph_invoices_supplier_permonth.php', 'enabledbydefaulton' => 'Home'],
+				['file' => 'box_graph_orders_supplier_permonth.php', 'enabledbydefaulton' => 'Home'],
+				['file' => 'box_fournisseurs.php', 'enabledbydefaulton' => 'Home'],
+				['file' => 'box_factures_fourn_imp.php', 'enabledbydefaulton' => 'Home'],
+				['file' => 'box_factures_fourn.php', 'enabledbydefaulton' => 'Home'],
+				['file' => 'box_supplier_orders.php', 'enabledbydefaulton' => 'Home'],
+				['file' => 'box_supplier_orders_awaiting_reception.php', 'enabledbydefaulton' => 'Home'],
+			];
 
 			$arraydate = dol_getdate(dol_now());
 			$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);

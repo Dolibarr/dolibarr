@@ -1,17 +1,17 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2013      Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
- * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Cédric Salvador             <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2016       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2022  Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2019       Nicolas Zabouri             <info@inovea-conseil.com>
+ * Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       William Mead                <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,16 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -48,16 +58,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("orders", "sendings", 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
@@ -162,7 +162,7 @@ if ($search_option == 'recv_late') {
 	$search_status = '3,4';
 }
 
-$diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
+
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -189,8 +189,9 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
+$diroutputmassaction = getMultidirTemp($object).'/massgeneration/'.$user->id;
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
@@ -359,7 +360,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'CommandeFournisseur';
 	$objectlabel = 'SupplierOrders';
-	$uploaddir = $conf->fournisseur->commande->dir_output;
+	$uploaddir = getMultidirOutput($object);
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($action == 'validate' && $permissiontovalidate) {
@@ -631,7 +632,7 @@ if (empty($reshook)) {
 
 				// Fac builddoc
 				$donotredirect = 1;
-				$upload_dir = $conf->fournisseur->facture->dir_output;
+				$upload_dir = getMultidirOutput($objecttmp);
 				$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 				//include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
@@ -1883,7 +1884,7 @@ if ($resql) {
 				print $objectstatic->getNomUrl(1, '', 0, -1, 1);
 				// Other picto tool
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filedir = getMultidirOutput($objectstatic).'/'.dol_sanitizeFileName($obj->ref);
 				print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 
 				print '</td>'."\n";

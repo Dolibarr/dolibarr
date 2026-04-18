@@ -113,7 +113,7 @@ $extrafields = new ExtraFields($db);
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='booth@eventorganization'");
+$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module:=:'booth@eventorganization'");
 if ($arrayofconfboothtype == -1) {
 	$arrayofconfboothtype = [];
 }

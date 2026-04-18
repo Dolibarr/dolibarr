@@ -327,7 +327,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;

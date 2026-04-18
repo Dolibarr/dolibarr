@@ -252,6 +252,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->ticket->dir_output;
 
 	global $error;
+	/** @phan-var-force int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records

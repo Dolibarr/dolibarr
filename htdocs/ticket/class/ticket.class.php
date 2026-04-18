@@ -2756,7 +2756,7 @@ class Ticket extends CommonObject
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
-		global $mysoc, $langs;
+		global $mysoc, $langs, $hookmanager;
 
 		$error = 0;
 
@@ -2866,6 +2866,14 @@ class Ticket extends CommonObject
 							if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 							}
+						}
+
+						$parameters = array('sendto' => $sendto);
+						$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if (empty($reshook)) {
+							$sendto = array_merge($sendto, $hookmanager->resArray);
+						} elseif ($reshook > 0) {
+							$sendto = $hookmanager->resArray;
 						}
 
 						if (!empty($sendto)) {
@@ -2979,6 +2987,14 @@ class Ticket extends CommonObject
 								}
 							}
 
+							$parameters = array('sendto' => $sendto);
+							$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+							if (empty($reshook)) {
+								$sendto = array_merge($sendto, $hookmanager->resArray);
+							} elseif ($reshook > 0) {
+								$sendto = $hookmanager->resArray;
+							}
+
 							$sendtocc = array();
 							if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
@@ -3090,6 +3106,14 @@ class Ticket extends CommonObject
 									if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 										$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 									}
+								}
+
+								$parameters = array('sendto' => $sendto);
+								$reshook = $hookmanager->executeHooks('updateSendtoTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+								if (empty($reshook)) {
+									$sendto = array_merge($sendto, $hookmanager->resArray);
+								} elseif ($reshook > 0) {
+									$sendto = $hookmanager->resArray;
 								}
 
 								$sendtocc = array();
