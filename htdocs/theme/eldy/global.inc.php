@@ -6107,6 +6107,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding-top: 5px;
 	padding-bottom: 5px;
 	min-width: 300px;
+	max-width: 70%;
 }
 .ui-widget-header {
 	padding: 8px !important;
@@ -9433,12 +9434,18 @@ table.jPicker {
 	body {
 		font-size: 0.91em;
 	}
+
+	.ui-dialog {
+		min-width: 280px;
+		max-width: 95%;
+	}
+
 	.pictofixedwidth {
 		text-align: start;
 		width: 1.5em;
 		/* padding-right: 0; */
 	}
-	table.titlemodulehelp tr td img.widthpictotitle {
+	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}
 
