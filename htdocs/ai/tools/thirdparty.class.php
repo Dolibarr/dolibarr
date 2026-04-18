@@ -183,7 +183,7 @@ class ToolThirdParty extends McpTool
 	 *                                                                           - query: Search string or ID
 	 *                                                                           - type: 'customer', 'prospect', 'supplier'
 	 *                                                                           - limit: Limit results (default 5)
-	 * @return array{error:string}|list<array>
+	 * @return array{error:string}|list<array{id:int,name:string,alias:string,code_cust:string,code_sup:string,email:string,type:string,url:string}>
 	 *
 	 */
 	private function search(array $args)
@@ -419,8 +419,8 @@ class ToolThirdParty extends McpTool
 	 *
 	 * @param array{id:int|string,name?:string,email?:string,phone?:string,address?:string,zip?:string,town?:string,country_code?:string} $args Thirdparty fields to update (ID required).
 	 *
-	 * @return array{status:string,message:string,id:int,url:string}
-	 *         |array{error:string}
+	 * @return array{status:string,message:string,id:int,url:string}|array{error:string}
+	 *
 	 */
 	private function update(array $args)
 	{
@@ -490,7 +490,7 @@ class ToolThirdParty extends McpTool
 	 *
 	 * @param   array{id: int|string} $args   Arguments array containing the thirdparty ID.
 	 *
-	 * @return  array{error: string}|list<array>
+	 * @return array{error: string}|list<array<string, int|string>>
 	 *
 	 */
 	private function listContacts(array $args)
@@ -569,8 +569,8 @@ class ToolThirdParty extends McpTool
 	 *
 	 * @param array{thirdparty_identifier:int|string,firstname:string,lastname:string,email?:string,phone?:string} $args Arguments array (identifier, firstname, lastname required).
 	 *
-	 * @return array{status:string,message:string,id:int}
-	 *         |array{error:string}
+	 * @return array{status:string,message:string,id:int,url?:string}|array{error:string}
+	 *
 	 *
 	 */
 	private function addContact(array $args)
