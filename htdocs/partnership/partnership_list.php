@@ -395,7 +395,7 @@ if ($managedfor == 'member') {
 	}
 }
 foreach ($search as $key => $val) {
-	if (array_key_exists($key, $object->fields)) {
+	if (isset($object->fields[$key])) {
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
