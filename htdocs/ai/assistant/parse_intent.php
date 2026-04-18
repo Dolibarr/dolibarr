@@ -247,7 +247,7 @@ try {
 		$mcp = new McpHandler($db, $user);
 
 		// Fetch all tools
-		$allToolsSchema = $mcp->getToolsSchema() ?? [];
+		$allToolsSchema = $mcp->getToolsSchema();
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
 		$isComplex = isComplexScript($query);
@@ -517,13 +517,10 @@ function recursiveUnmaskValues($data, ?PrivacyGuard $guard)
 			},
 			$data
 		);
-	} elseif (is_string($data)) {
-		if (method_exists($guard, 'unmask')) {
-			return $guard->unmask($data);
-		}
-		if (method_exists($guard, 'unmaskAiResponse')) {
-			return $guard->unmaskAiResponse($data);
-		}
+	}
+
+	if (is_string($data)) {
+		return $guard->unmask($data);
 	}
 
 	return $data;
@@ -721,9 +718,9 @@ function filterToolsProfessional(array $allTools, array $activeCategories)
  * Compresses tool schema by removing optional parameters with defaults
  * and stripping descriptions, relying on LLM inference of variable names.
  *
- * @param array<string, mixed> $tools         Array of tool definitions.
- * @param bool                 $isLargeSchema True if compression is needed.
- * @return array<string, mixed> Array of compressed tool definitions.
+ * @param array<int, array<string, mixed>> $tools Array of tool definitions.
+ * @param bool $isLargeSchema True if compression is needed.
+ * @return array<int, array<string, mixed>>
  */
 function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 {
