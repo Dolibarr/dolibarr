@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ?ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -77,13 +78,15 @@ $pagenext = $page + 1;
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $object = new Productlot($db);
-$extrafields = new ExtraFields($db);
+if (!is_object($extrafields)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+	$extrafields = new ExtraFields($db);
+}
 $diroutputmassaction = $conf->productbatch->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('product_lotlist'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-//$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -261,9 +264,13 @@ foreach ($search as $key => $val) {
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
-		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
+		$field_spec = $object->fields[$key];
+		if ($field_spec === null) { // @phpstan-ignore-line
+			continue;
+		}
+		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);
+		if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
