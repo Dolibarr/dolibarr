@@ -116,7 +116,7 @@ class McpHandler
 
 				require_once $realFilePath;
 
-				$basename = basename($file, '.php');
+				$basename = basename($file, '.class.php');
 				$className = 'Tool' . str_replace(' ', '', ucwords(str_replace('_', ' ', $basename)));
 
 				if (!class_exists($className)) {
