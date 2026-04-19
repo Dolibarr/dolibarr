@@ -193,10 +193,10 @@ if (empty($reshook)) {
 
 	if (isset($_POST['confirmmassaction']) && isset($_POST['massaction']) && $_POST['massaction'] == 'presend') {
 		global $arrayofselected;
-		
+
 		$toselect = is_array($_POST['toselect']) ? $_POST['toselect'] : array();
 		$arrayofselected = array();
-		
+
 		// Store only VALID IDs (those with emails)
 		foreach ($toselect as $invoice_id) {
 			$objecttmp = new Facture($db);
@@ -205,7 +205,7 @@ if (empty($reshook)) {
 				if (empty($objecttmp->thirdparty) || !is_object($objecttmp->thirdparty)) {
 					$objecttmp->fetch_thirdparty();
 				}
-				
+
 				// Only add to array if email exists
 				if (!empty($objecttmp->thirdparty->email)) {
 					// Store just the ID, not the object
@@ -213,15 +213,15 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		
+
 		if (empty($arrayofselected)) {
-			setEventMessages($langs->trans("NoValidRecordsSelectedForAction"), null, 'errors');
+			setEventMessages($langs->trans("DefaultStatusEmptyMandatory").' '.$langs->trans("Select"), null, 'errors');
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
 	} else {
-        include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-    }
+		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	}
 }
 
 /*
@@ -423,7 +423,7 @@ if ($id > 0 || !empty($ref)) {
 					$modelmail = "facture_send";
 					$objecttmp = new Facture($db);
 					$trackid = 'inv'.$id;
-					
+
 					include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 				}
 
