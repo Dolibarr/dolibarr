@@ -126,7 +126,8 @@ if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
 }
 $module = GETPOST("module", 'alpha');
-$buttonaction = GETPOST('button_'.$module, 'aZ09');
+$buttonadd = GETPOST('button_'.$module, 'aZ09');
+$buttondelete = GETPOST('button_delete_'.$module, 'aZ09');
 if ($action == 'change' && $permissiontocreate) {		// Change recipients
 	$result = -1;
 	$obj = null;
@@ -151,17 +152,13 @@ if ($action == 'change' && $permissiontocreate) {		// Change recipients
 				'@phan-var-force MailingTargets $obj';
 				$obj->evenunsubscribe = $object->evenunsubscribe;
 
-				if ($buttonaction == 'Add') {
+				if ($buttonadd) {
 					dol_syslog("Call add_to_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
 					$result = $obj->add_to_target($id);
-				} elseif ($buttonaction == 'Delete') {
+				}
+				if ($buttondelete) {
 					dol_syslog("Call delete_from_target() on class ".$classname." evenunsubscribe=".$object->evenunsubscribe);
 					$result = $obj->delete_from_target($id);
-				} else {
-					dol_syslog("targetmailing.php::action::add::unknown buttonaction=".$buttonaction, LOG_ERR);
-					setEventMessages($langs->trans("Unknown").' buttonaction='.$buttonaction, null, 'errors');
-					$result = -1;
-					break;
 				}
 
 				$sqlmessage = $obj->sql;
@@ -171,7 +168,7 @@ if ($action == 'change' && $permissiontocreate) {		// Change recipients
 			}
 		}
 	}
-	if ($buttonaction == 'Add') {
+	if ($buttonadd) {
 		if ($result > 0) {
 			// If status of emailing is sent completely, change to to send partially
 			if ($object->status == $object::STATUS_SENTCOMPLETELY) {
@@ -187,7 +184,8 @@ if ($action == 'change' && $permissiontocreate) {		// Change recipients
 		if ($result < 0 && is_object($obj)) {
 			setEventMessages($langs->trans("Error").($obj->error ? ' '.$obj->error : ''), null, 'errors');
 		}
-	} elseif ($buttonaction == 'Delete') {
+	}
+	if ($buttondelete) {
 		if ($result > 0) {
 			// If status of emailing is sent completely, change to to send partially
 			if ($object->status == $object::STATUS_SENTCOMPLETELY) {
@@ -677,12 +675,12 @@ if ($object->fetch($id) >= 0) {
 					if ($allowaddtarget) {
 						print '<input type="submit" class="butAction button-add small reposition" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						if ($allowdeletetarget && $modulename == 'eventorganization') {
-							print '<input type="submit" class="butActionDelete button-delete small reposition" name="button_'.$modulename.'" value="'.$langs->trans("Delete").'">';
+							print '<input type="submit" class="butActionDelete button-delete small reposition" name="button_delete_'.$modulename.'" value="'.$langs->trans("Delete").'">';
 						}
 					} else {
 						print '<input type="submit" class="butAction small disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						if ($allowdeletetarget && $modulename == 'eventorganization') {
-							print '<input type="submit" class="butActionDelete button-delete small disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Delete").'">';
+							print '<input type="submit" class="butActionDelete button-delete small disabled" disabled="disabled" name="button_delete_'.$modulename.'" value="'.$langs->trans("Delete").'">';
 						}
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
