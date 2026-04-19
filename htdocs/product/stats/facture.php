@@ -169,6 +169,7 @@ $arrayofmassactions = array(
 );
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $arrayofselected = is_array($toselect) ? $toselect : array();
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
 $totalarray = array();
@@ -380,17 +381,12 @@ if ($id > 0 || !empty($ref)) {
 				$num = $db->num_rows($result);
 				// I am saving the result here, because some hooks a little later will change $result such that I can not get the contents
 				$all_rows = array();
-				if ($result) {
-					$num = $db->num_rows($result);
-					while ($row = $db->fetch_object($result)) {
-						$all_rows[] = $row;
-					}
-					$db->free($result); // Free immediately
-					$result = null; // Clear the variable
-				} else {
-					dol_print_error($db);
-					$num = 0;
+				$num = $db->num_rows($result);
+				while ($row = $db->fetch_object($result)) {
+					$all_rows[] = $row;
 				}
+				$db->free($result); // Free immediately
+				$result = null; // Clear the variable
 
 				$option .= '&id='.$product->id;
 
@@ -446,10 +442,6 @@ if ($id > 0 || !empty($ref)) {
 				print '</div>';
 				print '</div>';
 				print '</div>';
-
-				if ($massactionbutton) {
-					$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
-				}
 
 				$i = 0;
 				print '<div class="div-table-responsive">';
