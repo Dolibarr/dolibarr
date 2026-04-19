@@ -152,7 +152,23 @@ class FormProduct
 				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
-		$sql .= $this->db->order($orderBy);
+		$reorderBy = explode(',', $orderBy);
+		$arraysortfield = array();
+		$arraysortorder = array();
+		foreach ($reorderBy as $element) {
+			$elementKey = explode(' ', $element)[0];
+			if ($elementKey) {
+				$arraysortfield[] = $elementKey;
+				if (isset($element[1])) {
+					$arraysortorder[] = $element[1];
+				} else {
+					$arraysortorder[] = 'ASC';
+				}
+			}
+		}
+		$sortfield = implode(',', $arraysortfield);
+		$sortorder = implode(',', $arraysortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
