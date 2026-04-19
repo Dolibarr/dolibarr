@@ -811,8 +811,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 						switch (morphy) {
 							case "phy":
-								/* $phyInput.prop({disabled: false, checked: true});
-								$morInput.prop({disabled: true, checked: false}); */
+								$phyInput.prop({disabled: false, checked: true});
+								$morInput.prop({disabled: true, checked: false});
 								$span1.addClass("member-individual-back").removeClass("nonature-back");
 								$span2.removeClass("member-company-back").addClass("nonature-back");
 								$("#phisicalinput").prop("checked", true);
@@ -822,8 +822,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								break;
 
 							case "mor":
-								/* $phyInput.prop({disabled: true, checked: false});
-								$morInput.prop({disabled: false, checked: true}); */
+								$phyInput.prop({disabled: true, checked: false});
+								$morInput.prop({disabled: false, checked: true});
 								$span2.addClass("member-company-back").removeClass("nonature-back");
 								$span1.removeClass("member-individual-back").addClass("nonature-back");
 								$("#moralinput").prop("checked", true);
@@ -832,11 +832,13 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$tdFirst.removeClass("fieldrequired");
 								break;
 
-							default:';
+							default:
+								$phyInput.prop({disabled: false});
+								$morInput.prop({disabled: false});';
 			if ($action != "subscription" && !GETPOST('morphy')) {
 				print '
-				$phyInput.prop({disabled: false, checked: false});
-				$morInput.prop({disabled: false, checked: false});
+				$phyInput.prop({checked: false});
+				$morInput.prop({checked: false});
 				$span1.removeClass("member-individual-back").addClass("nonature-back");
 				$span2.removeClass("member-company-back").addClass("nonature-back");';
 			}
