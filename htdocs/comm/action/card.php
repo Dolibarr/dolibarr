@@ -980,7 +980,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->contact_id = GETPOSTINT("contactid");
 		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
 			reset($object->socpeopleassigned);
-			$object->contact_id = key($object->socpeopleassigned);
+			$object->contact_id = (int) key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
 		$taskid = GETPOSTINT('taskid');
