@@ -383,7 +383,6 @@ if (empty($reshook)) {
 					$parameters = array('remaintopay' => $objecttmp->resteapayer);
 					$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
 					if ($reshook > 0) {
-						// print $hookmanager->resPrint;
 						if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
 							$objecttmp->resteapayer = $remaintopay;
 						}
@@ -1414,7 +1413,7 @@ if (!empty($arrayfields['f.total_localtax2']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_ttc']['checked'])) {
-	// Amount inc tac
+	// Amount inc tax
 	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 	print '</td>';
@@ -1515,7 +1514,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -1853,7 +1852,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->fk_statut > 1) ? 'opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select'.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->fk_statut > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
