@@ -366,7 +366,7 @@ abstract class DoliDB implements Database
 					$oldsortorder = 'DESC';
 					$return .= ' DESC';
 				} else {
-					$return .= ' '.($oldsortorder ? $oldsortorder : ' ASC');
+					$return .= ' '.($oldsortorder ? $oldsortorder : 'ASC');
 				}
 
 				$i++;
