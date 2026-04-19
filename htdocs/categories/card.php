@@ -128,6 +128,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$result = 0;
+
 	// Add action
 	if ($action == 'add' && $user->hasRight('categorie', 'creer')) {
 		// Action add a category
@@ -194,6 +196,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
+
 	// Action confirmation of creation category
 	if ($action == 'confirmed' && $user->hasRight('categorie', 'creer')) {
 		if ($urlfrom) {
