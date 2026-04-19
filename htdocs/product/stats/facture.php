@@ -169,7 +169,7 @@ $arrayofmassactions = array(
 );
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $arrayofselected = is_array($toselect) ? $toselect : array();
-$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
 $totalarray = array();
