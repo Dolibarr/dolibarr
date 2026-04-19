@@ -59,7 +59,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$name		Name of database
 	 *	@param	    int		$port		Port of database server
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -1368,7 +1368,7 @@ if (class_exists('mysqli')) {
 		 *	@param	    int		$port		Port of database server
 		 *	@param	    string	$socket		Socket
 		 */
-		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")  // @phpstan-ignore constructor.unusedParameter
 		{
 			$flags = 0;
 			if (PHP_VERSION_ID >= 80100) {
