@@ -266,7 +266,7 @@ class FormMail extends Form
 	public $withtoccuser = array();
 
 	/**
-	 * @var ModelMail[]
+	 * @var CEmailTemplate[]
 	 */
 	public $lines_model;
 
