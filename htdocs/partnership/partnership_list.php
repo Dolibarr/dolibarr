@@ -1036,8 +1036,6 @@ while ($i < $imaxinloop) {
 					}
 				} elseif ($key == 'fk_soc_member' && $adherent->id > 0) {
 					print $adherent->getNomUrl(1);
-				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} elseif ($key == 'fk_soc_dateend') {
 					if ($adherent->id > 0) {
 						$datefin = $adherent->datefin;
