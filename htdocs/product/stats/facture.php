@@ -201,7 +201,7 @@ if (empty($reshook)) {
 		// Store only VALID IDs (those with emails)
 		foreach ($toselect as $invoice_id) {
 			$objecttmp = new Facture($db);
-			if ($objecttmp->fetch($invoice_id) > 0) {
+			if ($objecttmp->fetch((int) $invoice_id) > 0) {
 				// Force loading the thirdparty object
 				if (empty($objecttmp->thirdparty) || !is_object($objecttmp->thirdparty)) {
 					$objecttmp->fetch_thirdparty();
