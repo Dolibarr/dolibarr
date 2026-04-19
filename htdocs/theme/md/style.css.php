@@ -9155,6 +9155,11 @@ table.jPicker {
 		font-size: 0.91em;
 	}
 
+	.ui-dialog {
+		min-width: 280px;
+		max-width: 95%;
+	}
+
 	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {
 		width: 30px;
 	}
