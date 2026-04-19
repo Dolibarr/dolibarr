@@ -816,12 +816,12 @@ if (empty($reshook)) {
 		//exit;
 
 		// Replacement invoice
-		if (GETPOSTINT('type') === '') {
+		if (GETPOST('type') === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error++;
 		}
 
-		if (GETPOST('type') == FactureFournisseur::TYPE_REPLACEMENT) {
+		if (GETPOSTINT('type') == FactureFournisseur::TYPE_REPLACEMENT) {
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
@@ -876,7 +876,7 @@ if (empty($reshook)) {
 		}
 
 		// Credit note invoice
-		if (GETPOST('type') == FactureFournisseur::TYPE_CREDIT_NOTE) {
+		if (GETPOSTINT('type') == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$sourceinvoice = GETPOSTINT('fac_avoir');
 			if (!($sourceinvoice > 0) && !getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 				$error++;
@@ -999,7 +999,7 @@ if (empty($reshook)) {
 					}
 				}
 			}
-		} elseif ($fac_recid > 0 && (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT)) {
+		} elseif ($fac_recid > 0 && (GETPOSTINT('type') == FactureFournisseur::TYPE_STANDARD || GETPOSTINT('type') == FactureFournisseur::TYPE_DEPOSIT)) {
 			// Standard invoice or Deposit invoice, created from a Predefined template invoice
 			if (empty($dateinvoice)) {
 				$error++;
@@ -1019,7 +1019,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$object->socid              = GETPOSTINT('socid');
-				$object->type               = GETPOST('type', 'alphanohtml');
+				$object->type               = GETPOSTINT('type');
 				$object->subtype            = GETPOSTINT('subtype');
 				$object->ref                = GETPOST('ref', 'alphanohtml');
 				$object->date               = $dateinvoice;
@@ -1046,7 +1046,7 @@ if (empty($reshook)) {
 
 				$id = $object->create($user); // This include recopy of links from recurring invoice and recurring invoice lines
 			}
-		} elseif ($fac_recid <= 0 && (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT)) {
+		} elseif ($fac_recid <= 0 && (GETPOSTINT('type') == FactureFournisseur::TYPE_STANDARD || GETPOSTINT('type') == FactureFournisseur::TYPE_DEPOSIT)) {
 			// Standard invoice or Deposit invoice, not from a Predefined template invoice
 			if (GETPOSTINT('socid') < 1) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
@@ -1083,7 +1083,7 @@ if (empty($reshook)) {
 
 				// Creation invoice
 				$object->socid				= GETPOSTINT('socid');
-				$object->type				= GETPOST('type', 'alphanohtml');
+				$object->type				= GETPOSTINT('type');
 				$object->subtype            = GETPOSTINT('subtype');
 				$object->ref				= GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier		= GETPOST('ref_supplier', 'alphanohtml');
@@ -1184,7 +1184,7 @@ if (empty($reshook)) {
 
 						// If deposit invoice - down payment with 1 line (fixed amount or percent)
 						$typeamount = GETPOST('typedeposit', 'alpha');
-						if (GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
+						if (GETPOSTINT('type') == FactureFournisseur::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
 							$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
 
 							// Define the array $amountdeposit
@@ -1499,7 +1499,7 @@ if (empty($reshook)) {
 			$type = $prod->type;
 		} else {
 			$label = GETPOST('product_desc', 'restricthtml');
-			$type = GETPOST("type") ? GETPOST("type") : 0;
+			$type = GETPOSTINT("type");
 		}
 
 		$date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), GETPOSTINT('date_startsec'), GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
@@ -1667,7 +1667,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && (!GETPOST('idprodfournprice') || GETPOST('idprodfournprice') == '-1') && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && (!GETPOST('idprodfournprice') || GETPOST('idprodfournprice') == '-1') && GETPOSTINT('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
@@ -2610,7 +2610,7 @@ if ($action == 'create') {
 
 				print '<!-- replacement line -->';
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				$tmp='<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
+				$tmp='<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOSTINT('type') == 1 ? ' checked' : '');
 				if (! $options) $tmp.=' disabled';
 				$tmp.='> ';
 				print '<script type="text/javascript">
@@ -2681,7 +2681,7 @@ if ($action == 'create') {
 					}
 
 					print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-					$tmp = '<input type="radio" id="radio_creditnote" name="type" value="2"'.(GETPOST('type') == 2 ? ' checked' : '');
+					$tmp = '<input type="radio" id="radio_creditnote" name="type" value="2"'.(GETPOSTINT('type') == 2 ? ' checked' : '');
 					if (!$optionsav && !getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 						$tmp .= ' disabled';
 					}
