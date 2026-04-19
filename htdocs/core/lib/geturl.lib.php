@@ -30,6 +30,8 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * To test there is no error, you can do:  if (empty($resultget['curl_error_no']) && $resultget['http_code'] == 200) ...
+ *
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
  * @param	string	  					$url 			    URL to call.
