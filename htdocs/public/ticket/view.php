@@ -449,7 +449,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<div class="ticketpublicarea ticketlargemargin">';
 		print '<h3>';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
-		print '<h3>';
+		print '</h3>';
 		print '</div>';
 
 		$object->viewTicketMessages(false, true, $object->dao);

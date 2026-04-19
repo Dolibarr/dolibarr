@@ -221,7 +221,6 @@ class ActionsTicket extends CommonHookActions
 		print '<table class="border tableforfield centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 
-
 		if ($action == 'presend') {
 			print '<h4>';
 			print $langs->trans('InitialMessage');
@@ -247,7 +246,7 @@ class ActionsTicket extends CommonHookActions
 		print '</td></tr>';
 
 		print '<tr>';
-		print '<td colspan="3">';
+		print '<td colspan="2">';
 		if ($permissiontoadd && !in_array($object->status, $closeStatuses) && $action == 'edit_message_init') {
 			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
@@ -312,7 +311,7 @@ class ActionsTicket extends CommonHookActions
 
 			print '<tr class="liste_titre">';
 
-			print '<td align="left" class="borderbottom">';
+			print '<td>';
 			print '<h4>';
 			print $langs->trans('TicketMessagesList');
 			print '</h4>';
@@ -326,7 +325,6 @@ class ActionsTicket extends CommonHookActions
 				print '</td>';
 			}
 			print '</tr>';
-			print '<!-- pre additional messages of ticket -->';
 
 			$ticket_message_nr = 1;
 			foreach ($this->dao->cache_msgs_ticket as $id => $arraymsgs) {
@@ -335,7 +333,7 @@ class ActionsTicket extends CommonHookActions
 				) {
 					//print '<tr>';
 					print '<tr id="ticket_message_header_'.$ticket_message_nr.'" class="oddeven nohover">';
-					print '<td align="left">';
+					print '<td><strong>';
 					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
 					if ($show_author) {
@@ -347,9 +345,7 @@ class ActionsTicket extends CommonHookActions
 								print img_picto('', 'user', 'class="pictofixedwidth"');
 								print $userstat->getNomUrl(0);
 							}
-							print '</td><td align="left">';
 						} elseif (isset($arraymsgs['fk_contact_author'])) {
-							print '</td><td align="left">';
 							$contactstat = new Contact($this->db);
 							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
 							if ($res == 2) {
