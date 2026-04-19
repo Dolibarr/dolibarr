@@ -650,11 +650,10 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 				$rsql .= " AND pfd.traite = 0";
 				$rsql .= " ORDER BY pfd.date_demande DESC";
 
+				$numprlv = 0;
 				$result_sql = $db->query($rsql);
 				if ($result_sql) {
 					$numprlv = $db->num_rows($result_sql);
-				} else {
-					$numprlv = 0;
 				}
 
 				if ($numprlv > 0) {
@@ -2006,6 +2005,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
@@ -2285,6 +2285,9 @@ if ($num > 0) {
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
+		if (empty($obj)) {
+			break; // Should not happen
+		}
 
 		$datelimit = $db->jdate($obj->datelimite);
 
