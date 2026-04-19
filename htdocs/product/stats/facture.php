@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 /**
  * @var Conf $conf
@@ -85,8 +86,6 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "f.datef";
 }
-$toselect = GETPOST('toselect', 'array:int');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
 
 $option = '';
 
@@ -132,15 +131,20 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 
 
 /*
- * View
+ * Actions
  */
+$toselect = GETPOST('toselect', 'array:int');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
+$massaction = GETPOST('massaction', 'alpha');
+$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
 
-$invoicestatic = new Facture($db);
-$societestatic = new Societe($db);
-
-$form = new Form($db);
-$formother = new FormOther($db);
-
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 $arrayfields = array(
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 50),
@@ -151,18 +155,105 @@ $arrayfields = array(
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
+$invoicestatic = new Facture($db);
+$societestatic = new Societe($db);
+
+$form = new Form($db);
+$formother = new FormOther($db);
+
+
+
 $arrayofmassactions = array(
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
+
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} else {
+	dol_syslog('productstatsinvoice::reshook='.$reshook, LOG_DEBUG);
+}
+if (empty($reshook)) {
+	$objectclass = 'Facture';
+	$objectlabel = 'Invoices';
+	$permissiontoread = $user->hasRight("facture", "lire");
+	$permissiontoadd = $user->hasRight("facture", "creer");
+	$permissiontodelete = $user->hasRight("facture", "supprimer");
+	$uploaddir = $conf->invoice->dir_output;
+
+	// FORCE MASSACTION VARIABLE
+	if (isset($_POST['massaction'])) {
+		$massaction = $_POST['massaction'];
+	}
+
+	dol_syslog("Empty reshook", LOG_DEBUG);
+
+	// --- CUSTOM HANDLER FOR 'presend' ---
+	if (isset($_POST['confirmmassaction']) && isset($_POST['massaction']) && $_POST['massaction'] == 'presend') {
+		global $arrayofselected;
+		
+		$toselect = is_array($_POST['toselect']) ? $_POST['toselect'] : array();
+		$arrayofselected = array();
+		
+		// Store only VALID IDs (those with emails)
+		foreach ($toselect as $invoice_id) {
+			$objecttmp = new Facture($db);
+			if ($objecttmp->fetch($invoice_id) > 0) {
+				// Force loading the thirdparty object
+				if (empty($objecttmp->thirdparty) || !is_object($objecttmp->thirdparty)) {
+					$objecttmp->fetch_thirdparty();
+				}
+				
+				// Only add to array if email exists
+				if (!empty($objecttmp->thirdparty->email)) {
+					// Store just the ID, not the object
+					$arrayofselected[] = $invoice_id;
+				}
+			}
+		}
+		
+		if (empty($arrayofselected)) {
+			setEventMessages($langs->trans("NoValidRecordsSelectedForAction"), null, 'errors');
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			exit;
+		}
+		
+		$skip_standard_handler = true;
+		dol_syslog("skip_standard_handler=".$skip_standard_handler, LOG_DEBUG);
+	}
+	// --- END CUSTOM HANDLER ---
+	echo "<!-- DEBUG_CUSTOM_LOGIC_DONE -->";
+
+    // ONLY run standard handler if we are NOT doing a custom presend
+    if (empty($skip_standard_handler)) {
+        include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    }
+}
+
+// Debug: Check if array is populated
+if (empty($arrayofselected) && isset($_POST['confirmmassaction'])) {
+    die("DEBUG: arrayofselected is empty after custom block. Check logic.");
+}
+
+/*
+ * View
+ */
+
+
+
 if ($id > 0 || !empty($ref)) {
+	dol_syslog("product id=".$id, LOG_DEBUG);
+	dol_syslog("product ref=".$ref, LOG_DEBUG);
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
+	dol_syslog("fetching product result=".$result, LOG_DEBUG);
 
 	$object = $product;
 
@@ -185,12 +276,15 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stats_facture');
+	echo "<!-- DEBUG_AFTER_HEADER -->";
+	dol_syslog("result=".$result, LOG_DEBUG);
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct".$product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
 		print dol_get_fiche_head($head, 'referers', $titre, -1, $picto);
+		echo "<!-- DEBUG_AFTER_FICHE_HEAD -->";
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
@@ -213,7 +307,12 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
 
+		echo "<!-- DEBUG_BEFORE_STATS -->";
+		// TEMPORARY: Disable stats to isolate crash
 		$nboflines = show_stats_for_company($product, $socid);
+		echo "<!-- DEBUG_AFTER_STATS -->";
+
+		$nboflines = 0; 
 
 		print "</table>";
 
@@ -304,10 +403,36 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			$sql .= $db->plimit($limit + 1, $offset);
+			echo "<!-- DEBUG_BEFORE_SQL -->";
 
 			$result = $db->query($sql);
+			$test_row = $db->fetch_object($result);
+			if ($test_row) {
+				dol_syslog("if test_row", LOG_DEBUG);
+				// Reset pointer
+				if (isset($result->results)) {
+					dol_syslog("if test_row data_seek", LOG_DEBUG);
+					$result->results->data_seek(0);
+				}
+			} else {
+				dol_syslog("else test_row", LOG_DEBUG);
+				// No rows or bad result
+				$num = 0;
+			}
 			if ($result) {
 				$num = $db->num_rows($result);
+				$all_rows = array();
+				if ($result) {
+					$num = $db->num_rows($result);
+					while ($row = $db->fetch_object($result)) {
+						$all_rows[] = $row;
+					}
+					$db->free($result); // Free immediately
+					$result = null; // Clear the variable
+				} else {
+					dol_print_error($db);
+					$num = 0;
+				}
 
 				$option .= '&id='.$product->id;
 
@@ -315,12 +440,18 @@ if ($id > 0 || !empty($ref)) {
 					$option .= '&limit='.((int) $limit);
 				}
 
+				$prehook = $db->num_rows($result);
+				dol_syslog("prehook printFieldListSearchParam=".$prehook, LOG_DEBUG);
+
 				// Add $param from extra fields
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 				// Add $param from hooks
 				$parameters = array('param' => &$param);
 				$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				$option .= $hookmanager->resPrint;
+
+				$posthook = $db->num_rows($result);
+				dol_syslog("posthook printFieldListSearchParam=".$posthook, LOG_DEBUG);
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -331,12 +462,43 @@ if ($id > 0 || !empty($ref)) {
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 				}
 
+				$prehook = $db->num_rows($result);
+				dol_syslog("prehook CustomersInvoices=".$prehook, LOG_DEBUG);
+
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("CustomersInvoices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, $massactionbutton, $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+
+				$posthook = $db->num_rows($result);
+				dol_syslog("posthook CustomersInvoices=".$posthook, LOG_DEBUG);
+
+				$prehook = $db->num_rows($result);
+				dol_syslog("prehook mass action presend =".$prehook, LOG_DEBUG);
+
+				// --- CUSTOM FORM RENDERING FOR 'presend' ---
+				if ($massaction == 'presend' && !empty($arrayofselected)) {
+					// Set variables expected by the template
+					$topicmail = "SendBillRef";
+					$modelmail = "facture_send";
+					$objecttmp = new Facture($db);
+					$trackid = 'inv'.$id;
+					// $objecttmp is already defined in the loop, but ensure it's valid
+					
+					// Include the standard template for the email form
+					echo "<!-- DEBUG_FORM_BLOCK_ENTERED -->";
+					include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+					echo "<!-- DEBUG_FORM_BLOCK_EXITED -->";
+				}
+				// --- END CUSTOM FORM RENDERING ---
+
+				$posthook = $db->num_rows($result);
+				dol_syslog("posthook mass action presend =".$posthook, LOG_DEBUG);
 
 				if (!empty($page)) {
 					$option .= '&page='.urlencode((string) ($page));
 				}
+
+				$prehook = $db->num_rows($result);
+				dol_syslog("prehook printFieldPreListTitle=".$prehook, LOG_DEBUG);
 
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
@@ -346,6 +508,9 @@ if ($id > 0 || !empty($ref)) {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
+
+				$posthook = $db->num_rows($result);
+				dol_syslog("posthook printFieldPreListTitle=".$posthook, LOG_DEBUG);
 
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -372,14 +537,46 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				// Hook fields
+				$prehook = $db->num_rows($result);
+				dol_syslog("prehook printFieldListTitle=".$prehook, LOG_DEBUG);
 				$parameters = array('param' => $option, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 				print "</tr>\n";
 
+				$posthook = $db->num_rows($result);
+				dol_syslog("posthook printFieldListTitle=".$posthook, LOG_DEBUG);
+				// 2. CRITICAL: Reset the cursor to the start
+				// In Dolibarr, the internal mysqli_result is often accessible via ->results or ->res
+				// Try the standard mysqli method first
+				if (is_object($result) && method_exists($result, 'results')) {
+					// Access the internal mysqli_result object
+					$internal_res = $result->results; 
+					if (is_object($internal_res) && method_exists($internal_res, 'data_seek')) {
+						$internal_res->data_seek(0);
+						// Debug: Confirm reset
+						// error_log("Cursor reset to 0");
+					}
+				} 
+				// Fallback: If the above doesn't work, try accessing ->res
+				elseif (is_object($result) && method_exists($result, 'res')) {
+					$internal_res = $result->res;
+					if (is_object($internal_res) && method_exists($internal_res, 'data_seek')) {
+						$internal_res->data_seek(0);
+					}
+				}
+				$renum = $db->num_rows($result);
+				dol_syslog("renum=".$renum, LOG_DEBUG);
+
+				dol_syslog("num=".$num, LOG_DEBUG);
+				dol_syslog("while length result=".count((array)$result), LOG_DEBUG);
 				if ($num > 0) {
 					while ($i < min($num, $limit)) {
-						$objp = $db->fetch_object($result);
+						$objp = $all_rows[$i];
+						dol_syslog("while length objp=".count((array)$objp), LOG_DEBUG);
+						if (!$objp) {
+							dol_syslog("Not objp", LOG_DEBUG);
+						}
 
 						if ($objp->type == Facture::TYPE_CREDIT_NOTE) {
 							$objp->qty = -($objp->qty);
@@ -445,12 +642,12 @@ if ($id > 0 || !empty($ref)) {
 			} else {
 				dol_print_error($db);
 			}
-			$db->free($result);
 		}
 	}
 } else {
 	dol_print_error();
 }
+echo "<!-- DEBUG_BEFORE_FOOTER -->";
 
 // End of page
 llxFooter();
