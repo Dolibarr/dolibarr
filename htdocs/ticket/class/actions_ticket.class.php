@@ -318,7 +318,7 @@ class ActionsTicket extends CommonHookActions
 			print '</td>';
 
 			if ($show_author) {
-				print '<td align="left" class="borderbottom">';
+				print '<td>';
 				print '<h4>';
 				print $langs->trans('Author');
 				print '</h4>';
