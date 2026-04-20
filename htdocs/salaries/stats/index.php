@@ -2,6 +2,8 @@
 /* Copyright (C) 2018      Alexandre Spangaro <aspangaro@open-dsi.fr>
  * Copyright (C) 2018      Fidesio            <contact@fidesio.com>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("salaries", "companies", "bills"));
 
@@ -51,8 +61,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$nowyear = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -75,6 +85,9 @@ dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
 
+if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
+	$useridtofilter = $user->id;
+}
 if (!$user->hasRight('salaries', 'readall') && empty($useridtofilter)) {
 	$useridtofilter = $user->getAllChildIds(1);
 }
@@ -165,7 +178,7 @@ if (!$mesg) {
 	$px3->SetLegend($legend);
 	$px3->SetYLabel($langs->trans("AmountAverage"));
 	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetMinValue((int) $px3->GetFloorMinValue());
 	$px3->SetWidth($WIDTH);
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
@@ -204,29 +217,34 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
+	print img_picto('', 'user', 'class="pictofixedwidth"');
+	print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, null, 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+} else {
+	print $user->getNomUrl(1);
+}
 print '</td></tr>';
+
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
 if (!in_array($year, $arrayyears)) {
 	$arrayyears[$year] = $year;
 }
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
@@ -239,7 +257,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {
+	while ($year && $oldyear > (int) $year + 1) {
 		// If we have empty year
 		$oldyear--;
 

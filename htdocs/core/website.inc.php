@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2024  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,13 @@
  *  				This file is included in top of all container pages (in edit mode, in dolibarr web server mode and in external web server mode).
  *  				It is run only when a web page is called.
  *  			    The global variable $websitekey must be defined.
+ */
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ *
+ * @var string $websitekey
  */
 
 // Load website class
@@ -93,13 +101,13 @@ if (!empty($pageid) && $pageid > 0) {
 		}
 	}
 	if (empty($srclang)) {
-		$srclang= 'auto';
+		$srclang = 'auto';
 	}
 	$weblangs->setDefaultLang($srclang);
 
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
-	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
+	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'setup', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
 		$weblangs->load("website");
 
 		// Security options
@@ -134,7 +142,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	//header("X-XSS-Protection: 1");      		// XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
 	// Content-Security-Policy-Report-Only
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCECSPRO')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCECSPRO')) {
 		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		// For example: to restrict to only local resources, except for css (cloudflare+google), and js (transifex + google tags) and object/iframe (youtube)
 		// default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;
@@ -145,7 +153,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		//
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
-		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO');
+		$contentsecuritypolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCECSPRO');
 
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -153,7 +161,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'reportonly');
+		$parameters = array('contentsecuritypolicy' => $contentsecuritypolicy, 'mode' => 'reportonly');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
@@ -167,7 +175,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	}
 
 	// Content-Security-Policy
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCECSP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCECSP')) {
 		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		// For example: to restrict to only local resources, except for css (cloudflare+google), and js (transifex + google tags) and object/iframe (youtube)
 		// default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;
@@ -178,7 +186,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		//
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
-		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP');
+		$contentsecuritypolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -186,7 +194,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'active');
+		$parameters = array('contentsecuritypolicy' => $contentsecuritypolicy, 'mode' => 'active');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
@@ -200,32 +208,32 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	}
 
 	// Referrer-Policy
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCERP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCERP')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCERP should never be defined by page, but the variable used just after may be
 
 		// For public web sites, we use the same default value than "strict-origin-when-cross-origin"
-		$referrerpolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', "strict-origin-when-cross-origin");
+		$referrerpolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCERP', "strict-origin-when-cross-origin");
 
 		header("Referrer-Policy: ".$referrerpolicy);
 	}
 
 	// Strict-Transport-Security
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCESTS')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCESTS')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCESTS should never be defined by page, but the variable used just after may be
 
 		// Example: "max-age=31536000; includeSubDomains"
-		$sts = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS');
+		$sts = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCESTS');
 		if (!empty($sts)) {
 			header("Strict-Transport-Security: ".$sts);
 		}
 	}
 
 	// Permissions-Policy (old name was Feature-Policy)
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCEPP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCEPP')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCEPP should never be defined by page, but the variable used just after may be
 
 		// Example: "camera: 'none'; microphone: 'none';"
-		$pp = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP');
+		$pp = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCEPP');
 		if (!empty($pp)) {
 			header("Permissions-Policy: ".$pp);
 		}
@@ -296,15 +304,51 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 //$savsessionid = $_COOKIE[$sessionname];
 
+
+// Add a protection if custom PHP is not allowed or allowed with conditions
+global $dolibarr_website_allow_custom_php;
+if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 1) {
+	$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+	foreach ($systemfunctions as $systemfunction) {
+		//print ini_get('disable_functions').'<br>';
+		//print exec("ls");
+
+		// @phpstan-ignore-next-line
+		if (function_exists($systemfunction)) {
+			print '<center><br><br>';
+			print 'Website features are protected to be disabled if the PHP system functions ('.implode(',', $systemfunctions).') are not disabled for the website context.<br>';
+			print 'The value "'.$systemfunction.'" has NOT been found into the <b>current disable_functions</b>=<br>';
+			print '<textarea cols="100" rows="5">';
+			print ini_get('disable_functions');		// Warning, the real value may not be this one.Only the master initial value from php.ini is effective, not the local value set at virtualhost.
+			//print (implode(', ', explode(',', (string) ini_get('disable_functions'))));
+			print '</textarea>';
+			print '<br><br>';
+			print 'You can fix this by changing setup of your PHP ini (changing this in a virtual host with php_admin_value is not effective):<br>';
+			print 'disable_functions="exec,passthru,shell_exec,system,popen,proc_open,..."<br>';
+			print 'but WARNING, this may also break features for:<br>';
+			print '- cron tasks calling command line tools.<br>';
+			print '- and for the backup feature running the database dump tool.<br>';
+			print '- and for the command line antivirus check ran when uploading a file.<br>';
+			print '<br>';
+			print 'If you don\'t use this 3 feature, change your php.ini, if you need at least one, you can bypass this protection by setting $dolibarr_website_allow_custom_php to 2 in your dolibarr config file.';
+			print '</center>';
+			exit;		// Stop here to PHP later won't be executed
+		}
+	}
+}
+
+
 $_COOKIE[$sessionname] = 'obfuscatedcookie';
 unset($conf->file->instance_unique_id);
 
 unset($dolibarr_main_instance_unique_id);
+unset($dolibarr_main_dolcrypt_key);
+
 unset($dolibarr_main_db_host);
 unset($dolibarr_main_db_port);
 unset($dolibarr_main_db_name);
 unset($dolibarr_main_db_user);
 unset($dolibarr_main_db_pass);
-unset($$dolibarr_main_db_type);
+unset($dolibarr_main_db_type);
 unset($dolibarr_main_document_root);
 unset($dolibarr_main_document_root_alt);

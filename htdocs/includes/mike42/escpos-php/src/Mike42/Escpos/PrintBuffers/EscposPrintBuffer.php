@@ -211,7 +211,7 @@ class EscposPrintBuffer implements PrintBuffer
             }
             $encode[$num] = $encodeMap;
         }
-        
+
         /* Use generated data */
         $dataArray = [
             "available" => $available,

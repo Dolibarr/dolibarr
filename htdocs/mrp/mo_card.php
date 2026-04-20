@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
-/* Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
@@ -40,6 +43,15 @@ if (isModEnabled('workstation')) {
 }
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
 
@@ -49,15 +61,15 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$TBomLineId = GETPOST('bomlineid', 'array');
+$TBomLineId = GETPOST('bomlineid', 'array:int');
 $lineid   = GETPOSTINT('lineid');
 $socid = GETPOSTINT("socid");
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $objectbom = new BOM($db);
 
@@ -84,7 +96,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 if (GETPOSTINT('fk_bom') > 0) {
 	$objectbom->fetch(GETPOSTINT('fk_bom'));
@@ -128,7 +140,7 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
-	$object->oldQty = $object->qty;
+	$object->oldQty = (float) $object->qty;
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -145,7 +157,7 @@ if (empty($reshook)) {
 	$triggermodname = 'MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Create MO with Children
-	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
+	if ($action == 'add' && empty($id) && !empty($TBomLineId) && $permissiontoadd) {
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -159,7 +171,7 @@ if (empty($reshook)) {
 
 			$objectbomchildline->fetch($id_bom_line);
 
-			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', array('origin_id' => $id_bom_line));
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, array('origin_id' => $id_bom_line));
 
 			foreach ($TMoLines as $tmpmoline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
@@ -177,7 +189,7 @@ if (empty($reshook)) {
 		exit;
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && !empty($permissiontoadd)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
-		$result = $object->cancel($user, 0, $also_cancel_consumed_and_produced_lines);
+		$result = $object->cancel($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . dol_buildpath('/mrp/mo_card.php?id=' . $object->id, 1));
 			exit;
@@ -187,12 +199,17 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
-		$result = $object->delete($user, 0, $also_cancel_consumed_and_produced_lines);
+		$result = $object->delete($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . $backurlforlist);
 			exit;
 		} else {
 			$action = '';
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'settags' && isModEnabled('category') && $permissiontoadd) {
+		$result = $object->setCategories(GETPOST('categories', 'array'));
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -270,7 +287,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -283,7 +300,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 	// Action close produced
 	if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd) {
@@ -293,7 +310,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -326,13 +343,14 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans('ManufacturingOrder')." - ".$langs->trans("Card");
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 
-llxHeader('', $title, '');
-
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-card');
 
 
 // Part to create
 if ($action == 'create') {
+	$titlelist = null;
 	if (GETPOSTINT('fk_bom') > 0) {
 		$titlelist = $langs->trans("ToConsume");
 		if ($objectbom->bomtype == 1) {
@@ -342,7 +360,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Mo")), '', 'mrp');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -361,6 +379,13 @@ if ($action == 'create') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+		print '</td></tr>';
+	}
 
 	print '</table>'."\n";
 
@@ -427,7 +452,7 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Create");
 
 	if ($objectbom->id > 0) {
-		print load_fiche_titre($titlelist);
+		print load_fiche_titre((string) $titlelist);
 
 		print '<!-- list of product/services to consume -->'."\n";
 		print '<div class="div-table-responsive-no-min">';
@@ -443,6 +468,7 @@ if ($action == 'create') {
 			$moLine->qty = $objectbom->lines[$key]->qty;
 			$moLine->qty_frozen = $objectbom->lines[$key]->qty_frozen;
 			$moLine->disable_stock_change = $objectbom->lines[$key]->disable_stock_change;
+			$moLine->fk_bom_child = $objectbom->lines[$key]->fk_bom_child;
 
 			$arrayOfMoLines[] = $moLine;
 		}
@@ -463,7 +489,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("ManufacturingOrder"), '', 'mrp');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -485,6 +511,13 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+		print '</td></tr>';
+	}
 
 	print '</table>';
 
@@ -531,6 +564,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
+	// Reload BOM to consume and produce
+	if ($action == 'reload') {
+		$object->createProduction($user, 0);
+	}
+
 	// Confirmation of validation
 	if ($action == 'validate') {
 		// We check that object has a temporary ref
@@ -539,7 +577,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$object->fetch_product();
 			$numref = $object->getNextNumRef($object->product);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateMo', $numref);
@@ -580,7 +618,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'value' => 0
 			),
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CancelMo'), $langs->trans('ConfirmCancelMo'), 'confirm_cancel', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('CancelMo'), $langs->trans('ConfirmCancelMo'), 'confirm_cancel', $formquestion, 0, 1);
 	}
 
 	// Clone confirmation
@@ -628,9 +666,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -667,6 +705,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	unset($object->fields['fk_project']);
 	unset($object->fields['fk_soc']);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// Tags-Categories
+	if (isModEnabled('category')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans("Categories");
+		print '<td><td class="right">';
+		if ($permissiontoadd) {
+			print '<a class="editfielda" href="' . DOL_URL_ROOT . '/mrp/mo_card.php?id=' . $object->id . '&action=edittags&token=' . newToken() . '">' . img_edit() . '</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		if ($action == 'edittags') {
+			print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+			print '<input type="hidden" name="action" value="settags">';
+			print '<input type="hidden" name="token" value="' . newToken() . '">';
+			print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="' . $langs->trans("Modify") . '">';
+			print '</form>';
+		} else {
+			print $form->showCategories($object->id, Categorie::TYPE_MO, 1);
+		}
+		print "</td></tr>";
+	}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -791,6 +856,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
+			// Reload BOM
+			if ($object->status == $object::STATUS_DRAFT && $object->fk_bom > 0) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reload&token='.newToken().'">'.$langs->trans("Reload").'</a>';
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Reload').'</a>'."\n";
+				}
+			}
+
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if ($permissiontoadd) {
@@ -856,8 +930,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang, '', $object);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, false);
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('mo'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, array());
 
 
 		print '</div><div class="fichehalfright">';

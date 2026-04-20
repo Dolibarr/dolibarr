@@ -114,7 +114,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Contrat		$contract	contract object
-	 *	@return string|-1      			Value if OK, -1 if KO
+	 *	@return string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{

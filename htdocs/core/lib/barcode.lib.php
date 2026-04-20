@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2016 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
  *                         source code at http://www.ashberg.de/bar.
  *
@@ -114,7 +114,7 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png", $fil
  *   ANY    choose best-fit (default)
  *   EAN    8 or 13 EAN-Code
  *   UPC    12-digit EAN
- *   ISBN   isbn numbers (still EAN-13)
+ *   ISBN   ISBN number (still EAN-13)
  *   39     code 39
  *   128    code 128 (a,b,c: autoselection)
  *   128C   code 128 (compact form for digits)
@@ -151,13 +151,13 @@ function barcode_encode($code, $encoding)
 	) {
 		/* use built-in EAN-Encoder */
 		dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
-		$bars = barcode_encode_ean($code, $encoding);
+		$bars = barcode_encode_ean($code, (string) $encoding);
 	} elseif (file_exists($genbarcode_loc)) {	// For example C39
 		/* use genbarcode */
 		dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
-		$bars = barcode_encode_genbarcode($code, $encoding);
+		$bars = barcode_encode_genbarcode($code, (string) $encoding);
 	} else {
-		print "barcode_encode needs an external program for encodings other then EAN/ISBN (code=".dol_escape_htmltag($code).", encoding=".dol_escape_htmltag($encoding).")<BR>\n";
+		print "barcode_encode needs an external program for encodings other then EAN/ISBN (code=".dol_escape_htmltag($code).", encoding=".dol_escape_htmltag((string) $encoding).")<BR>\n";
 		print "<UL>\n";
 		print "<LI>download gnu-barcode from <A href=\"https://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
 		print "<LI>compile and install them\n";
@@ -247,7 +247,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 		$encoding = "ISBN";
 	}
 	if (strlen($ean) < 12 || strlen($ean) > 13) {
-		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 digits)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 digits)");
 	}
 
 	$ean = substr($ean, 0, 12);
@@ -295,7 +295,7 @@ function barcode_encode_upc($upc, $encoding = "UPC")
 	}
 	$encoding = strtoupper($encoding);
 	if (strlen($upc) < 11 || strlen($upc) > 12) {
-		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 digits)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 digits)");
 	}
 
 	$upc = substr("0".$upc, 0, 12);

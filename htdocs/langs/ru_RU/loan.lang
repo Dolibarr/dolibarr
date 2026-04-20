@@ -23,7 +23,7 @@ AddLoan=Создать заем
 FinancialCommitment=Финансовые обязательства
 InterestAmount=Доля капитала
 CapitalRemain=Остается капитал
-TermPaidAllreadyPaid = Этот срок уже оплачен
+TermPaidAllreadyPaid = Этот термин уже Оплачен
 CantUseScheduleWithLoanStartedToPaid = Не удается сгенерировать временную шкалу для кредита с начатым платежом
 CantModifyInterestIfScheduleIsUsed = Вы не можете изменить интерес, если используете расписание
 # Admin

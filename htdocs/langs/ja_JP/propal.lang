@@ -14,7 +14,7 @@ DeleteProp=商取引提案を削除する。
 ValidateProp=商取引提案を検証
 CancelPropal=キャンセル
 AddProp=提案書を作成する
-ConfirmDeleteProp=この商取引提案を削除してもよいか？ 
+ConfirmDeleteProp=この商取引提案を削除してもよいか？
 ConfirmValidateProp=この商取引提案を <b>%s </b>という名前で検証してもよいか？
 ConfirmCancelPropal=コマーシャル プロポーザル <b>%s</b> をキャンセルしたいのか?
 LastPropals=最新の%s提案書
@@ -23,7 +23,10 @@ AllPropals=全提案書
 SearchAProposal=提案書を検索
 NoProposal=提案書なし
 ProposalsStatistics=商取引提案の統計
+NumberOfProposals=提案数
 NumberOfProposalsByMonth=月ごとの数
+AmountOfProposals=提案数
+AmountOfProposalsHT=提案金額（税抜）
 AmountOfProposalsByMonthHT=月別金額(税込)
 NbOfProposals=商取引提案の数
 ShowPropal=提案書を示す
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1週間
 AvailabilityTypeAV_2W=2週間
 AvailabilityTypeAV_3W=3週間
 AvailabilityTypeAV_1M=1ヶ月
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=代表的なフォローアップの提案書
 TypeContact_propal_external_BILLING=顧客の請求書の連絡先
 TypeContact_propal_external_CUSTOMER=顧客の連絡先フォローアップ提案書
 TypeContact_propal_external_SHIPPING=配達のための顧客の連絡先
-
 # Document models
 CantBeNoSign=署名せずに設定することはできない
 CaseFollowedBy=ケースに続いて
@@ -122,3 +123,7 @@ SignSociete_rib=委任状に署名する
 SignPropal=提案を受諾
 Signed=署名
 SignedOnly=署名のみ
+ExpeditionSigned=発送署名済み
+SignExpedition=出荷に署名する
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=一部の国では表示が義務付けられていマスる (フランス, ...)

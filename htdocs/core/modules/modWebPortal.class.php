@@ -71,7 +71,7 @@ class modWebPortal extends DolibarrModules
 		//$this->editor_url = 'dolibarr.org';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated', 'experimental_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -82,7 +82,7 @@ class modWebPortal extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'fa-door-open';
+		$this->picto = 'webportal';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -148,10 +148,9 @@ class modWebPortal extends DolibarrModules
 		//$this->need_javascript_ajax = 0;
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'WebPortalWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -205,7 +204,7 @@ class modWebPortal extends DolibarrModules
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'website',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),

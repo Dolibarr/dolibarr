@@ -54,3 +54,7 @@ SucessConvertImgWebp=画像が正常に複製された
 SucessConvertChosenImgWebp=選択した画像が正常に複製された
 ECMDirName=ディレクトリ名
 ECMParentDirectory=親ディレクトリ
+ShowFile=ファイル を表示
+FullPathOrig=フルパスの起源
+GenOrUpload=ファイル の由来
+FileHasAnIndexedTextContent=ファイル にはインデックス化されたテキストコンテンツがある

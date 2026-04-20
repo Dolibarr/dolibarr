@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014	  Ion Agorria		  <ion@agorria.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.cl
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
+$langs->loadLangs(array('products', 'accountancy'));
 
 $id = GETPOSTINT('id');
 $eid = GETPOSTINT('eid');
@@ -58,12 +67,18 @@ if (empty($eid)) { //This also disables fetch when eid == 0
 	$price_expression->fetch($eid);
 }
 
+$object = $product;
+
+$usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
+
 
 /*
  * Actions
  */
 
-if ($action == 'add') {
+if ($action == 'add' && $usercancreate) {
 	if ($eid == 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0) { //No existing entry found with title, ok
@@ -92,7 +107,7 @@ if ($action == 'add') {
 	}
 }
 
-if ($action == 'update') {
+if ($action == 'update' && $usercancreate) {
 	if ($eid != 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0 || $result == $eid) { //No existing entry found with title or existing one is the current one, ok
@@ -121,7 +136,7 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == 'delete') {
+if ($action == 'delete' && $usercancreate) {
 	if ($eid != 0) {
 		$price_expression->fetch($eid);
 		$result = $price_expression->delete($user);
@@ -189,7 +204,7 @@ print dol_get_fiche_end();
 //Buttons
 print '<div class="center">';
 print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
-print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
+print '<span id="back" class="butAction">'.$langs->trans("GoBack").'</span>';
 if ($eid == 0) {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 } else {

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.org>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +31,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $servicename = 'PayBox';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paybox', 'paypal', 'stripe'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'stripe'));
 
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
-
+$error = 0;
 
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
@@ -96,10 +107,6 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
-		$error++;
-	}
 	$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
@@ -135,7 +142,7 @@ if (!getDolGlobalString('PAYBOX_IBS_DEVISE')) {
 
 llxHeader();
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("PayBoxSetup"), $linkback, 'title_setup');
 
 $h = 0;
@@ -146,7 +153,7 @@ $head[$h][1] = $langs->trans("PayBox");
 $head[$h][2] = 'payboxaccount';
 $h++;
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -230,7 +237,7 @@ print '</td></tr>';
 if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
-	$form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	$form->select_comptes(getDolGlobalInt('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS'), 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
 
@@ -275,11 +282,6 @@ print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SE
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (!getDolGlobalString('PAYMENT_SECURITY_TOKEN') ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
 print '</td></tr>';
 
 print '</table>';

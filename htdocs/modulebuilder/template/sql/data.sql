@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) ---Replace with your own copyright and developer email---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 -- new types of automatic events to record in agenda
 -- 'code' must be a value matching 'MYOBJECT_ACTION'
 -- 'elementtype' must be value 'mymodule' ('myobject@mymodule' may be possible but should not be required)
---insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_VALIDATE','MyObject validated','Executed when myobject is validated', 'mymodule', 1000);
---insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_UNVALIDATE','MyObject unvalidated','Executed when myobject is unvalidated', 'mymodule', 1001);
---insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_DELETE','MyObject deleted','Executed when myobject deleted', 'mymodule', 1004);
 
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_VALIDATE','MyObject validated','Executed when myobject is validated', 'myobject@mymodule', 1000);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_UNVALIDATE','MyObject unvalidated','Executed when myobject is unvalidated', 'myobject@mymodule', 1001);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_DELETE','MyObject deleted','Executed when myobject deleted', 'myobject@mymodule', 1004);

@@ -31,9 +31,11 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_fk_currency (fk_currency);
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 ALTER TABLE llx_facture ADD INDEX idx_facture_tms (tms);
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_input_reason (fk_input_reason);
 
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_valid     FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_facture_source FOREIGN KEY (fk_facture_source) REFERENCES llx_facture (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason   FOREIGN KEY (fk_input_reason) REFERENCES llx_c_input_reason (rowid);
