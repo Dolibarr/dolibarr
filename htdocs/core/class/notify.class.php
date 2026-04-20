@@ -187,10 +187,10 @@ class Notify
 	 *  Return message that say how many notification (and to which email) will occurs on requested event.
 	 *	This is to show confirmation messages before event is recorded.
 	 *
-	 * 	@param	string	$action		Id of action in llx_c_action_trigger
-	 * 	@param	int		$socid		Id of third party
-	 *  @param	Object	$object		Object the notification is about
-	 *	@return	string				Message
+	 * 	@param	string			$action		Id of action in llx_c_action_trigger
+	 * 	@param	int				$socid		Id of third party
+	 *  @param	?CommonObject	$object		Object the notification is about
+	 *	@return	string						Message
 	 */
 	public function confirmMessage($action, $socid, $object)
 	{
@@ -453,7 +453,7 @@ class Notify
 	 *
 	 * @param	string			$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
 	 * @param	int				$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
-	 * @param	CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
+	 * @param	?CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
 	 * @param	int				$userid         Id of user or 0 for all users or -1 for no users
 	 * @param   string[]   		$scope          Scope where to search
 	 * @return	array<string,array{type:'touser'|'tofixedemail',code:string,emaildesc:string,email:string,userid:int,isemailvalid:bool}>|-1		Return integer <0 if KO, array of notifications to send if OK
