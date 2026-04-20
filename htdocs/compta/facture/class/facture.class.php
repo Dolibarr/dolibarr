@@ -321,7 +321,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -1750,7 +1750,7 @@ class Facture extends CommonInvoice
 		$deposit->multicurrency_tx = $origin->multicurrency_tx;
 		$deposit->module_source = $origin->module_source;
 		$deposit->pos_source = $origin->pos_source;
-		$deposit->model_pdf = 'crabe';
+		$deposit->model_pdf = 'sponge';
 
 		$modelByTypeConfName = 'FACTURE_ADDON_PDF_' . $deposit->type;
 
@@ -1766,6 +1766,7 @@ class Facture extends CommonInvoice
 		}
 
 		$deposit->origin = $origin->element;
+		$deposit->origin_type = $origin->element;
 		$deposit->origin_id = $origin->id;
 
 		$origin->fetch_optionals();
@@ -1774,7 +1775,7 @@ class Facture extends CommonInvoice
 			$deposit->array_options[$extrakey] = $value;
 		}
 
-		$deposit->linked_objects[$deposit->origin] = $deposit->origin_id;
+		$deposit->linked_objects[$deposit->origin_type] = $deposit->origin_id;
 
 		foreach ($overrideFields as $key => $value) {
 			$deposit->$key = $value;
@@ -5697,20 +5698,20 @@ class Facture extends CommonInvoice
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
-	 *	@param	Translate	$outputlangs	Object lang to use for translation
-	 *  @param  int<0,1>			$hidedetails    Hide details of lines
-	 *  @param  int<0,1>	$hidedesc       Hide description
-	 *  @param  int<0,1>	$hideref        Hide ref
-	 *  @param  ?array<string,mixed>	$moreparams	Array to provide more information
-	 *	@return int<-1,1>					Return integer <0 if KO, >0 if OK
+	 *	@param	string					$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
+	 *	@param	Translate				$outputlangs	Object lang to use for translation
+	 *  @param  int<0,1>				$hidedetails    Hide details of lines
+	 *  @param  int<0,1>				$hidedesc       Hide description
+	 *  @param  int<0,1>				$hideref        Hide ref
+	 *  @param  ?array<string,mixed>	$moreparams		Array to provide more information
+	 *	@return int<-1,1>								Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		$outputlangs->loadLangs(array("bills", "products"));
 
 		if (!dol_strlen($modele)) {
-			$modele = 'crabe';
+			$modele = 'sponge';
 			$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$this->type;
 
 			if (!empty($this->model_pdf)) {

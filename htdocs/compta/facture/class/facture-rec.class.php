@@ -250,7 +250,7 @@ class FactureRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1384,9 +1384,10 @@ class FactureRec extends CommonInvoice
 	 *  @param	int<0,max>	$restrictioninvoiceid	0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int<0,1>	$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
 	 *	@param	int<0,1> 	$notrigger				Disable the trigger
+	 *  @param	int<0,1>	$forcebuilddoc			1=Force generation of PDF whatever is template generate_pdf flag.
 	 *  @return	int									0 if OK, > 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0)
+	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0, $forcebuilddoc = 0)
 	{
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1402,14 +1403,14 @@ class FactureRec extends CommonInvoice
 
 		$this->output = '';
 
-		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation);
+		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation." forcebuilddoc=".$forcebuilddoc, LOG_DEBUG);
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
 		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($today)."')";
 		$sql .= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql .= ' AND suspended = 0';
-		$sql .= ' AND entity = '.$conf->entity; // MUST STAY = $conf->entity here
+		$sql .= ' AND entity = '.((int) $conf->entity); // MUST STAY = $conf->entity here
 		if ($restrictioninvoiceid > 0) {
 			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
@@ -1500,23 +1501,28 @@ class FactureRec extends CommonInvoice
 							$errorforinvoice++;
 						}
 					}
-					if (!$errorforinvoice && $facturerec->generate_pdf) {
-						// We refresh the object in order to have all necessary data (like date_lim_reglement)
+					if (!$errorforinvoice && ($facturerec->generate_pdf || $forcebuilddoc || $facturerec->auto_validate == 2)) {	// ->generate_pdf is 1 by default (can be edited if INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION is set to 1)
+						// We reload the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
+						$facture->fetch_thirdparty();
+
 						$outputlangs = $langs;
 						if (getDolGlobalInt('MAIN_MULTILANGS')) {
-							$facture->fetch_thirdparty();
 							if (!empty($facture->thirdparty->default_lang)) {
 								$outputlangs = new Translate('', $conf);
 								$outputlangs->setDefaultLang($facture->thirdparty->default_lang);
 								$outputlangs->loadLangs(array('main', 'bills'));
 							}
 						}
-						$result = $facture->generateDocument($facturerec->model_pdf, $outputlangs);
-						if ($result <= 0) {
-							$this->setErrorsFromObject($facture);
-							$error++;
-							$errorforinvoice++;
+
+						$result = 1;
+						if ($facturerec->generate_pdf || $forcebuilddoc) {
+							$result = $facture->generateDocument($facturerec->model_pdf, $outputlangs);
+							if ($result <= 0) {
+								$this->setErrorsFromObject($facture);
+								$error++;
+								$errorforinvoice++;
+							}
 						}
 
 						// Auto sending of the invoice
@@ -1524,14 +1530,6 @@ class FactureRec extends CommonInvoice
 							require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 							require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 							$formmail = new FormMail($this->db);
-
-							$outputlangs = new Translate('', $conf);
-							if ($facture->thirdparty->default_lang) {
-								$outputlangs->setDefaultLang($facture->thirdparty->default_lang);
-								$outputlangs->loadLangs(array("main", "bills"));
-							} else {
-								$outputlangs = $langs;
-							}
 
 							// Select email template according to language of recipient
 							$template = $facturerec->fk_email_template;

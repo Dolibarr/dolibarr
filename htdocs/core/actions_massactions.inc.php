@@ -4,7 +4,7 @@
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1156,6 +1156,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	$nbignored = 0;
+	/** @var string[] $TMsg */
 	$TMsg = array();
 
 	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
@@ -2008,9 +2009,15 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 
 			// We check if invoice type is supported. If not, we refuse to create credit note.
 			$isSupportedType = false;
-			if ($objecttmp->type == Facture::TYPE_STANDARD) $isSupportedType = true;
-			if ($objecttmp->type == Facture::TYPE_PROFORMA) $isSupportedType = true;
-			if ($objecttmp->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) $isSupportedType = true;
+			if ($objecttmp->type == Facture::TYPE_STANDARD) {
+				$isSupportedType = true;
+			}
+			if ($objecttmp->type == Facture::TYPE_PROFORMA) {
+				$isSupportedType = true;
+			}
+			if ($objecttmp->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+				$isSupportedType = true;
+			}
 
 			if (!$isSupportedType) {
 				$listtype = array(

@@ -5306,7 +5306,7 @@ div .tdtop:not(.tagtdnote) {
 	padding-bottom: 0px !important;
 }
 
-#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td:not(.noborder), .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
 }
 #tablelines tr td, #tablelinesservice tr td {
@@ -8908,7 +8908,7 @@ table.jPicker {
 /* ============================================================================== */
 
 .ai_dropdown {
-	min-width: 400px !important;
+	min-width: 500px !important;
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
@@ -9153,6 +9153,11 @@ table.jPicker {
 {
 	body {
 		font-size: 0.91em;
+	}
+
+	.ui-dialog {
+		min-width: 280px;
+		max-width: 95%;
 	}
 
 	td.widthpictotitle,	table.titlemodulehelp tr td img.widthpictotitle {

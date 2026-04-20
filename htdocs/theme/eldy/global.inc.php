@@ -5288,7 +5288,7 @@ div.tabBar .noborder {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 
-#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td:not(.noborder), .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 #tablelines tr td, #tablelinesservice tr td {
@@ -5735,7 +5735,7 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #665511 !important; }
+.warning { color: #776611 !important; }
 .error   { color: #660000 !important; font-weight: bold; }
 .green   { color: #118822 !important; }
 .neutral { color: #444 !important; }
@@ -5774,7 +5774,7 @@ div.info {
 }
 
 /* Ok message */
-div.green div.greenborder, section.green, section.greenborder {
+div.green div.greenborder, div.green.greenborder, section.green, section.greenborder {
 	border-<?php print $left; ?>: solid 5px #118822;
 }
 div.green, section.green {
@@ -5796,6 +5796,7 @@ div.warning a, div.info a, div.error a {
 div.error {
 	border-<?php print $left; ?>: solid 5px #f28787;
 	background: #EFCFCF;
+	font-weight: normal;
 }
 
 
@@ -6107,6 +6108,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding-top: 5px;
 	padding-bottom: 5px;
 	min-width: 300px;
+	max-width: 70%;
 }
 .ui-widget-header {
 	padding: 8px !important;
@@ -9129,7 +9131,7 @@ table.jPicker {
 /* ============================================================================== */
 
 .ai_dropdown {
-	min-width: 400px !important;
+	min-width: 500px !important;
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
@@ -9433,12 +9435,18 @@ table.jPicker {
 	body {
 		font-size: 0.91em;
 	}
+
+	.ui-dialog {
+		min-width: 280px;
+		max-width: 95%;
+	}
+
 	.pictofixedwidth {
 		text-align: start;
 		width: 1.5em;
 		/* padding-right: 0; */
 	}
-	table.titlemodulehelp tr td img.widthpictotitle {
+	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}
 

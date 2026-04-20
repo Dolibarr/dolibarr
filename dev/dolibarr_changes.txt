@@ -64,6 +64,11 @@ Replace
 With
 	protected $connector;
 
+Replace
+	if (!is_resource($im)) {
+With
+	if (!is_resource($im) && !($im instanceof \GdImage)) {
+
 
 
 PHP SABRE:
@@ -419,6 +424,18 @@ Modify function
 		return new Uri($url);
 	}
 
+Into OAuth/Common/HTTP/Client/CurlClient.php, add code
+
+        // @CHANGE DOL_LDR Add log
+        if (function_exists('getDolGlobalString') && getDolGlobalString('OAUTH_DEBUG')) {
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $endpoint->getAbsoluteUri()."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $requestBody."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $method."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", var_export($extraHeaders, true)."\n", FILE_APPEND);
+        	if (function_exists('dolChmod')) {
+        		dolChmod(DOL_DATA_ROOT . "/dolibarr_oauth.log");
+        	}
+        }
 
 
 JS JSGANTT:
