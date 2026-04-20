@@ -464,6 +464,12 @@ if (empty($reshook)) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
+	// Project
+	if ($action == 'classin' && $usercancreate) {
+		$object->setProject($fk_project);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit();
+	}
 
 	// Actions to build doc
 	$upload_dir = $conf->product->dir_output;
@@ -1705,6 +1711,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 			}
 
+			// Project - action = create
 			if (isModEnabled('project')) {
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 				print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, array(), 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -2338,6 +2345,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					*/
 				}
 
+				// Project - action = edit
 				if (isModEnabled('project')) {
 					print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 					print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $object->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -2661,21 +2669,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 				}
 
-				// fk_project
+				// Project - action is either view or edit_fk_project
 				if (isModEnabled("project")) {
 					$langs->load("projects");
 					print '<tr><td class="titlefieldmiddle">';
 					print $form->editfieldkey($langs->trans('Project'), 'fk_project', (string) $object->fk_project, $object, (int) $usercancreate);
 					print '</td><td>';
-					if (!empty($object->fk_project)) {
-						$project_static_result = $project_static->fetch($object->fk_project);
-						if ($project_static_result > 0 && $project_static->id > 0) {
-							print $project_static->getNomUrl(1);
-							if ($project_static->title) {
-								print '<span class="opacitymedium"> - '.dol_escape_htmltag($project_static->title).'</span>';
+					if ($action == 'editfk_project') {
+						print $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'editfk_project' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					} else {
+						if (!empty($object->fk_project)) {
+							$project_static_result = $project_static->fetch($object->fk_project);
+							if ($project_static_result > 0 && $project_static->id > 0) {
+								print $project_static->getNomUrl(1);
+								if ($project_static->title) {
+									print '<span class="opacitymedium"> - '.dol_escape_htmltag($project_static->title).'</span>';
+								}
+							} else {
+								print (int) $object->fk_project;
 							}
-						} else {
-							print (int) $object->fk_project;
 						}
 					}
 					print '</td></tr>';
