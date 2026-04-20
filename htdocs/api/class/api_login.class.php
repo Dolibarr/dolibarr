@@ -41,7 +41,7 @@ class Login
 		global $db;
 		$this->db = $db;
 
-		if (!getDolGlobalString('API_ENABLE_LOGIN_API')) {
+		if (!getDolGlobalInt('API_ENABLE_LOGIN_API')) {
 			throw new RestException(403, "Error: The login APIs are disabled. It is recommended to call the APIs using the DOLAPIKEY token of an allowed user instead of the login/password. API key can be set from the user card. If you really need to get the API token from the login API, you can set the constant API_ENABLE_LOGIN_API.");
 		}
 	}
@@ -186,7 +186,7 @@ class Login
 			'success' => array(
 				'code' => 200,
 				'token' => $token,
-				'entity' => $tmpuser->entity,
+				'entity' => $tmpuser->entity ?? 1,
 				'message' => 'Welcome '.$login.($reset ? ' - Token is new' : ' - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer.')
 			)
 		);

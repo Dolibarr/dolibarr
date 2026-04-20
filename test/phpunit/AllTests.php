@@ -68,6 +68,7 @@ if (empty($user->id)) {
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 $conf->global->MAIN_UMASK = '666';
 
+require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
 
 
