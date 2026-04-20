@@ -830,6 +830,34 @@ function showWebsiteTemplates(Website $website, int $refresh)
 
 	$colspan = 2;
 
+	$importButtonIsDisabled = 0;
+
+	global $dolibarr_website_allow_custom_php;
+	if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 1) {
+		$notdisabledsystemfunction = '';
+		$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+		foreach ($systemfunctions as $systemfunction) {
+			// @phpstan-ignore-next-line
+			if (function_exists($systemfunction)) {
+				$notdisabledsystemfunction .= ($notdisabledsystemfunction ? ', ' : '').$systemfunction;
+			}
+		}
+		if ($notdisabledsystemfunction) {
+			print '<div class="warning">';
+			print $langs->trans("ImportOfWebsiteTemplateIncludingPHPIsAllowedIf", 'warning');
+			print '</div>';
+
+			$importButtonIsDisabled = 1;
+		}
+	}
+	if (empty($dolibarr_website_allow_custom_php)) {
+		print '<div class="warning">';
+		print $langs->trans("ImportOfWebsiteTemplateIncludingPHPIsDisabled", 'warning');
+		print '</div>';
+
+		$importButtonIsDisabled = 1;
+	}
+
 	print '<!-- For website template import -->'."\n";
 	print '<table class="noborder centpercent">';
 
@@ -911,7 +939,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 							if ($user->hasRight('website', 'delete')) {
 								print ' <a href="'.$_SERVER["PHP_SELF"].'?action=deletetemplate&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'">'.img_picto('', 'delete').'</a>';
 							}
-							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
+							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button'.($importButtonIsDisabled ? ' disabled' : '').'">'.$langs->trans("Load").'</a>';
 							print '</div>';
 
 							$i++;

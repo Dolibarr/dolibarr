@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  */
 /**
  * Simple autoloader, so we don't need Composer just for this.
@@ -13,6 +13,7 @@ spl_autoload_register(
 	 * @return bool				If class could be loaded
 	 */
 	static function ($class) {
+		// @phpstan-ignore argument.type
 		if (preg_match('/^DebugBar/', $class)) {
 			$file = DOL_DOCUMENT_ROOT.'/includes/maximebf/debugbar/src/'.str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
 			//var_dump($class.' - '.file_exists($file).' - '.$file);

@@ -16983,7 +16983,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$libelle = '';
 
 			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
-				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
+				$out .= $langs->trans('TicketNewMessage').' - <em>'.img_picto($langs->trans('Private'), 'lock', 'class="valignmiddle"').' '.$langs->trans('Private').'</em>';
+				$summary = preg_replace('/\[[^\]]*\]\s*/', '', $actionstatic->label);
+				//if ($summary != $object->title) {
+				$out .= ' - '.dolPrintHTML($summary);
+				//}
 			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
 			} elseif (isset($histo[$key]['type'])) {
