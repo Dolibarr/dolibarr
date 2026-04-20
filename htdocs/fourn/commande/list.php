@@ -539,6 +539,7 @@ if (empty($reshook)) {
 								$lines[$i]->fk_unit,
 								// Keep the source line id to preserve line-level traceability from the originating supplier order.
 								$lines[$i]->id,
+								'supplier_order_line',
 								$lines[$i]->pa_ht,
 								$lines[$i]->ref_supplier,
 								$lines[$i]->special_code,
