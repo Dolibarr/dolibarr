@@ -186,7 +186,7 @@ class Login
 			'success' => array(
 				'code' => 200,
 				'token' => $token,
-				'entity' => $tmpuser->entity,
+				'entity' => $tmpuser->entity ?? 1,
 				'message' => 'Welcome '.$login.($reset ? ' - Token is new' : ' - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer.')
 			)
 		);
