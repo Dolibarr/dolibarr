@@ -987,6 +987,10 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getVentilExportCompta($mode = 0)
 	{
+		if (!isModEnabled('accounting')) {
+			return 0;
+		}
+
 		$alreadydispatched = 0;
 
 		$type = 'customer_invoice';
