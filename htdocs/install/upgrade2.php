@@ -4381,7 +4381,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
- * @param	array<string,'noboxes'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
+ * @param	array<string,'noboxes'|'menuonly'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
  * @param   int<0,1>	$force          1=Reload module even if not already loaded
  * @return	int							Return integer <0 if KO, >0 if OK
  */
@@ -4579,7 +4579,7 @@ function migrate_productlot_path()
 	$resql = $db->query($sql);
 
 	if ($resql) {
-		$modulepart="product_batch";
+		$modulepart = "product_batch";
 
 		$lot = new Productlot($db);
 
@@ -5585,7 +5585,8 @@ function migrate_apiresttokens()
 			while ($obj = $db->fetch_object($result)) {
 				if (!in_array(dolDecrypt($obj->tokenstring), $allexistingtokens)) {
 					// Load the object of the user of token so we can get the API_COUNT_CALL
-					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
+					unset($tmpuser->conf);
+					$tmpuser->conf = new stdClass();
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";

@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,13 +156,13 @@ if (empty($reshook)) {
 
 		$typeleaves = $holiday->getTypes(1, 1);
 
-		$userID = array_keys(GETPOST('update_cp'));
-		$userID = $userID[0];
+		$userID = array_keys(GETPOST('update_cp', 'array:int'));
+		$userID = (int) $userID[0];
 
 		$db->begin();
 
 		foreach ($typeleaves as $key => $val) {
-			$userValue = GETPOST('nb_holiday_'.$val['rowid']);
+			$userValue = GETPOST('nb_holiday_'.$val['rowid'], 'array');
 			$userValue = $userValue[$userID];
 
 			if (!empty($userValue) || (string) $userValue == '0') {
