@@ -81,8 +81,6 @@ abstract class AbstractRestAPITest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
-
 		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 		$addheaders = array('Content-Type: application/json', 'Accept: application/json');
 

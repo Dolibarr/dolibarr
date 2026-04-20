@@ -41,7 +41,7 @@ class Login
 		global $db;
 		$this->db = $db;
 
-		if (getDolGlobalString('API_ENABLE_LOGIN_API')) {
+		if (!getDolGlobalString('API_ENABLE_LOGIN_API')) {
 			throw new RestException(403, "Error: The login APIs are disabled. It is recommended to call the APIs using the DOLAPIKEY token of an allowed user instead of the login/password. API key can be set from the user card. If you really need to get the API token from the login API, you can set the constant API_ENABLE_LOGIN_API.");
 		}
 	}
