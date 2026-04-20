@@ -1916,7 +1916,7 @@ class FormTicket
 
 		$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+		$showlinktoai = (/* $formmail->withaiprompt && */ isModEnabled('ai')) ? 'textgenerationemail' : ''; // withaiprompt is set above
 		$showlinktoailabel = $langs->trans("AIEnhancements");
 		$formatforouput = '';
 		$htmlname = 'message';
