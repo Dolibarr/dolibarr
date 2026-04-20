@@ -212,7 +212,7 @@ class mailing_eventorganization extends MailingTargets
 
 		$s = img_picto($langs->trans("OrganizedEvent"), 'project', 'class="pictofixedwidth"');
 		$s .= $formproject->select_projects(-1, '0', "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
-		$s .= $formproject->select_attendee_status_list('attendeeStatusList', array(), 0, 0, 'maxwidth500', 0, 390, '', '', '', -1, 1);
+		$s .= '<br>'.$formproject->select_attendee_status_list('attendeeStatusList', array(), 0, 0, 'maxwidth500', 0, 390, '', '', '', -1, 1);
 
 		return $s;
 	}
