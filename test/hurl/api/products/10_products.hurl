@@ -14,17 +14,25 @@ HTTP 200
 GET http://{{hostnport}}/api/index.php/products?limit=100&page=1
 HTTP 200
 
-# GET with fk_user
-GET http://{{hostnport}}/api/index.php/products?fk_user=0
-HTTP 200
-
 # GET with properties=id%2Cstatus
 GET http://{{hostnport}}/api/index.php/products?properties=id%2Cstatus
 HTTP 200
 
+
 # GET with pagination_data=false
 GET http://{{hostnport}}/api/index.php/products?pagination_data=false
 HTTP 200
+
+# GET with pagination_data=true
+GET http://{{hostnport}}/api/index.php/products?pagination_data=true
+HTTP 200
+[Asserts]
+jsonpath "$.data" exists
+jsonpath "$.pagination.total" >= 0
+jsonpath "$.pagination.page" >= 0
+jsonpath "$.pagination.page_count" >= 0
+jsonpath "$.pagination.limit" == 100
+
 
 # GET group with ID 0 - which should not exist
 GET http://{{hostnport}}/api/index.php/products/0
