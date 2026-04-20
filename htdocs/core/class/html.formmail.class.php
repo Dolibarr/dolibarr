@@ -1146,7 +1146,10 @@ class FormMail extends Form
 						}
 					}
 
-					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, true, $this->withfckeditor, 8, '95%');
+					$uselocalbrowser = getDolGlobalBool('FCKEDITOR_ENABLE_IMAGE_UPLOAD');
+					// $uselocalbrowser = true;
+
+					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, $uselocalbrowser, $this->withfckeditor, 8, '95%');
 					$out .= $doleditor->Create(1);
 				}
 				$out .= "</td></tr>\n";

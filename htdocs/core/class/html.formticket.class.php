@@ -7,6 +7,7 @@
  * Copyright (C) 2023-2025  Charlene Benke	        <charlene.r@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Irvine FLEITH		    <irvine.fleith@atm-consulting.fr>
+ * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1775,7 +1776,18 @@ class FormTicket
 
 		$uselocalbrowser = false;
 
-		// Subject/topic
+		// Summary
+		if ($this->withtitletopic) {
+			print '<tr><td><label for="summary"><span>'.$langs->trans("Summary").'</span></label></td><td>';
+			// Answer to a ticket : display of the thread title in readonly
+			if ($this->withtopicreadonly && $this->topic_title) {
+				print $langs->trans('Summary').' '.$this->topic_title;
+			} elseif (empty($this->withtopicreadonly)) {
+				$subject = $this->topic_title;
+				print '<input class="text minwidth500" maxlength="42" id="summary" name="summary" placeholder="" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
+			}
+			print '</td></tr>';
+		}
 		$topic = "";
 		foreach ($formmail->lines_model as $line) {
 			if (!empty($this->substit) && $this->param['models_id'] == $line->id) {
@@ -1888,7 +1900,7 @@ class FormTicket
 		if (!$ckeditorenabledforticket) {
 			$defaultmessage = dol_string_nohtmltag($defaultmessage, 2);
 		}
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $ckeditorenabledforticket, ROWS_5, '90%');
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $ckeditorenabledforticket, ROWS_6, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 

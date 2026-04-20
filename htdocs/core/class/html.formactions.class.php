@@ -322,8 +322,11 @@ class FormActions
 
 					// Type
 					$labeltypelong = $actioncomm->getTypeLabel(2);
-					print '<td class="tdoverflowmax100 center" title="'.dolPrintHTML($labeltypelong).'">';
+					print '<td class="tdoverflowmax100 center valignmiddle" title="'.dolPrintHTML($labeltypelong).'">';
 					print $actioncomm->getTypePicto('valignmiddle');
+					if (preg_match('/PRIVATE/', $actioncomm->code)) {
+						print ' '.img_picto($langs->transnoentitiesnoconv("Private"), 'lock', 'class="valignmiddle"');
+					}
 					//$labeltype = $actioncomm->getTypeLabel(0);
 					//print $labeltype;
 					print '</td>';
