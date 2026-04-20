@@ -17,7 +17,26 @@ HTTP 200
 # GET with properties=id%2Cstatus
 GET http://{{hostnport}}/api/index.php/products?properties=id%2Cstatus
 HTTP 200
+[Captures]
+total_count: jsonpath "$" count
 
+[Asserts]
+jsonpath "$[*].id" count == {{total_count}}
+jsonpath "$[*].status" count == {{total_count}}
+jsonpath "$[*].fk_project" count == 0
+
+
+# GET with properties=id%2Cstatus%2Cfk_project
+GET http://{{hostnport}}/api/index.php/products?properties=id%2Cstatus%2Cfk_project
+HTTP 200
+[Captures]
+total_count: jsonpath "$" count
+
+[Asserts]
+jsonpath "$[*].id" count == {{total_count}}
+jsonpath "$[*].status" count == {{total_count}}
+jsonpath "$[*].id" count == {{total_count}}
+jsonpath "$[*].fk_project" count == {{total_count}}
 
 # GET with pagination_data=false
 GET http://{{hostnport}}/api/index.php/products?pagination_data=false
