@@ -33,7 +33,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var ?ExtraFields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -44,10 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'categories'));
 
-if (!is_object($extrafields)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$extrafields = new ExtraFields($db);
-}
 $form = new Form($db);
 
 // List of supported format

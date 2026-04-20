@@ -32,7 +32,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var ?ExtraFields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -63,10 +63,6 @@ $result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
-}
-if (!is_object($extrafields)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$extrafields = new ExtraFields($db);
 }
 $extralabels = $extrafields->fetch_name_optionals_label("categorie_lang");
 

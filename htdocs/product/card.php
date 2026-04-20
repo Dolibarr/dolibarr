@@ -49,7 +49,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var ?ExtraFields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -157,10 +157,6 @@ if ($result > 0) {
 
 $object = new Product($db);
 $object->type = $type; // so test later to fill $usercancxxx is correct
-if (!is_object($extrafields)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$extrafields = new ExtraFields($db);
-}
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

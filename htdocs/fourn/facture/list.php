@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2016	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2018-2022	Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter				<git-jk@bloxera.com>
@@ -42,7 +42,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var ?ExtraFields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -178,10 +178,6 @@ $now = dol_now();
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new FactureFournisseur($db);
 $hookmanager->initHooks(array('supplierinvoicelist'));
-if (!is_object($extrafields)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$extrafields = new ExtraFields($db);
-}
 
 $diroutputmassaction = getMultidirTemp($object).'/massgeneration/'.$user->id;
 

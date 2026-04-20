@@ -33,7 +33,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var ?ExtraFields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -104,10 +104,6 @@ if (!GETPOSTISSET('parent') && $catorigin) {
 
 $object = new Categorie($db);
 
-if (!is_object($extrafields)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$extrafields = new ExtraFields($db);
-}
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array

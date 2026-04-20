@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var ?ExtraFields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -82,10 +82,6 @@ if (is_numeric($type)) {
 	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
-if (!is_object($extrafields)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$extrafields = new ExtraFields($db);
-}
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $error = 0;
