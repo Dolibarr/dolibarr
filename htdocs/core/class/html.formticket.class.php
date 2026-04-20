@@ -1569,11 +1569,13 @@ class FormTicket
 					jQuery("#send_msg_email").prop("checked", true).trigger("change");
 				}
 				jQuery(".email_line").show();
+				jQuery(".not_email_line").hide();
 			} else {
 				if (!jQuery("#private_message").is(":checked")) {
 					jQuery("#private_message").prop("checked", true).trigger("change");
 				}
 				jQuery(".email_line").hide();
+				jQuery(".not_email_line").show();
 			}
 		';
 
@@ -1586,9 +1588,11 @@ class FormTicket
 							jQuery("#private_message").prop("checked", false).trigger("change");
 						}
 						jQuery(".email_line").show();
+						jQuery(".not_email_line").hide();
 					}
 					else {
 						jQuery(".email_line").hide();
+						jQuery(".not_email_line").show();
 					}
 				});
 
@@ -1599,6 +1603,7 @@ class FormTicket
 							jQuery("#send_msg_email").prop("checked", false).trigger("change");
 						}
 						jQuery(".email_line").hide();
+						jQuery(".not_email_line").show();
 					}
 				});';
 		}
@@ -1778,7 +1783,7 @@ class FormTicket
 
 		// Summary
 		if ($this->withtitletopic) {
-			print '<tr><td><label for="summary"><span>'.$langs->trans("Summary").'</span></label></td><td>';
+			print '<tr class="not_email_line"><td><label for="summary"><span>'.$langs->trans("Summary").'</span></label></td><td>';
 			// Answer to a ticket : display of the thread title in readonly
 			if ($this->withtopicreadonly && $this->topic_title) {
 				print $langs->trans('Summary').' '.$this->topic_title;
@@ -1788,6 +1793,7 @@ class FormTicket
 			}
 			print '</td></tr>';
 		}
+
 		$topic = "";
 		foreach ($formmail->lines_model as $line) {
 			if (!empty($this->substit) && $this->param['models_id'] == $line->id) {
@@ -1797,9 +1803,9 @@ class FormTicket
 		}
 		print '<tr class="email_line"><td class="fieldrequired">'.$langs->trans('MailTopic').'</td>';
 		if (empty($topic)) {
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'"  spellcheck="false">';
 		} else {
-			print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" spellcheck="false">';
 		}
 		print '</td></tr>';
 
@@ -1870,7 +1876,10 @@ class FormTicket
 			$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 		}
 
-		print '<tr><td colspan="2"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+
+		print '<!-- Message line from showMessageForm -->';
+		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
 		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$texttooltip = $langs->trans("TicketMessageHelp");
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO') || getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
@@ -1888,7 +1897,41 @@ class FormTicket
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');
 		}
-		print '</label></td></tr>';
+		print '</label></td>';
+		$out = '<td class="tdtop">';
+
+		$out .= '<div class="div-layoutai">';
+
+		// Required to show editor assistants
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($this->db);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+		$formai = new FormAI($this->db);
+
+		$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
+		$formmail->withlayout = $ckeditorenabledforticket ? 1 : 0;
+		$formmail->withaiprompt = 'text';
+		$formai = new FormAI($this->db);
+
+		$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
+		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+		$showlinktoailabel = $langs->trans("AIEnhancements");
+		$formatforouput = '';
+		$htmlname = 'message';
+
+		$formai->substit = $this->substit;
+		$formai->substit_lines = $this->substit_lines;
+
+		// Fill $out
+		$db = $this->db;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+		$out .= '</td>';
+		print $out;
+
+		print '</tr>';
 
 
 		print '<tr><td colspan="2">';
@@ -1896,7 +1939,6 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
-		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 		if (!$ckeditorenabledforticket) {
 			$defaultmessage = dol_string_nohtmltag($defaultmessage, 2);
 		}

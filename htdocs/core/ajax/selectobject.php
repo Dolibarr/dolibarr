@@ -132,7 +132,7 @@ $sharedentities = getEntity(strtolower($objecttmp->element));
 
 $filter = str_replace(
 	array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__', '$ID$'),
-	array($conf->entity, $sharedentities, $user->id, $id),
+	array((string) $conf->entity, $sharedentities, (string) $user->id, (string) $id),
 	$filter
 );
 

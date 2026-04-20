@@ -2555,6 +2555,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			// Example $actionstatic->code = AC_COMPANY_MODIFY and $actionstatic->type_code = AC_OTH_AUTO
 			$out .= $actionstatic->getTypePicto();
 			$out .= $labelOfTypeToShow;
+			if (preg_match('/PRIVATE/', $actionstatic->code)) {
+				$out .= ' ' . img_picto($langs->trans("Private"), 'lock', 'class="valignmiddle"');
+			}
 			$out .= '</td>';
 
 			// Title/Label of event
@@ -2565,6 +2568,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$label = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="' . dol_escape_htmltag($label) . '">';
+				$label = preg_replace('/^\[[^\[]*\]/', '[...]', $label);
 				$out .= dol_trunc($label, 120);
 			}
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
@@ -2573,7 +2577,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$label .= ' - ' . $histo[$key]['note'];
 				$out .= '<a href="' . DOL_URL_ROOT . '/comm/mailing/card.php?id=' . $histo[$key]['id'] . '"';
 				$out .= ' title="' . dol_escape_htmltag($label) . '">';
-				//$out .= img_object($langs->trans("EMailing").'<br>'.$histo[$key]['note'], "email").' ';
+				$label = preg_replace('/^\[[^\[]*\]/', '[...]', $label);
 				$out .= dol_trunc($label, 120);
 				$out .= '</a>';
 			}
