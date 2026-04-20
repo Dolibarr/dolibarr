@@ -2,6 +2,9 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,122 +23,122 @@
 /**
  *     \file       htdocs/expedition/contact.php
  *     \ingroup    expedition
- *     \brief      Onglet de gestion des contacts de expedition
+ *     \brief      Tab to manage addresses of shipments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'expedition', $id, '');
-
+$typeobject = null;
 $object = new Expedition($db);
-if ($id > 0 || !empty($ref))
-{
-    $object->fetch($id, $ref);
-    $object->fetch_thirdparty();
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
+	$objectsrc = clone $object;
 
-    if (!empty($object->origin))
-    {
-        $typeobject = $object->origin;
-        $origin = $object->origin;
-        $object->fetch_origin();
-    }
+	if (!empty($object->origin)) {
+		$typeobject = $object->origin;
+		$origin = $object->origin;
+		$object->fetch_origin();
+	}
 
-    // Linked documents
-    if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-    {
-        $objectsrc = new Commande($db);
-        $objectsrc->fetch($object->$typeobject->id);
-    }
-    if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-    {
-        $objectsrc = new Propal($db);
-        $objectsrc->fetch($object->$typeobject->id);
-    }
+	// Linked documents
+	if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
+		$objectsrc = new Commande($db);
+		$objectsrc->fetch($object->origin_object->id);
+	}
+	if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
+		$objectsrc = new Propal($db);
+		$objectsrc->fetch($object->origin_object->id);
+	}
 }
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$hookmanager->initHooks(array('shipmentcontactcard', 'globalcard'));
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 /*
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->expedition->creer)
-{
-    if ($result > 0 && $id > 0)
-    {
-  		$result = $objectsrc->add_contact(GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'), $_POST["type"], $_POST["source"]);
-    }
+$parameters = array('id' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-		} else {
-			$mesg = $objectsrc->error;
-			$mesgs = $objectsrc->errors;
+if (empty($reshook)) {
+	if ($action == 'addcontact' && $user->hasRight('expedition', 'creer')) {
+		if ($result > 0 && $id > 0) {
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result    = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
-		setEventMessages($mesg, $mesgs, 'errors');
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+			} else {
+				$mesg  = $objectsrc->error;
+				$mesgs = $objectsrc->errors;
+			}
+			setEventMessages($mesg, $mesgs, 'errors');
+		}
+	} elseif ($action == 'swapstatut' && $user->hasRight('expedition', 'creer')) {
+		// bascule du statut d'un contact
+		$result = $objectsrc->swapContactStatus(GETPOSTINT('ligne'));
+	} elseif ($action == 'deletecontact' && $user->hasRight('expedition', 'creer')) {
+		// Efface un contact
+		$result = $objectsrc->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			dol_print_error($db);
+		}
 	}
 }
-
-// bascule du statut d'un contact
-elseif ($action == 'swapstatut' && $user->rights->expedition->creer)
-{
-    $result = $objectsrc->swapContactStatus(GETPOST('ligne'));
-}
-
-// Efface un contact
-elseif ($action == 'deletecontact' && $user->rights->expedition->creer)
-{
-	$result = $objectsrc->delete_contact(GETPOST("lineid"));
-
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else {
-		dol_print_error($db);
-	}
-}
-/*
-elseif ($action == 'setaddress' && $user->rights->expedition->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
-
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:expeditions_Clients|ES:Pedidos de clientes');
+
+$help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
+
+llxHeader('', $langs->trans('Shipment'), $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -146,61 +149,44 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
-	$langs->trans("OrderCard");
-
+if ($id > 0 || !empty($ref)) {
 	$head = shipping_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
-
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, $object->picto);
 
 	// Shipment card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer shipment
-	$morehtmlref .= $form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
-    $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-    // Project
-    if (!empty($conf->projet->enabled)) {
-        $langs->load("projects");
-        $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-        if (0) {    // Do not change on shipment
-            if ($action != 'classify') {
-                $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-            }
-            if ($action == 'classify') {
-                // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-                $morehtmlref .= '</form>';
-            } else {
-                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-            }
-        } else {
-            // We don't have project on shipment, so we will use the project or source object instead
-            // TODO Add project on shipment
-            $morehtmlref .= ' : ';
-            if (!empty($objectsrc->fk_project)) {
-                $proj = new Project($db);
-                $proj->fetch($objectsrc->fk_project);
-                $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-                $morehtmlref .= $proj->ref;
-                $morehtmlref .= '</a>';
-            } else {
-                $morehtmlref .= '';
-            }
-        }
-    }
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+	// Project
+	if (isModEnabled('project')) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>';
+		if (0) {	// @phpstan-ignore-line  Do not change on shipment
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+			if ($action != 'classify') {
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		} else {
+			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($objectsrc->fk_project);
+				$morehtmlref .= $proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+				}
+			}
+		}
+	}
 	$morehtmlref .= '</div>';
 
 
@@ -208,33 +194,31 @@ if ($id > 0 || !empty($ref))
 
 
 	print '<div class="fichecenter">';
-    //print '<div class="fichehalfleft">';
+	//print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">';
 
-    // Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-	{
-	    print '<tr><td class="titlefield">';
-	    $objectsrc = new Commande($db);
-	    $objectsrc->fetch($object->$typeobject->id);
-	    print $langs->trans("RefOrder").'</td>';
-	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1, 'commande');
-	    print "</td>\n";
-	    print '</tr>';
+	// Linked documents
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
+		print '<tr><td class="titlefield">';
+		$objectsrc = new Commande($db);
+		$objectsrc->fetch($object->origin_object->id);
+		print $langs->trans("RefOrder").'</td>';
+		print '<td colspan="3">';
+		print $objectsrc->getNomUrl(1, 'commande');
+		print "</td>\n";
+		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-	{
-	    print '<tr><td class="titlefield">';
-	    $objectsrc = new Propal($db);
-	    $objectsrc->fetch($object->$typeobject->id);
-	    print $langs->trans("RefProposal").'</td>';
-	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1, 'expedition');
-	    print "</td>\n";
-	    print '</tr>';
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
+		print '<tr><td class="titlefield">';
+		$objectsrc = new Propal($db);
+		$objectsrc->fetch($object->origin_object->id);
+		print $langs->trans("RefProposal").'</td>';
+		print '<td colspan="3">';
+		print $objectsrc->getNomUrl(1, 'expedition');
+		print "</td>\n";
+		print '</tr>';
 	}
 
 	print "</table>";
@@ -242,18 +226,16 @@ if ($id > 0 || !empty($ref))
 
 	//print '</div>';
 	//print '<div class="fichehalfright">';
-	//print '<div class="ficheaddleft">';
 	//print '<div class="underbanner clearboth"></div>';
 
 
-	//print '</div>';
 	//print '</div>';
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Lines of contacts
 	echo '<br>';
@@ -261,10 +243,14 @@ if ($id > 0 || !empty($ref))
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	$preselectedtypeofcontact = dol_getIdFromCode($db, 'SHIPPING', 'c_type_contact', 'code', 'rowid');
-	foreach ($dirtpls as $reldir)
-	{
-	    $res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-	    if ($res) break;
+	foreach ($dirtpls as $reldir) {
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
+		}
 	}
 }
 

@@ -3,7 +3,7 @@
  * This file is part of escpos-php: PHP receipt printer library for use with
  * ESC/POS-compatible thermal and impact printers.
  *
- * Copyright (c) 2014-16 Michael Billington < michael.billington@gmail.com >,
+ * Copyright (c) 2014-18 Michael Billington < michael.billington@gmail.com >,
  * incorporating modifications by others. See CONTRIBUTORS.md for a full list.
  *
  * This software is distributed under the terms of the MIT license. See LICENSE.md
@@ -12,7 +12,6 @@
 
 namespace Mike42\Escpos;
 
-use Mike42\Escpos\EscposImage;
 use Exception;
 
 /**
@@ -27,13 +26,13 @@ class GdEscposImage extends EscposImage
      * @throws Exception if the image format is not supported,
      *  or the file cannot be opened.
      */
-    protected function loadImageData($filename = null)
+    protected function loadImageData(string $filename = null)
     {
         if ($filename === null) {
             /* Set to blank image */
             return parent::loadImageData($filename);
         }
-        
+
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         switch ($ext) {
             case "png":
@@ -59,7 +58,7 @@ class GdEscposImage extends EscposImage
      */
     public function readImageFromGdResource($im)
     {
-        if (!is_resource($im)) {
+        if (!is_resource($im) && !($im instanceof \GdImage)) {
             throw new Exception("Failed to load image.");
         } elseif (!EscposImage::isGdLoaded()) {
             throw new Exception(__FUNCTION__ . " requires 'gd' extension.");

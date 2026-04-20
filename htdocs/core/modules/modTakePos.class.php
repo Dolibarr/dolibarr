@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 SuperAdmin
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,10 @@
  *
  *  \file       htdocs/core/modules/modTakePos.class.php
  *  \ingroup    takepos
- *  \brief      Description and activation file for module TakePos
+ *  \brief      Description and activation file for the module TakePos
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -39,9 +41,9 @@ class modTakePos extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs, $conf;
+		global $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -53,7 +55,7 @@ class modTakePos extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "portal";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '60';
+		$this->module_position = '45';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -78,16 +80,16 @@ class modTakePos extends DolibarrModules
 		// for specific path of parts (eg: /takepos/core/modules/barcode)
 		// for specific css file (eg: /takepos/css/takepos.css.php)
 		$this->module_parts = array(
-		                        	'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
-									'login' => 0, // Set this to 1 if module has its own login method file (core/login)
-									'substitutions' => 1, // Set this to 1 if module has its own substitution function file (core/substitutions)
-									'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
-									'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
-		                        	'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
-									'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
-									'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
-									'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-		                        );
+			'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
+			'login' => 0, // Set this to 1 if module has its own login method file (core/login)
+			'substitutions' => 1, // Set this to 1 if module has its own substitution function file (core/substitutions)
+			'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
+			'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
+			'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
+			'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
+			'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
+			'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+		);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/takepos/temp","/takepos/subdir");
@@ -98,16 +100,16 @@ class modTakePos extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array('always1'=>"modBanque", 'always2'=>"modFacture", 'always3'=>"modProduct", 'always4'=>'modCategorie', 'FR1'=>'modBlockedLog'); // List of module class names as string that must be enabled if this module is enabled
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
+		$this->depends = array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("cashdesk");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4, 0); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array('FR' => array('WarningNoteModulePOSForFrenchLaw', 'WarningNoteModulePOSForFrenchLaw2', 'WarningNoteModulePOSForFrenchLaw3')); // Warning to show when we activate module. array('always' => 'text') or array('FR' => array('text1', 'text2))
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'TakePosWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -118,22 +120,21 @@ class modTakePos extends DolibarrModules
 			//1=>array('TAKEPOS_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
-
-		if (!isset($conf->takepos) || !isset($conf->takepos->enabled))
-		{
+		// To avoid warning
+		if (!isModEnabled('takepos')) {
 			$conf->takepos = new stdClass();
 			$conf->takepos->enabled = 0;
 		}
 
 
 		// Array to add new pages in new tabs
-        $this->tabs = array();
+		$this->tabs = array();
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@takepos:$user->rights->takepos->read:/takepos/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@takepos:$user->rights->othermodule->read:/takepos/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-        //
-        // Where objecttype can be
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@takepos:$user->rights->othermodule->read:/takepos/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		//
+		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
 		// 'contract'         to add a tab in contract view
@@ -141,9 +142,9 @@ class modTakePos extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -155,31 +156,17 @@ class modTakePos extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 
-        // Dictionaries
+		// Dictionaries
 		$this->dictionaries = array();
-        /* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@takepos',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->takepos->enabled,$conf->takepos->enabled,$conf->takepos->enabled)												// Condition to show each dictionary
-        );
-        */
 
 
-        // Boxes/Widgets
+		// Boxes/Widgets
 		// Add here list of php file(s) stored in takepos/core/boxes that contains class to show a widget.
-        $this->boxes = array(
-        	//0=>array('file'=>'takeposwidget1.php@takepos','note'=>'Widget provided by TakePos','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'takeposwidget2.php@takepos','note'=>'Widget provided by TakePos'),
-        	//2=>array('file'=>'takeposwidget3.php@takepos','note'=>'Widget provided by TakePos')
-        );
+		$this->boxes = array(
+			//0=>array('file'=>'takeposwidget1.php@takepos','note'=>'Widget provided by TakePos','enabledbydefaulton'=>'Home'),
+			//1=>array('file'=>'takeposwidget2.php@takepos','note'=>'Widget provided by TakePos'),
+			//2=>array('file'=>'takeposwidget3.php@takepos','note'=>'Widget provided by TakePos')
+		);
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -199,10 +186,24 @@ class modTakePos extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 50151;
-		$this->rights[$r][1] = 'Use Point Of Sale';
+		$this->rights[$r][1] = 'Use Point Of Sale (record a sale, add products, record payment)';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'run';
+
+		$r++;
+		$this->rights[$r][0] = 50152;
+		$this->rights[$r][1] = 'Can modify added sales lines (prices, discount)';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editlines';
+
+		$r++;
+		$this->rights[$r][0] = 50153;
+		$this->rights[$r][1] = 'Edit ordered sales lines (useful only when option "Order printers" has been enabled). Allow to edit sales lines even after the order has been printed';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editorderedlines';
 
 
 		// Main menu entries
@@ -217,11 +218,12 @@ class modTakePos extends DolibarrModules
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
+								'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth"'),
 								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,
-								'enabled'=>'$conf->takepos->enabled', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->takepos->run', // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
+								'enabled'=>'isModEnabled("takepos")', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->hasRight("takepos", "run")', // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
 								'target'=>'takepos',
 								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 
@@ -260,21 +262,103 @@ class modTakePos extends DolibarrModules
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
-     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
-		global $conf, $db;
+		global $conf, $langs, $user, $mysoc;
 
-		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+		$langs->load("cashdesk");
 
-		$this->_load_tables('/takepos/sql/');
+		dolibarr_set_const($this->db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+
+		// Default customer for Point of sale
+		if (!getDolGlobalInt('CASHDESK_ID_THIRDPARTY1')) {	// If a customer has already ben set into the TakePos setup page
+			$societe = new Societe($this->db);
+			$nametouse = $langs->trans("DefaultPOSThirdLabel");
+
+			$searchcompanyid = $societe->fetch(0, $nametouse);
+			if ($searchcompanyid == 0) {
+				$societe->name = $nametouse;
+				$societe->client = 1;
+				$societe->code_client = '-1';
+				$societe->code_fournisseur = '-1';
+				$societe->country_id = $mysoc->country_id ? $mysoc->country_id : 1; // By default we consider the default customer is in the same country than the company
+				$societe->note_private = "Default customer automatically created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
+
+				$searchcompanyid = $societe->create($user);
+			}
+			if ($searchcompanyid > 0) {
+				// We already have or we have create a thirdparty with id = $searchcompanyid, so we link use it into setup
+				dolibarr_set_const($this->db, "CASHDESK_ID_THIRDPARTY1", $searchcompanyid, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($societe->error, $societe->errors, 'errors');
+			}
+		}
+
+		// Create product category DefaultPOSCatLabel if not exists
+		$categories = new Categorie($this->db);
+		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
+		if (is_array($cate_arbo)) {
+			if (!count($cate_arbo) || (!getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') || getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') == '-1')) {
+				$category = new Categorie($this->db);
+
+				$category->label = $langs->trans("DefaultPOSCatLabel");
+				$category->type = Categorie::TYPE_PRODUCT;
+
+				$result = $category->create($user);
+
+				if ($result > 0) {
+					dolibarr_set_const($this->db, 'TAKEPOS_ROOT_CATEGORY_ID', $result, 'chaine', 0, 'Id of category for products visible in TakePOS', $conf->entity);
+
+					/* TODO Create a generic product only if there is no product yet. If 0 product,  we create 1. If there is already product, it is better to show a message to ask to add product in the category */
+					/*
+					$product = new Product($this->db);
+					$product->status = 1;
+					$product->ref = "takepos";
+					$product->label = $langs->trans("DefaultPOSProductLabel");
+					$product->create($user);
+					$product->setCategories($result);
+					 */
+				} else {
+					setEventMessages($category->error, $category->errors, 'errors');
+				}
+			}
+		}
+
+		// Create cash account CASH-POS / DefaultCashPOSLabel if not exists
+		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$cashaccount = new Account($this->db);
+			$searchaccountid = $cashaccount->fetch(0, "CASH-POS");
+			if ($searchaccountid == 0) {
+				$cashaccount->ref = "CASH-POS";
+				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
+				$cashaccount->courant = Account::TYPE_CASH; // deprecated
+				$cashaccount->type = Account::TYPE_CASH;
+				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
+				$cashaccount->date_solde = dol_now();
+				$idjournal = dol_getIdFromCode($this->db, 'BQ', 'accounting_journal', 'code', 'rowid');
+				$cashaccount->fk_accountancy_journal = (int) $idjournal;
+				$searchaccountid = $cashaccount->create($user);
+			}
+			if ($searchaccountid > 0) {
+				dolibarr_set_const($this->db, "CASHDESK_ID_BANKACCOUNT_CASH1", $searchaccountid, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($cashaccount->error, $cashaccount->errors, 'errors');
+			}
+		}
+
+		$result = $this->_load_tables('/install/mysql/', 'takepos');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
+		// Clean before activation
+		$this->remove($options);
 
 		$sql = array();
-
-		// Remove permissions and default values
-		$this->remove($options);
 
 		return $this->_init($sql, $options);
 	}

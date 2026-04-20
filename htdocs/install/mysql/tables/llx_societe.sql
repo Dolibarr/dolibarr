@@ -1,10 +1,11 @@
 -- ========================================================================
--- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
--- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
--- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+-- Copyright (C) 2000-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@inodbox.com>
+-- Copyright (C) 2010		Juanjo Menent			<dolibarr@2byte.es>
+-- Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+-- Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+-- Copyright (C) 2023-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,55 +30,60 @@ create table llx_societe
   entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 
   ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(255),                                -- reference into an internal system (deprecated)
 
-  statut                   tinyint        DEFAULT 0,            		-- statut
+  statut                   tinyint        DEFAULT 0,            		-- statut (deprecated)
   parent                   integer,
 
-  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
+  status            	   tinyint 		  DEFAULT 1,			        -- active or not ( 1 -- active, 0 -- closed or not open)
 
   code_client              varchar(24),                         		-- code client
-  code_fournisseur         varchar(24),                         		-- code founisseur
-  code_compta              varchar(24),                         		-- code compta client
-  code_compta_fournisseur  varchar(24),                         		-- code compta founisseur
+  code_fournisseur         varchar(24),                         		-- code fournisseur
+  tp_payment_reference     varchar(25),                                 -- SEPA and any other national or custom payment id
+  accountancy_code_customer_general	varchar(32) DEFAULT NULL,			-- customer accountancy general account
+  code_compta              			varchar(32),                        -- customer accountancy auxiliary account
+  accountancy_code_supplier_general varchar(32) DEFAULT NULL,			-- supplier accountancy general account
+  code_compta_fournisseur  			varchar(32),                        -- supplier accountancy auxiliary account
+
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
-  fk_departement           integer        DEFAULT 0,            		--
-  fk_pays                  integer        DEFAULT 0,            		--
-  fk_account               integer        DEFAULT 0,            		--
-  phone                    varchar(20),                         		-- phone number
-  fax                      varchar(20),                         		-- fax number
-  url                      varchar(255),                        		--
-  email                    varchar(128),                        		--
+  fk_departement           integer        DEFAULT 0,            		-- state
+  fk_pays                  integer        DEFAULT 0,            		-- country
+
+  geolat                   double(24,8)   DEFAULT NULL,
+  geolong                  double(24,8)   DEFAULT NULL,
+  geopoint                 point DEFAULT NULL,
+  georesultcode            varchar(16),
+
+  phone                    varchar(30),                         		-- phone number
+  phone_mobile             varchar(30),                         		-- mobile phone number
+  fax                      varchar(30),                         		-- fax number
+  url                      varchar(255),                        		-- web site
+  email                    varchar(128),                        		-- main email
+
+  fk_account               integer        DEFAULT 0,                    -- default bank account
 
   socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
-  skype                    varchar(255),                        		-- deprecated
-  twitter                  varchar(255),                        		-- deprecated
-  facebook                 varchar(255),                        		-- deprecated
-  linkedin                 varchar(255),                        		-- deprecated
-  instagram                varchar(255),                        		-- deprecated
-  snapchat                 varchar(255),                        		-- deprecated
-  googleplus               varchar(255),                        		-- deprecated
-  youtube                  varchar(255),                        		-- deprecated
-  whatsapp                 varchar(255),                        		-- deprecated
 
   fk_effectif              integer        DEFAULT 0,            		--
-  fk_typent                integer        DEFAULT 0,            		--
+  fk_typent                integer        DEFAULT NULL,                 -- type ent
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
+  birth                    date,				            			-- date of company creation
   fk_currency			   varchar(3),									-- default currency
-  siren	                   varchar(128),                         		-- IDProf1: depends on country (example: siren or RCS for france, ...)
-  siret                    varchar(128),                         		-- IDProf2: depends on country (example: siret for france, ...)
-  ape                      varchar(128),                         		-- IDProf3: depends on country (example: code ape for france, ...)
-  idprof4                  varchar(128),                         		-- IDProf4: depends on country (example: nu for france, ...)
-  idprof5                  varchar(128),                         		-- IDProf5: depends on country (example: nu for france, ...)
-  idprof6                  varchar(128),                         		-- IDProf6: depends on country (example: nu for france, ...
-  tva_intra                varchar(20),                         		-- vat numero
+  siren	                   varchar(128),                         		-- IDProf1: depends on country (example: Siren for france, ...)
+  siret                    varchar(128),                         		-- IDProf2: depends on country (example: Siret for france, ...)
+  ape                      varchar(128),                         		-- IDProf3: depends on country (example: Code ape for france, ...)
+  idprof4                  varchar(128),                         		-- IDProf4: depends on country (example: Rcs/rm for france, ...)
+  idprof5                  varchar(128),                         		-- IDProf5: depends on country (example: EORI, ...)
+  idprof6                  varchar(128),                         		-- IDProf6: depends on country (example: Not used for france, ...
+  euid                     varchar(64),                         		-- EUID number (European Unique Identifier)
+  tva_intra                varchar(20),                         		-- VAT number (example: FR12345678901 for france, ...)
   capital                  double(24,8)   DEFAULT NULL,        			-- capital of company
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
-  model_pdf				   varchar(255),
+  model_pdf				   varchar(255),								-- the last template used to generate a document
+  last_main_doc			   varchar(255),								-- relative filepath+filename of the last main generated document
   prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
@@ -90,16 +96,21 @@ create table llx_societe
   supplier_rate            real           DEFAULT 0,            		-- taux fiabilite fournisseur (0 a 1)
   remise_client            real           DEFAULT 0,            		-- discount by default granted to this customer
   remise_supplier          real           DEFAULT 0,            		-- discount by default granted by this supplier
-  mode_reglement           tinyint,                             		-- payment mode customer
+  mode_reglement           integer,                             		-- payment mode customer
   cond_reglement           tinyint,                             		-- payment term customer
+  deposit_percent          varchar(63) DEFAULT NULL,                    -- default deposit % if payment term needs it
+  transport_mode           tinyint,                             		-- transport mode customer (Intracomm report)
   mode_reglement_supplier  tinyint,                             		-- payment mode supplier
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
+  transport_mode_supplier  tinyint,                             		-- transport mode supplier (Intracomm report)
   fk_shipping_method       integer,                                     -- preferred shipping method id
-  tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
+  tva_assuj                tinyint        DEFAULT 1,	        		-- if company using VAT or is exempted
+  vatexemptcode            varchar(24),									-- if company is exempted, the VAT reason code of exemption
+  vat_reverse_charge       tinyint        DEFAULT 0,	        		-- By default, company is not concerned by vat reverse charge
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
-  localtax1_value 		   double(6,3),
+  localtax1_value 		   double(7,4),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
-  localtax2_value 		   double(6,3),
+  localtax2_value 		   double(7,4),
   barcode                  varchar(180),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices
@@ -110,17 +121,22 @@ create table llx_societe
   logo                     varchar(255)   DEFAULT NULL,
   logo_squarred            varchar(255)   DEFAULT NULL,
   canvas				   varchar(32)    DEFAULT NULL,	                -- type of canvas if used (null by default)
-  fk_entrepot 			   integer DEFAULT 0,							-- if we need a link between third party and warehouse
+  fk_warehouse			   integer 		  DEFAULT NULL,					-- if we need a link between third party and warehouse
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
 
-  tms                      timestamp,									-- last modification date
+  accountancy_code_sell         varchar(32),                            -- Selling accountancy code
+  accountancy_code_buy          varchar(32),                            -- Buying accountancy code
+
   datec	                   datetime,                            		-- creation date
-  fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info
-  fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
+  tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
+  fk_user_creat            integer NULL,                        		-- creation user
+  fk_user_modif            integer,                             		-- last modification user
 
   fk_multicurrency		   integer,
-  multicurrency_code	   varchar(255),
+  multicurrency_code	   varchar(3),
+
+  ip                       varchar(250),                              	-- ip used to create record (for public submission page)
 
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

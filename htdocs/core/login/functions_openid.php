@@ -20,6 +20,9 @@
  *      \file       htdocs/core/login/functions_openid.php
  *      \ingroup    core
  *      \brief      Authentication functions for OpenId mode
+ *
+ *     This authentication method is based on "OpenID v2" and is deprecated.
+ *     Use instead the method "OpenID Connect".
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
@@ -32,83 +35,69 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
  * @param	string	$usertotest		Login
  * @param	string	$passwordtotest	Password
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
- * @return	string					Login if OK, '' if KO
+ * @return	string|false				Login if OK, false otherwise
  */
 function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 {
-    global $_POST, $db, $conf, $langs;
+	global $db, $conf;
 
-    dol_syslog("functions_openid::check_user_password_openid usertotest=".$usertotest);
+	dol_syslog("functions_openid::check_user_password_openid usertotest=".$usertotest);
 
-    $login = '';
+	$login = '';
 
-    // Get identity from user and redirect browser to OpenID Server
-    if (GETPOSISSET('username'))
-    {
-        $openid = new SimpleOpenID();
-        $openid->SetIdentity($_POST['username']);
-        $protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
-        $openid->SetTrustRoot($protocol.$_SERVER["HTTP_HOST"]);
-        $openid->SetRequiredFields(array('email', 'fullname'));
-        $_SESSION['dol_entity'] = $_POST["entity"];
-        //$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
-        if ($openid->sendDiscoveryRequestToGetXRDS())
-        {
-            $openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script
-            $openid->Redirect(); // This will redirect user to OpenID Server
-        }
-        else
-        {
-            $error = $openid->GetError();
-            return false;
-        }
-        return false;
-    }
-    // Perform HTTP Request to OpenID server to validate key
-    elseif ($_GET['openid_mode'] == 'id_res')
-    {
-        $openid = new SimpleOpenID();
-        $openid->SetIdentity($_GET['openid_identity']);
-        $openid_validation_result = $openid->ValidateWithServer();
-        if ($openid_validation_result === true)
-        {
-            // OK HERE KEY IS VALID
+	// Get identity from user and redirect browser to OpenID Server
+	if (GETPOSTISSET('username')) {
+		$openid = new SimpleOpenID();
+		$openid->SetIdentity(GETPOST('username'));
+		$protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
+		$openid->SetTrustRoot($protocol.$_SERVER["HTTP_HOST"]);
+		$openid->SetRequiredFields(array('email', 'fullname'));
+		$_SESSION['dol_entity'] = GETPOSTINT("entity");
+		//$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
+		if ($openid->sendDiscoveryRequestToGetXRDS()) {
+			$openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script
+			$openid->Redirect(); // This will redirect user to OpenID Server
+		} else {
+			$_SESSION["dol_loginmesg"] = $openid->GetError();
+			return false;
+		}
+		return false;
+	} elseif (GETPOST('openid_mode') == 'id_res') {
+		// Perform HTTP Request to OpenID server to validate key
+		$openid = new SimpleOpenID();
+		$openid->SetIdentity(GETPOST('openid_identity'));
+		$openid_validation_result = $openid->validateWithServer();
+		if ($openid_validation_result === true) {
+			// OK HERE KEY IS VALID
 
-            $sql = "SELECT login";
-            $sql .= " FROM ".MAIN_DB_PREFIX."user";
-            $sql .= " WHERE openid = '".$db->escape($_GET['openid_identity'])."'";
-            $sql .= " AND entity IN (0,".($_SESSION["dol_entity"] ? $_SESSION["dol_entity"] : 1).")";
+			$sql = "SELECT login, entity, datestartvalidity, dateendvalidity";
+			$sql .= " FROM ".MAIN_DB_PREFIX."user";
+			$sql .= " WHERE openid = '".$db->escape(GETPOST('openid_identity'))."'";
+			$sql .= " AND entity IN (0,".(!empty($_SESSION["dol_entity"]) ? ((int) $_SESSION["dol_entity"]) : 1).")";
 
-            dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
-            $resql = $db->query($sql);
-            if ($resql)
-            {
-                $obj = $db->fetch_object($resql);
-                if ($obj)
-                {
-                    $login = $obj->login;
-                }
-            }
-        }
-        elseif ($openid->IsError() === true)
-        {
-            // ON THE WAY, WE GOT SOME ERROR
-            $error = $openid->GetError();
-            return false;
-        }
-        else
-        {
-            // Signature Verification Failed
-            //echo "INVALID AUTHORIZATION";
-            return false;
-        }
-    }
-    elseif ($_GET['openid_mode'] == 'cancel')
-    {
-        // User Canceled your Request
-        //echo "USER CANCELED REQUEST";
-        return false;
-    }
+			dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+					$login = $obj->login;
+				}
+			}
+		} elseif ($openid->IsError() === true) {
+			// ON THE WAY, WE GOT SOME ERROR
+			$_SESSION["dol_loginmesg"] = $openid->GetError();
+			return false;
+		} else {
+			// Signature Verification Failed
+			//echo "INVALID AUTHORIZATION";
+			return false;
+		}
+	} elseif (GETPOST('openid_mode') == 'cancel') {
+		// User Canceled your Request
+		//echo "USER CANCELED REQUEST";
+		return false;
+	}
 
-    return $login;
+	return $login;
 }

@@ -25,18 +25,18 @@
 insert into llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('MAIN_ENABLE_LOG_TO_HTML')__,__ENCRYPT('0')__,'chaine','If this option is set to 1, it is possible to see log output at end of HTML sources by adding paramater logtohtml=1 on URL',1,0);
 
 
--- Was done into a 3.8 fix, so we must do it also in 3.9 
+-- Was done into a 3.8 fix, so we must do it also in 3.9
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
 
-ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
+ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
 
 
 UPDATE llx_user set api_key = null where api_key = '';
@@ -48,7 +48,7 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(255) after email_tocc;
 
 
 ALTER TABLE llx_user MODIFY COLUMN pass varchar(128);
-ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128); 
+ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128);
 
 ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
 ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
@@ -146,7 +146,7 @@ CREATE TABLE llx_ecm_files
   cover             text,                           -- is this file a file to use for a cover
   extraparams		varchar(255),					-- for stock other parameters with json format
   date_c			datetime,
-  date_m			timestamp,
+  date_m			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
   acl				text							-- for future permission 'per file'
@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   fk_user_author 	integer NOT NULL,
   fk_user_mod		integer NOT NULL,
   datec				datetime NOT NULL,
-  tms				timestamp NOT NULL,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   status            smallint DEFAULT 1
 ) ENGINE=InnoDB;
 
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS llx_user_rib (
   fk_user        integer      NOT NULL,
   entity         integer DEFAULT 1 NOT NULL,	-- multi company id
   datec          datetime,
-  tms            timestamp,
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label          varchar(30),
   bank           varchar(255),  -- bank name
   code_banque    varchar(128),  -- bank code
@@ -263,10 +263,10 @@ create table llx_stock_lotserial
   eatby           date DEFAULT NULL,			-- Eatby date
   sellby          date DEFAULT NULL, 			-- Sellby date
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
-  import_key    integer  
+  import_key    integer
 ) ENGINE=innodb;
 
 
@@ -278,14 +278,14 @@ create table llx_budget
   entity		integer NOT NULL DEFAULT 1,
   label         varchar(255) NOT NULL,
   status        integer,
-  note			text,	
+  note			text,
   date_start	date,
   date_end		date,
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
-  import_key    integer  
+  import_key    integer
 )ENGINE=innodb;
 
 
@@ -296,10 +296,10 @@ create table llx_budget_lines
   fk_project_ids	varchar(255) NOT NULL,		-- List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project 'Projects to come'.
   amount		double(24,8) NOT NULL,
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
-  import_key    integer  
+  import_key    integer
 )ENGINE=innodb;
 
 ALTER TABLE llx_budget_lines ADD UNIQUE INDEX uk_budget_lines (fk_budget, fk_project_ids);
@@ -369,7 +369,7 @@ create table llx_categorie_project
 create table llx_expedition_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -379,7 +379,7 @@ ALTER TABLE llx_expedition_extrafields ADD INDEX idx_expedition_extrafields (fk_
 create table llx_expeditiondet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -392,7 +392,7 @@ ALTER TABLE llx_expeditiondet_extrafields ADD INDEX idx_expeditiondet_extrafield
 create table llx_livraison_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -402,7 +402,7 @@ ALTER TABLE llx_livraison_extrafields ADD INDEX idx_livraison_extrafields (fk_ob
 create table llx_livraisondet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -595,7 +595,7 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NULL;
 
-ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
+ALTER TABLE llx_holiday ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_entity (entity);
 

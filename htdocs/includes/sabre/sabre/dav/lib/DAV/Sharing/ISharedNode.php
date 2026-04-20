@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Sharing;
 
 use Sabre\DAV\INode;
@@ -13,8 +15,8 @@ use Sabre\DAV\INode;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ISharedNode extends INode {
-
+interface ISharedNode extends INode
+{
     /**
      * Returns the 'access level' for the instance of this shared resource.
      *
@@ -23,7 +25,7 @@ interface ISharedNode extends INode {
      *
      * @return int
      */
-    function getShareAccess();
+    public function getShareAccess();
 
     /**
      * This function must return a URI that uniquely identifies the shared
@@ -36,7 +38,7 @@ interface ISharedNode extends INode {
      *
      * @return string
      */
-    function getShareResourceUri();
+    public function getShareResourceUri();
 
     /**
      * Updates the list of sharees.
@@ -44,9 +46,8 @@ interface ISharedNode extends INode {
      * Every item must be a Sharee object.
      *
      * @param \Sabre\DAV\Xml\Element\Sharee[] $sharees
-     * @return void
      */
-    function updateInvites(array $sharees);
+    public function updateInvites(array $sharees);
 
     /**
      * Returns the list of people whom this resource is shared with.
@@ -64,6 +65,5 @@ interface ISharedNode extends INode {
      *
      * @return \Sabre\DAV\Xml\Element\Sharee[]
      */
-    function getInvites();
-
+    public function getInvites();
 }

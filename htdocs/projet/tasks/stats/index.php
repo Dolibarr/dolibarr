@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
  * Copyright (C) 2015      Laurent Destailleur <ldestailleur@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,31 +24,39 @@
  *       \brief      Page for tasks statistics
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/taskstats.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
-if (!$user->rights->projet->lire)
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
+}
 
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-//$startyear=$year-2;
-$startyear = $year - 1;
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -62,10 +72,10 @@ $form = new Form($db);
 $includeuserlist = array();
 
 
-llxHeader('', $langs->trans('Tasks'));
+llxHeader('', $langs->trans('Tasks'), '', '', 0, 0, '', '', '', 'mod-project project-tasks page-stats');
 
 $title = $langs->trans("TasksStatistics");
-$dir = $conf->projet->dir_output.'/temp';
+$dir = $conf->project->dir_output.'/temp';
 
 print load_fiche_titre($title, '', 'projecttask');
 
@@ -73,9 +83,15 @@ dol_mkdir($dir);
 
 
 $stats_tasks = new TaskStats($db);
-if (!empty($userid) && $userid != -1) $stats_tasks->userid = $userid;
-if (!empty($socid) && $socid != -1) $stats_tasks->socid = $socid;
-if (!empty($year)) $stats_tasks->year = $year;
+if (!empty($userid) && $userid != -1) {
+	$stats_tasks->userid = $userid;
+}
+if (!empty($socid) && $socid != -1) {
+	$stats_tasks->socid = $socid;
+}
+if (!empty($year)) {
+	$stats_tasks->year = $year;
+}
 
 
 
@@ -89,12 +105,11 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=taskstats&amp;file=tasknbpr
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
+	$i = $startyear;
+	$legend = array();
+	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
 	}
@@ -116,29 +131,33 @@ if (!$mesg)
 $stats_tasks->year = 0;
 $data_all_year = $stats_tasks->getAllByYear();
 
-if (!empty($year)) $stats_tasks->year = $year;
+if (!empty($year)) {
+	$stats_tasks->year = $year;
+}
 $arrayyears = array();
 foreach ($data_all_year as $val) {
 	$arrayyears[$val['year']] = $val['year'];
 }
-if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!count($arrayyears)) {
+	$arrayyears[$nowyear] = $nowyear;
+}
 
 
 $h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+complete_head_from_modules($conf, $langs, null, $head, $h, 'project_tasks_stats');
 
-dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
+print dol_get_fiche_head($head, 'byyear', '', -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -154,40 +173,45 @@ print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
 print '</td></tr>';*/
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
-if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!in_array($year, $arrayyears)) {
+	$arrayyears[$year] = $year;
+}
+if (!in_array($nowyear, $arrayyears)) {
+	$arrayyears[$nowyear] = $nowyear;
+}
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
+print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
-print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
+
 print '</form>';
+
 print '<br><br>';
 
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre" height="24">';
-print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfTasks").'</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data_all_year as $val)
-{
+foreach ($data_all_year as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1)
-	{	// If we have empty year
+	while ($year && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
 
-		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		print '<tr class="oddeven">';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
-	print '<tr class="oddeven" height="24">';
-	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+	print '<tr class="oddeven">';
+	print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '</tr>';
 	$oldyear = $year;
@@ -196,11 +220,12 @@ foreach ($data_all_year as $val)
 print '</table>';
 print '</div>';
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
-$stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+$stringtoshow = '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
+if ($mesg) {
+	print $mesg;
+} else {
 	$stringtoshow .= $px1->show();
 	$stringtoshow .= "<br>\n";
 }
@@ -209,8 +234,11 @@ $stringtoshow .= '</td></tr></table>';
 print $stringtoshow;
 
 
-print '</div></div></div>';
-print '<div style="clear:both"></div>';
+print '</div></div>';
+
+print '<div class="clearboth"></div>';
+
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -13,15 +13,15 @@ use Sabre\VObject\DateTimeParser;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Time extends Text {
-
+class Time extends Text
+{
     /**
      * In case this is a multi-value property. This string will be used as a
      * delimiter.
      *
-     * @var string|null
+     * @var string
      */
-    public $delimiter = null;
+    public $delimiter = '';
 
     /**
      * Returns the type of value.
@@ -31,23 +31,18 @@ class Time extends Text {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'TIME';
-
     }
 
     /**
      * Sets the JSON value, as it would appear in a jCard or jCal object.
      *
      * The value must always be an array.
-     *
-     * @param array $value
-     *
-     * @return void
      */
-    function setJsonValue(array $value) {
-
+    public function setJsonValue(array $value)
+    {
         // Removing colons from value.
         $value = str_replace(
             ':',
@@ -55,12 +50,11 @@ class Time extends Text {
             $value
         );
 
-        if (count($value) === 1) {
+        if (1 === count($value)) {
             $this->setValue(reset($value));
         } else {
             $this->setValue($value);
         }
-
     }
 
     /**
@@ -70,8 +64,8 @@ class Time extends Text {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         $parts = DateTimeParser::parseVCardTime($this->getValue());
         $timeStr = '';
 
@@ -109,7 +103,7 @@ class Time extends Text {
 
         // Timezone
         if (!is_null($parts['timezone'])) {
-            if ($parts['timezone'] === 'Z') {
+            if ('Z' === $parts['timezone']) {
                 $timeStr .= 'Z';
             } else {
                 $timeStr .=
@@ -118,27 +112,20 @@ class Time extends Text {
         }
 
         return [$timeStr];
-
     }
 
     /**
      * Hydrate data from a XML subtree, as it would appear in a xCard or xCal
      * object.
-     *
-     * @param array $value
-     *
-     * @return void
      */
-    function setXmlValue(array $value) {
-
+    public function setXmlValue(array $value)
+    {
         $value = array_map(
-            function($value) {
+            function ($value) {
                 return str_replace(':', '', $value);
             },
             $value
         );
         parent::setXmlValue($value);
-
     }
-
 }

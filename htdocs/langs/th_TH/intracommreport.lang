@@ -1,0 +1,38 @@
+IntraCommReport=รายงานภายในการสื่อสาร
+IntraCommReports=รายงานภายในการสื่อสาร
+
+Module68000Name = รายงานภายในคอม
+Module68000Desc = การจัดการรายงานภายในคอม (รองรับรูปแบบ DEB/DES ภาษาฝรั่งเศส)
+IntracommReportSetup = การตั้งค่าโมดูล Intracommreport
+IntracommReportAbout = เกี่ยวกับรายงานภายในคอม
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD เดอ rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=ประเภทนักแสดง
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les บทนำ
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=หมวดหมู่บริการประเภท "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+# Menu
+MenuIntracommReport=รายงานภายในคอม
+MenuIntracommReportNew=ประกาศใหม่
+MenuIntracommReportList=รายการ
+# View
+NewDeclaration=ประกาศใหม่
+Declaration=คำประกาศ
+AnalysisPeriod=ช่วงการวิเคราะห์
+TypeOfDeclaration=ประเภทของการประกาศ
+DEB=การประกาศการแลกเปลี่ยนสินค้า (DEB)
+DES=การประกาศการแลกเปลี่ยนบริการ (DES)
+# Export page
+IntracommReportTitle=การเตรียมไฟล์ XML ในรูปแบบ ProDouane
+# List
+IntracommReportList=รายการประกาศที่สร้างขึ้น
+IntracommReportNumber=เลขที่ประกาศ
+IntracommReportPeriod=ระยะเวลาของการวิเคราะห์
+IntracommReportTypeDeclaration=ประเภทของการประกาศ
+IntracommReportDownload=ดาวน์โหลดไฟล์ XML
+# Invoice
+IntracommReportTransportMode=โหมดการขนส่ง
+DeleteIntraCommReport=ลบรายงาน IntraComm

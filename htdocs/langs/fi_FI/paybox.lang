@@ -1,31 +1,16 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox moduulin asetukset
-PayBoxDesc=Tämä moduuli tarjota sivuja, jotta maksua <a href="http://www.paybox.com" target="_blank">Paybox</a> asiakkaat. Tätä voidaan käyttää vapaa-maksun tai maksaa tietyn Dolibarr objektin (lasku-, tilaus-, ...)
-FollowingUrlAreAvailableToMakePayments=Seuraavat URL-osoitteet ovat käytettävissä tarjota sivu asiakas tehdä maksua Dolibarr esineitä
-PaymentForm=Maksu-muodossa
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=Tässä näytössä voit tehdä online-maksu %s.
-ThisIsInformationOnPayment=Tämä on informations maksua tehdä
-ToComplete=Saattamaan
-YourEMail=Sähköposti maksupyyntö vahvistus
-Creditor=Velkoja
-PaymentCode=Maksu-koodi
-PayBoxDoPayment=Pay with Paybox
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Maksa Payboxilla
 YouWillBeRedirectedOnPayBox=Sinut ohjataan on turvattu Paybox sivu tuloliittimeen voit luottokortin tiedot
-Continue=Seuraava
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Tämä sivu vahvistaa, että maksu on kirjattu. Kiitos.
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=Tilin parametrit
-UsageParameter=Käyttöparametrien
-InformationToFindParameters=Auta löytää %s tilitiedot
+YourPaymentHasNotBeenRecorded=maksu EI ole tallennettu ja tapahtuma on peruutettu. Kiitos.
 PAYBOX_CGI_URL_V2=Url on Paybox CGI moduuli maksaa
-VendorName=Nimi myyjä
-CSSUrlForPaymentForm=CSS-tyylisivu url maksun muodossa
 NewPayboxPaymentReceived=Uusi Paybox maksu vastaanotettu
 NewPayboxPaymentFailed=Uusi Paybox maksu epäonnistui
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PAYONLINE_SENDEMAIL=Sähköposti-ilmoitus maksu yrityksen jälkeen (onnistui tai epäonnistui)
 PAYBOX_PBX_SITE=PBX SITE arvo
 PAYBOX_PBX_RANG=PBX Rang arvo
 PAYBOX_PBX_IDENTIFIANT=PBX ID arvo
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=HMAC-avain

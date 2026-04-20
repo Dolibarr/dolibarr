@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use DateTime;
@@ -19,42 +21,40 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class GetLastModified implements Element {
-
+class GetLastModified implements Element
+{
     /**
-     * time
+     * time.
      *
      * @var DateTime
      */
     public $time;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param int|DateTime $time
      */
-    function __construct($time) {
-
+    public function __construct($time)
+    {
         if ($time instanceof DateTime) {
             $this->time = clone $time;
         } else {
-            $this->time = new DateTime('@' . $time);
+            $this->time = new DateTime('@'.$time);
         }
 
         // Setting timezone to UTC
         $this->time->setTimezone(new DateTimeZone('UTC'));
-
     }
 
     /**
-     * getTime
+     * getTime.
      *
      * @return DateTime
      */
-    function getTime() {
-
+    public function getTime()
+    {
         return $this->time;
-
     }
 
     /**
@@ -68,16 +68,12 @@ class GetLastModified implements Element {
      *
      * Important note 2: If you are writing any new elements, you are also
      * responsible for closing them.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->write(
-            HTTP\Util::toHTTPDate($this->time)
+            HTTP\toDate($this->time)
         );
-
     }
 
     /**
@@ -98,13 +94,10 @@ class GetLastModified implements Element {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
-        return
-            new self(new DateTime($reader->parseInnerTree()));
-
+    public static function xmlDeserialize(Reader $reader)
+    {
+        return new self(new DateTime($reader->parseInnerTree()));
     }
 }

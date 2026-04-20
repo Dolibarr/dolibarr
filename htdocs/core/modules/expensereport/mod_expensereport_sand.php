@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +21,7 @@
 /**
  * \file       htdocs/core/modules/expensereport/mod_expensereport_sand.php
  * \ingroup    expensereport
- * \brief      Fichier contenant la classe du modele de numerotation de reference de note de frais Sand
+ * \brief      Fichier contenant la class du modele de numerotation de reference de note de frais Sand
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
@@ -31,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expenserepor
 class mod_expensereport_sand extends ModeleNumRefExpenseReport
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -42,7 +44,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -54,14 +56,15 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	public $name = 'Sand';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $db, $conf, $langs;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
+	 */
+	public function info($langs)
+	{
+		global $db, $langs;
 
 		$langs->load("bills");
 
@@ -72,19 +75,25 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconst" value="EXPENSEREPORT_SAND_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
+		$mask = getDolGlobalString('EXPENSEREPORT_SAND_MASK');
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -92,61 +101,57 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $db, $conf, $langs, $user;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $db, $langs, $user;
 
-     	$exp = new ExpenseReport($db);
-     	$exp->initAsSpecimen();
-     	$exp->fk_user_author = $user->id;
+		$exp = new ExpenseReport($db);
+		$exp->initAsSpecimen();
+		$exp->fk_user_author = $user->id;
 
-     	$numExample = $this->getNextValue($exp);
+		$numExample = $this->getNextValue($exp);
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
-    /**
-     *  Return next free value
-     *
-     *  @param  Object      $object     Object we need next value for
-     *  @return string                  Value if KO, <0 if KO
-     */
-    public function getNextValue($object)
-    {
-        global $db, $conf;
+	/**
+	 *  Return next free value
+	 *
+	 *  @param  ExpenseReport	$object     Object we need next value for
+	 *  @return string|int<-1,0>   			Next value if OK, -1 or 0 if KO
+	 */
+	public function getNextValue($object)
+	{
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->EXPENSEREPORT_SAND_MASK;
+		$mask = getDolGlobalString('EXPENSEREPORT_SAND_MASK');
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
 		$date = $object->date_valid; // $object->date does not exists
-		if (empty($date))
-		{
+		if (empty($date)) {
 			$this->error = 'Date valid not defined';
 			return 0;
 		}
 
 		$fuser = null;
-		if ($object->fk_user_author > 0)
-		{
+		if ($object->fk_user_author > 0) {
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_author);
 		}
@@ -154,5 +159,5 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
-    }
+	}
 }

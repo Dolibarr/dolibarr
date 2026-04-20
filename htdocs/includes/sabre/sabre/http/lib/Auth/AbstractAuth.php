@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\HTTP\Auth;
 
 use Sabre\HTTP\RequestInterface;
@@ -14,60 +16,50 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractAuth {
-
+abstract class AbstractAuth
+{
     /**
-     * Authentication realm
+     * Authentication realm.
      *
      * @var string
      */
     protected $realm;
 
     /**
-     * Request object
+     * Request object.
      *
      * @var RequestInterface
      */
     protected $request;
 
     /**
-     * Response object
+     * Response object.
      *
      * @var ResponseInterface
      */
     protected $response;
 
     /**
-     * Creates the object
-     *
-     * @param string $realm
-     * @return void
+     * Creates the object.
      */
-    function __construct($realm = 'SabreTooth', RequestInterface $request, ResponseInterface $response) {
-
+    public function __construct(string $realm, RequestInterface $request, ResponseInterface $response)
+    {
         $this->realm = $realm;
         $this->request = $request;
         $this->response = $response;
-
     }
 
     /**
-     * This method sends the needed HTTP header and statuscode (401) to force
+     * This method sends the needed HTTP header and status code (401) to force
      * the user to login.
-     *
-     * @return void
      */
-    abstract function requireLogin();
+    abstract public function requireLogin();
 
     /**
-     * Returns the HTTP realm
-     *
-     * @return string
+     * Returns the HTTP realm.
      */
-    function getRealm() {
-
+    public function getRealm(): string
+    {
         return $this->realm;
-
     }
-
 }

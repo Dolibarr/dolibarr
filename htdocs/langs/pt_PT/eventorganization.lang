@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = Organização de eventos
+EventOrganizationDescription = Organização de eventos através do projeto módulo
+EventOrganizationDescriptionLong= Gerenciar a organização de um evento (show, conferências, participantes ou palestrantes, com páginas públicas para sugestão, votação ou inscrição)
+EventOrganizationMenuLeft = Eventos organizados
+EventOrganizationConferenceOrBoothMenuLeft = Conferência ou estande
+PaymentEvent=Pagamento do evento
+EventFee=Taxa do evento
+# Admin page
+NewRegistration=Cadastro
+EventOrganizationSetup=Configuração da organização do evento
+EventOrganization=Organização de eventos
+EventOrganizationSetupPage = Página de configuração da organização do evento
+EVENTORGANIZATION_TASK_LABEL = Rótulo de tarefas a serem criadas automaticamente quando o projeto for validado
+EVENTORGANIZATION_TASK_LABELTooltip = Quando você validar um evento para organizar, algumas tarefas podem ser automaticamente criadas no projeto<br> <br>Por exemplo: <br>Enviar chamada para conferências<br> Enviar chamada para estandes<br>Validar sugestões de conferências<br>Validar Aplicação para estandes <br>Inscrições abertas para o evento para os participantes<br>Enviar um lembrete do evento aos palestrantes<br> Enviar um lembrete do evento aos organizadores do estande<br>Enviar um lembrete do evento aos participantes
+EVENTORGANIZATION_TASK_LABELTooltip2=Mantenha em branco se não precisar criar tarefas automaticamente.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoria para adicionar a terceiros automaticamente criados quando alguém sugere uma conferência
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoria para adicionar a terceiros automaticamente criados quando eles sugerem um estande
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modelo de email para enviar após receber uma sugestão de conferência.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Modelo de email para enviar após receber sugestão de estande.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Modelo de e-mail para enviar após o pagamento da inscrição em um estande.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Modelo de e-mail para enviar após o pagamento da inscrição em um evento.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modelo de e-mail para usar ao enviar e-mails da ação "Enviar e-mails" para palestrantes
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modelo de e-mail a ser usado ao enviar e-mails da ação "Enviar e-mails" na lista de participantes
+EVENTORGANIZATION_FILTERATTENDEES_CAT = No formulário para criar/adicionar um participante, restringe a lista de terceiros a terceiros no Categoria
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulário para criar/adicionar um participante, restringe a lista de terceiros a terceiros com a natureza
+# Object
+OrganizedEvent=Evento organizado
+EventOrganizationConfOrBooth= Conferência ou estande
+EventOrganizationConfOrBoothes=Conferências ou Estandes
+ManageOrganizeEvent = Gerenciar a organização de um evento
+ConferenceOrBooth = Conferência ou estande
+ConferenceOrBoothTab = Conferência ou estande
+AmountPaid = Quantia paga
+DateOfRegistration = data do registro
+ConferenceOrBoothAttendee = Participante da conferência ou estande
+ApplicantOrVisitor=Candidato ou visitante
+Speaker=Palestrante
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = Sua solicitação de conferência foi recebida
+YourOrganizationEventBoothRequestWasReceived = Sua solicitação de estande foi recebida
+EventOrganizationEmailAskConf = Solicitação de conferência
+EventOrganizationEmailAskBooth = Solicitação de estande
+EventOrganizationEmailBoothPayment = Pagamento do seu estande
+EventOrganizationEmailRegistrationPayment = Inscrições para um evento
+EventOrganizationMassEmailAttendees = Comunicação aos participantes
+EventOrganizationMassEmailSpeakers = Comunicação aos palestrantes
+ToSpeakers=Para alto-falantes
+# Event
+AllowUnknownPeopleSuggestConf=Permitir que as pessoas sugiram conferências
+AllowUnknownPeopleSuggestConfHelp=Permitir que pessoas desconhecidas sugiram uma conferência que desejam realizar
+AllowUnknownPeopleSuggestBooth=Permitir que as pessoas se inscrevam para um estande
+AllowUnknownPeopleSuggestBoothHelp=Permitir que pessoas desconhecidas se inscrevam em um estande
+PriceOfRegistration=Preço da inscrição
+PriceOfRegistrationHelp=Preço a pagar para se inscrever ou participar do evento
+PriceOfBooth=Preço da assinatura para ficar em um estande
+PriceOfBoothHelp=Preço da assinatura para ficar em um estande
+EventOrganizationICSLinkProject=hiperligação, conexão ICS para o evento
+EventOrganizationICSLink=hiperligação, conexão ICS para conferências
+ConferenceOrBoothInformation=Informações sobre conferência ou estande
+ConferenceOrBoothFormat=Modo de conferência ou cabine
+ConferenceOrBoothFormatID=Id. do modo de conferência ou cabine
+ConferenceOrBoothFormatCode=Código do modo de conferência ou cabine
+ConferenceOrBoothFormatLabel=Rótulo do modo de conferência ou estande
+Attendees=Participantes
+ListOfAttendeesOfEvent=Lista de participantes dos projetos do evento
+ListOfConfOrBoothOfEvent=Lista de conferências ou estandes de projetos de eventos
+DownloadICSLink=Baixe o ICS ficheiro
+EVENTORGANIZATION_SECUREKEY=Semente para garantir a chave da página de registro público para sugerir uma conferência
+SERVICE_BOOTH_LOCATION=Serviço usado para a linha fatura sobre o local de um estande
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Serviço usado para a linha fatura sobre a assinatura de um participante em um evento
+NbVotes=Número de votos
+# Status
+EvntOrgDraft = Esboço, projeto
+EvntOrgSuggested = Sugerido
+EvntOrgConfirmed = Confirmado
+EvntOrgNotQualified = Não qualificado
+EvntOrgDone = Realizadas
+EvntOrgCancelled = Cancelada
+# Other
+SuggestForm = Página de sugestões
+SuggestOrVoteForConfOrBooth = Página para sugestão ou voto
+EvntOrgRegistrationHelpMessage = Aqui você pode votar em uma conferência ou sugerir uma nova para o evento. Você também pode se inscrever para ter um estande durante o evento.
+EvntOrgRegistrationConfHelpMessage = Aqui você pode sugerir uma nova conferência para animar durante o evento.
+EvntOrgRegistrationBoothHelpMessage = Aqui você pode se inscrever para ter um estande durante o evento.
+ListOfSuggestedConferences = Lista de conferências sugeridas
+ListOfSuggestedBooths=Estandes sugeridos
+ListOfConferencesOrBooths=Conferências ou estandes de projeto de evento
+SuggestConference = Sugira uma nova conferência
+SuggestBooth = Sugira um estande
+ViewAndVote = Veja e vote em eventos sugeridos
+PublicAttendeeSubscriptionGlobalPage = hiperligação, conexão público para inscrição no evento
+PublicAttendeeSubscriptionPage = hiperligação, conexão público apenas para inscrição neste evento
+MissingOrBadSecureKey = A chave de segurança é inválida ou está faltando
+EvntOrgWelcomeMessage = Este formulário permite que você se registre como um novo participante do evento
+EvntOrgDuration = Esta conferência começa em %s e e termina em %s.
+ConferenceAttendeeFee = Taxa de participante da conferência para o evento: '%s' ocorrendo de %s a %s.
+BoothLocationFee = Local do estande do evento: '%s' ocorrendo de %s a %s
+EventType = Tipo de evento
+LabelOfBooth=Etiqueta do estande
+LabelOfconference=Etiqueta de conferência
+ConferenceIsNotConfirmed=Inscrições não disponíveis, conferência ainda não confirmada
+EventRegistrationAreClosed=As inscrições para o evento estão encerradas
+DateMustBeBeforeThan=%s deve ser anterior a %s
+DateMustBeAfterThan=%s deve ser posterior a %s
+MaxNbOfAttendeesReached=O número máximo de participantes foi atingido
+NewSubscription=Cadastro
+OrganizationEventConfRequestWasReceived=Sua sugestão para uma conferência foi recebida
+OrganizationEventBoothRequestWasReceived=Sua solicitação de estande foi recebida
+OrganizationEventPaymentOfBoothWasReceived=Seu pagamento pelo seu estande foi registrado
+OrganizationEventPaymentOfRegistrationWasReceived=Seu pagamento pela inscrição no evento foi registrado
+OrganizationEventBulkMailToAttendees=Este é um lembrete sobre sua participação no evento como participante
+OrganizationEventBulkMailToSpeakers=Este é um lembrete sobre sua participação no evento como palestrante
+OrganizationEventLinkToThirdParty=hiperligação, conexão para terceiros (cliente, fornecedor ou parceiro)
+OrganizationEvenLabelName=Nome público da conferência ou estande
+NewSuggestionOfBooth=Aplicação para um estande
+NewSuggestionOfConference=Aplicação para realizar uma conferência
+EvntOrgRegistrationWelcomeMessage = Bem-vindo à página de sugestões de conferências ou estandes.
+EvntOrgRegistrationConfWelcomeMessage = Bem-vindo à página de sugestões de conferências.
+EvntOrgRegistrationBoothWelcomeMessage = Bem-vindo à página de sugestões de estandes.
+EvntOrgVoteHelpMessage = Aqui você pode ver a e votação para os eventos sugeridos para o projeto
+VoteOk = Seu voto foi aceito.
+AlreadyVoted = Você já votou neste evento.
+VoteError = Ocorreu um erro durante a votação. Tente novamente.
+SubscriptionOk=Seu cadastro foi registrado
+AmountOfRegistrationPaid=Valor da inscrição paga
+ConfAttendeeSubscriptionConfirmation = Confirmação da sua inscrição em um evento
+Attendee = Participante
+PaymentConferenceAttendee = Pagamento do participante da conferência
+PaymentBoothLocation = Pagamento por localização do estande
+DeleteConferenceOrBoothAttendee=Remover participante
+RegistrationAndPaymentWereAlreadyRecorder=Um registro e um pagamento já foi registrado para o e-mail <b>%s</b>
+EmailAttendee=E-mail do participante
+EmailCompany=empresa, companhia e-mail
+EmailCompanyForInvoice=E-mail empresa, companhia (para fatura, se for diferente do e-mail do participante)
+ErrorSeveralCompaniesWithEmailContactUs=Foram encontradas diversas empresas com este e-mail, por isso não podemos validar automaticamente seu cadastro. Entre em contato conosco em %s para obter um manual validação
+ErrorSeveralCompaniesWithNameContactUs=Várias empresas com este nome foram encontradas, portanto não podemos validar automaticamente seu registro. Entre em contato conosco em %s para obter um manual validação
+NoPublicActionsAllowedForThisEvent=Nenhuma ação pública é abrir pública neste evento
+MaxNbOfAttendees=Número máximo de participantes
+DateStartEvent=Início do evento data
+DateEndEvent=Fim do evento data
+ModifyStatus=modificar status
+ConfirmModifyStatus=Confirmar modificação de status
+ConfirmModifyStatusQuestion=Tem a certeza que pretende para modificar o(s) %s registro(s) selecionado(s)?
+RecordsUpdated=%s Registros atualizados
+RecordUpdated=Registro atualizado
+NoRecordUpdated=Nenhum registro atualizado
+ProfitPerValidatedAttendee=Lucro por participante
+Confirmed=Confirmado
+NotSelected=Não selecionado
+TheLinkIsAvailableOnTheProjectEventCard=Os links para sugerir ou votar em uma conferência ou se candidatar a um estande são fornecidos na página do projeto/evento
+ShowedUp=Apareceu

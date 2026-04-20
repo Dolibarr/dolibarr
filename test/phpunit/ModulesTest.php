@@ -1,5 +1,8 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +30,17 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class for PHPUnit tests
@@ -44,122 +49,92 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ModulesTest extends PHPUnit\Framework\TestCase
+class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()."::".__FUNCTION__.PHP_EOL;
+		}
+
+		$infotable = $db->DDLListTablesFull($db->database_name);
+		print "List of existing tables before running test ModulesTest\n";
+		print var_export($infotable, true)."\n";
+	}
+
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * Return list of modules for which to test initialisation
 	 *
-	 * @return BuildDocTest
+	 * @return array<array{0:string}> List of module labels to test (class is mod<module_label>)
 	 */
-	public function __construct()
+	public function moduleInitListProvider()
 	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
+		$full_list = self::VALID_MODULE_MAPPING;
+		$filtered_list = array_map(function ($value) {
+			return array($value);
+		}, array_filter($full_list, function ($value) {
+			return $value !== null;
+		}));
+		return $filtered_list;
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-    	print __METHOD__."\n";
-    }
-
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-    }
-
-	/**
-	 * Init phpunit tests
+	 * testModulesInit
 	 *
-	 * @return	void
-	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-    }
-	/**
-	 * End phpunit tests
+	 * @param string	$modlabel	Module label (class is mod<modlabel>)
 	 *
-	 * @return	void
+	 * @return int
+	 *
+	 * @dataProvider moduleInitListProvider
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	public function testModulesInit(string $modlabel)
+	{
+		global $conf,$user,$langs,$db;
 
-    /**
-     * testModulesInit
-     *
-     * @return int
-     */
-    public function testModulesInit()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$modulelist=array('Accounting','Adherent','Agenda','Api','Asset','Banque','Barcode','BlockedLog','Bookmark',
-		'CashDesk','Categorie','ClickToDial','Collab','Commande','Comptabilite','Contrat','Cron','DataPolicy','Dav','Deplacement','DocumentGeneration','Don','DynamicPrices',
-		'ECM','EmailCollector','Expedition','ExpenseReport','Export','ExternalRss','ExternalSite',
-		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','HRM','Import','Incoterm','Label','Ldap','Loan',
-		'Mailing','MailmanSpip','Margin','ModuleBuilder','MultiCurrency',
-		'Notification','Oauth','OpenSurvey','Paybox','Paypal','Prelevement','Printing','Product','ProductBatch','Projet','Propale','ReceiptPrinter','Resource',
-		'Salaries','Service','SocialNetworks','Societe','Stock','Stripe','SupplierProposal','Syslog','TakePos','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow');
-		foreach($modulelist as $modlabel)
-		{
-    		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
-            $class='mod'.$modlabel;
-    		$mod=new $class($db);
-            $result=$mod->remove();
-            $result=$mod->init();
-        	$this->assertLessThan($result, 0, $modlabel);
-        	print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
+		$class = 'mod'.$modlabel;
+		$mod = new $class($db);
 
-        	if (in_array($modlabel, array('Ldap', 'MailmanSpip')))
-        	{
-        	    $result=$mod->remove();
-        	}
+		$result = $mod->remove();
+		print __METHOD__." test remove for module ".$modlabel.", result=".$result."\n";
+
+		$result = $mod->init();
+		print __METHOD__." test init for module ".$modlabel.", result=".$result."\n";
+
+		$this->assertLessThan($result, 0, $modlabel." ".$mod->error);
+
+		if ($modlabel == 'User') {
+			print __METHOD__." test table llx_user exists after Webhook init\n";
+			$infotable = $db->DDLListTablesFull($db->database_name);
+			print var_export($infotable, true)."\n";
+			$this->assertGreaterThan(0, count($infotable));
+		}
+		if ($modlabel == 'Webhook') {
+			print __METHOD__." test table llx_webhook_target exists after Webhook init\n";
+			//$infotable = $db->DDLInfoTable("llx_webhook_target");
+			$infotable = $db->DDLListTablesFull($db->database_name);
+			print var_export($infotable, true)."\n";
+			$this->assertGreaterThan(0, count($infotable));
 		}
 
-        return 0;
-    }
+		if (in_array($modlabel, array('Ldap', 'MailmanSpip'))) {
+			$result = $mod->remove();
+		}
+
+		return 0;
+	}
 }

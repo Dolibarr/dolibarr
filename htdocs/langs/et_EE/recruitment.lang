@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Värbamine
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Uute töökohtade värbamiskampaaniate haldamine ja jälgimine
+# Admin page
+RecruitmentSetup = Värbamise seadistamine
+RecruitmentSetupPage = Sisesta siia värbamismooduli peamised valikud
+RecruitmentArea=Värbamisvaldkond
+PublicInterfaceRecruitmentDesc=Töökohtade avalikud lehed on avalikud URL-id avatud töökohtade kuvamiseks ja neile vastamiseks. Iga avatud töö kohta on üks erinev link, mis asub iga töökuulutuse juures.
+EnablePublicRecruitmentPages=Luba avatud töökohtade avalikud lehed
+
+NbOfEmployeesExpected=Eeldatav töötajate arv
+JobLabel=Ametikoha silt
+WorkPlace=Töökoht
+DateExpected=Eeldatav kuupäev
+FutureManager=Tulevane juht
+ResponsibleOfRecruitement=Värbamise eest vastutav
+IfJobIsLocatedAtAPartner=Kui töökoht asub partnerettevõttes
+PositionToBeFilled=Ametikoht
+PositionsToBeFilled=Töökohad
+ListOfPositionsToBeFilled=Ametikohtade loetelu
+NewPositionToBeFilled=Uued töökohad
+JobOfferToBeFilled=Täidetav ametikoht
+ThisIsInformationOnJobPosition=Täidetava ametikoha teave
+ContactForRecruitment=Kontakt värbamiseks
+EmailRecruiter=Kirjuta värbajale
+ToUseAGenericEmail=Üldise e-posti aadressi kasutamiseks. Kui seda pole määratletud, kasutatakse värbamise eest vastutava isiku e-posti aadressi.
+NewCandidature=Uus taotlus
+ListOfCandidatures=Rakenduste loetelu
+Remuneration=Palk
+RequestedRemuneration=Soovitud palk
+ProposedRemuneration=Soovituslik palk
+ContractProposed=Pakutud leping
+ContractSigned=Leping on allkirjastatud
+ContractRefused=Lepingust keelduti
+RecruitmentCandidature=Taotlus
+JobPositions=Töökohad
+RecruitmentCandidatures=Rakendused
+InterviewToDo=Kontaktid, mida jälgida
+AnswerCandidature=Taotluse vastus
+YourCandidature=Teie avaldus
+YourCandidatureAnswerMessage=Täname teid avalduse eest.<br>...
+JobClosedTextCandidateFound=Töökoht on suletud. Ametikoht on täidetud.
+JobClosedTextCanceled=Töökoht on suletud.
+ExtrafieldsJobPosition=Täiendavad omadused (ametikohad)
+ExtrafieldsApplication=Täiendavad omadused (tööavaldused)
+MakeOffer=Tee pakkumine
+WeAreRecruiting=Otsime töötajaid. See on nimekiri vabadest ametikohtadest, mida soovitakse täita...
+NoPositionOpen=Hetkel pole ühtegi avatud ametikohta
+ConfirmClose=Kinnita tühistamine
+ConfirmCloseAsk=Kas olete kindel, et soovite selle värbamisavalduse tühistada?
+Recruitment=Värbamine
+ApplyJobCandidature=Kandideeri sellele tööle
+ErrorRecruitmmentCandidatureAlreadyExists= Värbamisavaldus on juba olemas e-posti aadressiga %s.
+RecruitmentCandidatureSaved=Värbamisavalduse salvestamine õnnestus
+NoOpenJobOffer=Hetkel pole ühtegi avatud tööpakkumist

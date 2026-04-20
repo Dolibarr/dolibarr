@@ -5,32 +5,34 @@ DeleteResource=Slett ressurs
 ConfirmDeleteResourceElement=Bekreft sletting av ressursen for dette elementet
 NoResourceInDatabase=Ingen ressurs i databasen
 NoResourceLinked=Ingen koblet ressurs
-
+ActionsOnResource=Hendelser om denne ressursen
 ResourcePageIndex=Ressursliste
 ResourceSingular=Ressurs
 ResourceCard=Ressurskort
+NewResource=Ny ressurs
 AddResource=Opprett ressurs
 ResourceFormLabel_ref=Ressursnavn
-ResourceType=Ressurstype
 ResourceFormLabel_description=Beskrivelse av ressurs
-
+ResourceType=Ressurstype
+ResourceTypeID=Ressurstype-ID
+ResourceTypeLabel=Ressurstype-etikett
 ResourcesLinkedToElement=Ressurs koblet til element
 
 ShowResource=Vis ressurs
-
 ResourceElementPage=Elementressurser
 ResourceCreatedWithSuccess=Ressursopprettelse vellykket
 RessourceLineSuccessfullyDeleted=Vellykket sletting av ressurslinje
 RessourceLineSuccessfullyUpdated=Vellykket oppdatering av ressurslinje
 ResourceLinkedWithSuccess=Vellykket ressurskobling
-
 ConfirmDeleteResource=Bekreft sletting av ressurs
 RessourceSuccessfullyDeleted=Vellykket sletting av ressurs
 DictionaryResourceType=Ressurstype
-
 SelectResource=Velg ressurs
-
 IdResource=ID ressurs
 AssetNumber=Serienummer
 ResourceTypeCode=Ressurskode
 ImportDataset_resource_1=Ressurser
+ErrorResourcesAlreadyInUse=Noen ressurser er i bruk
+ErrorResourceUseInEvent=%s brukt i %s hendelse
+MaxUsers=Maksimalt antall brukere (plasser, seter osv.)
+MaxUsersLabel=Maksimalt antall brukere

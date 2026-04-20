@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
@@ -20,8 +22,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MkCol extends PropPatch {
-
+class MkCol extends PropPatch
+{
     /**
      * A list of resource-types in clark-notation.
      *
@@ -32,14 +34,13 @@ class MkCol extends PropPatch {
     /**
      * Creates the MKCOL object.
      *
-     * @param string[] $resourceType List of resourcetype values.
-     * @param array $mutations List of new properties values.
+     * @param string[] $resourceType list of resourcetype values
+     * @param array    $mutations    list of new properties values
      */
-    function __construct(array $resourceType, array $mutations) {
-
+    public function __construct(array $resourceType, array $mutations)
+    {
         $this->resourceType = $resourceType;
         parent::__construct($mutations);
-
     }
 
     /**
@@ -47,10 +48,9 @@ class MkCol extends PropPatch {
      *
      * @return string[]
      */
-    function getResourceType() {
-
+    public function getResourceType()
+    {
         return $this->resourceType;
-
     }
 
     /**
@@ -61,12 +61,11 @@ class MkCol extends PropPatch {
      * checked.
      *
      * @param string|string[] $resourceType
+     *
      * @return bool
      */
-    function hasResourceType($resourceType) {
-
-        return count(array_diff((array)$resourceType, $this->resourceType)) === 0;
-
+    public function hasResourceType($resourceType)
+    {
+        return 0 === count(array_diff((array) $resourceType, $this->resourceType));
     }
-
 }

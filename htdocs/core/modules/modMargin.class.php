@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2015   Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2012	    Christophe Battarel	    <christophe.battarel@altairis.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
  *      \brief      Module to manage margins
  *      \file       htdocs/core/modules/modMargin.class.php
  *      \ingroup    margin
- *      \brief      Description and activation file for module Margin
+ *      \brief      Description and activation file for the module Margin
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -72,7 +74,7 @@ class modMargin extends DolibarrModules
 		$this->depends = array("modPropale", "modProduct"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 2); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("margins");
 
@@ -81,12 +83,11 @@ class modMargin extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
-		$this->const = array(0=>array('MARGIN_TYPE', 'chaine', 'costprice', 'Rule for margin calculation by default', 0, 'current', 0)); // List of particular constants to add when module is enabled
+		$this->const = array(0 => array('MARGIN_TYPE', 'chaine', 'costprice', 'Rule for margin calculation by default', 0, 'current', 0)); // List of particular constants to add when module is enabled
 
 		// New pages on tabs
 		$this->tabs = array(
-				'product:+margin:Margins:margins:$user->rights->margins->liretous:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:empty($user->socid) && $user->rights->margins->liretous && ($object->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'product:+margin:Margins:margins:$user->hasRight("margins","liretous"):/margin/tabs/productMargins.php?id=__ID__',
 		);
 
 
@@ -104,18 +105,20 @@ class modMargin extends DolibarrModules
 
 		// left menu entry
 		$this->menu[$r] = array(
-				'fk_menu'=>'fk_mainmenu=billing', // Put 0 if this is a top menu
-				'type'=>'left', // This is a Top menu entry
-				'titre'=>'Margins',
-				'mainmenu'=>'billing',
-				'leftmenu'=>'margins',
-				'url'=>'/margin/index.php',
-				'langs'=>'margins', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-				'position'=>100,
-				'enabled'=>'$conf->margin->enabled', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-				'perms'=>'$user->rights->margins->liretous', // Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
-				'target'=>'',
-				'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=billing', // Put 0 if this is a top menu
+			'type' => 'left', // This is a Top menu entry
+			'titre' => 'Margins',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'billing',
+			'leftmenu' => 'margins',
+			'url' => '/margin/index.php',
+			'langs' => 'margins', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 100,
+			'enabled' => 'isModEnabled("margin")', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->hasRight("margins", "liretous")',
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
+		);
 		$r++;
 
 		// Permissions
@@ -125,22 +128,22 @@ class modMargin extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 59001; // id de la permission
 		$this->rights[$r][1] = 'Visualiser les marges'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'liretous';
 
 		$r++;
 		$this->rights[$r][0] = 59002; // id de la permission
 		$this->rights[$r][1] = 'Définir les marges'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 59003; // id de la permission
 		$this->rights[$r][1] = 'Read every user margin'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'read';
 		$this->rights[$r][5] = 'all';
 	}

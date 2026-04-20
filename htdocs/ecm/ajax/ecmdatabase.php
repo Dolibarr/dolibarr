@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +18,47 @@
 
 /**
  *       \file       htdocs/ecm/ajax/ecmdatabase.php
- *       \brief      File to build ecm database
+ *       \brief      File to build/refresh the ecm database for directories
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');
+
+$permissiontoread = $user->hasRight('ecm', 'read');
+
+$error = 0;
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -40,12 +69,8 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
-if (isset($action) && !empty($action))
-{
-	$error = 0;
-
-	if ($action == 'build' && !empty($element))
-	{
+if (isset($action) && !empty($action)) {
+	if ($action == 'build' && !empty($element) && $permissiontoread) {
 		require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 		$ecmdirstatic = new EcmDirectory($db);
@@ -57,34 +82,32 @@ if (isset($action) && !empty($action))
 		$diroutputslash = str_replace('\\', '/', $conf->$element->dir_output);
 		$diroutputslash .= '/';
 
-		// Scan directory tree on disk
-		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', '', 0);
+		// Scan directory tree on disk to get list of all directories
+		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', 0, 0);
+		//dol_syslog("Found ".count($disktree)." directories on disk");
 
 		// Scan directory tree in database
 		$sqltree = $ecmdirstatic->get_full_arbo(0);
+		//dol_syslog("Found ".count($sqltree)." directories in database");
 
 		$adirwascreated = 0;
 
 		// Now we compare both trees to complete missing trees into database
 		//var_dump($disktree);
 		//var_dump($sqltree);
-		foreach ($disktree as $dirdesc)    // Loop on tree onto disk
-		{
+		foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 			set_time_limit(0); // To force restarts the timeout counter from zero
 
 			$dirisindatabase = 0;
-			foreach ($sqltree as $dirsqldesc)
-			{
-				if ($conf->$element->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname'])
-				{
+			foreach ($sqltree as $dirsqldesc) {
+				if ($conf->$element->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
 					$dirisindatabase = 1;
 					break;
 				}
 			}
 
-			if (!$dirisindatabase)
-			{
-				$txt = "Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
+			if (!$dirisindatabase) {
+				$txt = "Directory found on disk ".$dirdesc['fullname'].", not found into table ecm_directories, so we add it";
 				dol_syslog($txt);
 
 				// We must first find the fk_parent of directory to create $dirdesc['fullname']
@@ -92,43 +115,34 @@ if (isset($action) && !empty($action))
 				$relativepathmissing = str_replace($diroutputslash, '', $dirdesc['fullname']);
 				$relativepathtosearchparent = $relativepathmissing;
 				//dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
-				if (preg_match('/\//', $relativepathtosearchparent))
+				if (preg_match('/\//', $relativepathtosearchparent)) {
 					//while (preg_match('/\//',$relativepathtosearchparent))
-				{
 					$relativepathtosearchparent = preg_replace('/\/[^\/]*$/', '', $relativepathtosearchparent);
 					$txt = "Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
 					dol_syslog($txt);
 					//print $txt." -> ";
 					$parentdirisindatabase = 0;
-					foreach ($sqltree as $dirsqldesc)
-					{
-						if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent)
-						{
+					foreach ($sqltree as $dirsqldesc) {
+						if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
 							$parentdirisindatabase = $dirsqldesc['id'];
 							break;
 						}
 					}
-					if ($parentdirisindatabase > 0)
-					{
+					if ($parentdirisindatabase > 0) {
 						dol_syslog("Yes with id ".$parentdirisindatabase);
 						//print "Yes with id ".$parentdirisindatabase."<br>\n";
 						$fk_parent = $parentdirisindatabase;
 						//break;  // We found parent, we can stop the while loop
-					}
-					else
-					{
+					} else {
 						dol_syslog("No");
 						//print "No<br>\n";
 					}
-				}
-				else
-				{
+				} else {
 					dol_syslog("Parent is root");
 					$fk_parent = 0; // Parent is root
 				}
 
-				if ($fk_parent >= 0)
-				{
+				if ($fk_parent >= 0) {
 					$ecmdirtmp->ref                = 'NOTUSEDYET';
 					$ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
 					$ecmdirtmp->description        = '';
@@ -138,8 +152,7 @@ if (isset($action) && !empty($action))
 					dol_syslog($txt);
 					//print $txt."<br>\n";
 					$id = $ecmdirtmp->create($user);
-					if ($id > 0)
-					{
+					if ($id > 0) {
 						$newdirsql = array('id'=>$id,
 								'id_mere'=>$ecmdirtmp->fk_parent,
 								'label'=>$ecmdirtmp->label,
@@ -148,13 +161,10 @@ if (isset($action) && !empty($action))
 						$sqltree[] = $newdirsql; // We complete fulltree for following loops
 						//var_dump($sqltree);
 						$adirwascreated = 1;
-					}
-					else
-					{
+					} else {
 						dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
 					}
-				}
-				else {
+				} else {
 					$txt = "Parent of ".$dirdesc['fullname']." not found";
 					dol_syslog($txt);
 					//print $txt."<br>\n";
@@ -163,20 +173,19 @@ if (isset($action) && !empty($action))
 		}
 
 		// Loop now on each sql tree to check if dir exists
-		foreach ($sqltree as $dirdesc)    // Loop on each sqltree to check dir is on disk
-		{
+		foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
 			$dirtotest = $conf->$element->dir_output.'/'.$dirdesc['fullrelativename'];
-			if (!dol_is_dir($dirtotest))
-			{
-				$mesg .= $dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
+			if (!dol_is_dir($dirtotest)) {
+				dol_syslog($dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']);
 				$ecmdirtmp->id = $dirdesc['id'];
 				$ecmdirtmp->delete($user, 'databaseonly');
 				//exit;
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cahce counting, we set to value -1 = "unknown"
-		dol_syslog("sql = ".$sql);
+		dol_syslog("Nb of directories added into database = ".$adirwascreated);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cache counting, we set to value -1 = "unknown"
 		$db->query($sql);
 	}
 }

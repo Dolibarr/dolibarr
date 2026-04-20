@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2017 Regis Houssin <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +24,13 @@
 /**
  * \file scripts/members/sync_members_types_dolibarr2ldap.php
  * \ingroup ldap core
- * \brief Script de mise a jour des types de membres dans LDAP depuis base Dolibarr
+ * \brief Script to update member types in LDAP from the Dolibarr database
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -31,22 +38,37 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: ".$script_file." now\n";
-	exit(-1);
+	exit(1);
 }
+
 $now = $argv[1];
 
 require_once $path."../../htdocs/master.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_db_readonly
+ */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 
+
 // Global variables
-$version = DOL_VERSION;
+$version = constant('DOL_VERSION');
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -54,15 +76,20 @@ $error = 0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 /*
- * if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
- * {
+ * if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
+ * exit(1);
  * }
  */
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(1);
+}
+
 
 $sql = "SELECT rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
@@ -73,7 +100,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		while ($i < $num) {
@@ -85,7 +112,7 @@ if ($resql) {
 			$membertype->id = $obj->rowid;
 			$membertype->fetch($membertype->id);
 
-			print $langs->trans("UpdateMemberType")." rowid=".$membertype->id." ".$membertype - label;
+			print $langs->trans("UpdateMemberType")." rowid=".$membertype->id." ".$membertype->label;
 
 			$oldobject = $membertype;
 
@@ -95,7 +122,7 @@ if ($resql) {
 			$info = $membertype->_load_ldap_info();
 			$dn = $membertype->_load_ldap_dn($info);
 
-			$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+			$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 			$result = $ldap->update($dn, $info, $user, $olddn);
 			if ($result > 0) {
 				print " - ".$langs->trans("OK");
@@ -109,7 +136,6 @@ if ($resql) {
 		}
 
 		$ldap->unbind();
-		$ldap->close();
 	} else {
 		print $ldap->error;
 	}

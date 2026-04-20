@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Exception;
 
 use Sabre\DAV;
 
 /**
- * InvalidSyncToken
+ * InvalidSyncToken.
  *
  * This exception is emited for the {DAV:}valid-sync-token pre-condition, as
  * defined in rfc6578, section 3.2.
@@ -19,20 +21,14 @@ use Sabre\DAV;
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class InvalidSyncToken extends Forbidden {
-
+class InvalidSyncToken extends Forbidden
+{
     /**
-     * This method allows the exception to include additional information into the WebDAV error response
-     *
-     * @param DAV\Server $server
-     * @param \DOMElement $errorNode
-     * @return void
+     * This method allows the exception to include additional information into the WebDAV error response.
      */
-    function serialize(DAV\Server $server, \DOMElement $errorNode) {
-
+    public function serialize(DAV\Server $server, \DOMElement $errorNode)
+    {
         $error = $errorNode->ownerDocument->createElementNS('DAV:', 'd:valid-sync-token');
         $errorNode->appendChild($error);
-
     }
-
 }

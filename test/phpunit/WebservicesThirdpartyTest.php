@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +31,16 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
-
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->global->MAIN_UMASK='0666';
+$conf->global->MAIN_UMASK = '0666';
 
 
 /**
@@ -48,364 +50,310 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
+class WebservicesThirdpartyTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
-    protected $soapclient;
+	protected $soapclient;
 
-    private $_WS_DOL_URL;
-    private $_ns='http://www.dolibarr.org/ns/';
+	private $ns = 'http://www.dolibarr.org/ns/';
 
 
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @param 	string	$name		Name
+	 * @return WebservicesThirdpartyTest
+	 */
+	public function __construct($name = '')
+	{
+		parent::__construct($name);
+
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
+
+		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
+
+		// Set the WebService URL
+		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
+		$this->soapclient = new nusoap_client($WS_DOL_URL);
+		if ($this->soapclient) {
+			$this->soapclient->soap_defencoding = 'UTF-8';
+			$this->soapclient->decodeUTF8(false);
+		}
+
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
 
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return DateLibTest
-     */
-    public function __construct()
-    {
-        parent::__construct();
+	/**
+	 * testWSThirdpartycreateThirdParty
+	 *
+	 * @return array thirdparty created
+	 */
+	public function testWSThirdpartycreateThirdParty()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
-
-        $this->_WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
-
-        // Set the WebService URL
-        print __METHOD__." create nusoap_client for URL=".$this->_WS_DOL_URL."\n";
-        $this->soapclient = new nusoap_client($this->_WS_DOL_URL);
-        if ($this->soapclient) {
-        	$this->soapclient->soap_defencoding='UTF-8';
-        	$this->soapclient->decodeUTF8(false);
-        }
-
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
-
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-        print __METHOD__."\n";
-    }
-
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
-
-        print __METHOD__."\n";
-    }
-
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        print __METHOD__."\n";
-    }
-
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
-
-    /**
-     * testWSThirdpartycreateThirdParty
-     *
-     * @return array thirdparty created
-     */
-    public function testWSThirdpartycreateThirdParty()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-
-    	$WS_METHOD  = 'createThirdParty';
+		$WS_METHOD  = 'createThirdParty';
 
 
-    	// Call the WebService method and store its result in $result.
-    	$authentication=array(
-    			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-    			'sourceapplication'=>'DEMO',
-    			'login'=>'admin',
-    			'password'=>'admin',
-    			'entity'=>'');
+		// Call the WebService method and store its result in $result.
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
-    	$body = array (
-    			"id" => null,
-    			"ref" => "name",
-    			"ref_ext" => "12",
-    			"fk_user_author" => null,
-    			"status" => null,
-    			"client" => 1,
-    			"supplier" => 0,
-    			"customer_code" => "CU0901-5678",
-    			"supplier_code" => "SU0901-5678",
-    			"customer_code_accountancy" => "",
-    			"supplier_code_accountancy" => "",
-    			"date_creation" => "", // dateTime
-    			"date_modification" => "", // dateTime
-    			"note_private" => "",
-    			"note_public" => "",
-    			"address" => "",
-    			"zip" => "",
-    			"town" => "",
-    			"province_id" => "",
-    			"country_id" => "",
-    			"country_code" => "",
-    			"country" => "",
-    			"phone" => "",
-    			"fax" => "",
-    			"email" => "",
-    			"url" => "",
-    			"profid1" => "",
-    			"profid2" => "",
-    			"profid3" => "",
-    			"profid4" => "",
-    			"profid5" => "",
-    			"profid6" => "",
-    			"capital" => "",
-    			"vat_used" => "",
-    			"vat_number" => ""
-    	);
+		$body = array(
+				"id" => null,
+				"ref" => "name",
+				"ref_ext" => "12",
+				"fk_user_author" => null,
+				"status" => null,
+				"client" => 1,
+				"supplier" => 0,
+				"customer_code" => "CU0901-5678",
+				"supplier_code" => "SU0901-5678",
+				"customer_code_accountancy" => "",
+				"supplier_code_accountancy" => "",
+				"date_creation" => "", // dateTime
+				"date_modification" => "", // dateTime
+				"note_private" => "",
+				"note_public" => "",
+				"address" => "",
+				"zip" => "",
+				"town" => "",
+				"province_id" => "",
+				"country_id" => "",
+				"country_code" => "",
+				"country" => "",
+				"phone" => "",
+				"fax" => "",
+				"email" => "",
+				"url" => "",
+				"profid1" => "",
+				"profid2" => "",
+				"profid3" => "",
+				"profid4" => "",
+				"profid5" => "",
+				"profid6" => "",
+				"capital" => "",
+				"vat_used" => "",
+				"vat_number" => ""
+		);
 
-    	// Test URL
-    	$result='';
-    	$parameters = array('authentication'=>$authentication, 'thirdparty'=>$body);
-    	print __METHOD__." call method ".$WS_METHOD."\n";
-    	try {
-    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
-    	} catch(SoapFault $exception) {
-    		echo $exception;
-    		$result=0;
-    	}
-    	if (! $result || ! empty($result['faultstring'])) {
-    		//var_dump($soapclient);
-    		print $this->soapclient->error_str;
-    		print "\n<br>\n";
-    		print $this->soapclient->request;
-    		print "\n<br>\n";
-    		print $this->soapclient->response;
-    		print "\n";
-    	}
+		// Test URL
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'thirdparty' => $body);
+		print __METHOD__." call method ".$WS_METHOD."\n";
+		try {
+			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
+		} catch (SoapFault $exception) {
+			echo $exception;
+			$result = 0;
+		}
+		if (! $result || !empty($result['faultstring'])) {
+			//var_dump($soapclient);
+			print $this->soapclient->error_str;
+			print "\n<br>\n";
+			print $this->soapclient->request;
+			print "\n<br>\n";
+			print $this->soapclient->response;
+			print "\n";
+		}
 
-    	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK', $result['result']['result_code']);
-    	$this->assertEquals('name', $result['ref']);
+		print __METHOD__." result=".$result['result']['result_code']."\n";
+		$this->assertEquals('OK', $result['result']['result_code']);
+		$this->assertEquals('name', $result['ref']);
 
-    	return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * testWSThirdpartygetThirdPartyById
-     *
-     * Use id to retrieve thirdparty
-     * @depends testWSThirdpartycreateThirdParty
-     *
-     * @param	array	$result		thirdparty created by create method
-     * @return	array				thirpdarty updated
-     */
-    public function testWSThirdpartygetThirdPartyById($result)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-        $id = $result['id'];
-
-        $WS_METHOD  = 'getThirdParty';
-
-        // Call the WebService method and store its result in $result.
-        $authentication=array(
-        'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-        'sourceapplication'=>'DEMO',
-        'login'=>'admin',
-        'password'=>'admin',
-        'entity'=>'');
-
-        $result='';
-        $parameters = array('authentication'=>$authentication, 'id'=>$id);
-        print __METHOD__." call method ".$WS_METHOD."\n";
-        try {
-            $result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
-        } catch(SoapFault $exception) {
-            echo $exception;
-            $result=0;
-        }
-        if (! $result || ! empty($result['faultstring'])) {
-            //var_dump($soapclient);
-            print $this->soapclient->error_str;
-            print "\n<br>\n";
-            print $this->soapclient->request;
-            print "\n<br>\n";
-            print $this->soapclient->response;
-            print "\n";
-        }
-
-        print __METHOD__." result=".$result['result']['result_code']."\n";
-        $this->assertEquals('OK', $result['result']['result_code']);
-        $this->assertEquals($id, $result['thirdparty']['id']);
-        $this->assertEquals('name', $result['thirdparty']['ref']);
-        $this->assertEquals('12', $result['thirdparty']['ref_ext']);
-        $this->assertEquals('0', $result['thirdparty']['status']);
-        $this->assertEquals('1', $result['thirdparty']['client']);
-        $this->assertEquals('0', $result['thirdparty']['supplier']);
-
-
-        return $result;
-    }
-
-    /**
-     * testWSThirdpartygetThirdPartyByRefExt
-     *
-     * Use ref_ext to retrieve thirdparty
-     *
+	/**
+	 * testWSThirdpartygetThirdPartyById
+	 *
+	 * Use id to retrieve thirdparty
 	 * @depends testWSThirdpartycreateThirdParty
 	 *
-     * @param	array	$result		thirdparty created by create method
-     * @return	array				thirdparty
-     */
-    public function testWSThirdpartygetThirdPartyByRefExt($result)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-    	$id = $result['id'];
+	 * @param	array	$result		thirdparty created by create method
+	 * @return	array				thirpdarty updated
+	 */
+	public function testWSThirdpartygetThirdPartyById($result)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$id = $result['id'];
 
-    	$WS_METHOD  = 'getThirdParty';
+		$WS_METHOD  = 'getThirdParty';
 
-    	// Call the WebService method and store its result in $result.
-    	$authentication=array(
-    			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-    			'sourceapplication'=>'DEMO',
-    			'login'=>'admin',
-    			'password'=>'admin',
-    			'entity'=>'');
+		// Call the WebService method and store its result in $result.
+		$authentication = array(
+		'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+		'sourceapplication' => 'DEMO',
+		'login' => 'admin',
+		'password' => 'admin',
+		'entity' => '');
 
-    	// Test URL
-    	$result='';
-    	$parameters = array('authentication'=>$authentication, 'id'=>'', 'ref'=>'', 'ref_ext'=>'12');
-    	print __METHOD__." call method ".$WS_METHOD."\n";
-    	try {
-    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
-    	} catch(SoapFault $exception) {
-    		echo $exception;
-    		$result=0;
-    	}
-    	print $this->soapclient->response;
-    	if (! $result || ! empty($result['faultstring'])) {
-    		//var_dump($soapclient);
-    		print $this->soapclient->error_str;
-    		print "\n<br>\n";
-    		print $this->soapclient->request;
-    		print "\n<br>\n";
-    		print $this->soapclient->response;
-    		print "\n";
-    	}
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => $id);
+		print __METHOD__." call method ".$WS_METHOD."\n";
+		try {
+			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
+		} catch (SoapFault $exception) {
+			echo $exception;
+			$result = 0;
+		}
+		if (! $result || !empty($result['faultstring'])) {
+			//var_dump($soapclient);
+			print $this->soapclient->error_str;
+			print "\n<br>\n";
+			print $this->soapclient->request;
+			print "\n<br>\n";
+			print $this->soapclient->response;
+			print "\n";
+		}
 
-    	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK', $result['result']['result_code']);
-    	$this->assertEquals($id, $result['thirdparty']['id']);
-    	$this->assertEquals('name', $result['thirdparty']['ref']);
-    	$this->assertEquals('12', $result['thirdparty']['ref_ext']);
-    	$this->assertEquals('0', $result['thirdparty']['status']);
-    	$this->assertEquals('1', $result['thirdparty']['client']);
-    	$this->assertEquals('0', $result['thirdparty']['supplier']);
+		print __METHOD__." result=".$result['result']['result_code']."\n";
+		$this->assertEquals('OK', $result['result']['result_code']);
+		$this->assertEquals($id, $result['thirdparty']['id']);
+		$this->assertEquals('name', $result['thirdparty']['ref']);
+		$this->assertEquals('12', $result['thirdparty']['ref_ext']);
+		$this->assertEquals('0', $result['thirdparty']['status']);
+		$this->assertEquals('1', $result['thirdparty']['client']);
+		$this->assertEquals('0', $result['thirdparty']['supplier']);
 
 
-    	return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * testWSThirdpartydeleteThirdParty
-     *
-     * @depends testWSThirdpartycreateThirdParty
-     *
-     * @param	array	$result		thirdparty created by create method
-     * @return	array				thirdparty
-     */
-    public function testWSThirdpartydeleteThirdPartyById($result)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-    	$id = $result['id'];
+	/**
+	 * testWSThirdpartygetThirdPartyByRefExt
+	 *
+	 * Use ref_ext to retrieve thirdparty
+	 *
+	 * @depends testWSThirdpartycreateThirdParty
+	 *
+	 * @param	array	$result		thirdparty created by create method
+	 * @return	array				thirdparty
+	 */
+	public function testWSThirdpartygetThirdPartyByRefExt($result)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$id = $result['id'];
 
-    	$WS_METHOD  = 'deleteThirdParty';
+		$WS_METHOD  = 'getThirdParty';
 
-    	// Call the WebService method and store its result in $result.
-    	$authentication=array(
-    			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-    			'sourceapplication'=>'DEMO',
-    			'login'=>'admin',
-    			'password'=>'admin',
-    			'entity'=>'');
+		// Call the WebService method and store its result in $result.
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
 
-    	$result='';
-    	$parameters = array('authentication'=>$authentication, 'id'=>$id, 'ref'=>'', 'ref_ext'=>'');
-    	print __METHOD__." call method ".$WS_METHOD."\n";
-    	try {
-    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
-    	} catch(SoapFault $exception) {
-    		echo $exception;
-    		$result=0;
-    	}
-    	if (! $result || ! empty($result['faultstring'])) {
-    		print $this->soapclient->error_str;
-    		print "\n<br>\n";
-    		print $this->soapclient->request;
-    		print "\n<br>\n";
-    		print $this->soapclient->response;
-    		print "\n";
-    	}
+		// Test URL
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => '', 'ref' => '', 'ref_ext' => '12');
+		print __METHOD__." call method ".$WS_METHOD."\n";
+		try {
+			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
+		} catch (SoapFault $exception) {
+			echo $exception;
+			$result = 0;
+		}
+		print $this->soapclient->response;
+		if (! $result || !empty($result['faultstring'])) {
+			//var_dump($soapclient);
+			print $this->soapclient->error_str;
+			print "\n<br>\n";
+			print $this->soapclient->request;
+			print "\n<br>\n";
+			print $this->soapclient->response;
+			print "\n";
+		}
 
-    	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK', $result['result']['result_code']);
+		print __METHOD__." result=".$result['result']['result_code']."\n";
+		$this->assertEquals('OK', $result['result']['result_code']);
+		$this->assertEquals($id, $result['thirdparty']['id']);
+		$this->assertEquals('name', $result['thirdparty']['ref']);
+		$this->assertEquals('12', $result['thirdparty']['ref_ext']);
+		$this->assertEquals('0', $result['thirdparty']['status']);
+		$this->assertEquals('1', $result['thirdparty']['client']);
+		$this->assertEquals('0', $result['thirdparty']['supplier']);
 
-    	return $result;
-    }
+
+		return $result;
+	}
+
+	/**
+	 * testWSThirdpartydeleteThirdParty
+	 *
+	 * @depends testWSThirdpartycreateThirdParty
+	 *
+	 * @param	array	$result		thirdparty created by create method
+	 * @return	array				thirdparty
+	 */
+	public function testWSThirdpartydeleteThirdPartyById($result)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$id = $result['id'];
+
+		$WS_METHOD  = 'deleteThirdParty';
+
+		// Call the WebService method and store its result in $result.
+		$authentication = array(
+				'dolibarrkey' => getDolGlobalString('WEBSERVICES_KEY'),
+				'sourceapplication' => 'DEMO',
+				'login' => 'admin',
+				'password' => 'admin',
+				'entity' => '');
+
+		$result = '';
+		$parameters = array('authentication' => $authentication, 'id' => $id, 'ref' => '', 'ref_ext' => '');
+		print __METHOD__." call method ".$WS_METHOD."\n";
+		try {
+			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
+		} catch (SoapFault $exception) {
+			echo $exception;
+			$result = 0;
+		}
+		if (! $result || !empty($result['faultstring'])) {
+			print 'Error: '.$this->soapclient->error_str;
+			print "\n<br>\n";
+			print $this->soapclient->request;
+			print "\n<br>\n";
+			print $this->soapclient->response;
+			print "\n";
+		}
+
+		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
+
+		$resultcode = empty($result['result']['result_code']) ? 'KO' : $result['result']['result_code'];
+
+		$this->assertEquals('OK', $resultcode);
+
+		return $result;
+	}
 }

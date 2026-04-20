@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,37 +36,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 class mod_propale_saphir extends ModeleNumRefPropales
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
+	 * @var string Error code (or message)
 	 */
-	public $nom = 'Saphir';
+	public $error = '';
 
 	/**
-	 * @var string model name
+	 * @var int		Position
+	 */
+	public $position = 40;
+
+	/**
+	 * @var string Name of model
 	 */
 	public $name = 'Saphir';
 
 
-    /**
-     *  Return description of module
-     *
-     *  @return     string      Texte descripif
-     */
-	public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Return description of module
+	 *
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
+	 */
+	public function info($langs)
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -75,19 +76,26 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstpropal" value="PROPALE_SAPHIR_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Proposal"), $langs->transnoentities("Proposal"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Proposal"), $langs->transnoentities("Proposal"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left"><input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -95,38 +103,39 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $db, $langs;
 
-    	$old_code_client = $mysoc->code_client;
-    	$old_code_type = $mysoc->typent_code;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$mysoc->typent_code = 'TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
-		if (!$numExample)
-		{
-			$numExample = 'NotConfigured';
+		$propal = new Propal($db);
+		$propal->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+		$numExample = $this->getNextValue($thirdparty, $propal);
+
+		if (!$numExample) {
+			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
-    }
+	}
 
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
+	 *  @param	?Societe	$objsoc     Object third party
 	 * 	@param	Propal		$propal		Object commercial proposal
-	 *  @return string      			Value if OK, 0 if KO
+	 *  @return string|int<-1,0>		Next value, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $propal)
 	{
@@ -135,10 +144,9 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
@@ -146,7 +154,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		// Get entities
 		$entity = getEntity('proposalnumber', 1, $propal);
 
-		$date = $propal->date;
+		$date = empty($propal->date) ? dol_now() : $propal->date;
 
 		$numFinal = get_next_value($db, $mask, 'propal', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 

@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
+/* Copyright (C) 2010-2011	Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Juanjo Menent 			<jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García 			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +20,48 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE expensereport/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force ExpenseReport[] $linkedObjectBlock';
+/** @var ExpenseReport[] $linkedObjectBlock */
 
-$var = true;
 $total = 0;
-foreach ($linkedObjectBlock as $key => $objectlink)
-{
+$ilink = 0;
+foreach ($linkedObjectBlock as $key => $objectlink) {
+	$ilink++;
+		$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+		$trclass .= ' liste_sub_total';
+	}
 	?>
-<tr <?php echo $GLOBALS['bc'][$var]; ?> >
+<tr <?php echo $trclass; ?> >
 	<td><?php echo $langs->trans("ExpenseReport"); ?></td>
-    <td><?php echo $objectlink->getNomUrl(1); ?></td>
-    <td></td>
+	<td><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
 	<td class="right"><?php
-	if ($user->rights->expensereport->lire) {
-		$total = $total + $objectlink->total_ht;
+	if ($user->hasRight('expensereport', 'lire')) {
+		$total += $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	} ?></td>
 	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 	<?php
 }

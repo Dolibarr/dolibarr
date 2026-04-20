@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Backend;
 
 use Sabre\DAV;
@@ -11,8 +13,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface SubscriptionSupport extends BackendInterface {
-
+interface SubscriptionSupport extends BackendInterface
+{
     /**
      * Returns a list of subscriptions for a principal.
      *
@@ -43,9 +45,10 @@ interface SubscriptionSupport extends BackendInterface {
      *    default components).
      *
      * @param string $principalUri
+     *
      * @return array
      */
-    function getSubscriptionsForUser($principalUri);
+    public function getSubscriptionsForUser($principalUri);
 
     /**
      * Creates a new subscription for a principal.
@@ -55,13 +58,13 @@ interface SubscriptionSupport extends BackendInterface {
      *
      * @param string $principalUri
      * @param string $uri
-     * @param array $properties
+     *
      * @return mixed
      */
-    function createSubscription($principalUri, $uri, array $properties);
+    public function createSubscription($principalUri, $uri, array $properties);
 
     /**
-     * Updates a subscription
+     * Updates a subscription.
      *
      * The list of mutations is stored in a Sabre\DAV\PropPatch object.
      * To do the actual updates, you must tell this object which properties
@@ -72,18 +75,15 @@ interface SubscriptionSupport extends BackendInterface {
      *
      * Read the PropPatch documentation for more info and examples.
      *
-     * @param mixed $subscriptionId
+     * @param mixed                $subscriptionId
      * @param \Sabre\DAV\PropPatch $propPatch
-     * @return void
      */
-    function updateSubscription($subscriptionId, DAV\PropPatch $propPatch);
+    public function updateSubscription($subscriptionId, DAV\PropPatch $propPatch);
 
     /**
      * Deletes a subscription.
      *
      * @param mixed $subscriptionId
-     * @return void
      */
-    function deleteSubscription($subscriptionId);
-
+    public function deleteSubscription($subscriptionId);
 }

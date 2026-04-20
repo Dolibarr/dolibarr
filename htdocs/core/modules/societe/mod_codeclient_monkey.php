@@ -2,6 +2,8 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,56 +23,41 @@
 /**
  *       \file       htdocs/core/modules/societe/mod_codeclient_monkey.php
  *       \ingroup    societe
- *       \brief      Fichier de la classe des gestion lion des codes clients
+ *       \brief      Fichier de la class des gestion lion des codes clients
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
 
 /**
- *	Classe permettant la gestion monkey des codes tiers
+ *	Class permettant la gestion monkey des codes tiers
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModeleThirdPartyCode class
 	public $name = 'Monkey';
+	public $version = 'dolibarr';
 
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
+	// variables not inherited
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
+	 * @var string
 	 */
-	public $code_auto;
-
 	public $prefixcustomer = 'CU';
-
+	/**
+	 * @var string
+	 */
 	public $prefixsupplier = 'SU';
-
-	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
 	/**
 	 * 	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
-		$this->nom = "Monkey";
-		$this->name = "Monkey";
-		$this->version = "dolibarr";
+		$this->db = $db;
+
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -81,7 +68,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 
 	/**
-     *  Return description of module
+	 *  Return description of module
 	 *
 	 *  @param	Translate	$langs	Object langs
 	 *  @return string      		Description of module
@@ -95,12 +82,12 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	societe		$objsoc		Object thirdparty
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
 		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
 	}
@@ -109,52 +96,55 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
+	 * @param	Societe|string|null	$objsoc	Object third party
+	 * @param	int<-1,2>			$type	Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
-		global $db, $conf, $mc;
+		global $db;
 
 		$field = '';
-        $prefix = '';
+		$prefix = '';
 		if ($type == 0) {
 			$field = 'code_client';
-            $prefix = $this->prefixcustomer;
+			$prefix = $this->prefixcustomer;
 		} elseif ($type == 1) {
 			$field = 'code_fournisseur';
-            $prefix = $this->prefixsupplier;
+			$prefix = $this->prefixsupplier;
 		} else {
-            return -1;
-        }
+			return -1;
+		}
 
-        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
-		$posindice = 8;
-        $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		// First, we get the max value (response immediate car champ indexe)
+		$posindice = strlen($prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(".$db->sanitize($field)." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE ".$field." LIKE '".$prefix."____-%'";
+		$sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
-		}
-		else
-		{
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
 			return -1;
 		}
 
 		$date	= dol_now();
-		$yymm	= strftime("%y%m", $date);
+		$yymm	= dol_print_date($date, "%y%m", 'tzuserrel');
 
-		if ($max >= (pow(10, 5) - 1)) $num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
-		else $num = sprintf("%05s", $max + 1);
+		if ($max >= (pow(10, 5) - 1)) {
+			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
+		} else {
+			$num = sprintf("%05d", $max + 1);
+		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;
@@ -167,50 +157,36 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *	@param	DoliDB		$db		Database handler
 	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
-	 *  @return int					0 if OK
+	 *  @param  int<0,1>  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int<-6,0>			0 if OK
 	 * 								-1 ErrorBadCustomerCodeSyntax
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
+	 * 								-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 								-6 Other (see this->error)
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
-		global $conf;
-
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
-		{
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
-		{
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
-		}
-		else
-		{
-			if ($this->verif_syntax($code) >= 0)
-			{
+		} else {
+			if ($this->verif_syntax($code) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0)
-				{
+				if ($is_dispo != 0) {
 					$result = -3;
-				}
-				else
-				{
+				} else {
 					$result = 0;
 				}
-			}
-			else
-			{
-				if (dol_strlen($code) == 0)
-				{
+			} else {
+				if (dol_strlen($code) == 0) {
 					$result = -2;
-				}
-				else
-				{
+				} else {
 					$result = -1;
 				}
 			}
@@ -221,65 +197,59 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Renvoi si un code est pris ou non (par autre tiers)
+	 *		Indicates if the code is available or not (by another third party)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
+	 *		@param	DoliDB		$db			Handler access base
 	 *		@param	string		$code		Code a verifier
-	 *		@param	Societe		$soc		Objet societe
+	 *		@param	Societe		$soc		Object societe
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
-        // phpcs:enable
-		global $conf, $mc;
-
+		// phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$code."'";
-		else $sql .= " WHERE code_client = '".$code."'";
+		if ($type == 1) {
+			$sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		} else {
+			$sql .= " WHERE code_client = '".$db->escape($code)."'";
+		}
 		$sql .= " AND entity IN (".getEntity('societe').")";
-		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
+		if ($soc->id > 0) {
+			$sql .= " AND rowid <> ".$soc->id;
+		}
 
 		dol_syslog(get_class($this)."::verif_dispo", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			if ($db->num_rows($resql) == 0)
-			{
+		if ($resql) {
+			if ($db->num_rows($resql) == 0) {
 				return 0;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi si un code respecte la syntaxe
+	 *  Renvoi si un code respecte la syntax
 	 *
 	 *  @param  string      $code       Code a verifier
 	 *  @return int                     0 si OK, <0 si KO
 	 */
 	public function verif_syntax($code)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$res = 0;
 
-		if (dol_strlen($code) < 11)
-		{
+		if (dol_strlen($code) < 11) {
 			$res = -1;
-		}
-		else
-		{
+		} else {
 			$res = 0;
 		}
 		return $res;

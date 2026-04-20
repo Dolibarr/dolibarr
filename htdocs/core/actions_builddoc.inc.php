@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,116 +27,144 @@
 // $id must be defined
 // $object must be defined and must have a method generateDocument().
 // $permissiontoadd must be defined
-// $upload_dir must be defined (example $conf->projet->dir_output . "/";)
+// $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 
-if (!empty($permissioncreate) && empty($permissiontoadd)) $permissiontoadd = $permissioncreate; // For backward compatibility
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ * @var User $user
+ * @var CommonObject|Societe $object
+ *
+ * @var string $action
+ * @var int $id
+ * @var ?int $permissioncreate
+ * @var ?int $usercangeneratedoc
+ * @var int $permissiontoadd
+ * @var string $upload_dir
+ *
+ * @var ?int $hidedetails
+ * @var ?int $hidedesc
+ * @var ?int $hideref
+ * @var ?array<string,mixed> $moreparams
+ */
+'
+@phan-var-force ?array<string,mixed> $moreparams
+@phan-var-force CommonObject|Societe $object
+';
+
+if (!empty($permissioncreate) && empty($permissiontoadd)) {
+	$permissiontoadd = $permissioncreate; // For backward compatibility
+}
 
 // Build doc
-if ($action == 'builddoc' && $permissiontoadd)
-{
-    if (is_numeric(GETPOST('model', 'alpha')))
-    {
-        $error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
-    }
-    else
-    {
-   		// Reload to get all modified line records and be ready for hooks
-        $ret = $object->fetch($id);
-        $ret = $object->fetch_thirdparty();
-        /*if (empty($object->id) || ! $object->id > 0)
-        {
-            dol_print_error('Object must have been loaded by a fetch');
-            exit;
-        }*/
+if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneratedoc))) {
+	if (is_numeric(GETPOST('model', 'alpha'))) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Model")), null, 'errors');
+	} else {
+		// Reload to get all modified line records and be ready for hooks
+		$ret = $object->fetch($id);
+		$ret = $object->fetch_thirdparty();
 
-        // Save last template used to generate document
-    	if (GETPOST('model', 'alpha'))
-    	{
-    	    $object->setDocModel($user, GETPOST('model', 'alpha'));
-    	}
+		// Save last template used to generate document
+		if (GETPOST('model', 'alpha')) {
+			$object->setDocModel($user, GETPOST('model', 'alpha'));
+		}
 
-        // Special case to force bank account
-        //if (property_exists($object, 'fk_bank'))
-        //{
-        if (GETPOST('fk_bank', 'int')) {
-            // this field may come from an external module
-            $object->fk_bank = GETPOST('fk_bank', 'int');
-        } elseif (!empty($object->fk_account)) {
-            $object->fk_bank = $object->fk_account;
-        }
-        //}
+		// Special case to force bank account
+		if (GETPOSTINT('fk_bank')) {
+			// this field may come from an external module
+			$object->fk_bank = GETPOSTINT('fk_bank');	// For compatibility
+			$object->fk_account = GETPOSTINT('fk_bank');
+		} elseif (!empty($object->fk_account)) {
+			$object->fk_bank = $object->fk_account;		// For compatibility
+		}
 
-        $outputlangs = $langs;
-        $newlang = '';
+		$outputlangs = $langs;
+		$newlang = '';
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {
+			$newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
+		}
+		if (getDolGlobalInt('MAIN_MULTILANGS') && property_exists($object, 'default_lang') && empty($newlang) && isset($object->default_lang)) {
+			$newlang = $object->default_lang; // for thirdparty
+		}
+		if (!empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
 
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->thirdparty->default_lang)) $newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->default_lang)) $newlang = $object->default_lang; // for thirdparty
-        if (!empty($newlang))
-        {
-            $outputlangs = new Translate("", $conf);
-            $outputlangs->setDefaultLang($newlang);
-        }
+		// To be sure vars is defined
+		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+		$moreparams = isset($moreparams) ? $moreparams : null;
 
-        // To be sure vars is defined
-        if (empty($hidedetails)) $hidedetails = 0;
-        if (empty($hidedesc)) $hidedesc = 0;
-        if (empty($hideref)) $hideref = 0;
-        if (empty($moreparams)) $moreparams = null;
+		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if ($result <= 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		} else {
+			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
+				setEventMessages($langs->trans("FileGenerated"), null);
 
-        $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-        if ($result <= 0)
-        {
-            setEventMessages($object->error, $object->errors, 'errors');
-            $action = '';
-        }
-        else
-        {
-        	if (empty($donotredirect))	// This is set when include is done by bulk action "Bill Orders"
-        	{
-	            setEventMessages($langs->trans("FileGenerated"), null);
+				/*$urltoredirect = $_SERVER['REQUEST_URI'];
+				$urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+				$urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect); // To avoid infinite loop
 
-	            $urltoredirect = $_SERVER['REQUEST_URI'];
-	            $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
-	            $urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect); // To avoid infinite loop
-
-	            header('Location: '.$urltoredirect.'#builddoc');
-	            exit;
-        	}
-        }
-    }
+				header('Location: '.$urltoredirect.'#builddoc');
+				exit;*/
+			}
+		}
+	}
 }
 
 // Delete file in doc form
-if ($action == 'remove_file' && $permissiontoadd)
-{
+if ($action == 'remove_file' && $permissiontoadd) {
 	if (!empty($upload_dir)) {
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	    if (empty($object->id) || !$object->id > 0)
-	    {
-	        // Reload to get all modified line records and be ready for hooks
-	        $ret = $object->fetch($id);
-	        $ret = $object->fetch_thirdparty();
-	    }
+		if (empty($object->id) || !$object->id > 0) {
+			// Reload to get all modified line records and be ready for hooks
+			$ret = $object->fetch($id);
+			$ret = $object->fetch_thirdparty();
+		}
 
-	    $langs->load("other");
-	    $filetodelete = GETPOST('file', 'alpha');
-	    $file = $upload_dir.'/'.$filetodelete;
-	    $ret = dol_delete_file($file, 0, 0, 0, $object);
-	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
-	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');
+		$langs->load("other");
+		$filetodelete = GETPOST('file', 'alpha');
+		$file = $upload_dir.'/'.$filetodelete;
+		$dirthumb = dirname($file).'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
+		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		if ($ret) {
+			// If it exists, remove thumb.
+			$regs = array();
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff|\.webp|\.xpm|\.xbm|\.avif)$/i', $file, $regs)) {
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
 
-	    // Make a redirect to avoid to keep the remove_file into the url that create side effects
-	    $urltoredirect = $_SERVER['REQUEST_URI'];
-	    $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
-	    $urltoredirect = preg_replace('/action=remove_file&?/', '', $urltoredirect);
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
+			}
 
-	    header('Location: '.$urltoredirect);
-	    exit;
-	}
-	else {
+			setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');
+		}
+
+		// Make a redirect to avoid to keep the remove_file into the url that create side effects
+		$urltoredirect = $_SERVER['REQUEST_URI'];
+		$urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+		$urltoredirect = preg_replace('/action=remove_file&?/', '', $urltoredirect);
+
+		header('Location: '.$urltoredirect);
+		exit;
+	} else {
 		setEventMessages('BugFoundVarUploaddirnotDefined', null, 'errors');
 	}
 }

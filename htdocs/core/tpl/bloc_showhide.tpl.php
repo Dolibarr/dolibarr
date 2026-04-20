@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,23 +17,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
+/**
+ * @var CommonObject $object
+ *
+ * @var string $blocname
+ */
 // Protection to avoid direct call of template
-if (empty($blocname))
-{
+if (empty($blocname)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 $hide = true; // Hide by default
-if (isset($parameters['showblocbydefault'])) $hide = (empty($parameters['showblocbydefault']) ? true : false);
-if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
+if (isset($parameters['showblocbydefault'])) {
+	$hide = empty($parameters['showblocbydefault']);
+}
+if (isset($object->extraparams[$blocname]['showhide'])) {
+	$hide = empty($object->extraparams[$blocname]['showhide']);
+}
 
 ?>
 <!-- BEGIN PHP TEMPLATE bloc_showhide.tpl.php -->
 
 <?php
-print '<script type="text/javascript">'."\n";
+print '<script>'."\n";
 print '$(document).ready(function() {'."\n";
 print '$("#hide-'.$blocname.'").click(function(){'."\n";
 print '		setShowHide(0);'."\n";
@@ -49,9 +57,9 @@ print '		$("#hide-'.$blocname.'").show();'."\n";
 print '});'."\n";
 
 print 'function setShowHide(status) {'."\n";
-print '		var id			= '.$object->id.";\n";
-print "		var element		= '".$object->element."';\n";
-print "		var htmlelement	= '".$blocname."';\n";
+print '		var id			= '.((int) $object->id).";\n";
+print "		var element		= '".dol_escape_js($object->element)."';\n";
+print "		var htmlelement	= '".dol_escape_js($blocname)."';\n";
 print '		var type		= "showhide";'."\n";
 print '		$.get("'.dol_buildpath('/core/ajax/extraparams.php', 1);
 print '?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);'."\n";
@@ -61,13 +69,13 @@ print '});'."\n";
 print '</script>'."\n";
 
 print '<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-'.$blocname.'"';
-print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1uparrow.png').'</div>'."\n";
+print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1uparrow').'</div>'."\n";
 print '<div style="float:right; position: relative; top: 3px; right:5px;" id="show-'.$blocname.'"';
-print ' class="linkobject'.($hide ? '' : ' hideobject').'">'.img_picto('', '1downarrow.png').'</div>'."\n";
+print ' class="linkobject'.($hide ? '' : ' hideobject').'">'.img_picto('', '1downarrow').'</div>'."\n";
 print '<div id="'.$blocname.'_title" class="liste_titre">'.$title.'</div>'."\n";
 print '<div id="'.$blocname.'_bloc" class="'.($hide ? 'hideobject' : 'nohideobject').'">'."\n";
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php';
 print '</div><br>';
 ?>
-<!-- END PHP TEMPLATE BLOC SHOW/HIDE -->
+<!-- END PHP TEMPLATE BLOCK SHOW/HIDE -->

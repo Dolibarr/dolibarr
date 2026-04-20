@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013           Florian Henry		 <florian.henry@open-concept.pro>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,31 +27,57 @@
  *   \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$action = GETPOST('action', 'aZ09');
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("companies");
 
-// Security check
-$id = GETPOST('id', 'int');
-if ($user->socid) $id = $user->socid;
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+$action = GETPOST('action', 'aZ09');
+
+$id = GETPOSTINT('id');
 
 $object = new Contact($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+// Security check
+if ($user->socid > 0) {
+	if ($object->fk_soc > 0 && $object->fk_soc != $user->socid) {
+		accessforbidden();
+	}
+}
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('contactnote'));
+
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
+}
 
 
 /*
@@ -58,55 +86,62 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $now = dol_now();
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("ContactNotes");
 
 $form = new Form($db);
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
 
-if ($id > 0)
-{
-    /*
-     * Affichage onglets
-     */
-    if (!empty($conf->notification->enabled)) $langs->load("mails");
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_note');
 
-    $head = contact_prepare_head($object);
+if ($id > 0) {
+	/*
+	 * Show tabs
+	 */
+	if (isModEnabled('notification')) {
+		$langs->load("mails");
+	}
 
-    dol_fiche_head($head, 'note', $title, -1, 'contact');
+	$head = contact_prepare_head($object);
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	print dol_get_fiche_head($head, 'note', $title, -1, 'contact');
 
-    $morehtmlref = '<div class="refidno">';
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-    {
-        $objsoc = new Societe($db);
-        $objsoc->fetch($object->socid);
-        // Thirdparty
-        $morehtmlref .= $langs->trans('ThirdParty').' : ';
-        if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1);
-        else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
-    }
-    $morehtmlref .= '</div>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
 
-    $cssclass = 'titlefield';
-    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
-    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+	$morehtmlref .= '<div class="refidno">';
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
+		$objsoc = new Societe($db);
+		$objsoc->fetch($object->socid);
+		// Thirdparty
+		if ($objsoc->id > 0) {
+			$morehtmlref .= $objsoc->getNomUrl(1);
+		} else {
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
+		}
+	}
+	$morehtmlref .= '</div>';
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+
+	$cssclass = 'titlefield';
+	//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+	//if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
 
-    // Civility
-    print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
-    print $object->getCivilityLabel();
-    print '</td></tr>';
+	// Civility
+	print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
+	print $object->getCivilityLabel();
+	print '</td></tr>';
 
-    print "</table>";
+	print "</table>";
 
 
 	$cssclass = "titlefield";
@@ -114,7 +149,7 @@ if ($id > 0)
 
 	print '</div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 llxFooter();

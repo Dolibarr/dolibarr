@@ -26,7 +26,7 @@ ALTER TABLE llx_expedition MODIFY COLUMN width float;
 ALTER TABLE llx_expedition MODIFY COLUMN size float;
 ALTER TABLE llx_expedition MODIFY COLUMN weight float;
 
- 
+
 ALTER TABLE llx_societe DROP COLUMN datea;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_create integer;
@@ -74,7 +74,7 @@ ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
--- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
@@ -108,7 +108,7 @@ create table llx_product_customer_price
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec					datetime,
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer NOT NULL,
   fk_soc				integer NOT NULL,
   price						double(24,8) DEFAULT 0,
@@ -164,7 +164,7 @@ ALTER TABLE llx_product ADD COLUMN tobatch tinyint DEFAULT 0 NOT NULL;
 
 CREATE TABLE llx_product_batch (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product_stock integer NOT NULL,
   eatby datetime DEFAULT NULL,
   sellby datetime DEFAULT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE llx_expeditiondet_batch (
 --DROP TABLE llx_payment_salary
 CREATE TABLE llx_payment_salary (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user integer NOT NULL,
   datep date,
   datev date,
@@ -229,7 +229,7 @@ ALTER TABLE llx_projet_task_time ADD thm double(24,8) AFTER fk_user;
 create table llx_categories_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -283,7 +283,7 @@ CREATE TABLE llx_resource
   fk_code_type_resource varchar(32),
   note_public     		text,
   note_private    		text,
-  tms         			timestamp
+  tms         			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
 
 ALTER TABLE llx_resource ADD INDEX fk_code_type_resource_idx (fk_code_type_resource);
@@ -298,7 +298,7 @@ CREATE TABLE llx_element_resources
   busy			  integer,
   mandatory		  integer,
   fk_user_create   integer,
-  tms             timestamp
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
 
 ALTER TABLE llx_element_resources ADD UNIQUE INDEX idx_element_resources_idx1 (resource_id, resource_type, element_id, element_type);
@@ -743,7 +743,7 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (412,'PCG99-BASE','PROD',  'XXXXXX',  '753', '409', 'Jetons de présence et rémunérations d''administrateurs, gérants,...', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (413,'PCG99-BASE','PROD',  'XXXXXX',  '754', '409', 'Ristournes perçues des coopératives (provenant des excédents)', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (414,'PCG99-BASE','PROD',  'XXXXXX',  '755', '409', 'Quotes-parts de résultat sur opérations faites en commun', '1');
-INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (415,'PCG99-BASE','PROD',  'XXXXXX',  '758', '409', 'Produits divers de gestion courante', '1'); 
+INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (415,'PCG99-BASE','PROD',  'XXXXXX',  '758', '409', 'Produits divers de gestion courante', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (416,'PCG99-BASE','PROD',  'XXXXXX',   '76','1507', 'Produits financiers', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (417,'PCG99-BASE','PROD',  'XXXXXX',  '761', '416', 'Produits de participations', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (418,'PCG99-BASE','PROD',  'XXXXXX',  '762', '416', 'Produits des autres immobilisations financières', '1');
@@ -752,17 +752,17 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (421,'PCG99-BASE','PROD',  'XXXXXX',  '765', '416', 'Escomptes obtenus', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (422,'PCG99-BASE','PROD',  'XXXXXX',  '766', '416', 'Gains de change', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (423,'PCG99-BASE','PROD',  'XXXXXX',  '767', '416', 'Produits nets sur cessions de valeurs mobilières de placement', '1');
-INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (424,'PCG99-BASE','PROD',  'XXXXXX',  '768', '416', 'Autres produits financiers', '1'); 
+INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (424,'PCG99-BASE','PROD',  'XXXXXX',  '768', '416', 'Autres produits financiers', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (425,'PCG99-BASE','PROD',  'XXXXXX',   '77','1507', 'Produits exceptionnels', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (426,'PCG99-BASE','PROD',  'XXXXXX',  '771', '425', 'Produits exceptionnels sur opérations de gestion', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (427,'PCG99-BASE','PROD',  'XXXXXX',  '772', '425', '(Compte à la disposition des entités pour enregistrer, en cours d''exercice, les produits sur exercices antérieurs)', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (428,'PCG99-BASE','PROD',  'XXXXXX',  '775', '425', 'Produits des cessions d''éléments d''actif', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (429,'PCG99-BASE','PROD',  'XXXXXX',  '777', '425', 'Quote-part des subventions d''investissement virée au résultat de l''exercice', '1');
-INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (430,'PCG99-BASE','PROD',  'XXXXXX',  '778', '425', 'Autres produits exceptionnels', '1'); 
+INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (430,'PCG99-BASE','PROD',  'XXXXXX',  '778', '425', 'Autres produits exceptionnels', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (431,'PCG99-BASE','PROD',  'XXXXXX',   '78','1507', 'Reprises sur amortissements et provisions', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (432,'PCG99-BASE','PROD',  'XXXXXX',  '781', '431', 'Reprises sur amortissements et provisions (à inscrire dans les produits d''exploitation)', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (433,'PCG99-BASE','PROD',  'XXXXXX',  '786', '431', 'Reprises sur provisions pour risques (à inscrire dans les produits financiers)', '1');
-INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (434,'PCG99-BASE','PROD',  'XXXXXX',  '787', '431', 'Reprises sur provisions (à inscrire dans les produits exceptionnels)', '1'); 
+INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (434,'PCG99-BASE','PROD',  'XXXXXX',  '787', '431', 'Reprises sur provisions (à inscrire dans les produits exceptionnels)', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (435,'PCG99-BASE','PROD',  'XXXXXX',   '79','1507', 'Transferts de charges', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (436,'PCG99-BASE','PROD',  'XXXXXX',  '791', '435', 'Transferts de charges d''exploitation ', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (437,'PCG99-BASE','PROD',  'XXXXXX',  '796', '435', 'Transferts de charges financières', '1');
@@ -1703,4 +1703,3 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 
 UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
 UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
-

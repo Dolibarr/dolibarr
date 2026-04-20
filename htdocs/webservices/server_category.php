@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
+/* Copyright (C) 2006-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       JF FERRY                <jfefe@aternatik.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +23,41 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
+}
 
-require "../master.inc.php";
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -47,6 +71,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrCategorie', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -58,11 +83,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 
@@ -76,45 +101,45 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'id' => array('name'=>'id', 'type'=>'xsd:string'),
-		'id_mere' => array('name'=>'id_mere', 'type'=>'xsd:string'),
-		'label' => array('name'=>'label', 'type'=>'xsd:string'),
-		'description' => array('name'=>'description', 'type'=>'xsd:string'),
-		'socid' => array('name'=>'socid', 'type'=>'xsd:string'),
-		'type' => array('name'=>'type', 'type'=>'xsd:string'),
-		'visible' => array('name'=>'visible', 'type'=>'xsd:string'),
-		'dir'=> array('name'=>'dir', 'type'=>'xsd:string'),
-		'photos' => array('name'=>'photos', 'type'=>'tns:PhotosArray'),
-		'filles' => array('name'=>'filles', 'type'=>'tns:FillesArray')
+		'id' => array('name' => 'id', 'type' => 'xsd:string'),
+		'id_mere' => array('name' => 'id_mere', 'type' => 'xsd:string'),
+		'label' => array('name' => 'label', 'type' => 'xsd:string'),
+		'description' => array('name' => 'description', 'type' => 'xsd:string'),
+		'socid' => array('name' => 'socid', 'type' => 'xsd:string'),
+		'type' => array('name' => 'type', 'type' => 'xsd:string'),
+		'visible' => array('name' => 'visible', 'type' => 'xsd:string'),
+		'dir' => array('name' => 'dir', 'type' => 'xsd:string'),
+		'photos' => array('name' => 'photos', 'type' => 'tns:PhotosArray'),
+		'filles' => array('name' => 'filles', 'type' => 'tns:FillesArray')
 	)
 );
 
 /*
- * Les catégories filles, sous tableau dez la catégorie
+ * The child categories, sub-tables of the category
  */
 $server->wsdl->addComplexType(
-    'FillesArray',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:categorie[]')
-    ),
-    'tns:categorie'
+	'FillesArray',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+		array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:categorie[]')
+	),
+	'tns:categorie'
 );
 
- /*
-  * Image of product
- */
+/*
+ * Image of product
+*/
 $server->wsdl->addComplexType(
-		'PhotosArray',
-		'complexType',
-		'array',
-		'sequence',
-		'',
-		array(
+	'PhotosArray',
+	'complexType',
+	'array',
+	'sequence',
+	'',
+	array(
 				'image' => array(
 						'name' => 'image',
 						'type' => 'tns:image',
@@ -124,20 +149,20 @@ $server->wsdl->addComplexType(
 		)
 );
 
- /*
-  * An image
- */
+/*
+ * An image
+*/
 $server->wsdl->addComplexType(
-		'image',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
-				'photo' => array('name'=>'photo', 'type'=>'xsd:string'),
-				'photo_vignette' => array('name'=>'photo_vignette', 'type'=>'xsd:string'),
-				'imgWidth' => array('name'=>'imgWidth', 'type'=>'xsd:string'),
-				'imgHeight' => array('name'=>'imgHeight', 'type'=>'xsd:string')
+	'image',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+				'photo' => array('name' => 'photo', 'type' => 'xsd:string'),
+				'photo_vignette' => array('name' => 'photo_vignette', 'type' => 'xsd:string'),
+				'imgWidth' => array('name' => 'imgWidth', 'type' => 'xsd:string'),
+				'imgHeight' => array('name' => 'imgHeight', 'type' => 'xsd:string')
 		)
 );
 
@@ -151,8 +176,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
@@ -168,21 +193,21 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getCategory',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'categorie'=>'tns:categorie'),
+	array('result' => 'tns:result', 'categorie' => 'tns:categorie'),
 	$ns,
-    $ns.'#getCategory',
-    $styledoc,
-    $styleuse,
-    'WS to get category'
+	$ns.'#getCategory',
+	$styledoc,
+	$styleuse,
+	'WS to get category'
 );
 
 
 /**
  * Get category infos and children
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity?:int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @return	mixed
  */
@@ -194,37 +219,37 @@ function getCategory($authentication, $id)
 
 	dol_syslog("Function: getCategory login=".$authentication['login']." id=".$id);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if (!$error && !$id)
-	{
+	if (!$error && !$id) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id must be provided.";
 	}
 
-	if (!$error)
-	{
-		$fuser->getrights();
+	if (!$error) {
+		$fuser->loadRights();
 
 		$nbmax = 10;
-		if ($fuser->rights->categorie->lire)
-		{
+		if ($fuser->hasRight('categorie', 'lire')) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$dir = (!empty($conf->categorie->dir_output) ? $conf->categorie->dir_output : $conf->service->dir_output);
 				$pdir = get_exdir($categorie->id, 2, 0, 0, $categorie, 'category').$categorie->id."/photos/";
 				$dir = $dir.'/'.$pdir;
 
 				$cat = array(
 					'id' => $categorie->id,
-					'id_mere' => $categorie->id_mere,
+					'id_mere' => $categorie->fk_parent,
 					'label' => $categorie->label,
 					'description' => $categorie->description,
 					'socid' => $categorie->socid,
@@ -232,52 +257,47 @@ function getCategory($authentication, $id)
 					'type' => $categorie->type,
 					'dir' => $pdir,
 					'photos' => $categorie->liste_photos($dir, $nbmax)
-		    	);
+				);
 
 				$cats = $categorie->get_filles();
-				if (count($cats) > 0)
-				{
-				 	foreach ($cats as $fille)
-					{
+				if (count($cats) > 0) {
+					foreach ($cats as $child_cat) {
 						$dir = (!empty($conf->categorie->dir_output) ? $conf->categorie->dir_output : $conf->service->dir_output);
-						$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category').$fille->id."/photos/";
+						$pdir = get_exdir($child_cat->id, 2, 0, 0, $categorie, 'category').$child_cat->id."/photos/";
 						$dir = $dir.'/'.$pdir;
 						$cat['filles'][] = array(
-							'id'=>$fille->id,
-							'id_mere' => $categorie->id_mere,
-							'label'=>$fille->label,
-							'description'=>$fille->description,
-							'socid'=>$fille->socid,
-							//'visible'=>$fille->visible,
-							'type'=>$fille->type,
+							'id' => $child_cat->id,
+							'id_mere' => $categorie->fk_parent,
+							'label' => $child_cat->label,
+							'description' => $child_cat->description,
+							'socid' => $child_cat->socid,
+							//'visible'=>$child_cat->visible,
+							'type' => $child_cat->type,
 							'dir' => $pdir,
-							'photos' => $fille->liste_photos($dir, $nbmax)
+							'photos' => $child_cat->liste_photos($dir, $nbmax)
 						);
 					}
 				}
 
-			    // Create
-			    $objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'categorie'=> $cat
-			    );
-			}
-			else
-			{
+				// Create
+				$objectresp = array(
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'categorie' => $cat
+				);
+			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id;
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	if ($error) {
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

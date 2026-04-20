@@ -41,7 +41,7 @@ https://**yourdolibarr.tld**/mydolibarr/api/index.php/otherservice?DOLAPIKEY=**a
 Develop an API
 --------------
 
-The API uses Lucarast Restler framework. Please check documentation https://www.luracast.com/products/restler and examples http://help.luracast.com/restler/examples/ 
+The API uses Lucarast Restler framework. Please check documentation https://www.luracast.com/products/restler and examples https://restler3.luracast.com/examples/index.html  
 
 Github contains also useful information : https://github.com/Luracast/Restler
 
@@ -68,5 +68,3 @@ It is possible to specify url for API methods by simply use the PHPDoc tag **@ur
 Other annotations are used, you are encouraged to read them : https://github.com/Luracast/Restler/blob/master/ANNOTATIONS.md
 
 PHPDoc tags can also be used to specify variables information for API. Again, rtfm : https://github.com/Luracast/Restler/blob/master/PARAM.md 
-
-

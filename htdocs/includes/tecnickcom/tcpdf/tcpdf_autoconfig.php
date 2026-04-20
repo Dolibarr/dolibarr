@@ -40,11 +40,11 @@
  * @version 1.1.1
  */
 
-// DOCUMENT_ROOT fix for IIS Webserver
+// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
 if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
-	if(isset($_SERVER['SCRIPT_FILENAME'])) {
+	if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
 		$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
-	} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
+	} elseif (isset($_SERVER['PATH_TRANSLATED']) && isset($_SERVER['PHP_SELF'])) {
 		$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
 	} else {
 		// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
@@ -226,6 +226,10 @@ if (!defined('K_THAI_TOPCHARS')) {
 
 if (!defined('K_TCPDF_CALLS_IN_HTML')) {
 	define('K_TCPDF_CALLS_IN_HTML', false);
+}
+
+if (!defined('K_ALLOWED_TCPDF_TAGS')) {
+	define('K_ALLOWED_TCPDF_TAGS', '');
 }
 
 if (!defined('K_TCPDF_THROW_EXCEPTION_ERROR')) {

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php'
 class mod_expedition_safor extends ModelNumRefExpedition
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'SH';
 
 	/**
@@ -42,7 +47,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -57,13 +62,14 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	public function info($langs)
+	{
+		global $langs;
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -71,7 +77,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
-    public function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -80,28 +86,31 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@return     boolean     false if conflit, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
-    public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-		{
+		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -114,53 +123,42 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@param	Expedition	$shipment	Shipment object
+	 *	@return string|int<-1,0> 		Value if OK, <=0 if KO
 	 */
-    public function getNextValue($objsoc, $shipment)
+	public function getNextValue($objsoc, $shipment)
 	{
 		global $db, $conf;
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
-		}
-		else
-		{
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
 			dol_syslog("mod_expedition_safor::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
-		$date = time();
-		$yymm = strftime("%y%m", $date);
+		$date = $shipment->date_creation;
+		$yymm = dol_print_date($date, "%y%m");
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04d", $max + 1);
+		}
 
 		dol_syslog("mod_expedition_safor::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$objforref	Shipment object
-	 *	@return string      			Next free value
-	 */
-    public function expedition_get_num($objsoc, $objforref)
-	{
-        // phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

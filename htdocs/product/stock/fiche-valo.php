@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +24,23 @@
  *	\brief      Page fiche de valorisation du stock dans l'entrepot
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies'));
-$mesg = '';
+
+$id = GETPOSTINT('id');
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -41,23 +53,18 @@ $result = restrictedArea($user, 'stock');
 $form = new Form($db);
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("WarehouseCard"), $help_url);
+llxHeader("", $langs->trans("WarehouseCard"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_fiche_valo');
 
-if ($_GET["id"])
-{
-	if ($mesg) print $mesg;
-
+if ($id > 0) {
 	$entrepot = new Entrepot($db);
-	$result = $entrepot->fetch($_GET["id"]);
-	if ($result < 0)
-	{
+	$result = $entrepot->fetch($id);
+	if ($result < 0) {
 		dol_print_error($db);
 	}
 
-
 	$head = stock_prepare_head($entrepot);
 
-	dol_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
+	print dol_get_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
 
 
 	print '<table class="border centpercent">';
@@ -109,7 +116,7 @@ if ($_GET["id"])
 	/* ************************************************************************** */
 
 	print "<div class=\"graph\">\n";
-	$year = strftime("%Y", time());
+	$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 
 	$file = $conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
 
@@ -120,19 +127,15 @@ if ($_GET["id"])
 
 
 
-	if (file_exists($file))
-	{
+	if (file_exists($file)) {
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
 		print '<img src="'.$url.'" alt="Valorisation du stock annee '.($year).'">';
 
-		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year - 1).'.png'))
-		{
-			$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year - 1).'.png';
-			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year - 1).'">';
+		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.((int) $year - 1).'.png')) {
+			$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.((int) $year - 1).'.png';
+			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.((int) $year - 1).'">';
 		}
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		print $langs->trans("FeatureNotYetAvailable");
 	}

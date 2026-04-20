@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
  * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +24,12 @@
  *	\brief      File of class to manage expense ik
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *	Class to manage inventories
  */
-class ExpenseReportIk extends CoreObject
+class ExpenseReportIk extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -40,7 +42,7 @@ class ExpenseReportIk extends CoreObject
 	public $table_element = 'expensereport_ik';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expense_ik';
 
@@ -68,31 +70,85 @@ class ExpenseReportIk extends CoreObject
 	 */
 	public $ikoffset;
 
-    /**
-     * Attribute object linked with database
-     * @var array
-     */
+
+	/**
+	 * Attribute object linked with database
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'index'=>true)
-		,'fk_c_exp_tax_cat'=>array('type'=>'integer', 'index'=>true)
-	    ,'fk_range'=>array('type'=>'integer', 'index'=>true)
-		,'coef'=>array('type'=>'double')
-		,'ikoffset'=>array('type'=>'double')
+		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 10),
+		'fk_c_exp_tax_cat' => array('type' => 'integer', 'label' => 'Tax cat id', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 20),
+		'fk_range' => array('type' => 'integer', 'label' => 'Tax range id', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 30),
+		'coef' => array('type' => 'double', 'label' => 'Coef', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'ikoffset' => array('type' => 'double', 'label' => 'Offset', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 	);
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
-	public function __construct(DoliDB &$db)
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct(DoliDB $db)
 	{
-		global $conf;
+		$this->db = $db;
+	}
 
-        parent::__construct($db);
-		parent::init();
 
-		$this->errors = array();
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = 0)
+	{
+		$resultcreate = $this->createCommon($user, $notrigger);
+
+		//$resultvalidate = $this->validate($user, $notrigger);
+
+		return $resultcreate;
+	}
+
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null)
+	{
+		return $this->fetchCommon($id, $ref);
+	}
+
+
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = 0)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       	User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = 0)
+	{
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 
@@ -100,52 +156,54 @@ class ExpenseReportIk extends CoreObject
 	 * Return expense categories in array
 	 *
 	 * @param	int		$mode	1=only active; 2=only inactive; other value return all
-	 * @return	array of category
+	 * @return	array<int,object> of category
 	 */
-	public static function getTaxCategories($mode = 1)
+	public function getTaxCategories($mode = 1)
 	{
-		global $db;
-
 		$categories = array();
 
 		$sql = 'SELECT rowid, label, entity, active';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat';
-		$sql .= ' WHERE entity IN ('.getEntity('c_exp_tax_cat').')';
-		if ($mode == 1) $sql .= ' AND active = 1';
-		elseif ($mode == 2) $sql .= 'AND active = 0';
+		$sql .= ' WHERE entity IN (0, '.getEntity($this->element).')';
+		if ($mode == 1) {
+			$sql .= ' AND active = 1';
+		} elseif ($mode == 2) {
+			$sql .= 'AND active = 0';
+		}
 
-		dol_syslog(get_called_class().'::getTaxCategories sql='.$sql, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			{
+		dol_syslog(get_called_class().'::getTaxCategories', LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$categories[$obj->rowid] = $obj;
 			}
-		}
-		else
-		{
-			dol_print_error($db);
+		} else {
+			dol_print_error($this->db);
 		}
 
 		return $categories;
 	}
 
-    /**
-     * Return an array of ranges for a user
-     *
-     * @param User  $userauthor         user author id
-     * @param int   $fk_c_exp_tax_cat   category
-     * @return boolean|array
-     */
-    public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
-    {
+	/**
+	 * Return a range for a user
+	 *
+	 * @param User  $userauthor         user author id
+	 * @param int   $fk_c_exp_tax_cat   category
+	 * @return false|ExpenseReportIk
+	 */
+	public function getRangeByUser(User $userauthor, int $fk_c_exp_tax_cat)
+	{
 		$default_range = (int) $userauthor->default_range; // if not defined, then 0
-		$ranges = self::getRangesByCategory($fk_c_exp_tax_cat);
-
-		// substract 1 because array start from 0
-		if (empty($ranges) || !isset($ranges[$default_range - 1])) return false;
-		else return $ranges[$default_range - 1];
+		$ranges = $this->getRangesByCategory($fk_c_exp_tax_cat);
+		// prevent out of range -1 indice
+		$indice = $default_range  - 1;
+		// subtract 1 because array start from 0
+		if (empty($ranges) || $indice < 0 || !isset($ranges[$indice])) {
+			return false;
+		} else {
+			return $ranges[$indice];
+		}
 	}
 
 	/**
@@ -153,39 +211,38 @@ class ExpenseReportIk extends CoreObject
 	 *
 	 * @param int	$fk_c_exp_tax_cat	category id
 	 * @param int	$active				active
-	 * @return array
+	 * @return ExpenseReportIk[]
 	 */
-	public static function getRangesByCategory($fk_c_exp_tax_cat, $active = 1)
+	public function getRangesByCategory(int $fk_c_exp_tax_cat, $active = 1)
 	{
-		global $db;
-
 		$ranges = array();
 
+		dol_syslog(get_called_class().'::getRangesByCategory for fk_c_exp_tax_cat='.$fk_c_exp_tax_cat, LOG_DEBUG);
+
 		$sql = 'SELECT r.rowid FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
-		if ($active) $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
-		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.$fk_c_exp_tax_cat;
-		if ($active) $sql .= ' AND r.active = 1 AND c.active = 1';
+		if ($active) {
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
+		}
+		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.((int) $fk_c_exp_tax_cat);
+		$sql .= " AND r.entity IN(0, ".getEntity($this->element).")";
+		if ($active) {
+			$sql .= ' AND r.active = 1 AND c.active = 1';
+		}
 		$sql .= ' ORDER BY r.range_ik';
 
-		dol_syslog(get_called_class().'::getRangesByCategory sql='.$sql, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
-				while ($obj = $db->fetch_object($resql))
-				{
-					$object = new ExpenseReportIk($db);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$object = new ExpenseReportIk($this->db);
 					$object->fetch($obj->rowid);
 
 					$ranges[] = $object;
 				}
 			}
-		}
-		else
-		{
-			dol_print_error($db);
+		} else {
+			dol_print_error($this->db);
 		}
 
 		return $ranges;
@@ -194,38 +251,39 @@ class ExpenseReportIk extends CoreObject
 	/**
 	 * Return an array of ranges grouped by category
 	 *
-	 * @return array
+	 * @return array<int,array{ranges:array<Object>,label:string,active:int<0,1>}>
 	 */
-	public static function getAllRanges()
+	public function getAllRanges()
 	{
-		global $db;
-
 		$ranges = array();
 
 		$sql = ' SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, c.label, i.rowid as fk_expense_ik, r.active as range_active, c.active as cat_active';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport_ik i ON (r.rowid = i.fk_range)';
-		$sql .= ' WHERE r.entity IN (0, '.getEntity('').')';
+		$sql .= ' WHERE r.entity IN (0, '.getEntity($this->element).')';
 		$sql .= ' ORDER BY r.fk_c_exp_tax_cat, r.range_ik';
 
-		dol_syslog(get_called_class().'::getAllRanges sql='.$sql, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			{
-				$ik = new ExpenseReportIk($db);
-				if ($obj->fk_expense_ik > 0) $ik->fetch($obj->fk_expense_ik);
+		dol_syslog(get_called_class().'::getAllRanges', LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$ik = new ExpenseReportIk($this->db);
+				if ($obj->fk_expense_ik > 0) {
+					$ik->fetch($obj->fk_expense_ik);
+				}
+
+				// TODO Set a $tmparray = new stdObj(); and use it to fill $ranges array
 				$obj->ik = $ik;
 
-				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) $ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
+				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) {
+					$ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
+				}
 				$ranges[$obj->fk_c_exp_tax_cat]['ranges'][] = $obj;
 			}
-		}
-		else
-		{
-			dol_print_error($db);
+		} else {
+			dol_print_error($this->db);
 		}
 
 		return $ranges;
@@ -234,31 +292,28 @@ class ExpenseReportIk extends CoreObject
 	/**
 	 * Return the max number of range by a category
 	 *
-	 * @param int $default_c_exp_tax_cat id
-	 * @return int
+	 * @param 	int 	$default_c_exp_tax_cat id	Default c_exp_tax_cat
+	 * @return 	int									Max nb
 	 */
-	public static function getMaxRangeNumber($default_c_exp_tax_cat = 0)
+	public function getMaxRangeNumber($default_c_exp_tax_cat = 0)
 	{
-		global $db, $conf;
-
 		$sql = 'SELECT MAX(counted) as nbRange FROM (';
 		$sql .= ' SELECT COUNT(*) as counted';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
-		$sql .= ' WHERE r.entity IN (0, '.$conf->entity.')';
-		if ($default_c_exp_tax_cat > 0) $sql .= ' AND r.fk_c_exp_tax_cat = '.$default_c_exp_tax_cat;
+		$sql .= ' WHERE r.entity IN (0, '.getEntity($this->element).')';
+		if ($default_c_exp_tax_cat > 0) {
+			$sql .= ' AND r.fk_c_exp_tax_cat = '.((int) $default_c_exp_tax_cat);
+		}
 		$sql .= ' GROUP BY r.fk_c_exp_tax_cat';
 		$sql .= ') as counts';
 
-		dol_syslog(get_called_class().'::getMaxRangeNumber sql='.$sql, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
+		dol_syslog(get_called_class().'::getMaxRangeNumber', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
 			return $obj->nbRange;
-		}
-		else
-		{
-			dol_print_error($db);
+		} else {
+			dol_print_error($this->db);
 		}
 
 		return 0;

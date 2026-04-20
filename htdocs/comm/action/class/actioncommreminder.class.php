@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
  */
 
 /**
- * \file        class/actioncommreminder.class.php
+ * \file        htdocs/comm/action/class/actioncommreminder.class.php
  * \ingroup     agenda
  * \brief       This file is a CRUD class file for ActionCommReminder (Create/Read/Update/Delete)
  */
@@ -41,14 +43,20 @@ class ActionCommReminder extends CommonObject
 	public $table_element = 'actioncomm_reminder';
 
 	/**
-	 * @var array  Does actioncommreminder support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
 	 * @var string String with name of icon for actioncommreminder. Must be the part after the 'object_' into object_actioncommreminder.png
 	 */
 	public $picto = 'generic';
+
+	const STATUS_TODO = 0;
+	const STATUS_DONE = 1;
+	const STATUS_ERROR = -1;
+
+	/** @var int reminder for user */
+	const TYPE_USER = 0;
+	/** @var int reminder for customer */
+	const TYPE_CUSTOMER = 1;
+	/** @var int reminder for contact */
+	const TYPE_CONTACT = 2;
 
 
 	/**
@@ -70,16 +78,20 @@ class ActionCommReminder extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'dateremind' => array('type'=>'datetime', 'label'=>'DateRemind', 'visible'=>1, 'enabled'=>1, 'position'=>60, 'notnull'=>1, 'index'=>1,),
-		'typeremind' => array('type'=>'varchar(32)', 'label'=>'TypeRemind', 'visible'=>-1, 'enabled'=>1, 'position'=>55, 'notnull'=>1, 'comment'=>"email, browser, sms",),
-		'fk_user' => array('type'=>'integer', 'label'=>'User', 'visible'=>-1, 'enabled'=>1, 'position'=>65, 'notnull'=>1, 'index'=>1,),
-		'offsetvalue' => array('type'=>'integer', 'label'=>'OffsetValue', 'visible'=>1, 'enabled'=>1, 'position'=>56, 'notnull'=>1,),
-		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"m, h, d, w",),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -1, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'visible' => 0, 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'index' => 1,),
+		'dateremind' => array('type' => 'datetime', 'label' => 'DateRemind', 'visible' => 1, 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'index' => 1,),
+		'typeremind' => array('type' => 'varchar(32)', 'label' => 'TypeRemind', 'visible' => -1, 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'comment' => "email, browser, sms",),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'User', 'visible' => -1, 'enabled' => 1, 'position' => 65, 'notnull' => 1, 'index' => 1,),
+		'offsetvalue' => array('type' => 'integer', 'label' => 'OffsetValue', 'visible' => 1, 'enabled' => 1, 'position' => 56, 'notnull' => 1,),
+		'offsetunit' => array('type' => 'varchar(1)', 'label' => 'OffsetUnit', 'visible' => 1, 'enabled' => 1, 'position' => 57, 'notnull' => 1, 'comment' => "y, m, d, w, h, i",),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 58, 'notnull' => 1, 'default' => '0', 'index' => 0, 'arrayofkeyval' => array('0' => 'ToDo', '1' => 'Done')),
+		'lasterror' => array('type' => 'varchar(128)', 'label' => 'LastError', 'visible' => -1, 'enabled' => 1, 'position' => 59, 'index' => 0),
+		'fk_actioncomm' => array('type' => 'integer', 'label' => 'Project', 'visible' => 1, 'enabled' => 1, 'position' => 70, 'notnull' => 1, 'index' => 1,),
+		'fk_email_template' => array('type' => 'integer', 'label' => 'EmailTemplate', 'visible' => 1, 'enabled' => 1, 'position' => 80, 'notnull' => 0),
 	);
 
 	/**
@@ -87,7 +99,14 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $rowid;
 
+	/**
+	 * @var int|'' date remind
+	 */
 	public $dateremind;
+
+	/**
+	 * @var string reminder type email, browser, sms
+	 */
 	public $typeremind;
 
 	/**
@@ -95,7 +114,14 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int offset value
+	 */
 	public $offsetvalue;
+
+	/**
+	 * @var string y, m, d, w, h, i
+	 */
 	public $offsetunit;
 
 	/**
@@ -103,33 +129,50 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $status;
 
-	// END MODULEBUILDER PROPERTIES
+	/**
+	 * @var string Last error message
+	 */
+	public $lasterror;
 
+	/**
+	 * @var int Project
+	 */
+	public $fk_actioncomm;
+
+	/**
+	 * @var int Template Mail
+	 */
+	public $fk_email_template;
+	// END MODULEBUILDER PROPERTIES
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
+		$this->ismultientitymanaged = 0;
+
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (!isModEnabled('multicompany')) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 	}
 
 	/**
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		return $this->createCommon($user, $notrigger);
 	}
@@ -140,7 +183,7 @@ class ActionCommReminder extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -152,10 +195,10 @@ class ActionCommReminder extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -163,19 +206,19 @@ class ActionCommReminder extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return label of the status of a reminder
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int     $mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -183,7 +226,7 @@ class ActionCommReminder extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -193,49 +236,41 @@ class ActionCommReminder extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0 || $mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Done');
-			elseif ($status == 0) return $langs->trans('ToDo');
+		$labelStatus = $langs->transnoentitiesnoconv('ToDo');
+		if ($status == 1) {
+			$labelStatus = $langs->transnoentitiesnoconv('Done');
+		} elseif ($status == -1) {
+			$labelStatus = $langs->transnoentitiesnoconv('Error');
 		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
+
+		$labelStatusShort = $langs->transnoentitiesnoconv('ToDo');
+		if ($status == 1) {
+			$labelStatus = $langs->transnoentitiesnoconv('Done');
+		} elseif ($status == -1) {
+			$labelStatus = $langs->transnoentitiesnoconv('Error');
 		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5');
+
+		$statusType = 'status5';
+		if ($status == 1) {
+			$statusType = 'status4';
+		} elseif ($status == -1) {
+			$statusType = 'status8';
 		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
-			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
-			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');
-		}
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 }

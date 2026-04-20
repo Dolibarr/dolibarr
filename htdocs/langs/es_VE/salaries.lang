@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - salaries
-THMDescription=Este valor puede ser utilizado para calcular el costo de tiempo consumido en un proyecto que ponen los usuarios si se utiliza el proyecto de módulo
-TJMDescription=Este valor es actualmente como única información y no se utiliza para cualquier cálculo
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, bt also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.

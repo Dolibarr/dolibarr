@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
- * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
+/* Copyright (C) 2017		ATM Consulting				<support@atm-consulting.fr>
+ * Copyright (C) 2017		Pierre-Henry Favre			<phf@atm-consulting.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +24,12 @@
  *	\brief      File of class to manage expense ik
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *	Class to manage inventories
  */
-class ExpenseReportRule extends CoreObject
+class ExpenseReportRule extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -40,7 +42,7 @@ class ExpenseReportRule extends CoreObject
 	public $table_element = 'expensereport_rules';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expense_rule';
 
@@ -92,7 +94,6 @@ class ExpenseReportRule extends CoreObject
 	 */
 	public $code_expense_rules_type;
 
-
 	/**
 	 * rule for all
 	 * @var int
@@ -109,86 +110,132 @@ class ExpenseReportRule extends CoreObject
 
 	/**
 	 * Attribute object linked with database
-	 * @var array
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'index'=>true)
-		,'dates'=>array('type'=>'date')
-		,'datee'=>array('type'=>'date')
-		,'amount'=>array('type'=>'double')
-		,'restrictive'=>array('type'=>'integer')
-		,'fk_user'=>array('type'=>'integer')
-		,'fk_usergroup'=>array('type'=>'integer')
-		,'fk_c_type_fees'=>array('type'=>'integer')
-		,'code_expense_rules_type'=>array('type'=>'string')
-		,'is_for_all'=>array('type'=>'integer')
-		,'entity'=>array('type'=>'integer')
+		'rowid' => array('type' => 'integer', 'index' => 1, 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'position' => 10),
+		'dates' => array('type' => 'date', 'label' => 'Dates', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'amount' => array('type' => 'double', 'label' => 'Amount', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'restrictive' => array('type' => 'integer', 'label' => 'Restrictive', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'User', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'fk_usergroup' => array('type' => 'integer', 'label' => 'Usergroup', 'enabled' => 1, 'visible' => -1, 'position' => 70),
+		'fk_c_type_fees' => array('type' => 'integer', 'label' => 'Type fees', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'code_expense_rules_type' => array('type' => 'string', 'label' => 'Expense rule code', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'is_for_all' => array('type' => 'integer', 'label' => 'IsForAll', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => -2, 'position' => 110),
 	);
+
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDB &$db)
+	public function __construct(DoliDB $db)
 	{
-		global $conf;
-
-		parent::__construct($db);
-		parent::init();
-
-		$this->errors = array();
+		$this->db = $db;
 	}
+
+
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = 0)
+	{
+		$resultcreate = $this->createCommon($user, $notrigger);
+
+		//$resultvalidate = $this->validate($user, $notrigger);
+
+		return $resultcreate;
+	}
+
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null)
+	{
+		return $this->fetchCommon($id, $ref);
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = 0)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = 0)
+	{
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
 
 	/**
 	 * Return all rules or filtered by something
 	 *
 	 * @param int	     $fk_c_type_fees	type of expense
-	 * @param integer	 $date			    date of expense
+	 * @param int|string $date			    date of expense
 	 * @param int        $fk_user		    user of expense
-	 * @return array                        Array with ExpenseReportRule
+	 * @return ExpenseReportRule[]          Array with ExpenseReportRule
 	 */
-	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
+	public function getAllRule($fk_c_type_fees = 0, $date = '', $fk_user = 0)
 	{
-		global $db;
-
 		$rules = array();
+
 		$sql = 'SELECT er.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
-		$sql .= ' WHERE er.entity IN (0,'.getEntity('').')';
-		if (!empty($fk_c_type_fees))
-		{
-			$sql .= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
+		$sql .= ' WHERE er.entity IN (0,'.getEntity($this->element).')';
+		if (!empty($fk_c_type_fees)) {
+			$sql .= ' AND er.fk_c_type_fees IN (-1, '.((int) $fk_c_type_fees).')';
 		}
-		if (!empty($date))
-		{
-			$date = dol_print_date($date, '%Y-%m-%d');
-			$sql .= ' AND er.dates <= \''.$date.'\'';
-			$sql .= ' AND er.datee >= \''.$date.'\'';
+		if (!empty($date)) {
+			$sql .= " AND er.dates <= '".$this->db->idate($date)."'";
+			$sql .= " AND er.datee >= '".$this->db->idate($date)."'";
 		}
-		if ($fk_user > 0)
-		{
+		if ($fk_user > 0) {
 			$sql .= ' AND (er.is_for_all = 1';
-			$sql .= ' OR er.fk_user = '.$fk_user;
-			$sql .= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.$fk_user.') )';
+			$sql .= ' OR er.fk_user = '.((int) $fk_user);
+			$sql .= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.((int) $fk_user).') )';
 		}
 		$sql .= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
 
-		dol_syslog("ExpenseReportRule::getAllRule sql=".$sql);
+		dol_syslog("ExpenseReportRule::getAllRule");
 
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			{
-				$rule = new ExpenseReportRule($db);
-				if ($rule->fetch($obj->rowid) > 0) $rules[$rule->id] = $rule;
-				else dol_print_error($db);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$rule = new ExpenseReportRule($this->db);
+				if ($rule->fetch($obj->rowid) > 0) {
+					$rules[$rule->id] = $rule;
+				} else {
+					dol_print_error($this->db);
+				}
 			}
-		}
-		else
-		{
-			dol_print_error($db);
+		} else {
+			dol_print_error($this->db);
 		}
 
 		return $rules;
@@ -203,15 +250,11 @@ class ExpenseReportRule extends CoreObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
-		if ($this->fk_usergroup > 0)
-		{
+		if ($this->fk_usergroup > 0) {
 			$group = new UserGroup($this->db);
-			if ($group->fetch($this->fk_usergroup) > 0)
-			{
-				return $group->nom;
-			}
-			else
-			{
+			if ($group->fetch($this->fk_usergroup) > 0) {
+				return $group->name;
+			} else {
 				$this->error = $group->error;
 				$this->errors[] = $this->error;
 			}
@@ -229,15 +272,11 @@ class ExpenseReportRule extends CoreObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-		if ($this->fk_user > 0)
-		{
+		if ($this->fk_user > 0) {
 			$u = new User($this->db);
-			if ($u->fetch($this->fk_user) > 0)
-			{
+			if ($u->fetch($this->fk_user) > 0) {
 				return dolGetFirstLastname($u->firstname, $u->lastname);
-			}
-			else
-			{
+			} else {
 				$this->error = $u->error;
 				$this->errors[] = $this->error;
 			}

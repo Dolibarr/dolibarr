@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - assets
+ModuleAssetsDesc=Descripción de activo
+AssetSetup=Configuración de activos
+AssetSetupPage=Página de configuración de activos
+ASSET_ACCOUNTANCY_CATEGORY=Grupo contable de activos fijos
+MenuNewAsset=Nuevo activo
+MenuListAssets=Lista
+MenuListAssetModels=Lista
+AssetDepreciationOptions=Opciones de depreciación
+AssetDepreciation=Depreciación
+AssetReversalAmountHT=Importe de reversión (sin imp.)
+AssetAcquisitionValueHT=Monto de adquisición (sin imp.)
+AssetReversalDate=Fecha de reversión
+AssetType=Tipo de activo
+AssetConfirmDisposalAsk=¿Está seguro de que desea deshacerse del activo <b>%s</b>?
+AssetConfirmReOpenAsk=¿Está seguro de que desea volver a abrir el activo <b>%s</b>?
+AssetAccountancyCodeDepreciationAsset=Depreciación
+AssetDepreciationBeginDate=Comienzo de la amortización en
+AssetErrorAssetOrAssetModelIDNotProvide=No se ha proporcionado el ID del activo del modelo encontrado
+AssetErrorFetchAccountancyCodesForMode=Error al recuperar las '%s' cuentas contables para el modo de depreciación
+AssetErrorDeleteAccountancyCodesForMode=Error al eliminar cuentas contables de  '%s' del modo de depreciación
+AssetErrorFetchDepreciationOptionsForMode=Error al recuperar opciones para '%s' del modo de amortización
+AssetErrorDeleteDepreciationOptionsForMode=Error al eliminar '%s' de las opciones del modo de depreciación
+AssetErrorInsertDepreciationOptionsForMode=Error al insertar %s de las opciones del modo de depreciación
+AssetErrorCalculationDepreciationLines=Error al calcular las líneas de amortización (recuperación y futuro)
+AssetErrorReversalDateNotProvidedForMode=No se proporciona la fecha de reversión para el '%s' método de depreciación
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=La fecha de reversión debe ser mayor o igual al comienzo del año fiscal actual para el '%s' método de depreciación

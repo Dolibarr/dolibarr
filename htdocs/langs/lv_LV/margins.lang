@@ -6,6 +6,7 @@ TotalMargin=Kopējais Maržinālā
 MarginOnProducts=Maržinālā / Produkti
 MarginOnServices=Margin / Pakalpojumi
 MarginRate=Noguldījuma likme
+ModifyMarginRates=Mainiet maržas likmes
 MarkRate=Atzīmēt likmi
 DisplayMarginRates=Displeja maržinālās
 DisplayMarkRates=Displeja zīmju cenas
@@ -22,7 +23,7 @@ ProductService=Produkts vai pakalpojums
 AllProducts=Visi produkti un pakalpojumi
 ChooseProduct/Service=Izvēlies preci vai pakalpojumu
 ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
-ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+ForceBuyingPriceIfNullDetails=Ja pirkšanas/pašizmaksas cena nav norādīta, pievienojot jaunu rindu, un šī opcija ir "IESLĒGTA", jaunā rindā rezerve būs 0%% (pirkšanas/pašizmaksa = pārdošanas cena). Ja šī opcija ir “IZSLĒGTA” (ieteicama), rezerve būs vienāda ar noklusējuma ieteikto vērtību (un var būt 100%%, ja nevar atrast noklusējuma vērtību).
 MARGIN_METHODE_FOR_DISCOUNT=Maržinālā metode pasaules atlaides
 UseDiscountAsProduct=Kā produktu
 UseDiscountAsService=Kā pakalpojums
@@ -37,7 +38,7 @@ CostPrice=Pašizmaksa
 UnitCharges=Vienības izmaksas
 Charges=Maksas
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Nosakiet, kāds kontakta tips (saistīts ar rēķiniem) tiks izmantots starpības pārskata iesniegšanai par katru kontaktpersonu / adresi. Ņemiet vērā, ka kontakta statistikas lasīšana nav ticama, jo vairumā gadījumu kontakti rēķinos var nebūt precīzi definēti.
+AgentContactTypeDetails=Definējiet, kāds kontaktpersonas veids (kas ir saistīts ar rēķiniem) tiks izmantots maržas pārskatam katrai kontaktpersonai/adresei. Ņemiet vērā, ka kontaktpersonas statistikas nolasīšana nav uzticama, jo vairumā gadījumu kontaktpersona rēķinos var nebūt skaidri norādīta.
 rateMustBeNumeric=Likmei jābūt skaitliskai vērtībai
 markRateShouldBeLesserThan100=Likmei jābūt zemākai par 100
 ShowMarginInfos=Show margin infos

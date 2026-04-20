@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use Sabre\DAV;
@@ -21,17 +23,17 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedReportSet implements XmlSerializable, HtmlOutput {
-
+class SupportedReportSet implements XmlSerializable, HtmlOutput
+{
     /**
-     * List of reports
+     * List of reports.
      *
      * @var array
      */
     protected $reports = [];
 
     /**
-     * Creates the property
+     * Creates the property.
      *
      * Any reports passed in the constructor
      * should be valid report-types in clark-notation.
@@ -40,61 +42,56 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      *
      * @param string|string[] $reports
      */
-    function __construct($reports = null) {
-
-        if (!is_null($reports))
+    public function __construct($reports = null)
+    {
+        if (!is_null($reports)) {
             $this->addReport($reports);
-
+        }
     }
 
     /**
-     * Adds a report to this property
+     * Adds a report to this property.
      *
      * The report must be a string in clark-notation.
      * Multiple reports can be specified as an array.
      *
      * @param mixed $report
-     * @return void
      */
-    function addReport($report) {
-
-        $report = (array)$report;
+    public function addReport($report)
+    {
+        $report = (array) $report;
 
         foreach ($report as $r) {
-
-            if (!preg_match('/^{([^}]*)}(.*)$/', $r))
+            if (!preg_match('/^{([^}]*)}(.*)$/', $r)) {
                 throw new DAV\Exception('Reportname must be in clark-notation');
-
+            }
             $this->reports[] = $r;
-
         }
-
     }
 
     /**
-     * Returns the list of supported reports
+     * Returns the list of supported reports.
      *
      * @return string[]
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->reports;
-
     }
 
     /**
      * Returns true or false if the property contains a specific report.
      *
      * @param string $reportName
+     *
      * @return bool
      */
-    function has($reportName) {
-
+    public function has($reportName)
+    {
         return in_array(
             $reportName,
             $this->reports
         );
-
     }
 
     /**
@@ -112,12 +109,9 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->getValue() as $val) {
             $writer->startElement('{DAV:}supported-report');
             $writer->startElement('{DAV:}report');
@@ -125,7 +119,6 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
             $writer->endElement();
             $writer->endElement();
         }
-
     }
 
     /**
@@ -139,16 +132,13 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
      *
-     * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         return implode(
             ', ',
             array_map([$html, 'xmlName'], $this->getValue())
         );
-
     }
-
 }

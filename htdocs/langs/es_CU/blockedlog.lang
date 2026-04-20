@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+Fingerprints=Eventos archivados y huellas dactilares
+CompanyInitialKey=Clave inicial de la empresa (hash del bloque de génesis)
+OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos de esta línea no fueron modificados y la entrada sigue a la anterior.
+OkCheckFingerprintValidityButChainIsKo=El registro archivado parece válido en comparación con el anterior, pero la cadena estaba dañada anteriormente.
+NotAddedByAuthorityYet=Aún no almacenado en la autoridad remota
+BlockedlogInfoDialog=Detalles de registro
+ListOfTrackedEvents=Lista de eventos rastreados
+TooManyRecordToScanRestrictFilters=Demasiados registros para escanear/analizar. Restrinja la lista con filtros más restrictivos.
+RestrictYearToExport=Restringir mes/año para exportar
+logBILL_DELETE=Factura de cliente eliminada lógicamente
+logBILL_PAYED=Factura de cliente pagada
+logBILL_SENTBYMAIL=Envío de factura de cliente por correo
+logBILL_UNPAYED=Factura de cliente establecida sin pagar
+logBILL_VALIDATE=Factura de cliente validada
+logDONATION_PAYMENT_DELETE=Eliminación lógica del pago de la donación
+logDON_DELETE=Eliminación lógica de la donación
+logMEMBER_SUBSCRIPTION_DELETE=Eliminación lógica de suscripción de miembro
+logMODULE_RESET=Módulo BlockedLog fue deshabilitado
+logMODULE_SET=Módulo BlockedLog fue habilitado
+logPAYMENT_ADD_TO_BANK=Pago agregado al banco
+logPAYMENT_CUSTOMER_CREATE=Pago de cliente creado
+logPAYMENT_CUSTOMER_DELETE=Eliminación lógica de pago del cliente
+logPAYMENT_VARIOUS_CREATE=Pago (no asignado a una factura) creado
+logPAYMENT_VARIOUS_DELETE=Pago (no asignado a una factura) borrado lógico
+logPAYMENT_VARIOUS_MODIFY=Pago (no asignado a una factura) modificado

@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +35,7 @@
  *	@param 	string				$description    Description
  *	@param 	integer	            $builddate      Date generation
  *	@param 	string				$exportlink     Link for export or ''
- *	@param	array				$moreparam		Array with list of params to add into form
+ *	@param	array<string,mixed>	$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
@@ -44,78 +46,87 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	print "\n\n<!-- start banner of report -->\n";
 
-	if (!empty($varlink)) $varlink = '?'.$varlink;
+	if (!empty($varlink)) {
+		$varlink = '?'.$varlink;
+	}
 
-	$head = array();
+	$title = $langs->trans("Report");
 
-	$h = 0;
-	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
-	$head[$h][1] = $langs->trans("Report");
-	$head[$h][2] = 'report';
+	print_barre_liste($title, 0, '', '', '', '', '', -1, '', 'generic', 0, '', '', -1, 1, 1);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
-	dol_fiche_head($head, 'report');
+	print dol_get_fiche_head();
 
-	foreach ($moreparam as $key => $value)
-	{
-		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
+	foreach ($moreparam as $key => $value) {
+		print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
 	}
 
 	print '<table class="border tableforfield centpercent">'."\n";
 
-	$variante = ($periodlink || $exportlink);
+	$variant = ($periodlink || $exportlink);
 
-	// Ligne de titre
+	// Title line
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="150">'.$langs->trans("ReportName").'</td>';
 	print '<td>';
 	print $reportname;
 	print '</td>';
-	if ($variante) print '<td></td>';
+	if ($variant) {
+		print '<td></td>';
+	}
 	print '</tr>'."\n";
 
 	// Calculation mode
-	if ($calcmode)
-	{
+	if ($calcmode) {
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td width="150">'.$langs->trans("CalculationMode").'</td>';
 		print '<td>';
 		print $calcmode;
-		if ($variante) print '<td></td>';
+		if ($variant) {
+			print '<td></td>';
+		}
 		print '</td>';
 		print '</tr>'."\n";
 	}
 
-	// Ligne de la periode d'analyse du rapport
+	// Report analysis period row
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	print '<td>';
-	if ($period) print $period;
-	if ($variante) print '<td class="nowraponall">'.$periodlink.'</td>';
+	if ($period) {
+		print $period;
+	}
+	if ($variant) {
+		print '<td class="nowraponall">'.$periodlink.'</td>';
+	}
 	print '</td>';
 	print '</tr>'."\n";
 
-	// Ligne de description
+	// Description row
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td>'.$description.'</td>';
-	if ($variante) print '<td></td>';
+	if ($variant) {
+		print '<td></td>';
+	}
 	print '</tr>'."\n";
 
-	// Ligne d'export
+	// Export row
 	print '<tr>';
 	print '<td>'.$langs->trans("GeneratedOn").'</td>';
 	print '<td>';
 	print dol_print_date($builddate, 'dayhour');
 	print '</td>';
-	if ($variante) print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
+	if ($variant) {
+		print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
+	}
 	print '</tr>'."\n";
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 

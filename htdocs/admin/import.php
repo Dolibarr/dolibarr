@@ -8,6 +8,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2020   	Floriazn Henry			<florian.henry@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,17 +30,29 @@
  *	\brief      config page module import
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'exports', 'other'));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 
 /*
  * Actions
@@ -55,10 +68,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 $form = new Form($db);
 
 $page_name = "ImportSetup";
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans($page_name), '', '', 0, 0, '', '', '', 'mod-admin page-import');
 
 // Subheader
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback);
 
@@ -70,10 +83,11 @@ $head[$h][1] = $langs->trans("Setup");
 $head[$h][2] = 'setup';
 $h++;
 
-dol_fiche_head($head, 'setup', $langs->trans("ImportArea"), -1, "technic");
+print dol_get_fiche_head($head, 'setup', $langs->trans("ImportArea"), -1, "technic");
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="action" value="setModuleOptions">';
 print '<input type="hidden" name="param" value="IMPORT_CSV_SEPARATOR_TO_USE">';
 
@@ -85,15 +99,15 @@ print '<td class="center" width="100"></td>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ImportCsvSeparator").' ('.$langs->trans("ByDefault").')</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".(empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
-print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td width="60" align="center"><input size="3" class="flat" type="text" name="value" value="'.getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE', ',').'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
 print '</td></tr>';
 
 print '</table>';
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

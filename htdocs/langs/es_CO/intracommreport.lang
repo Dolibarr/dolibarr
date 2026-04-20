@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - intracommreport
+IntraCommReports=Informes intracomunitarios
+Module68000Desc =Gestión de informes intracomunitarios (soporte para formato francés DEB / DES)
+IntracommReportSetup =Configuración del módulo intracommreport
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivel de obligación sobre los envíos
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoría de servicio del tipo "Gastos de envío"
+IntracommReportTitle=Elaboración de un archivo XML en formato ProDouane
+IntracommReportNumber=Numero de declaracion
+DeleteIntraCommReport=Eliminar informe de IntraComm

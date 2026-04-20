@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,61 +32,155 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class PrintingDriver
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB      $db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * @var string Name
+	 */
+	public $name;
 
-    /**
-     *  Return list of printing driver
-     *
-     *  @param  DoliDB  $db                 Database handler
-     *  @param  integer  $maxfilenamelength  Max length of value to show
-     *  @return array                       List of drivers
-    */
-    public static function listDrivers($db, $maxfilenamelength = 0)
-    {
-        global $conf;
+	/**
+	 * @var string Description
+	 */
+	public $desc;
 
-        $type = 'printing';
-        $list = array();
+	/**
+	 * @var string Html string returned for print
+	 */
+	public $resprint;
 
-        $moduledir = DOL_DOCUMENT_ROOT."/core/modules/printing/";
-        $tmpfiles = dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
-        foreach ($tmpfiles as $record) {
-            $list[$record['fullname']] = str_replace('.modules.php', '', $record['name']);
-        }
+	/**
+	 * @var string Name of active driver ? ("Constant" in child class)
+	 */
+	public $active = "NOT_SET";
 
-        return $list;
-    }
 
-    /**
-     *  Return description of Printing Module
-     *
-     *  @return     string      Return translation of key PrintingModuleDescXXX where XXX is module name, or $this->desc if not exists
-     */
-    public function getDesc()
-    {
-        global $langs;
-        $langs->load("printing");
-        $transstring = "PrintingModuleDesc".$this->name;
-        if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
-        else return $this->desc;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB      $db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 *  Return list of printing driver
+	 *
+	 *  @param  DoliDB  $db                 Database handler
+	 *  @param  int		$maxfilenamelength	Max length of value to show
+	 *  @return array<string,string>		List of drivers
+	 */
+	public static function listDrivers($db, $maxfilenamelength = 0)
+	{
+		global $conf;
+
+		$type = 'printing';
+		$list = array();
+
+		$listoffiles = array();
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+		foreach ($dirmodels as $dir) {
+			$tmpfiles = dol_dir_list(dol_buildpath($dir, 0), 'all', 0, '\.modules.php', '', 'name', SORT_ASC, 0);
+			if (!empty($tmpfiles)) {
+				$listoffiles = array_merge($listoffiles, $tmpfiles);
+			}
+		}
+		foreach ($listoffiles as $record) {
+			$list[$record['fullname']] = str_replace('.modules.php', '', $record['name']);
+		}
+		return $list;
+	}
+
+	/**
+	 *  Return description of Printing Module
+	 *
+	 *  @return     string      Return translation of key PrintingModuleDescXXX where XXX is module name, or $this->desc if not exists
+	 */
+	public function getDesc()
+	{
+		global $langs;
+		$langs->load("printing");
+		$transstring = "PrintingModuleDesc".$this->name;
+		if ($langs->trans($transstring) != $transstring) {
+			return $langs->trans($transstring);
+		} else {
+			return $this->desc;
+		}
+	}
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	public function listAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return array<int|string,string|array<string|int,string>>	list of printers
+	 */
+	public function getlistAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return [];
+	}
+
+	/**
+	 *  Print selected file
+	 *
+	 * @param   string      $file       file
+	 * @param   string      $module     module
+	 * @param   string      $subdir     subdir for file
+	 * @return  int                     0 if OK, >0 if KO
+	 */
+	public function printFile($file, $module, $subdir = '')
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
+
+	/**
+	 *  List jobs print
+	 *
+	 *  @param   ?string      $module     module
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	public function listJobs($module = null)
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
 }

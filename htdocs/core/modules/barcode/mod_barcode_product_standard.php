@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,38 +37,28 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 {
 	public $name = 'Standard'; // Model Name
 
-	public $code_modifiable; // Editable code
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	public $code_modifiable_null; // Modified code if it is null
-
-	public $code_null; // Optional code
-
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-	 * @var int Automatic numbering
+	 * @var ?string
 	 */
-	public $code_auto;
-
 	public $searchcode; // Search string
 
-	public $numbitcounter; // Number of digits the counter
-
-	public $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
-
+	/**
+	 * @var ?int
+	 */
+	public $numbitcounter; // Number of digits in the counter
 
 	/**
 	 *	Constructor
 	 */
 	public function __construct()
 	{
-		$this->code_null = 0;
+		$this->code_null = 0;	// 1=can be empty
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
@@ -92,23 +84,26 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="BARCODE_STANDARD_PRODUCT_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
-		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= $langs->trans("GenericMaskCodes3EAN");
 		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
-		$tooltip .= '020{000000000} (for internal use)<br>';
-		$tooltip .= '9771234{00000} (example of ISSN code with prefix 1234)<br>';
-		$tooltip .= '9791234{00000} (example of ISMN code with prefix 1234)<br>';
-		//$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip .= '04{0000000000}? (for internal use)<br>';
+		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
+		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
+		//$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? $conf->global->BARCODE_STANDARD_PRODUCT_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -121,58 +116,117 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs			Object langs
-	 * @param	Product		$objproduct		Object product
-	 * @return	string						Return string example
+	 * @param	?Translate		$langs			Object langs
+	 * @param	?CommonObject	$objproduct		Object
+	 * @return	string							Return string example
 	 */
-	public function getExample($langs, $objproduct = 0)
+	public function getExample($langs = null, $objproduct = null)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplebarcode = $this->getNextValue($objproduct, '');
-		if (!$examplebarcode)
-		{
+		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');
 		}
-		if ($examplebarcode == "ErrorBadMask")
-		{
+		if ($examplebarcode == "ErrorBadMask") {
 			$langs->load("errors");
 			$examplebarcode = $langs->trans($examplebarcode);
 		}
 
 		return $examplebarcode;
 	}
+	/**
+	 *  Return literal barcode type code from numerical rowid type of barcode
+	 *
+	 *	@param	DoliDB	$db         Database
+	 *  @param  int  	$type       Type of barcode (EAN, ISBN, ...) as rowid
+	 *  @return string
+	 */
+	public function literalBarcodeType($db, $type = 0)
+	{
+		global $conf;
+		$out = '';
+
+		$sql = "SELECT rowid, code, libelle as label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+		$sql .= " WHERE rowid = ".(int) $type;
+		$sql .= " AND entity = ".((int) $conf->entity);
+		$result = $db->query($sql);
+		if ($result) {
+			$num = $db->num_rows($result);
+
+			if ($num > 0) {
+				$obj = $db->fetch_object($result);
+				$out .= $obj->label; //take the label corresponding to the type rowid in the database
+			}
+		} else {
+			dol_print_error($db);
+		}
+
+		return $out;
+	}
 
 	/**
 	 * Return next value
 	 *
-	 * @param	Product		$objproduct     Object product
-	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
+	 * @param	?CommonObject	$objproduct 	Object product (not used)
+	 * @param	string			$type    		Type of barcode (EAN, ISBN, ...)
+	 * @return 	string|int<-1,-1> 				Value if OK, '' if module not configured, <0 if KO
 	 */
 	public function getNextValue($objproduct = null, $type = '')
 	{
-		global $db, $conf;
+		global $db;
+
+		if (is_object($objproduct) && !$objproduct instanceof Product) {
+			dol_syslog(get_class($this)."::getNextValue used on incompatible".get_class($objproduct), LOG_ERR);
+			return -1;
+		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
-		// TODO
+		// Get barcode type configuration for products if $type not set
+		if (empty($type)) {
+			$type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
+		}
 
 		// Get Mask value
-		$mask = '';
-		if (!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) $mask = $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
 
-		if (empty($mask))
-		{
+		if (empty($mask)) {
 			$this->error = 'NotConfigured';
 			return '';
 		}
 
-		$field = 'barcode'; $where = '';
+		$field = 'barcode';
+		$where = '';
 
 		$now = dol_now();
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
+		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
+		if ((substr($numFinal, -1) == '*') or (substr($numFinal, -1) == '?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
+			$literaltype = '';
+			$literaltype = $this->literalBarcodeType($db, (int) $type);//get literal_Barcode_Type
+			switch ($literaltype) {
+				case 'EAN13': //EAN13 rowid = 2
+					if (strlen($numFinal) == 13) {// be sure that the mask length is correct for EAN13
+						$ean = substr($numFinal, 0, 12); //take first 12 digits
+						$eansum = barcode_gen_ean_sum($ean);
+						$ean .= $eansum; //substitute the las character by the key
+						$numFinal = $ean;
+					}
+					break;
+					// Other barcode cases with key could be written here
+				default:
+					break;
+			}
+		}
+		//End barcode with key
 
-		return  $numFinal;
+		return $numFinal;
 	}
 
 
@@ -181,18 +235,21 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *
 	 *	@param	DoliDB		$db					Database handler
 	 *	@param	string		$code				Code to check/correct
-	 *	@param	Product		$product			Object product
-	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *	@param	Product|Societe	$product			Object product
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
-	 *  @return int								0 if OK
-	 * 											-1 ErrorBadCustomerCodeSyntax
-	 * 											-2 ErrorCustomerCodeRequired
-	 * 											-3 ErrorCustomerCodeAlreadyUsed
-	 * 											-4 ErrorPrefixRequired
+	 *  @return int<-7,0>						0 if OK
+	 * 											-1 ErrorBadProductCodeSyntax
+	 * 											-2 ErrorProductCodeRequired
+	 * 											-3 ErrorProductCodeAlreadyUsed
+	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $product, $thirdparty_type, $type)
 	{
-		global $conf;
+		if (!$product instanceof Product) {
+			dol_syslog(get_class($this)."::verif called with ".get_class($product)." Expected Product", LOG_ERR);
+			return -7;
+		}
 
 		//var_dump($code.' '.$product->ref.' '.$thirdparty_type);exit;
 
@@ -200,37 +257,22 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$result = 0;
 		$code = strtoupper(trim($code));
-
-		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK))
-		{
+		if (empty($code) && $this->code_null) {
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)))
-		{
+		} elseif (empty($code) && !$this->code_null && getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
 			$result = -2;
-		}
-		else
-		{
-			if ($this->verif_syntax($code, $type) >= 0)
-			{
+		} else {
+			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $product);
-				if ($is_dispo <> 0)
-				{
+				if ($is_dispo != 0) {
 					$result = -3;
-				}
-				else
-				{
+				} else {
 					$result = 0;
 				}
-			}
-			else
-			{
-				if (dol_strlen($code) == 0)
-				{
+			} else {
+				if (dol_strlen($code) == 0) {
 					$result = -2;
-				}
-				else
-				{
+				} else {
 					$result = -1;
 				}
 			}
@@ -241,59 +283,56 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return if a code is used (by other element)
 	 *
-	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	DoliDB		$db			Handler access base
 	 *	@param	string		$code		Code to check
-	 *	@param	Product		$product	Objet product
+	 *	@param	Product		$product	Object product
 	 *	@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $product)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE barcode = '".$code."'";
-		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
+		$sql .= " WHERE barcode = '".$db->escape($code)."'";
+		$sql .= " AND entity IN (".getEntity('product').")";
+
+		if ($product->id > 0) {
+			$sql .= " AND rowid <> ".$product->id;
+		}
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			if ($db->num_rows($resql) == 0)
-			{
+		if ($resql) {
+			if ($db->num_rows($resql) == 0) {
 				return 0;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return if a barcode value match syntax
 	 *
 	 *	@param	string	$codefortest	Code to check syntax
-     *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
+	 *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
 	 *	@return	int						0 if OK, <0 if KO
 	 */
 	public function verif_syntax($codefortest, $typefortest)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$result = 0;
 
 		// Get Mask value
-		$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? '' : $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
-		if (!$mask)
-		{
+		$mask = !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK') ? '' : $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return -1;
 		}
@@ -302,19 +341,19 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$newcodefortest = $codefortest;
 
-        // Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
-        if (in_array($typefortest, array('EAN13', 'ISBN')))	// We remove the CRC char not included into mask
-        {
-            if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
-            {
-                if (strlen($reg[1]) == 12) $newcodefortest = substr($newcodefortest, 0, 12);
-                dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
-            }
-        }
+		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
+		if (in_array($typefortest, array('EAN13', 'ISBN'))) {	// We remove the CRC char not included into mask
+			$reg = array();
+			if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg)) {
+				if (strlen($reg[1]) == 12) {
+					$newcodefortest = substr($newcodefortest, 0, 12);
+				}
+				dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
+			}
+		}
 
 		$result = check_value($mask, $newcodefortest);
-		if (is_string($result))
-		{
+		if (is_string($result)) {
 			$this->error = $result;
 			return -1;
 		}

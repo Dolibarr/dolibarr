@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +30,14 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/user/class/usergroup.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -44,253 +47,169 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UserGroupTest extends PHPUnit\Framework\TestCase
+class UserGroupTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * testUserGroupCreate
+	 *
+	 * @return	void
+	 */
+	public function testUserGroupCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return UserGroupTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+		$localobject = new UserGroup($db);
+		$localobject->initAsSpecimen();
+		$result = $localobject->create($user);
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+	/**
+	 * testUserGroupFetch
+	 *
+	 * @param   int $id             Id of group
+	 * @return  void
+	 * @depends testUserGroupCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserGroupFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+		$localobject = new UserGroup($db);
+		$result = $localobject->fetch($id);
 
-        print __METHOD__."\n";
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		return $localobject;
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+	/**
+	 * testUserGroupUpdate
+	 *
+	 * @param   UserGroup $localobject Group
+	 * @return  void
+	 * @depends testUserGroupFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserGroupUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        print __METHOD__."\n";
-    }
+		$localobject->note = 'New note after update';
+		$result = $localobject->update($user);
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-    */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * testUserGroupAddRight
+	 *
+	 * @param   UserGroup $localobject Object to show
+	 * @return  void
+	 * @depends testUserGroupUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserGroupAddRight($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+		$result = $localobject->addrights(1, 'bookmarks');
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-    /**
-     * testUserGroupCreate
-     *
-     * @return	void
-     */
-    public function testUserGroupCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-        $localobject=new UserGroup($this->savdb);
-        $localobject->initAsSpecimen();
-        $result=$localobject->create($user);
+	/**
+	 * testUserGroupDelRight
+	 *
+	 * @param   UserGroup $localobject Object
+	 * @return  void
+	 * @depends testUserGroupAddRight
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserGroupDelRight($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-        return $result;
-    }
+		$result = $localobject->delrights(1, 'bookmarks');
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-    /**
-     * testUserGroupFetch
-     *
-     * @param   int $id             Id of group
-     * @return  void
-     * @depends testUserGroupCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserGroupFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-        $localobject=new UserGroup($this->savdb);
-        $result=$localobject->fetch($id);
+	/**
+	 * testUserGroupOther
+	 *
+	 * @param   UserGroup $localobject Object
+	 * @return  void
+	 * @depends testUserGroupDelRight
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserGroupOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." id=".$id." result=".$result."\n";
-        return $localobject;
-    }
+		$result = $localobject->generateDocument('templatenamethadoesnotexist', $langs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(-1, $result, 'Calling generateDocument with a not existing template should return 0');
 
-    /**
-     * testUserGroupUpdate
-     *
-     * @param   Object $localobject Group
-     * @return  void
-     * @depends testUserGroupFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserGroupUpdate($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return $localobject->id;
+	}
 
-        $localobject->note='New note after update';
-        $result=$localobject->update($user);
+	/**
+	 * testUserGroupDelete
+	 *
+	 * @param   int $id             Id of object
+	 * @return  void
+	 * @depends testUserGroupOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserGroupDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		$localobject = new UserGroup($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
-    /**
-     * testUserGroupAddRight
-     *
-     * @param   Object $localobject Object to show
-     * @return  void
-     * @depends testUserGroupUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserGroupAddRight($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $result=$localobject->addrights(1, 'bookmarks');
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
-
-    /**
-     * testUserGroupDelRight
-     *
-     * @param   Object $localobject Object
-     * @return  void
-     * @depends testUserGroupAddRight
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserGroupDelRight($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $result=$localobject->delrights(1, 'bookmarks');
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
-
-    /**
-     * testUserGroupOther
-     *
-     * @param   Object $localobject Object
-     * @return  void
-     * @depends testUserGroupDelRight
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserGroupOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
-
-        /*$localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-        */
-        return $localobject->id;
-    }
-
-    /**
-     * testUserGroupDelete
-     *
-     * @param   int $id             Id of object
-     * @return  void
-     * @depends testUserGroupOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testUserGroupDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new UserGroup($this->savdb);
-        $result=$localobject->fetch($id);
-        $result=$localobject->delete($user);
-
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $result;
-    }
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

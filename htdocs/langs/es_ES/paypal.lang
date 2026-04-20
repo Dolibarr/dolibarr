@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuración del módulo PayPal
-PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
+PaypalDesc=Este módulo permite el pago por parte de los clientes a través de <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a>. Esto se puede utilizar para un pago ad-hoc o para un pago relacionado con un objeto Dolibarr (factura, pedido, ...)
 PaypalOrCBDoPayment=Pagar con Paypal (tarjeta de crédito o Paypal)
 PaypalDoPayment=Continuar el pago mediante Paypal
 PAYPAL_API_SANDBOX=Modo de pruebas (sandbox)
@@ -25,7 +25,7 @@ DoExpressCheckoutPaymentAPICallFailed=Llamada a la API DoExpressCheckoutPayment 
 DetailedErrorMessage=Mensaje de error detallado
 ShortErrorMessage=Mensaje de error Corto
 ErrorCode=Código de error
-ErrorSeverityCode=Gravedad del Código de error 
+ErrorSeverityCode=Gravedad del Código de error
 OnlinePaymentSystem=Sistema de pago online
 PaypalLiveEnabled=Paypal en vivo habilitado (de lo contrario, modo prueba/sandbox)
 PaypalImportPayment=Importe pagos Paypal
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Se realizó una reversión en todas las accio
 ValidationOfPaymentFailed=La validación del pago Paypal ha fallado
 CardOwner=Titular de la tarjeta
 PayPalBalance=Crédito paypal
+OnlineSubscriptionPaymentLine=Suscripción en línea registrada en %s <br> Pagada a través de %s <br> Dirección IP de origen: %s <br> ID de transacción: %s

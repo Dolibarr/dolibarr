@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +17,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var CommonObject $this
+ * @var Translate $langs
+ * @var User $user
+ * @var string $canvas
+ */
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 $contact = $GLOBALS['objcanvas']->control->object;
@@ -34,7 +42,9 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['error']; ?>
 
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>
-<?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
+<?php if ($this->control->tpl['js_checkVatPopup']) {
+	echo $this->control->tpl['js_checkVatPopup'];
+} ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
@@ -49,22 +59,9 @@ $contact = $GLOBALS['objcanvas']->control->object;
 
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('ThirdPartyName'); ?></span></td>
-	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
+	<td colspan="3"><input type="text" size="40" maxlength="60" name="name" value="<?php echo $this->control->tpl['name']; ?>"></td>
 </tr>
 
-<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
-<tr>
-	<td><?php echo $langs->trans("Prefix"); ?></td>
-	<td colspan="3">
-	<?php if (($this->control->tpl['prefix_customercode'] || $this->control->tpl['prefix_suppliercode']) && $this->control->tpl['prefix_comm']) { ?>
-	<input type="hidden" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
-		<?php echo $this->control->tpl['prefix_comm']; ?>
-	<?php } else { ?>
-	<input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
-	<?php } ?>
-	</td>
-</tr>
-<?php } ?>
 
 <tr>
 	<td width="25%"><span class="fieldrequired"><?php echo $langs->trans('ProspectCustomer'); ?></span></td>
@@ -75,7 +72,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_customercode']) { ?>
-				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="15">
+				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['customercode']; ?>
 				<input type="hidden" name="code_client" value="<?php echo $this->control->tpl['customercode']; ?>">
@@ -96,7 +93,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_suppliercode']) { ?>
-				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="15">
+				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['suppliercode']; ?>
 				<input type="hidden" name="code_fournisseur" value="<?php echo $this->control->tpl['suppliercode']; ?>">
@@ -116,10 +113,10 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
 		<?php
-    }
+	}
 }
 
-if (!empty($conf->barcode->enabled)) { ?>
+if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -128,7 +125,7 @@ if (!empty($conf->barcode->enabled)) { ?>
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adress" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="address" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>
@@ -151,6 +148,8 @@ if (!empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><input type="text" name="phone" value="<?php echo $this->control->tpl['phone']; ?>"></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><input type="text" name="phone_mobile" value="<?php echo $this->control->tpl['phone_mobile']; ?>"></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><input type="text" name="fax" value="<?php echo $this->control->tpl['fax']; ?>"></td>
 </tr>
@@ -165,15 +164,23 @@ if (!empty($conf->barcode->enabled)) { ?>
 <?php
 for ($i = 1; $i <= 4; $i++) {
 	if ($this->control->tpl['langprofid'.$i] != '-') {
-		if ($i == 1 || $i == 3) echo '<tr>';
+		if ($i == 1 || $i == 3) {
+			echo '<tr>';
+		}
 		echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
 		echo '<td>'.$this->control->tpl['showprofid'.$i].'</td>';
-		if ($i == 2 || $i == 4) echo '</tr>';
+		if ($i == 2 || $i == 4) {
+			echo '</tr>';
+		}
 	} else {
-		if ($i == 1 || $i == 3) echo '<tr>';
+		if ($i == 1 || $i == 3) {
+			echo '<tr>';
+		}
 		echo '<td>&nbsp;</td>';
 		echo '<td>&nbsp;</td>';
-		if ($i == 2 || $i == 4) echo '</tr>';
+		if ($i == 2 || $i == 4) {
+			echo '</tr>';
+		}
 	}
 }
 ?>
@@ -202,22 +209,24 @@ for ($i = 1; $i <= 4; $i++) {
 	<td><?php echo $this->control->tpl['select_workforce']; echo $this->control->tpl['info_admin']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
 </tr>
 <?php }
 
-if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 </table>
 <br>
 
 <div class="center">
-<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
+<input type="submit" class="button button-save" name="save" value="<?php echo $langs->trans("Save"); ?>">
 &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+<input type="submit" class="button button-cancel" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 </div>
 
 </form>

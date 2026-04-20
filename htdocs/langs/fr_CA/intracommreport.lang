@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - intracommreport
+IntraCommReport=Rapport Intracomm
+Module68000Name =Rapport Intracomm
+Module68000Desc =Gestion des rapports intracomm (Support du format français DEB/DES)
+IntracommReportSetup =Configuration du module Intracommreport
+IntracommReportAbout =À propos d'intracommreport
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de défi
+MenuIntracommReport=Rapport Intracomm
+TypeOfDeclaration=Type de déclaration
+IntracommReportTitle=Préparation d'un fichier XML au format ProDouane
+IntracommReportList=Liste des déclarations générées
+IntracommReportTypeDeclaration=Type de déclaration
+IntracommReportDownload=télécharger le fichier XML
+DeleteIntraCommReport=Supprimer le rapport IntraComm

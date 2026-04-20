@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +22,29 @@
  *  \brief      Page to show Performance information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("install", "other", "admin", "products", "mrp", "accountancy"));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
-if (GETPOST('action', 'aZ09') == 'donothing')
-{
+if (GETPOST('action', 'aZ09') == 'donothing') {
 	exit;
 }
 
@@ -45,141 +56,167 @@ if (GETPOST('action', 'aZ09') == 'donothing')
 $form = new Form($db);
 $nowstring = dol_print_date(dol_now(), 'dayhourlog');
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_perf');
 
 print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
-print $langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span>';
+print ' &nbsp; &nbsp; ';
+print '<a href="'.$_SERVER["PHP_SELF"].'">';
+print img_picto($langs->trans("Reload"), 'refresh').' ';
+print $langs->trans("Reload");
+print '</a>';
+print '<br>';
+print '<br>';
 
-// Recupere la version de PHP
+
+print '<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("Version").'</strong><br>';
+print '<div class="divsection">';
+
+// Get PHP version
 $phpversion = version_php();
-print "<br><strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."<br>\n";
+print "<strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."\n";
 
-// Recupere la version du serveur web
+// Get version web server
 print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+
+print '</div>';
+
 
 // XDebug
 print '<br>';
-print '<strong>'.$langs->trans("XDebug").'</strong>: ';
-$test = !function_exists('xdebug_is_enabled');
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
-	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("XDebug").'</strong><br>';
+print '<div class="divsection">';
+$test = !function_exists('xdebug_is_debugger_active');
+if ($test) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NotInstalled").'  <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
+} else {
+	print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
 }
 print '<br>';
+print '</div>';
 
 // Module log
 print '<br>';
-print '<strong>'.$langs->trans("Syslog").'</strong>: ';
-$test = empty($conf->syslog->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
-	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("Syslog").'</strong><br>';
+print '<div class="divsection">';
+$test = !isModEnabled('syslog');
+if ($test) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NotInstalled").'  <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
+} else {
+	if (getDolGlobalInt('SYSLOG_LEVEL') > LOG_NOTICE) {
+		print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), getDolGlobalInt('SYSLOG_LEVEL'));
+	}
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
+print '</div>';
 
 // Module debugbar
 print '<br>';
-print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
-	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
-    //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("DebugBar").'</strong><br>';
+print '<div class="divsection">';
+$test = !isModEnabled('debugbar');
+if ($test) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NotInstalled").' <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
+} else {
+	print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
+print '</div>';
 
 // Applicative cache
 print '<br>';
-print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
-$test = !empty($conf->memcached->enabled);
-if ($test)
-{
-	if (!empty($conf->global->MEMCACHED_SERVER))
-	{
-		print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("ApplicativeCache").'</strong><br>';
+print '<div class="divsection">';
+$test = isModEnabled('memcached');
+if ($test) {
+	if (getDolGlobalString('MEMCACHED_SERVER')) {
+		print $langs->trans("MemcachedAvailableAndSetup");
 		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
-	}
-	else
-	{
-		print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
+	} else {
+		print $langs->trans("MemcachedModuleAvailableButNotSetup");
 		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	}
+} else {
+	print $langs->trans("MemcachedNotAvailable");
 }
-else print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
 print '</br>';
+print '</div>';
 
 // OPCode cache
 print '<br>';
-print '<strong>'.$langs->trans("OPCodeCache").'</strong>: ';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("OPCodeCache").'</strong><br>';
+print '<div class="divsection">';
 $foundcache = 0;
 $test = function_exists('xcache_info');
-if (!$foundcache && $test)
-{
+if (!$foundcache && $test) {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "XCache");
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("PHPModuleLoaded", "XCache");
 	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php">Xcache admin page</a>';
 }
 $test = function_exists('eaccelerator_info');
-if (!$foundcache && $test)
-{
+if (!$foundcache && $test) {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "Eaccelerator");
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("PHPModuleLoaded", "Eaccelerator");
 }
 $test = function_exists('opcache_get_status');
-if (!$foundcache && $test)
-{
+if (!$foundcache && $test) {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "ZendOPCache"); // Should be by default starting with PHP 5.5
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("PHPModuleLoaded", "ZendOPCache"); // Should be by default starting with PHP 5.5
 	//$tmp=opcache_get_status();
 	//var_dump($tmp);
 }
 $test = function_exists('apc_cache_info');
-if (!$foundcache && $test)
-{
+if (!$foundcache && $test) {
 	//var_dump(apc_cache_info());
-	if (ini_get('apc.enabled'))
-	{
+	if (ini_get('apc.enabled')) {
 		$foundcache++;
-		print img_picto('', 'tick.png').' '.$langs->trans("APCInstalled");
-	}
-	else
-	{
-		print img_picto('', 'warning').' '.$langs->trans("APCCacheInstalledButDisabled");
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("PHPModuleLoaded", "APCCache");
+	} else {
+		print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("APCCacheInstalledButDisabled");
 	}
 }
-if (!$foundcache) print $langs->trans("NoOPCodeCacheFound");
+if (!$foundcache) {
+	print $langs->trans("NoOPCodeCacheFound");
+}
 print '<br>';
+print '</div>';
 
 // Use of preload bootstrap
-if (ini_get('opcache.preload'))
-{
-	print '<br>';
-	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
+print '<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("PreloadOPCode").'</strong><br>';
+print '<div class="divsection">';
+if (ini_get('opcache.preload')) {
 	print ini_get('opcache.preload');
-}
-else
-{
-	print '<br>';
-	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
-	print $langs->trans("No");
+} else {
+	print img_picto('', 'minus', 'class="pictofixedwidth"').' '.$langs->trans("No");
 }
 print '<br>';
+print '</div>';
 
 // HTTPCacheStaticResources
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
   var getphpurl;
   var cachephpstring;
   var compphpstring;
   getphpurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/index.php\',
+	data: { token: \''.currentToken().'\' },
+    url: \''.DOL_URL_ROOT.'/public/notice.php\',
     cache: false,
     /* async: false, */
     /* crossDomain: true,*/
@@ -200,7 +237,7 @@ jQuery(document).ready(function() {
       	compphpstring=getphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compphpstring);*/
-      	if (compphpstring == null || (compphpstring.indexOf("gzip") == -1 && compphpstring.indexOf("deflate") == -1))
+      	if (compphpstring == null || (compphpstring.indexOf("gzip") == -1 && compphpstring.indexOf("deflate") == -1  && compphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompphpok").hide();
       		jQuery("#httpcompphpko").show();
@@ -218,10 +255,11 @@ jQuery(document).ready(function() {
   var compcssstring;
   getcssurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/includes/jquery/css/base/jquery-ui.css\',
+	data: { token: \'notrequired\' },
+    url: \''.DOL_URL_ROOT.'/public/includes/jquery/css/base/jquery-ui.css\',
     cache: false,
     /* async: false, */
-    /*crossDomain: true, */
+    /* crossDomain: true, */
     success: function () {
       	cachecssstring=getcssurl.getResponseHeader(\'Cache-Control\');
       	/* alert(\'css:\'+getcssurl.getAllResponseHeaders()); */
@@ -239,7 +277,7 @@ jQuery(document).ready(function() {
       	compcssstring=getcssurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getcssurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compcssstring);*/
-      	if (compcssstring == null || (compcssstring.indexOf("gzip") == -1 && compcssstring.indexOf("deflate") == -1))
+      	if (compcssstring == null || (compcssstring.indexOf("gzip") == -1 && compcssstring.indexOf("deflate") == -1 && compcssstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompcssok").hide();
       		jQuery("#httpcompcssko").show();
@@ -257,10 +295,11 @@ jQuery(document).ready(function() {
   var compcssphpstring;
   getcssphpurl = $.ajax({
     type: "GET",
+	data: { token: \''.currentToken().'\' },
     url: \''.DOL_URL_ROOT.'/theme/eldy/style.css.php\',
     cache: false,
     /* async: false, */
-    /*crossDomain: true,*/
+    /* crossDomain: true,*/
     success: function () {
       	cachecssphpstring=getcssphpurl.getResponseHeader(\'Cache-Control\');
       	/* alert(\'cssphp:\'+getcssphpurl.getAllResponseHeaders()); */
@@ -278,7 +317,7 @@ jQuery(document).ready(function() {
       	compcssphpstring=getcssphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getcssphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compcssphpstring);*/
-      	if (compcssphpstring == null || (compcssphpstring.indexOf("gzip") == -1 && compcssphpstring.indexOf("deflate") == -1))
+      	if (compcssphpstring == null || (compcssphpstring.indexOf("gzip") == -1 && compcssphpstring.indexOf("deflate") == -1 && compcssphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompcssphpok").hide();
       		jQuery("#httpcompcssphpko").show();
@@ -296,10 +335,11 @@ jQuery(document).ready(function() {
   var compimgstring;
   getimgurl = $.ajax({
     type: "GET",
+	data: { token: \'notrequired\' },
     url: \''.DOL_URL_ROOT.'/theme/eldy/img/help.png\',
     cache: false,
     /* async: false, */
-    /*crossDomain: true,*/
+    /* crossDomain: true,*/
     success: function () {
       	cacheimgstring=getimgurl.getResponseHeader(\'Cache-Control\');
       	/* alert(\'img:\'+getimgurl.getAllResponseHeaders()); */
@@ -317,7 +357,7 @@ jQuery(document).ready(function() {
       	compimgstring=getimgurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getimgurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compimgstring);*/
-      	if (compimgstring == null || (compimgstring.indexOf("gzip") == -1 && compimgstring.indexOf("deflate") == -1))
+      	if (compimgstring == null || (compimgstring.indexOf("gzip") == -1 && compimgstring.indexOf("deflate") == -1 && compimgstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompimgok").hide();
       		jQuery("#httpcompimgko").show();
@@ -335,6 +375,7 @@ jQuery(document).ready(function() {
   var compjsstring;
   getjsurl = $.ajax({
     type: "GET",
+	data: { token: \'notrequired\' },
     url: \''.DOL_URL_ROOT.'/core/js/lib_rare.js\',
     cache: false,
     /* async: false, */
@@ -356,7 +397,7 @@ jQuery(document).ready(function() {
       	compjsstring=getjsurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'js:\'+getjsurl.getAllResponseHeaders()); */
       	/*alert(\'js:\'+compjsstring);*/
-      	if (compjsstring == null || (compjsstring.indexOf("gzip") == -1 && compjsstring.indexOf("deflate") == -1))
+      	if (compjsstring == null || (compjsstring.indexOf("gzip") == -1 && compjsstring.indexOf("deflate") == -1 && compjsstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompjsok").hide();
       		jQuery("#httpcompjsko").show();
@@ -374,6 +415,7 @@ jQuery(document).ready(function() {
   var compjsphpstring;
   getjsphpurl = $.ajax({
     type: "GET",
+	data: { token: \''.currentToken().'\' },
     url: \''.DOL_URL_ROOT.'/core/js/lib_head.js.php\',
     cache: false,
     /* async: false, */
@@ -395,7 +437,7 @@ jQuery(document).ready(function() {
       	compjsphpstring=getjsphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getjsphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compjsphpstring);*/
-      	if (compjsphpstring == null || (compjsphpstring.indexOf("gzip") == -1 && compjsphpstring.indexOf("deflate") == -1))
+      	if (compjsphpstring == null || (compjsphpstring.indexOf("gzip") == -1 && compjsphpstring.indexOf("deflate") == -1 && compjsphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompjsphpok").hide();
       		jQuery("#httpcompjsphpko").show();
@@ -413,151 +455,352 @@ jQuery(document).ready(function() {
 
 
 print '<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
 print $form->textwithpicto($langs->trans("CacheByServer"), $langs->trans("CacheByServerDesc"));
-print ':</strong><br>';
-// No cahce on PHP
-//print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
-//print '<div id="httpcachephpko">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
+print '</strong><br>';
+print '<div class="divsection">';
+// No cache on PHP
+//print '<div id="httpcachephpok">'.img_picto('','warning').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
+//print '<div id="httpcachephpko">'.img_picto('','tick').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
 // Cache on rest
-print '<div id="httpcachecssok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'css (.css)').'</div>';
-print '<div id="httpcachecssko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'css (.css)').'</div>';
-print '<div id="httpcachecssphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'css (.css.php)').'</div>';
-print '<div id="httpcachecssphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'css (.css.php)').'</div>';
-print '<div id="httpcacheimgok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'img (.png)').'</div>';
-print '<div id="httpcacheimgko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'img (.png)').'</div>';
-print '<div id="httpcachejsok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'javascript (.js)').'</div>';
-print '<div id="httpcachejsko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js)').'</div>';
-print '<div id="httpcachejsphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'javascript (.js.php)').'</div>';
-print '<div id="httpcachejsphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js.php)').'</div>';
+print '<div id="httpcachecssok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCached", 'css (.css)').'</div>';
+print '<div id="httpcachecssko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCached", 'css (.css)').'</div>';
+print '<div id="httpcachecssphpok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCached", 'css (.css.php)').'</div>';
+print '<div id="httpcachecssphpko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCached", 'css (.css.php)').'</div>';
+print '<div id="httpcacheimgok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCached", 'img (.png)').'</div>';
+print '<div id="httpcacheimgko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCached", 'img (.png)').'</div>';
+print '<div id="httpcachejsok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCached", 'javascript (.js)').'</div>';
+print '<div id="httpcachejsko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js)').'</div>';
+print '<div id="httpcachejsphpok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCached", 'javascript (.js.php)').'</div>';
+print '<div id="httpcachejsphpko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js.php)').'</div>';
+print '</div>';
+
+
 print '<br>';
-print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
-print $langs->trans("CacheByClient").':</strong><br>';
-print $langs->trans("TestNotPossibleWithCurrentBrowsers").'<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - '.$langs->trans("CacheByClient").'</strong><br>';
+print '<div class="divsection">';
+print '<div id="httpcachebybrowser"><span class="opacitymedium">'.img_picto('', 'question.png', 'class="pictofixedwidth"').' '.$langs->trans("TestNotPossibleWithCurrentBrowsers").'</span></div>';
+print '</div>';
 
 
 // Compressions
 print '<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
 print '<strong>';
 print $form->textwithpicto($langs->trans("CompressionOfResources"), $langs->trans("CompressionOfResourcesDesc"));
-print '</strong>: ';
-//$tmp=getURLContent(DOL_URL_ROOT.'/index.php','GET');var_dump($tmp);
+print '</strong>';
 print '<br>';
+print '<div class="divsection">';
 // on PHP
-print '<div id="httpcompphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'php (.php)').'</div>';
-print '<div id="httpcompphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'php (.php)').'</div>';
+print '<div id="httpcompphpok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCompressed", 'php (.php)').'</div>';
+print '<div id="httpcompphpko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCompressed", 'php (.php)').'</div>';
 // on rest
-print '<div id="httpcompcssok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'css (.css)').'</div>';
-print '<div id="httpcompcssko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'css (.css)').'</div>';
-print '<div id="httpcompcssphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'css (.css.php)').'</div>';
-print '<div id="httpcompcssphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'css (.css.php)').'</div>';
-//print '<div id="httpcompimgok">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeCompressed",'img (.png)').'</div>';
-//print '<div id="httpcompimgko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'img (.png)').'</div>';
-print '<div id="httpcompjsok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'javascript (.js)').'</div>';
-print '<div id="httpcompjsko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'javascript (.js)').'</div>';
-print '<div id="httpcompjsphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'javascript (.js.php)').'</div>';
-print '<div id="httpcompjsphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'javascript (.js.php)').'</div>';
+print '<div id="httpcompcssok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCompressed", 'css (.css)').'</div>';
+print '<div id="httpcompcssko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCompressed", 'css (.css)').'</div>';
+print '<div id="httpcompcssphpok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCompressed", 'css (.css.php)').'</div>';
+print '<div id="httpcompcssphpko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCompressed", 'css (.css.php)').'</div>';
+//print '<div id="httpcompimgok">'.img_picto('','tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCompressed",'img (.png)').'</div>';
+//print '<div id="httpcompimgko">'.img_picto('','warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCompressed",'img (.png)').'</div>';
+print '<div id="httpcompjsok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCompressed", 'javascript (.js)').'</div>';
+print '<div id="httpcompjsko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCompressed", 'javascript (.js)').'</div>';
+print '<div id="httpcompjsphpok">'.img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeCompressed", 'javascript (.js.php)').'</div>';
+print '<div id="httpcompjsphpko">'.img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("FilesOfTypeNotCompressed", 'javascript (.js.php)').'</div>';
+print '</div>';
 
 // Database driver
 print '<br>';
-print '<strong>'.$langs->trans("DriverType").'</strong>: ';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("DriverType").'</strong>';
 print '<br>';
-if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
-{
+print '<div class="divsection">';
+if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli') {
 	$test = ($conf->db->type == 'mysqli');
-	if ($test)
-	{
-		print img_picto('', 'tick.png').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
-	}
-	else
-	{
-		print img_picto('', 'warning.png').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
+	if ($test) {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
+	} else {
+		print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
 	}
 	print '<br>';
 }
+print '</div>';
 
-// Product search
 print '<br>';
-print '<strong>'.$langs->trans("SearchOptim").'</strong>: ';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("ComboListOptim").'</strong>';
 print '<br>';
-$tab = array();
+print '<div class="divsection">';
+// Product combo list
 $sql = "SELECT COUNT(*) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 $resql = $db->query($sql);
-if ($resql)
-{
-	$limitforoptim = 10000;
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT', getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Thirdparty combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT', getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Contact combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT', getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Contacts"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Project combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."projet as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT', getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Projects"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Bom combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".$db->prefix()."bom_bom as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
-	if ($nb > $limitforoptim)
-	{
-		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
-		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('BOM_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Bom"), 'BOM_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Bom"), 'BOM_USE_SEARCH_TO_SELECT', getDolGlobalString('BOM_USE_SEARCH_TO_SELECT'));
 		}
-		else
-		{
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
-		}
+	} else {
+		print img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Bom"));
 	}
-	else
-	{
-		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
+	print '<br>';
+	$db->free($resql);
+}
+print '</div>';
+// Auxiliary account combo list (accounting)
+// Check performance for auxiliary accounts (third parties with accounting code + users with accountancy_code)
+$sql = "SELECT";
+$sql .= " (SELECT COUNT(*) FROM " . MAIN_DB_PREFIX . "societe";
+$sql .= "  WHERE entity IN (" . getEntity('societe') . ")";
+$sql .= "  AND (client IN (1,3) OR fournisseur = 1)";
+$sql .= "  AND (code_compta != '' OR code_compta_fournisseur != '')) as nb_soc,";
+$sql .= " (SELECT COUNT(*) FROM " . MAIN_DB_PREFIX . "user";
+$sql .= "  WHERE entity IN (" . getEntity('user') . ")";
+$sql .= "  AND accountancy_code != '') as nb_user";
+
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 2000;
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb_soc + (int) $obj->nb_user;
+
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+
+
+print '<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("SearchOptim").'</strong>';
+print '<br>';
+print '<div class="divsection">';
+// Product search
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 100000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
+			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE', getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 	}
 	print '<br>';
 	$db->free($resql);
 }
 
 // Thirdparty search
-$tab = array();
 $sql = "SELECT COUNT(*) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $resql = $db->query($sql);
-if ($resql)
-{
-	$limitforoptim = 10000;
+if ($resql) {
+	$limitforoptim = 100000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
-	$nb = $obj->nb;
-	if ($nb > $limitforoptim)
-	{
-		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))
-		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
+			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE', getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE'));
 		}
-		else
-		{
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
-		}
-	}
-	else
-	{
-		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 	}
 	print '<br>';
 	$db->free($resql);
 }
 
+// Perf advice on max size on list
+$MAXRECOMMENDED = 20;
+if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > $MAXRECOMMENDED) {
+	print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveALargeAmountOfRecordOnLists", getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT'), $MAXRECOMMENDED);
+} else {
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("MaxNbOfRecordOnListIsOk", getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT'), $MAXRECOMMENDED);
+}
+
+print '</div>';
+
+
 // Browser
+
 print '<br>';
-print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
-if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox')))
-{
-	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("Browser").'</strong><br>';
+print '<div class="divsection">';
+if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'))) {
+	print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
+} else {
+	print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
 }
-else
-{
-	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
+print '<br>';
+print '</div>';
+
+// Options
+print '<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("Options").'</strong><br>';
+print '<div class="divsection">';
+if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }
+print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
+print ': ';
+print yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
 print '<br>';
 
-// Database statistics update
-/*
+if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'minus', 'class="pictofixedwidth"');
+}
+print $form->textwithpicto($langs->trans('MAIN_ENABLE_AJAX_TOOLTIP'), $langs->trans("Option").' MAIN_ENABLE_AJAX_TOOLTIP');
+print ': ';
+print yn(getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP'));
 print '<br>';
-print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
+
+
+if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'minus', 'class="pictofixedwidth"');
+}
+print $form->textwithpicto($langs->trans('MAIN_CACHE_COUNT'), $langs->trans("Option").' MAIN_CACHE_COUNT');
+print ': ';
+print yn(getDolGlobalInt('MAIN_CACHE_COUNT'));
+//.' '.img_picto('', 'warning');
 print '<br>';
-*/
+
+print '</div>';
+
+
+
+// Experimental
+print '<br>';
+print img_picto('', 'folder', 'class="pictofixedwidth"');
+print '<strong>'.$langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')</strong><br>';
+print '<div class="divsection">';
+if (getDolGlobalInt('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST')) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'minus', 'class="pictofixedwidth"');
+}
+print $form->textwithpicto($langs->trans('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST'), $langs->trans("Option").' MAIN_DO_FETCH_IN_ONE_SQL_REQUEST');
+print ' = '.getDolGlobalString('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+//print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+print '</div>';
+
 
 // End of page
 llxFooter();

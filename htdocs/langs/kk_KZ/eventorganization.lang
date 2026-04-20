@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = Іс -шараны ұйымдастыру
+EventOrganizationDescription = Модульдік жоба арқылы оқиғаны ұйымдастыру
+EventOrganizationDescriptionLong= Іс-шараны ұйымдастыруды басқару (шоу, конференциялар, қатысушылар немесе спикерлер, ұсыныс, дауыс беру немесе тіркеу үшін ашық беттері бар)
+EventOrganizationMenuLeft = Ұйымдастырылған шаралар
+EventOrganizationConferenceOrBoothMenuLeft = Конференция немесе стенд
+PaymentEvent=Оқиғаның төлемі
+EventFee=Іс-шараның ақысы
+# Admin page
+NewRegistration=Тіркеу
+EventOrganizationSetup=Іс -шараны ұйымдастыру
+EventOrganization=Іс-шараны ұйымдастыру
+EventOrganizationSetupPage = Оқиғаны ұйымдастыру беті
+EVENTORGANIZATION_TASK_LABEL = Жоба расталған кезде автоматты түрде жасалатын тапсырмалар белгісі
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Тапсырмаларды автоматты түрде жасау қажет болмаса, бос қалдырыңыз.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Біреу конференция ұсынған кезде үшінші тараптарға автоматты түрде қосылатын санат
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Үшінші тараптарға стенд ұсынылған кезде автоматты түрде қосылатын санат
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Конференция туралы ұсынысты алғаннан кейін жіберілетін электрондық пошта үлгісі.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Стенд ұсынысын алғаннан кейін жіберілетін электрондық пошта үлгісі.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Стендке тіркелу төленгеннен кейін жіберілетін электрондық пошта үлгісі.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Оқиғаға тіркелу төленгеннен кейін жіберілетін электрондық пошта үлгісі.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Динамиктерге «Электрондық хаттарды жіберу» массасынан электрондық хаттарды жіберу кезінде пайдаланылатын электрондық пошта үлгісі
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Қатысушылар тізіміндегі «Электрондық хаттарды жіберу» массасынан электрондық хаттарды жіберу кезінде пайдаланылатын электрондық пошта үлгісі
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Қатысушыны жасау/қосу пішімінде санаттағы үшінші тұлғаларға үшінші тұлғалар тізімін шектейді
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Қатысушыны құру/қосу пішімінде үшінші тұлғалардың тізімін үшінші тұлғаларға сипатымен шектейді
+# Object
+OrganizedEvent=Ұйымдастырылған шара
+EventOrganizationConfOrBooth= Конференция немесе стенд
+EventOrganizationConfOrBoothes=Конференциялар немесе стендтер
+ManageOrganizeEvent = Іс-шараны ұйымдастыруды басқарыңыз
+ConferenceOrBooth = Конференция немесе стенд
+ConferenceOrBoothTab = Конференция немесе стенд
+AmountPaid = Төленген сома
+DateOfRegistration = Тіркеу күні
+ConferenceOrBoothAttendee = Конференцияға немесе стендке қатысушы
+ApplicantOrVisitor=Өтініш беруші немесе келуші
+Speaker=Спикер
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = Сіздің конференцияға сұранысыңыз қабылданды
+YourOrganizationEventBoothRequestWasReceived = Стендке сұранысыңыз қабылданды
+EventOrganizationEmailAskConf = Конференцияға сұраныс
+EventOrganizationEmailAskBooth = Стендке сұраныс
+EventOrganizationEmailBoothPayment = Сіздің стендіңіздің төлемі
+EventOrganizationEmailRegistrationPayment = Іс-шараға тіркелу
+EventOrganizationMassEmailAttendees = Қатысушыларға хабарлау
+EventOrganizationMassEmailSpeakers = Баяндамашылармен байланыс
+ToSpeakers=Спикерлерге
+# Event
+AllowUnknownPeopleSuggestConf=Адамдарға конференциялар ұсынуға мүмкіндік беріңіз
+AllowUnknownPeopleSuggestConfHelp=Белгісіз адамдарға өздері қалаған конференцияны ұсынуға рұқсат беріңіз
+AllowUnknownPeopleSuggestBooth=Адамдарға стендке өтініш беруге рұқсат етіңіз
+AllowUnknownPeopleSuggestBoothHelp=Бейтаныс адамдарға стендке өтініш беруге рұқсат етіңіз
+PriceOfRegistration=Тіркеу бағасы
+PriceOfRegistrationHelp=Тіркелу немесе шараға қатысу үшін төлейтін баға
+PriceOfBooth=Кабинаға жазылу бағасы
+PriceOfBoothHelp=Кабинаға жазылу бағасы
+EventOrganizationICSLinkProject=Оқиға үшін ICS сілтемесін жасаңыз
+EventOrganizationICSLink=Конференциялар үшін ICS сілтемесі
+ConferenceOrBoothInformation=Конференция немесе стенд туралы ақпарат
+ConferenceOrBoothFormat=Конференция немесе стенд режимі
+ConferenceOrBoothFormatID=Конференция немесе стенд режимінің идентификаторы
+ConferenceOrBoothFormatCode=Конференция немесе стенд режимінің коды
+ConferenceOrBoothFormatLabel=Конференция немесе стенд режимінің белгісі
+Attendees=Қатысушылар
+ListOfAttendeesOfEvent=Іс-шара жобаларына қатысушылардың тізімі
+ListOfConfOrBoothOfEvent=Конференциялар тізімі немесе оқиға жобаларының стендтері
+DownloadICSLink=Download ICS file
+EVENTORGANIZATION_SECUREKEY=Конференцияны ұсыну үшін жалпыға ортақ тіркеу бетінің кілтін қорғау үшін Seed
+SERVICE_BOOTH_LOCATION=Кабинаның орналасқан жері туралы шот -фактура жолы үшін қолданылатын қызмет
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Қатысушының оқиғаға жазылуы туралы шот-фактура жолында қолданылатын қызмет
+NbVotes=Дауыстар саны
+# Status
+EvntOrgDraft = Жоба
+EvntOrgSuggested = Ұсынылды
+EvntOrgConfirmed = Расталды
+EvntOrgNotQualified = Біліктілігі жоқ
+EvntOrgDone = Орындалды
+EvntOrgCancelled = Бас тартылды
+# Other
+SuggestForm = Ұсыныс беті
+SuggestOrVoteForConfOrBooth = Ұсыныс немесе дауыс беру үшін бет
+EvntOrgRegistrationHelpMessage = Мұнда сіз конференцияға дауыс бере аласыз немесе оқиғаға жаңасын ұсына аласыз. Сондай-ақ іс-шара кезінде стенд алу үшін өтініш бере аласыз.
+EvntOrgRegistrationConfHelpMessage = Мұнда сіз оқиға кезінде анимациялау үшін жаңа конференция ұсына аласыз.
+EvntOrgRegistrationBoothHelpMessage = Мұнда сіз іс-шара кезінде стендке тапсырыс бере аласыз.
+ListOfSuggestedConferences = Ұсынылған конференциялар тізімі
+ListOfSuggestedBooths=Ұсынылған стендтер
+ListOfConferencesOrBooths=Конференциялар немесе оқиға жобасының стендтері
+SuggestConference = Жаңа конференцияны ұсыныңыз
+SuggestBooth = Стенд ұсыну
+ViewAndVote = Ұсынылған оқиғаларды қарау және оларға дауыс беру
+PublicAttendeeSubscriptionGlobalPage = Оқиғаға тіркелу үшін жалпыға қолжетімді сілтеме
+PublicAttendeeSubscriptionPage = Тек осы оқиғаға тіркелу үшін жалпыға қолжетімді сілтеме
+MissingOrBadSecureKey = Қауіпсіздік кілті жарамсыз немесе жоқ
+EvntOrgWelcomeMessage = Бұл пішін оқиғаға жаңа қатысушы ретінде тіркелуге мүмкіндік береді
+EvntOrgDuration = Бұл конференция %s басталып, %s аяқталады.
+ConferenceAttendeeFee = Конференцияға қатысушылардың ақысы: «%s» - %s - %s аралығында.
+BoothLocationFee = Іс -шараның стендтік орны: '%s' %s мен %s аралығында болады
+EventType = Оқиға түрі
+LabelOfBooth=Стенд белгісі
+LabelOfconference=Конференция белгісі
+ConferenceIsNotConfirmed=Тіркеу мүмкін емес, конференция әлі расталмаған
+EventRegistrationAreClosed=Оқиғаларды тіркеу жабық
+DateMustBeBeforeThan=%s %s алдында болуы керек
+DateMustBeAfterThan=%s %s кейін болуы керек
+MaxNbOfAttendeesReached=Қатысушылардың максималды санына жетті
+NewSubscription=Тіркеу
+OrganizationEventConfRequestWasReceived=Конференцияға қатысты ұсынысыңыз қабылданды
+OrganizationEventBoothRequestWasReceived=Сіздің стенд туралы өтінішіңіз қабылданды
+OrganizationEventPaymentOfBoothWasReceived=Сіздің стенд үшін төлеміңіз жазылды
+OrganizationEventPaymentOfRegistrationWasReceived=Оқиғаны тіркеу үшін төлеген төлеміңіз жазылды
+OrganizationEventBulkMailToAttendees=Бұл сіздің іс-шараға қатысушы ретінде қатысқаныңызды еске салады
+OrganizationEventBulkMailToSpeakers=Бұл іс-шараға спикер ретінде қатысқаныңыз туралы еске салу
+OrganizationEventLinkToThirdParty=Үшінші тарапқа сілтеме (тұтынушы, жеткізуші немесе серіктес)
+OrganizationEvenLabelName=Конференцияның немесе стендтің жалпыға ортақ атауы
+NewSuggestionOfBooth=Стендке өтінім
+NewSuggestionOfConference=Конференция өткізуге өтініш
+EvntOrgRegistrationWelcomeMessage = Конференцияға немесе стенд ұсыныстарына қош келдіңіз.
+EvntOrgRegistrationConfWelcomeMessage = Конференцияның ұсыныс бетіне қош келдіңіз.
+EvntOrgRegistrationBoothWelcomeMessage = Стенд ұсыныстар бетіне қош келдіңіз.
+EvntOrgVoteHelpMessage = Мұнда сіз жобаға ұсынылған оқиғаларды көре және дауыс бере аласыз
+VoteOk = Сіздің дауысыңыз қабылданды.
+AlreadyVoted = Сіз бұл оқиғаға дауыс бердіңіз.
+VoteError = Дауыс беру кезінде қате пайда болды, қайталап көріңіз.
+SubscriptionOk=Сіздің тіркеуіңіз жазылды
+AmountOfRegistrationPaid=Төленген тіркеу сомасы
+ConfAttendeeSubscriptionConfirmation = Оқиғаға жазылуыңызды растау
+Attendee = Қатысушы
+PaymentConferenceAttendee = Конференцияға қатысушылардың төлемі
+PaymentBoothLocation = Букс орналасқан жерді төлеу
+DeleteConferenceOrBoothAttendee=Қатысушыны жою
+RegistrationAndPaymentWereAlreadyRecorder=Тіркеу және төлем <b>%s</b> электрондық поштасы үшін әлдеқашан жазылған.
+EmailAttendee=Қатысушы электрондық поштасы
+EmailCompany=Компанияның электрондық поштасы
+EmailCompanyForInvoice=Компанияның электрондық поштасы (шот-фактура үшін, егер қатысушының электрондық поштасынан өзгеше болса)
+ErrorSeveralCompaniesWithEmailContactUs=Осы электрондық поштасы бар бірнеше компания табылды, сондықтан тіркеуіңізді автоматты түрде растай алмаймыз. Қолмен тексеру үшін %s арқылы бізге хабарласыңыз.
+ErrorSeveralCompaniesWithNameContactUs=Осындай атаумен бірнеше компания табылды, сондықтан тіркеуіңізді автоматты түрде растай алмаймыз. Қолмен тексеру үшін %s арқылы бізге хабарласыңыз.
+NoPublicActionsAllowedForThisEvent=Бұл іс-шара үшін көпшілікке ашық акциялар жоқ
+MaxNbOfAttendees=Қатысушылардың максималды саны
+DateStartEvent=Оқиғаның басталу күні
+DateEndEvent=Оқиғаның аяқталу күні
+ModifyStatus=Күйді өзгерту
+ConfirmModifyStatus=Күйді өзгертуді растаңыз
+ConfirmModifyStatusQuestion=Таңдалған жазбаларды %s өзгерткіңіз келетініне сенімдісіз бе?
+RecordsUpdated=%s Жазбалар жаңартылды
+RecordUpdated=Жазба жаңартылды
+NoRecordUpdated=Жаңартылған жазба жоқ
+ProfitPerValidatedAttendee=Бір қатысушыға шаққандағы пайда
+Confirmed=Confirmed
+NotSelected=Not selected
+TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
+ShowedUp=Showed up

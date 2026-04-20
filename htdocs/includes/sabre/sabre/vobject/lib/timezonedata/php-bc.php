@@ -68,7 +68,6 @@ return [
     'Brazil/West',
     'Canada/Atlantic',
     'Canada/Central',
-    'Canada/East-Saskatchewan',
     'Canada/Eastern',
     'Canada/Mountain',
     'Canada/Newfoundland',
@@ -148,7 +147,6 @@ return [
     'US/Michigan',
     'US/Mountain',
     'US/Pacific',
-    'US/Pacific-New',
     'US/Samoa',
     'WET',
 ];

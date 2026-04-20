@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = นโยบายความเป็นส่วนตัวของข้อมูล
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = โมดูลในการจัดการความเป็นส่วนตัวของข้อมูล (สอดคล้องกับ GDPR)
+# Administration page
+datapolicySetup = การตั้งค่านโยบายความเป็นส่วนตัวของข้อมูลโมดูล
+DataDeletion=การลบข้อมูล
+DataAnonymization=การทำให้ข้อมูลไม่ระบุตัวตน
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = ข้อมูลส่วนบุคคลจะต้องถูกเก็บรักษาไว้เป็นระยะเวลาไม่เกินระยะเวลาที่ต้องการข้อมูลเพื่อวัตถุประสงค์ในการรวบรวมข้อมูล ยกเว้นเพื่อวัตถุประสงค์ในการเก็บถาวร ขึ้นอยู่กับกฎหมายของประเทศของคุณ (ตัวอย่าง <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">มาตรา 5</a> ของ GDPR) โดยโมดูลนี้จะทำการทำให้ไม่ระบุตัวตนโดยอัตโนมัติหลังจากระยะเวลาหนึ่งโดยไม่มีเหตุการณ์ใดๆ (ระยะเวลาที่คุณจะระบุไว้ด้านล่าง) และหากวัตถุนั้นไม่มีวัตถุทางธุรกิจย่อยที่มีอยู่
+NB_MONTHS = %s เดือน
+ONE_YEAR = 1 ปี
+NB_YEARS = %s ปี
+DATAPOLICY_TIERS_CLIENT = ลูกค้า
+DATAPOLICY_TIERS_PROSPECT = โอกาส
+DATAPOLICY_TIERS_PROSPECT_CLIENT = ผู้มีแนวโน้มจะเป็นลูกค้า/ลูกค้า
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = หรือผู้มีโอกาสเป็นลูกค้า/หรือลูกค้า
+DATAPOLICY_TIERS_FOURNISSEUR = ผู้ผลิต
+DATAPOLICY_CONTACT_CLIENT = ลูกค้า
+DATAPOLICY_CONTACT_PROSPECT = โอกาส
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = ผู้มีแนวโน้มจะเป็นลูกค้า/ลูกค้า
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = หรือผู้มีโอกาสเป็นลูกค้า/หรือลูกค้า
+DATAPOLICY_CONTACT_FOURNISSEUR = ผู้ผลิต
+DATAPOLICY_ADHERENT = สมาชิก
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = คุณสามารถส่งอีเมล GDPR ไปยังผู้ติดต่อที่เกี่ยวข้องทั้งหมดของคุณ (ผู้ที่ยังไม่ได้รับอีเมลและคุณยังไม่ได้ลงทะเบียนอะไรเกี่ยวกับข้อตกลง GDPR ของพวกเขา) เมื่อต้องการทำเช่นนี้ ใช้ปุ่มต่อไปนี้
+SendAgreement = ส่งอีเมลล์
+AllAgreementSend = ส่งอีเมลทั้งหมดแล้ว
+TXTLINKDATAPOLICYACCEPT = ข้อความสำหรับลิงก์ "ข้อตกลง"
+TXTLINKDATAPOLICYREFUSE = ข้อความสำหรับลิงก์ "ความขัดแย้ง"
+DelayForAnonymization=การล่าช้าในการทำให้ไม่ระบุตัวตน
+DelayForDeletion=การล่าช้าในการลบ
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR : การประมวลผลข้อมูลส่วนบุคคล
+DATAPOLICY_consentement = ได้รับความยินยอมในการประมวลผลข้อมูลส่วนบุคคล
+DATAPOLICY_opposition_traitement = คัดค้านการประมวลผลข้อมูลส่วนบุคคลของเขา
+DATAPOLICY_opposition_prospection = คัดค้านการประมวลผลข้อมูลส่วนบุคคลของเขาเพื่อวัตถุประสงค์ในการค้นหา
+# Notes added during an anonymization
+DATAPOLICY_date = วันที่ตกลง/ไม่ตกลง GDPR
+DATAPOLICY_send = ส่งอีเมลข้อตกลงวันที่แล้ว
+MailSent = ได้ส่งอีเมล
+NUMBER_MONTH_BEFORE_DELETION = จำนวนเดือนก่อนการลบ
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2014-2019  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +24,33 @@
  * \brief		Setup page to configure salaries module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'salaries'));
 
 // Security check
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters SALARIES_*
 $list = array(
@@ -47,26 +61,30 @@ $list = array(
  * Actions
  */
 
-if ($action == 'update')
-{
-    $error = 0;
+if ($action == 'update') {
+	$error = 0;
 
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+$reg = array();
+if (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
+	// Set boolean (on/off) constants
+	if (!dolibarr_set_const($db, $reg[2], ($reg[1] === 'set' ? '1' : '0'), 'chaine', 0, '', $conf->entity) > 0) {
+		dol_print_error($db);
+	}
 }
 
 /*
@@ -76,14 +94,16 @@ if ($action == 'update')
 llxHeader('', $langs->trans('SalariesSetup'));
 
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+if (isModEnabled('accounting')) {
+	$formaccounting = new FormAccounting($db);
+}
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans('SalariesSetup'), $linkback, 'title_setup');
 
 $head = salaries_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Salaries"), -1, 'payment');
+print dol_get_fiche_head($head, 'general', $langs->trans("Salaries"), -1, 'payment');
 
 // Document templates
 print load_fiche_titre($langs->trans("Options"), '', '');
@@ -101,8 +121,7 @@ print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="60">'.$langs->trans("Value")."</td>\n";
 print "</tr>\n";
 
-foreach ($list as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -111,13 +130,10 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	if (!empty($conf->accounting->enabled))
-	{
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	}
-	else
-	{
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	if (isModEnabled('accounting')) {
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, array(), 1, 1);
+	} else {
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
 	print '</td></tr>';
 }
@@ -126,11 +142,25 @@ print '</tr>';
 
 print "</table>\n";
 
-//dol_fiche_end();
+//print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
-print '</form>';
+print '</form><br>';
+
+echo '<div>';
+echo '<table class="noborder centpercent">';
+echo '<thead>';
+echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
+echo '</thead>';
+echo '<tbody>';
+
+$key = 'CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT';
+echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
+
+echo '</tbody>';
+echo '</table>';
+echo '</div>';
 
 // End of page
 llxFooter();

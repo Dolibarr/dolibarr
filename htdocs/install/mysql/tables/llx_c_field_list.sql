@@ -16,15 +16,16 @@
 --
 -- Change are done into list pages to use the new code to manage
 -- selection by users of fields. Once all changes are done with new
--- code, we will be able to use this table to store the content of
--- the $arrayfields table.
+-- code, we may be able to use this table to store the content of
+-- the $arrayfields table. This looks a bad idea (think performance) for standard
+-- features, but may be for canvas or external modules ?
 -- Table not used / not required for the moment.
 -- ========================================================================
 
 create table llx_c_field_list
 (
   rowid			integer  AUTO_INCREMENT PRIMARY KEY,
-  tms			timestamp,
+  tms			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   element		varchar(64)        			NOT NULL,		-- name of element list
   entity		integer			DEFAULT 1 	NOT NULL,		-- entity id
   name			varchar(32)        			NOT NULL,		-- name of field with table alias (ex: p.ref)

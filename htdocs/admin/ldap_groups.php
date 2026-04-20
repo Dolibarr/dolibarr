@@ -5,6 +5,8 @@
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +28,7 @@
  *		\brief      Page to setup LDAP synchronization for groups
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -33,11 +36,20 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -46,36 +58,50 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' /* && $user->admin */) {
 	$error = 0;
 	$db->begin();
 
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FILTER', GETPOST("filter"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',GETPOST("fieldname", 'alphanohtml'),'chaine',0,'',$conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
 	// This one must be after the others
-    $valkey = '';
-    $key = GETPOST("key");
-    if ($key) $valkey = $conf->global->$key;
-    if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+	$valkey = '';
+	$key = GETPOST("key");
+	if ($key) {
+		$valkey = getDolGlobalString($key);
+	}
+	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
-    if (!$error)
-    {
-    	$db->commit();
-    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-    	$db->rollback();
-    	dol_print_error($db);
-    }
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		dol_print_error($db);
+	}
 }
 
 
@@ -84,30 +110,30 @@ if ($action == 'setvalue' && $user->admin)
  * View
  */
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$form = new Form($db);
+
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_groups');
+
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
-if (!function_exists("ldap_connect"))
-{
+// Test if the LDAP functionality is available
+if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-dol_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'groups', '', -1);
 
 
-print $langs->trans("LDAPDescGroups").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescGroups").'</span><br>';
 print '<br>';
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-
-$form = new Form($db);
 
 print '<table class="noborder centpercent">';
 
@@ -115,26 +141,38 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeGroups").'</td>';
 print "</tr>\n";
 
-// DN pour les groupes
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupDn").'</span></td><td>';
-print '<input size="48" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
+// DN (Domain Name) for the groups
+print '<!-- LDAP_GROUP_DN -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPGroupDn").'</span></td><td>';
+print '<input size="48" type="text" name="group" value="'.getDolGlobalString('LDAP_GROUP_DN').'">';
 print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupObjectClassList").'</span></td><td>';
-print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_GROUP_OBJECT_CLASS.'">';
+print '<!-- LDAP_GROUP_OBJECT_CLASS -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPGroupObjectClassList").'</span></td><td>';
+print '<input size="48" type="text" name="objectclass" value="'.getDolGlobalString('LDAP_GROUP_OBJECT_CLASS').'">';
 print '</td><td>'.$langs->trans("LDAPGroupObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
+// Filter, used to filter search
+print '<!-- LDAP_GROUP_FILTER -->';
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
+print '<input size="48" type="text" name="filter" value="'.getDolGlobalString('LDAP_GROUP_FILTER').'">';
+print '</td><td>'.$langs->trans("LDAPGroupFilterExample").'</td>';
+print '<td></td>';
+print '</tr>';
+
 print '</table>';
+
 print '<br>';
+
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td>'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
@@ -143,9 +181,9 @@ print "</tr>\n";
 
 // Common name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
-print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'">';
+print '<input size="25" type="text" name="fieldfullname" value="'.getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS == $conf->global->LDAP_GROUP_FIELD_FULLNAME) ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_FULLNAME"'.((getDolGlobalString('LDAP_KEY_GROUPS') == getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Name
@@ -159,21 +197,21 @@ print '</tr>';
 
 // Description
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
-print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_GROUP_FIELD_DESCRIPTION.'">';
+print '<input size="25" type="text" name="fielddescription" value="'.getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION').'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS == $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_DESCRIPTION"'.((getDolGlobalString('LDAP_KEY_GROUPS') == getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // User group
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
-print '<input size="25" type="text" name="fieldgroupmembers" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'">';
+print '<input size="25" type="text" name="fieldgroupmembers" value="'.getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS').'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS == $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.((getDolGlobalString('LDAP_KEY_GROUPS') == getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Group id
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupid").'</td><td>';
-print '<input size="25" type="text" name="fieldgroupid" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPID.'">';
+print '<input size="25" type="text" name="fieldgroupid" value="'.getDolGlobalString('LDAP_GROUP_FIELD_GROUPID').'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupidExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
@@ -182,41 +220,44 @@ print '</table>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
-{
+if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroGroup");
 	$testlabel = 'testgroup';
-	$key = $conf->global->LDAP_KEY_GROUPS;
-	$dn = $conf->global->LDAP_GROUP_DN;
-	$objectclass = $conf->global->LDAP_GROUP_OBJECT_CLASS;
+	$key = getDolGlobalString('LDAP_KEY_GROUPS');
+	$dn = getDolGlobalString('LDAP_GROUP_DN');
+	$objectclass = getDolGlobalString('LDAP_GROUP_OBJECT_CLASS');
 
+	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
+} elseif (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+	$butlabel = $langs->trans("LDAPTestSearch");
+	$testlabel = 'testsearchgroup';
+	$key = getDolGlobalString('LDAP_KEY_GROUPS');
+	$dn = getDolGlobalString('LDAP_GROUP_DN');
+	$objectclass = getDolGlobalString('LDAP_GROUP_OBJECT_CLASS');
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
-if (function_exists("ldap_connect"))
-{
-	if ($_GET["action"] == 'testgroup')
-	{
-		// Creation objet
+if (function_exists("ldap_connect")) {
+	if ($action == 'testgroup') {
+		// Create object
 		$object = new UserGroup($db);
 		$object->initAsSpecimen();
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
 
@@ -229,31 +270,82 @@ if (function_exists("ldap_connect"))
 			$result2 = $ldap->add($dn, $info, $user); // Now the test
 			$result3 = $ldap->delete($dn); // Clean what we did
 
-			if ($result2 > 0)
-			{
+			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-			}
-			else
-			{
+				print '<span class="ok">'.$langs->trans("LDAPSynchroOK").'</span><br>';
+			} else {
 				print img_picto('', 'error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
-				print '</font><br>';
+				print '</span><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
-		}
-		else
-		{
+		} else {
 			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</font><br>';
+			print '</span><br>';
+			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+		}
+	}
+
+	if ($action == 'testsearchgroup') {
+		// TODO Mutualize code below with other ldap_xxxx.php pages
+
+		// Test synchro
+		$ldap = new Ldap();
+		$result = $ldap->connectBind();
+
+		if ($result > 0) {
+			$required_fields = array(
+				getDolGlobalString('LDAP_KEY_GROUPS'),
+				// getDolGlobalString('LDAP_GROUP_FIELD_NAME'),
+				getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION'),
+				getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS'),
+				getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')
+			);
+
+			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
+			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
+
+			// Get from LDAP database an array of results
+			$ldapgroups = $ldap->getRecords('*', getDolGlobalString('LDAP_GROUP_DN'), getDolGlobalString('LDAP_KEY_GROUPS'), $required_fields, 'group');
+			//$ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, '', 'group');
+
+			$liste = array();
+			if (is_array($ldapgroups)) {
+				foreach ($ldapgroups as $key => $ldapgroup) {
+					// Define the label string for this group
+					$label = '';
+					foreach ($required_fields as $value) {
+						if ($value) {
+							$label .= $value."=".$ldapgroup[$value]." ";
+						}
+					}
+					$liste[$key] = $label;
+				}
+			} else {
+				setEventMessages($ldap->error, $ldap->errors, 'errors');
+			}
+
+			print "<br>\n";
+			print "LDAP search for group:<br>\n";
+			print "search: *<br>\n";
+			print "userDN: ".getDolGlobalString('LDAP_GROUP_DN')."<br>\n";
+			print "useridentifier: ".getDolGlobalString('LDAP_KEY_GROUPS')."<br>\n";
+			print "required_fields: ".implode(',', $required_fields)."<br>\n";
+			print "=> ".count($liste)." records<br>\n";
+			print "\n<br>";
+		} else {
+			print img_picto('', 'error').' ';
+			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
+			print '</span><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

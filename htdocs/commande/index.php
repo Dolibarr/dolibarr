@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,34 +21,53 @@
 
 /**
  *	\file       htdocs/commande/index.php
- *	\ingroup    commande
- *	\brief      Home page of customer order module
+ *	\ingroup    order
+ *	\brief      Home page of sales order module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
-if (!$user->rights->commande->lire) accessforbidden();
-
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('ordersindex'));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills'));
 
+
+if (!$user->hasRight('commande', 'lire')) {
+	accessforbidden();
+}
+
+$hookmanager = new HookManager($db);
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('ordersindex'));
+
+
 // Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid > 0)
-{
+$socid = GETPOSTINT('socid');
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
+// Maximum elements of the tables
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxLatestEditCount = 5;
+$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 
 /*
@@ -61,7 +80,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 
-llxHeader("", $langs->trans("Orders"), $help_url);
+llxHeader('', $langs->trans("Orders"), $help_url, '', 0, 0, '', '', '', 'mod-commande page-index');
 
 
 print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
@@ -69,153 +88,54 @@ print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
-    // Search customer orders
-    print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("CustomerOrder").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></div></form><br>\n";
-}
-
-
-/*
- * Statistics
- */
-
-$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.fk_soc = s.rowid";
-$sql .= " AND c.entity IN (".getEntity('societe').")";
-if ($user->socid) $sql .= ' AND c.fk_soc = '.$user->socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-$sql .= " GROUP BY c.fk_statut";
-
-$resql = $db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    $i = 0;
-
-    $total = 0;
-    $totalinprocess = 0;
-    $dataseries = array();
-    $colorseries = array();
-    $vals = array();
-    // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-    while ($i < $num)
-    {
-        $row = $db->fetch_row($resql);
-        if ($row)
-        {
-            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-            {
-                if (!isset($vals[$row[1]])) $vals[$row[1]] = 0;
-                $vals[$row[1]] += $row[0];
-                $totalinprocess += $row[0];
-            }
-            $total += $row[0];
-        }
-        $i++;
-    }
-    $db->free($resql);
-
-    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
-    $listofstatus = array(0, 1, 2, 3, -1);
-    foreach ($listofstatus as $status)
-    {
-    	$dataseries[] = array($commandestatic->LibStatut($status, 0, 1, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-    	if ($status == Commande::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-    	if ($status == Commande::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
-    	if ($status == Commande::STATUS_SHIPMENTONPROCESS) $colorseries[$status] = $badgeStatus4;
-    	if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) $colorseries[$status] = $badgeStatus6;
-    	if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) $colorseries[$status] = $badgeStatus6;
-    	if ($status == Commande::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
-
-    	if (empty($conf->use_javascript_ajax))
-    	{
-    		print '<tr class="oddeven">';
-    		print '<td>'.$commandestatic->LibStatut($status, 0, 0, 1).'</td>';
-    		print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
-    		print $commandestatic->LibStatut($status, 0, 3, 1);
-    		print '</a></td>';
-    		print "</tr>\n";
-    	}
-    }
-    if ($conf->use_javascript_ajax)
-    {
-        print '<tr class="impair"><td align="center" colspan="2">';
-
-        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-        $dolgraph = new DolGraph();
-        $dolgraph->SetData($dataseries);
-        $dolgraph->SetDataColor(array_values($colorseries));
-        $dolgraph->setShowLegend(2);
-        $dolgraph->setShowPercent(1);
-        $dolgraph->SetType(array('pie'));
-        $dolgraph->setHeight('200');
-        $dolgraph->draw('idgraphstatus');
-        print $dolgraph->show($total ? 0 : 1);
-
-        print '</td></tr>';
-    }
-
-    //if ($totalinprocess != $total)
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-    print "</table></div><br>";
-}
-else
-{
-    dol_print_error($db);
+$tmp = getCustomerOrderPieChart($socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
 }
 
 
 /*
  * Draft orders
  */
-if (!empty($conf->commande->enabled))
-{
+if (isModEnabled('order')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
-    $sql .= ", s.client";
-    $sql .= ", s.code_client";
-    $sql .= ", s.canvas";
+	$sql .= ", s.client";
+	$sql .= ", s.code_client";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = 0";
-	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-
+	if ($socid) {
+		$sql .= " AND c.fk_soc = ".((int) $socid);
+	}
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$resql = $db->query($sql);
-	if ($resql)
-	{
-        print '<div class="div-table-responsive-no-min">';
+	if ($resql) {
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
-                $commandestatic->id = $obj->rowid;
-                $commandestatic->ref = $obj->ref;
+				$commandestatic->id = $obj->rowid;
+				$commandestatic->ref = $obj->ref;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -226,15 +146,13 @@ if (!empty($conf->commande->enabled))
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				print $commandestatic->getNomUrl(1);
-                print "</td>";
-                print '<td class="nowrap">';
+				print "</td>";
+				print '<td class="nowrap">';
 				print $companystatic->getNomUrl(1, 'company', 16);
-                print '</td></tr>';
+				print '</td></tr>';
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table></div><br>";
@@ -242,45 +160,48 @@ if (!empty($conf->commande->enabled))
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
-
-$max = 5;
 
 /*
- * Lattest modified orders
+ * Latest modified orders
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_cloture as datec, c.tms as datem,";
 $sql .= " s.nom as name, s.rowid as socid";
 $sql .= ", s.client";
 $sql .= ", s.code_client";
 $sql .= ", s.canvas";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('commande').")";
 //$sql.= " AND c.fk_statut > 2";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($socid) {
+	$sql .= " AND c.fk_soc = ".((int) $socid);
+}
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
+// Add where from hooks
+$parameters = array('socid' => $user->socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-    print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
-
+if ($resql) {
 	$num = $db->num_rows($resql);
-	if ($num)
-	{
+
+	startSimpleTable($langs->trans("LastModifiedOrders", $max), "commande/list.php", "sortfield=c.tms&sortorder=DESC", 2, -1, 'order');
+
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -314,54 +235,65 @@ if ($resql)
 			print '</td>';
 
 			print '<td class="nowrap">';
-            print $companystatic->getNomUrl(1, 'company', 16);
-            print '</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
+			print $companystatic->getNomUrl(1, 'company', 16);
+			print '</td>';
+
+			$datem = $db->jdate($obj->datem);
+			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print dol_print_date($datem, 'day', 'tzuserrel');
+			print '</td>';
+
+			print '<td class="right">'.$commandestatic->LibStatut($obj->status, $obj->facture, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
 	}
-	print "</table></div><br>";
+	finishSimpleTable(true);
+} else {
+	dol_print_error($db);
 }
-else dol_print_error($db);
 
-$max = 10;
 
 /*
  * Orders to process
  */
-if (!empty($conf->commande->enabled))
-{
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
-    $sql .= ", s.client";
-    $sql .= ", s.code_client";
-    $sql .= ", s.canvas";
+if (isModEnabled('order')) {
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
+	$sql .= ", s.client";
+	$sql .= ", s.code_client";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_VALIDATED;
-	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) {
+		$sql .= " AND c.fk_soc = ".((int) $socid);
+	}
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="4">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_VALIDATED.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num && $i < $max)
-			{
+			while ($i < $num && $i < $max) {
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
@@ -394,12 +326,12 @@ if (!empty($conf->commande->enabled))
 				print '</td>';
 
 				print '<td class="nowrap">';
-                print $companystatic->getNomUrl(1, 'company', 24);
-                print '</td>';
+				print $companystatic->getNomUrl(1, 'company', 24);
+				print '</td>';
 
-                print '<td class="right">'.dol_print_date($db->jdate($obj->date), 'day').'</td>'."\n";
+				print '<td class="right">'.dol_print_date($db->jdate($obj->date), 'day').'</td>'."\n";
 
-				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
+				print '<td class="right">'.$commandestatic->LibStatut($obj->status, $obj->facture, 3).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -410,44 +342,51 @@ if (!empty($conf->commande->enabled))
 		}
 
 		print "</table></div><br>";
+	} else {
+		dol_print_error($db);
 	}
-	else dol_print_error($db);
 }
 
 /*
  * Orders that are in process
  */
-if (!empty($conf->commande->enabled))
-{
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
-    $sql .= ", s.client";
-    $sql .= ", s.code_client";
-    $sql .= ", s.canvas";
+if (isModEnabled('order')) {
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
+	$sql .= ", s.client";
+	$sql .= ", s.code_client";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
-	$sql .= " AND c.fk_statut = ".Commande::STATUS_ACCEPTED;
-	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_SHIPMENTONPROCESS);
+	if ($socid) {
+		$sql .= " AND c.fk_soc = ".((int) $socid);
+	}
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_ACCEPTED.'"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_SHIPMENTONPROCESS.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num && $i < $max)
-			{
+			while ($i < $num && $i < $max) {
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';
@@ -485,7 +424,7 @@ if (!empty($conf->commande->enabled))
 
 				print '<td class="right">'.dol_print_date($db->jdate($obj->date), 'day').'</td>'."\n";
 
-				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
+				print '<td class="right">'.$commandestatic->LibStatut($obj->status, $obj->facture, 3).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -495,12 +434,13 @@ if (!empty($conf->commande->enabled))
 			}
 		}
 		print "</table></div><br>";
+	} else {
+		dol_print_error($db);
 	}
-	else dol_print_error($db);
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardOrders', $parameters, $object); // Note that $action and $object may have been modified by hook

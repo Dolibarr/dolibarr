@@ -4,8 +4,8 @@ This directory contains unit tests and docs for Dolibarr quality analysis.
 
 
 - PHPUnit          -  https://phpunit.de
-- PHP_CodeSniffer  -  https://pear.php.net/package/PHP_CodeSniffer/ 
-- PHP Depend       -  https://pdepend.org/ 
+- PHP_CodeSniffer  -  https://pear.php.net/package/PHP_CodeSniffer/
+- PHP Depend       -  https://pdepend.org/
 
 
 PHPUNIT
@@ -30,10 +30,18 @@ If not using Eclipse, to install PHPUnit manually:
 > sudo pear upgrade-all
 > sudo pear install --alldeps phpunit/PHPUnit
 
-* Run Unit tests: 
+
+* Run Unit tests:
 > cd test/phpunit
 > phpunit MyFileTest.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
+
+* Example to run phpunit 7.0 from composer using php version 8.0:
+> cd ~/tmp
+> composer -i phpunit
+> cd test/phpunit
+> /usr/bin/php8.0 ~/tmp/htdocs/includes/phpunit/phpunit/phpunit MyFileTest.php
+
 
 * Generate a report of Unit tests code coverage done by one tested class:
 > cd test
@@ -45,12 +53,12 @@ Increase your PHP memory (memory_limit and suhosin.memory_limit in php.ini) to 4
 > cd test
 > phpunit -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report phpunit/AllTests.php
 
-If there is a timeout before end, try this: 
+If there is a timeout before end, try this:
 > cd test
 > php -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 /usr/bin/phpunit -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report phpunit/AllTests.php
 ou
 > php -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 /usr/bin/phpunit -d suhosin.memory_limit=4G -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-php ./report/codecoverage.php phpunit/AllTests.php
-puis 
+puis
 > sudo renice -10 idprocessphp
 
 
@@ -71,8 +79,7 @@ PHPDEPEND
 
 * Launch PDepend analysis:
 > cd test
-> pdepend --debug -d memory_limit=-1 --configuration=./phpunit/phpunittest.xml --phpunit-xml=./report/logs/pdepend.xml --summary-xml=./report/logs/summary.xml --jdepend-chart=./report/logs/jdepend.svg --overview-pyramid=./report/logs/pyramid.svg --ignore=custom,custom2,adodbtime,artichow,ckeditor,efc_xfss,fckeditor,fpdf,geoip,magpierss,nusoap,odtphp,phpexcel,php_writeexcel,smarty,smtps,tcpdf,vcard ../htdocs
+> pdepend --debug -d memory_limit=-1 --configuration=./phpunit/phpunittest.xml --phpunit-xml=./report/logs/pdepend.xml --summary-xml=./report/logs/summary.xml --jdepend-chart=./report/logs/jdepend.svg --overview-pyramid=./report/logs/pyramid.svg --ignore=custom,custom2,adodbtime,artichow,ckeditor,efc_xfss,fckeditor,fpdf,geoip,magpierss,nusoap,odtphp,php_writeexcel,smarty,smtps,tcpdf,vcard ../htdocs
 
 * To clean pdepend cache files
-> rm -fr ~/.pdepend/* 
-
+> rm -fr ~/.pdepend/*

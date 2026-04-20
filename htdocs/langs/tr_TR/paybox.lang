@@ -1,27 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox modülü kurulumu
-PayBoxDesc=Bu modül <a href="http://www.paybox.com" target="_blank">Paybox</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
-FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL'ler bir müşteriye Dolibarr nesnelerine bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
-PaymentForm=Ödeme Formu
-WelcomeOnPaymentPage=Çevrimiçi ödeme hizmetimize hoş geldiniz
-ThisScreenAllowsYouToPay=Bu ekran %s için çevrimiçi bir ödeme yapmanızı sağlar
-ThisIsInformationOnPayment=Bu yapılacak ödeme hakkında bilgidir
-ToComplete=Tamamlanacak
-YourEMail=Ödeme alındısı onayı için e-posta adresi
-Creditor=Alacaklı
-PaymentCode=Ödeme kodu
+PayBoxDesc=Bu modül, müşteriler tarafından <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> üzerinden ödeme yapılmasını sağlayan sayfalar sunar. Bu, ücretsiz bir ödeme veya belirli bir Dolibarr nesnesi için kullanılabilir (fatura, sipariş, ...)
 PayBoxDoPayment=Paybox ile öde
 YouWillBeRedirectedOnPayBox=Kredi kartı bilgilerinizi girmek için güvenli Paybox sayfasına yönlendirileceksiniz
-Continue=Sonraki
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Paybox tarafından doğrulandığında ödemenin otomatik olarak oluşturulması için <b> %s </b> URL'si ile Paybox'ınızı ayarlayın.
 YourPaymentHasBeenRecorded=Bu sayfa ödeme kaydedilmiş olduğunu onaylar. Teşekkür ederim.
 YourPaymentHasNotBeenRecorded=Ödemeniz kaydedilmedi ve işlem iptal edildi. Teşekkür ederiz.
-AccountParameter=Hesap parametreleri
-UsageParameter=Kullanım parametreleri
-InformationToFindParameters=%s Hesap bilgilerinizi bulmanız için yardım
 PAYBOX_CGI_URL_V2=Ödeme için Paybox CGI modülü URL'si
-VendorName=Satıcının Adı
-CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
 NewPayboxPaymentReceived=Yeni Paybox ödemesi alındı
 NewPayboxPaymentFailed=Yeni Paybox ödemesi denendi ama başarısız oldu
 PAYBOX_PAYONLINE_SENDEMAIL=Ödeme denemesinden sonra e-posta bildirimi (başarılı veya başarısız)

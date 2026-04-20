@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +30,15 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/accounting.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -44,196 +48,172 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AccountingAccountTest extends PHPUnit\Framework\TestCase
+class AccountingAccountTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return AccountingAccountTest
-     */
-    public function __construct()
-    {
-        parent::__construct();
+		if (!isModEnabled('accounting')) {
+			print __METHOD__." module accounting must be enabled.\n";
+			exit(1);
+		}
 
-        //$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		print __METHOD__."\n";
+	}
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * testAccountingAccountCreate
+	 *
+	 * @return  int		Id of created object
+	 */
+	public function testAccountingAccountCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        if (empty($conf->accounting->enabled)) { print __METHOD__." module accouting must be enabled.\n"; exit(-1); }
+		$localobject = new AccountingAccount($db);
+		$localobject->fk_pcg_version = 'PCG99-ABREGE';
+		$localobject->account_category = 0;
+		$localobject->pcg_type = 'XXXXX';
+		$localobject->pcg_subtype = 'XXXXX';
+		$localobject->account_number = '411123456';
+		$localobject->account_parent = 0;
+		$localobject->label = 'Account specimen';
+		$localobject->active = 0;
+		$result = $localobject->create($user);
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+		return $result;
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * testAccountingAccountFetch
+	 *
+	 * @param   int $id     Id accounting account
+	 * @return  AccountingAccount
+	 *
+	 * @depends	testAccountingAccountCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testAccountingAccountFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$localobject = new AccountingAccount($db);
+		$result = $localobject->fetch($id);
 
-        print __METHOD__."\n";
-        //print $db->getVersion()."\n";
-    }
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+		return $localobject;
+	}
 
-    /**
-     * testAccountingAccountCreate
-     *
-     * @return  int		Id of created object
-     */
-    public function testAccountingAccountCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testAccountingAccountUpdate
+	 *
+	 * @param	AccountingAccount		$localobject	AccountingAccount
+	 * @return	int							ID accounting account
+	 *
+	 * @depends	testAccountingAccountFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testAccountingAccountUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $localobject=new AccountingAccount($this->savdb);
-        $localobject->fk_pcg_version = 'PCG99-ABREGE';
-        $localobject->account_category = 0;
-        $localobject->pcg_type = 'XXXXX';
-        $localobject->pcg_subtype = 'XXXXX';
-        $localobject->account_number = '411123456';
-        $localobject->account_parent = 0;
-        $localobject->label = 'Account specimen';
-        $localobject->active = 0;
-        $result=$localobject->create($user);
+		$localobject->label = 'New label';
+		$result = $localobject->update($user);
 
-        print __METHOD__." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-        return $result;
-    }
+		return $localobject->id;
+	}
 
-    /**
-     * testAccountingAccountFetch
-     *
-     * @param   int $id     Id accounting account
-     * @return  AccountingAccount
-     *
-     * @depends	testAccountingAccountCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testAccountingAccountFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testAccountingAccountDelete
+	 *
+	 * @param   int $id         Id of accounting account
+	 * @return  int				Result of delete
+	 *
+	 * @depends testAccountingAccountUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testAccountingAccountDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $localobject=new AccountingAccount($this->savdb);
-        $result=$localobject->fetch($id);
+		$localobject = new AccountingAccount($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-        return $localobject;
-    }
+		return $result;
+	}
 
-    /**
-     * testAccountingAccountUpdate
-     *
-     * @param	Object		$localobject	AccountingAccount
-     * @return	int							ID accounting account
-     *
-     * @depends	testAccountingAccountFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testAccountingAccountUpdate($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testGetCurrentPeriodOfFiscalYear
+	 *
+	 * @return  int				Result of delete
+	 *
+	 * @depends testAccountingAccountDelete
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testGetCurrentPeriodOfFiscalYear()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $localobject->label='New label';
-        $result=$localobject->update($user);
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		$result = getCurrentPeriodOfFiscalYear($db, $conf, null, 'tzserver');
+		var_dump($result);
 
-        return $localobject->id;
-    }
+		print __METHOD__." date_start = ".dol_print_date($result['date_start'], 'dayhour', 'gmt')."\n";
+		print __METHOD__." date_end   = ".dol_print_date($result['date_end'], 'dayhour', 'gmt')."\n";
 
-    /**
-     * testAccountingAccountDelete
-     *
-     * @param   int $id         Id of accounting account
-     * @return  int				Result of delete
-     *
-     * @depends testAccountingAccountUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testAccountingAccountDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$this->assertArrayHasKey('date_start', $result);
+		$this->assertArrayHasKey('date_end', $result);
 
-        $localobject=new AccountingAccount($this->savdb);
-        $result=$localobject->fetch($id);
-        $result=$localobject->delete($user);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		$result = getCurrentPeriodOfFiscalYear($db, $conf, null, 'gmt');
+		var_dump($result);
 
-        return $result;
-    }
+		print __METHOD__." date_start = ".dol_print_date($result['date_start'], 'dayhour', 'gmt')."\n";
+		print __METHOD__." date_end   = ".dol_print_date($result['date_end'], 'dayhour', 'gmt')."\n";
+
+		$this->assertArrayHasKey('date_start', $result);
+		$this->assertArrayHasKey('date_end', $result);
+
+		return $result;
+	}
 }

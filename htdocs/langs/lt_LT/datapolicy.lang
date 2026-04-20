@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Duomenų privatumo politika
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Duomenų privatumo valdymo modulis (atitiktis BDAR)
+# Administration page
+datapolicySetup = Modulio duomenų privatumo politikos sąranka
+DataDeletion=Duomenų ištrynimas
+DataAnonymization=Duomenų anonimizavimas
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Priklausomai nuo jūsų šalies įstatymų (pavyzdys <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">5 straipsnis</a> BDAR), asmens duomenys turi būti saugomi ne ilgiau nei reikia tiems tikslams, kuriems jie buvo surinkti, išskyrus archyvavimo tikslais.<br>Šis modulis automatiškai atliks anonimizaciją po tam tikros trukmės be įvykių (trukmę, kurią nurodysite toliau) ir jei objektas neturi esamų verslo objektų antrinių elementų.
+NB_MONTHS = %s mėnesių
+ONE_YEAR = 1 metai
+NB_YEARS = %s metai
+DATAPOLICY_TIERS_CLIENT = Klientas
+DATAPOLICY_TIERS_PROSPECT = Numatomas klientas
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Potencialus klientas / klientas
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nei potencialus klientas / nei klientas
+DATAPOLICY_TIERS_FOURNISSEUR = Tiekėjas
+DATAPOLICY_CONTACT_CLIENT = Klientas
+DATAPOLICY_CONTACT_PROSPECT = Numatomas klientas
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potencialus klientas / klientas
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nei potencialus klientas / nei klientas
+DATAPOLICY_CONTACT_FOURNISSEUR = Tiekėjas
+DATAPOLICY_ADHERENT = Narys
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = Galite išsiųsti BDAR el. laišką visiems susijusiems kontaktams (kurie dar negavo el. laiško ir kuriems neužregistravote jokios informacijos apie jų BDAR susitarimą). Norėdami tai padaryti, naudokite šį mygtuką.
+SendAgreement = Siųsti el. laiškus
+AllAgreementSend = Visi el. laiškai išsiųsti
+TXTLINKDATAPOLICYACCEPT = Nuorodos „susitarimas“ tekstas
+TXTLINKDATAPOLICYREFUSE = Nuorodos „nesutarimas“ tekstas
+DelayForAnonymization=Anonimizavimo atidėjimas
+DelayForDeletion=Ištrynimo atidėjimas
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = BDAR: Asmens duomenų tvarkymas
+DATAPOLICY_consentement = Sutikimas, gautas tvarkyti asmens duomenis
+DATAPOLICY_opposition_traitement = Prieštarauja jo asmens duomenų tvarkymui
+DATAPOLICY_opposition_prospection = Nesutinka, kad jo asmens duomenys būtų tvarkomi žvalgybos tikslais
+# Notes added during an anonymization
+DATAPOLICY_date = Sutikimo / nesutikimo data pagal BDAR
+DATAPOLICY_send = Sutarties el. laiško išsiuntimo data
+MailSent = El. laiškas išsiųstas
+NUMBER_MONTH_BEFORE_DELETION = Mėnesių skaičius iki ištrynimo
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

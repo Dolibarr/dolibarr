@@ -1,8 +1,11 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,28 +22,50 @@
  */
 
 /**
- *      \file       htdocs/comm/propal/info.php
+ *      \file       htdocs/supplier_proposal/info.php
  *      \ingroup    propal
- *      \brief      Page d'affichage des infos d'une proposition commerciale
+ *      \brief      Page with info about the supplier proposal
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta'));
 
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$action = GETPOST('action', 'aZ09');
+
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 
 // Security check
-if (!empty($user->socid)) $socid = $user->socid;
-$result = restrictedArea($user, 'supplier_proposal', $id);
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'supplier_proposal', $id);
+
+$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -48,18 +73,19 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
  */
 
 $form = new Form($db);
-
-llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
-
 $object = new SupplierProposal($db);
 $object->fetch($id);
 $object->fetch_thirdparty();
-
 $object->info($object->id);
+
+$title = $object->ref." - ".$langs->trans('Info');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card_info');
 
 
 $head = supplier_proposal_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans('CommRequest'), -1, 'supplier_proposal');
+print dol_get_fiche_head($head, 'info', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 // Supplier proposal card
 $linkback = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -70,40 +96,29 @@ $morehtmlref = '<div class="refidno">';
 //$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
 //$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
 // Thirdparty
-$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+$morehtmlref .= $object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled))
-{
-    $langs->load("projects");
-    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-    if ($user->rights->supplier_proposal->creer)
-    {
-        if ($action != 'classify') {
-        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-			$morehtmlref .= ' : ';
-        }
-        if ($action == 'classify') {
-            //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-            $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-            $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-            $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-            $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            $morehtmlref .= '</form>';
-        } else {
-            $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-        }
-    } else {
-        if (!empty($object->fk_project)) {
-            $proj = new Project($db);
-            $proj->fetch($object->fk_project);
-            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-            $morehtmlref .= $proj->ref;
-            $morehtmlref .= '</a>';
-        } else {
-            $morehtmlref .= '';
-        }
-    }
+if (isModEnabled('project')) {
+	$langs->load("projects");
+	$morehtmlref .= '<br>';
+	if (0) {	// @phpstan-ignore-line
+		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+		if ($action != 'classify') {
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+		}
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+	} else {
+		if (!empty($object->fk_project)) {
+			$proj = new Project($db);
+			$proj->fetch($object->fk_project);
+			$morehtmlref .= $proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= ' - '.$proj->title;
+			}
+		} else {
+			$morehtmlref .= '';
+		}
+	}
 }
 $morehtmlref .= '</div>';
 
@@ -122,7 +137,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

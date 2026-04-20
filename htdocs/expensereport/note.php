@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,39 +25,72 @@
  *  \brief      Tab for notes on expense reports
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$socid = GETPOSTINT('socid');
+$action = GETPOST('action', 'aZ09');
+
+$childids = $user->getAllChildIds(1);
 
 // Security check
 $socid = 0;
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$hookmanager->initHooks(array('expensereportnote'));
+
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 $object = new ExpenseReport($db);
-if (!$object->fetch($id, $ref) > 0)
-{
+if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
-$permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_setnotes.inc.php
 
+if ($object->id > 0) {
+	// Check current user can read this expense report
+	$canread = 0;
+	if ($user->hasRight('expensereport', 'readall')) {
+		$canread = 1;
+	}
+	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
+}
 
 
 /*
@@ -68,15 +102,14 @@ llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
+	print dol_get_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -94,7 +127,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

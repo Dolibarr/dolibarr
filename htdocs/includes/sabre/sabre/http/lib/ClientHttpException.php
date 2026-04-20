@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\HTTP;
 
 /**
@@ -12,47 +14,37 @@ namespace Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ClientHttpException extends \Exception implements HttpException {
-
+class ClientHttpException extends \Exception implements HttpException
+{
     /**
-     * Response object
+     * Response object.
      *
      * @var ResponseInterface
      */
     protected $response;
 
     /**
-     * Constructor
-     *
-     * @param ResponseInterface $response
+     * Constructor.
      */
-    function __construct(ResponseInterface $response) {
-
+    public function __construct(ResponseInterface $response)
+    {
         $this->response = $response;
         parent::__construct($response->getStatusText(), $response->getStatus());
-
     }
 
     /**
      * The http status code for the error.
-     *
-     * @return int
      */
-    function getHttpStatus() {
-
+    public function getHttpStatus(): int
+    {
         return $this->response->getStatus();
-
     }
 
     /**
      * Returns the full response object.
-     *
-     * @return ResponseInterface
      */
-    function getResponse() {
-
+    public function getResponse(): ResponseInterface
+    {
         return $this->response;
-
     }
-
 }

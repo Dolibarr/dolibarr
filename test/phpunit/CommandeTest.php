@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +30,14 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -44,262 +47,206 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeTest extends PHPUnit\Framework\TestCase
+class CommandeTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return CommandeTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+		if (!isModEnabled('order')) {
+			print __METHOD__." module customer order must be enabled.\n";
+			die(1);
+		}
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		print __METHOD__."\n";
+	}
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * testCommandeCreate
+	 *
+	 * @return  void
+	 */
+	public function testCommandeCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        if (empty($conf->commande->enabled)) { print __METHOD__." module customer order must be enabled.\n"; die(); }
+		$soc = new Societe($db);
+		$soc->name = "CommandeTest Unittest";
+		$socid = $soc->create($user);
+		$this->assertLessThan($socid, 0, $soc->errorsToString());
 
-        print __METHOD__."\n";
-    }
+		$localobject = new Commande($db);
+		$param = array('tosell' => 1);
+		$localobject->initAsSpecimen($param);
+		$localobject->socid = $socid;
+		$result = $localobject->create($user);
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * testCommandeFetch
+	 *
+	 * @param   int $id     Id order
+	 * @return  Commande
+	 *
+	 * @depends	testCommandeCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$localobject = new Commande($db);
+		$result = $localobject->fetch($id);
 
-        print __METHOD__."\n";
-        //print $db->getVersion()."\n";
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		return $localobject;
+	}
 
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+	/**
+	 * testCommandeUpdate
+	 *
+	 * @param	Commande		$localobject	Commande
+	 * @return	Commande
+	 *
+	 * @depends	testCommandeFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * testCommandeCreate
-     *
-     * @return  void
-     */
-    public function testCommandeCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$localobject->note_private = 'New note private after update';
+		$result = $localobject->update($user);
 
-        $localobject=new Commande($this->savdb);
-        $localobject->initAsSpecimen();
-        $result=$localobject->create($user);
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		return $localobject;
+	}
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-        return $result;
-    }
+	/**
+	 * testCommandeValid
+	 *
+	 * @param   Commande  $localobject    Order
+	 * @return  Commande
+	 *
+	 * @depends	testCommandeUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeValid($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * testCommandeFetch
-     *
-     * @param   int $id     Id order
-     * @return  Commande
-     *
-     * @depends	testCommandeCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$result = $localobject->valid($user);
 
-        $localobject=new Commande($this->savdb);
-        $result=$localobject->fetch($id);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." id=".$id." result=".$result."\n";
-        return $localobject;
-    }
+	/**
+	 * testCommandeCancel
+	 *
+	 * @param   Commande  $localobject    Order
+	 * @return  Commande
+	 *
+	 * @depends testCommandeValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeCancel($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * testCommandeUpdate
-     *
-     * @param	Object		$localobject	Commande
-     * @return	Commande
-     *
-     * @depends	testCommandeFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeUpdate($localobject)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+		$result = $localobject->cancel($user);
 
-    	$localobject->note_private='New note private after update';
-    	$result=$localobject->update($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	return $localobject;
-    }
+	/**
+	 * testCommandeOther
+	 *
+	 * @param   Commande  $localobject    Order
+	 * @return  int						Order id
+	 *
+	 * @depends testCommandeCancel
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-    /**
-     * testCommandeValid
-     *
-     * @param   Object  $localobject    Order
-     * @return  Commande
-     *
-     * @depends	testCommandeUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeValid($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
 
-        $result=$localobject->valid($user);
+		$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		return $localobject->id;
+	}
 
-    /**
-     * testCommandeCancel
-     *
-     * @param   Object  $localobject    Order
-     * @return  Commande
-     *
-     * @depends testCommandeValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeCancel($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testCommandeDelete
+	 *
+	 * @param   int $id         Id of order
+	 * @return  void
+	 *
+	 * @depends testCommandeOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $result=$localobject->cancel();
+		$localobject = new Commande($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
-
-    /**
-     * testCommandeOther
-     *
-     * @param   Object  $localobject    Order
-     * @return  int						Order id
-     *
-     * @depends testCommandeCancel
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
-
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-
-        return $localobject->id;
-    }
-
-    /**
-     * testCommandeDelete
-     *
-     * @param   int $id         Id of order
-     * @return  void
-     *
-     * @depends testCommandeOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new Commande($this->savdb);
-        $result=$localobject->fetch($id);
-        $result=$localobject->delete($user);
-
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $result;
-    }
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

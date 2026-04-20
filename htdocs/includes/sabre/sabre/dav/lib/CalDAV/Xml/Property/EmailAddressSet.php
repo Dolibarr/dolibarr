@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Property;
 
 use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 /**
- * email-address-set property
+ * email-address-set property.
  *
  * This property represents the email-address-set property in the
  * http://calendarserver.org/ns/ namespace.
@@ -17,35 +19,31 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class EmailAddressSet implements XmlSerializable {
-
+class EmailAddressSet implements XmlSerializable
+{
     /**
-     * emails
+     * emails.
      *
      * @var array
      */
     private $emails;
 
     /**
-     * __construct
-     *
-     * @param array $emails
+     * __construct.
      */
-    function __construct(array $emails) {
-
+    public function __construct(array $emails)
+    {
         $this->emails = $emails;
-
     }
 
     /**
-     * Returns the email addresses
+     * Returns the email addresses.
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->emails;
-
     }
 
     /**
@@ -63,18 +61,11 @@ class EmailAddressSet implements XmlSerializable {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->emails as $email) {
-
             $writer->writeElement('{http://calendarserver.org/ns/}email-address', $email);
-
         }
-
     }
-
 }

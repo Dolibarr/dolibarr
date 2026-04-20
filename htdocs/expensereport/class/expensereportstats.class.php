@@ -2,6 +2,9 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Charlene Benke      <charlemen@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,29 +23,50 @@
 /**
  *       \file       htdocs/expensereport/class/expensereportstats.class.php
  *       \ingroup    expensereport
- *       \brief      Fichier de la classe de gestion des stats des expensereport et notes de frais
+ *       \brief      File of lass to manage the statistics of the expensereports et expense notes
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 /**
- *  Classe permettant la gestion des stats des expensereports et notes de frais
+ *  Class to manage the statistics of the expensereports and expense notes
  */
 class ExpenseReportStats extends Stats
 {
-    /**
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element;
 
-    public $socid;
-    public $userid;
+	/**
+	 * @var int ID
+	 */
+	public $socid;
 
-    public $from;
-    public $field;
-    public $where;
+	/**
+	 * @var int ID
+	 */
+	public $userid;
 
-    private $datetouse = 'date_valid';
+	/**
+	 * @var string
+	 */
+	public $from;
+
+	/**
+	 * @var string
+	 */
+	public $field;
+
+	/**
+	 * @var string
+	 */
+	public $where;
+
+	/**
+	 * @var string
+	 */
+	private $datetouse = 'date_debut';
 
 
 	/**
@@ -50,7 +74,7 @@ class ExpenseReportStats extends Stats
 	 *
 	 * @param 	DoliDB		$db		   Database handler
 	 * @param 	int			$socid	   Id third party
-     * @param   int			$userid    Id user for filter
+	 * @param   int			$userid    Id user for filter
 	 * @return 	void
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
@@ -58,8 +82,8 @@ class ExpenseReportStats extends Stats
 		global $conf, $user;
 
 		$this->db = $db;
-        $this->socid = $socid;
-        $this->userid = $userid;
+		$this->socid = $socid;
+		$this->userid = $userid;
 
 		$object = new ExpenseReport($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as e";
@@ -70,32 +94,32 @@ class ExpenseReportStats extends Stats
 		$this->where .= ' e.entity IN ('.getEntity('expensereport').')';
 
 		//$this->where.= " AND entity = ".$conf->entity;
-		if ($this->socid)
-		{
-			$this->where .= " AND e.fk_soc = ".$this->socid;
+		if ($this->socid) {
+			$this->where .= " AND e.fk_soc = ".((int) $this->socid);
 		}
 
 		// Only me and subordinates
-		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
-		{
+		if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
-			$this->where .= " AND e.fk_user_author IN (".(join(',', $childids)).")";
+			$this->where .= " AND e.fk_user_author IN (".$this->db->sanitize(implode(',', $childids)).")";
 		}
 
-		if ($this->userid > 0) $this->where .= ' AND e.fk_user_author = '.$this->userid;
+		if ($this->userid > 0) {
+			$this->where .= ' AND e.fk_user_author = '.((int) $this->userid);
+		}
 	}
 
 
 	/**
 	 * 	Return nb of expense report per year
 	 *
-	 *	@return		array	Array of values
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
-		$sql = "SELECT YEAR(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).") as dm, count(*)";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT YEAR(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).") as dm, count(*)";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " GROUP BY dm DESC";
 		$sql .= " WHERE ".$this->where;
 
@@ -104,23 +128,23 @@ class ExpenseReportStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 * 	Return the quantity of invoices per month for a given year
 	 *
-	 *	@param	string	$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
+	 *	@param	int		$year		Year to scan
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
-		$sql = "SELECT MONTH(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).") as dm, count(*)";
-		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE YEAR(e.".$this->datetouse.") = ".$year;
+		$sql = "SELECT MONTH(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).") as dm, count(*)";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " WHERE YEAR(e.".$this->datetouse.") = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -129,20 +153,20 @@ class ExpenseReportStats extends Stats
 	 * 	Renvoie le montant de facture par mois pour une annee donnee
 	 *
 	 *	@param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, sum(".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%m') as dm, sum(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " WHERE date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -150,16 +174,16 @@ class ExpenseReportStats extends Stats
 	 *	Return average amount
 	 *
 	 *	@param	int		$year		Year to scan
-	 *	@return	array				Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	public function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, avg(".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%m') as dm, avg(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " WHERE date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -167,16 +191,16 @@ class ExpenseReportStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array				Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(".$this->db->ifsql("e.".$this->db->sanitize($this->datetouse)." IS NULL", "e.date_create", "e.".$this->db->sanitize($this->datetouse)).",'%Y') as year, count(*) as nb, sum(".$this->db->sanitize($this->field).") as total, avg(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
-        $sql .= $this->db->order('year', 'DESC');
+		$sql .= $this->db->order('year', 'DESC');
 
-        return $this->_getAllByYear($sql);
-    }
+		return $this->_getAllByYear($sql);
+	}
 }

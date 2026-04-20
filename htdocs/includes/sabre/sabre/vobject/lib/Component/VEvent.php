@@ -16,8 +16,8 @@ use Sabre\VObject\Recur\NoInstancesException;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VEvent extends VObject\Component {
-
+class VEvent extends VObject\Component
+{
     /**
      * Returns true or false depending on if the event falls in the specified
      * time-range. This is used for filtering purposes.
@@ -25,25 +25,17 @@ class VEvent extends VObject\Component {
      * The rules used to determine if an event falls within the specified
      * time-range is based on the CalDAV specification.
      *
-     * @param DateTimeInterface $start
-     * @param DateTimeInterface $end
-     *
      * @return bool
      */
-    function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end) {
-
+    public function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end)
+    {
         if ($this->RRULE) {
-
             try {
-
                 $it = new EventIterator($this, null, $start->getTimezone());
-
             } catch (NoInstancesException $e) {
-
-                // If we've catched this exception, there are no instances
+                // If we've caught this exception, there are no instances
                 // for the event that fall into the specified time-range.
                 return false;
-
             }
 
             $it->fastForward($start);
@@ -54,13 +46,11 @@ class VEvent extends VObject\Component {
             //
             // If the starttime of the recurrence did not exceed the
             // end of the time range as well, we have a match.
-            return ($it->getDTStart() < $end && $it->getDTEnd() > $start);
-
+            return $it->getDTStart() < $end && $it->getDTEnd() > $start;
         }
 
         $effectiveStart = $this->DTSTART->getDateTime($start->getTimezone());
         if (isset($this->DTEND)) {
-
             // The DTEND property is considered non inclusive. So for a 3 day
             // event in july, dtstart and dtend would have to be July 1st and
             // July 4th respectively.
@@ -68,7 +58,6 @@ class VEvent extends VObject\Component {
             // See:
             // http://tools.ietf.org/html/rfc5545#page-54
             $effectiveEnd = $this->DTEND->getDateTime($end->getTimezone());
-
         } elseif (isset($this->DURATION)) {
             $effectiveEnd = $effectiveStart->add(VObject\DateTimeParser::parseDuration($this->DURATION));
         } elseif (!$this->DTSTART->hasTime()) {
@@ -76,10 +65,10 @@ class VEvent extends VObject\Component {
         } else {
             $effectiveEnd = $effectiveStart;
         }
-        return (
-            ($start < $effectiveEnd) && ($end > $effectiveStart)
-        );
 
+        return
+            ($start < $effectiveEnd) && ($end > $effectiveStart)
+        ;
     }
 
     /**
@@ -87,13 +76,12 @@ class VEvent extends VObject\Component {
      *
      * @return array
      */
-    protected function getDefaults() {
-
+    protected function getDefaults()
+    {
         return [
-            'UID'     => 'sabre-vobject-' . VObject\UUIDUtil::getUUID(),
-            'DTSTAMP' => date('Ymd\\THis\\Z'),
+            'UID' => 'sabre-vobject-'.VObject\UUIDUtil::getUUID(),
+            'DTSTAMP' => gmdate('Ymd\\THis\\Z'),
         ];
-
     }
 
     /**
@@ -111,43 +99,42 @@ class VEvent extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         $hasMethod = isset($this->parent->METHOD);
+
         return [
-            'UID'           => 1,
-            'DTSTAMP'       => 1,
-            'DTSTART'       => $hasMethod ? '?' : '1',
-            'CLASS'         => '?',
-            'CREATED'       => '?',
-            'DESCRIPTION'   => '?',
-            'GEO'           => '?',
+            'UID' => 1,
+            'DTSTAMP' => 1,
+            'DTSTART' => $hasMethod ? '?' : '1',
+            'CLASS' => '?',
+            'CREATED' => '?',
+            'DESCRIPTION' => '?',
+            'GEO' => '?',
             'LAST-MODIFIED' => '?',
-            'LOCATION'      => '?',
-            'ORGANIZER'     => '?',
-            'PRIORITY'      => '?',
-            'SEQUENCE'      => '?',
-            'STATUS'        => '?',
-            'SUMMARY'       => '?',
-            'TRANSP'        => '?',
-            'URL'           => '?',
+            'LOCATION' => '?',
+            'ORGANIZER' => '?',
+            'PRIORITY' => '?',
+            'SEQUENCE' => '?',
+            'STATUS' => '?',
+            'SUMMARY' => '?',
+            'TRANSP' => '?',
+            'URL' => '?',
             'RECURRENCE-ID' => '?',
-            'RRULE'         => '?',
-            'DTEND'         => '?',
-            'DURATION'      => '?',
+            'RRULE' => '?',
+            'DTEND' => '?',
+            'DURATION' => '?',
 
-            'ATTACH'         => '*',
-            'ATTENDEE'       => '*',
-            'CATEGORIES'     => '*',
-            'COMMENT'        => '*',
-            'CONTACT'        => '*',
-            'EXDATE'         => '*',
+            'ATTACH' => '*',
+            'ATTENDEE' => '*',
+            'CATEGORIES' => '*',
+            'COMMENT' => '*',
+            'CONTACT' => '*',
+            'EXDATE' => '*',
             'REQUEST-STATUS' => '*',
-            'RELATED-TO'     => '*',
-            'RESOURCES'      => '*',
-            'RDATE'          => '*',
+            'RELATED-TO' => '*',
+            'RESOURCES' => '*',
+            'RDATE' => '*',
         ];
-
     }
-
 }

@@ -1,0 +1,66 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = ஆட்சேர்ப்பு
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = புதிய வேலை நிலைகளுக்கான ஆட்சேர்ப்பு பிரச்சாரங்களை நிர்வகிக்கவும் பின்பற்றவும்
+# Admin page
+RecruitmentSetup = ஆட்சேர்ப்பு அமைப்பு
+RecruitmentSetupPage = ஆட்சேர்ப்பு தொகுதிக்கான முக்கிய விருப்பங்களின் அமைப்பை இங்கே உள்ளிடவும்
+RecruitmentArea=ஆட்சேர்ப்பு பகுதி
+PublicInterfaceRecruitmentDesc=வேலைகளின் பொதுப் பக்கங்கள், திறந்த வேலைகளைக் காண்பிப்பதற்கும் பதிலளிப்பதற்கும் பொது URLகளாகும். ஒவ்வொரு வேலைப் பதிவிலும் காணப்படும் ஒவ்வொரு வேலைக்கும் வெவ்வேறு இணைப்புகள் உள்ளன.
+EnablePublicRecruitmentPages=திறந்த வேலைகளின் பொதுப் பக்கங்களை இயக்கவும்
+
+NbOfEmployeesExpected=எதிர்பார்க்கப்படும் ஊழியர்களின் எண்ணிக்கை
+JobLabel=வேலை நிலையின் லேபிள்
+WorkPlace=வேலை இடம்
+DateExpected=எதிர்பார்க்கப்படுகிறது தேதி
+FutureManager=எதிர்கால மேலாளர்
+ResponsibleOfRecruitement=ஆட்சேர்ப்புக்கு பொறுப்பு
+IfJobIsLocatedAtAPartner=பங்குதாரர் இடத்தில் வேலை அமைந்திருந்தால்
+PositionToBeFilled=வேலை நிலை
+PositionsToBeFilled=வேலை நிலைகள்
+ListOfPositionsToBeFilled=பணியிடங்களின் பட்டியல்
+NewPositionToBeFilled=புதிய வேலை வாய்ப்புகள்
+JobOfferToBeFilled=பணியிடத்தை நிரப்ப வேண்டும்
+ThisIsInformationOnJobPosition=நிரப்பப்பட வேண்டிய வேலை நிலை பற்றிய தகவல்கள்
+ContactForRecruitment=ஆட்சேர்ப்புக்கு தொடர்பு கொள்ளவும்
+EmailRecruiter=மின்னஞ்சல் பணியமர்த்துபவர்
+ToUseAGenericEmail=பொதுவான மின்னஞ்சலைப் பயன்படுத்த. வரையறுக்கப்படவில்லை என்றால், ஆட்சேர்ப்புக்கு பொறுப்பானவரின் மின்னஞ்சல் பயன்படுத்தப்படும்
+NewCandidature=புதிய பயன்பாடு
+ListOfCandidatures=விண்ணப்பங்களின் பட்டியல்
+Remuneration=Salary
+RequestedRemuneration=Requested salary
+ProposedRemuneration=Proposed salary
+ContractProposed=ஒப்பந்தம் முன்மொழியப்பட்டது
+ContractSigned=ஒப்பந்தம் கையெழுத்தானது
+ContractRefused=ஒப்பந்தம் மறுத்துவிட்டது
+RecruitmentCandidature=விண்ணப்பம்
+JobPositions=வேலை நிலைகள்
+RecruitmentCandidatures=விண்ணப்பங்கள்
+InterviewToDo=Contacts to follow
+AnswerCandidature=விண்ணப்ப பதில்
+YourCandidature=உங்கள் விண்ணப்பம்
+YourCandidatureAnswerMessage=உங்கள் விண்ணப்பத்திற்கு நன்றி. <br> ...
+JobClosedTextCandidateFound=வேலை நிலை மூடப்பட்டுள்ளது. பதவி நிரப்பப்பட்டுள்ளது.
+JobClosedTextCanceled=வேலை நிலை மூடப்பட்டுள்ளது.
+ExtrafieldsJobPosition=நிரப்பு பண்புக்கூறுகள் (வேலை நிலைகள்)
+ExtrafieldsApplication=நிரப்பு பண்புக்கூறுகள் (வேலை விண்ணப்பங்கள்)
+MakeOffer=சலுகை கொடு
+WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
+NoPositionOpen=No positions open at the moment
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+Recruitment=Recruitment

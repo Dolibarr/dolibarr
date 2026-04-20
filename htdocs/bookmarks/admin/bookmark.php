@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,31 +23,44 @@
  *		\brief      Page to setup bookmark module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
-if ($action == 'setvalue')
-{
+/*
+ * Actions
+ */
+$error = 0;
+
+if ($action == 'setvalue') {
 	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU', 'alpha');
 	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU", $showmenu, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
@@ -57,15 +71,15 @@ if ($action == 'setvalue')
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-bookmarks page-admin_bookmark');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("BookmarkSetup"), $linkback, 'title_setup');
 
 print $langs->trans("BookmarkDesc")."<br>\n";
 
 print '<br>';
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -77,9 +91,9 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("NbOfBoomarkToShow").'</td><td>';
-print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf->global->BOOKMARKS_SHOW_IN_MENU.'">';
+print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="' . getDolGlobalString('BOOKMARKS_SHOW_IN_MENU').'">';
 print '</td></tr>';
-print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
+print '</table><br><div class="center"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></div></form>';
 
 // End of page
 llxFooter();

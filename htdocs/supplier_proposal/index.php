@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +26,28 @@
  *	\brief      Home page of vendor proposal area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('suppliersproposalsindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0)
-{
+$socid = GETPOSTINT('socid');
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -54,150 +62,154 @@ $supplier_proposalstatic = new SupplierProposal($db);
 $companystatic = new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+
+$title = $langs->trans("SupplierProposalArea");
 $help_url = "EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
-llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-index');
 
 print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'supplier_proposal');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
-
-// Search form
-
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
-    print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print '</tr>';
-    print "</table></div></form><br>\n";
-}
-
 
 // Statistics
 
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE p.fk_soc = s.rowid";
 $sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
-if ($user->socid) $sql .= ' AND p.fk_soc = '.$user->socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($user->socid) {
+	$sql .= ' AND p.fk_soc = '.((int) $user->socid);
+}
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
 $sql .= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql .= " GROUP BY p.fk_statut";
 $resql = $db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    $i = 0;
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    $total = 0;
-    $totalinprocess = 0;
-    $dataseries = array();
-    $colorseries = array();
-    $vals = array();
-    // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
-    while ($i < $num)
-    {
-        $row = $db->fetch_row($resql);
-        if ($row)
-        {
-            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-            {
-                $vals[$row[1]] = $row[0];
-                $totalinprocess += $row[0];
-            }
-            $total += $row[0];
-        }
-        $i++;
-    }
-    $db->free($resql);
+	$total = 0;
+	$totalinprocess = 0;
+	$dataseries = array();
+	$colorseries = array();
+	$vals = array();
+	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for sales orders), 3=Closed (Sent/Received, billed or not)
+	while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		if ($row) {
+			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
+			{
+				$vals[$row[1]] = $row[0];
+				$totalinprocess += $row[0];
+			}
+			$total += $row[0];
+		}
+		$i++;
+	}
+	$db->free($resql);
 
-    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus5
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus8
+	 * @var string $badgeStatus9
+	 */
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
-    $listofstatus = array(0, 1, 2, 3, 4);
-    foreach ($listofstatus as $status)
-    {
-    	$dataseries[] = array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-    	if ($status == SupplierProposal::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-    	if ($status == SupplierProposal::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
-    	if ($status == SupplierProposal::STATUS_SIGNED) $colorseries[$status] = $badgeStatus4;
-    	if ($status == SupplierProposal::STATUS_NOTSIGNED) $colorseries[$status] = $badgeStatus9;
-    	if ($status == SupplierProposal::STATUS_CLOSE) $colorseries[$status] = $badgeStatus6;
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
+	$listofstatus = array(0, 1, 2, 3, 4);
+	foreach ($listofstatus as $status) {
+		$dataseries[] = array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+		if ($status == SupplierProposal::STATUS_DRAFT) {
+			$colorseries[$status] = '-'.$badgeStatus0;
+		}
+		if ($status == SupplierProposal::STATUS_VALIDATED) {
+			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == SupplierProposal::STATUS_SIGNED) {
+			$colorseries[$status] = $badgeStatus4;
+		}
+		if ($status == SupplierProposal::STATUS_NOTSIGNED) {
+			$colorseries[$status] = $badgeStatus9;
+		}
+		if ($status == SupplierProposal::STATUS_CLOSE) {
+			$colorseries[$status] = $badgeStatus6;
+		}
 
-    	if (empty($conf->use_javascript_ajax))
-    	{
-    		print '<tr class="oddeven">';
-    		print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
-    		print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-    		print "</tr>\n";
-    	}
-    }
-    if ($conf->use_javascript_ajax)
-    {
-        print '<tr><td class="center" colspan="2">';
+		if (empty($conf->use_javascript_ajax)) {
+			print '<tr class="oddeven">';
+			print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
+			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
+			print "</tr>\n";
+		}
+	}
+	if ($conf->use_javascript_ajax) {
+		print '<tr><td class="center" colspan="2">';
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-        $dolgraph = new DolGraph();
-        $dolgraph->SetData($dataseries);
-        $dolgraph->SetDataColor(array_values($colorseries));
-        $dolgraph->setShowLegend(2);
-        $dolgraph->setShowPercent(1);
-        $dolgraph->SetType(array('pie'));
-        $dolgraph->setHeight('200');
-        $dolgraph->draw('idgraphstatus');
-        print $dolgraph->show($total ? 0 : 1);
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
+		$dolgraph->setShowLegend(2);
+		$dolgraph->setShowPercent(1);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->setHeight('200');
+		$dolgraph->draw('idgraphstatus');
+		print $dolgraph->show($total ? 0 : 1);
 
-        print '</td></tr>';
-    }
+		print '</td></tr>';
+	}
 
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-    print "</table></div><br>";
-}
-else
-{
-    dol_print_error($db);
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
+	print "</table></div><br>";
+} else {
+	dol_print_error($db);
 }
 
 
 /*
  * Draft askprice
  */
-if (!empty($conf->supplier_proposal->enabled))
-{
+if (isModEnabled('supplier_proposal')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity = ".$conf->entity;
 	$sql .= " AND c.fk_statut = 0";
-	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) {
+		$sql .= " AND c.fk_soc = ".((int) $socid);
+	}
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
-        print '<div class="div-table-responsive-no-min">';
+	if ($resql) {
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
 		$langs->load("supplier_proposal");
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
@@ -219,7 +231,7 @@ if (!empty($conf->supplier_proposal->enabled))
 	}
 }
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 5;
@@ -232,29 +244,32 @@ $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, 
 $sql .= " date_cloture as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity = ".$conf->entity;
 //$sql.= " AND c.fk_statut > 2";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($socid) {
+	$sql .= " AND c.fk_soc = ".((int) $socid);
+}
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-    print '<div class="div-table-responsive-no-min">';
+if ($resql) {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedRequests", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -294,45 +309,50 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
+} else {
+	dol_print_error($db);
 }
-else dol_print_error($db);
 
 
 /*
  * Opened askprice
  */
-if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
-{
+if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
 	$langs->load("supplier_proposal");
 
 	$now = dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total_ttc, p.total_tva, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql .= " AND p.fk_statut = 1";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid) $sql .= " AND s.rowid = ".$socid;
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
 	$sql .= " ORDER BY p.rowid DESC";
 
 	$result = $db->query($sql);
-	if ($result)
-	{
+	if ($result) {
 		$total = 0;
 		$num = $db->num_rows($result);
 		$i = 0;
-		if ($num > 0)
-		{
-            print '<div class="div-table-responsive-no-min">';
+		if ($num > 0) {
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened");
+			print ' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1" alt="'.$langs->trans("GoOnList").'"><span class="badge">'.$num.'</span></a>';
+			print '</th></tr>';
 
-			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-			while ($i < $nbofloop)
-			{
+			$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($result);
 
 				print '<tr class="oddeven">';
@@ -348,7 +368,9 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				print $supplier_proposalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) {
+					print img_warning($langs->trans("Late"));
+				}
 				print '</td>';
 				print '<td width="16" class="center nobordernopadding">';
 				$filename = dol_sanitizeFileName($obj->ref);
@@ -373,24 +395,19 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$i++;
 				$total += $obj->total_ttc;
 			}
-			if ($num > $nbofloop)
-			{
+			if ($num > $nbofloop) {
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
-			{
+			} elseif ($total > 0) {
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table></div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardSupplierProposal', $parameters, $object); // Note that $action and $object may have been modified by hook

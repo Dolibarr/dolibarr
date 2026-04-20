@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +24,52 @@
  * 	\brief      Page to show a trip information
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("trips");
 
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
+
+$childids = $user->getAllChildIds(1);
+
 // Security check
-$id = GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
+
+$object = new ExpenseReport($db);
+if (!$object->fetch($id, $ref) > 0) {
+	dol_print_error($db);
+}
+
+if ($object->id > 0) {
+	// Check current user can read this expense report
+	$canread = 0;
+	if ($user->hasRight('expensereport', 'readall')) {
+		$canread = 1;
+	}
+	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
 
 
 /*
@@ -47,15 +82,14 @@ $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Info");
 $helpurl = "EN:Module_Expense_Reports";
 llxHeader("", $title, $helpurl);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
+	print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -76,7 +110,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

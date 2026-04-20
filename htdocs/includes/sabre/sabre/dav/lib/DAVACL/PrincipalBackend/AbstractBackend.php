@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\PrincipalBackend;
 
 /**
- * Abstract Principal Backend
+ * Abstract Principal Backend.
  *
  * Currently this class has no function. It's here for consistency and so we
  * have a non-bc-breaking way to add a default generic implementation to
@@ -13,8 +15,8 @@ namespace Sabre\DAVACL\PrincipalBackend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBackend implements BackendInterface {
-
+abstract class AbstractBackend implements BackendInterface
+{
     /**
      * Finds a principal by its URI.
      *
@@ -30,13 +32,14 @@ abstract class AbstractBackend implements BackendInterface {
      *
      * @param string $uri
      * @param string $principalPrefix
-     * @return string
+     *
+     * @return string|null
      */
-    function findByUri($uri, $principalPrefix) {
-
+    public function findByUri($uri, $principalPrefix)
+    {
         // Note that the default implementation here is a bit slow and could
         // likely be optimized.
-        if (substr($uri, 0, 7) !== 'mailto:') {
+        if ('mailto:' !== substr($uri, 0, 7)) {
             return;
         }
         $result = $this->searchPrincipals(
@@ -47,7 +50,5 @@ abstract class AbstractBackend implements BackendInterface {
         if ($result) {
             return $result[0];
         }
-
     }
-
 }

@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2018      Juanjo Menent <jmenent@2byte.es>
+/* Copyright (C) 2010-2011  Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Juanjo Menent 			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,53 +19,65 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE contrat/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force Contrat[] $linkedObjectBlock';
+/** @var Contrat[] $linkedObjectBlock */
 
 // Load translation files required by the page
 $langs->load("contracts");
 
-$total = 0; $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink)
-{
-    $ilink++;
+$total = 0;
+$ilink = 0;
+foreach ($linkedObjectBlock as $key => $objectlink) {
+	$ilink++;
 
-    $trclass = 'oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
-	?>
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">';
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
+
+	$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+		$trclass .= ' liste_sub_total';
+	} ?>
 <tr class="<?php echo $trclass; ?>">
-    <td><?php echo $langs->trans("Contract"); ?></td>
-    <td><?php echo $objectlink->getNomUrl(1); ?></td>
-    <td></td>
+	<td><?php echo $langs->trans("Contract"); ?></td>
+	<td class="nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td class="nopaddingtopimp nopaddingbottomimp"><?php echo $refWithThirdparty; ?></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
-    <td class="right"><?php
+	<td class="nowraponall right"><?php
 	// Price of contract is not shown by default because a contract is a list of service with
-	// start and end date that change with time andd that may be different that the period of reference for price.
+	// start and end date that change with time and that may be different that the period of reference for price.
 	// So price of a contract does often means nothing. Prices is on the different invoices done on same contract.
-	if ($user->rights->contrat->lire && empty($conf->global->CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE))
-	{
+	if ($user->hasRight('contrat', 'lire') && !getDolGlobalString('CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE')) {
 		$totalcontrat = 0;
 		foreach ($objectlink->lines as $linecontrat) {
-			$totalcontrat = $totalcontrat + $linecontrat->total_ht;
-		    $total = $total + $linecontrat->total_ht;
+			$totalcontrat += $linecontrat->total_ht;
+			$total += $linecontrat->total_ht;
 		}
 		echo price($totalcontrat);
 	} ?></td>
 	<td class="right"><?php echo $objectlink->getLibStatut(7); ?></td>
-	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 	<?php
 }

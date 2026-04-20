@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,73 +33,60 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_accountancy_suspense_account extends ModeleBoxes
 {
-    public $boxcode = "accountancy_suspense_account";
-    public $boximg = "object_invoice";
-    public $boxlabel = "BoxSuspenseAccount";
-    public $depends = array("accounting");
+	public $boxcode = "accountancy_suspense_account";
+	public $boximg = "accountancy";
+	public $boxlabel = "BoxSuspenseAccount";
+	public $depends = array("accounting");
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param)
+	{
+		global $user;
 
-    public $param;
+		$this->db = $db;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+		$this->hidden = !$user->hasRight('accounting', 'mouvements', 'lire');
+	}
 
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param  int     $max        Maximum number of records to load
+	 *  @return	void
+	 */
+	public function loadBox($max = 1)
+	{
+		global $user, $langs, $conf;
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param)
-    {
-        global $user;
+		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-        $this->db = $db;
+		//$bookkeepingstatic = new BookKeeping($this->db);
 
-        $this->hidden = !($user->rights->accounting->mouvements->lire);
-    }
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
-    /**
-     *  Load data for box to show them later
-     *
-     *  @return	void
-     */
-    public function loadBox()
-    {
-        global $user, $langs, $conf;
-
-        include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-
-        //$bookkeepingstatic = new BookKeeping($this->db);
-
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
-
-        if ($user->rights->accounting->mouvements->lire)
-        {
-			$suspenseAccount = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-        	if (!empty($suspenseAccount) && $suspenseAccount > 0)
-        	{
+		if ($user->hasRight('accounting', 'mouvements', 'lire')) {
+			$suspenseAccount = getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE');
+			if (!empty($suspenseAccount) && $suspenseAccount > 0) {
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-				$sql .= " WHERE b.numero_compte = ".$suspenseAccount;
+				$sql .= " WHERE b.numero_compte = '".$this->db->escape($suspenseAccount)."'";
 				$sql .= " AND b.entity = ".$conf->entity;
 
 				$result = $this->db->query($sql);
 				$nbSuspenseAccount = 0;
-				if ($result)
-				{
+				if ($result) {
 					$obj = $this->db->fetch_object($result);
 					$nbSuspenseAccount = $obj->nb_suspense_account;
 				}
 
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'text' => $langs->trans("NumberOfLinesInSuspenseAccount").':'
+					'text' => $langs->trans("NumberOfLinesInSuspenseAccount")
 				);
 
 				$this->info_box_contents[0][1] = array(
@@ -112,24 +100,26 @@ class box_accountancy_suspense_account extends ModeleBoxes
 					'text' => '<span class="opacitymedium">'.$langs->trans("SuspenseAccountNotDefined").'</span>'
 				);
 			}
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover"',
-            	'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
-            );
-        }
-    }
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
+			);
+		}
+	}
+
+
 
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

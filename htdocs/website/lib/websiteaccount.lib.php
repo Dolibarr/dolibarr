@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +27,7 @@
  * Prepare array of tabs for SocieteAccount
  *
  * @param	SocieteAccount	$object		SocieteAccount
- * @return 	array						Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function websiteaccountPrepareHead($object)
 {
@@ -34,19 +36,18 @@ function websiteaccountPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/website/websiteaccount_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/website/websiteaccount_card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("WebsiteAccount");
 	$head[$h][2] = 'card';
 	$h++;
 
-	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
-	{
+	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if(!empty($object->fields['note_private'])) $nbNote++;
 		if(!empty($object->fields['note_public'])) $nbNote++;
 		$head[$h][0] = dol_buildpath('/monmodule/websiteaccount_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		$head[$h][2] = 'note';
 		$h++;
 	}*/
@@ -59,7 +60,7 @@ function websiteaccountPrepareHead($object)
 	$nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dol_buildpath("/monmodule/websiteaccount_document.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>' : '');
 	$head[$h][2] = 'document';
 	$h++;
 

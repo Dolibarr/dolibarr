@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  *      \brief      Module to OpenSurvey integration.
  *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
- *      \brief      Description and activation file for module OpenSurvey
+ *      \brief      Description and activation file for the module OpenSurvey
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -31,16 +32,13 @@ include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
  */
 class modOpenSurvey extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param		DoliDB		$db		Database handler
 	 */
-    public function __construct($db)
-    {
-		global $langs, $conf;
-
+	public function __construct($db)
+	{
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -64,7 +62,7 @@ class modOpenSurvey extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = '^date@opensurvey';
+		$this->picto = 'poll';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -76,14 +74,14 @@ class modOpenSurvey extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 4, 0); // Minimum version of Dolibarr required by module
 
 		// Constants
 		$this->const = array(); // List of parameters
 
 		// Dictionaries
-        $this->dictionaries = array();
+		$this->dictionaries = array();
 
 		// Boxes
 		$this->boxes = array(); // List of boxes
@@ -119,73 +117,79 @@ class modOpenSurvey extends DolibarrModules
 		$r++;
 
 
-        // Menus
-        //-------
-        $r = 0;
-        $this->menu[$r] = array(
-            'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'left',
-            'titre'=>'Survey',
-            'mainmenu'=>'tools',
-            'leftmenu'=>'opensurvey',
-            'url'=>'/opensurvey/index.php?mainmenu=tools&leftmenu=opensurvey',
-            'langs'=>'opensurvey',
-            'position'=>200,
-            'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->opensurvey->read',
-            'target'=>'',
-            'user'=>0,
-        );
-        $r++;
+		// Menus
+		//-------
+		$r = 0;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left',
+			'titre' => 'Survey',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'tools',
+			'leftmenu' => 'opensurvey',
+			'url' => '/opensurvey/list.php?mainmenu=tools&leftmenu=opensurvey',
+			'langs' => 'opensurvey',
+			'position' => 30,
+			'enabled' => 'isModEnabled("opensurvey")', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->hasRight("opensurvey", "read")',
+			'target' => '',
+			'user' => 0,
+		);
+		$r++;
 
-        $this->menu[$r] = array(
-            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'left',
-            'titre'=>'NewSurvey',
-            'mainmenu'=>'tools',
-            'leftmenu'=>'opensurvey_new',
-            'url'=>'/opensurvey/wizard/index.php',
-            'langs'=>'opensurvey',
-            'position'=>210,
-            'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->opensurvey->write',
-            'target'=>'',
-            'user'=>0,
-        );
-        $r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left',
+			'titre' => 'NewSurvey',
+			'mainmenu' => 'tools',
+			'leftmenu' => 'opensurvey_new',
+			'url' => '/opensurvey/wizard/index.php',
+			'langs' => 'opensurvey',
+			'position' => 32,
+			'enabled' => 'isModEnabled("opensurvey")', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->hasRight("opensurvey", "write")',
+			'target' => '',
+			'user' => 0,
+		);
+		$r++;
 
-        $this->menu[$r] = array(
-            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'left',
-            'titre'=>'List',
-            'mainmenu'=>'tools',
-            'leftmenu'=>'opensurvey_list',
-            'url'=>'/opensurvey/list.php',
-            'langs'=>'opensurvey',
-            'position'=>220,
-            'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->opensurvey->read',
-            'target'=>'',
-            'user'=>0,
-        );
-        $r++;
-    }
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left',
+			'titre' => 'List',
+			'mainmenu' => 'tools',
+			'leftmenu' => 'opensurvey_list',
+			'url' => '/opensurvey/list.php',
+			'langs' => 'opensurvey',
+			'position' => 34,
+			'enabled' => 'isModEnabled("opensurvey")', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->hasRight("opensurvey", "read")',
+			'target' => '',
+			'user' => 0,
+		);
+		$r++;
+	}
 
 	/**
 	 *	Function called when module is enabled.
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *  @return     int             	1 if OK, 0 if KO
 	 */
-    public function init($options = '')
-    {
-        // Permissions
-        $this->remove($options);
+	public function init($options = '')
+	{
+		$result = $this->_load_tables('/install/mysql/', 'opensurvey');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
-        $sql = array();
+		// Permissions
+		$this->remove($options);
 
-        return $this->_init($sql, $options);
-    }
+		$sql = array();
+
+		return $this->_init($sql, $options);
+	}
 }

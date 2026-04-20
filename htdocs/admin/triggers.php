@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,24 @@
  *       \brief      Page to view triggers
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $sortfield = 'file';
 $sortorder = 'ASC';
@@ -43,7 +55,7 @@ $sortorder = 'ASC';
  * View
  */
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-triggers');
 
 $form = new Form($db);
 
@@ -55,28 +67,25 @@ print "<br>\n";
 
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();
-$param = ''; $align = '';
+$param = '';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
-print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
+print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList($langs->trans("Active"), 0, $_SERVER["PHP_SELF"], 'active', "", $param, 'align="center"', $sortfield, $sortorder, '', 1)."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
 print '</tr>';
 
-foreach ($triggers as $trigger)
-{
+foreach ($triggers as $trigger) {
 	print '<tr class="oddeven">';
-	print '<td class="tdtop" width="32">'.$trigger['picto'].'</td>';
-	print '<td class="tdtop">'.$trigger['file'].'</td>';
-	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-	print '<td class="tdtop">';
-	$text = $trigger['info'];
-	$text .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
-	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
-	print $form->textwithpicto('', $text);
+	print '<td>'.$trigger['picto'].' '.$trigger['file'].'</td>';
+	print '<td class="center">'.$trigger['status'].'</td>';
+	print '<td>';
+	$htmltooltip = $trigger['info'];
+	$htmltooltip .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
+	//$htmltooltip.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+	print $form->textwithpicto('', $htmltooltip);
 	print '</td>';
 	print '</tr>';
 }

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,166 +22,163 @@
 /**
  *	\file       htdocs/core/boxes/box_clients.php
  *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\brief      Module for generating box to show last customers
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last thirdparties
+ * Class to manage the box to show last customers
  */
 class box_clients extends ModeleBoxes
 {
-    public $boxcode = "lastcustomers";
-    public $boximg = "object_company";
-    public $boxlabel = "BoxLastCustomers";
-    public $depends = array("societe");
+	public $boxcode  = "lastcustomers";
+	public $boximg   = "object_company";
+	public $boxlabel = "BoxLastCustomers";
+	public $depends  = array("societe");
 
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-    public $enabled = 1;
-
-    public $info_box_head = array();
-    public $info_box_contents = array();
-
+	public $enabled = 1;
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+	 *  @param	string	$param		More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled = 0; // disabled by this option
+		if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
+			$this->enabled = 0; // disabled by this option
+		}
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/societe/card.php?action=create&type=c';
+		$this->msgNoRecords = 'NoRecordedCustomers';
 	}
 
 	/**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs, $hookmanager;
 		$langs->load("boxes");
 
 		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic = new Societe($this->db);
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+		$thirdpartystatic = new Client($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedCustomers", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?type=c&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>',
+		);
 
-		if ($user->rights->societe->lire)
-		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-            $sql .= ", s.code_client";
-            $sql .= ", s.client";
-            $sql .= ", s.code_fournisseur";
-            $sql .= ", s.fournisseur";
-            $sql .= ", s.code_compta";
-            $sql .= ", s.code_compta_fournisseur";
-            $sql .= ", s.logo";
-            $sql .= ", s.email";
-            $sql .= ", s.datec, s.tms, s.status, s.entity";
+		if ($user->hasRight('societe', 'lire')) {
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = $user->socid";
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdpartystatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid > 0) {
+					$sql .= " AND s.rowid = ".((int) $user->socid);
+				}
+			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
-                    $thirdpartystatic->id = $objp->socid;
-                    $thirdpartystatic->name = $objp->name;
-                    $thirdpartystatic->code_client = $objp->code_client;
-                    $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-                    $thirdpartystatic->code_compta = $objp->code_compta;
-                    $thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-                    $thirdpartystatic->client = $objp->client;
-                    $thirdpartystatic->fournisseur = $objp->fournisseur;
-                    $thirdpartystatic->logo = $objp->logo;
-                    $thirdpartystatic->email = $objp->email;
+
+					$thirdpartystatic->id = $objp->socid;
+					$thirdpartystatic->name = $objp->name;
+					$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_client = $objp->code_client;
+					$thirdpartystatic->code_compta = $objp->code_compta_client;
+					$thirdpartystatic->code_compta_client = $objp->code_compta_client;
+					$thirdpartystatic->client = $objp->client;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
 					$thirdpartystatic->entity = $objp->entity;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $thirdpartystatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax150"',
+						'text' => $thirdpartystatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datem, "day")
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel')
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status, 3)
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $thirdpartystatic->LibStatut($objp->status, 3)
+					);
 
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedCustomers")
-				);
 
 				$this->db->free($result);
-			}
-			else {
+			} else {
 				$this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql)
-                );
+					'td' => '',
+					'maxlength' => 500,
+					'text' => ($this->db->error().' sql='.$sql)
+				);
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

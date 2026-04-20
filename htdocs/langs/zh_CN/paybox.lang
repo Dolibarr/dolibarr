@@ -1,31 +1,16 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox模块设置
-PayBoxDesc=该模块提供的网页，以便在付款<a href="http://www.paybox.com" target="_blank">Paybox</a>客户。这可以用来为一个自由付款或就某一Dolibarr对象（发票，订货，付款...）
-FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象
-PaymentForm=付款方式
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=这个屏幕允许你进行网上支付%s。
-ThisIsInformationOnPayment=这是在做付款信息
-ToComplete=要完成
-YourEMail=付款确认的电子邮件
-Creditor=债权人
-PaymentCode=付款代码
-PayBoxDoPayment=Pay with Paybox
+PayBoxDesc=该模块提供页面，允许客户在<a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a>付款。这可以用于免费付款或给特定的 Dolibarr 对象 (发票、订单……) 付款
+PayBoxDoPayment=使用 Paybox 付款
 YouWillBeRedirectedOnPayBox=您将被重定向担保Paybox页，输入您的信用卡信息
-Continue=下一个
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=用网站链接<b>%s</b>设置您的 Paybox，以便当用 Paybox 验证时自动创建付款。
 YourPaymentHasBeenRecorded=本页面确认您的付款已记录。谢谢。
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=帐户参数
-UsageParameter=使用参数
-InformationToFindParameters=帮助，找到你的%s帐户信息
+YourPaymentHasNotBeenRecorded=您的付款尚未记录和交易已取消。谢谢。
 PAYBOX_CGI_URL_V2=钱箱付款CGI模块的调用地址
-VendorName=供应商名称
-CSSUrlForPaymentForm=付款方式的CSS样式表的URL
 NewPayboxPaymentReceived=新建收款钱箱
 NewPayboxPaymentFailed=尝试新建收款钱箱失败
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PAYONLINE_SENDEMAIL=付款尝试以后的电子邮件通知 (成功或失败)
 PAYBOX_PBX_SITE=PBX SITE参数值
 PAYBOX_PBX_RANG=PBX Rang参数值
 PAYBOX_PBX_IDENTIFIANT=PBX ID参数值
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=HMAC 密钥

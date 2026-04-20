@@ -23,8 +23,9 @@ create table llx_entrepot
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(255) NOT NULL,
   datec           datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_project	  integer DEFAULT NULL,			-- project associated to warehouse if any
   description     text,
   lieu            varchar(64),					-- resume lieu situation
   address         varchar(255),
@@ -32,11 +33,14 @@ create table llx_entrepot
   town            varchar(50),
   fk_departement  integer,
   fk_pays         integer DEFAULT 0,
-  phone           varchar(20),                  -- phone number
-  fax             varchar(20),                  -- fax number
-  statut          tinyint DEFAULT 1,			-- 1 open, 0 close
+  phone           varchar(30),                  -- phone number
+  fax             varchar(30),                  -- fax number
+  barcode         varchar(180) DEFAULT NULL,          -- barcode
+  fk_barcode_type integer      DEFAULT NULL,          -- barcode type
+  warehouse_usage integer DEFAULT 1,            -- 1=internal, 2=external (virtual warehouse or stock out of company). Need STOCK_USE_WAREHOUSE_USAGE opton.
+  statut          tinyint DEFAULT 1,			-- 1 open, 0 close. If option ENTREPOT_EXTRA_STATUS is set, value 2 means open for internal move only/close for external mode.
   fk_user_author  integer,
   model_pdf       varchar(255),
-  import_key	    varchar(14),
+  import_key	  varchar(14),
   fk_parent       integer DEFAULT 0
 )ENGINE=innodb;

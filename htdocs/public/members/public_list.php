@@ -3,6 +3,8 @@
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +26,39 @@
  *  \brief      File sample to list members
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retreive from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) define("DOLENTITY", $entity);
+// if (is_numeric($entity)) { // $entity is casted to int
+define("DOLENTITY", $entity);
+// }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 // Security check
-if (empty($conf->adherent->enabled)) accessforbidden('', 0, 0, 1);
-
+if (!isModEnabled('member')) {
+	httponly_accessforbidden('Module Membership not enabled');
+}
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
@@ -46,29 +66,32 @@ $langs->loadLangs(array("main", "members", "companies", "other"));
 /**
  * Show header for member list
  *
- * @param 	string		$title		Title
- * @param 	string		$head		More info into header
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "")
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
-	global $user, $conf, $langs;
+	top_htmlhead($head, $title);
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	print "<html>\n";
-	print "<head>\n";
-	print "<title>".$title."</title>\n";
-	if ($head) print $head."\n";
-	print "</head>\n";
 	print '<body class="public_body">'."\n";
 }
 
 /**
  * Show footer for member list
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	printCommonFooter('public');
 
@@ -77,11 +100,13 @@ function llxFooterVierge()
 }
 
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -89,56 +114,89 @@ $pagenext = $page + 1;
 $filter = GETPOST('filter');
 $statut = GETPOST('statut');
 
-if (!$sortorder) {  $sortorder = "ASC"; }
-if (!$sortfield) {  $sortfield = "lastname"; }
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "lastname";
+}
 
 
 /*
  * View
  */
 
+if (!getDolGlobalString('MEMBER_PUBLIC_ENABLED')) {
+	httponly_accessforbidden('Public access of list of members is not enabled. See setup of module membership to enable it.');
+}
+
 $form = new Form($db);
 
 $morehead = '';
-if (!empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
-else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
+if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
+	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
+} else {
+	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
+}
 
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
 $sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, birth, photo";
+
+$sqlfields = $sql;
+
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-$sql .= " WHERE entity = ".$entity;
+$sql .= " WHERE entity = ".((int) $entity);
 $sql .= " AND statut = 1";
 $sql .= " AND public = 1";
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
+}
+
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);
-//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, zip, town, d.email, t.libelle as type, d.morphy, d.statut, t.subscription";
-//$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-//$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
-//$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
 	$param = "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
+	$title = $langs->trans("ListOfValidatedPublicMembers");
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 	print '<table class="public_border centpercent">';
 
 	print '<tr class="public_liste_titre">';
-	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"), $langs->trans("Lastname")).'</a></td>';
-	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
-	//print_liste_field_titre("DateToBirth", $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
-	print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "email", '', $param, '', $sortfield, $sortorder, 'public_');
-	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"], "zip", "", $param, '', $sortfield, $sortorder, 'public_');
-	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "town", "", $param, '', $sortfield, $sortorder, 'public_');
-	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'public_');
+	print '<th class="left"><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"), $langs->trans("Lastname")).'</a></th>';
+	print '<th class="left"><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></th>'."\n";
+	//print_liste_field_titre("DateOfBirth", $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
+	print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "email", '', $param, '', $sortfield, $sortorder, 'left public_');
+	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"], "zip", "", $param, '', $sortfield, $sortorder, 'left public_');
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "town", "", $param, '', $sortfield, $sortorder, 'left public_');
+	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center public_');
 	print "</tr>\n";
 
-	while ($i < $num && $i < $conf->liste_limit)
-	{
+	while ($i < $num && $i < $conf->liste_limit) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
@@ -147,23 +205,18 @@ if ($result)
 		print '<td>'.$objp->email.'</td>'."\n";
 		print '<td>'.$objp->zip.'</td>'."\n";
 		print '<td>'.$objp->town.'</td>'."\n";
-		if (isset($objp->photo) && $objp->photo != '')
-		{
-			print '<td>';
+		if (isset($objp->photo) && $objp->photo != '') {
+			print '<td class="center">';
 			print $form->showphoto('memberphoto', $objp, 64);
 			print '</td>'."\n";
-		}
-		else
-		{
+		} else {
 			print "<td>&nbsp;</td>\n";
 		}
 		print "</tr>";
 		$i++;
 	}
 	print "</table>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

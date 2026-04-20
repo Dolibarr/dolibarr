@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,9 +46,9 @@ class AntiVir
 	public $output;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 *  Constructor
@@ -59,86 +60,58 @@ class AntiVir
 		$this->db = $db;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
 	 *  Return also true (virus found) if file end with '.virus' (so we can make test safely).
 	 *
 	 *	@param	string	$file		File to scan
-	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
+	 *	@return	int					Return integer <0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
 	public function dol_avscan_file($file)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$return = 0;
-
-		if (preg_match('/\.virus$/i', $file))
-		{
-		    $this->errors[] = 'File has an extension saying file is a virus';
-		    return -97;
+		if (preg_match('/\.virus$/i', $file)) {
+			$this->errors[] = 'File has an extension saying file is a virus';
+			return -97;
 		}
 
 		$fullcommand = $this->getCliCommand($file);
+		//$fullcommand="/usr/bin/clamdscan --fdpass '/tmp/phpuxoAEo'"
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
-        $fullcommand .= ' 2>&1'; // This is to get error output
+		//var_dump($fullcommand);
 
-		$output = array();
-		$return_var = 0;
-        $safemode = ini_get("safe_mode");
+		$safemode = ini_get("safe_mode");
 		// Create a clean fullcommand
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode ? "on" : "off"));
-		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
-		$lastline = exec($fullcommand, $output, $return_var);
+		// Run CLI command.
+		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+		$utils = new Utils($this->db);
+		$outputfile = $conf->user->dir_temp.'/antivir.tmp';
 
-		if (is_null($output)) $output = array();
+		$result = $utils->executeCLI($fullcommand, $outputfile);
 
-        //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
+		$return_var = $result['result'];
+		$output = $result['output'];
+		$errorstring = $result['error'];
 
-		/*
-        $outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
-		$handle = fopen($outputfile, 'w');
-		if ($handle)
-		{
-			$handlein = popen($fullcommand, 'r');
-			while (!feof($handlein))
-			{
-				$read = fgets($handlein);
-				fwrite($handle,$read);
-			}
-			pclose($handlein);
-
-			$errormsg = fgets($handle,2048);
-			$this->output=$errormsg;
-
-			fclose($handle);
-
-			if (! empty($conf->global->MAIN_UMASK))
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		if (is_null($output)) {
+			$output = array();
 		}
-		else
-		{
-			$langs->load("errors");
-			dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
-			$this->error="ErrorFailedToWriteInDir";
-			$return=-1;
-		}
-		*/
 
-		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',', $output));
+		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".$output);
 
 		$returncodevirus = 1;
-		if ($return_var == $returncodevirus)	// Virus found
-		{
-			$this->errors = $output;
+		if ($return_var == $returncodevirus) {	// Virus found
+			$this->errors = array($errorstring, $output);
 			return -99;
 		}
 
-		if ($return_var > 0)					// If other error
-		{
-			$this->errors = $output;
+		if ($return_var > 0) {					// If other error
+			$this->errors = array($errorstring, $output);
 			return -98;
 		}
 
@@ -156,32 +129,35 @@ class AntiVir
 	 */
 	public function getCliCommand($file)
 	{
-		global $conf;
-
 		$maxreclevel = 5; // maximal recursion level
 		$maxfiles = 1000; // maximal number of files to be scanned within archive
 		$maxratio = 200; // maximal compression ratio
 		$bz2archivememlim = 0; // limit memory usage for bzip2 (0/1)
 		$maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
 
-		$command = $conf->global->MAIN_ANTIVIRUS_COMMAND;
-		$param = $conf->global->MAIN_ANTIVIRUS_PARAM;
+		$command = getDolGlobalString('MAIN_ANTIVIRUS_COMMAND', '/usr/bin/clamdscan');
+		$param = getDolGlobalString('MAIN_ANTIVIRUS_PARAM');
 
-		$param = preg_replace('/%maxreclevel/', $maxreclevel, $param);
-		$param = preg_replace('/%maxfiles/', $maxfiles, $param);
-		$param = preg_replace('/%maxratio/', $maxratio, $param);
-		$param = preg_replace('/%bz2archivememlim/', $bz2archivememlim, $param);
-		$param = preg_replace('/%maxfilesize/', $maxfilesize, $param);
+		$param = preg_replace('/%maxreclevel/', (string) $maxreclevel, $param);
+		$param = preg_replace('/%maxfiles/', (string) $maxfiles, $param);
+		$param = preg_replace('/%maxratio/', (string) $maxratio, $param);
+		$param = preg_replace('/%bz2archivememlim/', (string) $bz2archivememlim, $param);
+		$param = preg_replace('/%maxfilesize/', (string) $maxfilesize, $param);
 		$param = preg_replace('/%file/', trim($file), $param);
 
-		if (!preg_match('/%file/', $conf->global->MAIN_ANTIVIRUS_PARAM))
+		if (!preg_match('/%file/', getDolGlobalString('MAIN_ANTIVIRUS_PARAM'))) {
 			$param = $param." ".escapeshellarg(trim($file));
+		}
 
-		if (preg_match("/\s/", $command)) $command = escapeshellarg($command); // Use quotes on command. Using escapeshellcmd fails.
+		if (preg_match("/\s/", $command)) {
+			$command = escapeshellarg($command); // Force use of quotes on command. Using escapeshellcmd fails.
+		}
 
-		$ret = $command.' '.$param;
+		$forbidden_chars_to_replace = array("*", "?", "\"", "<", ">", "|", "[", "]", ";", '°', '$');
+		$ret = dol_sanitizePathName($command).' '.dol_string_nospecial($param, '_', $forbidden_chars_to_replace);
+
 		//$ret=$command.' '.$param.' 2>&1';
-        //print "xx".$ret."xx";exit;
+		//print "xx".$ret."xx";exit;
 
 		return $ret;
 	}

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +32,13 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'ER';
 
 	/**
@@ -42,7 +47,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -57,9 +62,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	/**
 	 *  Return description of numbering model
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -81,28 +87,31 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-		{
+		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -112,27 +121,25 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	}
 
 	/**
-	 * 	Return next free value
+	 *  Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param  ExpenseReport	$object     Object we need next value for
+	 *  @return string|int<-1,0>   			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
 		global $db, $conf;
 
 		// For backward compatibility and restore old behavior to get ref of expense report
-		if ($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)
-		{
+		if (getDolGlobalString('EXPENSEREPORT_USE_OLD_NUMBERING_RULE')) {
 			$fuser = null;
-			if ($object->fk_user_author > 0)
-			{
+			if ($object->fk_user_author > 0) {
 				$fuser = new User($db);
 				$fuser->fetch($object->fk_user_author);
 			}
 
-			$expld_car = (empty($conf->global->NDF_EXPLODE_CHAR)) ? "-" : $conf->global->NDF_EXPLODE_CHAR;
-			$num_car = (empty($conf->global->NDF_NUM_CAR_REF)) ? "5" : $conf->global->NDF_NUM_CAR_REF;
+			$expld_car = (!getDolGlobalString('NDF_EXPLODE_CHAR')) ? "-" : $conf->global->NDF_EXPLODE_CHAR;
+			$num_car = (!getDolGlobalString('NDF_NUM_CAR_REF')) ? "5" : $conf->global->NDF_NUM_CAR_REF;
 
 			$sql = 'SELECT MAX(de.ref_number_int) as max';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport de';
@@ -148,24 +155,25 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 				}
 			} else {
 				$newref = 1;
-				while (strlen($newref) < $num_car) {
+				while (strlen((string) $newref) < $num_car) {
 					$newref = "0".$newref;
 				}
 			}
 
-			$ref_number_int = ($newref + 1) - 1;
+			$ref_number_int = (int) $newref;
 
 			$user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
 
 			$prefix = "ER";
-			if (!empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix = $conf->global->EXPENSE_REPORT_PREFIX;
+			if (getDolGlobalString('EXPENSE_REPORT_PREFIX')) {
+				$prefix = getDolGlobalString('EXPENSE_REPORT_PREFIX');
+			}
 			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 
-			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
+			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.((int) $ref_number_int).' WHERE rowid = '.((int) $object->id);
 			$resqlbis = $db->query($sqlbis);
-			if (!$resqlbis)
-			{
-				dol_print_error($resqlbis);
+			if (!$resqlbis) {
+				dol_print_error($db, $db->lasterror());
 				exit;
 			}
 
@@ -174,36 +182,38 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		}
 
 		// First we get the max value
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
-		}
-		else
-		{
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
 			dol_syslog("mod_expensereport_jade::getNextValue", LOG_DEBUG);
 			return 0;
 		}
 
 		$date = $object->date_valid; // $object->date does not exists
-		if (empty($date))
-		{
+		if (empty($date)) {
 			$this->error = 'Date valid not defined';
 			return 0;
 		}
 
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04d", $max + 1);
+		}
 
 		dol_syslog("mod_expensereport_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

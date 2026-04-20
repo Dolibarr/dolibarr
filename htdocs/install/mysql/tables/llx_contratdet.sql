@@ -20,7 +20,7 @@
 create table llx_contratdet
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   fk_contrat            integer       NOT NULL,
   fk_product            integer       NULL,                -- doit pouvoir etre nul pour ligne detail sans produits
@@ -38,24 +38,24 @@ create table llx_contratdet
   date_cloture          datetime,
 
   vat_src_code			varchar(10)   DEFAULT '',		   -- Vat code used as source of vat fields. Not strict foreign key here.
-  tva_tx                double(6,3)   DEFAULT 0, 	       -- taux tva
-  localtax1_tx		    double(6,3)   DEFAULT 0,           -- local tax 1 rate
+  tva_tx                double(7,4)   DEFAULT 0, 	       -- taux tva
+  localtax1_tx		    double(7,4)   DEFAULT 0,           -- local tax 1 rate
   localtax1_type		varchar(10)	  	 NULL, 		       -- localtax1 type
-  localtax2_tx		    double(6,3)   DEFAULT 0,           -- local tax 2 rate
+  localtax2_tx		    double(7,4)   DEFAULT 0,           -- local tax 2 rate
   localtax2_type		varchar(10)	  	 NULL, 			   -- localtax2 type
   qty                   real          NOT NULL,            -- quantity
   remise_percent        real          DEFAULT 0,    	   -- pourcentage de remise
-  subprice              double(24,8)  DEFAULT 0,           -- prix unitaire
-  price_ht              real,              		           -- prix final (obsolete)
-  remise                real          DEFAULT 0,    		             -- montant de la remise (obsolete)
+  subprice              double(24,8)  DEFAULT 0,           -- unit price
+  subprice_ttc         	double(24,8)  DEFAULT 0,    	   -- unit price if price was entered including tax
   total_ht              double(24,8)  DEFAULT 0,     		   -- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva             double(24,8)  DEFAULT 0,	   		   -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
   total_localtax1       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 1 de la ligne
   total_localtax2       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 2 de la ligne
   total_ttc             double(24,8)  DEFAULT 0,	   		   -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  product_type			integer       DEFAULT 1,               -- Product type (1=service by default)
+  product_type			integer       DEFAULT 1,               -- Type of line (1=service by default)
   info_bits		        integer DEFAULT 0, 		               -- TVA NPR ou non
 
+  rang					integer DEFAULT 0,
   buy_price_ht          double(24,8)  DEFAULT NULL,            -- buying price
   fk_product_fournisseur_price integer DEFAULT NULL,           -- reference of supplier price when line was added was created (may be used to update buy_price_ht when future invoice will be created)
 
@@ -66,9 +66,11 @@ create table llx_contratdet
   fk_unit               integer       DEFAULT NULL,
 
   fk_multicurrency		integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code			varchar(3),
   multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc	double(24,8) DEFAULT 0,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0  
+  multicurrency_total_ttc	double(24,8) DEFAULT 0,
+  extraparams				 varchar(255)				 -- to stock other parameters in json format
 )ENGINE=innodb;

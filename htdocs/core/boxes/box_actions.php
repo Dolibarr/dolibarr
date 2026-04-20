@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 /**
  *	\file       htdocs/core/boxes/box_actions.php
  *	\ingroup    actions
- *	\brief      Module to build boxe for events
+ *	\brief      Module to build box for events
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -32,21 +33,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_actions extends ModeleBoxes
 {
-    public $boxcode = "lastactions";
-    public $boximg = "object_action";
-    public $boxlabel = "BoxLastActions";
-    public $depends = array("agenda");
+	public $boxcode = "lastactions";
+	public $boximg = "object_action";
+	public $boxlabel = "BoxOldestActions";
+	public $depends = array("agenda");
 
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-    public $param;
-
-    public $info_box_head = array();
-    public $info_box_contents = array();
-
+	public $enabled = 1;
 
 	/**
 	 *  Constructor
@@ -54,160 +46,188 @@ class box_actions extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->agenda->myactions->read);
+		$this->enabled = isModEnabled('agenda');
+
+		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+		$this->msgNoRecords = 'NoActionsToDo';
 	}
 
 	/**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-        $societestatic = new Societe($this->db);
-        $actionstatic = new ActionComm($this->db);
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+		$societestatic = new Societe($this->db);
+		$actionstatic = new ActionComm($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestActionsToDo", $max));
 
-        if ($user->rights->agenda->myactions->read) {
+		if ($user->hasRight('agenda', 'myactions', 'read')) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
-            $sql .= ", ta.code";
-            $sql .= ", ta.libelle as type_label";
-            $sql .= ", s.nom as name";
-            $sql .= ", s.rowid as socid";
-            $sql .= ", s.code_client";
+			$sql .= ", ta.code";
+			$sql .= ", ta.libelle as type_label";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+			}
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
-			$sql .= " AND a.entity = ".$conf->entity;
+			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
-			if ($user->socid)   $sql .= " AND s.rowid = ".$user->socid;
-			if (!$user->rights->agenda->allactions->read) $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
-			$sql .= " ORDER BY a.datec DESC";
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
+			if (!$user->hasRight('agenda', 'allactions', 'read')) {
+				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id).")";
+			}
+			$sql .= " ORDER BY a.datep ASC";
 			$sql .= $this->db->plimit($max, 0);
 
-			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
+			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
-            if ($result) {
+			if ($result) {
 				$now = dol_now();
-				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+				$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);
+
 				$line = 0;
-                while ($line < $num) {
+				while ($line < $num) {
 					$late = '';
 					$objp = $this->db->fetch_object($result);
 					$datelimite = $this->db->jdate($objp->dp);
-                    $actionstatic->id = $objp->id;
-                    $actionstatic->label = $objp->label;
-                    $actionstatic->type_label = $objp->type_label;
-                    $actionstatic->code = $objp->code;
-                    $societestatic->id = $objp->socid;
-                    $societestatic->name = $objp->name;
-                    $societestatic->code_client = $objp->code_client;
 
-                    if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning))
-                        $late = img_warning($langs->trans("Late"));
+					$actionstatic->id = $objp->id;
+					$actionstatic->label = $objp->label;
+					$actionstatic->type_label = $objp->type_label;
+					$actionstatic->code = $objp->code;
+
+					$societestatic->id = $objp->socid;
+					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
+					$societestatic->code_client = $objp->code_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
+					$societestatic->client = $objp->client;
+					$societestatic->logo = $objp->logo;
+					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
+
+					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning)) {
+						$late = img_warning($langs->trans("Late"));
+					}
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label = empty($objp->label) ? $objp->type_label : $objp->label;
+					//$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $actionstatic->getNomUrl(1),
-                        'text2'=> $late,
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="tdoverflowmax200"',
+						'text' => $actionstatic->getNomUrl(1),
+						'text2' => $late,
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][1] = array(
+						'td' => 'class="tdoverflowmax100"',
+						'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap left"',
-                        'text' => dol_print_date($datelimite, "dayhour"),
-                    );
+					$this->info_box_contents[$line][2] = array(
+						'td' => 'class="center nowraponall"',
+						'text' => $datelimite ? dol_print_date($datelimite, "dayhour", 'tzuserrel') : '',
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => ($objp->percentage >= 0 ? $objp->percentage.'%' : ''),
-                    );
+					$this->info_box_contents[$line][3] = array(
+						'td' => 'class="right"',
+						'text' => ($objp->percentage >= 0 ? $objp->percentage.'%' : ''),
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $actionstatic->LibStatut($objp->percentage, 3),
-                    );
+					$this->info_box_contents[$line][4] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $actionstatic->LibStatut($objp->percentage, 3),
+						'asis' => 1
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0)
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'class="center"',
-                        'text'=>$langs->trans("NoActionsToDo"),
-                    );
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
+				// 	);
+				// }
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength' => 500,
+					'text' => ($this->db->error().' sql='.$sql)
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
+			);
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param  array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		global $langs, $conf;
-		$out = parent::showBox($this->info_box_head, $this->info_box_contents);
+		$out = parent::showBox($this->info_box_head, $this->info_box_contents, 1);
 
-        if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE))
-        {
+		if (getDolGlobalString('SHOW_DIALOG_HOMEPAGE')) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
-			$nblines = count($contents);
-			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
-			{
+			$nblines = 0;
+			if (is_countable($contents) && count($contents) > 0) {
+				$nblines = count($contents);
+			}
+			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo")) {
 				$out .= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
 				$out .= '<table width=100%>';
-				for ($line = 0, $n = $nblines; $line < $n; $line++)
-				{
-					if (isset($contents[$line]))
-					{
-						// on affiche que les évènement du jours ou passé
-						// qui ne sont pas à 100%
+				for ($line = 0, $n = $nblines; $line < $n; $line++) {
+					if (isset($contents[$line])) {
+						// we display events from today or the past
+						// that are not 100% certain
 						$actioncejour = true;
 
 						// TR
@@ -233,29 +253,28 @@ class box_actions extends ModeleBoxes
 				$out .= '</table>';
 			}
 			$out .= '</div>';
-			if ($actioncejour)
-			{
-				$out .= '<script>';
+			if ($actioncejour) {
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
-				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1)    // autoclose after this delay
-				{
+				if (getDolGlobalInt('SHOW_DIALOG_HOMEPAGE') > 1) {    // autoclose after this delay
 					$out .= 'setTimeout(function(){';
 					$out .= '$("#dialogboxaction").dialog("close");';
 					$out .= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE * 1000).');';
 				}
 				$out .= '</script>';
-			}
-			else
-			{
-				$out .= '<script>';
+			} else {
+				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';
 			}
 		}
 
-		if ($nooutput) return $out;
-		else print $out;
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
+		}
 
 		return '';
-    }
+	}
 }

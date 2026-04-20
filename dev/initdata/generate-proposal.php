@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -43,82 +44,95 @@ require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
 require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
+// Global variables
+$version = DOL_VERSION;
+
+
 /*
- * Parameters
+ * Main
  */
 
-define(GEN_NUMBER_PROPAL, 10);
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
+
+if (empty($argv[1])) {
+	print "Usage:  $script_file  nbofrecord\n";
+	print "Usage:  $script_file  100\n";
+	print "\n";
+	exit(1);
+}
+
+define('GEN_NUMBER_PROPAL', ((int) $argv[1]) ?? 10);
+
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
-    mktime(12, 0, 0, 1, 9, $year),
-    mktime(12, 0, 0, 2, 13, $year),
-    mktime(12, 0, 0, 2, 23, $year),
-    mktime(12, 0, 0, 3, 30, $year),
-    mktime(12, 0, 0, 4, 3, $year),
-    mktime(12, 0, 0, 4, 3, $year),
-    mktime(12, 0, 0, 5, 9, $year),
-    mktime(12, 0, 0, 5, 1, $year),
-    mktime(12, 0, 0, 5, 13, $year),
-    mktime(12, 0, 0, 5, 19, $year),
-    mktime(12, 0, 0, 5, 23, $year),
-    mktime(12, 0, 0, 6, 3, $year),
-    mktime(12, 0, 0, 6, 19, $year),
-    mktime(12, 0, 0, 6, 24, $year),
-    mktime(12, 0, 0, 7, 3, $year),
-    mktime(12, 0, 0, 7, 9, $year),
-    mktime(12, 0, 0, 7, 23, $year),
-    mktime(12, 0, 0, 7, 30, $year),
-    mktime(12, 0, 0, 8, 9, $year),
-    mktime(12, 0, 0, 9, 23, $year),
-    mktime(12, 0, 0, 10, 3, $year),
-    mktime(12, 0, 0, 11, 12, $year),
-    mktime(12, 0, 0, 11, 13, $year),
-    mktime(12, 0, 0, 1, 3, ($year - 1)),
-    mktime(12, 0, 0, 1, 9, ($year - 1)),
-    mktime(12, 0, 0, 2, 13, ($year - 1)),
-    mktime(12, 0, 0, 2, 23, ($year - 1)),
-    mktime(12, 0, 0, 3, 30, ($year - 1)),
-    mktime(12, 0, 0, 4, 3, ($year - 1)),
-    mktime(12, 0, 0, 4, 3, ($year - 1)),
-    mktime(12, 0, 0, 5, 9, ($year - 1)),
-    mktime(12, 0, 0, 5, 1, ($year - 1)),
-    mktime(12, 0, 0, 5, 13, ($year - 1)),
-    mktime(12, 0, 0, 5, 19, ($year - 1)),
-    mktime(12, 0, 0, 5, 23, ($year - 1)),
-    mktime(12, 0, 0, 6, 3, ($year - 1)),
-    mktime(12, 0, 0, 6, 19, ($year - 1)),
-    mktime(12, 0, 0, 6, 24, ($year - 1)),
-    mktime(12, 0, 0, 7, 3, ($year - 1)),
-    mktime(12, 0, 0, 7, 9, ($year - 1)),
-    mktime(12, 0, 0, 7, 23, ($year - 1)),
-    mktime(12, 0, 0, 7, 30, ($year - 1)),
-    mktime(12, 0, 0, 8, 9, ($year - 1)),
-    mktime(12, 0, 0, 9, 23, ($year - 1)),
-    mktime(12, 0, 0, 10, 3, ($year - 1)),
-    mktime(12, 0, 0, 11, 12, $year),
-    mktime(12, 0, 0, 11, 13, $year),
-    mktime(12, 0, 0, 12, 12, $year),
-    mktime(12, 0, 0, 12, 13, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
+	mktime(12, 0, 0, 1, 9, $year),
+	mktime(12, 0, 0, 2, 13, $year),
+	mktime(12, 0, 0, 2, 23, $year),
+	mktime(12, 0, 0, 3, 30, $year),
+	mktime(12, 0, 0, 4, 3, $year),
+	mktime(12, 0, 0, 4, 3, $year),
+	mktime(12, 0, 0, 5, 9, $year),
+	mktime(12, 0, 0, 5, 1, $year),
+	mktime(12, 0, 0, 5, 13, $year),
+	mktime(12, 0, 0, 5, 19, $year),
+	mktime(12, 0, 0, 5, 23, $year),
+	mktime(12, 0, 0, 6, 3, $year),
+	mktime(12, 0, 0, 6, 19, $year),
+	mktime(12, 0, 0, 6, 24, $year),
+	mktime(12, 0, 0, 7, 3, $year),
+	mktime(12, 0, 0, 7, 9, $year),
+	mktime(12, 0, 0, 7, 23, $year),
+	mktime(12, 0, 0, 7, 30, $year),
+	mktime(12, 0, 0, 8, 9, $year),
+	mktime(12, 0, 0, 9, 23, $year),
+	mktime(12, 0, 0, 10, 3, $year),
+	mktime(12, 0, 0, 11, 12, $year),
+	mktime(12, 0, 0, 11, 13, $year),
+	mktime(12, 0, 0, 1, 3, ($year - 1)),
+	mktime(12, 0, 0, 1, 9, ($year - 1)),
+	mktime(12, 0, 0, 2, 13, ($year - 1)),
+	mktime(12, 0, 0, 2, 23, ($year - 1)),
+	mktime(12, 0, 0, 3, 30, ($year - 1)),
+	mktime(12, 0, 0, 4, 3, ($year - 1)),
+	mktime(12, 0, 0, 4, 3, ($year - 1)),
+	mktime(12, 0, 0, 5, 9, ($year - 1)),
+	mktime(12, 0, 0, 5, 1, ($year - 1)),
+	mktime(12, 0, 0, 5, 13, ($year - 1)),
+	mktime(12, 0, 0, 5, 19, ($year - 1)),
+	mktime(12, 0, 0, 5, 23, ($year - 1)),
+	mktime(12, 0, 0, 6, 3, ($year - 1)),
+	mktime(12, 0, 0, 6, 19, ($year - 1)),
+	mktime(12, 0, 0, 6, 24, ($year - 1)),
+	mktime(12, 0, 0, 7, 3, ($year - 1)),
+	mktime(12, 0, 0, 7, 9, ($year - 1)),
+	mktime(12, 0, 0, 7, 23, ($year - 1)),
+	mktime(12, 0, 0, 7, 30, ($year - 1)),
+	mktime(12, 0, 0, 8, 9, ($year - 1)),
+	mktime(12, 0, 0, 9, 23, ($year - 1)),
+	mktime(12, 0, 0, 10, 3, ($year - 1)),
+	mktime(12, 0, 0, 11, 12, $year),
+	mktime(12, 0, 0, 11, 13, $year),
+	mktime(12, 0, 0, 12, 12, $year),
+	mktime(12, 0, 0, 12, 13, $year),
 );
 
-$ret=$user->fetch('', 'admin');
-if (! $ret > 0)
-{
+$ret = $user->fetch('', 'admin');
+if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 $socids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client in (1,3)";
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num_thirdparties = $db->num_rows($resql);
 	$i = 0;
-	while ($i < $num_thirdparties)
-	{
+	while ($i < $num_thirdparties) {
 		$i++;
 		$row = $db->fetch_row($resql);
 		$socids[$i] = $row[0];
@@ -128,12 +142,10 @@ if ($resql)
 $contids = array();
 $sql = "SELECT rowid, fk_soc FROM ".MAIN_DB_PREFIX."socpeople";
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num_conts = $db->num_rows($resql);
 	$i = 0;
-	while ($i < $num_conts)
-	{
+	while ($i < $num_conts) {
 		$i++;
 		$row = $db->fetch_row($resql);
 		$contids[$row[1]][0] = $row[0]; // A ameliorer
@@ -143,12 +155,10 @@ if ($resql)
 $prodids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tosell=1";
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num_prods = $db->num_rows($resql);
 	$i = 0;
-	while ($i < $num_prods)
-	{
+	while ($i < $num_prods) {
 		$i++;
 		$row = $db->fetch_row($resql);
 		$prodids[$i] = $row[0];
@@ -159,15 +169,13 @@ $user->rights->propal->creer=1;
 $user->rights->propal->propal_advance->validate=1;
 
 
-if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
-{
-	require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php";
+if (getDolGlobalString('PROPALE_ADDON') && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/" . getDolGlobalString('PROPALE_ADDON').".php")) {
+	require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/" . getDolGlobalString('PROPALE_ADDON').".php";
 }
 
 $i=0;
 $result=0;
-while ($i < GEN_NUMBER_PROPAL && $result >= 0)
-{
+while ($i < GEN_NUMBER_PROPAL && $result >= 0) {
 	$i++;
 	$socid = mt_rand(1, $num_thirdparties);
 	print "Proposal ".$i." for socid ".$socid;
@@ -177,9 +185,9 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 
 	$object = new Propal($db);
 
-    $fuser = new User($db);
-    $fuser->fetch(mt_rand(1, 2));
-    $fuser->getRights();
+	$fuser = new User($db);
+	$fuser->fetch(mt_rand(1, 2));
+	$fuser->loadRights();
 
 	$object->contactid = $contids[$socids[$socid]][0];
 	$object->socid = $socids[$socid];
@@ -188,38 +196,30 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 	$object->mode_reglement_id = 3;
 
 	$result=$object->create($fuser);
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		$nbp = mt_rand(2, 5);
 		$xnbp = 0;
-		while ($xnbp < $nbp)
-		{
+		while ($xnbp < $nbp) {
 			$prodid = mt_rand(1, $num_prods);
 			$product=new Product($db);
 			$result=$product->fetch($prodids[$prodid]);
 			$result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				dol_print_error($db, $object->error);
 			}
 			$xnbp++;
 		}
 
 		$result=$object->valid($fuser);
-		if ($result > 0)
-		{
-		    $db->commit();
-		    print " OK with ref ".$object->ref."\n";
+		if ($result > 0) {
+			$db->commit();
+			print " OK with ref ".$object->ref."\n";
+		} else {
+			print " KO\n";
+			$db->rollback();
+			dol_print_error($db, $object->error);
 		}
-		else
-		{
-		    print " KO\n";
-		    $db->rollback();
-		    dol_print_error($db, $object->error);
-		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

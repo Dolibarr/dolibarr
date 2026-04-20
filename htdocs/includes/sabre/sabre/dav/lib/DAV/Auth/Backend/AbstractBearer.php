@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Auth\Backend;
 
-use Sabre\DAV;
 use Sabre\HTTP;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * HTTP Bearer authentication backend class
+ * HTTP Bearer authentication backend class.
  *
  * This class can be used by authentication objects wishing to use HTTP Bearer
  * Most of the digest logic is handled, implementors just need to worry about
@@ -20,8 +21,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBearer implements BackendInterface {
-
+abstract class AbstractBearer implements BackendInterface
+{
     /**
      * Authentication Realm.
      *
@@ -33,12 +34,13 @@ abstract class AbstractBearer implements BackendInterface {
     protected $realm = 'sabre/dav';
 
     /**
-     * Validates a Bearer token
+     * Validates a Bearer token.
      *
      * This method should return the full principal url, or false if the
      * token was incorrect.
      *
      * @param string $bearerToken
+     *
      * @return string|false
      */
     abstract protected function validateBearerToken($bearerToken);
@@ -47,12 +49,10 @@ abstract class AbstractBearer implements BackendInterface {
      * Sets the authentication realm for this backend.
      *
      * @param string $realm
-     * @return void
      */
-    function setRealm($realm) {
-
+    public function setRealm($realm)
+    {
         $this->realm = $realm;
-
     }
 
     /**
@@ -79,12 +79,10 @@ abstract class AbstractBearer implements BackendInterface {
      *
      * principals/users/[username]
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Bearer(
             $this->realm,
             $request,
@@ -97,10 +95,10 @@ abstract class AbstractBearer implements BackendInterface {
         }
         $principalUrl = $this->validateBearerToken($bearerToken);
         if (!$principalUrl) {
-            return [false, "Bearer token was incorrect"];
+            return [false, 'Bearer token was incorrect'];
         }
-        return [true, $principalUrl];
 
+        return [true, $principalUrl];
     }
 
     /**
@@ -119,20 +117,14 @@ abstract class AbstractBearer implements BackendInterface {
      * WWW-Authenticate headers may already have been set, and you'll want to
      * append your own WWW-Authenticate header instead of overwriting the
      * existing one.
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Bearer(
             $this->realm,
             $request,
             $response
         );
         $auth->requireLogin();
-
     }
-
 }

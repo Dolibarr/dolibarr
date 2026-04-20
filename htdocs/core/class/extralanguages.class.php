@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +29,13 @@
 class ExtraLanguages
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
-     * @var array New array to store extralanguages definition
-     */
+	 * @var array<string,array<string,string>>	New array to store extralanguages definition
+	 */
 	public $attributes;
 
 	/**
@@ -47,7 +48,7 @@ class ExtraLanguages
 	 */
 	public $errors = array();
 
-    /**
+	/**
 	 * @var string DB Error number
 	 */
 	public $errno;
@@ -57,7 +58,7 @@ class ExtraLanguages
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
-	*/
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -67,32 +68,40 @@ class ExtraLanguages
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load array this->attributes with list of fields per object that need an alternate translation. The object and field must be managed with
 	 *  the widgetForTranslation() method.
-	 *  You can set variable MAIN_USE_ALTERNATE_TRANSLATION_FOR=elementA:fieldname,fieldname2;elementB:...
+	 *  You must set variable MAIN_USE_ALTERNATE_TRANSLATION_FOR=elementA:fieldname,fieldname2;elementB:...
 	 *  Example: MAIN_USE_ALTERNATE_TRANSLATION_FOR=societe:name,town;contact:firstname,lastname
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
-	 * 	@return	array							Array of attributes keys+label for all extra fields.
+	 * 	@return	array<string,array<string,string>>		Array of attributes keys+label for all extra fields.
 	 */
 	public function fetch_name_extralanguages($elementtype, $forceload = false)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		if (empty($elementtype)) return array();
+		if (empty($elementtype)) {
+			return array();
+		}
 
-		if ($elementtype == 'thirdparty')     $elementtype = 'societe';
-		if ($elementtype == 'contact')        $elementtype = 'socpeople';
-		if ($elementtype == 'order_supplier') $elementtype = 'commande_fournisseur';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+		if ($elementtype == 'order_supplier') {
+			$elementtype = 'commande_fournisseur';
+		}
 
 
 		$array_name_label = array();
-		if (!empty($conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR)) {
-			$tmpelement = explode(';', $conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR);
+		if (getDolGlobalString('MAIN_USE_ALTERNATE_TRANSLATION_FOR')) {
+			$tmpelement = explode(';', getDolGlobalString('MAIN_USE_ALTERNATE_TRANSLATION_FOR'));
 			foreach ($tmpelement as $elementstring) {
 				$reg = array();
 				preg_match('/^(.*):(.*)$/', $elementstring, $reg);
@@ -121,31 +130,28 @@ class ExtraLanguages
 	 * @param  string  $key            			Key of attribute
 	 * @param  string  $value          			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
-	 * @param  string  $moreparam      			To add more parametes on html input tag
+	 * @param  string  $moreparam      			To add more parameters on html input tag
 	 * @param  string  $keysuffix      			Prefix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keyprefix      			Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int     $objectid       			Current object id
-	 * @param  string  $mode                    1=Used for search filters
+	 * @param  int	   $mode                    1=Used for search filters
 	 * @return string
 	 */
 	public function showInputField($key, $value, $extrafieldsobjectkey, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $mode = 0)
 	{
 		global $conf, $langs, $form;
 
-		if (!is_object($form))
-		{
+		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
 
 		$out = '';
 
-		if (!preg_match('/options_$/', $keyprefix))	// Because we work on extrafields, we add 'options_' to prefix if not already added
-		{
-			$keyprefix = $keyprefix.'options_';
+		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
+			$keyprefix .= 'options_';
 		}
-
 
 		return $out;
 	}
@@ -158,7 +164,7 @@ class ExtraLanguages
 	 * @param   string	$value          		Value to show
 	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @return	string							Formated value
+	 * @return	string							Formatted value
 	 */
 	public function showOutputField($key, $value, $extrafieldsobjectkey, $moreparam = '')
 	{

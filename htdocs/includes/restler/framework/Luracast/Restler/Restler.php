@@ -15,13 +15,14 @@ use Luracast\Restler\Format\UrlEncodedFormat;
  * inspired by the RestServer code from
  * <http://jacwright.com/blog/resources/RestServer.txt>
  *
+ *
  * @category   Framework
  * @package    Restler
  * @author     R.Arul Kumaran <arul@luracast.com>
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  *
  * @method static void onGet() onGet(Callable $function) fired before reading the request details
  * @method static void onRoute() onRoute(Callable $function) fired before finding the api method
@@ -48,10 +49,13 @@ use Luracast\Restler\Format\UrlEncodedFormat;
  * @method void onRespond() onRespond(Callable $function) fired before sending response
  * @method void onComplete() onComplete(Callable $function) fired after sending response
  * @method void onMessage() onMessage(Callable $function) fired before composing error response
+ *
+ * @property bool|null  _authenticated
+ * @property bool _authVerified
  */
 class Restler extends EventDispatcher
 {
-    const VERSION = '3.0.0rc6';
+    const VERSION = '3.1.0';
 
     // ==================================================================
     //
@@ -693,6 +697,8 @@ class Restler extends EventDispatcher
      *  - media type
      *  - charset
      *  - language
+     *
+     * @throws RestException
      */
     protected function negotiate()
     {

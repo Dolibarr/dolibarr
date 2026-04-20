@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL;
 
 use Sabre\DAV\Exception\InvalidResourceType;
@@ -7,7 +9,7 @@ use Sabre\DAV\IExtendedCollection;
 use Sabre\DAV\MkCol;
 
 /**
- * Principals Collection
+ * Principals Collection.
  *
  * This collection represents a list of users.
  * The users are instances of Sabre\DAVACL\Principal
@@ -16,8 +18,8 @@ use Sabre\DAV\MkCol;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PrincipalCollection extends AbstractPrincipalCollection implements IExtendedCollection, IACL {
-
+class PrincipalCollection extends AbstractPrincipalCollection implements IExtendedCollection, IACL
+{
     use ACLTrait;
 
     /**
@@ -27,13 +29,11 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      * at least contain a uri item. Other properties may or may not be
      * supplied by the authentication backend.
      *
-     * @param array $principal
      * @return \Sabre\DAV\INode
      */
-    function getChildForPrincipal(array $principal) {
-
+    public function getChildForPrincipal(array $principal)
+    {
         return new Principal($this->principalBackend, $principal);
-
     }
 
     /**
@@ -56,21 +56,19 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      * property for you.
      *
      * @param string $name
-     * @param MkCol $mkCol
+     *
      * @throws InvalidResourceType
-     * @return void
      */
-    function createExtendedCollection($name, MkCol $mkCol) {
-
+    public function createExtendedCollection($name, MkCol $mkCol)
+    {
         if (!$mkCol->hasResourceType('{DAV:}principal')) {
             throw new InvalidResourceType('Only resources of type {DAV:}principal may be created here');
         }
 
         $this->principalBackend->createPrincipal(
-            $this->principalPrefix . '/' . $name,
+            $this->principalPrefix.'/'.$name,
             $mkCol
         );
-
     }
 
     /**
@@ -85,7 +83,8 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      *
      * @return array
      */
-    function getACL() {
+    public function getACL()
+    {
         return [
             [
                 'principal' => '{DAV:}authenticated',
@@ -94,5 +93,4 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
             ],
         ];
     }
-
 }

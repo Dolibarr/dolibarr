@@ -1,0 +1,38 @@
+IntraCommReport=Báo cáo nội bộ
+IntraCommReports=Báo cáo nội bộ
+
+Module68000Name = báo cáo nội bộ
+Module68000Desc = Quản lý báo cáo nội bộ (Hỗ trợ định dạng DEB/DES của Pháp)
+IntracommReportSetup = Thiết lập mô-đun báo cáo nội bộ
+IntracommReportAbout = Giới thiệu về báo cáo nội bộ
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Loại diễn viên
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Giới thiệu về Niveau d'obligation sur les
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'nghĩa vụ trên chuyến thám hiểm
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Danh mục dịch vụ thuộc loại "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Số khai báo
+# Menu
+MenuIntracommReport=báo cáo nội bộ
+MenuIntracommReportNew=Khai báo mới
+MenuIntracommReportList=Danh sách
+# View
+NewDeclaration=Khai báo mới
+Declaration=Tuyên ngôn
+AnalysisPeriod=Giai đoạn phân tích
+TypeOfDeclaration=Loại khai báo
+DEB=Tờ khai trao đổi hàng hóa (DEB)
+DES=Khai báo trao đổi dịch vụ (DES)
+# Export page
+IntracommReportTitle=Chuẩn bị tệp XML ở định dạng ProDouane
+# List
+IntracommReportList=Danh sách các khai báo được tạo
+IntracommReportNumber=Số khai báo
+IntracommReportPeriod=Giai đoạn phân tích
+IntracommReportTypeDeclaration=Loại khai báo
+IntracommReportDownload=tải xuống tệp XML
+# Invoice
+IntracommReportTransportMode=Phương tiện giao thông
+DeleteIntraCommReport=Xóa báo cáo IntraComm

@@ -1,21 +1,26 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
+'
+@phan-var-force DolibarrModules $this
+@phan-var-force int $r
+';
 
-if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement))
-{
-    //print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
-    dol_print_error('', 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
-    exit;
+if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
+	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
+	dol_print_error(null, 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
+	exit;
 }
-if (empty($keyforalias)) $keyforalias = 't';
+if (empty($keyforalias)) {
+	$keyforalias = 't';
+}
 
 dol_include_once($keyforclassfile);
-if (class_exists($keyforclass))
-{
+if (class_exists($keyforclass)) {
 	$tmpobject = new $keyforclass($this->db);
 
 	// Add common fields
-	foreach ($tmpobject->fields as $keyfield => $valuefield)
-	{
+	foreach ($tmpobject->fields as $keyfield => $valuefield) {
 		$fieldname = $keyforalias.'.'.$keyfield;
 		$fieldlabel = ucfirst($valuefield['label']);
 		$typeFilter = "Text";
@@ -35,17 +40,17 @@ if (class_exists($keyforclass))
 			case 'boolean':
 				$typeFilter = "Boolean";
 				break;
-			/*
-			 * case 'sellist':
-			 * $tmp='';
-			 * $tmpparam=unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-			 * if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-			 * $tmpkeys=array_keys($tmpparam['options']);
-			 * $tmp=array_shift($tmpkeys);
-			 * }
-			 * if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
-			 * break;
-			 */
+				/*
+				 * case 'sellist':
+				 * $tmp='';
+				 * $tmpparam=jsonOrUnserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+				 * if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+				 * $tmpkeys=array_keys($tmpparam['options']);
+				 * $tmp=array_shift($tmpkeys);
+				 * }
+				 * if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+				 * break;
+				 */
 		}
 		$helpfield = '';
 		if (!empty($valuefield['help'])) {
@@ -58,9 +63,7 @@ if (class_exists($keyforclass))
 			$this->export_help_array[$r][$fieldname] = $helpfield;
 		}
 	}
-}
-else
-{
+} else {
 	dol_print_error($this->db, 'Failed to find class '.$keyforclass.', even after the include of '.$keyforclassfile);
 }
 // End add common fields

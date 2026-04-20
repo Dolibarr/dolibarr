@@ -1,0 +1,38 @@
+IntraCommReport=Intracomm report
+IntraCommReports=Intracomm reports
+
+Module68000Name = انٹرا کام رپورٹ
+Module68000Desc = انٹرا کام رپورٹ مینجمنٹ (فرانسیسی DEB/DES فارمیٹ کے لیے سپورٹ)
+IntracommReportSetup = انٹرا کامرپورٹ ماڈیول سیٹ اپ
+IntracommReportAbout = انٹرا کامرپورٹ کے بارے میں
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=اداکار کی قسم
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT="Frais de port" کی قسم کی خدمات کی زمرہ
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+# Menu
+MenuIntracommReport=انٹرا کام رپورٹ
+MenuIntracommReportNew=نیا اعلان
+MenuIntracommReportList=فہرست
+# View
+NewDeclaration=نیا اعلان
+Declaration=اعلامیہ
+AnalysisPeriod=تجزیہ کی مدت
+TypeOfDeclaration=اعلان کی قسم
+DEB=گڈز ایکسچینج ڈیکلریشن (DEB)
+DES=خدمات کے تبادلے کا اعلان (DES)
+# Export page
+IntracommReportTitle=ProDouane فارمیٹ میں XML فائل کی تیاری
+# List
+IntracommReportList=تیار کردہ اعلانات کی فہرست
+IntracommReportNumber=اعلان کی تعداد
+IntracommReportPeriod=تجزیہ کی مدت
+IntracommReportTypeDeclaration=اعلان کی قسم
+IntracommReportDownload=XML فائل ڈاؤن لوڈ کریں۔
+# Invoice
+IntracommReportTransportMode=ٹرانسپورٹ موڈ
+DeleteIntraCommReport=Delete IntraComm report

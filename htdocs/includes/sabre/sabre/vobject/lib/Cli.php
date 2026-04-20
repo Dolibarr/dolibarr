@@ -2,8 +2,7 @@
 
 namespace Sabre\VObject;
 
-use
-    InvalidArgumentException;
+use InvalidArgumentException;
 
 /**
  * This is the CLI interface for sabre-vobject.
@@ -12,8 +11,8 @@ use
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Cli {
-
+class Cli
+{
     /**
      * No output.
      *
@@ -29,7 +28,7 @@ class Cli {
     protected $showHelp = false;
 
     /**
-     * Wether to spit out 'mimedir' or 'json' format.
+     * Whether to spit out 'mimedir' or 'json' format.
      *
      * @var string
      */
@@ -96,8 +95,8 @@ class Cli {
      *
      * @return int
      */
-    function main(array $argv) {
-
+    public function main(array $argv)
+    {
         // @codeCoverageIgnoreStart
         // We cannot easily test this, so we'll skip it. Pretty basic anyway.
 
@@ -113,103 +112,92 @@ class Cli {
 
         // @codeCoverageIgnoreEnd
 
-
         try {
-
             list($options, $positional) = $this->parseArguments($argv);
 
             if (isset($options['q'])) {
                 $this->quiet = true;
             }
-            $this->log($this->colorize('green', "sabre/vobject ") . $this->colorize('yellow', Version::VERSION));
+            $this->log($this->colorize('green', 'sabre/vobject ').$this->colorize('yellow', Version::VERSION));
 
             foreach ($options as $name => $value) {
-
                 switch ($name) {
-
-                    case 'q' :
+                    case 'q':
                         // Already handled earlier.
                         break;
-                    case 'h' :
-                    case 'help' :
+                    case 'h':
+                    case 'help':
                         $this->showHelp();
+
                         return 0;
                         break;
-                    case 'format' :
+                    case 'format':
                         switch ($value) {
-
                             // jcard/jcal documents
-                            case 'jcard' :
-                            case 'jcal' :
-
+                            case 'jcard':
+                            case 'jcal':
                             // specific document versions
-                            case 'vcard21' :
-                            case 'vcard30' :
-                            case 'vcard40' :
-                            case 'icalendar20' :
-
+                            case 'vcard21':
+                            case 'vcard30':
+                            case 'vcard40':
+                            case 'icalendar20':
                             // specific formats
-                            case 'json' :
-                            case 'mimedir' :
-
+                            case 'json':
+                            case 'mimedir':
                             // icalendar/vcad
-                            case 'icalendar' :
-                            case 'vcard' :
+                            case 'icalendar':
+                            case 'vcard':
                                 $this->format = $value;
                                 break;
 
-                            default :
-                                throw new InvalidArgumentException('Unknown format: ' . $value);
-
+                            default:
+                                throw new InvalidArgumentException('Unknown format: '.$value);
                         }
                         break;
-                    case 'pretty' :
+                    case 'pretty':
                         if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
                             $this->pretty = true;
                         }
                         break;
-                    case 'forgiving' :
+                    case 'forgiving':
                         $this->forgiving = true;
                         break;
-                    case 'inputformat' :
+                    case 'inputformat':
                         switch ($value) {
                             // json formats
-                            case 'jcard' :
-                            case 'jcal' :
-                            case 'json' :
+                            case 'jcard':
+                            case 'jcal':
+                            case 'json':
                                 $this->inputFormat = 'json';
                                 break;
 
                             // mimedir formats
-                            case 'mimedir' :
-                            case 'icalendar' :
-                            case 'vcard' :
-                            case 'vcard21' :
-                            case 'vcard30' :
-                            case 'vcard40' :
-                            case 'icalendar20' :
-
+                            case 'mimedir':
+                            case 'icalendar':
+                            case 'vcard':
+                            case 'vcard21':
+                            case 'vcard30':
+                            case 'vcard40':
+                            case 'icalendar20':
                                 $this->inputFormat = 'mimedir';
                                 break;
 
-                            default :
-                                throw new InvalidArgumentException('Unknown format: ' . $value);
-
+                            default:
+                                throw new InvalidArgumentException('Unknown format: '.$value);
                         }
                         break;
-                    default :
-                        throw new InvalidArgumentException('Unknown option: ' . $name);
-
+                    default:
+                        throw new InvalidArgumentException('Unknown option: '.$name);
                 }
-
             }
 
-            if (count($positional) === 0) {
+            if (0 === count($positional)) {
                 $this->showHelp();
+
                 return 1;
             }
 
-            if (count($positional) === 1) {
+            if (1 === count($positional)) {
                 throw new InvalidArgumentException('Inputfile is a required argument');
             }
 
@@ -218,12 +206,12 @@ class Cli {
             }
 
             if (!in_array($positional[0], ['validate', 'repair', 'convert', 'color'])) {
-                throw new InvalidArgumentException('Uknown command: ' . $positional[0]);
+                throw new InvalidArgumentException('Unknown command: '.$positional[0]);
             }
-
         } catch (InvalidArgumentException $e) {
             $this->showHelp();
-            $this->log('Error: ' . $e->getMessage(), 'red');
+            $this->log('Error: '.$e->getMessage(), 'red');
+
             return 1;
         }
 
@@ -232,76 +220,71 @@ class Cli {
         $this->inputPath = $positional[1];
         $this->outputPath = isset($positional[2]) ? $positional[2] : '-';
 
-        if ($this->outputPath !== '-') {
+        if ('-' !== $this->outputPath) {
             $this->stdout = fopen($this->outputPath, 'w');
         }
 
         if (!$this->inputFormat) {
-            if (substr($this->inputPath, -5) === '.json') {
+            if ('.json' === substr($this->inputPath, -5)) {
                 $this->inputFormat = 'json';
             } else {
                 $this->inputFormat = 'mimedir';
             }
         }
         if (!$this->format) {
-            if (substr($this->outputPath, -5) === '.json') {
+            if ('.json' === substr($this->outputPath, -5)) {
                 $this->format = 'json';
             } else {
                 $this->format = 'mimedir';
             }
         }
 
-
         $realCode = 0;
 
         try {
-
             while ($input = $this->readInput()) {
-
                 $returnCode = $this->$command($input);
-                if ($returnCode !== 0) $realCode = $returnCode;
-
+                if (0 !== $returnCode) {
+                    $realCode = $returnCode;
+                }
             }
-
         } catch (EofException $e) {
             // end of file
         } catch (\Exception $e) {
-            $this->log('Error: ' . $e->getMessage(), 'red');
+            $this->log('Error: '.$e->getMessage(), 'red');
+
             return 2;
         }
 
         return $realCode;
-
     }
 
     /**
      * Shows the help message.
-     *
-     * @return void
      */
-    protected function showHelp() {
-
+    protected function showHelp()
+    {
         $this->log('Usage:', 'yellow');
-        $this->log("  vobject [options] command [arguments]");
+        $this->log('  vobject [options] command [arguments]');
         $this->log('');
         $this->log('Options:', 'yellow');
-        $this->log($this->colorize('green', '  -q            ') . "Don't output anything.");
-        $this->log($this->colorize('green', '  -help -h      ') . "Display this help message.");
-        $this->log($this->colorize('green', '  --format      ') . "Convert to a specific format. Must be one of: vcard, vcard21,");
-        $this->log($this->colorize('green', '  --forgiving   ') . "Makes the parser less strict.");
-        $this->log("                vcard30, vcard40, icalendar20, jcal, jcard, json, mimedir.");
-        $this->log($this->colorize('green', '  --inputformat ') . "If the input format cannot be guessed from the extension, it");
-        $this->log("                must be specified here.");
+        $this->log($this->colorize('green', '  -q            ')."Don't output anything.");
+        $this->log($this->colorize('green', '  -help -h      ').'Display this help message.');
+        $this->log($this->colorize('green', '  --format      ').'Convert to a specific format. Must be one of: vcard, vcard21,');
+        $this->log($this->colorize('green', '  --forgiving   ').'Makes the parser less strict.');
+        $this->log('                vcard30, vcard40, icalendar20, jcal, jcard, json, mimedir.');
+        $this->log($this->colorize('green', '  --inputformat ').'If the input format cannot be guessed from the extension, it');
+        $this->log('                must be specified here.');
         // Only PHP 5.4 and up
         if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-            $this->log($this->colorize('green', '  --pretty      ') . "json pretty-print.");
+            $this->log($this->colorize('green', '  --pretty      ').'json pretty-print.');
         }
         $this->log('');
         $this->log('Commands:', 'yellow');
-        $this->log($this->colorize('green', '  validate') . ' source_file              Validates a file for correctness.');
-        $this->log($this->colorize('green', '  repair') . ' source_file [output_file]  Repairs a file.');
-        $this->log($this->colorize('green', '  convert') . ' source_file [output_file] Converts a file.');
-        $this->log($this->colorize('green', '  color') . ' source_file                 Colorize a file, useful for debbugging.');
+        $this->log($this->colorize('green', '  validate').' source_file              Validates a file for correctness.');
+        $this->log($this->colorize('green', '  repair').' source_file [output_file]  Repairs a file.');
+        $this->log($this->colorize('green', '  convert').' source_file [output_file] Converts a file.');
+        $this->log($this->colorize('green', '  color').' source_file                 Colorize a file, useful for debugging.');
         $this->log(
         <<<HELP
 
@@ -319,34 +302,30 @@ HELP
         $this->log('   vobject color calendar.ics');
         $this->log('');
         $this->log('https://github.com/fruux/sabre-vobject', 'purple');
-
     }
 
     /**
      * Validates a VObject file.
      *
-     * @param Component $vObj
-     *
      * @return int
      */
-    protected function validate(Component $vObj) {
-
+    protected function validate(Component $vObj)
+    {
         $returnCode = 0;
 
         switch ($vObj->name) {
-            case 'VCALENDAR' :
-                $this->log("iCalendar: " . (string)$vObj->VERSION);
+            case 'VCALENDAR':
+                $this->log('iCalendar: '.(string) $vObj->VERSION);
                 break;
-            case 'VCARD' :
-                $this->log("vCard: " . (string)$vObj->VERSION);
+            case 'VCARD':
+                $this->log('vCard: '.(string) $vObj->VERSION);
                 break;
         }
 
         $warnings = $vObj->validate();
         if (!count($warnings)) {
-            $this->log("  No warnings!");
+            $this->log('  No warnings!');
         } else {
-
             $levels = [
                 1 => 'REPAIRED',
                 2 => 'WARNING',
@@ -354,46 +333,39 @@ HELP
             ];
             $returnCode = 2;
             foreach ($warnings as $warn) {
-
                 $extra = '';
                 if ($warn['node'] instanceof Property) {
-                    $extra = ' (property: "' . $warn['node']->name . '")';
+                    $extra = ' (property: "'.$warn['node']->name.'")';
                 }
-                $this->log("  [" . $levels[$warn['level']] . '] ' . $warn['message'] . $extra);
-
+                $this->log('  ['.$levels[$warn['level']].'] '.$warn['message'].$extra);
             }
-
         }
 
         return $returnCode;
-
     }
 
     /**
      * Repairs a VObject file.
      *
-     * @param Component $vObj
-     *
      * @return int
      */
-    protected function repair(Component $vObj) {
-
+    protected function repair(Component $vObj)
+    {
         $returnCode = 0;
 
         switch ($vObj->name) {
-            case 'VCALENDAR' :
-                $this->log("iCalendar: " . (string)$vObj->VERSION);
+            case 'VCALENDAR':
+                $this->log('iCalendar: '.(string) $vObj->VERSION);
                 break;
-            case 'VCARD' :
-                $this->log("vCard: " . (string)$vObj->VERSION);
+            case 'VCARD':
+                $this->log('vCard: '.(string) $vObj->VERSION);
                 break;
         }
 
         $warnings = $vObj->validate(Node::REPAIR);
         if (!count($warnings)) {
-            $this->log("  No warnings!");
+            $this->log('  No warnings!');
         } else {
-
             $levels = [
                 1 => 'REPAIRED',
                 2 => 'WARNING',
@@ -401,20 +373,16 @@ HELP
             ];
             $returnCode = 2;
             foreach ($warnings as $warn) {
-
                 $extra = '';
                 if ($warn['node'] instanceof Property) {
-                    $extra = ' (property: "' . $warn['node']->name . '")';
+                    $extra = ' (property: "'.$warn['node']->name.'")';
                 }
-                $this->log("  [" . $levels[$warn['level']] . '] ' . $warn['message'] . $extra);
-
+                $this->log('  ['.$levels[$warn['level']].'] '.$warn['message'].$extra);
             }
-
         }
         fwrite($this->stdout, $vObj->serialize());
 
         return $returnCode;
-
     }
 
     /**
@@ -424,47 +392,46 @@ HELP
      *
      * @return int
      */
-    protected function convert($vObj) {
-
+    protected function convert($vObj)
+    {
         $json = false;
         $convertVersion = null;
         $forceInput = null;
 
         switch ($this->format) {
-            case 'json' :
+            case 'json':
                 $json = true;
-                if ($vObj->name === 'VCARD') {
+                if ('VCARD' === $vObj->name) {
                     $convertVersion = Document::VCARD40;
                 }
                 break;
-            case 'jcard' :
+            case 'jcard':
                 $json = true;
                 $forceInput = 'VCARD';
                 $convertVersion = Document::VCARD40;
                 break;
-            case 'jcal' :
+            case 'jcal':
                 $json = true;
                 $forceInput = 'VCALENDAR';
                 break;
-            case 'mimedir' :
-            case 'icalendar' :
-            case 'icalendar20' :
-            case 'vcard' :
+            case 'mimedir':
+            case 'icalendar':
+            case 'icalendar20':
+            case 'vcard':
                 break;
-            case 'vcard21' :
+            case 'vcard21':
                 $convertVersion = Document::VCARD21;
                 break;
-            case 'vcard30' :
+            case 'vcard30':
                 $convertVersion = Document::VCARD30;
                 break;
-            case 'vcard40' :
+            case 'vcard40':
                 $convertVersion = Document::VCARD40;
                 break;
-
         }
 
         if ($forceInput && $vObj->name !== $forceInput) {
-            throw new \Exception('You cannot convert a ' . strtolower($vObj->name) . ' to ' . $this->format);
+            throw new \Exception('You cannot convert a '.strtolower($vObj->name).' to '.$this->format);
         }
         if ($convertVersion) {
             $vObj = $vObj->convert($convertVersion);
@@ -480,20 +447,16 @@ HELP
         }
 
         return 0;
-
     }
 
     /**
      * Colorizes a file.
      *
      * @param Component $vObj
-     *
-     * @return int
      */
-    protected function color($vObj) {
-
-        fwrite($this->stdout, $this->serializeComponent($vObj));
-
+    protected function color($vObj)
+    {
+        $this->serializeComponent($vObj);
     }
 
     /**
@@ -503,19 +466,19 @@ HELP
      *
      * @return string
      */
-    protected function colorize($color, $str, $resetTo = 'default') {
-
+    protected function colorize($color, $str, $resetTo = 'default')
+    {
         $colors = [
-            'cyan'    => '1;36',
-            'red'     => '1;31',
-            'yellow'  => '1;33',
-            'blue'    => '0;34',
-            'green'   => '0;32',
+            'cyan' => '1;36',
+            'red' => '1;31',
+            'yellow' => '1;33',
+            'blue' => '0;34',
+            'green' => '0;32',
             'default' => '0',
-            'purple'  => '0;35',
+            'purple' => '0;35',
         ];
-        return "\033[" . $colors[$color] . 'm' . $str . "\033[" . $colors[$resetTo] . "m";
 
+        return "\033[".$colors[$color].'m'.$str."\033[".$colors[$resetTo].'m';
     }
 
     /**
@@ -523,20 +486,17 @@ HELP
      *
      * @param string $color
      * @param string $str
-     *
-     * @return void
      */
-    protected function cWrite($color, $str) {
-
+    protected function cWrite($color, $str)
+    {
         fwrite($this->stdout, $this->colorize($color, $str));
-
     }
 
-    protected function serializeComponent(Component $vObj) {
-
+    protected function serializeComponent(Component $vObj)
+    {
         $this->cWrite('cyan', 'BEGIN');
         $this->cWrite('red', ':');
-        $this->cWrite('yellow', $vObj->name . "\n");
+        $this->cWrite('yellow', $vObj->name."\n");
 
         /**
          * Gives a component a 'score' for sorting purposes.
@@ -545,55 +505,54 @@ HELP
          *
          * A higher score means the item will be lower in the list.
          * To avoid score collisions, each "score category" has a reasonable
-         * space to accomodate elements. The $key is added to the $score to
+         * space to accommodate elements. The $key is added to the $score to
          * preserve the original relative order of elements.
          *
-         * @param int $key
+         * @param int   $key
          * @param array $array
          *
          * @return int
          */
-        $sortScore = function($key, $array) {
-
+        $sortScore = function ($key, $array) {
             if ($array[$key] instanceof Component) {
-
                 // We want to encode VTIMEZONE first, this is a personal
                 // preference.
-                if ($array[$key]->name === 'VTIMEZONE') {
+                if ('VTIMEZONE' === $array[$key]->name) {
                     $score = 300000000;
+
                     return $score + $key;
                 } else {
                     $score = 400000000;
+
                     return $score + $key;
                 }
             } else {
                 // Properties get encoded first
                 // VCARD version 4.0 wants the VERSION property to appear first
                 if ($array[$key] instanceof Property) {
-                    if ($array[$key]->name === 'VERSION') {
+                    if ('VERSION' === $array[$key]->name) {
                         $score = 100000000;
+
                         return $score + $key;
                     } else {
                         // All other properties
                         $score = 200000000;
+
                         return $score + $key;
                     }
                 }
             }
-
         };
 
         $children = $vObj->children();
         $tmp = $children;
         uksort(
             $children,
-            function($a, $b) use ($sortScore, $tmp) {
-
+            function ($a, $b) use ($sortScore, $tmp) {
                 $sA = $sortScore($a, $tmp);
                 $sB = $sortScore($b, $tmp);
 
                 return $sA - $sB;
-
             }
         );
 
@@ -607,19 +566,14 @@ HELP
 
         $this->cWrite('cyan', 'END');
         $this->cWrite('red', ':');
-        $this->cWrite('yellow', $vObj->name . "\n");
-
+        $this->cWrite('yellow', $vObj->name."\n");
     }
 
     /**
      * Colorizes a property.
-     *
-     * @param Property $property
-     *
-     * @return void
      */
-    protected function serializeProperty(Property $property) {
-
+    protected function serializeProperty(Property $property)
+    {
         if ($property->group) {
             $this->cWrite('default', $property->group);
             $this->cWrite('red', '.');
@@ -628,19 +582,14 @@ HELP
         $this->cWrite('yellow', $property->name);
 
         foreach ($property->parameters as $param) {
-
             $this->cWrite('red', ';');
             $this->cWrite('blue', $param->serialize());
-
         }
         $this->cWrite('red', ':');
 
         if ($property instanceof Property\Binary) {
-
-            $this->cWrite('default', 'embedded binary stripped. (' . strlen($property->getValue()) . ' bytes)');
-
+            $this->cWrite('default', 'embedded binary stripped. ('.strlen($property->getValue()).' bytes)');
         } else {
-
             $parts = $property->getParts();
             $first1 = true;
             // Looping through property values
@@ -652,7 +601,7 @@ HELP
                 }
                 $first2 = true;
                 // Looping through property sub-values
-                foreach ((array)$part as $subPart) {
+                foreach ((array) $part as $subPart) {
                     if ($first2) {
                         $first2 = false;
                     } else {
@@ -664,42 +613,37 @@ HELP
                         $subPart,
                         [
                             '\\' => $this->colorize('purple', '\\\\', 'green'),
-                            ';'  => $this->colorize('purple', '\;', 'green'),
-                            ','  => $this->colorize('purple', '\,', 'green'),
+                            ';' => $this->colorize('purple', '\;', 'green'),
+                            ',' => $this->colorize('purple', '\,', 'green'),
                             "\n" => $this->colorize('purple', "\\n\n\t", 'green'),
-                            "\r" => "",
+                            "\r" => '',
                         ]
                     );
 
                     $this->cWrite('green', $subPart);
                 }
             }
-
         }
-        $this->cWrite("default", "\n");
-
+        $this->cWrite('default', "\n");
     }
 
     /**
      * Parses the list of arguments.
-     *
-     * @param array $argv
-     *
-     * @return void
      */
-    protected function parseArguments(array $argv) {
-
+    protected function parseArguments(array $argv)
+    {
         $positional = [];
         $options = [];
 
-        for ($ii = 0; $ii < count($argv); $ii++) {
-
+        for ($ii = 0; $ii < count($argv); ++$ii) {
             // Skipping the first argument.
-            if ($ii === 0) continue;
+            if (0 === $ii) {
+                continue;
+            }
 
             $v = $argv[$ii];
 
-            if (substr($v, 0, 2) === '--') {
+            if ('--' === substr($v, 0, 2)) {
                 // This is a long-form option.
                 $optionName = substr($v, 2);
                 $optionValue = true;
@@ -707,22 +651,17 @@ HELP
                     list($optionName, $optionValue) = explode('=', $optionName);
                 }
                 $options[$optionName] = $optionValue;
-            } elseif (substr($v, 0, 1) === '-' && strlen($v) > 1) {
+            } elseif ('-' === substr($v, 0, 1) && strlen($v) > 1) {
                 // This is a short-form option.
                 foreach (str_split(substr($v, 1)) as $option) {
                     $options[$option] = true;
                 }
-
             } else {
-
                 $positional[] = $v;
-
             }
-
         }
 
         return [$options, $positional];
-
     }
 
     protected $parser;
@@ -732,14 +671,14 @@ HELP
      *
      * @return Component
      */
-    protected function readInput() {
-
+    protected function readInput()
+    {
         if (!$this->parser) {
-            if ($this->inputPath !== '-') {
+            if ('-' !== $this->inputPath) {
                 $this->stdin = fopen($this->inputPath, 'r');
             }
 
-            if ($this->inputFormat === 'mimedir') {
+            if ('mimedir' === $this->inputFormat) {
                 $this->parser = new Parser\MimeDir($this->stdin, ($this->forgiving ? Reader::OPTION_FORGIVING : 0));
             } else {
                 $this->parser = new Parser\Json($this->stdin, ($this->forgiving ? Reader::OPTION_FORGIVING : 0));
@@ -747,25 +686,20 @@ HELP
         }
 
         return $this->parser->parse();
-
     }
 
     /**
      * Sends a message to STDERR.
      *
      * @param string $msg
-     *
-     * @return void
      */
-    protected function log($msg, $color = 'default') {
-
+    protected function log($msg, $color = 'default')
+    {
         if (!$this->quiet) {
-            if ($color !== 'default') {
+            if ('default' !== $color) {
                 $msg = $this->colorize($color, $msg);
             }
-            fwrite($this->stderr, $msg . "\n");
+            fwrite($this->stderr, $msg."\n");
         }
-
     }
-
 }

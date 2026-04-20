@@ -14,8 +14,8 @@ namespace Sabre\VObject\ITip;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Message {
-
+class Message
+{
     /**
      * The object's UID.
      *
@@ -123,19 +123,14 @@ class Message {
      *
      * @return mixed bool|string
      */
-    function getScheduleStatus() {
-
+    public function getScheduleStatus()
+    {
         if (!$this->scheduleStatus) {
-
             return false;
-
         } else {
-
             list($scheduleStatus) = explode(';', $this->scheduleStatus);
+
             return $scheduleStatus;
-
         }
-
     }
-
 }

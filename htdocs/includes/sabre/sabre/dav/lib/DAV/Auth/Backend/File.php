@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Auth\Backend;
 
 use Sabre\DAV;
@@ -13,10 +15,10 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class File extends AbstractDigest {
-
+class File extends AbstractDigest
+{
     /**
-     * List of users
+     * List of users.
      *
      * @var array
      */
@@ -29,11 +31,11 @@ class File extends AbstractDigest {
      *
      * @param string|null $filename
      */
-    function __construct($filename = null) {
-
-        if (!is_null($filename))
+    public function __construct($filename = null)
+    {
+        if (!is_null($filename)) {
             $this->loadFile($filename);
-
+        }
     }
 
     /**
@@ -41,37 +43,32 @@ class File extends AbstractDigest {
      * more than 1 file is used.
      *
      * @param string $filename
-     * @return void
      */
-    function loadFile($filename) {
-
+    public function loadFile($filename)
+    {
         foreach (file($filename, FILE_IGNORE_NEW_LINES) as $line) {
-
-            if (substr_count($line, ":") !== 2)
+            if (2 !== substr_count($line, ':')) {
                 throw new DAV\Exception('Malformed htdigest file. Every line should contain 2 colons');
-
+            }
             list($username, $realm, $A1) = explode(':', $line);
 
-            if (!preg_match('/^[a-zA-Z0-9]{32}$/', $A1))
+            if (!preg_match('/^[a-zA-Z0-9]{32}$/', $A1)) {
                 throw new DAV\Exception('Malformed htdigest file. Invalid md5 hash');
-
-            $this->users[$realm . ':' . $username] = $A1;
-
+            }
+            $this->users[$realm.':'.$username] = $A1;
         }
-
     }
 
     /**
-     * Returns a users' information
+     * Returns a users' information.
      *
      * @param string $realm
      * @param string $username
+     *
      * @return string
      */
-    function getDigestHash($realm, $username) {
-
-        return isset($this->users[$realm . ':' . $username]) ? $this->users[$realm . ':' . $username] : false;
-
+    public function getDigestHash($realm, $username)
+    {
+        return isset($this->users[$realm.':'.$username]) ? $this->users[$realm.':'.$username] : false;
     }
-
 }

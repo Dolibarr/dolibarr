@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 use Sabre\DAV\Exception\BadRequest;
@@ -14,8 +16,8 @@ use Sabre\Xml\ParseException;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CorePlugin extends ServerPlugin {
-
+class CorePlugin extends ServerPlugin
+{
     /**
      * Reference to server object.
      *
@@ -24,34 +26,30 @@ class CorePlugin extends ServerPlugin {
     protected $server;
 
     /**
-     * Sets up the plugin
-     *
-     * @param Server $server
-     * @return void
+     * Sets up the plugin.
      */
-    function initialize(Server $server) {
-
+    public function initialize(Server $server)
+    {
         $this->server = $server;
-        $server->on('method:GET',       [$this, 'httpGet']);
-        $server->on('method:OPTIONS',   [$this, 'httpOptions']);
-        $server->on('method:HEAD',      [$this, 'httpHead']);
-        $server->on('method:DELETE',    [$this, 'httpDelete']);
-        $server->on('method:PROPFIND',  [$this, 'httpPropFind']);
+        $server->on('method:GET', [$this, 'httpGet']);
+        $server->on('method:OPTIONS', [$this, 'httpOptions']);
+        $server->on('method:HEAD', [$this, 'httpHead']);
+        $server->on('method:DELETE', [$this, 'httpDelete']);
+        $server->on('method:PROPFIND', [$this, 'httpPropFind']);
         $server->on('method:PROPPATCH', [$this, 'httpPropPatch']);
-        $server->on('method:PUT',       [$this, 'httpPut']);
-        $server->on('method:MKCOL',     [$this, 'httpMkcol']);
-        $server->on('method:MOVE',      [$this, 'httpMove']);
-        $server->on('method:COPY',      [$this, 'httpCopy']);
-        $server->on('method:REPORT',    [$this, 'httpReport']);
+        $server->on('method:PUT', [$this, 'httpPut']);
+        $server->on('method:MKCOL', [$this, 'httpMkcol']);
+        $server->on('method:MOVE', [$this, 'httpMove']);
+        $server->on('method:COPY', [$this, 'httpCopy']);
+        $server->on('method:REPORT', [$this, 'httpReport']);
 
-        $server->on('propPatch',        [$this, 'propPatchProtectedPropertyCheck'], 90);
-        $server->on('propPatch',        [$this, 'propPatchNodeUpdate'], 200);
-        $server->on('propFind',         [$this, 'propFind']);
-        $server->on('propFind',         [$this, 'propFindNode'], 120);
-        $server->on('propFind',         [$this, 'propFindLate'], 200);
+        $server->on('propPatch', [$this, 'propPatchProtectedPropertyCheck'], 90);
+        $server->on('propPatch', [$this, 'propPatchNodeUpdate'], 200);
+        $server->on('propFind', [$this, 'propFind']);
+        $server->on('propFind', [$this, 'propFindNode'], 120);
+        $server->on('propFind', [$this, 'propFindLate'], 200);
 
-        $server->on('exception',        [$this, 'exception']);
-
+        $server->on('exception', [$this, 'exception']);
     }
 
     /**
@@ -62,34 +60,37 @@ class CorePlugin extends ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'core';
-
     }
 
     /**
      * This is the default implementation for the GET method.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpGet(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpGet(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
         $node = $this->server->tree->getNodeForPath($path);
 
-        if (!$node instanceof IFile) return;
+        if (!$node instanceof IFile) {
+            return;
+        }
 
-        $body = $node->get();
+        if ('HEAD' === $request->getHeader('X-Sabre-Original-Method')) {
+            $body = '';
+        } else {
+            $body = $node->get();
 
-        // Converting string into stream, if needed.
-        if (is_string($body)) {
-            $stream = fopen('php://temp', 'r+');
-            fwrite($stream, $body);
-            rewind($stream);
-            $body = $stream;
+            // Converting string into stream, if needed.
+            if (is_string($body)) {
+                $stream = fopen('php://temp', 'r+');
+                fwrite($stream, $body);
+                rewind($stream);
+                $body = $stream;
+            }
         }
 
         /*
@@ -105,14 +106,11 @@ class CorePlugin extends ServerPlugin {
             $httpHeaders['Content-Type'] = 'application/octet-stream';
         }
 
-
         if (isset($httpHeaders['Content-Length'])) {
-
             $nodeSize = $httpHeaders['Content-Length'];
 
             // Need to unset Content-Length, because we'll handle that during figuring out the range
             unset($httpHeaders['Content-Length']);
-
         } else {
             $nodeSize = null;
         }
@@ -126,7 +124,6 @@ class CorePlugin extends ServerPlugin {
         // If ifRange is set, and range is specified, we first need to check
         // the precondition.
         if ($nodeSize && $range && $ifRange) {
-
             // if IfRange is parsable as a date we'll treat it as a DateTime
             // otherwise, we must treat it as an etag.
             try {
@@ -134,81 +131,84 @@ class CorePlugin extends ServerPlugin {
 
                 // It's a date. We must check if the entity is modified since
                 // the specified date.
-                if (!isset($httpHeaders['Last-Modified'])) $ignoreRangeHeader = true;
-                else {
+                if (!isset($httpHeaders['Last-Modified'])) {
+                    $ignoreRangeHeader = true;
+                } else {
                     $modified = new \DateTime($httpHeaders['Last-Modified']);
-                    if ($modified > $ifRangeDate) $ignoreRangeHeader = true;
+                    if ($modified > $ifRangeDate) {
+                        $ignoreRangeHeader = true;
+                    }
                 }
-
             } catch (\Exception $e) {
-
                 // It's an entity. We can do a simple comparison.
-                if (!isset($httpHeaders['ETag'])) $ignoreRangeHeader = true;
-                elseif ($httpHeaders['ETag'] !== $ifRange) $ignoreRangeHeader = true;
+                if (!isset($httpHeaders['ETag'])) {
+                    $ignoreRangeHeader = true;
+                } elseif ($httpHeaders['ETag'] !== $ifRange) {
+                    $ignoreRangeHeader = true;
+                }
             }
         }
 
         // We're only going to support HTTP ranges if the backend provided a filesize
         if (!$ignoreRangeHeader && $nodeSize && $range) {
-
             // Determining the exact byte offsets
             if (!is_null($range[0])) {
-
                 $start = $range[0];
                 $end = $range[1] ? $range[1] : $nodeSize - 1;
-                if ($start >= $nodeSize)
-                    throw new Exception\RequestedRangeNotSatisfiable('The start offset (' . $range[0] . ') exceeded the size of the entity (' . $nodeSize . ')');
-
-                if ($end < $start) throw new Exception\RequestedRangeNotSatisfiable('The end offset (' . $range[1] . ') is lower than the start offset (' . $range[0] . ')');
-                if ($end >= $nodeSize) $end = $nodeSize - 1;
-
+                if ($start >= $nodeSize) {
+                    throw new Exception\RequestedRangeNotSatisfiable('The start offset ('.$range[0].') exceeded the size of the entity ('.$nodeSize.')');
+                }
+                if ($end < $start) {
+                    throw new Exception\RequestedRangeNotSatisfiable('The end offset ('.$range[1].') is lower than the start offset ('.$range[0].')');
+                }
+                if ($end >= $nodeSize) {
+                    $end = $nodeSize - 1;
+                }
             } else {
-
                 $start = $nodeSize - $range[1];
                 $end = $nodeSize - 1;
 
-                if ($start < 0) $start = 0;
-
+                if ($start < 0) {
+                    $start = 0;
+                }
             }
 
             // Streams may advertise themselves as seekable, but still not
             // actually allow fseek.  We'll manually go forward in the stream
             // if fseek failed.
-            if (!stream_get_meta_data($body)['seekable'] || fseek($body, $start, SEEK_SET) === -1) {
+            if (!stream_get_meta_data($body)['seekable'] || -1 === fseek($body, $start, SEEK_SET)) {
                 $consumeBlock = 8192;
-                for ($consumed = 0; $start - $consumed > 0;){
-                    if (feof($body)) throw new Exception\RequestedRangeNotSatisfiable('The start offset (' . $start . ') exceeded the size of the entity (' . $consumed . ')');
+                for ($consumed = 0; $start - $consumed > 0;) {
+                    if (feof($body)) {
+                        throw new Exception\RequestedRangeNotSatisfiable('The start offset ('.$start.') exceeded the size of the entity ('.$consumed.')');
+                    }
                     $consumed += strlen(fread($body, min($start - $consumed, $consumeBlock)));
                 }
             }
 
             $response->setHeader('Content-Length', $end - $start + 1);
-            $response->setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $nodeSize);
+            $response->setHeader('Content-Range', 'bytes '.$start.'-'.$end.'/'.$nodeSize);
             $response->setStatus(206);
             $response->setBody($body);
-
         } else {
-
-            if ($nodeSize) $response->setHeader('Content-Length', $nodeSize);
+            if ($nodeSize) {
+                $response->setHeader('Content-Length', $nodeSize);
+            }
             $response->setStatus(200);
             $response->setBody($body);
-
         }
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * HTTP OPTIONS
+     * HTTP OPTIONS.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpOptions(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpOptions(RequestInterface $request, ResponseInterface $response)
+    {
         $methods = $this->server->getAllowedMethods($request->getPath());
 
         $response->setHeader('Allow', strtoupper(implode(', ', $methods)));
@@ -227,31 +227,28 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * HTTP HEAD
+     * HTTP HEAD.
      *
      * This method is normally used to take a peak at a url, and only get the
      * HTTP response headers, without the body. This is used by clients to
      * determine if a remote file was changed, so they can use a local cached
      * version, instead of downloading it again
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpHead(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpHead(RequestInterface $request, ResponseInterface $response)
+    {
         // This is implemented by changing the HEAD request to a GET request,
-        // and dropping the response body.
+        // and telling the request handler that is doesn't need to create the body.
         $subRequest = clone $request;
         $subRequest->setMethod('GET');
+        $subRequest->setHeader('X-Sabre-Original-Method', 'HEAD');
 
         try {
             $this->server->invokeMethod($subRequest, $response, false);
-            $response->setBody('');
         } catch (Exception\NotImplemented $e) {
             // Some clients may do HEAD requests on collections, however, GET
             // requests and HEAD requests _may_ not be defined on a collection,
@@ -267,23 +264,20 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * HTTP Delete
+     * HTTP Delete.
      *
      * The HTTP delete method, deletes a given uri
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    function httpDelete(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpDelete(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
-        if (!$this->server->emit('beforeUnbind', [$path])) return false;
+        if (!$this->server->emit('beforeUnbind', [$path])) {
+            return false;
+        }
         $this->server->tree->delete($path);
         $this->server->emit('afterUnbind', [$path]);
 
@@ -293,11 +287,10 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * WebDAV PROPFIND
+     * WebDAV PROPFIND.
      *
      * This WebDAV method requests information about an uri resource, or a list of resources
      * If a client wants to receive the properties for a single resource it will add an HTTP Depth: header with a 0 value
@@ -307,13 +300,9 @@ class CorePlugin extends ServerPlugin {
      * The response body is also an xml document, containing information about every uri resource and the requested properties
      *
      * It has to return a HTTP 207 Multi-status status code
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    function httpPropFind(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPropFind(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         $requestBody = $request->getBodyAsString();
@@ -321,7 +310,7 @@ class CorePlugin extends ServerPlugin {
             try {
                 $propFindXml = $this->server->xml->expect('{DAV:}propfind', $requestBody);
             } catch (ParseException $e) {
-                throw new BadRequest($e->getMessage(), null, $e);
+                throw new BadRequest($e->getMessage(), 0, $e);
             }
         } else {
             $propFindXml = new Xml\Request\PropFind();
@@ -331,7 +320,9 @@ class CorePlugin extends ServerPlugin {
 
         $depth = $this->server->getHTTPDepth(1);
         // The only two options for the depth of a propfind is 0 or 1 - as long as depth infinity is not enabled
-        if (!$this->server->enablePropfindDepthInfinity && $depth != 0) $depth = 1;
+        if (!$this->server->enablePropfindDepthInfinity && 0 != $depth) {
+            $depth = 1;
+        }
 
         $newProperties = $this->server->getPropertiesIteratorForPath($path, $propFindXml->properties, $depth);
 
@@ -350,7 +341,7 @@ class CorePlugin extends ServerPlugin {
         $response->setHeader('DAV', implode(', ', $features));
 
         $prefer = $this->server->getHTTPPrefer();
-        $minimal = $prefer['return'] === 'minimal';
+        $minimal = 'minimal' === $prefer['return'];
 
         $data = $this->server->generateMultiStatus($newProperties, $minimal);
         $response->setBody($data);
@@ -358,27 +349,24 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * WebDAV PROPPATCH
+     * WebDAV PROPPATCH.
      *
      * This method is called to update properties on a Node. The request is an XML body with all the mutations.
      * In this XML body it is specified which properties should be set/updated and/or deleted
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpPropPatch(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPropPatch(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         try {
             $propPatch = $this->server->xml->expect('{DAV:}propertyupdate', $request->getBody());
         } catch (ParseException $e) {
-            throw new BadRequest($e->getMessage(), null, $e);
+            throw new BadRequest($e->getMessage(), 0, $e);
         }
         $newProperties = $propPatch->properties;
 
@@ -387,30 +375,26 @@ class CorePlugin extends ServerPlugin {
         $prefer = $this->server->getHTTPPrefer();
         $response->setHeader('Vary', 'Brief,Prefer');
 
-        if ($prefer['return'] === 'minimal') {
-
+        if ('minimal' === $prefer['return']) {
             // If return-minimal is specified, we only have to check if the
             // request was successful, and don't need to return the
             // multi-status.
             $ok = true;
             foreach ($result as $prop => $code) {
-                if ((int)$code > 299) {
+                if ((int) $code > 299) {
                     $ok = false;
                 }
             }
 
             if ($ok) {
-
                 $response->setStatus(204);
+
                 return false;
-
             }
-
         }
 
         $response->setStatus(207);
         $response->setHeader('Content-Type', 'application/xml; charset=utf-8');
-
 
         // Reorganizing the result for generateMultiStatus
         $multiStatus = [];
@@ -430,22 +414,19 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * HTTP PUT method
+     * HTTP PUT method.
      *
      * This HTTP method updates a file, or creates a new one.
      *
      * If a new resource was created, a 201 Created status code should be returned. If an existing resource is updated, it's a 204 No Content
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpPut(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPut(RequestInterface $request, ResponseInterface $response)
+    {
         $body = $request->getBodyAsStream();
         $path = $request->getPath();
 
@@ -463,7 +444,6 @@ class CorePlugin extends ServerPlugin {
 
         // Intercepting the Finder problem
         if (($expected = $request->getHeader('X-Expected-Entity-Length')) && $expected > 0) {
-
             /*
             Many webservers will not cooperate well with Finder PUT requests,
             because it uses 'Chunked' transfer encoding for the request body.
@@ -487,7 +467,7 @@ class CorePlugin extends ServerPlugin {
 
             // Only reading first byte
             $firstByte = fread($body, 1);
-            if (strlen($firstByte) !== 1) {
+            if (1 !== strlen($firstByte)) {
                 throw new Exception\Forbidden('This server is not compatible with OS/X finder. Consider using a different WebDAV client or webserver.');
             }
 
@@ -500,26 +480,25 @@ class CorePlugin extends ServerPlugin {
             rewind($newBody);
 
             $body = $newBody;
-
         }
 
         if ($this->server->tree->nodeExists($path)) {
-
             $node = $this->server->tree->getNodeForPath($path);
 
             // If the node is a collection, we'll deny it
-            if (!($node instanceof IFile)) throw new Exception\Conflict('PUT is not allowed on non-files.');
-
+            if (!($node instanceof IFile)) {
+                throw new Exception\Conflict('PUT is not allowed on non-files.');
+            }
             if (!$this->server->updateFile($path, $body, $etag)) {
                 return false;
             }
 
             $response->setHeader('Content-Length', '0');
-            if ($etag) $response->setHeader('ETag', $etag);
+            if ($etag) {
+                $response->setHeader('ETag', $etag);
+            }
             $response->setStatus(204);
-
         } else {
-
             $etag = null;
             // If we got here, the resource didn't exist yet.
             if (!$this->server->createFile($path, $body, $etag)) {
@@ -528,61 +507,52 @@ class CorePlugin extends ServerPlugin {
             }
 
             $response->setHeader('Content-Length', '0');
-            if ($etag) $response->setHeader('ETag', $etag);
+            if ($etag) {
+                $response->setHeader('ETag', $etag);
+            }
             $response->setStatus(201);
-
         }
 
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
-
     /**
-     * WebDAV MKCOL
+     * WebDAV MKCOL.
      *
      * The MKCOL method is used to create a new collection (directory) on the server
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpMkcol(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpMkcol(RequestInterface $request, ResponseInterface $response)
+    {
         $requestBody = $request->getBodyAsString();
         $path = $request->getPath();
 
         if ($requestBody) {
-
             $contentType = $request->getHeader('Content-Type');
-            if (strpos($contentType, 'application/xml') !== 0 && strpos($contentType, 'text/xml') !== 0) {
-
+            if (null === $contentType || (0 !== strpos($contentType, 'application/xml') && 0 !== strpos($contentType, 'text/xml'))) {
                 // We must throw 415 for unsupported mkcol bodies
                 throw new Exception\UnsupportedMediaType('The request body for the MKCOL request must have an xml Content-Type');
-
             }
 
             try {
                 $mkcol = $this->server->xml->expect('{DAV:}mkcol', $requestBody);
             } catch (\Sabre\Xml\ParseException $e) {
-                throw new Exception\BadRequest($e->getMessage(), null, $e);
+                throw new Exception\BadRequest($e->getMessage(), 0, $e);
             }
 
             $properties = $mkcol->getProperties();
 
-            if (!isset($properties['{DAV:}resourcetype']))
+            if (!isset($properties['{DAV:}resourcetype'])) {
                 throw new Exception\BadRequest('The mkcol request must include a {DAV:}resourcetype property');
-
+            }
             $resourceType = $properties['{DAV:}resourcetype']->getValue();
             unset($properties['{DAV:}resourcetype']);
-
         } else {
-
             $properties = [];
             $resourceType = ['{DAV:}collection'];
-
         }
 
         $mkcol = new MkCol($resourceType, $properties);
@@ -596,7 +566,6 @@ class CorePlugin extends ServerPlugin {
             $response->setBody(
                 $this->server->generateMultiStatus([$result])
             );
-
         } else {
             $response->setHeader('Content-Length', '0');
             $response->setStatus(201);
@@ -605,38 +574,39 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * WebDAV HTTP MOVE method
+     * WebDAV HTTP MOVE method.
      *
      * This method moves one uri to a different uri. A lot of the actual request processing is done in getCopyMoveInfo
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpMove(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpMove(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         $moveInfo = $this->server->getCopyAndMoveInfo($request);
 
         if ($moveInfo['destinationExists']) {
-
-            if (!$this->server->emit('beforeUnbind', [$moveInfo['destination']])) return false;
-
+            if (!$this->server->emit('beforeUnbind', [$moveInfo['destination']])) {
+                return false;
+            }
         }
-        if (!$this->server->emit('beforeUnbind', [$path])) return false;
-        if (!$this->server->emit('beforeBind', [$moveInfo['destination']])) return false;
-        if (!$this->server->emit('beforeMove', [$path, $moveInfo['destination']])) return false;
+        if (!$this->server->emit('beforeUnbind', [$path])) {
+            return false;
+        }
+        if (!$this->server->emit('beforeBind', [$moveInfo['destination']])) {
+            return false;
+        }
+        if (!$this->server->emit('beforeMove', [$path, $moveInfo['destination']])) {
+            return false;
+        }
 
         if ($moveInfo['destinationExists']) {
-
             $this->server->tree->delete($moveInfo['destination']);
             $this->server->emit('afterUnbind', [$moveInfo['destination']]);
-
         }
 
         $this->server->tree->move($path, $moveInfo['destination']);
@@ -656,32 +626,38 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
-     * WebDAV HTTP COPY method
+     * WebDAV HTTP COPY method.
      *
      * This method copies one uri to a different uri, and works much like the MOVE request
      * A lot of the actual request processing is done in getCopyMoveInfo
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpCopy(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpCopy(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         $copyInfo = $this->server->getCopyAndMoveInfo($request);
 
-        if (!$this->server->emit('beforeBind', [$copyInfo['destination']])) return false;
+        if (!$this->server->emit('beforeBind', [$copyInfo['destination']])) {
+            return false;
+        }
+        if (!$this->server->emit('beforeCopy', [$path, $copyInfo['destination']])) {
+            return false;
+        }
+
         if ($copyInfo['destinationExists']) {
-            if (!$this->server->emit('beforeUnbind', [$copyInfo['destination']])) return false;
+            if (!$this->server->emit('beforeUnbind', [$copyInfo['destination']])) {
+                return false;
+            }
             $this->server->tree->delete($copyInfo['destination']);
         }
 
         $this->server->tree->copy($path, $copyInfo['destination']);
+        $this->server->emit('afterCopy', [$path, $copyInfo['destination']]);
         $this->server->emit('afterBind', [$copyInfo['destination']]);
 
         // If a resource was overwritten we should send a 204, otherwise a 201
@@ -691,22 +667,18 @@ class CorePlugin extends ServerPlugin {
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
-
     }
 
     /**
-     * HTTP REPORT method implementation
+     * HTTP REPORT method implementation.
      *
      * Although the REPORT method is not part of the standard WebDAV spec (it's from rfc3253)
      * It's used in a lot of extensions, so it made sense to implement it into the core.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpReport(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpReport(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         $result = $this->server->xml->parse(
@@ -716,16 +688,13 @@ class CorePlugin extends ServerPlugin {
         );
 
         if ($this->server->emit('report', [$rootElementName, $result, $path])) {
-
             // If emit returned true, it means the report was not supported
             throw new Exception\ReportNotSupported();
-
         }
 
         // Sending back false will interrupt the event chain and tell the server
         // we've handled this method.
         return false;
-
     }
 
     /**
@@ -735,11 +704,9 @@ class CorePlugin extends ServerPlugin {
      * ensure that the process fails if this is the case.
      *
      * @param string $path
-     * @param PropPatch $propPatch
-     * @return void
      */
-    function propPatchProtectedPropertyCheck($path, PropPatch $propPatch) {
-
+    public function propPatchProtectedPropertyCheck($path, PropPatch $propPatch)
+    {
         // Comparing the mutation list to the list of protected properties.
         $mutations = $propPatch->getMutations();
 
@@ -751,7 +718,6 @@ class CorePlugin extends ServerPlugin {
         if ($protected) {
             $propPatch->setResultCode($protected, 403);
         }
-
     }
 
     /**
@@ -761,32 +727,25 @@ class CorePlugin extends ServerPlugin {
      * updating of (some) properties.
      *
      * @param string $path
-     * @param PropPatch $propPatch
-     * @return void
      */
-    function propPatchNodeUpdate($path, PropPatch $propPatch) {
-
+    public function propPatchNodeUpdate($path, PropPatch $propPatch)
+    {
         // This should trigger a 404 if the node doesn't exist.
         $node = $this->server->tree->getNodeForPath($path);
 
         if ($node instanceof IProperties) {
             $node->propPatch($propPatch);
         }
-
     }
 
     /**
      * This method is called when properties are retrieved.
      *
      * Here we add all the default properties.
-     *
-     * @param PropFind $propFind
-     * @param INode $node
-     * @return void
      */
-    function propFind(PropFind $propFind, INode $node) {
-
-        $propFind->handle('{DAV:}getlastmodified', function() use ($node) {
+    public function propFind(PropFind $propFind, INode $node)
+    {
+        $propFind->handle('{DAV:}getlastmodified', function () use ($node) {
             $lm = $node->getLastModified();
             if ($lm) {
                 return new Xml\Property\GetLastModified($lm);
@@ -801,34 +760,36 @@ class CorePlugin extends ServerPlugin {
 
         if ($node instanceof IQuota) {
             $quotaInfo = null;
-            $propFind->handle('{DAV:}quota-used-bytes', function() use (&$quotaInfo, $node) {
+            $propFind->handle('{DAV:}quota-used-bytes', function () use (&$quotaInfo, $node) {
                 $quotaInfo = $node->getQuotaInfo();
+
                 return $quotaInfo[0];
             });
-            $propFind->handle('{DAV:}quota-available-bytes', function() use (&$quotaInfo, $node) {
+            $propFind->handle('{DAV:}quota-available-bytes', function () use (&$quotaInfo, $node) {
                 if (!$quotaInfo) {
                     $quotaInfo = $node->getQuotaInfo();
                 }
+
                 return $quotaInfo[1];
             });
         }
 
-        $propFind->handle('{DAV:}supported-report-set', function() use ($propFind) {
+        $propFind->handle('{DAV:}supported-report-set', function () use ($propFind) {
             $reports = [];
             foreach ($this->server->getPlugins() as $plugin) {
                 $reports = array_merge($reports, $plugin->getSupportedReportSet($propFind->getPath()));
             }
+
             return new Xml\Property\SupportedReportSet($reports);
         });
-        $propFind->handle('{DAV:}resourcetype', function() use ($node) {
+        $propFind->handle('{DAV:}resourcetype', function () use ($node) {
             return new Xml\Property\ResourceType($this->server->getResourceTypeForNode($node));
         });
-        $propFind->handle('{DAV:}supported-method-set', function() use ($propFind) {
+        $propFind->handle('{DAV:}supported-method-set', function () use ($propFind) {
             return new Xml\Property\SupportedMethodSet(
                 $this->server->getAllowedMethods($propFind->getPath())
             );
         });
-
     }
 
     /**
@@ -836,22 +797,15 @@ class CorePlugin extends ServerPlugin {
      *
      * This event is called a bit later, so plugins have a chance first to
      * populate the result.
-     *
-     * @param PropFind $propFind
-     * @param INode $node
-     * @return void
      */
-    function propFindNode(PropFind $propFind, INode $node) {
-
+    public function propFindNode(PropFind $propFind, INode $node)
+    {
         if ($node instanceof IProperties && $propertyNames = $propFind->get404Properties()) {
-
             $nodeProperties = $node->getProperties($propertyNames);
             foreach ($nodeProperties as $propertyName => $propertyValue) {
                 $propFind->set($propertyName, $propertyValue, 200);
             }
-
         }
-
     }
 
     /**
@@ -859,19 +813,16 @@ class CorePlugin extends ServerPlugin {
      *
      * This specific handler is called very late in the process, because we
      * want other systems to first have a chance to handle the properties.
-     *
-     * @param PropFind $propFind
-     * @param INode $node
-     * @return void
      */
-    function propFindLate(PropFind $propFind, INode $node) {
-
-        $propFind->handle('{http://calendarserver.org/ns/}getctag', function() use ($propFind) {
-
+    public function propFindLate(PropFind $propFind, INode $node)
+    {
+        $propFind->handle('{http://calendarserver.org/ns/}getctag', function () use ($propFind) {
             // If we already have a sync-token from the current propFind
             // request, we can re-use that.
             $val = $propFind->get('{http://sabredav.org/ns}sync-token');
-            if ($val) return $val;
+            if ($val) {
+                return $val;
+            }
 
             $val = $propFind->get('{DAV:}sync-token');
             if ($val && is_scalar($val)) {
@@ -899,9 +850,7 @@ class CorePlugin extends ServerPlugin {
                     return substr($val->getHref(), strlen(Sync\Plugin::SYNCTOKEN_PREFIX));
                 }
             }
-
         });
-
     }
 
     /**
@@ -909,8 +858,8 @@ class CorePlugin extends ServerPlugin {
      *
      * @param Exception $e
      */
-    function exception($e) {
-
+    public function exception($e)
+    {
         $logLevel = \Psr\Log\LogLevel::CRITICAL;
         if ($e instanceof \Sabre\DAV\Exception) {
             // If it's a standard sabre/dav exception, it means we have a http
@@ -947,13 +896,12 @@ class CorePlugin extends ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
-            'name'        => $this->getPluginName(),
+            'name' => $this->getPluginName(),
             'description' => 'The Core plugin provides a lot of the basic functionality required by WebDAV, such as a default implementation for all HTTP and WebDAV methods.',
-            'link'        => null,
+            'link' => null,
         ];
-
     }
 }

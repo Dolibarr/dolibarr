@@ -1,21 +1,7 @@
 # Dolibarr language file - Source file is en_US - dict
 CountryUK=UK
-CountryCI=Ivoiry Küste
-CountryAX=Land-Inseln
-CountryBW=Botsuana
-CountryCV=Kap Verde
-CountryCC=Cocos (Keeling) Inseln
-CountryHT=Hati
-CountryHM=Heard und McDonald
-CountryVA=Heiliger Stuhl (Staat Vatikanstadt)
-CountryLA=Laotisch
-CountryLY=Libysch
-CountryMK=Mazedonien, die ehemalige jugoslawische der
-CountryMD=Republik Moldau
-CountryKN=Saint Kitts und Nevis
-CountryGS=Süd-Georgien und Süd-Sandwich-Inseln
-CivilityMLE=Frau
 CivilityMTRE=Mag.
+CivilityDR=Dr.
 CurrencyCAD=CAN-Dollar
 CurrencySingCAD=CAN-Dollar
 CurrencyFRF=Französische Franken

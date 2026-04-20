@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +34,16 @@ class mailing_xinputuser extends MailingTargets
 {
 	public $name = 'EmailsFromUser'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array(); // Module mailing actif si modules require_module actifs
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $require_admin = 0; // Module mailing actif pour user admin ou non
 
 	/**
@@ -48,21 +58,21 @@ class mailing_xinputuser extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
 
 
-    /**
+	/**
 	 *	On the main mailing area, there is a box with statistics.
 	 *	If you want to add a line in this report you must provide an
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
-    public function getSqlArrayForStats()
+	public function getSqlArrayForStats()
 	{
 		global $langs;
 		$langs->load("users");
@@ -77,22 +87,22 @@ class mailing_xinputuser extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param      string	$sql   	Sql request to count
-	 *	@return		string			'' means NA
+	 *  @param      string			$sql   		Sql request to count
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
-    public function getNbOfRecipients($sql = '')
+	public function getNbOfRecipients($sql = '')
 	{
 		return '';
 	}
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
-     *  @param	int		$id		ID
-	 *  @return string      	Url lien
+	 *  @param	int		$id		ID
+	 *  @return string      	URL link
 	 */
-    public function url($id)
+	public function url($id)
 	{
 		return '';
 	}
@@ -103,63 +113,58 @@ class mailing_xinputuser extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
-    public function formFilter()
+	public function formFilter()
 	{
 		global $langs;
 
-		$s = '';
-		$s .= '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+		$s = '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+
 		return $s;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @return int           			< 0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer < 0 si erreur, nb ajout si ok
 	 */
-    public function add_to_target($mailing_id)
+	public function add_to_target($mailing_id)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs, $_FILES;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$tmparray = explode(';', GETPOST('xinputuser'));
+
 		$email = $tmparray[0];
-		$lastname = $tmparray[1];
-		$firstname = $tmparray[2];
-		$other = $tmparray[3];
+		$lastname = empty($tmparray[1]) ? '' : $tmparray[1];
+		$firstname = empty($tmparray[2]) ? '' : $tmparray[2];
+		$other = empty($tmparray[3]) ? '' : $tmparray[3];
 
 		$cibles = array();
-        if (!empty($email))
-        {
-			if (isValidEMail($email))
-			{
+		if (!empty($email)) {
+			if (isValidEmail($email)) {
 				$cibles[] = array(
-           			'email' => $email,
-           			'lastname' => $lastname,
-           			'firstname' => $firstname,
+					'email' => $email,
+					'lastname' => $lastname,
+					'firstname' => $firstname,
 					'other' => $other,
-                    'source_url' => '',
-                    'source_id' => '',
-                    'source_type' => 'file'
+					'source_url' => '',
+					'source_id' => 0,
+					'source_type' => 'file'
 				);
 
 				return parent::addTargetsToDatabase($mailing_id, $cibles);
-			}
-			else
-			{
+			} else {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorBadEMail", $email);
 				return -1;
 			}
-		}
-		else
-		{
-            $langs->load("errors");
-            $this->error = $langs->trans("ErrorBadEmail", $email);
+		} else {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEmail", $email);
 			return -1;
 		}
 	}

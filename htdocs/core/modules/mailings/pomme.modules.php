@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,31 +22,40 @@
 /**
  *	\file       htdocs/core/modules/mailings/pomme.modules.php
  *	\ingroup    mailing
- *	\brief      File of class to offer a selector of emailing targets with Rule 'Pomme'.
+ *	\brief      File of class to offer a selector of emailing targets of users.
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
 /**
- *	Class to offer a selector of emailing targets with Rule 'Peche'.
+ *	Class to offer a selector of emailing targets with Rule 'Pomme'.
  */
 class mailing_pomme extends MailingTargets
 {
-	public $name = 'DolibarrUsers'; // Identifiant du module mailing
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'Dolibarr users with emails'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-	public $require_module = array(); // Module mailing actif si modules require_module actifs
-	public $require_admin = 1; // Module mailing actif pour user admin ou non
+	/**
+	 * @var string name of mailing module
+	 */
+	public $name = 'DolibarrUsers';
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
+	public $desc = 'Dolibarr users with emails'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+
+	/**
+	 * @var string[] Module mailing actif si modules require_module actifs
+	 */
+	public $require_module = array();
+
+	/**
+	 * @var int Module mailing actif pour user admin ou non
+	 */
+	public $require_admin = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'user';
-
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
 
 
 	/**
@@ -52,13 +63,13 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
 
 
-    /**
+	/**
 	 *	On the main mailing area, there is a box with statistics.
 	 *	If you want to add a line in this report you must provide an
 	 *	array of SQL request that returns two field:
@@ -66,43 +77,46 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
-    public function getSqlArrayForStats()
+	public function getSqlArrayForStats()
 	{
 		global $conf, $langs;
 
 		$langs->load("users");
 
 		$statssql = array();
-		$sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label,";
+		$sql = "SELECT '".$this->db->escape($langs->trans("DolibarrUsers"))."' as label,";
 		$sql .= " count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+
 		$statssql[0] = $sql;
 
 		return $statssql;
 	}
 
 
-    /**
-     *	Return here number of distinct emails returned by your selector.
-     *	For example if this selector is used to extract 500 different
-     *	emails from a text file, this function must return 500.
-     *
-     *	@param	string	$sql		SQL request to use to count
-     *	@return	int					Number of recipients
-     */
-    public function getNbOfRecipients($sql = '')
+	/**
+	 *	Return here number of distinct emails returned by your selector.
+	 *	For example if this selector is used to extract 500 different
+	 *	emails from a text file, this function must return 500.
+	 *
+	 *	@param		string			$sql		SQL request to use to count
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 */
+	public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 
 		$sql = "SELECT count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -112,55 +126,55 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @return     string      Retourne zone select
 	 */
-    public function formFilter()
+	public function formFilter()
 	{
 		global $langs;
 
 		$langs->load("users");
 
 		$s = '';
-		$s .= $langs->trans("Status").': ';
-		$s .= '<select name="filter" class="flat">';
-		$s .= '<option value="-1">&nbsp;</option>';
+		$s .= '<select id="filter_pomme"" name="filter" class="flat minwidth100">';
+		$s .= '<option value="-1">'.$langs->trans("Status").'</option>';
 		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s .= '</select>';
+		$s .= ajax_combobox("filter_pomme");
 
 		$s .= ' ';
-		$s .= $langs->trans("Employee").': ';
-		$s .= '<select name="filteremployee" class="flat">';
-		$s .= '<option value="-1">&nbsp;</option>';
+		$s .= '<select id="filteremployee_pomme" name="filteremployee" class="flat minwidth100">';
+		$s .= '<option value="-1">'.$langs->trans("Employee").'</option>';
 		$s .= '<option value="1">'.$langs->trans("Yes").'</option>';
 		$s .= '<option value="0">'.$langs->trans("No").'</option>';
 		$s .= '</select>';
+		$s .= ajax_combobox("filteremployee_pomme");
 
 		return $s;
 	}
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
-     *  @param	int		$id		ID
-	 *  @return     string      Url lien
+	 *  @param	int		$id		ID
+	 *  @return string      	URL link
 	 */
-    public function url($id)
+	public function url($id)
 	{
 		return '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$id.'">'.img_object('', "user").'</a>';
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @return int           			< 0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer < 0 si erreur, nb ajout si ok
 	 */
-    public function add_to_target($mailing_id)
+	public function add_to_target($mailing_id)
 	{
-        // phpcs:enable
-	    global $conf, $langs;
+		// phpcs:enable
+		global $conf, $langs;
 		$langs->load("companies");
 
 		$cibles = array();
@@ -169,19 +183,29 @@ class mailing_pomme extends MailingTargets
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
 		$sql .= " u.lastname, u.firstname as firstname, u.civility as civility_id, u.login, u.office_phone";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicit dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
-		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql .= " AND u.statut=1";
-		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql .= " AND u.statut=0";
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql .= " AND u.employee=1";
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql .= " AND u.employee=0";
+		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
+		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') {
+			$sql .= " AND u.statut=1";
+		}
+		if (GETPOSTISSET("filter") && GETPOST("filter") == '0') {
+			$sql .= " AND u.statut=0";
+		}
+		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '1') {
+			$sql .= " AND u.employee=1";
+		}
+		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') {
+			$sql .= " AND u.employee=0";
+		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		$sql .= " ORDER BY u.email";
 
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$j = 0;
@@ -189,23 +213,21 @@ class mailing_pomme extends MailingTargets
 			dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
 			$old = '';
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email)
-				{
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
-                    	'email' => $obj->email,
-                    	'fk_contact' => $obj->fk_contact,
-                    	'lastname' => $obj->lastname,
-                    	'firstname' => $obj->firstname,
-                    	'other' =>
-					        ($langs->transnoentities("Login").'='.$obj->login).';'.
-                            ($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
-					        ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
-                        'source_url' => $this->url($obj->id),
-                        'source_id' => $obj->id,
-                        'source_type' => 'user'
+						'email' => $obj->email,
+						'fk_contact' => (int) $obj->fk_contact,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'other' =>
+							($langs->transnoentities("Login").'='.$obj->login).';'.
+							($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
+							($langs->transnoentities("PhonePro").'='.$obj->office_phone),
+						'source_url' => $this->url($obj->id),
+						'source_id' => (int) $obj->id,
+						'source_type' => 'user'
 					);
 					$old = $obj->email;
 					$j++;
@@ -213,14 +235,12 @@ class mailing_pomme extends MailingTargets
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog($this->db->error());
 			$this->error = $this->db->error();
 			return -1;
 		}
 
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
-    }
+	}
 }

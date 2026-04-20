@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,30 @@
  *	\brief      Home page of opensurvey area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("opensurvey");
 
 // Security check
-if (!$user->rights->opensurvey->read) accessforbidden();
+if (!$user->hasRight('opensurvey', 'read')) {
+	accessforbidden();
+}
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('opensurveyindex'));
 
 
@@ -48,12 +59,12 @@ $sql = 'SELECT COUNT(*) as nb';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
 $sql .= ' WHERE entity IN ('.getEntity('survey').')';
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$nbsondages = $obj->nb;
+} else {
+	dol_print_error($db, '');
 }
-else dol_print_error($db, '');
 
 
 $title = $langs->trans("OpenSurveyArea");

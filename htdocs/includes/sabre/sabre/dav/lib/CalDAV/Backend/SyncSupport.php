@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Backend;
 
 /**
@@ -18,8 +20,8 @@ namespace Sabre\CalDAV\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface SyncSupport extends BackendInterface {
-
+interface SyncSupport extends BackendInterface
+{
     /**
      * The getChanges method returns all the changes that have happened, since
      * the specified syncToken in the specified calendar.
@@ -72,10 +74,10 @@ interface SyncSupport extends BackendInterface {
      *
      * @param string $calendarId
      * @param string $syncToken
-     * @param int $syncLevel
-     * @param int $limit
-     * @return array
+     * @param int    $syncLevel
+     * @param int    $limit
+     *
+     * @return array|null
      */
-    function getChangesForCalendar($calendarId, $syncToken, $syncLevel, $limit = null);
-
+    public function getChangesForCalendar($calendarId, $syncToken, $syncLevel, $limit = null);
 }

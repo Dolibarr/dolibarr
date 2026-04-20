@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,44 +32,56 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy", "trips"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$codeventil = GETPOST('codeventil');
-$id = GETPOST('id');
+$codeventil = GETPOSTINT('codeventil');
+$id = GETPOSTINT('id');
 
 // Security check
-if ($user->socid > 0)
+if (!isModEnabled('accounting')) {
 	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (!$user->hasRight('accounting', 'bind', 'write')) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write)
-{
-	if (!$cancel)
-	{
-		if ($codeventil < 0) $codeventil = 0;
+if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
+	if (!$cancel) {
+		if ($codeventil < 0) {
+			$codeventil = 0;
+		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
-		$sql .= " SET fk_code_ventilation = ".$codeventil;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " SET fk_code_ventilation = ".((int) $codeventil);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-			if ($backtopage)
-			{
+			if ($backtopage) {
 				header("Location: ".$backtopage);
 				exit();
 			}
@@ -84,7 +97,9 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write)
 /*
  * View
  */
-llxHeader("", $langs->trans('FicheVentilation'));
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+
+llxHeader("", $langs->trans('FicheVentilation'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-expensereport page-card');
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
@@ -103,10 +118,10 @@ if (!empty($id)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON erd.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as er ON er.rowid = erd.fk_expensereport";
-	$sql .= " WHERE er.fk_statut > 0 AND erd.rowid = ".$id;
+	$sql .= " WHERE er.fk_statut > 0 AND erd.rowid = ".((int) $id);
 	$sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 
-	dol_syslog("/accounting/expensereport/card.php sql=".$sql, LOG_DEBUG);
+	dol_syslog("/accounting/expensereport/card.php", LOG_DEBUG);
 	$result = $db->query($sql);
 
 	if ($result) {
@@ -123,7 +138,7 @@ if (!empty($id)) {
 
 			print load_fiche_titre($langs->trans('ExpenseReportsVentilation'), '', 'title_accountancy');
 
-			dol_fiche_head();
+			print dol_get_fiche_head();
 
 			print '<table class="border centpercent">';
 
@@ -148,12 +163,12 @@ if (!empty($id)) {
 			print '</td></tr>';
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+			print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

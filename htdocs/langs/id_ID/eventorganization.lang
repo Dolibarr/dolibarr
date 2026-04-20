@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = Organisasi Acara
+EventOrganizationDescription = Organisasi Acara melalui Proyek Modul
+EventOrganizationDescriptionLong= Kelola organisasi suatu acara (pertunjukan, konferensi, peserta atau pembicara, dengan halaman publik untuk saran, pemungutan suara, atau pendaftaran)
+EventOrganizationMenuLeft = Acara yang diselenggarakan
+EventOrganizationConferenceOrBoothMenuLeft = Konferensi Atau Stan
+PaymentEvent=Pembayaran acara
+EventFee=Biaya acara
+# Admin page
+NewRegistration=Registrasi
+EventOrganizationSetup=Pengaturan Organisasi Acara
+EventOrganization=Organisasi acara
+EventOrganizationSetupPage = Halaman penyiapan Organisasi Acara
+EVENTORGANIZATION_TASK_LABEL = Label tugas untuk dibuat secara otomatis saat proyek divalidasi
+EVENTORGANIZATION_TASK_LABELTooltip = Saat Anda memvalidasi acara untuk diselenggarakan, beberapa tugas dapat dibuat secara otomatis di proyek<br><br>Misalnya: <br>Kirim Panggilan untuk Konferensi<br>Kirim Panggilan untuk Stan<br>Validasi saran Konferensi<br>Validasi permohonan untuk Booth<br>Buka langganan acara untuk peserta<br>Kirim pengingat acara kepada pembicara<br>Kirim pengingat acara ke hoster Booth<br>Kirim pengingat acara kepada peserta
+EVENTORGANIZATION_TASK_LABELTooltip2=Tetap kosong jika Anda tidak perlu membuat tugas secara otomatis.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategori untuk ditambahkan ke pihak ketiga secara otomatis dibuat ketika seseorang menyarankan konferensi
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategori untuk ditambahkan ke pihak ketiga secara otomatis dibuat saat mereka menyarankan stan
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template email untuk dikirim setelah menerima saran konferensi.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template email untuk dikirim setelah menerima saran stan.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Templat email untuk dikirim setelah pendaftaran ke stan telah dibayar.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Templat email untuk dikirim setelah pendaftaran acara telah dibayar.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Templat email yang akan digunakan saat mengirim email dari massal "Kirim email" ke pembicara
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Templat email yang akan digunakan saat mengirim email dari massal "Kirim email" pada daftar peserta
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Dalam formulir untuk membuat/menambah peserta, membatasi daftar pihak ketiga hanya pihak ketiga dalam kategori tersebut
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dalam formulir untuk membuat/menambah peserta, membatasi daftar pihak ketiga menjadi pihak ketiga yang sifatnya
+# Object
+OrganizedEvent=Acara terorganisir
+EventOrganizationConfOrBooth= Konferensi Atau Stan
+EventOrganizationConfOrBoothes=Konferensi atau Booth
+ManageOrganizeEvent = Mengelola organisasi acara
+ConferenceOrBooth = Konferensi Atau Stan
+ConferenceOrBoothTab = Konferensi Atau Stan
+AmountPaid = Jumlah yang dibayarkan
+DateOfRegistration = Tanggal pendaftaran
+ConferenceOrBoothAttendee = Peserta Konferensi Atau Stan
+ApplicantOrVisitor=Pemohon atau pengunjung
+Speaker=Pembicara
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = Permintaan Anda untuk konferensi telah diterima
+YourOrganizationEventBoothRequestWasReceived = Permintaan Anda untuk stan telah diterima
+EventOrganizationEmailAskConf = Permintaan konferensi
+EventOrganizationEmailAskBooth = Permintaan stan
+EventOrganizationEmailBoothPayment = Pembayaran stan Anda
+EventOrganizationEmailRegistrationPayment = Pendaftaran untuk suatu acara
+EventOrganizationMassEmailAttendees = Komunikasi kepada peserta
+EventOrganizationMassEmailSpeakers = Komunikasi dengan pembicara
+ToSpeakers=Kepada pembicara
+# Event
+AllowUnknownPeopleSuggestConf=Izinkan orang untuk menyarankan konferensi
+AllowUnknownPeopleSuggestConfHelp=Izinkan orang tak dikenal menyarankan konferensi yang ingin mereka lakukan
+AllowUnknownPeopleSuggestBooth=Izinkan orang untuk melamar stan
+AllowUnknownPeopleSuggestBoothHelp=Izinkan orang tak dikenal untuk melamar stan
+PriceOfRegistration=Harga pendaftaran
+PriceOfRegistrationHelp=Harga yang harus dibayar untuk mendaftar atau berpartisipasi dalam acara
+PriceOfBooth=Harga langganan mendirikan stan
+PriceOfBoothHelp=Harga langganan stand stand
+EventOrganizationICSLinkProject=Tautkan ICS untuk acara tersebut
+EventOrganizationICSLink=Tautkan ICS untuk konferensi
+ConferenceOrBoothInformation=Informasi Konferensi Atau Booth
+ConferenceOrBoothFormat=Mode konferensi atau stan
+ConferenceOrBoothFormatID=ID mode konferensi atau stan
+ConferenceOrBoothFormatCode=Kode mode konferensi atau stan
+ConferenceOrBoothFormatLabel=Label mode konferensi atau stan
+Attendees=Peserta
+ListOfAttendeesOfEvent=Daftar peserta proyek acara
+ListOfConfOrBoothOfEvent=Daftar konferensi atau stan proyek acara
+DownloadICSLink=Unduh berkas ICS
+EVENTORGANIZATION_SECUREKEY=Benih untuk mengamankan kunci halaman pendaftaran publik untuk menyarankan konferensi
+SERVICE_BOOTH_LOCATION=Layanan yang digunakan untuk baris faktur tentang lokasi stan
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Layanan yang digunakan untuk baris faktur tentang langganan peserta ke suatu acara
+NbVotes=Jumlah suara
+# Status
+EvntOrgDraft = Konsep
+EvntOrgSuggested = Disarankan
+EvntOrgConfirmed = Dikonfirmasi
+EvntOrgNotQualified = Tidak Berkualitas
+EvntOrgDone = Selesai
+EvntOrgCancelled = Dibatalkan
+# Other
+SuggestForm = Halaman saran
+SuggestOrVoteForConfOrBooth = Halaman untuk saran atau suara
+EvntOrgRegistrationHelpMessage = Di sini, Anda dapat memilih konferensi atau menyarankan konferensi baru untuk acara tersebut. Anda juga dapat mengajukan permohonan untuk memiliki stan selama acara berlangsung.
+EvntOrgRegistrationConfHelpMessage = Di sini, Anda dapat menyarankan konferensi baru untuk dianimasikan selama acara.
+EvntOrgRegistrationBoothHelpMessage = Di sini, Anda bisa mengajukan permohonan untuk memiliki booth selama acara berlangsung.
+ListOfSuggestedConferences = Daftar konferensi yang disarankan
+ListOfSuggestedBooths=Stan yang disarankan
+ListOfConferencesOrBooths=Konferensi atau stan proyek acara
+SuggestConference = Sarankan konferensi baru
+SuggestBooth = Sarankan stan
+ViewAndVote = Lihat dan pilih acara yang disarankan
+PublicAttendeeSubscriptionGlobalPage = Tautan publik untuk pendaftaran acara
+PublicAttendeeSubscriptionPage = Tautan publik untuk pendaftaran ke acara ini saja
+MissingOrBadSecureKey = Kunci keamanan tidak valid atau hilang
+EvntOrgWelcomeMessage = Formulir ini memungkinkan Anda untuk mendaftar sebagai peserta baru acara tersebut
+EvntOrgDuration = Konferensi ini dimulai pada %s dan berakhir pada %s.
+ConferenceAttendeeFee = Biaya peserta konferensi untuk acara: '%s' terjadi dari %s hingga %s.
+BoothLocationFee = Lokasi stan untuk acara : '%s' terjadi dari %s hingga %s
+EventType = Jenis agenda
+LabelOfBooth=Label stan
+LabelOfconference=Label konferensi
+ConferenceIsNotConfirmed=Pendaftaran tidak tersedia, konferensi belum dikonfirmasi
+EventRegistrationAreClosed=Pendaftaran acara ditutup
+DateMustBeBeforeThan=%s harus sebelum %s
+DateMustBeAfterThan=%s harus setelah %s
+MaxNbOfAttendeesReached=Jumlah maksimum peserta telah tercapai
+NewSubscription=Registrasi
+OrganizationEventConfRequestWasReceived=Saran Anda untuk konferensi telah diterima
+OrganizationEventBoothRequestWasReceived=Permintaan Anda untuk stan telah diterima
+OrganizationEventPaymentOfBoothWasReceived=Pembayaran Anda untuk stan Anda telah dicatat
+OrganizationEventPaymentOfRegistrationWasReceived=Pembayaran Anda untuk pendaftaran acara Anda telah dicatat
+OrganizationEventBulkMailToAttendees=Ini adalah pengingat tentang partisipasi Anda dalam acara tersebut sebagai peserta
+OrganizationEventBulkMailToSpeakers=Ini adalah pengingat atas partisipasi Anda dalam acara tersebut sebagai pembicara
+OrganizationEventLinkToThirdParty=Tautan ke pihak ketiga (pelanggan, pemasok, atau mitra)
+OrganizationEvenLabelName=Nama publik konferensi atau stan
+NewSuggestionOfBooth=Aplikasi untuk stan
+NewSuggestionOfConference=Aplikasi untuk mengadakan konferensi
+EvntOrgRegistrationWelcomeMessage = Selamat datang di halaman saran konferensi atau stan.
+EvntOrgRegistrationConfWelcomeMessage = Selamat datang di halaman saran konferensi.
+EvntOrgRegistrationBoothWelcomeMessage = Selamat datang di halaman saran stan.
+EvntOrgVoteHelpMessage = Di sini, Anda dapat melihat dan memilih acara yang disarankan untuk proyek
+VoteOk = Suara Anda telah diterima.
+AlreadyVoted = Anda telah memilih acara ini.
+VoteError = Terjadi kesalahan selama pemungutan suara, harap coba lagi.
+SubscriptionOk=Pendaftaran Anda telah dicatat
+AmountOfRegistrationPaid=Jumlah pendaftaran yang dibayar
+ConfAttendeeSubscriptionConfirmation = Konfirmasi langganan Anda ke suatu acara
+Attendee = Peserta
+PaymentConferenceAttendee = Pembayaran peserta konferensi
+PaymentBoothLocation = Pembayaran lokasi stan
+DeleteConferenceOrBoothAttendee=Hapus peserta
+RegistrationAndPaymentWereAlreadyRecorder=Pendaftaran dan pembayaran telah dicatat untuk email <b>%s</b>
+EmailAttendee=email peserta
+EmailCompany=email perusahaan
+EmailCompanyForInvoice=Email perusahaan (untuk invoice, jika berbeda dengan email peserta)
+ErrorSeveralCompaniesWithEmailContactUs=Beberapa perusahaan dengan email ini telah ditemukan sehingga kami tidak dapat memvalidasi pendaftaran Anda secara otomatis. Silakan hubungi kami di %s untuk validasi manual
+ErrorSeveralCompaniesWithNameContactUs=Beberapa perusahaan dengan nama ini telah ditemukan sehingga kami tidak dapat memvalidasi pendaftaran Anda secara otomatis. Silakan hubungi kami di %s untuk validasi manual
+NoPublicActionsAllowedForThisEvent=Tidak ada tindakan publik yang terbuka untuk umum untuk acara ini
+MaxNbOfAttendees=Jumlah peserta maksimal
+DateStartEvent=Tanggal mulai acara
+DateEndEvent=Tanggal akhir acara
+ModifyStatus=Ubah status
+ConfirmModifyStatus=Konfirmasikan perubahan status
+ConfirmModifyStatusQuestion=Apakah Anda yakin ingin mengubah %s data yang dipilih?
+RecordsUpdated=%s Catatan diperbarui
+RecordUpdated=Rekam diperbarui
+NoRecordUpdated=Tidak ada Catatan yang diperbarui
+ProfitPerValidatedAttendee=Keuntungan per peserta
+Confirmed=Dikonfirmasi
+NotSelected=Tidak dipilih
+TheLinkIsAvailableOnTheProjectEventCard=Tautan untuk menyarankan atau memilih konferensi atau mendaftar stan disediakan di halaman proyek/acara
+ShowedUp=Muncul

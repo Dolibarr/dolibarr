@@ -32,7 +32,6 @@
 
 delete from llx_c_typent;
 -- Entries for all countries
-insert into llx_c_typent (id,code,libelle,fk_country,active) values (  0, 'TE_UNKNOWN', '-',             NULL, 1);
 insert into llx_c_typent (id,code,libelle,fk_country,active) values (  1, 'TE_STARTUP', 'Start-up',      NULL, 0);
 insert into llx_c_typent (id,code,libelle,fk_country,active) values (  2, 'TE_GROUP',   'Grand groupe',  NULL, 1);
 insert into llx_c_typent (id,code,libelle,fk_country,active) values (  3, 'TE_MEDIUM',  'PME/PMI',       NULL, 1);

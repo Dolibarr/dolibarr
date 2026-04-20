@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - ecm
-ECMSectionsManual=Manuelle Verzeichnisse
-ECMSectionsAuto=Automatische Verzeichnisse
-ECMNbOfFilesInSubDir=Anzahl der Dateien im Unterverzeichnis
-ECMAreaDesc2=* Automatische Verzeichnisse werden automatisch befüllt, wenn Sie Dokumente von der Karte eines Elements erstellen. <br> * Manuelle Verzeichnisse können Sie dazu nutzen, nicht mit anderen Elementen verbundene Dokumente zu speichern.

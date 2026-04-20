@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
  *	\brief      Management module for batch number, eat-by and sell-by date for product
  *  \file       htdocs/core/modules/modProductBatch.class.php
  *  \ingroup    productbatch
- *  \brief      Description and activation file for module productbatch
+ *  \brief      Description and activation file for the module productbatch
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -40,9 +42,9 @@ class modProductBatch extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs, $conf;
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 		$this->numero = 39000;
 
 		$this->family = "products";
@@ -65,32 +67,49 @@ class modProductBatch extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into productdluo/admin directory, to use to setup module.
-		$this->config_page_url = array("product_lot_extrafields.php@product");
+		$this->config_page_url = array("product_lot.php@product");
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array("modProduct", "modStock", "modExpedition", "modFournisseur"); // List of module class names as string that must be enabled if this module is enabled
+		if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			$this->depends = array("modProduct", "modStock", "modExpedition", "modSupplierOrder"); // List of module class names as string that must be enabled if this module is enabled
+		} else {
+			$this->depends = array("modProduct", "modStock", "modExpedition", "modFournisseur"); // List of module class names as string that must be enabled if this module is enabled
+		}
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("productbatch");
 
 		// Constants
-		$this->const = array();
+		$this->const = [
+			[
+				"PRODUCTBATCH_LOT_ADDON",
+				"chaine",
+				"mod_lot_free",
+				"Module to control lot number",
+				0,
+			],
+			[
+				"PRODUCTBATCH_SN_ADDON",
+				"chaine",
+				"mod_sn_free",
+				"Module to control serial number",
+				0,
+			],
+		];
 
-        $this->tabs = array();
+		$this->tabs = array();
 
-        // Dictionaries
-	    if (!isset($conf->productbatch->enabled))
-        {
-        	$conf->productbatch = new stdClass();
-        	$conf->productbatch->enabled = 0;
-        }
+		if (!isset($conf->productbatch->enabled)) {
+			$conf->productbatch = new stdClass();
+			$conf->productbatch->enabled = 0;
+		}
+		// Dictionaries
 		$this->dictionaries = array();
 
-        // Boxes
-        $this->boxes = array(); // List of boxes
+		// Boxes
+		$this->boxes = array(); // List of boxes
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
@@ -111,20 +130,20 @@ class modProductBatch extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
-	    global $db, $conf;
+		global $db, $conf;
 
 		$sql = array();
 
-		if (!empty($conf->cashdesk->enabled)) {
-    		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
-    		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-    		    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
-    		}
+		if (isModEnabled('cashdesk')) {
+			if (!getDolGlobalString('CASHDESK_NO_DECREASE_STOCK')) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+			}
 		}
 
 		return $this->_init($sql, $options);

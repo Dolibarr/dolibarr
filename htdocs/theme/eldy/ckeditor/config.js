@@ -11,12 +11,13 @@ CKEDITOR.editorConfig = function( config )
 	config.enterMode = CKEDITOR.ENTER_BR;
 	//config.forceSimpleAmpersand = true;	// When you put a <img src="x?a=a&b=b"> into the textarea, and go into "source", then ckeditor change the & into &amp;. We don't want this. But this option does not fix this.
 	//config.entities = false;			// When you put a <img src="x?a=a&b=b"> into the textarea, and go into "source", then ckeditor change the & into &amp;. We don't want this. But this option does not fix this.
+	//config.entities_greek = false;
 	config.resize_enabled = false;
 	//config.resize_maxHeight = 3000;
 	//config.resize_maxWidth = 3000;
 	//config.height = '300px';
 	//config.resize_dir = 'vertical';	// horizontal, vertical, both
-	config.removePlugins = 'elementspath,save'; // config.removePlugins = 'elementspath,save,font';
+	config.removePlugins = 'elementspath,save'; // this list is modified into DolEditor::Create()
 	//config.extraPlugins = 'docprops,scayt,showprotected';
 	config.removeDialogTabs = 'flash:advanced';	// config.removeDialogTabs = 'flash:advanced;image:Link';
 	config.protectedSource.push( /<\?[\s\S]*?\?>/g );   // Prevent PHP Code to be formatted
@@ -31,6 +32,7 @@ CKEDITOR.editorConfig = function( config )
 	//config.autoParagraph = false;
 	//config.removeFormatTags = 'b,big,code,del,dfn,em,font,i,ins,kbd';		// See also rules on this.dataProcessor.writer.setRules
 	//config.forcePasteAsPlainText = true;
+	config.entities_latin = false;
 
 	config.toolbar_Full =
 	[
@@ -45,8 +47,8 @@ CKEDITOR.editorConfig = function( config )
 	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
-	    ['Link','Unlink','Anchor'],
-	    ['Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
+	    ['Link','Unlink'],
+	    ['Image','Table','HorizontalRule','SpecialChar'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']
@@ -57,13 +59,13 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize','Preview'],
 	 	['SpellChecker', 'Scayt'],
-	 	['Undo','Redo','-','Find','Replace'],
+	 	['Find','Replace'],
 	 	['CreateDiv','ShowBlocks'],
 	    ['Format','Font','FontSize'],
-	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
+	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar'],
+	 	['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	 ];
 
@@ -72,9 +74,9 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
-	 	['Undo','Redo','-','Find','Replace'],
-	    ['Format','Font','FontSize'],
-	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
+	 	['Find','Replace'],
+	    ['Format','FontSize'],
+	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
@@ -99,6 +101,28 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['Find'],
+	 	['Image'],
 	 	['Source']
+		['SpecialChar'],
 	];
 };
+
+
+/* Code to make links into CKEditor, in readonly, mode clickable */
+CKEDITOR.on('instanceReady', function(event) {
+    var editor = event.editor;
+	if (editor.readOnly) {
+	  var editable = editor.editable();
+	  editable.attachListener(editable, 'click', function(evt) {
+	    console.log("We click on a link in CKEditor in readonly mode");
+	    var target = evt.data.getTarget();
+	    var anchor = target.getAscendant('a', true);
+	    if (anchor) {
+	      var href = anchor.getAttribute('href');
+	      if (href) {
+	        window.open(href, '_blank'); // Open link in a new tab/window
+	      }
+	    }
+	  });
+	}
+});

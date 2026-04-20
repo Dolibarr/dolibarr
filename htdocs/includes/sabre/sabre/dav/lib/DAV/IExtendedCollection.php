@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
@@ -12,8 +14,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IExtendedCollection extends ICollection {
-
+interface IExtendedCollection extends ICollection
+{
     /**
      * Creates a new collection.
      *
@@ -34,10 +36,8 @@ interface IExtendedCollection extends ICollection {
      * property for you.
      *
      * @param string $name
-     * @param MkCol $mkCol
+     *
      * @throws Exception\InvalidResourceType
-     * @return void
      */
-    function createExtendedCollection($name, MkCol $mkCol);
-
+    public function createExtendedCollection($name, MkCol $mkCol);
 }

@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +24,7 @@
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
+ *      			See also PdfDocTest to test methods
  */
 
 global $conf,$user,$langs,$db;
@@ -39,7 +42,7 @@ require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_azur.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/doc/pdf_baleine.modules.php';
@@ -55,16 +58,16 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/modules_propa
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_project.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
-
 require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -74,367 +77,347 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BuildDocTest extends PHPUnit\Framework\TestCase
+class BuildDocTest extends CommonClassTest
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		global $conf,$user,$langs,$db;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return BuildDocTest
-     */
-    public function __construct()
-    {
-        parent::__construct();
+		if (!isModEnabled('supplier')) {
+			print __METHOD__." supplier module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('invoice')) {
+			print __METHOD__." invoice module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('order')) {
+			print __METHOD__." order module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('propal')) {
+			print __METHOD__." propal module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('project')) {
+			print __METHOD__." project module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('shipping')) {
+			print __METHOD__." shipment module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('intervention')) {
+			print __METHOD__." intervention module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('expensereport')) {
+			print __METHOD__." expensereport module not enabled\n";
+			die(1);
+		}
 
-        //$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		print "PHP Version: ".phpversion()."\n";
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-
-        if (! $conf->facture->enabled) { print __METHOD__." invoice module not enabled\n"; die(); }
-        if (! $conf->commande->enabled) { print __METHOD__." order module not enabled\n"; die(); }
-        if (! $conf->propal->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
-        if (! $conf->projet->enabled) { print __METHOD__." project module not enabled\n"; die(); }
-        if (! $conf->expedition->enabled) { print __METHOD__." shipment module not enabled\n"; die(); }
-        if (! $conf->ficheinter->enabled) { print __METHOD__." intervention module not enabled\n"; die(); }
-        if (! $conf->expensereport->enabled) { print __METHOD__." expensereport module not enabled\n"; die(); }
-
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-        print __METHOD__."\n";
-    }
-
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
-
-        print __METHOD__."\n";
-    }
-
-    /**
-     * Init phpunit tests
-     *
-     * @return	void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        print __METHOD__."\n";
-    }
-    /**
-     * End phpunit tests
-     *
-     * @return	void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
-
-    /**
-     * testFactureBuild
-     *
-     * @return int
-     */
-    public function testFactureBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $conf->facture->dir_output.='/temp';
-
-        $localobjectcom=new Commande($this->savdb);
-        $localobjectcom->initAsSpecimen();
-
-        $localobject=new Facture($this->savdb);
-        $localobject->createFromOrder($localobjectcom, $user);
-        $localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
-
-        // Crabe (english)
-        $localobject->modelpdf='crabe';
-        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Crabe (japanese)
-        $newlangs1=new Translate("", $conf);
-        $newlangs1->setDefaultLang('ja_JP');
-        $localobject->modelpdf='crabe';
-        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs1);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Crabe (saudiarabia)
-        $newlangs2a=new Translate("", $conf);
-        $newlangs2a->setDefaultLang('sa_SA');
-        $localobject->modelpdf='crabe';
-        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2a);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Crabe (english_saudiarabia)
-        $newlangs2b=new Translate("", $conf);
-        $newlangs2b->setDefaultLang('en_SA');
-        $localobject->modelpdf='crabe';
-        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2b);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Crabe (greek)
-        $newlangs3=new Translate("", $conf);
-        $newlangs3->setDefaultLang('el_GR');
-        $localobject->modelpdf='crabe';
-        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs3);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Crabe (chinese)
-        $newlangs4=new Translate("", $conf);
-        $newlangs4->setDefaultLang('zh_CN');
-        $localobject->modelpdf='crabe';
-        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs4);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Crabe (russian)
-        $newlangs5=new Translate("", $conf);
-        $newlangs5->setDefaultLang('ru_RU');
-        $localobject->modelpdf='crabe';
-        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs5);
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        return 0;
-    }
-
-    /**
-    * testFactureFournisseurBuild
-    *
-    * @return int
-    */
-    public function testFactureFournisseurBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $conf->fournisseur->facture->dir_output.='/temp';
-        $localobject=new FactureFournisseur($this->savdb);
-        $localobject->initAsSpecimen();
-
-        // Canelle
-        $localobject->modelpdf='canelle';
-        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
-
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        return 0;
-    }
-
-    /**
-     * testCommandeBuild
-     *
-     * @return int
-     */
-    public function testCommandeBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $conf->commande->dir_output.='/temp';
-        $localobject=new Commande($this->savdb);
-        $localobject->initAsSpecimen();
-
-        // Einstein
-        $localobject->modelpdf='einstein';
-        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
-
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        return 0;
-    }
+		print __METHOD__."\n";
+	}
 
 
-    /**
-     * testCommandeFournisseurBuild
-     *
-     * @return int
-     */
-    public function testCommandeFournisseurBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testFactureBuild
+	 *
+	 * @return int
+	 */
+	public function testFactureBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $conf->fournisseur->commande->dir_output.='/temp';
-        $localobject=new CommandeFournisseur($this->savdb);
-        $localobject->initAsSpecimen();
+		$conf->facture->dir_output .= '/temp';
 
-        // Muscadet
-        $localobject->modelpdf='muscadet';
-        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobjectcom = new Commande($db);
+		$localobjectcom->initAsSpecimen();
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
+		$localobject = new Facture($db);
+		$localobject->createFromOrder($localobjectcom, $user);
+		$localobject->date_lim_reglement = dol_now() + 3600 * 24 * 30;
+		$localobject->status = Facture::STATUS_DRAFT;
 
-        return 0;
-    }
+		// To be sure we are not using the Swiss QR Code addition
+		$conf->global->INVOICE_ADD_SWISS_QR_CODE = 0;
+		// Force config to use a watermark and without TCPDI
+		$conf->global->FACTURE_DRAFT_WATERMARK = 'A watermark';
+		// Force without TCPDI
+		$conf->global->MAIN_DISABLE_TCPDI = 1;
 
-    /**
-     * testPropalBuild
-     *
-     * @return int
-     */
-    public function testPropalBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		// sponge (english)
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of sponge invoice');
+		print __METHOD__." result=".$result." for generation from sponge\n";
 
-        $conf->propal->dir_output.='/temp';
-        $localobject=new Propal($this->savdb);
-        $localobject->initAsSpecimen();
+		// Restore default usage with TCPDI
+		$conf->global->MAIN_DISABLE_TCPDI = 0;
 
-        // Azur
-        $localobject->modelpdf='azur';
-        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
+		// sponge (english)
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of sponge invoice (MAIN_DISABLE_TCPDI=0 + watermark)');
+		print __METHOD__." result=".$result." for generation from sponge with MAIN_DISABLE_TCPDI and a watermark\n";
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
+		// sponge (japanese)
+		$newlangs1 = new Translate("", $conf);
+		$newlangs1->setDefaultLang('ja_JP');
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs1);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document ja_JP');
+		print __METHOD__." result=".$result."\n";
 
-        return 0;
-    }
+		// sponge (saudiarabia)
+		$newlangs2a = new Translate("", $conf);
+		$newlangs2a->setDefaultLang('sa_SA');
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2a);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document sa_SA');
+		print __METHOD__." result=".$result."\n";
 
-    /**
-     * testProjectBuild
-     *
-     * @return int
-     */
-    public function testProjectBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-        $conf->projet->dir_output.='/temp';
-        $localobject=new Project($this->savdb);
-        $localobject->initAsSpecimen();
+		// sponge (english_saudiarabia)
+		$newlangs2b = new Translate("", $conf);
+		$newlangs2b->setDefaultLang('en_SA');
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2b);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document en_SA');
+		print __METHOD__." result=".$result."\n";
 
-        // Baleine
-        $localobject->modelpdf='baleine';
-        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
+		// sponge (greek)
+		$newlangs3 = new Translate("", $conf);
+		$newlangs3->setDefaultLang('el_GR');
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs3);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document el_GR');
+		print __METHOD__." result=".$result."\n";
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
+		// sponge (chinese)
+		$newlangs4 = new Translate("", $conf);
+		$newlangs4->setDefaultLang('zh_CN');
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs4);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document zh_CN');
+		print __METHOD__." result=".$result."\n";
 
-        return 0;
-    }
+		// sponge (russian)
+		$newlangs5 = new Translate("", $conf);
+		$newlangs5->setDefaultLang('ru_RU');
+		$localobject->model_pdf = 'sponge';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs5);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document ru_RU');
+		print __METHOD__." result=".$result."\n";
 
-    /**
-     * testFichinterBuild
-     *
-     * @return int
-     */
-    public function testFichinterBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return 0;
+	}
 
-        $conf->ficheinter->dir_output.='/temp';
-        $localobject=new Fichinter($this->savdb);
-        $localobject->initAsSpecimen();
+	/**
+	* testFactureFournisseurBuild
+	*
+	* @return int
+	*/
+	public function testFactureFournisseurBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        // Soleil
-        $localobject->modelpdf='soleil';
-        $result=fichinter_create($db, $localobject, $localobject->modelpdf, $langs);
+		$conf->fournisseur->facture->dir_output .= '/temp';	// To not poluate the existing dir_output dir
+		$localobject = new FactureFournisseur($db);
+		$localobject->initAsSpecimen();
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
+		// Canelle
+		$localobject->model_pdf = 'canelle';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
-        return 0;
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
 
-    /**
-     * testExpeditionBuild
-     *
-     * @return int
-     */
-    public function testExpeditionBuild()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return 0;
+	}
 
-        $conf->expedition->dir_output.='/temp';
-        $localobject=new Expedition($this->savdb);
-        $localobject->initAsSpecimen();
+	/**
+	 * testCommandeBuild
+	 *
+	 * @return int
+	 */
+	public function testCommandeBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        // Merou
-        $localobject->modelpdf='merou';
-        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
+		$conf->commande->dir_output .= '/temp';
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
+		// Einstein
+		$localobject->model_pdf = 'einstein';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
-        // Rouget
-        $localobject->modelpdf='rouget';
-        $result= $localobject->generateDocument($localobject->modelpdf, $langs);
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
 
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
+		return 0;
+	}
 
-        return 0;
-    }
+
+	/**
+	 * testCommandeFournisseurBuild
+	 *
+	 * @return int
+	 */
+	public function testCommandeFournisseurBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->fournisseur->commande->dir_output .= '/temp';
+		$localobject = new CommandeFournisseur($db);
+		$localobject->initAsSpecimen();
+
+		// Muscadet
+		$localobject->model_pdf = 'muscadet';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+
+		return 0;
+	}
+
+	/**
+	 * testPropalBuild
+	 *
+	 * @return int
+	 */
+	public function testPropalBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->propal->dir_output .= '/temp';
+		$localobject = new Propal($db);
+		$localobject->initAsSpecimen();
+
+		// Azur
+		$localobject->model_pdf = 'azur';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+
+		return 0;
+	}
+
+	/**
+	 * testProjectBuild
+	 *
+	 * @return int
+	 */
+	public function testProjectBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$conf->project->dir_output .= '/temp';
+		$localobject = new Project($db);
+		$localobject->initAsSpecimen();
+
+		// Baleine
+		$localobject->model_pdf = 'baleine';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+
+		return 0;
+	}
+
+	/**
+	 * testFichinterBuild
+	 *
+	 * @return int
+	 */
+	public function testFichinterBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->ficheinter->dir_output .= '/temp';
+		$localobject = new Fichinter($db);
+		$localobject->initAsSpecimen();
+
+		// Soleil
+		$localobject->model_pdf = 'soleil';
+		$result = fichinter_create($db, $localobject, $localobject->model_pdf, $langs);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+
+		return 0;
+	}
+
+	/**
+	 * testExpeditionBuild
+	 *
+	 * @return int
+	 */
+	public function testExpeditionBuild()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->expedition->dir_output .= '/temp';
+		$localobject = new Expedition($db);
+		$localobject->initAsSpecimen();
+
+		// Merou
+		$localobject->model_pdf = 'merou';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+
+		// Rouget
+		$localobject->model_pdf = 'rouget';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
+
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+
+		return 0;
+	}
 }

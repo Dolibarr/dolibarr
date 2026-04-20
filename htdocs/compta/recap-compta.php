@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Pierre-Henry Favre      <support@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,54 +25,80 @@
  *  \brief      Page de fiche recap customer
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 // Load translation files required by the page
-$langs->load("companies");
-if (!empty($conf->facture->enabled)) $langs->load("bills");
+$langs->loadLangs(array("companies", "bills"));
 
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$action = GETPOST('action');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
+
+$id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
 // Security check
-if ($user->socid) $id = $user->socid;
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "f.datef,f.rowid"; // Set here default search field
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+	$sortfield = "f.datef,f.rowid"; // Set here default search field
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 
 
 $arrayfields = array(
-    'f.datef'=>array('label'=>"Date", 'checked'=>1),
-    //...
+	'f.datef' => array('label' => "Date", 'checked' => 1),
+	//...
 );
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
+
 
 /*
  * Actions
  */
+
 $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 // None
 
@@ -83,30 +111,39 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Summary");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Summary");
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
+	$title = $object->name.' - '.$langs->trans("Summary");
+}
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 llxHeader('', $title, $help_url);
 
-if ($id > 0)
-{
-    $param = '';
-    if ($id > 0) $param .= '&socid='.$id;
+if ($id > 0) {
+	$param = '';
+	if ($id > 0) {
+		$param .= '&socid='.$id;
+	}
+	if ($dol_openinpopup) {
+		$param .= '&dol_openinpopup='.urlencode($dol_openinpopup);
+	}
 
-    $head = societe_prepare_head($object);
+	if (empty($dol_openinpopup)) {
+		$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
-	dol_fiche_end();
+		print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
+		dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
+		print dol_get_fiche_end();
+	}
 
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
-	{
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
 		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
-        if (!empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		if (!empty($arrayfields['f.datef']['checked'])) {
+			print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		}
 		print '<td>'.$langs->trans("Element").'</td>';
 		print '<td>'.$langs->trans("Status").'</td>';
 		print '<td class="right">'.$langs->trans("Debit").'</td>';
@@ -115,35 +152,38 @@ if ($id > 0)
 		print '<td class="right">'.$langs->trans("Author").'</td>';
 		print '</tr>';
 
+		/**
+		 * @var array<int,array<string,mixed>>	$TData
+		 */
 		$TData = array();
 
 		$sql = "SELECT s.nom, s.rowid as socid, f.ref, f.total_ttc, f.datef as df,";
 		$sql .= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
 		$sql .= " u.login, u.rowid as userid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
+		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND f.fk_user_valid = u.rowid";
 		$sql .= $db->order($sortfield, $sortorder);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
 			// Boucle sur chaque facture
-			for ($i = 0; $i < $num; $i++)
-			{
+			for ($i = 0; $i < $num; $i++) {
 				$objf = $db->fetch_object($resql);
 
 				$fac = new Facture($db);
 				$ret = $fac->fetch($objf->facid);
-				if ($ret < 0)
-				{
+				if ($ret < 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+
+				$alreadypaid = $fac->getSommePaiement();
+				$alreadypaid += $fac->getSumDepositsUsed();
+				$alreadypaid += $fac->getSumCreditNotesUsed();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -153,14 +193,16 @@ if ($id > 0)
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaye),
+					'status' => $fac->getLibStatut(2, $alreadypaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
 
 				$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic);
 				$reshook = $hookmanager->executeHooks('facdao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
 
 				$TData[] = $values;
 
@@ -172,17 +214,15 @@ if ($id > 0)
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
 				$sql .= " WHERE pf.fk_paiement = p.rowid";
 				$sql .= " AND p.entity = ".$conf->entity;
-				$sql .= " AND pf.fk_facture = ".$fac->id;
+				$sql .= " AND pf.fk_facture = ".((int) $fac->id);
 				$sql .= " ORDER BY p.datep ASC, p.rowid ASC";
 
 				$resqlp = $db->query($sql);
-				if ($resqlp)
-				{
+				if ($resqlp) {
 					$nump = $db->num_rows($resqlp);
 					$j = 0;
 
-					while ($j < $nump)
-					{
+					while ($j < $nump) {
 						$objp = $db->fetch_object($resqlp);
 
 						$paymentstatic = new Paiement($db);
@@ -192,7 +232,7 @@ if ($id > 0)
 						$userstatic->login = $objp->login;
 
 						$values = array(
-						'fk_paiement' => $objp->rowid,
+							'fk_paiement' => $objp->rowid,
 							'date' => $db->jdate($objp->dp),
 							'datefieldforsort' => $db->jdate($objp->dp).'-'.$fac->ref,
 							'link' => $langs->trans("Payment").' '.$paymentstatic->getNomUrl(1),
@@ -203,7 +243,9 @@ if ($id > 0)
 
 						$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic, 'paymentstatic' => $paymentstatic);
 						$reshook = $hookmanager->executeHooks('paydao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
-						if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
 
 						$TData[] = $values;
 
@@ -211,29 +253,28 @@ if ($id > 0)
 					}
 
 					$db->free($resqlp);
-				}
-				else
-				{
+				} else {
 					dol_print_error($db);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
 		if (empty($TData)) {
-			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 		} else {
-			// Sort array by date ASC to calucalte balance
+			// Sort array by date ASC to calculate balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
 			// Balance calculation
 			$balance = 0;
-			foreach ($TData as &$data1) {
-				$balance += $data1['amount'];
-				$data1['balance'] += $balance;
+			foreach (array_keys($TData) as $key) {
+				$balance += $TData[$key]['amount'];
+				if (!array_key_exists('balance', $TData[$key])) {
+					$TData[$key]['balance'] = 0;
+				}
+				$TData[$key]['balance'] += $balance;
 			}
 
 			// Resorte array to have elements on the required $sortorder
@@ -245,14 +286,20 @@ if ($id > 0)
 			// Display array
 			foreach ($TData as $data) {
 				$html_class = '';
-				if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
-				elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+				if (!empty($data['fk_facture'])) {
+					$html_class = 'facid-'.$data['fk_facture'];
+				} elseif (!empty($data['fk_paiement'])) {
+					$html_class = 'payid-'.$data['fk_paiement'];
+				}
 
 				print '<tr class="oddeven '.$html_class.'">';
 
-				print "<td class=\"center\">";
-				if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
-				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
+				$datedetail = dol_print_date($data['date'], 'dayhour');
+				if (!empty($data['fk_facture'])) {
+					$datedetail = dol_print_date($data['date'], 'day');
+				}
+				print '<td class="center" title="'.dol_escape_htmltag($datedetail).'">';
+				print dol_print_date($data['date'], 'day');
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";
@@ -267,7 +314,7 @@ if ($id > 0)
 				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
 
 				// Balance
-				print '<td class="right">'.price($data['balance'])."</td>\n";
+				print '<td class="right"><span class="amount">'.price($data['balance'])."</span></td>\n";
 
 				// Author
 				print '<td class="nowrap right">';
@@ -288,9 +335,7 @@ if ($id > 0)
 
 		print "</table>";
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

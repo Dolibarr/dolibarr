@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Philippe Grand <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +17,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Adherent $object
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string $canvas
+ */
+
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -31,8 +40,6 @@ if (empty($conf) || !is_object($conf))
 print load_fiche_titre($this->control->tpl['title']);
 
 dol_htmloutput_errors((is_numeric($object->error) ? '' : $object->error), $object->errors);
-
-dol_htmloutput_errors((is_numeric($GLOBALS['error']) ? '' : $GLOBALS['error']), $GLOBALS['errors']);
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
@@ -69,7 +76,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td><?php echo $langs->trans("Morphy"); ?></td>
-	<td colspan="3"><input name="morphy" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['select_morphy']; ?>"></td>
+	<td colspan="3"><input name="morphy" type="text" class="minwidth200" value="<?php echo $this->control->tpl['select_morphy']; ?>"></td>
 </tr>
 
 <tr>
@@ -106,7 +113,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td><?php echo $langs->trans("Email"); ?></td>
-	<td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
+	<td colspan="3"><input name="email" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
 </tr>
 
 <tr>

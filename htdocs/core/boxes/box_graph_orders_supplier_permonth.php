@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +30,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_orders_supplier_permonth extends ModeleBoxes
 {
-    public $boxcode = "orderssupplierpermonth";
-    public $boximg = "object_order";
-    public $boxlabel = "BoxSuppliersOrdersPerMonth";
-    public $depends = array("fournisseur");
+	public $boxcode = "orderssupplierpermonth";
+	public $boximg = "object_order";
+	public $boxlabel = "BoxSuppliersOrdersPerMonth";
+	public $depends = array("fournisseur");
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-    public $info_box_head = array();
-    public $info_box_contents = array();
-
+	public $widgettype = 'graph';
 
 	/**
 	 *  Constructor
@@ -54,14 +49,14 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->fournisseur->commande->lire);
+		$this->hidden = !$user->hasRight('fournisseur', 'commande', 'lire');
 	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -73,55 +68,66 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
-		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
+		$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
+			$startmonth = 1;
+		}
 
 		$text = $langs->trans("BoxSuppliersOrdersPerMonth", $max);
 		$this->info_box_head = array(
 				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
-				'target'=>'none'	// Set '' to get target="_blank"
+				'limit' => dol_strlen($text),
+				'graph' => 1,
+				'sublink' => '',
+				'subtext' => $langs->trans("Filter"),
+				'subpicto' => 'filter.png',
+				'subclass' => 'linkobject boxfilter',
+				'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 		$dir = ''; // We don't need a path because image file will not be saved into disk
 		$prefix = '';
+		$mesg = '';
+		$px1 = null;
+		$px2 = null;
 		$socid = 0;
-		if ($user->socid) $socid = $user->socid;
-		if (!$user->rights->societe->client->voir || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		if ($user->socid) {
+			$socid = $user->socid;
+		}
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		}
 
-		if ($user->rights->fournisseur->commande->lire)
-		{
-		    $langs->load("orders");
+		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
+			$langs->load("orders");
 
-		    $param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
-			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
-			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
+			$param_year = 'DOLUSER_box_'.$this->boxcode.'_year';
+			$param_shownb = 'DOLUSER_box_'.$this->boxcode.'_shownb';
+			$param_showtot = 'DOLUSER_box_'.$this->boxcode.'_showtot';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray))
-			{
-				$endyear = GETPOST($param_year, 'int');
+			if (in_array('DOLUSER_box_'.$this->boxcode, $autosetarray)) {
+				$endyear = GETPOSTINT($param_year);
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
+			} else {
+				$tmparray = (!empty($_COOKIE['DOLUSER_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true) : array());
+				$endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+				$shownb = (!empty($tmparray['shownb']) ? $tmparray['shownb'] : '');
+				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
-			else
-			{
-				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
-				$endyear = $tmparray['year'];
-				$shownb = $tmparray['shownb'];
-				$showtot = $tmparray['showtot'];
+			if (empty($shownb) && empty($showtot)) {
+				$shownb = 1;
+				$showtot = 1;
 			}
-			if (empty($shownb) && empty($showtot)) { $shownb = 1; $showtot = 1; }
 			$nowarray = dol_getdate(dol_now(), true);
-			if (empty($endyear)) $endyear = $nowarray['year'];
-			$startyear = $endyear - 1;
+			if (empty($endyear)) {
+				$endyear = $nowarray['year'];
+			}
+			$startyear = $endyear - getDolGlobalInt('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH', 3) + 1;
+
 			$mode = 'supplier';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
@@ -129,31 +135,27 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 			$stats = new CommandeStats($this->db, $socid, $mode, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($shownb)
-			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
+			if ($shownb) {
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."orderssuppliernbinyear-".$endyear.".png";
 				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssuppliernbinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssuppliernbinyear-'.$endyear.'.png';
+				}
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
-				if (!$mesg)
-				{
+				if (!$mesg) {
 					$px1->SetData($data1);
 					unset($data1);
 					$i = $startyear;
 					$legend = array();
-					while ($i <= $endyear)
-					{
-						if ($startmonth != 1)
-						{
+					while ($i <= $endyear) {
+						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
-						}
-						else
-						{
+						} else {
 							$legend[] = $i;
 						}
 						$i++;
@@ -174,30 +176,27 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 			}
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showtot)
-			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
+			if ($showtot) {
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."orderssupplieramountinyear-".$endyear.".png";
 				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssupplieramountinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssupplieramountinyear-'.$endyear.'.png';
+				}
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
-				if (!$mesg)
-				{
+				if (!$mesg) {
 					$px2->SetData($data2);
 					unset($data2);
-					$i = $startyear; $legend = array();
-					while ($i <= $endyear)
-					{
-						if ($startmonth != 1)
-						{
+					$i = $startyear;
+					$legend = array();
+					while ($i <= $endyear) {
+						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
-						}
-						else
-						{
+						} else {
 							$legend[] = $i;
 						}
 						$i++;
@@ -217,16 +216,14 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 				}
 			}
 
-			if (empty($conf->use_javascript_ajax))
-			{
+			if (empty($conf->use_javascript_ajax)) {
 				$langs->load("errors");
 				$mesg = $langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
 			}
 
-			if (!$mesg)
-			{
+			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript" language="javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();
@@ -234,70 +231,70 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					});
 					</script>';
 				$stringtoshow .= '<div class="center hideobject" id="idfilter'.$this->boxcode.'">'; // hideobject is to start hidden
-				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
-				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';
-				$stringtoshow .= '<input type="checkbox" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'> '.$langs->trans("NumberOfOrdersByMonth");
+				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,shownb,showtot">';
+				$stringtoshow .= '<input type="checkbox" id="'.$param_shownb.'" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'><label for="'.$param_shownb.'"> '.$langs->trans("NumberOfOrdersByMonth").'</label>';
 				$stringtoshow .= ' &nbsp; ';
-				$stringtoshow .= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'> '.$langs->trans("AmountOfOrdersByMonthHT");
+				$stringtoshow .= '<input type="checkbox" id="'.$param_showtot.'" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'><label for="'.$param_showtot.'"> '.$langs->trans("AmountOfOrdersByMonthHT").'</label>';
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
-				if ($shownb && $showtot)
-				{
+				if ($shownb && $showtot) {
 					$stringtoshow .= '<div class="fichecenter">';
 					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) $stringtoshow .= $px1->show();
-				if ($shownb && $showtot)
-				{
+				if ($shownb && $px1 !== null) {
+					$stringtoshow .= $px1->show();
+				}
+				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) $stringtoshow .= $px2->show();
-				if ($shownb && $showtot)
-				{
+				if ($showtot && $px2 !== null) {
+					$stringtoshow .= $px2->show();
+				}
+				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '</div>';
 				}
 				$this->info_box_contents[0][0] = array(
-                    'tr'=>'class="oddeven nohover"',
-                    'td' => 'class="nohover center"',
-                    'textnoformat'=>$stringtoshow,
-                );
-			}
-			else
-			{
+					'tr' => 'class="oddeven nohover"',
+					'td' => 'class="nohover center"',
+					'textnoformat' => $stringtoshow,
+				);
+			} else {
 				$this->info_box_contents[0][0] = array(
-                    'tr'=>'class="oddeven nohover"',
-                    'td' => 'class="nohover left"',
-                    'maxlength'=>500,
-                    'text' => $mesg,
-                );
+					'tr' => 'class="oddeven nohover"',
+					'td' => 'class="nohover left"',
+					'maxlength' => 500,
+					'text' => $mesg,
+				);
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

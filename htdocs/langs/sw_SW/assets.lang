@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,170 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+NewAsset=Mali mpya
+AccountancyCodeAsset=Nambari ya hesabu (mali)
+AccountancyCodeDepreciationAsset=Nambari ya hesabu (akaunti ya mali ya kushuka)
+AccountancyCodeDepreciationExpense=Nambari ya hesabu (akaunti ya gharama ya kushuka kwa thamani)
+AssetsLines=Mali
+DeleteType=Futa
+DeleteAnAssetType=Futa muundo wa kipengee
+ConfirmDeleteAssetType=Je, una uhakika unataka kufuta muundo huu wa kipengee?
+ShowTypeCard=Onyesha muundo '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=Mali
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc=Maelezo ya mali
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetSetup=Mpangilio wa mali
+AssetSetupPage=Ukurasa wa usanidi wa mali
+ExtraFieldsAssetModel=Sifa za ziada (mfano wa Mali)
+
+AssetsType=Muundo wa mali
+AssetsTypeId=Kitambulisho cha muundo wa mali
+AssetsTypeLabel=Lebo ya muundo wa mali
+AssetsTypes=Miundo ya mali
+ASSET_ACCOUNTANCY_CATEGORY=Kikundi cha uhasibu wa mali zisizohamishika
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets=Mali
+MenuNewAsset=Mali mpya
+MenuAssetModels=Mali ya mfano
+MenuListAssets=Orodha
+MenuNewAssetModel=Muundo wa mali mpya
+MenuListAssetModels=Orodha
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=Je, kweli unataka kuondoa kipengee hiki?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Chaguzi za kushuka kwa thamani
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=Kushuka kwa thamani
+
+#
+# Asset
+#
+Asset=Mali
+Assets=Mali
+AssetReversalAmountHT=Kiasi cha kurejesha (bila ushuru)
+AssetAcquisitionValueHT=Kiasi cha ununuzi (bila ushuru)
+AssetRecoveredVAT=VAT iliyorejeshwa
+AssetReversalDate=Tarehe ya kurudi nyuma
+AssetDateAcquisition=Tarehe ya usakinishaji
+AssetDateStart=Tarehe ya kuanza
+AssetAcquisitionType=Aina ya upatikanaji
+AssetAcquisitionTypeNew=Mpya
+AssetAcquisitionTypeOccasion=Imetumika
+AssetType=Aina ya mali
+AssetTypeIntangible=Zisizogusika
+AssetTypeTangible=Yanayoonekana
+AssetTypeInProgress=Inaendelea
+AssetTypeFinancial=Kifedha
+AssetNotDepreciated=Haijapungua thamani
+AssetDisposal=Utupaji
+AssetConfirmDisposalAsk=Je, una uhakika unataka kutupa kipengee <b>  %s </b> ?
+AssetConfirmReOpenAsk=Je, una uhakika unataka kufungua tena kipengee <b>  %s </b> ?
+
+#
+# Asset status
+#
+AssetInProgress=Inaendelea
+AssetDisposed=Imetolewa
+AssetRecorded=Imehesabiwa
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Tarehe ya kutupwa
+AssetDisposalAmount=Thamani ya utupaji
+AssetDisposalType=Aina ya utupaji
+AssetDisposalDepreciated=Punguza mwaka wa uhamisho
+AssetDisposalSubjectToVat=Utupaji chini ya VAT
+
+#
+# Asset model
+#
+AssetModel=Mfano wa mali
+AssetModels=Mifano ya mali
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Kushuka kwa thamani ya kiuchumi
+AssetDepreciationOptionAcceleratedDepreciation=Kushuka kwa thamani kwa kasi (kodi)
+AssetDepreciationOptionDepreciationType=Aina ya kushuka kwa thamani
+AssetDepreciationOptionDepreciationTypeLinear=Linear
+AssetDepreciationOptionDepreciationTypeDegressive=Degressive
+AssetDepreciationOptionDepreciationTypeExceptional=Kipekee
+AssetDepreciationOptionDegressiveRate=Kiwango cha kushuka
+AssetDepreciationOptionDuration=Muda
+AssetDepreciationOptionDurationType=Muda wa aina
+AssetDepreciationOptionDurationTypeAnnual=Mwaka
+AssetDepreciationOptionDurationTypeMonthly=Kila mwezi
+AssetDepreciationOptionDurationTypeDaily=Kila siku
+AssetDepreciationOptionRate=Kadiria (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Msingi wa kushuka kwa thamani (isipokuwa VAT)
+AssetDepreciationOptionAmountBaseDeductibleHT=Msingi wa makato (isipokuwa VAT)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Jumla ya uchakavu wa mwisho (isipokuwa VAT)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Kushuka kwa thamani ya kiuchumi
+AssetAccountancyCodeAsset=Mali
+AssetAccountancyCodeDepreciationAsset=Kushuka kwa thamani
+AssetAccountancyCodeDepreciationExpense=Gharama ya kushuka kwa thamani
+AssetAccountancyCodeValueAssetSold=Thamani ya mali iliyotolewa
+AssetAccountancyCodeReceivableOnAssignment=Inapokewa ovyo
+AssetAccountancyCodeProceedsFromSales=Mapato kutoka kwa ovyo
+AssetAccountancyCodeVatCollected=VAT iliyokusanywa
+AssetAccountancyCodeVatDeductible=VAT iliyorejeshwa kwenye mali
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Kushuka kwa thamani kwa kasi (kodi)
+AssetAccountancyCodeAcceleratedDepreciation=Account
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Gharama ya kushuka kwa thamani
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Umiliki/Utoaji
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Msingi wa kushuka kwa thamani (isipokuwa VAT)
+AssetDepreciationBeginDate=Kuanza kwa kushuka kwa thamani kumewashwa
+AssetDepreciationDuration=Muda
+AssetDepreciationRate=Kadiria (%%)
+AssetDepreciationDate=Tarehe ya kushuka kwa thamani
+AssetDepreciationHT=Kushuka kwa thamani (isipokuwa VAT)
+AssetCumulativeDepreciationHT=Kushuka kwa thamani kwa jumla (isipokuwa VAT)
+AssetResidualHT=Thamani ya mabaki (isipokuwa VAT)
+AssetDispatchedInBookkeeping=Uchakavu umerekodiwa
+AssetFutureDepreciationLine=Kushuka kwa thamani siku zijazo
+AssetDepreciationReversal=Kugeuza
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model found has not been provided
+AssetErrorFetchAccountancyCodesForMode=Hitilafu wakati wa kurejesha akaunti za uhasibu za '%s' hali ya kushuka kwa thamani
+AssetErrorDeleteAccountancyCodesForMode=Hitilafu wakati wa kufuta akaunti za uhasibu kutoka kwa '%s' hali ya kushuka kwa thamani
+AssetErrorInsertAccountancyCodesForMode=Hitilafu wakati wa kuingiza akaunti za uhasibu za hali ya uchakavu '%s'
+AssetErrorFetchDepreciationOptionsForMode=Hitilafu wakati wa kuleta chaguo za '%s' hali ya kushuka kwa thamani
+AssetErrorDeleteDepreciationOptionsForMode=Hitilafu wakati wa kufuta '%s' chaguzi za hali ya uchakavu
+AssetErrorInsertDepreciationOptionsForMode=Hitilafu wakati wa kuingiza '%s' chaguzi za hali ya uchakavu
+AssetErrorFetchDepreciationLines=Hitilafu wakati wa kurejesha njia za uchakavu zilizorekodiwa
+AssetErrorClearDepreciationLines=Hitilafu wakati wa kusafisha njia za uchakavu zilizorekodiwa (kugeuza na siku zijazo)
+AssetErrorAddDepreciationLine=Hitilafu wakati wa kuongeza mstari wa kushuka kwa thamani
+AssetErrorCalculationDepreciationLines=Hitilafu wakati wa kuhesabu mistari ya kushuka kwa thamani (kufufua na siku zijazo)
+AssetErrorReversalDateNotProvidedForMode=Tarehe ya kurudi nyuma haijatolewa kwa '%s'njia ya kushuka thamani
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Tarehe ya kurudi nyuma lazima iwe kubwa kuliko au sawa na mwanzo wa mwaka wa sasa wa fedha kwa '%s' Mbinu ya kushuka kwa thamani
+AssetErrorReversalAmountNotProvidedForMode=Kiasi cha ubadilishaji hakijatolewa kwa hali ya uchakavu '%s'.
+AssetErrorFetchCumulativeDepreciation=Hitilafu wakati wa kurejesha kiasi kilichokusanywa cha uchakavu kutoka kwa mstari wa kushuka kwa thamani
+AssetErrorSetLastCumulativeDepreciation=Hitilafu wakati wa kurekodi kiasi cha mwisho cha uchakavu kilichokusanywa

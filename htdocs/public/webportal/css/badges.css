@@ -1,0 +1,179 @@
+
+.badge {
+	--font-weight-medium: 300;
+	--text-xs : 0.75rem;
+	--text-xs--line-height: calc(1 / .75);
+	--spacing : 0.25rem;
+	--tw-font-weight: var(--font-weight-medium);
+	--radius-sm : 0.25rem;
+	--border-size: 1px;
+	font-weight: var(--font-weight-medium);
+
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	padding-block: calc(var(--spacing) * .5);
+	padding-inline: calc(var(--spacing) * 2.5);
+	margin-inline-end: calc(var(--spacing) * 2);
+	border-radius: var(--radius-sm);
+	white-space:  nowrap;
+
+	color: #1e40af;
+	background-color: #dbeafe;
+	--badge-color-border : #60a5fa;
+}
+
+.badge.--rounded {
+	border-radius: 9999999px;
+}
+.badge.--border {
+	border: var(--border-size) solid var(--badge-color-border);
+}
+.badge.--border-dashed {
+	border: var(--border-size) dashed var(--badge-color-border);
+}
+.badge.--border.--no-bg, .badge.--border-dashed.--no-bg {
+	background-color: #f3f4f6;
+	color: #1f2937;
+}
+
+/* default color */
+.badge.--blue{
+	color: #1e40af;
+	background-color: #dbeafe;
+	--badge-color-border : #60a5fa;
+}
+
+.badge.--yellow {
+	--badge-color-border : #fcd34d;
+	color: #92400e;
+	background-color: #fef3c7;
+}
+
+.badge.--light{
+	--badge-color-border :#cad2d2;
+	color: #717171;
+	background-color: #ffffff;
+}
+
+.badge.--grey{
+	--badge-color-border : #b1b1b1;
+	color: #474747;
+	background-color: #e7e7e7;
+}
+
+.badge.--dark {
+	--badge-color-border : #1f2937;
+	color: #1f2937;
+	background-color: #f3f4f6;
+}
+
+.badge.--red {
+	--badge-color-border :#f87171;
+	color: #991b1b;
+	background-color: #fee2e2;
+}
+
+.badge.--green {
+	--badge-color-border :#34d399;
+	color: #065f46;
+	background-color: #d1fae5;
+}
+
+.badge.--indigo{
+	--badge-color-border :#818cf8;
+	color: #3730a3;
+	background-color: #e0e7ff;
+}
+
+.badge.--purple{
+	--badge-color-border :#818cf8;
+	color: #5b21b6;
+	background-color: #ede9fe;
+}
+
+.badge.--pink{
+	--badge-color-border :#f472b6;
+	color: #9d174d;
+	background-color: #fce7f3;
+}
+
+.badge.--cart {
+	color: #ffffff;
+	font-size: 12px;
+	background-color: #bd0000;
+	font-weight: bold;
+	border-radius: 30px;
+}
+
+/** *******************************************************
+ * STATUS BADGES
+ * ---------------------------------------------------------
+ * The styles for status badges are defined separately,
+ * although they are initially based on the standard badge styles.
+ *
+ * Reason:
+ * Status badges are not regular badges. To prevent future mistakes
+ * (e.g., someone unintentionally altering status badge appearance
+ * when modifying the standard badge styles),
+ * these definitions are isolated here.
+ ******************************************************** */
+
+/* All status */
+.badge-status {
+	font-weight: var(--font-weight-semibold);
+}
+
+/* All status with border solid */
+.badge-status3,.badge-status5,.badge-status7 {
+	border: var(--border-size) solid var(--badge-color-border);
+}
+
+/* All status with border dashed */
+.badge-status0 {
+	border: var(--border-size) dashed var(--badge-color-border);
+}
+
+/*
+* Now define all colors
+*/
+
+/* light color based */
+.badge-status0, .badge-status5 , .badge-status9 {
+	--badge-color-border :#cad2d2;
+	color: #717171;
+	background-color: #ffffff;
+}
+
+/* yellow color based */
+.badge-status1, .badge-status3 {
+	--badge-color-border : #fcd34d;
+	color: #92400e;
+	background-color: #fef3c7;
+}
+
+.badge-status2 {
+	color: #1e40af;
+	background-color: #dbeafe;
+	--badge-color-border : #60a5fa;
+}
+
+/* green color based */
+.badge-status4, .badge-status7 {
+	--badge-color-border :#34d399;
+	color: #065f46;
+	background-color: #d1fae5;
+}
+
+/* grey color based */
+.badge-status6 {
+	--badge-color-border : #b1b1b1;
+	color: #474747;
+	background-color: #e7e7e7;
+}
+
+/* pink color based */
+.badge-status8 {
+	--badge-color-border :#f472b6;
+	color: #9d174d;
+	background-color: #fce7f3;
+}

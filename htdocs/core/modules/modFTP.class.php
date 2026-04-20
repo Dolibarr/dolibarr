@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  * 		\brief      Module for FTP client module
  *      \file       htdocs/core/modules/modFTP.class.php
  *      \ingroup    ftp
- *      \brief      Description and activation file for module FTP
+ *      \brief      Description and activation file for the module FTP
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -32,12 +33,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modFTP extends DolibarrModules
 {
-
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-    */
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -54,11 +54,11 @@ class modFTP extends DolibarrModules
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "FTP Client";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = 'dolibarr_deprecated';
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module
-		$this->picto = 'dir';
+		$this->picto = 'folder';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/ftp/temp");
@@ -74,21 +74,21 @@ class modFTP extends DolibarrModules
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 
 		// Constants
-		$this->const = array(
-		    1=>array('FTP_CONNECT_WITH_SSL', 'chaine', '0', 'Use FTPS for FTP module', 1, 'current', 1),
-		    2=>array('FTP_CONNECT_WITH_SFTP', 'chaine', '0', 'Use SFTP for FTP module', 1, 'current', 1)
-		); // List of parameters
+		$this->const = [
+			['FTP_CONNECT_WITH_SSL', 'chaine', '0', 'Use FTPS for FTP module', 1, 'current', 1],
+			['FTP_CONNECT_WITH_SFTP', 'chaine', '0', 'Use SFTP for FTP module', 1, 'current', 1],
+		]; // List of parameters
 
 		// Boxes
-		$this->boxes = array(); // List of boxes
+		$this->boxes = []; // List of boxes
 		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+		//$this->boxes[$r][1] = "myboxa.php";
+		//$r++;
+		//$this->boxes[$r][1] = "myboxb.php";
+		//$r++;
 
 		// Permissions
 		$this->rights_class = 'ftp'; // Permission key
@@ -114,12 +114,13 @@ class modFTP extends DolibarrModules
 		$this->menu[$r] = array('fk_menu'=>0,
 							  'type'=>'top',
 							  'titre'=>'FTP',
+							  'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 							  'mainmenu'=>'ftp',
 							  'url'=>'/ftp/index.php',
 							  'langs'=>'ftp',
 							  'position'=>100,
-                              'enabled'=>'$conf->ftp->enabled',
-		                      'perms'=>'$user->rights->ftp->read || $user->rights->ftp->write || $user->rights->ftp->setup',
+							  'enabled'=>'isModEnabled("ftp")',
+							  'perms'=>'$user->hasRight("ftp", "read") || $user->hasRight("ftp", "write") || $user->hasRight("ftp", "setup")',
 							  'target'=>'',
 							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;

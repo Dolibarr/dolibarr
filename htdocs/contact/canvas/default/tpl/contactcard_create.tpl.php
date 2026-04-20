@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +16,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var Contact $object
+ * @var Translate $langs
+ *
+ * @var string $canvas
+ */
+
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -31,8 +40,6 @@ print load_fiche_titre($this->control->tpl['title']);
 
 dol_htmloutput_errors((is_numeric($object->error) ? '' : $object->error), $object->errors);
 
-dol_htmloutput_errors((is_numeric($GLOBALS['error']) ? '' : $GLOBALS['error']), $GLOBALS['errors']);
-
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry']; ?>
@@ -40,7 +47,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 <br>
 
 <form method="post" name="formsoc" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="action" value="add">
 <?php if ($this->control->tpl['company_id']) { ?>
@@ -68,7 +75,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td><?php echo $langs->trans("PostOrFunction"); ?></td>
-	<td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['poste']; ?>"></td>
+	<td colspan="3"><input name="poste" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['poste']; ?>"></td>
 </tr>
 
 <tr>
@@ -107,12 +114,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td><?php echo $langs->trans("Email"); ?></td>
-	<td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
-</tr>
-
-<tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['jabberid']; ?>"></td>
+	<td colspan="3"><input name="email" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
 </tr>
 
 <tr>

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +16,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var Contact $object
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $canvas
+ */
+
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -30,8 +40,12 @@ echo $this->control->tpl['showhead'];
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
-if (!empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
-if (!empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
+if (!empty($this->control->tpl['action_create_user'])) {
+	echo $this->control->tpl['action_create_user'];
+}
+if (!empty($this->control->tpl['action_delete'])) {
+	echo $this->control->tpl['action_delete'];
+} ?>
 
 <table class="border allwidth">
 
@@ -135,16 +149,16 @@ if (!empty($this->control->tpl['action_delete'])) echo $this->control->tpl['acti
 
 if (empty($user->socid)) {
 	print '<div class="tabsAction">';
-	if ($user->rights->societe->contact->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
+	if ($user->hasRight('societe', 'contact', 'creer')) {
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
-	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+	if (!$this->control->tpl['user_id'] && $user->hasRight('user', 'user', 'creer')) {
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
-	if ($user->rights->societe->contact->supprimer) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+	if ($user->hasRight('societe', 'contact', 'supprimer')) {
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
 	}
 
 	print '</div><br>';

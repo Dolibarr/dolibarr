@@ -14,8 +14,8 @@ use Sabre\VObject;
  * @author Ivan Enderlin
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Available extends VObject\Component {
-
+class Available extends VObject\Component
+{
     /**
      * Returns the 'effective start' and 'effective end' of this VAVAILABILITY
      * component.
@@ -28,8 +28,8 @@ class Available extends VObject\Component {
      *
      * @return array
      */
-    function getEffectiveStartEnd() {
-
+    public function getEffectiveStartEnd()
+    {
         $effectiveStart = $this->DTSTART->getDateTime();
         if (isset($this->DTEND)) {
             $effectiveEnd = $this->DTEND->getDateTime();
@@ -38,7 +38,6 @@ class Available extends VObject\Component {
         }
 
         return [$effectiveStart, $effectiveEnd];
-
     }
 
     /**
@@ -56,32 +55,31 @@ class Available extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
-            'UID'     => 1,
+            'UID' => 1,
             'DTSTART' => 1,
             'DTSTAMP' => 1,
 
-            'DTEND'    => '?',
+            'DTEND' => '?',
             'DURATION' => '?',
 
-            'CREATED'       => '?',
-            'DESCRIPTION'   => '?',
+            'CREATED' => '?',
+            'DESCRIPTION' => '?',
             'LAST-MODIFIED' => '?',
             'RECURRENCE-ID' => '?',
-            'RRULE'         => '?',
-            'SUMMARY'       => '?',
+            'RRULE' => '?',
+            'SUMMARY' => '?',
 
             'CATEGORIES' => '*',
-            'COMMENT'    => '*',
-            'CONTACT'    => '*',
-            'EXDATE'     => '*',
-            'RDATE'      => '*',
+            'COMMENT' => '*',
+            'CONTACT' => '*',
+            'EXDATE' => '*',
+            'RDATE' => '*',
 
             'AVAILABLE' => '*',
         ];
-
     }
 
     /**
@@ -108,19 +106,18 @@ class Available extends VObject\Component {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $result = parent::validate($options);
 
         if (isset($this->DTEND) && isset($this->DURATION)) {
             $result[] = [
-                'level'   => 3,
+                'level' => 3,
                 'message' => 'DTEND and DURATION cannot both be present',
-                'node'    => $this
+                'node' => $this,
             ];
         }
 
         return $result;
-
     }
 }

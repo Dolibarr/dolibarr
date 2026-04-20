@@ -1,5 +1,6 @@
 /* Copyright (C) 2014      delcroip            <delcroip@gmail.com>
  * Copyright (C) 2015-2017 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021-2024 Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ function regexEvent(objet,evt,type)
           case 'timeChar':
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
-              var charCode = (evt.which) ? evt.which : event.keyCode;
+              var charCode = (evt.which) ? evt.which : evt.keyCode;
 
               if(((charCode >= 48) && (charCode <= 57)) || //num
                     (charCode===46) || (charCode===8)||// comma & periode
@@ -71,12 +72,9 @@ function regexEvent(objet,evt,type)
                   // ((charCode>=96) && (charCode<=105)) || //numpad
             	  return true;
 
-              }else
-              {
+              } else {
                   return false;
               }
-
-              break;
           default:
               break;
       }
@@ -91,6 +89,7 @@ function pad(n) {
 
 /* function from http://www.timlabonne.com/2013/07/parsing-a-time-string-with-javascript/ */
 /* timeStr must be a duration with format XX:YY (AM/PM not supported) */
+/* return: nbofextradays (0, 1, ...) */
 function parseTime(timeStr, dt)
 {
     if (!dt) {
@@ -103,14 +102,14 @@ function parseTime(timeStr, dt)
         return -1;
     }
     var hours = parseInt(time[1], 10);
- 
     dt.setHours(hours);
     dt.setMinutes(parseInt(time[2], 10) || 0);
     dt.setSeconds(0, 0);
-    return 0;
+ 	//console.log("hours="+hours+" => return nbofextradays="+Math.floor(hours / 24)+" hours="+dt.getHours());
+    return Math.floor(hours / 24);
 }
 
-/* Update total. days = column nb staring from 0 */
+/* Update total. days = column nb starting from 0 */
 function updateTotal(days,mode)
 {
 	console.log('updateTotal days='+days+' mode='+mode);
@@ -124,12 +123,15 @@ function updateTotal(days,mode)
         if (document.getElementById('numberOfFirstLine')) {
         	startline = parseInt(document.getElementById('numberOfFirstLine').value);
         }
+        var nbextradays = 0;
         for (var i=-1; i < nbline; i++)
         {
+        	/* get value into timespent cell */
+
             var id='timespent['+i+']['+days+']';
-            var taskTime= new Date(0);
-            var element=document.getElementById(id);
-            if(element)
+            var taskTime = new Date(0);
+            var element = document.getElementById(id);
+            if (element)
             {
             	/* alert(element.value);*/
                 if (element.value)
@@ -142,10 +144,16 @@ function updateTotal(days,mode)
                 }
                 if (result >= 0)
                 {
+                	nbextrahour = Math.floor((total.getMinutes()+taskTime.getMinutes()) / 60);
+                	nbextradays = nbextradays + Math.floor((total.getHours()+taskTime.getHours() + nbextrahour + result*24) / 24);
+                	//console.log("i="+i+" result="+result);
                 	total.setHours(total.getHours()+taskTime.getHours());
                 	total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+            		//console.log("i="+i+" nbextradays cumul="+nbextradays+" h="+total.getHours()+" "+taskTime.getHours());
                 }
             }
+
+			/* get value into timeadded cell */
 
             var id='timeadded['+i+']['+days+']';
             var taskTime= new Date(0);
@@ -163,8 +171,12 @@ function updateTotal(days,mode)
                 }
                 if (result >= 0)
                 {
+			nbextrahour = Math.floor((total.getMinutes()+taskTime.getMinutes()) / 60);
+                	nbextradays = nbextradays + Math.floor((total.getHours()+taskTime.getHours() + nbextrahour + result*24) / 24);
+                	//console.log("i="+i+" result="+result);
                 	total.setHours(total.getHours()+taskTime.getHours());
                 	total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+                	//console.log("i="+i+" nbextradays cumul="+nbextradays+" h="+total.getHours()+" "+taskTime.getHours());
                 }
             }
         }
@@ -217,15 +229,20 @@ function updateTotal(days,mode)
         		console.log(total.getMinutes())
             }
         });
-        
+
         var stringdays = days;
         if (startline >= 1 && startline <= 9 && stringdays < 10) {
         	stringdays = '0'+stringdays;
         }
-        
+
+        /* Output total in top of column */
+
         if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+stringdays).addClass("bold");
         else jQuery('.totalDay'+stringdays).removeClass("bold");
-    	jQuery('.totalDay'+stringdays).text(pad(total.getHours())+':'+pad(total.getMinutes()));
+        var texttoshow = pad(nbextradays * 24 + total.getHours())+':'+pad(total.getMinutes());
+    	jQuery('.totalDay'+stringdays).text(texttoshow);
+
+		/* Output total of all total */
 
     	var totalhour = 0;
     	var totalmin = 0;
@@ -240,7 +257,7 @@ function updateTotal(days,mode)
        		result=parseTime(jQuery('.totalDay'+stringdays).text(),taskTime);
         	if (result >= 0)
         	{
-        		totalhour = totalhour + taskTime.getHours();
+        		totalhour = totalhour + taskTime.getHours() + result*24;
         		totalmin = totalmin + taskTime.getMinutes();
         	}
         }
@@ -292,7 +309,7 @@ function updateTotal(days,mode)
         	stringdays = '0'+stringdays;
         	console.log(stringdays);
         }
-        
+
         if (total) jQuery('.totalDay'+stringdays).addClass("bold");
         else jQuery('.totalDay'+stringdays).removeClass("bold");
     	jQuery('.totalDay'+stringdays).text(total);

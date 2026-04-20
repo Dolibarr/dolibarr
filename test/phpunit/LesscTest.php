@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,25 +31,45 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
-
-if (empty($user->id))
-{
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+if (! defined('NOREQUIREUSER')) {
+	define('NOREQUIREUSER', '1');
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+if (! defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no menu to show
+}
+if (! defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (! defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+	define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+}
+
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
+}
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -57,122 +79,44 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class LesscTest extends PHPUnit\Framework\TestCase
+class LesscTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * testLess
 	 *
-	 * @return SecurityTest
+	 * @return string
 	 */
-	public function __construct()
+	public function testLessc()
 	{
-		parent::__construct();
-
-		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+		include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 
-	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$lesscobj = new Lessc();
 
-    	print __METHOD__."\n";
-    }
-
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-    }
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-    }
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
-
-    /**
-     * testLess
-     *
-     * @return string
-     */
-    public function testLessc()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-        include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
-
-        $lesscobj = new Lessc();
-
-        $cssfile = "
+		$cssfile = "
         a { font-size: 10px; }
         b .test {
         	font-size: 10px;
         }
         ";
 
-        try {
-        	$contentforlessc = ".bodywebsite {\n".$cssfile."\n}\n";
-        	//print '<pre>'.$contentforlessc.'</pre>';
-        	$result = $lesscobj->compile($contentforlessc);
-        	//var_dump($contentforlessc); exit;
-        } catch (exception $e) {
-        	//echo "failed to compile lessc";
-        	dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
-        }
+		try {
+			$contentforlessc = ".bodywebsite {\n".$cssfile."\n}\n";
+			//print '<pre>'.$contentforlessc.'</pre>';
+			$result = $lesscobj->compile($contentforlessc);
+			//var_dump($contentforlessc); exit;
+		} catch (exception $e) {
+			//echo "failed to compile lessc";
+			$result = 'Error';
+			dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
+		}
 
-        $cssexpected = "
+		$cssexpected = "
 .bodywebsite a {
   font-size: 10px;
 }
@@ -181,9 +125,9 @@ class LesscTest extends PHPUnit\Framework\TestCase
 }
 ";
 
-		print __METHOD__." SeparatorDecimal=".$result."\n";
+		print __METHOD__." Result=".$result."\n";
 		$this->assertEquals(trim($result), trim($cssexpected));
 
-        return;
-    }
+		return;
+	}
 }

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
- * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
+/* Copyright (C) 2016   	Marcos García   	<marcosgdf@gmail.com>
+ * Copyright (C) 2018-2025  Frédéric France 	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,57 +16,97 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/lib/variants.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("admin", "products"));
 
-// Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
-	accessforbidden();
+$action = GETPOST('action', 'alphanohtml');
 
-if ($_POST) {
+// Security check
+if (!$user->admin || !isModEnabled('variants')) {
+	accessforbidden();
+}
+
+$error = 0;
+
+
+/*
+ * Actions
+ */
+
+if ($action) {
 	$value = GETPOST('PRODUIT_ATTRIBUTES_HIDECHILD');
 
-	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-	} else {
+	if (!dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {
 		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+		$error++;
 	}
 
-    if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
-        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
-    }
+	if (!dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+		$error++;
+	}
+
+	if (!dolibarr_set_const($db, 'VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT', GETPOST('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT'), 'chaine', 0, '', $conf->entity)) {
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	}
 }
 
-$title = $langs->trans('ModuleSetup').' '.$langs->trans('ProductAttributes');
+$title = $langs->trans('ModuleSetup').' '.$langs->trans('Module610Name');
 llxHeader('', $title);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
-dol_fiche_head(array(), 'general', $tab, 0, 'product');
+$head = adminProductAttributePrepareHead();
 
-print '<form method="post">';
+print dol_get_fiche_head($head, 'admin', $title, -1, 'product');
+
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update">';
+
 print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
-print '<th>'.$langs->trans("Parameters").'</td>'."\n";
-print '<th class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-print '<th width="80">&nbsp;</td></tr>'."\n";
+print '<th>'.$langs->trans("Parameters").'</th>'."\n";
+print '<th class="right" width="60">'.$langs->trans("Value").'</th>'."\n";
+print '</tr>'."\n";
+
 print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
-print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", $conf->global->PRODUIT_ATTRIBUTES_HIDECHILD, 1).'</td></tr>';
+print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD'), 1).'</td></tr>';
+
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
-if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-    $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
-} else {
-    $separator = "_";
-}
+
+$separator = getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR', '_');
+
 print '<td class="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
+
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans('AllowStockMovementVariantParent'), $langs->trans('AllowStockMovementVariantParentHelp')).'</td><td>';
+print $form->selectyesno("VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT", getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT'), 1).'</td></tr>';
+
 print '</table>';
-print '<br><div class="center"><input type="submit" value="'.$langs->trans('Save').'" class="button"></div>';
+
+print '<br><div class="center"><input type="submit" value="'.$langs->trans("Save").'" class="button button-save"></div>';
+
 print '</form>';
 
 // End of page

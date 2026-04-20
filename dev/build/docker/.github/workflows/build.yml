@@ -1,0 +1,36 @@
+name: build
+on:
+    push:
+        branches:
+            - master
+    schedule:
+        - cron: '0 0 * * 6'
+
+jobs:
+    build-docker-images:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: docker/setup-buildx-action@v2
+            - env:
+                DOCKER_BUILD: 1
+                DOCKER_PUSH: 1
+              run: |
+                echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+                ./update.sh
+
+    update-readme:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - run: |
+                docker run --rm -t \
+                -v $(pwd):/src \
+                -e DOCKER_USER=${{ secrets.DOCKER_HUB_USERNAME }} \
+                -e DOCKER_PASS=${{ secrets.DOCKER_HUB_PASSWORD }} \
+                -e PUSHRM_PROVIDER=dockerhub \
+                -e PUSHRM_FILE=/src/README.md \
+                -e PUSHRM_SHORT='Docker image for Dolibarr with auto installer on first boot.' \
+                -e PUSHRM_TARGET=docker.io/tuxgasy/dolibarr \
+                -e PUSHRM_DEBUG=1 \
+                chko/docker-pushrm:1

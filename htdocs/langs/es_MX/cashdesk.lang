@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cashdesk
 CashDeskMenu=punto de venta
-CashDesk=punto de venta
 CashDeskBankCash=Cuenta bancaria (en efectivo)
 CashDeskBankCB=Cuenta bancaria (tarjeta)
 CashDeskBankCheque=Cuenta bancaria (cheque)

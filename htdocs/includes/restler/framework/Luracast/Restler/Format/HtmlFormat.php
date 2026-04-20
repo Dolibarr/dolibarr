@@ -1,4 +1,5 @@
 <?php
+
 namespace Luracast\Restler\Format;
 
 use Exception;
@@ -6,8 +7,8 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\CompilerEngine;
-use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Engines\EngineResolver;
+use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View;
@@ -18,6 +19,10 @@ use Luracast\Restler\Restler;
 use Luracast\Restler\Scope;
 use Luracast\Restler\UI\Nav;
 use Luracast\Restler\Util;
+use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 /**
  * Html template format
@@ -29,10 +34,14 @@ use Luracast\Restler\Util;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class HtmlFormat extends DependentFormat
 {
+    const BLADE = 'Illuminate\View\View';
+    const TWIG = 'Twig\Environment';
+    const MUSTACHE = 'Mustache_Engine';
+
     public static $mime = 'text/html';
     public static $extension = 'html';
     public static $view;
@@ -84,11 +93,12 @@ class HtmlFormat extends DependentFormat
         }
     }
 
-    public function getDependencyMap(){
+    public function getDependencyMap()
+    {
         return array(
-            'Illuminate\View\View' => 'illuminate/view:4.2.*',
-            'Twig_Environment' => 'twig/twig:v1.13.*',
-            'Mustache_Engine' => 'mustache/mustache:dev-master',
+            self::BLADE    => 'illuminate/view:^8',
+            self::TWIG     => 'twig/twig:^3',
+            self::MUSTACHE => 'mustache/mustache:dev-master',
         );
     }
 
@@ -101,7 +111,7 @@ class HtmlFormat extends DependentFormat
         $resolver->register('blade', function () use ($engine) {
             return $engine;
         });
-        $phpEngine = new PhpEngine();
+        $phpEngine = new PhpEngine($files);
         $resolver->register('php', function () use ($phpEngine) {
             return $phpEngine;
         });
@@ -128,32 +138,43 @@ class HtmlFormat extends DependentFormat
         return $view->render();
     }
 
-    public static function twig(array $data, $debug = true)
+    /**
+     * @param array|object $data
+     * @param bool         $debug
+     *
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public static function twig($data, $debug = true)
     {
-        $loader = new \Twig_Loader_Filesystem(static::$viewPath);
-        $twig = new \Twig_Environment($loader, array(
-            'cache' => static::$cacheDirectory,
-            'debug' => $debug,
+        $loader = new FilesystemLoader(static::$viewPath);
+        $twig = new Environment($loader, array(
+            'cache'                => is_string(static::$cacheDirectory)
+                ? static::$cacheDirectory : false,
+            'debug'                => $debug,
             'use_strict_variables' => $debug,
         ));
-        if ($debug)
-            $twig->addExtension(new \Twig_Extension_Debug());
+        if ($debug) {
+            $twig->addExtension(new DebugExtension());
+        }
 
         $twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'form',
                 'Luracast\Restler\UI\Forms::get',
                 array('is_safe' => array('html'))
             )
         );
         $twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'form_key',
                 'Luracast\Restler\UI\Forms::key'
             )
         );
         $twig->addFunction(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'nav',
                 'Luracast\Restler\UI\Nav::get'
             )
@@ -164,7 +185,7 @@ class HtmlFormat extends DependentFormat
                 isset(HtmlFormat::$data[$name]) &&
                 is_callable(HtmlFormat::$data[$name])
             ) {
-                return new \Twig_SimpleFunction(
+                return new TwigFunction(
                     $name,
                     HtmlFormat::$data[$name]
                 );
@@ -172,21 +193,35 @@ class HtmlFormat extends DependentFormat
             return false;
         });
 
-        $template = $twig->loadTemplate(static::getViewFile());
-        return $template->render($data);
+        $template = $twig->load(static::getViewFile());
+        return $template->render((array)$data);
     }
 
-    public static function handlebar(array $data, $debug = true)
+    /**
+     * @param array|object $data
+     * @param bool         $debug
+     *
+     * @return string
+     */
+    public static function handlebar($data, $debug = true)
     {
         return static::mustache($data, $debug);
     }
 
-    public static function mustache(array $data, $debug = true)
+    /**
+     * @param array|object $data
+     * @param bool         $debug
+     *
+     * @return string
+     */
+    public static function mustache($data, $debug = true)
     {
-        if (!isset($data['nav']))
+        $data = (array)$data;
+        if (!isset($data['nav'])) {
             $data['nav'] = array_values(Nav::get());
+        }
         $options = array(
-            'loader' => new \Mustache_Loader_FilesystemLoader(
+            'loader'  => new \Mustache_Loader_FilesystemLoader(
                 static::$viewPath,
                 array('extension' => static::getViewExtension())
             ),
@@ -200,16 +235,25 @@ class HtmlFormat extends DependentFormat
                 },
             )
         );
-        if (!$debug)
+        if (!$debug) {
             $options['cache'] = static::$cacheDirectory;
+        }
         $m = new \Mustache_Engine($options);
         return $m->render(static::getViewFile(), $data);
     }
 
-    public static function php(array $data, $debug = true)
+    /**
+     * @param array|object $data
+     * @param bool         $debug
+     *
+     * @return string
+     * @throws RestException
+     */
+    public static function php($data, $debug = true)
     {
-        if (static::$view == 'debug')
+        if (static::$view == 'debug') {
             static::$viewPath = dirname(__DIR__) . '/views';
+        }
         $view = static::getViewFile(true);
 
         if (!is_readable($view)) {
@@ -222,22 +266,26 @@ class HtmlFormat extends DependentFormat
 
         $path = static::$viewPath . DIRECTORY_SEPARATOR;
         $template = function ($view) use ($data, $path) {
+            $data = (array)$data;
             $form = function () {
                 return call_user_func_array(
                     'Luracast\Restler\UI\Forms::get',
                     func_get_args()
                 );
             };
-            if (!isset($data['form']))
+            if (!isset($data['form'])) {
                 $data['form'] = $form;
+            }
             $nav = function () {
                 return call_user_func_array(
                     'Luracast\Restler\UI\Nav::get',
                     func_get_args()
                 );
             };
-            if (!isset($data['nav']))
+            if (!isset($data['nav'])) {
                 $data['nav'] = $nav;
+            }
+
 
             $_ = function () use ($data, $path) {
                 extract($data);
@@ -254,7 +302,7 @@ class HtmlFormat extends DependentFormat
                             ) {
                                 $str = '';
                                 foreach ($arrays as $arr) {
-                                    extract($arr);
+                                    extract((array)$arr);
                                     $str .= include $file;
                                 }
                                 return $str;
@@ -264,15 +312,18 @@ class HtmlFormat extends DependentFormat
                         }
                         break;
                     case 'if':
-                        if (count($args) < 2)
+                        if (count($args) < 2) {
                             $args[1] = '';
-                        if (count($args) < 3)
+                        }
+                        if (count($args) < 3) {
                             $args[2] = '';
+                        }
                         return $args[0] ? $args[1] : $args[2];
                         break;
                     default:
-                        if (isset($data[$task]) && is_callable($data[$task]))
+                        if (isset($data[$task]) && is_callable($data[$task])) {
                             return call_user_func_array($data[$task], $args);
+                        }
                 }
                 return '';
             };
@@ -280,8 +331,9 @@ class HtmlFormat extends DependentFormat
             return @include $view;
         };
         $value = $template($view);
-        if (is_string($value))
+        if (is_string($value)) {
             return $value;
+        }
     }
 
     /**
@@ -294,8 +346,8 @@ class HtmlFormat extends DependentFormat
      *                                     Formatter has to make the encoded
      *                                     output more human readable
      *
-     * @throws \Exception
      * @return string encoded string
+     * @throws \Exception
      */
     public function encode($data, $humanReadable = false)
     {
@@ -317,9 +369,9 @@ class HtmlFormat extends DependentFormat
                 'response' => static::$convertResponseToArray
                     ? Obj::toArray($data)
                     : $data,
-                'stages' => $this->restler->getEvents(),
-                'success' => $success,
-                'error' => $error
+                'stages'   => $this->restler->getEvents(),
+                'success'  => $success,
+                'error'    => $error
             );
             $info = $data['api'] = $this->restler->apiMethodInfo;
             $metadata = Util::nestedValue(
@@ -358,7 +410,9 @@ class HtmlFormat extends DependentFormat
             if ($value) {
                 $data = Util::nestedValue($data, explode('.', $value));
             }
-            $data += static::$data;
+            if (is_array($data)) {
+                $data += static::$data;
+            }
             if (false === ($i = strrpos(self::$view, '.'))) {
                 $template = self::$template;
             } else {
@@ -369,17 +423,18 @@ class HtmlFormat extends DependentFormat
                 static::$cacheDirectory = Defaults::$cacheDirectory . DIRECTORY_SEPARATOR . $template;
                 if (!file_exists(static::$cacheDirectory)) {
                     if (!mkdir(static::$cacheDirectory, 0770, true)) {
-                        throw new RestException(500, 'Unable to create cache directory `' . static::$cacheDirectory . '`');
+                        throw new RestException(500,
+                            'Unable to create cache directory `' . static::$cacheDirectory . '`');
                     }
                 }
             }
             if (method_exists($class = get_called_class(), $template)) {
                 if ($template == 'blade') {
-                    $this->checkDependency('Illuminate\View\View');
+                    $this->checkDependency(self::BLADE);
                 } elseif ($template == 'twig') {
-                    $this->checkDependency('Twig_Environment');
+                    $this->checkDependency(self::TWIG);
                 } elseif ($template == 'mustache' || $template == 'handlebar') {
-                    $this->checkDependency('Mustache_Engine');
+                    $this->checkDependency(self::MUSTACHE);
                 }
                 return call_user_func("$class::$template", $data, $humanReadable);
             }
@@ -416,8 +471,9 @@ class HtmlFormat extends DependentFormat
     {
         $v = $fullPath ? static::$viewPath . '/' : '';
         $v .= static::$view;
-        if ($includeExtension)
+        if ($includeExtension) {
             $v .= '.' . static::getViewExtension();
+        }
         return $v;
     }
 

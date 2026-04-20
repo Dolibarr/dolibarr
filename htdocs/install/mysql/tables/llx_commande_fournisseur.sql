@@ -32,12 +32,12 @@ create table llx_commande_fournisseur
   fk_soc					integer NOT NULL,
   fk_projet					integer DEFAULT 0,             -- project id
 
-  tms						timestamp,
-  date_creation				datetime,                      -- date de creation 
-  date_valid				datetime,                      -- date de validation
-  date_approve				datetime,                      -- date de approve
-  date_approve2				datetime,                      -- date de approve 2 (when double approving is accivated)
-  date_commande				date,                          -- date de la commande
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  date_creation				datetime,                      -- date of creation
+  date_valid				datetime,                      -- date of validation
+  date_approve				datetime,                      -- date of approval
+  date_approve2				datetime,                      -- date of approval 2 (when double approving is accivated)
+  date_commande				date,                          -- date of purchase order
   fk_user_author			integer,                       -- user making creation
   fk_user_modif				integer,                       -- user making last change
   fk_user_valid				integer,                       -- user validating
@@ -49,7 +49,7 @@ create table llx_commande_fournisseur
   amount_ht					double(24,8)      default 0,
   remise_percent			real      default 0,
   remise					real      default 0,
-  tva						double(24,8)      default 0,
+  total_tva						double(24,8)      default 0,
   localtax1					double(24,8)      default 0,
   localtax2					double(24,8)      default 0,
   total_ht					double(24,8)      default 0,
@@ -59,18 +59,20 @@ create table llx_commande_fournisseur
   model_pdf					varchar(255),
   last_main_doc				varchar(255),					-- relative filepath+filename of last main generated document
 
-  date_livraison			datetime default NULL,
-  fk_account				integer,                       -- bank account
-  fk_cond_reglement			integer,                       -- condition de reglement
-  fk_mode_reglement			integer,                       -- mode de reglement
-  fk_input_method			integer default 0,            -- id coming from c_input_reason, '0' if no defined
+  date_livraison			datetime default NULL,			-- date planned of delivery (expected shipment date)
+  date_reception        	datetime default NULL,			-- date of real final reception (when everything is received)
+  fk_account				integer,                        -- bank account
+  fk_cond_reglement			integer,                        -- condition de reglement
+  deposit_percent			varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it
+  fk_mode_reglement			integer,                        -- mode de reglement
+  fk_input_method			integer default 0,              -- id coming from c_input_reason, '0' if no defined
   fk_incoterms				integer,						-- for incoterms
   location_incoterms		varchar(255),					-- for incoterms
   import_key				varchar(14),
   extraparams				varchar(255),					-- for stock other parameters with json format
 
   fk_multicurrency			integer,
-  multicurrency_code		varchar(255),
+  multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
