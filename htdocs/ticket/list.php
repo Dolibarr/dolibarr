@@ -295,7 +295,7 @@ if (empty($reshook)) {
 		//var_dump($listofobjectthirdparties);exit;
 	}
 
-	/** @phan-var-force int $error */
+	'@phan-var-force int $error';
 	// Reopen records
 	if (!$error && $massaction == 'reopen' && $permissiontoadd) {
 		$objecttmp = new Ticket($db);
