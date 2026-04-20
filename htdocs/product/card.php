@@ -837,6 +837,10 @@ if (empty($reshook)) {
 				$object->duration_value = $duration_value;
 				$object->duration_unit = $duration_unit;
 
+				if ($fk_project) {
+					$object->fk_project = $fk_project;
+				}
+
 				$object->canvas = GETPOST('canvas');
 				$object->net_measure = GETPOST('net_measure');
 				$object->net_measure_units = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
@@ -2324,6 +2328,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					*/
 				}
 
+				if (isModEnabled('project')) {
+					print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
+					print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $object->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+					print '</td></tr>';
+				}
+
 				if ($object->isService() && isModEnabled('workstation')) {
 					// Default workstation
 					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
@@ -2643,14 +2653,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// fk_project
 				if (isModEnabled("project")) {
+					$langs->load("projects");
 					print '<tr><td class="titlefieldmiddle">';
 					print $form->editfieldkey($langs->trans('Project'), 'fk_project', (string) $object->fk_project, $object, (int) $usercancreate);
 					print '</td><td>';
-					$project_static_result = $project_static->fetch($object->fk_project);
-					if ($project_static_result > 0 && $project_static->id > 0) {
-						print $project_static->getNomUrl(1);
-					} else {
-						print (int) $object->fk_project;
+					if (!empty($object->fk_project)) {
+						$project_static_result = $project_static->fetch($object->fk_project);
+						if ($project_static_result > 0 && $project_static->id > 0) {
+							print $project_static->getNomUrl(1);
+							if ($project_static->title) {
+								print '<span class="opacitymedium"> - '.dol_escape_htmltag($project_static->title).'</span>';
+							}
+						} else {
+							print (int) $object->fk_project;
+						}
 					}
 					print '</td></tr>';
 				}

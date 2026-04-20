@@ -1639,6 +1639,7 @@ class Product extends CommonObject
 			$sql .= ", cost_price = ".($this->cost_price != '' ? ((float) $this->cost_price) : 'null');
 			$sql .= ", fk_unit= ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
+			$sql .= ", fk_project= ".(!$this->fk_project ? 'NULL' : (int) $this->fk_project);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? (int) $user->id : 'NULL');
 			$sql .= ", mandatory_period = ".((int) $this->mandatory_period);
