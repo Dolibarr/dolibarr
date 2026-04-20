@@ -37,12 +37,12 @@
  * @param string		$urloption			More parameters on URL request
  * @param int			$minLength			Minimum number of chars to trigger that Ajax search
  * @param int			$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
- * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
- *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                                      - Ex: array('disabled'=> )
- *                                                      - Ex: array('show'=> )
- *                                                      - Ex: array('update_textarea'=> )
- *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ * @param array<string,string|array<int|string,string>>	$ajaxoptions	Multiple options array
+ *                                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                                                      - Ex: array('disabled'=> )
+ *                                                                      - Ex: array('show'=> )
+ *                                                                      - Ex: array('update_textarea'=> )
+ *                                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  * @param string		$moreparams			More params provided to ajax call
  * @return string   						Script
  */

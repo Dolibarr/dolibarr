@@ -67,6 +67,7 @@ require_once 'filefunc.inc.php';
  */
 '
 @phan-var-force ?string $dolibarr_main_db_prefix
+@phan-var-force ?string $dolibarr_main_db_collation
 @phan-var-force ?string $dolibarr_main_db_encryption
 @phan-var-force ?string $dolibarr_main_db_cryptkey
 @phan-var-force ?string $dolibarr_main_limit_users

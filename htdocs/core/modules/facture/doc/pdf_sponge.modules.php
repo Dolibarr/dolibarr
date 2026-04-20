@@ -2285,11 +2285,13 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		$pdf->MultiCell($w, 3, $title, '', 'R');
+		$posy = $pdf->GetY();
+
 		if (!empty($subtitle)) {
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->SetXY($posx, $posy + 5);
+			$pdf->SetXY($posx, $posy);
 			$pdf->MultiCell($w, 6, $subtitle, '', 'R');
-			$posy += 2;
+			$posy = $pdf->GetY();
 		}
 
 		$pdf->SetFont('', '', $default_font_size - 2);

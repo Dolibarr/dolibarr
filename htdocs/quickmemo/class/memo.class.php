@@ -1323,12 +1323,33 @@ class Memo extends CommonObject
 	}
 
 	/**
+	 * @param array<string, array<string>> $contextTabMapping memo context list and Dolibarr context associated
+	 * @param string $tabContext memo context
+	 * @param string $dolibarrContext Dolibarr context
+	 *
+	 * @return void
+	 */
+	static public function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
+	{
+		$dolibarrContext = trim($dolibarrContext) ?: $tabContext;
+
+		if (!isset($contextTabMapping[$tabContext])) {
+			$contextTabMapping[$tabContext] = [$dolibarrContext];
+			return;
+		}
+
+		if (!in_array($dolibarrContext, $contextTabMapping[$tabContext], true)) {
+			$contextTabMapping[$tabContext][] = $dolibarrContext;
+		}
+	}
+
+	/**
 	 * Get available memo context
 	 *
 	 * @param null $object the common Dolibarr object
 	 * @param bool $onlyActiveModules on true return only
 	 *
-	 * @return array|string[]
+	 * @return array<string, array<string>>
 	 */
 	public static function getAvailableMemoContextMapping($object = null, $onlyActiveModules = true)
 	{
@@ -1336,58 +1357,68 @@ class Memo extends CommonObject
 
 		$contextTabMapping = [];
 
-		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats'];
-		foreach ($commonCardContext as $context) {
-			// init common contexts
-			$contextTabMapping[$context] = [];
-		}
-
 		// Start Correction of no standard Dolibarr context and special context
 		if (isModEnabled('propal') || !$onlyActiveModules) {
-			$contextTabMapping['contactcard'][] = 'proposalcontactcard';
+			self::completeMemoContextMapping($contextTabMapping, 'contactcard', 'proposalcontactcard');
 		}
 
 		if (isModEnabled('supplier_order') || !$onlyActiveModules) {
-			$contextTabMapping['contactcard'][] = 'ordersuppliercontactcard';
-			$contextTabMapping['document'][] = 'ordersuppliercarddocument';
-			$contextTabMapping['agenda'][] = 'ordersuppliercardinfo';
-			$contextTabMapping['ordersupplierdispatch'][] = 'ordersupplierdispatch';
+			self::completeMemoContextMapping($contextTabMapping, 'contactcard', 'ordersuppliercontactcard');
+			self::completeMemoContextMapping($contextTabMapping, 'document', 'ordersuppliercarddocument');
+			self::completeMemoContextMapping($contextTabMapping, 'agenda', 'ordersuppliercardinfo');
+			self::completeMemoContextMapping($contextTabMapping, 'ordersupplierdispatch');
 		}
 
 		if (isModEnabled('contract') || !$onlyActiveModules) {
-			$contextTabMapping['agenda'][] = 'agendacontract';
+			self::completeMemoContextMapping($contextTabMapping, 'agenda', 'agendacontract');
 		}
 
 		if (isModEnabled('order') || !$onlyActiveModules) {
-			$contextTabMapping['ordershipmentcard'][] = 'ordershipmentcard';
+			self::completeMemoContextMapping($contextTabMapping, 'ordershipmentcard');
+		}
+
+		if (isModEnabled('shipping')) {
+			self::completeMemoContextMapping($contextTabMapping, 'contactcard', 'shipmentcontactcard');
+		}
+
+		if (isModEnabled('product')) {
+			self::completeMemoContextMapping($contextTabMapping, 'productpricecard');
+			self::completeMemoContextMapping($contextTabMapping, 'pricesuppliercard');
+			self::completeMemoContextMapping($contextTabMapping, 'producttranslationcard');
+			self::completeMemoContextMapping($contextTabMapping, 'productcompositioncard');
+			self::completeMemoContextMapping($contextTabMapping, 'stockproductcard');
+			self::completeMemoContextMapping($contextTabMapping, 'productstatsinvoice');
+			self::completeMemoContextMapping($contextTabMapping, 'productstatscard');
+			self::completeMemoContextMapping($contextTabMapping, 'tabproductmarginlist');
 		}
 
 		// End of corrections
 
 		// Generate standard context
-		foreach (['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract'] as $module) {
-			if (!isModEnabled($module) && $onlyActiveModules) {
-				continue;
-			}
+		// TODO : Common contexts such as document, agenda, contact card, and stat, which are used across most Dolibarr objects, are not defined as standard global contexts.
+		//  Instead of having dedicated contexts like global_document, global_agenda, global_contactcard, or global_stat (similar to global_card), pages currently mix global_card with object-specific contexts (e.g. product_document, propal_agenda, etc.).
+		//  This creates inconsistent context handling. These contexts should include both their object-specific context and a proper global context (e.g. global_document or global_agenda) depending on the active tab.
+		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats']; // for common object
+		$modules = ['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract', 'product', 'shipping'];
+		foreach ($modules as $module) {
+			if (!isModEnabled($module) && $onlyActiveModules) { continue; }
 
 			$moduleClean = str_replace('_', '', $module);
 
 			foreach ($commonCardContext as $context) {
-				$contextTabMapping[$context][] = $moduleClean.$context;
+				self::completeMemoContextMapping($contextTabMapping, $context, $moduleClean.$context);
 			}
 		}
 
 		if (!empty($object) && !empty($object->element)) {
 			foreach ($commonCardContext as $context) {
-				$contextTabMapping[$context][] = $object->element.$context;
+				self::completeMemoContextMapping($contextTabMapping, $context, $object->element.$context);
 			}
 		}
 
-		$contextTabMapping = array_replace_recursive($contextTabMapping, [
-			// Need to by at end of tests
-			'index' => 'index',
-			'card' => 'globalcard'
-		]);
+		// Need to be at end of tests
+		self::completeMemoContextMapping($contextTabMapping, 'index');
+		self::completeMemoContextMapping($contextTabMapping, 'card', 'globalcard');
 
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
