@@ -517,12 +517,10 @@ class Users extends DolibarrApi
 	 */
 	public function setPassword($id, $send_password = false)
 	{
-		//$conf->global->API_DISABLE_LOGIN_API = 1;
-		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
+		if (!getDolGlobalString('API_ENABLE_LOGIN_API')) {
 			throw new RestException(403, "Error: login and password reset APIs are disabled. You can get access token from the backoffice to get access permission but permission and password manipulation from APIs are forbidden.");
 		}
 
-		//$conf->global->API_ALLOW_PASSWORD_RESET = 1;
 		if (!getDolGlobalString('API_ALLOW_PASSWORD_RESET')) {
 			throw new RestException(403, "Error: password reset APIs are disabled by default. To allow this, the option API_ALLOW_PASSWORD_RESET must be set.");
 		}

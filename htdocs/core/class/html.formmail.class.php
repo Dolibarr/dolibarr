@@ -266,7 +266,7 @@ class FormMail extends Form
 	public $withtoccuser = array();
 
 	/**
-	 * @var ModelMail[]
+	 * @var CEmailTemplate[]
 	 */
 	public $lines_model;
 
@@ -1102,6 +1102,7 @@ class FormMail extends Form
 					$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 				}
 
+				$out .= '<!-- Message line from get_form -->';
 				$out .= '<tr>';
 				$out .= '<td class="tdtop">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
@@ -1146,7 +1147,10 @@ class FormMail extends Form
 						}
 					}
 
-					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, true, $this->withfckeditor, 8, '95%');
+					$uselocalbrowser = getDolGlobalBool('FCKEDITOR_ENABLE_IMAGE_UPLOAD');
+					// $uselocalbrowser = true;
+
+					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, $uselocalbrowser, $this->withfckeditor, 8, '95%');
 					$out .= $doleditor->Create(1);
 				}
 				$out .= "</td></tr>\n";

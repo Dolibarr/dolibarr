@@ -792,7 +792,7 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 
 		print '<br>';
 
-		print '<strong>API_DISABLE_LOGIN_API</strong> = '.getDolGlobalString('API_DISABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
+		print '<strong>API_ENABLE_LOGIN_API</strong> = '.getDolGlobalString('API_ENABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
 	}
 }
 
