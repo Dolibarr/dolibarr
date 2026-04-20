@@ -124,6 +124,8 @@ $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_expor
 $search_import_key = GETPOST("search_import_key", 'alpha');
 $search_finished = GETPOST("search_finished");
 $search_units = GETPOST('search_units', 'int');
+$search_fk_project = GETPOST('search_fk_project', 'alpha');
+
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
@@ -448,6 +450,7 @@ if (empty($reshook)) {
 		$search_accountancy_code_buy_export = '';
 		$search_array_options = array();
 		$search_units = '';
+		$search_fk_project = '';
 	}
 
 	// Mass actions
@@ -641,8 +644,7 @@ if ($search_default_workstation) {
 	$sql .= natural_search('ws.ref', $search_default_workstation);
 }
 if ($search_fk_project) {
-	$sql .= natural_search('proj.ref', $search_fk_project);
-	$sql .= natural_search('proj.title', $search_fk_project);
+	$sql .= natural_search(array("proj.ref","proj.title"), $search_fk_project);
 }
 if ($search_barcode) {
 	$sql .= natural_search('p.barcode', $search_barcode);
