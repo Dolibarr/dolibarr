@@ -393,6 +393,14 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT revers
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
+AccountingDefaultNotExportLettering=By default, do not export lettering when generating the file
+AccountingDefaultNotExportLetteringDesc=If enabled, the lettering information of accounting entries will not be included in the generated export file.
+AccountingDefaultNotNotifiedExportDate=By default, mark not yet exported lines as "Exported"
+AccountingDefaultNotNotifiedExportDateDesc=If enabled, each exported line will be stamped with the export date. To modify a line marked as exported, you will need to delete the entire accounting entry and re-transfer it to accounting.
+AccountingDefaultNotifiedValidationDate=By default, validate and lock exported accounting entries
+AccountingDefaultNotifiedValidationDateDesc=If enabled, exported accounting entries will be automatically validated and locked (same effect as the "Close" feature). Editing and deletion of these lines will be PERMANENTLY impossible.
+AccountingDefaultNotifiedExportFull=By default, export source documents (Available only on some export models Quadra | FEC | FEC2)
+AccountingDefaultNotifiedExportFullDesc=If enabled, source documents associated with accounting entries (invoices, credit notes, etc.) will be included or attached when generating the export file.
 ## Template
 MenuListBookkeepingTemplates=Bookkeeping templates
 BookkeepingTemplates=Bookkeeping templates
