@@ -78,7 +78,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 

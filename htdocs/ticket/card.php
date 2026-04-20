@@ -1237,10 +1237,10 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="border tableforfield centpercent margintable bordertopimp">';
 		print '<tr class="liste_titre">';
 		print '<td class="valignmiddle titlefield">';
-		print '<table class="nobordernopadding centpercent"><tr><td class="none noborder">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="none" style="border-bottom: none !important;">';
 		print $langs->trans('TicketProperties');
 		if (GETPOST('set', 'alpha') != 'properties' && isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || !getDolGlobalInt('TICKET_DISALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED')) && $permissiontoadd) {
-			print '</td><td class="right noborder"><a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
+			print '</td><td class="right" style="border-bottom: none !important;"><a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td>';
@@ -1566,16 +1566,16 @@ if ($action == 'create' || $action == 'presend') {
 
 			// Substitution array
 			$morehtmlright = '';
-			$help = "";
+			//$help = "";
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 			complete_substitutions_array($substitutionarray, $outputlangs, $object);
-			$morehtmlright .= $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
+			//$morehtmlright .= $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
 
 			print '<div>';
 
 			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 
-			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
+			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'fa-comment-dots');
 
 			print '<hr>';
 

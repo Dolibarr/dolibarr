@@ -59,7 +59,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$name		Name of database
 	 *	@param	    int		$port		Port of database server
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -146,7 +146,7 @@ class DoliDBMysqli extends DoliDB
 						exit;
 					}
 
-					$collation = (empty($conf) ? 'utf8_unicode_ci' : $conf->db->dolibarr_main_db_collation);
+					$collation = (empty($conf) ? 'utf8_unicode_ci' : (string) $conf->db->dolibarr_main_db_collation);
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
@@ -179,7 +179,7 @@ class DoliDBMysqli extends DoliDB
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci
 
-					$collation = $conf->db->dolibarr_main_db_collation;
+					$collation = (string) $conf->db->dolibarr_main_db_collation;
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
@@ -1368,7 +1368,7 @@ if (class_exists('mysqli')) {
 		 *	@param	    int		$port		Port of database server
 		 *	@param	    string	$socket		Socket
 		 */
-		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")  // @phpstan-ignore constructor.unusedParameter
 		{
 			$flags = 0;
 			if (PHP_VERSION_ID >= 80100) {

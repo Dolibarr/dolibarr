@@ -54,11 +54,11 @@ class Ai
 	 */
 	private $apiEndpoint;
 
-	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return all HTML content inside a section tag. Do not add explanation.';
+	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return only the content of the message. Do not add explanation.';	// Note: This instruction will also be completed by generateContent() to manage text versus HTML content.
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase. If there is carriage return or line feed in original message, keep them.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
 	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are the proofreader, please write your response in the same language as the original text in order to correct spelling and grammar errors.';
@@ -90,7 +90,7 @@ class Ai
 	}
 
 	/**
-	 * Generate response of instructions
+	 * Generate the response of an AI prompt.
 	 *
 	 * @param   string|array<mixed,mixed>	$instructions   String instruction to generate content (or file path) or array of payload or ID of file with function threads
 	 * @param   string  					$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
@@ -147,6 +147,7 @@ class Ai
 			$this->apiEndpoint .= '/'.$moreendpoint;
 		}
 
+
 		// $model may be undefined or 'auto'.
 		// If this is the case, we must get it from $function and $this->apiService
 		if (empty($model) || $model == 'auto') {
@@ -169,7 +170,19 @@ class Ai
 			}
 		}
 
-		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format);
+		if (getDolGlobalString("AI_DEBUG")) {
+			if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+				$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
+				$fp = fopen($outputfile, "w");	// overwrite
+
+				if ($fp) {
+					fwrite($fp, "Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format."\n");
+					fclose($fp);
+					dolChmod($outputfile);
+				}
+			}
+		}
 
 		$response = null;
 
@@ -193,10 +206,16 @@ class Ai
 					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
+			//var_dump($prePrompt);
 
 			// Get the default value of prePrompt if not defined
 			if (empty($prePrompt) && $function == 'textgenerationemail') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EMAIL;
+				if ($format === 'html') {
+					$prePrompt .= ' Return all HTML content inside a section tag';
+				} else {
+					$prePrompt .= ' Return content in UTF8 text. Use Linux carriage return if you need to split a line. Do not include any HTML tag neither HTML entities.';
+				}
 			}
 			if (empty($prePrompt) && $function == 'textgenerationwebpage') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_WEBPAGE;
@@ -289,7 +308,7 @@ class Ai
 			if (getDolGlobalString("AI_DEBUG")) {
 				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 					$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
-					$fp = fopen($outputfile, "w");	// overwrite
+					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
 						if ($function == 'docparsing') {

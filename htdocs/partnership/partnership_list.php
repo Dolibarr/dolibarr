@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2017 	Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2021		NextGestion				<contact@nextgestion.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1034,10 +1034,10 @@ while ($i < $imaxinloop) {
 					} else {
 						print $object->thirdparty->town;
 					}
-				} elseif ($key == 'fk_soc_member' && $adherent->id > 0) {
+				} elseif ($key == 'fk_soc_member' && $adherent->id > 0) {  // @phpstan-ignore greater.alwaysFalse,booleanAnd.alwaysFalse
 					print $adherent->getNomUrl(1);
 				} elseif ($key == 'fk_soc_dateend') {
-					if ($adherent->id > 0) {
+					if ($adherent->id > 0) {  // @phpstan-ignore greater.alwaysFalse
 						$datefin = $adherent->datefin;
 						if ($datefin) {
 							print dol_print_date($datefin, 'day');

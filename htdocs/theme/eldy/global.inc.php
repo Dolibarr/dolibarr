@@ -9131,7 +9131,7 @@ table.jPicker {
 /* ============================================================================== */
 
 .ai_dropdown {
-	min-width: 400px !important;
+	min-width: 500px !important;
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
