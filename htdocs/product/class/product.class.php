@@ -5679,7 +5679,7 @@ class Product extends CommonObject
 	 * @param	string		$field_where			name of field of object we need to get linked items
 	 * @param	string		$table_element			name of association table
 	 * @param	int|null	$fk_product_type		Optional fk_product_type: 0=Products, 1=Services, default is null and that will return all kinds
-	 * @return 	array|int							Array of record, -1 if empty
+	 * @return 	int									nb of record, -1 if empty
 	 */
 	public static function getCountOfItemsLinkedByObjectID($fk_object_where, $field_where, $table_element, $fk_product_type = null)
 	{

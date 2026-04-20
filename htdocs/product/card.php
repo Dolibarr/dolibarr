@@ -1390,6 +1390,8 @@ $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
+} else {
+	$formproject = null;
 }
 $formaccounting = null;
 if (isModEnabled('accounting')) {
@@ -2676,7 +2678,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print $form->editfieldkey($langs->trans('Project'), 'fk_project', (string) $object->fk_project, $object, (int) $usercancreate);
 					print '</td><td>';
 					if ($action == 'editfk_project') {
-						print $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'editfk_project' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+						print $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, 'fk_project', 0, 0, 0, 1, '', 'maxwidth300');
 					} else {
 						if (!empty($object->fk_project)) {
 							$project_static_result = $project_static->fetch($object->fk_project);
