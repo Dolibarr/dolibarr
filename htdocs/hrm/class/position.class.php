@@ -398,7 +398,7 @@ class Position extends CommonObject
 	 * @param  	string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  	string      $filtermode   	No more used
-	 * @return 	array|int                 	int <0 if KO, array of pages if OK
+	 * @return 	self[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -985,7 +985,7 @@ class Position extends CommonObject
 	/**
 	 *    Create an array of lines
 	 *
-	 * @return array|int        array of lines if OK, <0 if KO
+	 * @return CommonObject[]|int        array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1063,7 +1063,7 @@ class Position extends CommonObject
 	 * getForUser
 	 *
 	 * @param int $userid id of user we need to get position list
-	 * @return array|int of positions of user with for each of them the job fetched into that array
+	 * @return self[]|int of positions of user with for each of them the job fetched into that array
 	 */
 	public function getForUser($userid)
 	{
