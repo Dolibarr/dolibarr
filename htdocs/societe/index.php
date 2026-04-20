@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->load("companies");
@@ -159,7 +158,7 @@ if ($result) {
 
 $thirdpartygraph = '<div class="div-table-responsive-no-min">';
 $thirdpartygraph .= '<table class="noborder nohover centpercent">'."\n";
-$thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+$thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("NatureOfThirdParty").'</th></tr>';
 if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2)) {
 	$thirdpartygraph .= '<tr><td class="center" colspan="2">';
 	$dataseries = array();
@@ -298,8 +297,9 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 }
 $sql .= ", s.logo";
 $sql .= ", s.entity";
-$sql .= ", s.canvas, s.tms as date_modification, s.status as status";
+$sql .= ", s.canvas, GREATEST(s.tms, sef.tms) as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
@@ -323,7 +323,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
-$sql .= $db->order("s.tms", "DESC");
+$sql .= $db->order("date_modification", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
@@ -419,7 +419,8 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas";
-$sql .= ", s.tms as date_modification, s.status as status";
+$sql .= ", s.status as status";
+$sql .= ", GREATEST(sp.tms, spef.tms) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
 $sql .= ", sp.address as caddress, sp.phone as cphone";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -448,7 +449,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
-$sql .= $db->order("s.tms", "DESC");
+$sql .= $db->order("date_modification", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
@@ -498,6 +499,7 @@ if ($result) {
 			$thirdparty_static->code_compta_client = $objp->code_compta;
 
 			$contact_static->id = $objp->cid;
+			$contact_static->status = $objp->cstatus;
 			$contact_static->firstname = $objp->firstname;
 			$contact_static->lastname = $objp->lastname;
 			$contact_static->email = $objp->cemail;

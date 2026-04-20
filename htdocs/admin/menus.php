@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ if ($action == 'update' && !$cancel) {
 		$db->close();
 
 		// We make a header redirect because we need to change menu NOW.
-		header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".dolBuildUrl($_SERVER["PHP_SELF"]));
 		exit;
 	}
 }
@@ -143,17 +143,17 @@ print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 $h = 0;
 
 $head = array();
-$head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/menus.php");
 $head[$h][1] = $langs->trans("MenuHandlers");
 $head[$h][2] = 'handler';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/menus/index.php");
 $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
 $h++;
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
@@ -196,7 +196,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'
 print '<td>';
 $formadmin->select_menu(getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENU_SMARTPHONE')), 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? '' : ' disabled');
 
-if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
+if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED'))
 	|| (!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENU_SMARTPHONE')))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
@@ -205,7 +205,7 @@ print '</td>';
 print '<td>';
 $formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')), 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? '' : ' disabled');
 
-if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
+if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', getDolGlobalString("MAIN_MENUFRONT_SMARTPHONE_FORCED"))
 	|| (!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
@@ -216,11 +216,11 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
-print dol_get_fiche_end();
-
 print '<div class="center">';
 print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 print '</div>';
+
+print dol_get_fiche_end();
 
 print '</form>';
 

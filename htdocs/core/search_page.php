@@ -50,6 +50,8 @@ require_once '../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_nocache
  */
 
 if (GETPOST('lang', 'aZ09')) {
@@ -176,7 +178,7 @@ $searchform .= '<br>';
 
 
 // Add search on URL
-if ($conf->dol_use_jmobile) {
+if (!empty($conf->dol_use_jmobile)) {
 	$ret = '';
 	$ret .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="searchform nowraponall tagtr">';
 	$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -188,7 +190,7 @@ if ($conf->dol_use_jmobile) {
 	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
 	$ret .= ' name="url" id="url" />';
-	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<button type="submit" class="button bordertransp nohover" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret .= '<span class="fa fa-search"></span>';
 	$ret .= '</button>';
 	$ret .= '</div>';

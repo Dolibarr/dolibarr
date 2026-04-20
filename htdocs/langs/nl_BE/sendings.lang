@@ -13,5 +13,6 @@ RefDeliveryReceipt=Referentie ontvangstbevestiging
 ActionsOnShipping=Events i.v.m. verzending
 WeightVolShort=Gewicht/Volume
 ValidateOrderFirstBeforeShipment=U moet eerst de bestelling valideren voor u een verzending kan aanmaken.
+DeliveryStateSaved=Leveringstoestand bewaard
 TypeContact_shipping_external_BILLING=Klant contact
 TypeContact_shipping_external_DELIVERY=Klantcontact voor leveringen

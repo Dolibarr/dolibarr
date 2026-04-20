@@ -57,7 +57,7 @@ $fileName = dirname(__FILE__).'/../Mobile_Detect.json';
 // Write the JSON file to disk.11
 // You can import this file in your app.
 if (file_put_contents(
-	$fileName, 
+	$fileName,
 	function_exists('json_format') ? json_format($json) : json_encode($json)
 )) {
 	echo 'Done. Check '.realpath($fileName).' file.';

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bancos | Dinero en efectivo
-MenuNewVariousPayment=Nuevo Pago Varios
 BankAccounts=Cuentas bancarias
 AccountRef=Ref de cuenta financiera
 AccountLabel=Etiqueta de cuenta financiera
@@ -67,6 +66,7 @@ DateConciliating=Conciliar fecha
 BankLineConciliated=Entrada conciliada con recibo bancario
 BankLineReconciled=Conciliado
 SupplierInvoicePayment=Pago de proveedor
+SubscriptionPayment=Pago de suscripción
 WithdrawalPayment=Pago por domiciliación bancaria
 SocialContributionPayment=Pago de impuestos sociales / fiscales
 BankTransfer=Transferencia de crédito
@@ -108,9 +108,6 @@ BankAccountModelModule=Plantillas de documentos para cuentas bancarias
 DocumentModelSepaMandate=Plantilla de mandato SEPA. Útil para países europeos en EEC únicamente.
 DocumentModelBan=Plantilla para imprimir una página con información BAN.
 VariousPayment=Pago Varios
-ShowVariousPayment=Mostrar Pagos Varios
-AddVariousPayment=Agregar pago varios
-VariousPaymentLabel=Etiqueta de pago varios
 ConfirmCloneVariousPayment=Confirmar el duplicado de un pago varios
 FindYourSEPAMandate=Este es su mandato de SEPA para autorizar a nuestra empresa a realizar un pedido de débito directo a su banco. Devuélvalo firmado (escaneo del documento firmado) o envíelo por correo a
 BankColorizeMovementName1=Color de fondo para movimiento de débito

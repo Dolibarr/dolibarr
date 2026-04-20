@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
+AccountingAccount=Conta contábil
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de coluna para arquivo de exportação
 ACCOUNTING_EXPORT_DATE=Formato de data para arquivo de exportação
 ACCOUNTING_EXPORT_PIECE=Exportar a quantidade de peça

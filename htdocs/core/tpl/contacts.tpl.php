@@ -72,7 +72,7 @@ if ($module == 'propal') {
 	} else {
 		$permission = $user->hasRight('supplier_order', 'creer');
 	}
-} elseif ($module == 'invoice_supplier' && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+} elseif ($module == 'invoice_supplier') {
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 	} else {
@@ -267,7 +267,7 @@ foreach (array('internal', 'external') as $source) {
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
 		} elseif ($contact['socid'] < 0) {
 			$entry->thirdparty_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
+			$entry->thirdparty_name = strtolower(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 		}
 
 		if ($contact['source'] == 'internal') {
@@ -325,7 +325,7 @@ $param = 'id='.$object->id.'&mainmenu=home';
 
 // Show list of contact links
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';

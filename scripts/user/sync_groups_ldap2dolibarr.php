@@ -103,7 +103,7 @@ foreach ($argv as $key => $val) {
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // We block email sending
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
@@ -152,7 +152,7 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
-			$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')]);
+			$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')], true); // Fetch LDAP groups AND members
 			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] ?? '';
 			$group->nom = $group->name; // For backward compatibility
 			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] ?? '';

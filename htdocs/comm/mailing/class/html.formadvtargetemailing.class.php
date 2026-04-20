@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,9 @@ class FormAdvTargetEmailing extends Form
 	}
 
 	/**
-	 * Affiche un champs select contenant une liste
+	 * Display a select field with a list
 	 *
-	 * @param string[] $selected_array à preselectionner
+	 * @param string[] $selected_array To preselect elements
 	 * @param string $htmlname select field
 	 * @return string select field
 	 */

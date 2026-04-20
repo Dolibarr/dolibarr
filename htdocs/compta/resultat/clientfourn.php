@@ -296,11 +296,11 @@ $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 
 
 
 if ($modecompta == 'BOOKKEEPING') {
-	$predefinedgroupwhere = "(";
-	$predefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
-	$predefinedgroupwhere .= " OR ";
-	$predefinedgroupwhere .= " (pcg_type = 'INCOME')";
-	$predefinedgroupwhere .= ")";
+	$sanitizedpredefinedgroupwhere = "(";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
+	$sanitizedpredefinedgroupwhere .= " OR ";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'INCOME')";
+	$sanitizedpredefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
 	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
@@ -314,7 +314,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	$sql .= "   ON aa.account_number = f.numero_compte";
 	$sql .= " 	AND aa.entity = f.entity"; // Security prevents duplicate.
 	$sql .= " WHERE 1=1";
-	$sql .= " AND ".$predefinedgroupwhere;
+	$sql .= " AND ".$sanitizedpredefinedgroupwhere;
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	$sql .= " AND f.entity = ".$conf->entity;
 	if (!empty($date_start) && !empty($date_end)) {

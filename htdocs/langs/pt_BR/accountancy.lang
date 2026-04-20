@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
+AccountingAccount=Conta contábil
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de coluna para arquivo de exportação
 ACCOUNTING_EXPORT_DATE=Formato de data para arquivo de exportação
 ACCOUNTING_EXPORT_PIECE=Exportar a quantidade de peça
@@ -121,7 +122,6 @@ ACCOUNTING_LENGTH_AACCOUNT=Comprimento das contas contábeis de terceiros (se vo
 ACCOUNTING_BANK_CONCILIATED=Transferir para a contabilidade apenas o linhas reconciliadas nos extratos bancários (por padrão, poderia ser desmarcado em cada transferência)
 BANK_DISABLE_DIRECT_INPUT=Desabilitar o registro direto da transação na conta bancária
 ACCOUNTANCY_ER_DATE_RECORD=Use a data final do período de um relatório de despesas como a data para a transferência para a contabilidade, em vez da data da despesa
-ACCOUNTANCY_COMBO_FOR_AUX=Habilitar lista de combinação para conta subsidiária (pode ser lento se você tiver muitos terceiros, interromper a capacidade de pesquisar em uma parte do valor)
 ACCOUNTING_DATE_START_BINDING=Desabilitar vinculação e transferência na contabilidade quando a data for inferior a esta data (as transações anteriores a esta data serão excluídas por padrão)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na página para transferir dados para a contabilidade, qual é o período selecionado por padrão
 ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=Quando a contabilidade é gerada, etiqueta da operação padrão
@@ -145,7 +145,6 @@ DONATION_ACCOUNTINGACCOUNT=Conta (do Plano de Contas) a ser usada para registrar
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta (do Plano de Contas) a ser usada para registrar assinaturas de membros (módulo assinatura - se a assinatura for registrada sem fatura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta (do Plano de Contas) a ser usada como a conta padrão para registrar o depósito do cliente
 UseAuxiliaryAccountOnCustomerDeposit=Armazene a conta do cliente como conta individual no razão auxiliar para linhas de pagamentos iniciais (se desabilitado, a conta individual para pagamento inicial linhas permanecerá vazia)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Conta (do Plano de Contas) a ser usada como padrão
 UseAuxiliaryAccountOnSupplierDeposit=Armazene a conta do fornecedor como conta individual no razão auxiliar para linhas de pagamentos iniciais (se desabilitada, a conta individual para pagamento inicial linhas permanecerá vazia)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Conta contábil por padrão para registrar a garantia retida pelo cliente
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta (do Plano de Contas) a ser usada como a conta padrão para os produtos adquiridos no mesmo país (usada se não estiver definida na planilha do produto)

@@ -85,11 +85,12 @@ class PropaleStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer', $typentid = 0, $categid = 0)
 	{
+		global $hookmanager;
 		$this->db = $db;
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->join = '';
-
+		$object = null;
 		if ($mode == 'customer') {
 			$object = new Propal($this->db);
 
@@ -129,6 +130,10 @@ class PropaleStats extends Stats
 		if ($categid) {
 			$this->where .= ' AND EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'categorie_societe as cats WHERE cats.fk_soc = p.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $socid);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$this->where .= $hookmanager->resPrint;
 	}
 
 
@@ -143,8 +148,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, COUNT(*) as nb";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -153,7 +158,6 @@ class PropaleStats extends Stats
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
-
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
@@ -168,8 +172,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%Y') as dm, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -192,8 +196,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, SUM(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -217,8 +221,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, AVG(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -240,8 +244,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%Y') as year, COUNT(*) as nb, SUM(".$this->db->sanitize($this->field).") as total, AVG(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -265,9 +269,9 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql .= " FROM ".$this->from;
-		$sql .= " INNER JOIN ".$this->from_line." ON p.rowid = tl.fk_propal";
+		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->db->sanitize($this->field_line).") as total, AVG(tl.".$this->db->sanitize($this->field_line).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 0, 1)." ON p.rowid = tl.fk_propal";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

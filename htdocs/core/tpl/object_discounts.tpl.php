@@ -2,7 +2,7 @@
 
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,22 @@
  * $backtopage				URL to come back to from discount modification pages
  */
 
- /**
- * @var Object		$object
+/**
+ * @var	Conf		$conf
  * @var Form 		$form
+ * @var Object		$object
  * @var Translate 	$langs
  * @var Societe		$thirdparty
- * @var	float		$absolute_discount		Amount of fixed discounts available
- * @var	float		$absolute_creditnote	Amount of credit notes available
+ * @var string		$backtopage
+ *
+ * @var	float		$absolute_discount				Amount of fixed discounts available
+ * @var	float		$absolute_creditnote			Amount of credit notes available
+ * @var int			$nb_creditnote_notyetavailable	Nb of cedit notes not yet available (not yet converted into discount)
+ * @var	string		$filterabsolutediscount
+ * @var	string		$filtercreditnote
+ * @var	string		$resteapayer
  * @var int			$cannotApplyDiscount
+ * @var	int			$discount_type
  */
 
 print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
@@ -56,6 +64,9 @@ if (empty($absolute_discount)) {
 }
 if (empty($absolute_creditnote)) {
 	$absolute_creditnote = 0;
+}
+if (empty($nb_creditnote_notyetavailable)) {
+	$nb_creditnote_notyetavailable = 0;
 }
 
 
@@ -106,8 +117,9 @@ if ($absolute_discount > 0) {
 	} else {
 		// Discount available of type fixed amount (not credit note)
 		$more = $addabsolutediscount;
+		$filter = $filterabsolutediscount;  // Fix PhanPluginSuspiciousParamPosition as filterabsolutescount is other argument name in form_remise_dispo
 		// TODO: Check $resteapayer - is '$maxvalue' in form_remise_dispo()
-		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOSTINT('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filterabsolutediscount, $resteapayer, $more, 0, $discount_type);
+		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOSTINT('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filter, $resteapayer, $more, 0, $discount_type, 1);
 	}
 }
 
@@ -136,7 +148,8 @@ if ($absolute_creditnote > 0) {
 	} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
 		// There is credit notes discounts available
 		$more = $isInvoice && !$isNewObject ? ' ('.$viewabsolutediscount.')' : '';
-		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $thirdparty->id, $absolute_creditnote, $filtercreditnote, 0, $more, 0, $discount_type); // We allow credit note even if amount is higher
+		$filter = $filtercreditnote;  // Avoid phan suspiscious order as $filtercreditnote is name of last argument for form_remise_dispo
+		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $thirdparty->id, $absolute_creditnote, $filter, 0, $more, 0, $discount_type, 0, 1); // We allow credit note even if amount is higher
 	}
 }
 
@@ -151,6 +164,12 @@ if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 	if ($isInvoice && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 		print ' '.$addabsolutediscount;
 	}
+}
+
+if ($nb_creditnote_notyetavailable > 0) {
+	print '<!-- absolute_creditnote not yet converted -->';
+	$translationKey = 'SomeNotConvertedCreditNoteExists';
+	print '<br><span class="opacitymedium">'.$langs->trans($translationKey, $nb_creditnote_notyetavailable).'</span>';
 }
 
 print '<!-- END template -->';

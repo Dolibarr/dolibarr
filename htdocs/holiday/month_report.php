@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2011		François Legastelois		<flegastelois@teclib.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('holiday', 'hrm'));
@@ -224,7 +223,7 @@ if (!empty($search_year)) {
 	$param .= '&search_year='.((int) $search_year);
 }
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -240,7 +239,7 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 // Selection filter
 print '<div class="tabBar">';
-print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth50 maxwidth75imp valignmiddle', true);
+print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth75 maxwidth150imp valignmiddle', true);
 print $formother->selectyear($search_year, 'search_year', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
 print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
 print '</div>';
@@ -459,7 +458,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday).'</td>';
+			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id).'</td>';
 		}
 
 		if (!empty($arrayfields['date_start_month']['checked'])) {
@@ -475,7 +474,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days_month']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
+			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
 			print '<td class="maxwidth300 small">';

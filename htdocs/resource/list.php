@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014  Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
   * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
@@ -28,8 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
@@ -46,7 +45,7 @@ $id				= GETPOSTINT('id');
 $action			= GETPOST('action', 'alpha');
 $massaction		= GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm		= GETPOST('confirm', 'alpha');
-$toselect		= GETPOST('toselect', 'array');
+$toselect		= GETPOST('toselect', 'array:int');
 $contextpage	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 
 $lineid			= GETPOSTINT('lineid');
@@ -71,6 +70,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 if (!is_array($search_array_options)) {
 	$search_array_options = array();
 }
+$search_all          = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref			= GETPOST("search_ref", 'alpha');
 $search_type		= GETPOST("search_type", 'alpha');
 $search_address		= GETPOST("search_address", 'alpha');
@@ -106,6 +106,12 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	't.ref' => 'Ref',
+	't.description' => 'Description',
+);
 
 $arrayfields = array(
 	't.ref' => array(
@@ -282,6 +288,10 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE t.entity IN (".getEntity('resource').")";
+// Search all
+if (!empty($search_all)) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 if ($search_ref) {
 	$sql .= natural_search('t.ref', $search_ref);
 }
@@ -337,7 +347,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -429,7 +439,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -451,6 +461,16 @@ print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sort
 $objecttmp = new Dolresource($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+if ($search_all) {
+	$setupstring = '';
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
+	}
+	print '<!-- Search done like if RESOURCE_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
+}
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'))); // This also change content of $arrayfields
@@ -610,7 +630,8 @@ while ($i < $imaxinloop) {
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
 
-	print '<tr data-rowid="'.$obj->rowid.'"  class="oddeven">';
+	print '<tr data-rowid="'.$obj->rowid.'" class="oddeven row-with-select">';
+
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
@@ -628,14 +649,14 @@ while ($i < $imaxinloop) {
 	}
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
-		print '<td>'.$objectstatic->getNomUrl(5).'</td>';
+		print '<td class="tdoverflowmax150">'.$objectstatic->getNomUrl(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['ty.label']['checked'])) {
-		print '<td>'.$objectstatic->type_label.'</td>';
+		print '<td class="tdoverflowmax200">'.$objectstatic->type_label.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

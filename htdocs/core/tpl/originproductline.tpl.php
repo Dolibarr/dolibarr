@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2022		Gauthier VERDOL	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2022		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
