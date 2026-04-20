@@ -4,7 +4,7 @@
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 /**
  *  Return an array with timezone values
  *
- *  @return     array<int<-11,13>,string>   Array with timezone values
+ *  @return     array<int<-11,14>,string>   Array with timezone values
  */
 function get_tz_array()
 {

@@ -12,7 +12,7 @@
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2024	Eric Seigne				<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
  * Copyright (C) 2026		Vincent Maury			<vmaury@timgroup.fr>
  *
@@ -1769,9 +1769,11 @@ class pdf_octopus extends ModelePDFFactures
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$tvaisnull = false;
-			if (!empty($this->tva_array) && count($this->tva_array) == 1 ) {
+			if (!empty($this->tva_array) && count($this->tva_array) == 1) {
 				$tva_el = reset($this->tva_array);
-				if ($tva_el['vatrate'] == '0.000' && is_float($tva_el['amount'])) $tvaisnull = true;
+				if ($tva_el['vatrate'] == '0.000' && is_float($tva_el['amount'])) {
+					$tvaisnull = true;
+				}
 			}
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
@@ -2818,13 +2820,17 @@ class pdf_octopus extends ModelePDFFactures
 				$salereparray = $object->thirdparty->getSalesRepresentatives($user);
 				$salerepobj = new User($this->db);
 				$salerepobj->fetch($salereparray[0]['id']);
-				if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
+				if (!empty($salerepobj->signature)) {
+					$notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
+				}
 			}
 		}
 
 		// Extrafields in note
 		$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
-		if (!empty($extranote)) $notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
+		if (!empty($extranote)) {
+			$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
+		}
 
 		if ($notetoshow) {
 			$tab_top -= 2;
@@ -3149,10 +3155,10 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Calculates the sum of two arrays, key by key, taking into account nested arrays
 	 *
-	 * @param   array<int|string,int|float|mixed[]>  $a  [$a description]
-	 * @param   array<int|string,int|float|mixed[]>  $b  [$b description]
+	 * @param	array<int|string,float|Facture|array<float|Facture>>	$a	[$a description]
+	 * @param	array<int|string,float|Facture|array<float|Facture>>	$b	[$b description]
 	 *
-	 * @return  array<int|string,int|float|mixed[]>		[return description]
+	 * @return	array<int|string,float|Facture|array<float|Facture>>		[return description]
 	 */
 	public function sumSituation($a, $b)
 	{

@@ -889,12 +889,6 @@ parameters:
 			path: ../../../htdocs/asset/card.php
 
 		-
-			message: '#^Property Asset\:\:\$fields \(array\<string, array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\}\>\) does not accept non\-empty\-array\<string, array\{type\: ''integer…'', label\: ''SupplierInvoice'', enabled\: ''1'', noteditable\: 1, position\: 280, notnull\: 0, visible\: 1, index\: 1, \.\.\.\}\|array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/asset/card.php
-
-		-
 			message: '#^Call to function is_callable\(\) with array\{\$this\(AssetDepreciationOptions\), ''validateField''\} will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -1147,12 +1141,6 @@ parameters:
 			path: ../../../htdocs/bookmarks/bookmarks.lib.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/categories/card.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''hierarchy'' and ''common'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -1161,12 +1149,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''hierarchy'' and ''hierarchy'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/categories/categorie_list.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
 			count: 1
 			path: ../../../htdocs/categories/categorie_list.php
 
@@ -1301,12 +1283,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 2
 			path: ../../../htdocs/comm/action/index.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/action/info.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
@@ -1979,12 +1955,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 3
 			path: ../../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/cashcontrol/cashcontrol_list.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(CashControl\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -4175,12 +4145,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/class/html.formother.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formprojet.class.php
 
 		-
 			message: '#^Variable \$labeltoshow might not be defined\.$#'
@@ -6757,18 +6721,6 @@ parameters:
 			path: ../../../htdocs/fourn/commande/card.php
 
 		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/fourn/commande/card.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/commande/card.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
@@ -6778,12 +6730,6 @@ parameters:
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 2
-			path: ../../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: '#^Variable \$comment might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/fourn/commande/dispatch.php
 
 		-
@@ -7315,12 +7261,6 @@ parameters:
 			path: ../../../htdocs/hrm/job_card.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/hrm/job_list.php
-
-		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -7331,12 +7271,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/position.php
-
-		-
-			message: '#^Property Position\:\:\$fields \(array\<string, array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\}\>\) does not accept non\-empty\-array\<string, array\{\}\|array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/hrm/position_agenda.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -8227,12 +8161,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/myobject_list.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -8461,12 +8389,6 @@ parameters:
 			path: ../../../htdocs/partnership/class/partnership.class.php
 
 		-
-			message: '#^Call to function property_exists\(\) with \$this\(Partnership\) and ''fk_soc'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/partnership/class/partnership.class.php
-
-		-
 			message: '#^Call to function property_exists\(\) with \$this\(Partnership\) and ''thirdparty'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -8505,7 +8427,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/partnership/class/partnership.class.php
 
 		-
@@ -8539,12 +8461,6 @@ parameters:
 			path: ../../../htdocs/partnership/partnership_card.php
 
 		-
-			message: '#^Variable \$adht might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/partnership/partnership_card.php
-
-		-
 			message: '#^Variable \$soc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -8554,12 +8470,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/partnership/partnership_list.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 2
 			path: ../../../htdocs/partnership/partnership_list.php
 
 		-
@@ -11585,12 +11495,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/webhook/target_card.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between array\{type\: string, label\: string, langfile\?\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-6, 6\>\|string, alwayseditable\?\: int\<0, 1\>\|string, \.\.\.\} and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webhook/triggerhistory_list.php
 
 		-
 			message: '#^Result of && is always false\.$#'
