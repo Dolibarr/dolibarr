@@ -219,19 +219,14 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					if (!empty($reg[2])) {
 						if (is_numeric($reg[2])) {	// This is a version
 							$versionrequest = explode('.', $reg[2]);
-							//var_dump($versionrequest);
-							//var_dump($versionarray);
 							if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0) {
 								$qualified = 0;
 							}
 						} else { // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
 							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
-							//var_dump($reg[2]);
-							//var_dump($dbcollation);
 							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) {
 								$qualified = 0;
 							}
-							//var_dump($qualified);
 						}
 					}
 				}
@@ -239,7 +234,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				if ($qualified) {
 					// Version qualified, delete SQL comments
 					$buf = preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i', '', $buf);
-					//print "Ligne $i qualifi?e par version: ".$buf.'<br>';
+					//print "Line $i qualified by version: ".$buf.'<br>';
 				}
 			}
 
