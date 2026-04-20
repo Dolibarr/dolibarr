@@ -1202,7 +1202,7 @@ class BonPrelevement extends CommonObject
 		$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser."_rib")." as sr ON s.rowid = sr.".$this->db->sanitize($socOrUser);
 		if ($sourcetype != 'salary') {
 			if (!empty($thirdpartyBANIds)) {
-				$sql .= " AND sr.rowid IN (" .implode(', ', $thirdpartyBANIds).")";
+				$sql .= " AND sr.rowid IN (" .$this->db->sanitize(implode(',', $thirdpartyBANIds)).")";
 			} else {
 				$sql .= " AND sr.default_rib = 1";
 			}
