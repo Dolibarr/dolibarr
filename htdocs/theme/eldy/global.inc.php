@@ -5774,7 +5774,7 @@ div.info {
 }
 
 /* Ok message */
-div.green div.greenborder, section.green, section.greenborder {
+div.green div.greenborder, div.green.greenborder, section.green, section.greenborder {
 	border-<?php print $left; ?>: solid 5px #118822;
 }
 div.green, section.green {
@@ -5796,6 +5796,7 @@ div.warning a, div.info a, div.error a {
 div.error {
 	border-<?php print $left; ?>: solid 5px #f28787;
 	background: #EFCFCF;
+	font-weight: normal;
 }
 
 
@@ -9130,7 +9131,7 @@ table.jPicker {
 /* ============================================================================== */
 
 .ai_dropdown {
-	min-width: 400px !important;
+	min-width: 500px !important;
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
