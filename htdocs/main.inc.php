@@ -146,13 +146,13 @@ if (!defined('NOSESSION')) {
 }
 
 
-// Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
+// Init the 7 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager, $extrafields
 require_once 'master.inc.php';
 /**
  * The master.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var ?DoliDB $db                 May be null if NOREQUIREDB is defined
- * @var ExtraFields $extrafields
+ * @var ?ExtraFields $extrafields   May be null if NOREQUIREDB is defined
  * @var ?HookManager $hookmanager   May be null if NOHOOKMANAGER is defined
  * @var ?Translate $langs           May be null if NOREQUIRETRAN is defined
  * @var ?User $user                 May be null if NOREQUIREUSER is defined
