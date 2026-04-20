@@ -68,6 +68,8 @@ if (empty($user->id)) {
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 $conf->global->MAIN_UMASK = '666';
 
+dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
+
 
 /**
  * Class for the All test suite
