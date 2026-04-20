@@ -432,7 +432,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return array|int         Return integer <0 if KO, array of skill level found
+	 * @return CommonObject[]|int         Return integer <0 if KO, array of skill level found
 	 */
 	public function fetchLines()
 	{
@@ -991,7 +991,7 @@ class Skill extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return Skilldet[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
