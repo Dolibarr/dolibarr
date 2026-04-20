@@ -5,6 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,7 +240,7 @@ if ($object->id > 0) {
 		$filters['search_agenda_label'] = $search_agenda_label;
 		$filters['search_rowid'] = $search_rowid;
 
-		$object->fields['label'] = array(); // Useful to get only agenda events linked to position (this object doesn't need label of ref field, but show_actions_done() needs it to work correctly)
+		$object->fields['label'] = array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 0, 'position' => 30, 'visible' => -1); // Useful to get only agenda events linked to position (this object doesn't need label of ref field, but show_actions_done() needs it to work correctly) - dummy but "valid" fields entry
 
 		// TODO Replace this with same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
