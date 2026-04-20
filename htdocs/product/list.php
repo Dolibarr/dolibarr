@@ -633,6 +633,10 @@ if (isModEnabled('variants') && !$show_childproducts) {
 	$sql .= " AND pac.rowid IS NULL";
 }
 
+if ($fk_project > 0 && isModEnabled('project')) {
+	$sql .= " AND p.fk_project = ".((int) $fk_project);
+}
+
 if ($search_id) {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
@@ -1110,11 +1114,11 @@ if ($type === "") {
 $newcardbutton .= dolGetButtonTitleSeparator();
 if ((isModEnabled('product') && $type === "") || $type == Product::TYPE_PRODUCT) {
 	$label = 'NewProduct';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', (int) $perm, $params);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0'.($fk_project ? '&origin=projet_project&originid='.$fk_project : ''), '', (int) $perm, $params);
 }
 if ((isModEnabled('service') && $type === "") || $type == Product::TYPE_SERVICE) {
 	$label = 'NewService';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', (int) $perm, $params);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1'.($fk_project ? '&origin=projet_project&originid='.$fk_project : ''), '', (int) $perm, $params);
 }
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
@@ -1133,6 +1137,9 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 if (empty($arrayfields['p.fk_product_type']['checked'])) {
 	print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
+}
+if ($fk_project) {
+	print '<input type="hidden" name="fk_project" value="'.$fk_project.'" >';
 }
 
 $picto = 'product';
