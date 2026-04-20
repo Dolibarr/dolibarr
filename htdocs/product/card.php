@@ -86,6 +86,14 @@ if (isModEnabled('bom')) {
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
+if (isModEnabled('project')) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	$project_static = new Project($db);
+} else {
+	$project_static = null;
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'other'));
@@ -123,6 +131,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOSTINT('socid');
 $duration_value = GETPOST('duration_value') === '' ? null : GETPOSTINT('duration_value');	// duration value can be an empty string
 $duration_unit = GETPOST('duration_unit', 'alpha');
+$fk_project = GETPOSTINT('fk_project');
 
 $accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 $accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -1365,6 +1374,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+}
 $formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -2626,6 +2638,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, (int) $usercancreate, $typeformat) : $langs->trans('Type');
 					print '</td><td>';
 					print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+					print '</td></tr>';
+				}
+
+				// fk_project
+				if (isModEnabled("project")) {
+					print '<tr><td class="titlefieldmiddle">';
+					print $form->editfieldkey($langs->trans('Project'), 'fk_project', (string) $object->fk_project, $object, (int) $usercancreate);
+					print '</td><td>';
+					$project_static_result = $project_static->fetch($object->fk_project);
+					if ($project_static_result > 0 && $project_static->id > 0) {
+						print $project_static->getNomUrl(1);
+					} else {
+						print (int) $object->fk_project;
+					}
 					print '</td></tr>';
 				}
 
