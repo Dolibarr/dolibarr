@@ -1957,7 +1957,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND soc.fk_pays = c.rowid";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
 				if (!empty($thirdpartyBANIds)) {
-					$sql .= " AND rib.rowid IN (" . implode(',', $thirdpartyBANIds) . ")";
+					$sql .= " AND rib.rowid IN (" . $this->db->sanitize(implode(',', $thirdpartyBANIds)) . ")";
 				} else {
 					$sql .= " AND rib.default_rib = 1";
 				}
