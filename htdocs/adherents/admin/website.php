@@ -175,7 +175,7 @@ if ($conf->use_javascript_ajax) {
 }
 
 
-print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").'</span><br><br>';
+print '<div class="info">'.$langs->trans("BlankSubscriptionFormDesc").'</div><br>';
 
 $param = '';
 
