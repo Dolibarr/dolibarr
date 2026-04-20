@@ -229,7 +229,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbProduct = $dataretrieved;
 		} else {
-			$nbProduct = $productstatic->getCountOfItemsLinkedByObjectID($project->id, 'fk_project', 'product', 0);
+			$nbProduct = $productstatic->getCountOfItemsLinkedByProjectID($project->id, 'fk_project', 'product', 0);
 			if ($nbProduct < 0) {
 				setEventMessages($productstatic->error, $productstatic->errors, 'errors');
 			} else {
@@ -258,7 +258,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbService = $dataretrieved;
 		} else {
-			$nbService = $productstatic->getCountOfItemsLinkedByObjectID($project->id, 'fk_project', 'product', 1);
+			$nbService = $productstatic->getCountOfItemsLinkedByProjectID($project->id, 'fk_project', 'product', 1);
 			if ($nbService < 0) {
 				setEventMessages($productstatic->error, $productstatic->errors, 'errors');
 			} else {
