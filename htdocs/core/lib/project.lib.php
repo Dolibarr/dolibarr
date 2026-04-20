@@ -215,8 +215,8 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	if (isModEnabled('product') && $user->hasRight('product', 'read')) {
 		$langs->load('products');
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/list.php', ['fk_project' => $project->id]);
-		$head[$h][1] = $langs->trans("ProductsPipeServices");
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/list.php', ['fk_project' => $project->id, 'type' => 0]);
+		$head[$h][1] = $langs->trans("Products");
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic = new Product($db);
@@ -236,7 +236,21 @@ function project_prepare_head(Project $project, $moreparam = '')
 				dol_setcache($cachekey, $nbProduct, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 			}
 		}
+		if ($nbProduct > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Products")).'">'.$nbProduct.'</span>';
+		}
+		$head[$h][2] = 'product';
+		$h++;
+	}
 
+	if (isModEnabled('service') && $user->hasRight('service', 'read')) {
+		$langs->load('products');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/list.php', ['fk_project' => $project->id, 'type' => 1]);
+		$head[$h][1] = $langs->trans("Services");
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$productstatic = new Product($db);
 		// Enable caching of Service count
 		$nbService = 0;
 		$cachekey = 'count_services_'.$project->id;
@@ -252,14 +266,12 @@ function project_prepare_head(Project $project, $moreparam = '')
 			}
 		}
 
-		if ($nbProduct > 0 || $nbService > 0) {
+		if ($nbService > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
-			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Products")).'">'.$nbProduct.'</span>';
-			$head[$h][1] .= ' + ';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Services")).'">'.$nbService.'</span>';
 			$head[$h][1] .= '</span>';
 		}
-		$head[$h][2] = 'product';
+		$head[$h][2] = 'service';
 		$h++;
 	}
 

@@ -848,7 +848,14 @@ if ($fk_project > 0) {
 		//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 		$head = project_prepare_head($project_static);
-		print dol_get_fiche_head($head, 'product', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+		if ($type == 0) {
+			print dol_get_fiche_head($head, 'product', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+		} elseif ($type == 1) {
+			print dol_get_fiche_head($head, 'service', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+		} else {
+			print dol_get_fiche_head($head, '', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+			dol_syslog("product/list.php::unknown type=".$type, LOG_ERR);
+		}
 
 		// Project card
 
