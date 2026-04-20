@@ -4946,7 +4946,7 @@ abstract class CommonObject
 	 * @param	int		$fk_object_where		id of object we need to get linked items
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array|int						Array of record, -1 if empty
+	 * @return 	int<-1,max>						Array of records, -1 if empty argument
 	 */
 	public static function getCountOfItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
