@@ -812,36 +812,36 @@ if ($action == 'export_file') {
 
 	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
 		// If 1, we check by default.
-		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING') ? 'true' : 'false';
+		$checked_exportreconcile = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING') ? 'true' : 'false';
 		$form_question['notexportlettering'] = array(
 			'name' => 'notexportlettering',
 			'type' => 'checkbox',
 			'label' => $langs->trans('NotExportLettering'),
-			'value' => $checked,
+			'value' => $checked_exportreconcile,
 		);
 
 		$form_question['separator1'] = array('name' => 'separator1', 'type' => 'separator');
 	}
 
 	// If 1 or not set, we check by default.
-	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE'));
+	$checked_exportdate = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE') ? 'true' : 'false';
 	$form_question['notifiedexportdate'] = array(
 		'name' => 'notifiedexportdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportDate'),
-		'value' => (getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE') ? 'false' : 'true'),
+		'value' => $checked_exportdate,
 	);
 
 	$form_question['separator2'] = array('name' => 'separator2', 'type' => 'separator');
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
-		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE');
+		$checked_validationdate = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE') ? 'true' : 'false';
 		$form_question['notifiedvalidationdate'] = array(
 			'name' => 'notifiedvalidationdate',
 			'type' => 'checkbox',
 			'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
-			'value' => $checked,
+			'value' => $checked_validationdate,
 		);
 
 		$form_question['separator3'] = array('name' => 'separator3', 'type' => 'separator');
@@ -865,11 +865,12 @@ if ($action == 'export_file') {
 		$except[] = $langs->trans('SupplierInvoice');
 	}
 
+	$checked_exportfull = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_EXPORTFULL') ? 'true' : 'false';
 	$form_question['notifiedexportfull'] = array(
 		'name' => 'notifiedexportfull',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportFull').(empty($except) ? '' : ' <spanc class="opacitymedium">('.$langs->trans("except").' '.implode(', ', $except).')</span>'),
-		'value' => 'false',
+		'value' => $checked_exportfull,
 	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 500, 700);
@@ -879,12 +880,18 @@ if ($action == 'export_file') {
 		const exportTypesWithDocs = ['.implode(',', $exportTypesWithDocs).'];
 		const $formatExport = jQuery("#formatexport");
 
+		// We retrieve the configured default value (true or false in native JavaScript)
+		const defaultChecked = ' . $checked_exportfull . ';
+
 		function toggleExportFull() {
 			const $checkbox = jQuery("#notifiedexportfull");
 			const show = exportTypesWithDocs.indexOf(parseInt($formatExport.val())) !== -1;
 			$checkbox.closest(".tagtr").toggle(show);
+
 			if (!show) {
 				$checkbox.prop("checked", false); // remove checked if hidden
+			} else {
+				$checkbox.prop("checked", defaultChecked); // Restore the default configuration if displayed
 			}
 		}
 
