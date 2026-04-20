@@ -1911,12 +1911,12 @@ class FormTicket
 
 		$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
 		$formmail->withlayout = $ckeditorenabledforticket ? 'email' : '';
-		$formmail->withaiprompt = 'text';
+		$formmail->withaiprompt = isModEnabled('ai') ? 'text' : '';
 		$formai = new FormAI($this->db);
 
 		$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+		$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
 		$showlinktoailabel = $langs->trans("AIEnhancements");
 		$formatforouput = '';
 		$htmlname = 'message';
