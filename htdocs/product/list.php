@@ -847,6 +847,7 @@ if ($fk_project > 0) {
 		//$userDelete = $object->restrictedProjectArea($user,'delete');
 		//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
+		'@phan-var-force Project $project_static';
 		$head = project_prepare_head($project_static);
 		if ($type == 0) {
 			print dol_get_fiche_head($head, 'product', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
@@ -876,6 +877,7 @@ if ($fk_project > 0) {
 			$project_static->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 		}
 
+		'@phan-var-force CommonObject $project_static';
 		dol_banner_tab($project_static, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 		print '<div class="fichecenter">';
