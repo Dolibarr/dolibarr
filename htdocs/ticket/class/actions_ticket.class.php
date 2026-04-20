@@ -221,22 +221,13 @@ class ActionsTicket extends CommonHookActions
 		print '<table class="border tableforfield centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 
-		if ($action == 'presend') {
-			print '<h4>';
-			print $langs->trans('InitialMessage');
-			print '&emsp;<small>';
-			print img_picto('', 'object_action', 'class="paddingright"');
-			print dol_print_date($object->datec, "dayhour").'</small>';
-			print '</h4>';
-		} else {
-			print '<table class="nobordernopadding centpercent "><tr><td class="noborder" style="border-bottom: none !important;">';
-			print $langs->trans('InitialMessage');
-			if ($action != 'edit_message_init' && $permissiontoadd && !in_array($object->status, $closeStatuses)) {
-				print '</td><td class="right noborder" style="border-bottom: none !important;">';
-				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
-			}
-			print '</td></tr></table>';
+		print '<table class="nobordernopadding centpercent "><tr><td class="noborder" style="border-bottom: none !important;">';
+		print $langs->trans('InitialMessage');
+		if ($action != 'edit_message_init' && $permissiontoadd && !in_array($object->status, $closeStatuses)) {
+			print '</td><td class="right noborder" style="border-bottom: none !important;">';
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
+		print '</td></tr></table>';
 
 		print '</td><td>';
 		if ($action == 'edit_message_init' && $permissiontoadd && !in_array($object->status, $closeStatuses)) {
