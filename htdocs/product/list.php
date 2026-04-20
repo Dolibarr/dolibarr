@@ -61,6 +61,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -296,6 +299,7 @@ $arrayfields = array(
 	'p.stock' => array('label' => "PhysicalStock", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 52),
 	'stock_virtual' => array('label' => "VirtualStock", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $virtualdiffersfromphysical), 'position' => 53),
 	'p.tobatch' => array('label' => "ManageLotSerial", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('productbatch')), 'position' => 60),
+	'p.fk_project' => array('label' => "fk_project", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('project')), 'position' => 64),
 	'p.fk_country' => array('label' => "Country", 'checked' => '0', 'position' => 100),
 	'p.fk_state' => array('label' => "State", 'checked' => '0', 'position' => 101),
 	$alias_product_perentity . '.accountancy_code_sell' => array('label' => "ProductAccountancySellCode", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 400),
@@ -495,6 +499,10 @@ $workstation_static = null;
 if (isModEnabled('workstation')) {
 	$workstation_static = new Workstation($db);
 }
+$project_static = null;
+if (isModEnabled('project')) {
+	$project_static = new Project($db);
+}
 $product_fourn = new ProductFournisseur($db);
 
 $title = $langs->trans("ProductsAndServices");
@@ -514,6 +522,9 @@ $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_
 $sql .= ' p.tobatch, ';
 if (isModEnabled('workstation')) {
 	$sql .= ' p.fk_default_workstation, ws.status as status_workstation, ws.ref as ref_workstation, ';
+}
+if (isModEnabled('project')) {
+	$sql .= ' p.fk_project, proj.title as project_title, proj.ref as project_ref, ';
 }
 if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -550,6 +561,10 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (isModEnabled('workstation')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation as ws ON (p.fk_default_workstation = ws.rowid)";
+}
+// Maybe small performance to be gained if LEFT JOIN's are only done when the field is actually enabled?
+if (isModEnabled('project')) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "projet as proj ON (p.fk_project = proj.rowid)";
 }
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
@@ -624,6 +639,10 @@ if ($search_label) {
 }
 if ($search_default_workstation) {
 	$sql .= natural_search('ws.ref', $search_default_workstation);
+}
+if ($search_fk_project) {
+	$sql .= natural_search('proj.ref', $search_fk_project);
+	$sql .= natural_search('proj.title', $search_fk_project);
 }
 if ($search_barcode) {
 	$sql .= natural_search('p.barcode', $search_barcode);
@@ -952,6 +971,9 @@ if ($search_date_modif_endday) {
 if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
+if ($search_fk_project) {
+	$param .= "&search_fk_project=".urlencode($search_fk_project);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -1253,6 +1275,13 @@ if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 	print '</td>';
 }
 
+// Project
+if (!empty($arrayfields['p.fk_project']['checked'])) {
+	print '<td class="liste_titre left">';
+	print '<input class="flat width75" type="text" name="search_fk_project" value="'.dol_escape_htmltag($search_fk_project).'">';
+	print '</td>';
+}
+
 // Sell price
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print '<td class="liste_titre right">';
@@ -1368,6 +1397,7 @@ if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra'
 if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy_export" value="'.dol_escape_htmltag($search_accountancy_code_buy_export).'"></td>';
 }
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
@@ -1534,6 +1564,10 @@ if (!empty($arrayfields['cu.label']['checked'])) {
 }
 if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_default_workstation']['label'], $_SERVER['PHP_SELF'], 'ws.ref', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.fk_project']['checked'])) {
+	print_liste_field_titre($arrayfields['p.fk_project']['label'], $_SERVER["PHP_SELF"], "p.fk_project", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.sellprice']['checked'])) {
@@ -1729,6 +1763,7 @@ while ($i < $imaxinloop) {
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
 		$product_static->stockable_product = $obj->stockable_product;
+		$product_static->fk_project = $obj->fk_project;
 		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
@@ -2089,6 +2124,23 @@ while ($i < $imaxinloop) {
 				$workstation_static->status = $obj->status_workstation;
 
 				print $workstation_static->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Project
+		if (!empty($arrayfields['p.fk_project']['checked'])) {
+			print '<td>';
+			if (isModEnabled('project') && !empty($obj->fk_project) && $project_static !== null) {
+				$project_static_result = $project_static->fetch($obj->fk_project);
+				if ($project_static_result > 0 && $project_static->id > 0) {
+					print $project_static->getNomUrl(1);
+				} else {
+					print (int) $obj->fk_project;
+				}
 			}
 			print '</td>';
 			if (!$i) {

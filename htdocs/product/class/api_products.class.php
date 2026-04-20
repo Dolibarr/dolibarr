@@ -2349,7 +2349,6 @@ class Products extends DolibarrApi
 		unset($object->ref_fourn);
 		unset($object->ref_supplier);
 		unset($object->product_fourn_id);
-		unset($object->fk_project);
 
 		unset($object->mode_reglement_id);
 		unset($object->cond_reglement_id);
