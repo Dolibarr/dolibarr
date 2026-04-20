@@ -63,6 +63,8 @@ if (isModEnabled('workstation')) {
 }
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -125,6 +127,7 @@ $search_import_key = GETPOST("search_import_key", 'alpha');
 $search_finished = GETPOST("search_finished");
 $search_units = GETPOST('search_units', 'int');
 $search_fk_project = GETPOST('search_fk_project', 'alpha');
+$fk_project  = GETPOSTINT('fk_project');
 
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
@@ -191,7 +194,11 @@ if ((string) $type == '0') {
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new Product($db);
-$hookmanager->initHooks(array('productservicelist'));
+if ($fk_project > 0) {
+	$hookmanager->initHooks(array('projectlist', 'globalcard'));
+} else {
+	$hookmanager->initHooks(array('productservicelist'));
+}
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -387,6 +394,9 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 $parameters = array('arrayfields' => &$arrayfields);
+if ($fk_project > 0) {
+	$parameters['fk_project'] = $fk_project;
+}
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -491,7 +501,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 /*
  * View
@@ -820,6 +829,72 @@ foreach ($searchCategoryProductList as $searchCategoryProduct) {
 
 //llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'classforhorizontalscrolloftabs');
 llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'bodyforlist mod-product page-list');
+
+if ($fk_project > 0) {
+	if ($project_static->fetch($fk_project) > 0) {
+		$project_static->fetch_thirdparty();
+
+		$savobject = $object;
+		$object = $project_static;
+
+		// To verify role of users
+		//$userAccess = $object->restrictedProjectArea($user,'read');
+		$userWrite = $project_static->restrictedProjectArea($user, 'write');
+		//$userDelete = $object->restrictedProjectArea($user,'delete');
+		//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+
+		$head = project_prepare_head($project_static);
+		print dol_get_fiche_head($head, 'product', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+
+		// Project card
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+		$morehtmlref = '<div class="refidno">';
+		// Title
+		$morehtmlref .= $project_static->title;
+		// Thirdparty
+		if (!empty($project_static->thirdparty->id) && $project_static->thirdparty->id > 0) {
+			$morehtmlref .= '<br>'.$project_static->thirdparty->getNomUrl(1, 'project');
+		}
+		$morehtmlref .= '</div>';
+
+		// Define a complementary filter for search of next/prev ref.
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$objectsListId = $project_static->getProjectsAuthorizedForUser($user, 0, 0);
+			$project_static->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
+		}
+
+		dol_banner_tab($project_static, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+		print '<div class="fichecenter">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield centpercent">';
+
+		// Visibility
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+		if ($project_static->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans('SharedProject');
+		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans('PrivateProject');
+		}
+		print '</td></tr>';
+
+		print "</table>";
+
+		print '</div>';
+		print dol_get_fiche_end();
+
+		print '<br>';
+
+		$object = $savobject;
+	} else {
+		print "ErrorRecordNotFound";
+	}
+}
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

@@ -5672,6 +5672,38 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 * Count items linked to an object id in association table
+	 *
+	 * @param	int			$fk_object_where		id of object we need to get linked items
+	 * @param	string		$field_where			name of field of object we need to get linked items
+	 * @param	string		$table_element			name of association table
+	 * @param	int|null	$fk_product_type		Optional fk_product_type: 0=Products, 1=Services, default is null and that will return all kinds
+	 * @return 	array|int							Array of record, -1 if empty
+	 */
+	public static function getCountOfItemsLinkedByObjectID($fk_object_where, $field_where, $table_element, $fk_product_type = null)
+	{
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
+
+		global $db;
+
+		$sql = "SELECT COUNT(*) as nb FROM ".$db->prefix().$db->sanitize($table_element)." WHERE ".$db->sanitize($field_where)." = ".((int) $fk_object_where);
+		if (!is_null($fk_product_type)) {
+			$sql .= " AND fk_product_type = ".((int) $fk_product_type);
+		}
+		$resql = $db->query($sql);
+		$n = 0;
+		if ($resql) {
+			$res = $db->fetch_object($resql);
+			if ($res) {
+				$n = $res->nb;
+			}
+		}
+
+		return $n;
+	}
 
 	/**
 	 *  Return children of product $id
