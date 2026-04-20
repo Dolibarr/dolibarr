@@ -618,6 +618,10 @@ if (empty($reshook)) {
 			$object->localtax1_type = $localtax1_type;
 			$object->localtax2_type = $localtax2_type;
 
+			if ($fk_project) {
+				$object->fk_project = $fk_project;
+			}
+
 			$object->type = $type;
 			$object->status = GETPOSTINT('statut');
 			$object->status_buy = GETPOSTINT('statut_buy');
@@ -1699,6 +1703,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 					print '<input name="desiredstock" type="hidden" value="0">';
 				}
+			}
+
+			if (isModEnabled('project')) {
+				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
+				print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, array(), 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print '</td></tr>';
 			}
 
 			if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
