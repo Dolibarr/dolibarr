@@ -27,10 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies'));
@@ -191,10 +191,10 @@ if ($id > 0 || !empty($ref)) {
 				$option .= '&limit='.((int) $limit);
 			}
 			if (!empty($search_month)) {
-				$option .= '&search_month='.urlencode($search_month);
+				$option .= '&search_month='.urlencode((string) $search_month);
 			}
 			if (!empty($search_year)) {
-				$option .= '&search_year='.urlencode((string) ($search_year));
+				$option .= '&search_year='.urlencode((string) $search_year);
 			}
 
 			print '<span id="anchorundermenu" class="anchorundermenu"></span>';
