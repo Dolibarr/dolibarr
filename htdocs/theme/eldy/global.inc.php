@@ -838,7 +838,7 @@ input.pageplusone {
 .hmirror {
 	transform: scale(-1, 1);
 }
-.undertopmenu {
+.anchorundermenu {
 	scroll-margin-top: 80px;
 }
 
@@ -4406,12 +4406,6 @@ span.tabspan {
 .allwidth {
 	width: 100%;
 }
-
-#undertopmenu {
-	background-repeat: repeat-x;
-	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
-}
-
 
 .paddingrightonly {
 	border-collapse: collapse;

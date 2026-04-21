@@ -26,6 +26,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +98,11 @@ class Form
 	public $cache_invoice_subtype = array();
 	/** @var array<string,string> */
 	public $cache_rule_for_lines_dates = array();
+
+	/**
+	 * @var bool Whether the shared phone input JS (country-sync) has been emitted
+	 */
+	private $phoneInputSharedJsLoaded = false;
 
 
 	/**
@@ -1110,6 +1116,285 @@ class Form
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$out .= ajax_combobox('select' . $htmlname, array(), 0, 0, 'resolve');
 		}
+
+		return $out;
+	}
+
+	/**
+	 *  Return a select list of country phone calling codes
+	 *
+	 *  @param	string		$selected			Pre-selected phone code value (e.g. "+33")
+	 *  @param	string		$htmlname			Name of HTML select element
+	 *  @param	string		$morecss			More CSS classes
+	 *  @param	int			$showempty			Show empty option (1) or not (0)
+	 *  @param	int			$country_id_hint	Country ID to prefer when multiple countries share a code
+	 *  @return	string							HTML select string
+	 */
+	public function selectPhoneCode($selected = '', $htmlname = 'phone_code', $morecss = 'maxwidth150', $showempty = 0, $country_id_hint = 0)
+	{
+		global $langs;
+
+		$langs->load("dict");
+
+		$out = '';
+		$codeArray = array();
+		$favorite = array();
+		$label = array();
+		$atleastonefavorite = 0;
+
+		$sql = "SELECT rowid, code, label, phone_code, favorite, trunk_prefix";
+		$sql .= " FROM ".$this->db->prefix()."c_country";
+		$sql .= " WHERE active > 0 AND phone_code IS NOT NULL AND phone_code != ''";
+
+		dol_syslog(get_class($this)."::selectPhoneCode", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				$translabel = ($obj->code && $langs->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langs->transnoentitiesnoconv("Country".$obj->code) : $obj->label;
+
+				$codeArray[$i]['rowid'] = $obj->rowid;
+				$codeArray[$i]['code'] = $obj->code;
+				$codeArray[$i]['label'] = $translabel;
+				$codeArray[$i]['phone_code'] = '+'.$obj->phone_code;
+				$codeArray[$i]['favorite'] = $obj->favorite;
+				$codeArray[$i]['trunk_prefix'] = $obj->trunk_prefix;
+				$favorite[$i] = $obj->favorite;
+				$label[$i] = dol_string_unaccent($translabel);
+				$i++;
+			}
+
+			$array1_sort_order = SORT_DESC;
+			$array2_sort_order = SORT_ASC;
+			array_multisort($favorite, $array1_sort_order, $label, $array2_sort_order, $codeArray);
+
+			$out .= '<select id="select'.$htmlname.'" class="flat selectphonecode'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+
+			if ($showempty) {
+				$out .= '<option value="">&nbsp;</option>'."\n";
+			}
+
+			// Determine which row index to select: prefer country_id_hint match, fallback to first phone_code match
+			$selectedIdx = -1;
+			$firstMatchIdx = -1;
+			if ($selected !== '') {
+				foreach ($codeArray as $idx => $row) {
+					if ($row['phone_code'] == $selected) {
+						if ($firstMatchIdx < 0) {
+							$firstMatchIdx = $idx;
+						}
+						if ($country_id_hint > 0 && $row['rowid'] == $country_id_hint) {
+							$selectedIdx = $idx;
+							break;
+						}
+					}
+				}
+				if ($selectedIdx < 0 && $firstMatchIdx >= 0) {
+					$selectedIdx = $firstMatchIdx;
+				}
+			}
+
+			foreach ($codeArray as $idx => $row) {
+				if (empty($row['code'])) {
+					continue;
+				}
+
+				if ($row['favorite']) {
+					$atleastonefavorite++;
+				}
+				if (empty($row['favorite']) && $atleastonefavorite) {
+					$atleastonefavorite = 0;
+					$out .= '<option value="" disabled class="selectoptiondisabledwhite">------------</option>';
+				}
+
+				$tmpflag = picto_from_langcode($row['code'], 'class="saturatemedium paddingrightonly"', 1);
+
+				// Short label for selected display: flag + country code
+				$selectlabel = ($tmpflag ? $tmpflag.' ' : '').$row['code'];
+
+				// Detailed label for dropdown list: flag + country name + phone code
+				$labeltoshow = ($tmpflag ? $tmpflag.' ' : '').$row['label'].' '.$row['phone_code'];
+
+				$out .= '<option value="'.dol_escape_htmltag($row['phone_code']).'"';
+				if ($idx === $selectedIdx) {
+					$out .= ' selected';
+				}
+				$out .= ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+				$out .= ' data-select-html="'.dol_escape_htmltag($selectlabel).'"';
+				$out .= ' data-country-id="'.((int) $row['rowid']).'"';
+				$out .= ' data-trunk-prefix="'.dol_escape_htmltag((string) $row['trunk_prefix']).'"';
+				$out .= '>';
+				$out .= dol_string_nohtmltag($labeltoshow);
+				$out .= '</option>'."\n";
+			}
+			$out .= '</select>';
+		} else {
+			dol_print_error($this->db);
+		}
+
+		// Make select dynamic
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+		$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve');
+
+		return $out;
+	}
+
+	/**
+	 * Show a self-contained phone input: hidden field + country code dropdown + number text field + JS.
+	 *
+	 * The hidden field (named $htmlname) carries the full phone value (e.g. "+33 644986885")
+	 * and is the only field POSTed. The code select and number input have no name attribute
+	 * (or a display-only name). JS keeps the hidden field in sync.
+	 *
+	 * @param  string  $phoneValue         Stored phone value (e.g. "+33 644986885") or empty
+	 * @param  string  $htmlname           Base name for the input (e.g. "phone_pro")
+	 * @param  int     $country_id_hint    Country ID for default phone code (0 = fallback to company country)
+	 * @param  string  $picto              Picto name (e.g. "object_phoning")
+	 * @param  string  $morecss            Additional CSS for the text input
+	 * @param  int     $maxlength          Max length attribute for the text input
+	 * @param  string  $countrySelectorId  ID of the country select to sync with
+	 * @return string                      HTML output
+	 */
+	public function showPhoneInput($phoneValue, $htmlname, $country_id_hint = 0, $picto = 'object_phoning', $morecss = 'maxwidth150', $maxlength = 0, $countrySelectorId = 'selectcountry_id')
+	{
+		global $mysoc;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
+
+		$codename = $htmlname.'_code';
+
+		// Fallback country_id: use caller hint, else main company country
+		if (empty($country_id_hint) && !empty($mysoc->country_id)) {
+			$country_id_hint = $mysoc->country_id;
+		}
+
+		// On POST re-display, read the hidden field (which contains the full phone string)
+		if (GETPOSTISSET($htmlname)) {
+			$fullPhone = (string) GETPOST($htmlname);
+		} else {
+			$fullPhone = (string) $phoneValue;
+		}
+
+		// Split into code + number
+		$parsed = dol_parse_phone($fullPhone);
+
+		// Resolve default phone code: parsed code if set, else from country hint
+		$phonecode = !empty($parsed['code']) ? $parsed['code'] : dol_get_phone_code_from_country($this->db, $country_id_hint);
+
+		$selectedCode = $phonecode;
+		$numberValue = $parsed['number'];
+
+		// Add back trunk prefix for display (e.g. "644986885" → "0644986885" for France)
+		if ($numberValue !== '' && $selectedCode !== '') {
+			$trunkPrefix = dol_get_trunk_prefix($this->db, $selectedCode);
+			if ($trunkPrefix !== '' && strpos($numberValue, $trunkPrefix) !== 0) {
+				$numberValue = $trunkPrefix.$numberValue;
+			}
+		}
+
+		// Build output: hidden field (POSTed value)
+		$out = '<input type="hidden" name="'.dol_escape_htmltag($htmlname).'" id="'.dol_escape_htmltag($htmlname).'" value="'.dol_escape_htmltag($fullPhone).'">';
+
+		// Picto
+		$out .= img_picto('', $picto, 'class="pictofixedwidth"');
+
+		// Phone code select (display-only name, not submitted as separate POST param)
+		$out .= $this->selectPhoneCode($selectedCode, $codename, 'maxwidth75 phone_code_select', 0, $country_id_hint);
+
+		// Visible number input (no name — not POSTed)
+		$out .= '<input type="tel" inputmode="numeric" pattern="[0-9]*" id="'.dol_escape_htmltag($htmlname).'_input" class="'.dol_escape_htmltag($morecss).'"';
+		if ($maxlength > 0) {
+			$out .= ' maxlength="'.$maxlength.'"';
+		}
+		$out .= ' value="'.dol_escape_htmltag($numberValue).'">';
+
+		// Per-field JS to sync hidden field
+		$out .= $this->getPhoneInputFieldJs($htmlname, $codename);
+
+		// Shared JS for country-sync (output once per page)
+		$out .= $this->getPhoneInputSharedJs($countrySelectorId);
+
+		return $out;
+	}
+
+	/**
+	 * Return inline JS that syncs the hidden phone field from select + text input.
+	 *
+	 * Strips formatting chars and trunk prefix from the number, then builds
+	 * the hidden value as "{code} {number}" or just "{number}" if no code.
+	 *
+	 * @param  string  $htmlname  Base name (e.g. "phone_pro")
+	 * @param  string  $codename  Code select name (e.g. "phone_pro_code")
+	 * @return string             Inline <script> block
+	 */
+	private function getPhoneInputFieldJs($htmlname, $codename)
+	{
+		$hiddenId = dol_escape_js($htmlname);
+		$inputId = dol_escape_js($htmlname).'_input';
+		$selectId = 'select'.dol_escape_js($codename);
+
+		$out = "\n".'<script type="text/javascript">'."\n";
+		$out .= 'jQuery(document).ready(function() {'."\n";
+		$out .= '	function syncPhoneField_'.$hiddenId.'() {'."\n";
+		$out .= '		var selectEl = jQuery("#'.$selectId.'");'."\n";
+		$out .= '		var code = selectEl.val() || "";'."\n";
+		$out .= '		var number = (jQuery("#'.$inputId.'").val() || "").replace(/[^0-9]/g, "");'."\n";
+		$out .= '		if (code && number) {'."\n";
+		$out .= '			var selOpt = selectEl[0] && selectEl[0].selectedOptions && selectEl[0].selectedOptions[0];'."\n";
+		$out .= '			var trunkPrefix = selOpt ? (selOpt.getAttribute("data-trunk-prefix") || "") : "";'."\n";
+		$out .= '			if (trunkPrefix !== "" && number.indexOf(trunkPrefix) === 0) {'."\n";
+		$out .= '				number = number.substring(trunkPrefix.length);'."\n";
+		$out .= '			}'."\n";
+		$out .= '			jQuery("#'.$hiddenId.'").val(code + " " + number);'."\n";
+		$out .= '		} else if (number) {'."\n";
+		$out .= '			jQuery("#'.$hiddenId.'").val(number);'."\n";
+		$out .= '		} else {'."\n";
+		$out .= '			jQuery("#'.$hiddenId.'").val("");'."\n";
+		$out .= '		}'."\n";
+		$out .= '	}'."\n";
+		$out .= '	jQuery("#'.$selectId.'").on("change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
+		$out .= '	jQuery("#'.$inputId.'").on("input change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
+		$out .= '});'."\n";
+		$out .= '</script>'."\n";
+
+		return $out;
+	}
+
+	/**
+	 * Return inline JS for country-selector → phone code sync (output once per page).
+	 *
+	 * When the country select changes, fetches the phone code via AJAX and updates
+	 * all .phone_code_select dropdowns, which in turn triggers per-field sync.
+	 *
+	 * @param  string  $countrySelectorId  ID of the country select element
+	 * @return string                      Inline <script> block or empty string
+	 */
+	private function getPhoneInputSharedJs($countrySelectorId)
+	{
+		if ($this->phoneInputSharedJsLoaded) {
+			return '';
+		}
+		$this->phoneInputSharedJsLoaded = true;
+
+		$out = "\n".'<script type="text/javascript">'."\n";
+		$out .= 'jQuery(document).ready(function() {'."\n";
+		$out .= '	jQuery("#'.dol_escape_js($countrySelectorId).'").on("change", function() {'."\n";
+		$out .= '		var country_id = jQuery(this).val();'."\n";
+		$out .= '		if (country_id) {'."\n";
+		$out .= '			jQuery.getJSON("'.DOL_URL_ROOT.'/core/ajax/getphonecode.php", {country_id: country_id, token: "'.currentToken().'"}, function(data) {'."\n";
+		$out .= '				if (data.phone_code) {'."\n";
+		$out .= '					jQuery(".phone_code_select").each(function() {'."\n";
+		$out .= '						jQuery(this).val(data.phone_code).trigger("change");'."\n";
+		$out .= '					});'."\n";
+		$out .= '				}'."\n";
+		$out .= '			});'."\n";
+		$out .= '		}'."\n";
+		$out .= '	});'."\n";
+		$out .= '});'."\n";
+		$out .= '</script>'."\n";
 
 		return $out;
 	}
