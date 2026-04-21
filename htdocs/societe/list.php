@@ -147,6 +147,11 @@ $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
 $search_note_public = GETPOST('search_note_public', 'alphanohtml');
 $search_note_private = GETPOST('search_note_private', 'alphanohtml');
 
+// If specific field filters are set, discard search_all to avoid combining both modes with no results
+if ($search_all && ($search_nom || $search_alias || $search_nom_only || $search_ref_ext || $search_barcode || $search_customer_code || $search_supplier_code || $search_account_customer_code || $search_account_supplier_code || $search_address || $search_zip || $search_town || $search_email || $search_phone || $search_phone_mobile || $search_fax || $search_url || $search_vat || $search_idprof1 || $search_idprof2 || $search_idprof3 || $search_idprof4 || $search_idprof5 || $search_idprof6 || $search_parent_name || $search_note_public || $search_note_private || ($search_id > 0))) {
+	$search_all = '';
+}
+
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
 $search_date_creation_startday = GETPOSTINT('search_date_creation_startday');
