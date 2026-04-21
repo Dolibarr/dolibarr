@@ -1379,7 +1379,7 @@ if (class_exists('mysqli')) {
 			}
 			if (strpos($host, 'ssl://') === 0) {
 				$host = substr($host, 6);
-				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, 0);
 				// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
 				parent::ssl_set(null, null, "", null, null);
 				$flags = MYSQLI_CLIENT_SSL;

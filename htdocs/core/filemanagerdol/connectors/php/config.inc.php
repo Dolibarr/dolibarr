@@ -3,6 +3,7 @@
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -52,7 +53,6 @@ $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_
 
 if (!empty($user->admin) && !$user->hasRight('website', 'write')) {
 	accessforbidden('Need to be admin or having write permission on website module');
-	exit;
 }
 
 

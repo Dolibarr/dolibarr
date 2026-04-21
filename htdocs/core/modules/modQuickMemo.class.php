@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2019	Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +99,7 @@ class modQuickMemo extends DolibarrModules
 		}
 		$compatibleHooks = array_unique($compatibleHooks);
 		// Security check
-		$compatibleHooks = array_filter($compatibleHooks, function (string $k) {
+		$compatibleHooks = array_filter($compatibleHooks, /** @return int|false */ static function (string $k) {
 			return preg_match('/^[a-zA-Z0-9_]+$/', $k);
 		});
 
