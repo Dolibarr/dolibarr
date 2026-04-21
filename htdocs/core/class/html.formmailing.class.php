@@ -90,8 +90,8 @@ class FormMailing extends Form
 			$out .= $title;
 		}
 
-		$out .= '<div id="massmail_selection_choices">';
-		$out .= '<select class="select" name="massmail_selection_choices_'.$htmlname.'" id="massmail_selection_choices_'.$htmlname.'" multiple size="'.$size.'" style="'.$morecss.'">';
+		$out .= '<div id="select_'.$htmlname.'">';
+		$out .= '<select class="select" name="select_'.$htmlname.'" id="select_'.$htmlname.'" multiple size="'.$size.'" style="'.$morecss.'">';
 
 		if (!empty($toptext)) {
 			$out .= '  <optgroup class="optgroup" label="'.$toptext.'">';
@@ -101,7 +101,7 @@ class FormMailing extends Form
 		foreach ($toplist as $mailingid) {
 			$fmresult = $mailingstatic->fetch($mailingid);
 			if ($fmresult) {
-				$out .= '    <option class="option" value="mailing_'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
+				$out .= '    <option class="option" value="'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
 			} else {
 				dol_syslog(__CLASS__.'::'.__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
 			}
@@ -117,7 +117,7 @@ class FormMailing extends Form
 		foreach ($endlist as $mailingid) {
 			$fmresult = $mailingstatic->fetch($mailingid);
 			if ($fmresult) {
-				$out .= '    <option class="option" value="mailing_'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
+				$out .= '    <option class="option" value="'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
 			} else {
 				dol_syslog(__CLASS__.'::'.__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
 			}
