@@ -204,7 +204,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_premassmail') {
 	$massaction = '';
 }
 
@@ -243,7 +243,19 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-
+// Massaction add/delete to/from mass mailing
+$button_add_mailing = GETPOST('button_add_mailing', 'aZ09');
+$button_delete_mailing = GETPOST('button_delete_mailing', 'aZ09');
+if ($massaction == 'confirm_premassmail' && $permissiontoread && $user->hasRight('mailing', 'write')) {		// Change recipients
+	$select_mailing = GETPOST('select_mailing', 'array') ?? array();
+	dol_syslog('line 249 count($select_mailing)='.count($select_mailing), LOG_DEBUG);
+	if ($button_add_mailing) {
+		dol_syslog('button_add_mailing='.$button_add_mailing, LOG_DEBUG);
+	}
+	if ($button_delete_mailing) {
+		dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
+	}
+}
 
 /*
  * View

@@ -91,7 +91,7 @@ class FormMailing extends Form
 		}
 
 		$out .= '<div id="select_'.$htmlname.'">';
-		$out .= '<select class="select" name="select_'.$htmlname.'" id="select_'.$htmlname.'" multiple size="'.$size.'" style="'.$morecss.'">';
+		$out .= '<select class="select" name="select_'.$htmlname.'[]" id="select_'.$htmlname.'" multiple size="'.$size.'" style="'.$morecss.'">';
 
 		if (!empty($toptext)) {
 			$out .= '  <optgroup class="optgroup" label="'.$toptext.'">';
@@ -135,7 +135,7 @@ class FormMailing extends Form
 		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
 		$out .= '<input type="hidden" name="massaction" value="confirm_premassmail">';
 		$out .= '<!-- 3 buttons Add, Delete and Cancel -->';
-		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_delete_'.$actionname.'" name="button_'.$actionname.'" value="'.$langs->trans("Add").'">';
+		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_add_'.$actionname.'" name="button_add_'.$actionname.'" value="'.$langs->trans("Add").'">';
 		$out .= '<input type="submit" class="butActionDelete button-delete small reposition" id="button_delete_'.$actionname.'" name="button_delete_'.$actionname.'" value="'.$langs->trans("Delete").'">';
 		$out .= '<input type="submit" class="button button-cancel reposition" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 		$out .= '</div><br>';
