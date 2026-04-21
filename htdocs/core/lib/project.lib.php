@@ -5,7 +5,7 @@
  * Copyright (C) 2018-2025 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1803,7 +1803,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Duration
 				print '<td class="center duration'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
-				$dayWorkLoad = empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? 0 : $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
+				$dayWorkLoad = empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? 0 : (int) $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
 				if (!isset($totalforeachday[$preselectedday])) {
 					$totalforeachday[$preselectedday] = 0;
 				}
@@ -2201,7 +2201,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					}
 
 					$tmparray = dol_getdate($tmpday);
-					$dayWorkLoad = (!empty($projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id]) ? $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id] : 0);
+					$dayWorkLoad = (!empty($projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id]) ? (int) $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id] : 0);
 					$totalforeachday[$tmpday] += $dayWorkLoad;
 
 					$alreadyspent = '';
@@ -2508,7 +2508,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$j = 0;
 				foreach ($TWeek as $weekIndex => $weekNb) {
 					$j++;
-					$weekWorkLoad = !empty($projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id]) ? $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id] : 0 ;
+					$weekWorkLoad = !empty($projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id]) ? (int) $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id] : 0 ;
 					if (!isset($totalforeachweek[$weekNb])) {
 						$totalforeachweek[$weekNb] = 0;
 					}

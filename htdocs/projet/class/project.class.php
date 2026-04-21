@@ -2144,7 +2144,7 @@ class Project extends CommonObject
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
 	 * @param 	int		$userid			Time spent by a particular user
-	 * @return 	int						Return integer <0 if OK, >0 if KO
+	 * @return 	1|-1					Return integer <0 if OK, >0 if KO
 	 */
 	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 	{
@@ -2181,11 +2181,11 @@ class Project extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$day = $this->db->jdate($obj->element_date); // task_date is date without hours
 				if (empty($dayallreadyfound[$day])) {
-					$this->weekWorkLoad[$day] = $obj->element_duration;
-					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = $obj->element_duration;
+					$this->weekWorkLoad[$day] = (int) $obj->element_duration; // Float in db used as int
+					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = (int) $obj->element_duration;
 				} else {
-					$this->weekWorkLoad[$day] += $obj->element_duration;
-					$this->weekWorkLoadPerTask[$day][$obj->fk_element] += $obj->element_duration;
+					$this->weekWorkLoad[$day] += (int) $obj->element_duration; // Float in db used as int
+					$this->weekWorkLoadPerTask[$day][$obj->fk_element] += (int) $obj->element_duration;
 				}
 				$dayallreadyfound[$day] = 1;
 				$i++;
@@ -2247,14 +2247,14 @@ class Project extends CommonObject
 					$week_number = getWeekNumber((int) $date[2], (int) $date[1], (int) $date[0]);
 				}
 				if (empty($weekalreadyfound[$week_number])) {
-					$this->monthWorkLoad[$week_number] = $obj->element_duration;
-					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
+					$this->monthWorkLoad[$week_number] = (int) $obj->element_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = (int) $obj->element_duration;
 				} else {
-					$this->monthWorkLoad[$week_number] += $obj->element_duration;
+					$this->monthWorkLoad[$week_number] += (int) $obj->element_duration;
 					if (!isset($this->monthWorkLoadPerTask[$week_number][$obj->fk_element])) {
 						$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = 0;
 					}
-					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += $obj->element_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += (int) $obj->element_duration;
 				}
 				$weekalreadyfound[$week_number] = 1;
 				$i++;

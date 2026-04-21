@@ -1373,7 +1373,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 
 		// --- 3. Return Final Value ---
 		if ($inhour == 1) {
-			return $nbOpenDay * 24;
+			return (int) ($nbOpenDay * 24);
 		}
 
 		return $nbOpenDay;
@@ -1391,7 +1391,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		if ($inhour == 1) {
 			$nbOpenDay *= 24;
 		}
-		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
+		return $nbOpenDay - (int) (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} else {
 		return $langs->trans("Error");
 	}
