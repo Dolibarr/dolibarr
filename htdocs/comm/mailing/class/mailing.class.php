@@ -577,7 +577,8 @@ class Mailing extends CommonObject
 	/**
 	 * Load id of mass mailings, either in a project or not
 	 *
-	 * @param	int			$projectid      Return only the mass mailing ids which is assigned to this project, 0 means return all mass mailing and is the default
+	 * @param	int			$include      	Return only the mass mailing ids which is assigned to this project, 0 means return all mass mailing and is the default
+	 * @param	int			$exclude      	Return only the mass mailing ids which is not assigned to this project, 0 means return all mass mailing and is the default
 	 * @param	int			$limit        	limit
 	 * @param	int			$offset       	Offset
 	 * @param	int			$showmin 		Mass mailings with status below this value will not be shown. Default is 0 (draft)
@@ -585,7 +586,7 @@ class Mailing extends CommonObject
 	 *
 	 * @return	int|int[]		-1 if KO, else OK either [] for nothing found or a list of id's
 	 */
-	public function fetchMassMailingIds($projectid = 0, $limit = 0, $offset = 0, $showmin = 0, $showmax = 3)
+	public function fetchMassMailingIds($include = 0, $exclude = 0, $limit = 0, $offset = 0, $showmin = 0, $showmax = 3)
 	{
 
 		dol_syslog(__CLASS__.'::'.__METHOD__, LOG_DEBUG);
@@ -599,8 +600,12 @@ class Mailing extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
-		if ($projectid > 0) {
-			$sql .= ' AND fk_project = '.$projectid;
+		if ($include > 0) {
+			$sql .= ' AND fk_project = '.$include;
+		}
+		if ($exclude > 0) {
+			$sql .= ' AND (fk_project != '.$exclude;
+			$sql .= ' OR fk_project IS NULL)';
 		}
 		$sql .= ' AND statut >= '.$showmin;
 		$sql .= ' AND statut <= '.$showmax;

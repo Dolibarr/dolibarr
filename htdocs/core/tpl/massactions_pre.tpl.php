@@ -388,19 +388,23 @@ if ($massaction == 'premassmail') {
 	if ($fpresult) {
 		$toptext = $projectstatic->title;
 		$toplist = $mailingstatic->fetchMassMailingIds($projectid);
+		$endlist = $mailingstatic->fetchMassMailingIds(0, $projectid);
 	} elseif ($projectid > 0) {
 		$toptext = $langs->trans("ProjectId").' '.$projectid.' '.$langs->trans("EMailings");
 		$toplist = $mailingstatic->fetchMassMailingIds($projectid);
+		$endlist = $mailingstatic->fetchMassMailingIds(0, $projectid);
 	} else {
 		$toptext = $langs->trans("ListOfEMailings");
 		$toplist = $mailingstatic->fetchMassMailingIds(0);
+		$endlist = array();
 	}
 
 	$htmlname = 'mailing';
 	$page = '';
 	$endtext = $langs->trans("Other").' '.$langs->trans("EMailings");
+	$size = round(10 + log(count($toplist)) + log(count($endlist)));
 	$title = '<h4><label for="massmail_selection_choices_'.$htmlname.'">'.$toptext.':</label></h4>';
-	$formmailing->formMultiSelectMassMailing($page, $htmlname, $title, $toplist, $toptext, $endlist, $endtext, 10, 'width: 100%;');
+	$formmailing->formMultiSelectMassMailing($page, $htmlname, $title, $toplist, $toptext, $endlist, $endtext, $size, 'width: 100%;');
 
 	print '<br>';
 }
