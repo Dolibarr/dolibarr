@@ -36,6 +36,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -85,7 +86,7 @@ $search_categ = GETPOST("search_categ", 'intcomma');
 $search_morphy = GETPOST("search_morphy", 'alpha');
 $search_import_key = trim(GETPOST("search_import_key", 'alpha'));
 
-$socid 		= GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 if (GETPOSTINT('catid') && empty($search_categ)) {
 	$search_categ = GETPOSTINT('catid');
 }
@@ -136,7 +137,7 @@ $object = new Adherent($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('memberlist'));
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->member->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
