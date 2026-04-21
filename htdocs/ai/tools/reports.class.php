@@ -492,18 +492,18 @@ class ToolReports extends McpTool
 				$this->db->free($resql);
 			}
 		} else {  // Global Grouped Report
-			$sqlGroup = "";
+			$sanitizedSqlGroup = "";
 			$colName = "";
 
 			if ($groupBy === 'month') {
-				$sqlGroup = "DATE_FORMAT(f.datef, '%Y-%m')";
+				$sanitizedSqlGroup = "DATE_FORMAT(f.datef, '%Y-%m')";
 				$colName = $langs->transnoentitiesnoconv("Month");
 			} else {
-				$sqlGroup = "s.nom";
+				$sanitizedSqlGroup = "s.nom";
 				$colName = $langs->transnoentitiesnoconv("Supplier");
 			}
 
-			$sql = "SELECT " . $sqlGroup . " as group_key, SUM(f.total_ttc) as total_amount, COUNT(f.rowid) as count_inv
+			$sql = "SELECT " . $sanitizedSqlGroup . " as group_key, SUM(f.total_ttc) as total_amount, COUNT(f.rowid) as count_inv
 				FROM " . MAIN_DB_PREFIX . "facture_fourn as f
 				LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid
 				WHERE f.entity IN (" . getEntity('facture_fourn') . ")
