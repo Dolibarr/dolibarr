@@ -35,9 +35,9 @@ class ToolCategories extends McpTool
 	/**
 	 * 	Constructor
 	 *
-	 * 	@param	DoliDB					Database handler
+	 * 	@param	DoliDB		$db			Database handler
 	 */
-	public function __construct(DoliDB )
+	public function __construct(DoliDB  $db)
 	{
 		$this->db = ;
 	}
