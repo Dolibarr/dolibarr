@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+ 
 /**
  * \file htdocs/ai/tools/categories.php
  * \ingroup ai
  * \brief MCP Server tool for Dolibarr categories.
  */
-
 
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -31,6 +31,17 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  */
 class ToolCategories extends McpTool
 {
+
+	/**
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
+
 	/**
 	 * @var array<string,int>|null Cached category type map (scope string => integer type ID)
 	 */
@@ -53,7 +64,6 @@ class ToolCategories extends McpTool
 			return $this->categoryTypeMapCache;
 		}
 
-		global $db;
 		$tmpCat = new Categorie($db);
 
 		$this->categoryTypeMapCache = $tmpCat->MAP_ID;
@@ -302,7 +312,6 @@ class ToolCategories extends McpTool
 	 */
 	private function resolveCategoryIdFromName($category_name, $scope = null)
 	{
-		global $db;
 
 		if (
 			!$this->user->hasRight('categorie', 'lire')
@@ -320,7 +329,7 @@ class ToolCategories extends McpTool
 		$sql = "SELECT c.rowid, c.label, c.type";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie as c";
 		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
-		$sql .= " AND LOWER(c.label) = '" . $db->escape($search_lower) . "'";
+		$sql .= " AND LOWER(c.label) = '" . $this->db->escape($search_lower) . "'";
 
 		if (!empty($scope)) {
 			if (!isset($cat_type_map[$scope])) {
@@ -332,21 +341,21 @@ class ToolCategories extends McpTool
 		$sql .= " LIMIT 2";
 
 		dol_syslog("ToolCategories::resolveCategoryIdFromName SQL: " . $sql, LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!$resql) {
-			return ["error" => "Database error during category ID lookup for '{$category_name}': " . $db->lasterror()];
+			return ["error" => "Database error during category ID lookup for '{$category_name}': " . $this->db->lasterror()];
 		}
 
-		$num_rows = $db->num_rows($resql);
+		$num_rows = $this->db->num_rows($resql);
 
 		if ($num_rows == 1) {
-			$obj = $db->fetch_object($resql);
-			$db->free($resql);
+			$obj = $this->db->fetch_object($resql);
+			$this->db->free($resql);
 			return (int) $obj->rowid;
 		} elseif ($num_rows > 1) {
 			$results = [];
-			while ($obj = $db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$results[] = [
 					"id" => (int) $obj->rowid,
 					"label" => $obj->label,
@@ -354,32 +363,32 @@ class ToolCategories extends McpTool
 					"url" => dol_buildpath('/categories/viewcat.php', 1) . "?id=" . $obj->rowid . "&type=" . $obj->type
 				];
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 			return [
 				"error" => "Multiple categories found with the label '{$category_name}'. Please specify a 'scope' to narrow down the result.",
 				"matches" => $results
 			];
 		} else {
-			$db->free($resql);
+			$this->db->free($resql);
 
 			// Try to find partial matches to help the user
 			$hint_sql = "SELECT c.rowid, c.label, c.type";
 			$hint_sql .= " FROM " . MAIN_DB_PREFIX . "categorie as c";
 			$hint_sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
-			$hint_sql .= " AND LOWER(c.label) LIKE '%" . $db->escape($search_lower) . "%'";
+			$hint_sql .= " AND LOWER(c.label) LIKE '%" . $this->db->escape($search_lower) . "%'";
 			$hint_sql .= " LIMIT 5";
 
-			$hint_resql = $db->query($hint_sql);
+			$hint_resql = $this->db->query($hint_sql);
 			$hints = [];
 			if ($hint_resql) {
-				while ($hint_obj = $db->fetch_object($hint_resql)) {
+				while ($hint_obj = $this->db->fetch_object($hint_resql)) {
 					$hints[] = [
 						"id" => (int) $hint_obj->rowid,
 						"label" => $hint_obj->label,
 						"scope" => $this->getScopeFromType((int) $hint_obj->type) ?? "unknown"
 					];
 				}
-				$db->free($hint_resql);
+				$this->db->free($hint_resql);
 			}
 
 			$error_msg = "Category with exact label '{$category_name}' not found.";
@@ -400,7 +409,6 @@ class ToolCategories extends McpTool
 	 */
 	private function searchCategories($args)
 	{
-		global $db;
 
 		if (
 			!$this->user->hasRight('categorie', 'lire')
@@ -426,7 +434,7 @@ class ToolCategories extends McpTool
 		if (!empty($query)) {
 			$query_lower = strtolower($query);
 
-			$sql .= " AND (LOWER(c.label) LIKE '%" . $db->escape($query_lower) . "%' OR LOWER(c.description) LIKE '%" . $db->escape($query_lower) . "%')";
+			$sql .= " AND (LOWER(c.label) LIKE '%" . $this->db->escape($query_lower) . "%' OR LOWER(c.description) LIKE '%" . $this->db->escape($query_lower) . "%')";
 		}
 
 		if (!empty($scope_filter)) {
@@ -439,10 +447,10 @@ class ToolCategories extends McpTool
 		}
 
 		$sql .= " ORDER BY c.label ASC";
-		$sql .= $db->plimit($limit, $offset);
+		$sql .= $this->db->plimit($limit, $offset);
 
 		dol_syslog("ToolCategories::searchCategories SQL: " . $sql, LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		$list = [];
 
 		if ($resql) {
@@ -473,7 +481,7 @@ class ToolCategories extends McpTool
 				'mo' => 'Manufacturing Order',
 			];
 
-			while ($r = $db->fetch_object($resql)) {
+			while ($r = $this->db->fetch_object($resql)) {
 				$type_id = (int) $r->type;
 				$scope_str = $this->getScopeFromType($type_id);
 
@@ -487,7 +495,7 @@ class ToolCategories extends McpTool
 					"url" => dol_buildpath('/categories/viewcat.php', 1) . "?id=" . (int) $r->rowid . "&type=" . $type_id
 				];
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 		}
 
 		if (empty($list)) {
@@ -514,7 +522,6 @@ class ToolCategories extends McpTool
 	 */
 	private function getCategoryDetails($args)
 	{
-		global $db;
 
 		if (
 			!$this->user->hasRight('categorie', 'lire')
@@ -684,7 +691,6 @@ class ToolCategories extends McpTool
 	 */
 	private function createCategory($args)
 	{
-		global $db;
 
 		$label = trim($args['name'] ?? $args['label'] ?? '');
 		$scope = trim($args['scope'] ?? '');
@@ -744,17 +750,17 @@ class ToolCategories extends McpTool
 		$label_lower = strtolower($label);
 
 		$existing_sql = "SELECT COUNT(*) as cnt FROM " . MAIN_DB_PREFIX . "categorie";
-		$existing_sql .= " WHERE LOWER(label) = '" . $db->escape($label_lower) . "'";
+		$existing_sql .= " WHERE LOWER(label) = '" . $this->db->escape($label_lower) . "'";
 		$existing_sql .= " AND type = " . ((int) $category_type);
 		$existing_sql .= " AND entity IN (" . getEntity('category') . ")";
 
-		$existing_res = $db->query($existing_sql);
+		$existing_res = $this->db->query($existing_sql);
 		if ($existing_res) {
-			$existing_obj = $db->fetch_object($existing_res);
+			$existing_obj = $this->db->fetch_object($existing_res);
 			if ($existing_obj && $existing_obj->cnt > 0) {
 				return ["error" => "A category with the label '{$label}' already exists for scope '{$scope}'."];
 			}
-			$db->free($existing_res);
+			$this->db->free($existing_res);
 		}
 
 		// Create the category
@@ -774,7 +780,7 @@ class ToolCategories extends McpTool
 				"url" => dol_buildpath('/categories/viewcat.php', 1) . "?id=" . $new_category_id . "&type=" . $category_type
 			];
 		} else {
-			$error_msg = $cat->error ?: ($cat->errors ? implode(', ', $cat->errors) : $db->lasterror());
+			$error_msg = $cat->error ?: ($cat->errors ? implode(', ', $cat->errors) : $this->db->lasterror());
 			return ["error" => "Failed to create category '{$label}': " . $error_msg];
 		}
 	}
