@@ -36,6 +36,17 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ToolInvoices extends McpTool
 {
+
+	/**
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 */
+	public function __construct(DoliDB  $db)
+	{
+		$this->db = $db;
+	}
+
 	/**
 	 * Returns an array of tool definitions, including name, description, and input schema.
 	 *
@@ -158,7 +169,7 @@ class ToolInvoices extends McpTool
 	 */
 	private function searchInvoices($args)
 	{
-		global $db, $conf;
+		global $conf;
 		$limit = isset($args['limit']) ? (int) $args['limit'] : 10;
 		$status = isset($args['status']) ? $args['status'] : 'unpaid';
 
@@ -189,17 +200,17 @@ class ToolInvoices extends McpTool
 			if (!is_array($cust)) {
 				$sql .= " AND f.fk_soc = " . ((int) $cust->id);
 			} else {
-				$sql .= " AND s.nom LIKE '%" . $db->escape($args['customer']) . "%'";
+				$sql .= " AND s.nom LIKE '%" . $this->db->escape($args['customer']) . "%'";
 			}
 		}
 
 		$sql .= " ORDER BY f.datef DESC LIMIT " . ((int) $limit);
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		$list = [];
 
 		if ($resql) {
-			while ($r = $db->fetch_object($resql)) {
+			while ($r = $this->db->fetch_object($resql)) {
 				// Double check to ensure no PROV/Drafts slip through unless asked
 				if ($status !== 'draft' && $r->fk_statut == 0) {
 					continue;
@@ -221,14 +232,14 @@ class ToolInvoices extends McpTool
 
 				$list[] = [
 					"ref" => $ref,
-					"date" => dol_print_date($db->jdate($r->datef), 'day'),
+					"date" => dol_print_date($this->db->jdate($r->datef), 'day'),
 					"customer" => $r->nom,
 					"amount" => price($r->total_ttc),
 					"status" => $statusLabel,
 					"url" => DOL_URL_ROOT . "/compta/facture/card.php?id=" . $r->rowid
 				];
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 		}
 
 		if (empty($list)) {
@@ -247,7 +258,6 @@ class ToolInvoices extends McpTool
 	 */
 	private function getInvoice($args)
 	{
-		global $db;
 		$id = isset($args['ref']) ? $args['ref'] : (isset($args['id']) ? $args['id'] : null);
 
 		$invoice = $this->findInvoice($id);
@@ -326,7 +336,7 @@ class ToolInvoices extends McpTool
 	 */
 	private function payInvoice($args)
 	{
-		global $db, $user;
+		global $user;
 		$invoice = $this->findInvoice($args['invoice']);
 		if (is_array($invoice)) {
 			return $invoice;
@@ -353,10 +363,10 @@ class ToolInvoices extends McpTool
 		}
 
 		$code = isset($args['payment_mode']) ? $args['payment_mode'] : 'VIR';
-		$modeId = dol_getIdFromCode($db, $code, 'c_paiement', 'code', 'id');
+		$modeId = dol_getIdFromCode($this->db, $code, 'c_paiement', 'code', 'id');
 
-		$db->begin();
-		$payment = new Paiement($db);
+		$this->db->begin();
+		$payment = new Paiement($this->db);
 		$payment->datepaye = dol_now();
 		$payment->amounts = [$invoice->id => $amount];
 		$payment->paiementid = $modeId;
@@ -364,16 +374,16 @@ class ToolInvoices extends McpTool
 
 		$paymentId = $payment->create($user, 1);
 		if ($paymentId < 0) {
-			$db->rollback();
+			$this->db->rollback();
 			return ["error" => "Payment creation failed: " . implode(', ', $payment->errors)];
 		}
 		$payment->fetch($paymentId);
 		if ($payment->addPaymentToBank($user, 'payment', '(Payment via AI)', $bank->rowid, '', '') < 0) {
-			$db->rollback();
+			$this->db->rollback();
 			return ["error" => "Failed to add payment to bank ledger."];
 		}
 
-		$db->commit();
+		$this->db->commit();
 
 		return [
 			"success" => true,
@@ -392,9 +402,9 @@ class ToolInvoices extends McpTool
 	 */
 	private function findCustomer($identifier)
 	{
-		global $db, $conf;
+		global $conf;
 
-		$customer = new Societe($db);
+		$customer = new Societe($this->db);
 		$identifier = trim($identifier);
 
 		if (preg_match('/^(?:socid|id)[:\s]+(\d+)$/i', $identifier, $m)) {
@@ -411,21 +421,21 @@ class ToolInvoices extends McpTool
 
 		// Exact
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe
-			WHERE (nom = '" . $db->escape($identifier) . "'
-			OR code_client = '" . $db->escape($identifier) . "')
+			WHERE (nom = '" . $this->db->escape($identifier) . "'
+			OR code_client = '" . $this->db->escape($identifier) . "')
 			AND entity IN (" . getEntity('societe') . ")";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
-		if ($resql && $db->num_rows($resql) > 0) {
-			$obj = $db->fetch_object($resql);
+		if ($resql && $this->db->num_rows($resql) > 0) {
+			$obj = $this->db->fetch_object($resql);
 			$customer->fetch($obj->rowid);
-			$db->free($resql);
+			$this->db->free($resql);
 			return $customer;
 		}
 
 		// Like
-		$like = '%' . $db->escape($identifier) . '%';
+		$like = '%' . $this->db->escape($identifier) . '%';
 
 		$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe
 			WHERE (nom LIKE '" . $like . "'
@@ -433,22 +443,22 @@ class ToolInvoices extends McpTool
 			AND entity IN (" . getEntity('societe') . ")
 			LIMIT 5";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 
 			if ($num == 1) {
-				$obj = $db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 				$customer->fetch($obj->rowid);
-				$db->free($resql);
+				$this->db->free($resql);
 				return $customer;
 			} elseif ($num > 1) {
 				$matches = [];
-				while ($obj = $db->fetch_object($resql)) {
+				while ($obj = $this->db->fetch_object($resql)) {
 					$matches[] = $obj->nom;
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 				return ["error" => "Multiple customers found.", "matches" => $matches];
 			}
 		}
@@ -464,8 +474,7 @@ class ToolInvoices extends McpTool
 	 */
 	private function findInvoice($identifier)
 	{
-		global $db;
-		$invoice = new Facture($db);
+		$invoice = new Facture($this->db);
 		$identifier = trim($identifier);
 
 		if (preg_match('/^\(?prov[-_]?(\d+)\)?$/i', $identifier, $matches)) {
@@ -493,7 +502,7 @@ class ToolInvoices extends McpTool
 	 */
 	private function findBankAccount($identifier)
 	{
-		global $db, $conf;
+		global $conf;
 
 		$identifier = trim($identifier);
 		$params = [];
@@ -505,15 +514,15 @@ class ToolInvoices extends McpTool
 		if (is_numeric($identifier)) {
 			$sql .= " AND rowid = " . ((int) $identifier);
 		} elseif (!empty($identifier)) {
-			$sql .= " AND (ref = '" . $db->escape($identifier) . "'
-						OR label LIKE '%" . $db->escape($identifier) . "%')";
+			$sql .= " AND (ref = '" . $this->db->escape($identifier) . "'
+						OR label LIKE '%" . $this->db->escape($identifier) . "%')";
 		}
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
-		if ($resql && $db->num_rows($resql) > 0) {
-			$obj = $db->fetch_object($resql);
-			$db->free($resql);
+		if ($resql && $this->db->num_rows($resql) > 0) {
+			$obj = $this->db->fetch_object($resql);
+			$this->db->free($resql);
 			return $obj;
 		}
 
@@ -522,11 +531,11 @@ class ToolInvoices extends McpTool
 			WHERE entity IN (" . getEntity('bank_account') . ") AND clos = 0
 			LIMIT 1";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
-		if ($resql && $db->num_rows($resql) > 0) {
-			$obj = $db->fetch_object($resql);
-			$db->free($resql);
+		if ($resql && $this->db->num_rows($resql) > 0) {
+			$obj = $this->db->fetch_object($resql);
+			$this->db->free($resql);
 			return $obj;
 		}
 
