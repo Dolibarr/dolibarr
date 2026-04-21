@@ -204,7 +204,13 @@ class ToolReports extends McpTool
 		}
 
 		if (!empty($args['thirdparty_name'])) {
-			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '%" . $this->db->escape($args['thirdparty_name']) . "%' AND entity IN (" . getEntity('societe') . ") LIMIT 1";
+			$name = $this->db->escape($args['thirdparty_name']);
+
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe 
+			WHERE nom LIKE '%" . $name . "%' 
+			AND entity IN (" . getEntity('societe') . ") 
+			LIMIT 1";
+
 			$resql = $this->db->query($sql);
 			if ($resql && $obj = $this->db->fetch_object($resql)) {
 				return $obj->rowid;
