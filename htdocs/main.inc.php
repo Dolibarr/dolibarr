@@ -72,6 +72,13 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
+/**
+ * @var ?string $php_session_save_handler
+ * @var ?string $dolibarr_main_force_https
+ * @var ?string $dolibarr_main_restrict_ip
+ * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_demo
+ */
 
 /**
  * @var Conf $conf

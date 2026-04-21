@@ -1137,14 +1137,23 @@ if (empty($reshook)) {
 			}
 
 			if (empty($error)) {
-				// Set invoice as paid
-				$result = $object->setPaid($user);	// We can close the invoice. Even if we got an excess received, it is now into discounts.
-				if ($result >= 0) {
-					$object->fetch($object->id);	// Reload properties
+				// Set invoice as paid, unless it's a deposit converted to credit without any payment received
+				// (option DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID allows creating the discount/credit even if the deposit
+				// has not been paid yet; in that case we must NOT mark it as paid since no payment was actually received)
+				$skipSetPaid = ($object->type == Facture::TYPE_DEPOSIT && getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') && price2num($object->getSommePaiement(), 'MT') == 0);
+
+				if ($skipSetPaid) {
+					$object->fetch($object->id);    // Reload properties
 					$db->commit();
 				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-					$db->rollback();
+					$result = $object->setPaid($user);  // We can close the invoice. Even if we got an excess received, it is now into discounts.
+					if ($result >= 0) {
+						$object->fetch($object->id);    // Reload properties
+						$db->commit();
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$db->rollback();
+					}
 				}
 			} else {
 				setEventMessages($discount->error, $discount->errors, 'errors');
