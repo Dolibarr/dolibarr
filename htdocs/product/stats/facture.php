@@ -5,6 +5,7 @@
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal'));
@@ -130,14 +131,104 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 
 
 /*
- * View
+ * Actions
  */
+
+$toselect = GETPOST('toselect', 'array:int');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
+$massaction = GETPOST('massaction', 'alpha');
+$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
+
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
+$arrayfields = array(
+	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 50),
+	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => '-1', 'position' => 52),
+	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 60),
+	'd.qty' => array('label' => "Qty", 'checked' => '1', 'position' => 65),
+	'd.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 70),
+	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
+);
 
 $invoicestatic = new Facture($db);
 $societestatic = new Societe($db);
 
 $form = new Form($db);
 $formother = new FormOther($db);
+
+
+
+$arrayofmassactions = array(
+	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+);
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+$arrayofselected = is_array($toselect) ? $toselect : array();
+$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	$objectclass = 'Facture';
+	$objectlabel = 'Invoices';
+	$permissiontoread = $user->hasRight("facture", "lire");
+	$permissiontoadd = $user->hasRight("facture", "creer");
+	$permissiontodelete = $user->hasRight("facture", "supprimer");
+	$uploaddir = $conf->invoice->dir_output;
+
+	if (isset($_POST['massaction'])) {
+		$massaction = $_POST['massaction'];
+	}
+
+	if (isset($_POST['confirmmassaction']) && isset($_POST['massaction']) && $_POST['massaction'] == 'presend') {
+		global $arrayofselected;
+
+		$toselect = is_array($_POST['toselect']) ? $_POST['toselect'] : array();
+		$arrayofselected = array();
+
+		// Store only VALID IDs (those with emails)
+		foreach ($toselect as $invoice_id) {
+			$objecttmp = new Facture($db);
+			if ($objecttmp->fetch((int) $invoice_id) > 0) {
+				// Force loading the thirdparty object
+				if (empty($objecttmp->thirdparty) || !is_object($objecttmp->thirdparty)) {
+					$objecttmp->fetch_thirdparty();
+				}
+
+				// Only add to array if email exists
+				if (!empty($objecttmp->thirdparty->email)) {
+					// Store just the ID, not the object
+					$arrayofselected[] = $invoice_id;
+				}
+			}
+		}
+
+		if (empty($arrayofselected)) {
+			setEventMessages($langs->trans("DefaultStatusEmptyMandatory").' '.$langs->trans("Select"), null, 'errors');
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			exit;
+		}
+	} else {
+		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	}
+}
+
+
+/*
+ * View
+ */
 
 if ($id > 0 || !empty($ref)) {
 	$product = new Product($db);
@@ -189,8 +280,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
+		print '<div class="clearboth"></div>';
+		print '<table class="noborder tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -202,7 +293,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		if ($showmessage && $nboflines > 1) {
-			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
+			// Nothing shown
 		} elseif ($user->hasRight('facture', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " f.ref, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";
@@ -287,6 +378,14 @@ if ($id > 0 || !empty($ref)) {
 			$result = $db->query($sql);
 			if ($result) {
 				$num = $db->num_rows($result);
+				// I am saving the result here, because some hooks a little later will change $result such that I can not get the contents
+				$all_rows = array();
+				$num = $db->num_rows($result);
+				while ($row = $db->fetch_object($result)) {
+					$all_rows[] = $row;
+				}
+				$db->free($result); // Free immediately
+				$result = null; // Clear the variable
 
 				$option .= '&id='.$product->id;
 
@@ -297,12 +396,16 @@ if ($id > 0 || !empty($ref)) {
 				// Add $param from extra fields
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 				// Add $param from hooks
+				'@phan-var-force string $param';
+				/** @var string $param */
 				$parameters = array('param' => &$param);
 				$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				$option .= $hookmanager->resPrint;
 
+				print '<span id="anchorundermenu" class="anchorundermenu"></span>';
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="">';
 				if (!empty($sortfield)) {
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 				}
@@ -311,7 +414,17 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-				print_barre_liste($langs->trans("CustomersInvoices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+				print_barre_liste($langs->trans("CustomersInvoices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, $massactionbutton, $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+
+				if ($massaction == 'presend' && !empty($arrayofselected)) {
+					// Set variables expected by the template
+					$topicmail = "SendBillRef";
+					$modelmail = "facture_send";
+					$objecttmp = new Facture($db);
+					$trackid = 'inv'.$id;
+
+					include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+				}
 
 				if (!empty($page)) {
 					$option .= '&page='.urlencode((string) ($page));
@@ -327,8 +440,8 @@ if ($id > 0 || !empty($ref)) {
 				print $hookmanager->resPrint;
 
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';
@@ -337,6 +450,8 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
+				// Action column
+				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
@@ -352,8 +467,7 @@ if ($id > 0 || !empty($ref)) {
 
 				if ($num > 0) {
 					while ($i < min($num, $limit)) {
-						$objp = $db->fetch_object($result);
-
+						$objp = $all_rows[$i];
 						if ($objp->type == Facture::TYPE_CREDIT_NOTE) {
 							$objp->qty = -($objp->qty);
 						}
@@ -366,15 +480,32 @@ if ($id > 0 || !empty($ref)) {
 						$societestatic->fetch($objp->socid);
 						$paiement = $invoicestatic->getSommePaiement();
 
-						print '<tr class="oddeven">';
-						print '<td>';
+						print '<tr data-row-id="'.$invoicestatic->id.'" class="oddeven row-with-select status2">';
+
+						// Action column
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center">';
+							if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+								$selected = 0;
+								if (in_array($invoicestatic->id, $arrayofselected)) {
+									$selected = 1;
+								}
+								print '<input id="cb'.$invoicestatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$invoicestatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+							}
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+
+						print '<td class="tdoverflowmax150">';
 						print $invoicestatic->getNomUrl(1);
 						print "</td>\n";
-						print '<td>'.$societestatic->getNomUrl(1).'</td>';
-						print "<td>".$objp->code_client."</td>\n";
+						print '<td class="tdoverflowmax125">'.$societestatic->getNomUrl(1).'</td>';
+						print '<td class="tdoverflowmax125">'.dolPrintHTML($objp->code_client)."</td>\n";
 						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->datef), 'dayhour')."</td>";
-						print '<td class="center">'.$objp->qty."</td>\n";
+						print '<td class="center">'.dolPrintHTML($objp->qty)."</td>\n";
 						print '<td class="right">'.price($objp->total_ht)."</td>\n";
 						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
 						// Fields from hook
@@ -401,7 +532,6 @@ if ($id > 0 || !empty($ref)) {
 			} else {
 				dol_print_error($db);
 			}
-			$db->free($result);
 		}
 	}
 } else {

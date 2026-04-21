@@ -694,6 +694,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('setConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, value, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
 
@@ -726,7 +732,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			//location.reload();
 			return false;
 		}
-	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.error("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 
 	return true;
 }
@@ -800,6 +806,12 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('delConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
 			if (url.indexOf('dol_resetcache') < 0) {

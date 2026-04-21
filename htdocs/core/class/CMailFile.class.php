@@ -189,6 +189,7 @@ class CMailFile
 	public $html_images = array();
 	/** @var array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}> */
 	public $images_encoded = array();
+	/** @var array<string,string> Filename extension to MIME mapping */
 	public $image_types = array(
 		'gif'  => 'image/gif',
 		'jpg'  => 'image/jpeg',

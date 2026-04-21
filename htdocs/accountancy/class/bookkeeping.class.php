@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -2947,7 +2947,7 @@ class BookKeeping extends CommonObject
 		$income_statement_amount = 0;
 
 		if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
-			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');  // @phpstan-ignore argument.type
 
 			$pcg_type_filter = array();
 			foreach ($accounting_groups_used_for_income_statement as $item) {
@@ -3073,8 +3073,8 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error && is_object($journal)) {
-				$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');
-				$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+				$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');  // @phpstan-ignore argument.type
+				$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');  // @phpstan-ignore argument.type
 
 				$pcg_type_filter = array();
 				$tmp = array_merge($accounting_groups_used_for_balance_sheet_account, $accounting_groups_used_for_income_statement);
@@ -3217,8 +3217,8 @@ class BookKeeping extends CommonObject
 							$bookkeeping->subledger_label = null;
 						} else {
 						*/
-							$bookkeeping->subledger_account = null;
-							$bookkeeping->subledger_label = null;
+						$bookkeeping->subledger_account = null;
+						$bookkeeping->subledger_label = null;
 						//}
 
 						$bookkeeping->numero_compte = $accountingaccount->account_number;
@@ -3422,16 +3422,20 @@ class BookKeeping extends CommonObject
 			$echecT = [];
 			foreach ($toselect as $id) {
 				if ($bookkeeping->fetch($id)) {
-					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
+					if (!getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
 						$accountcustcode = '411';
-					} else $accountcustcode = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+					} else {
+						$accountcustcode = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+					}
 
-					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) {
+					if (!getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) {
 						$accountsuppcode = '401';
-					} else $accountsuppcode = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+					} else {
+						$accountsuppcode = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+					}
 
 					if (strpos($bookkeeping->numero_compte, $accountcustcode) === 0 || strpos($bookkeeping->numero_compte, $accountsuppcode) === 0) {
-						$echecT[]=$bookkeeping->numero_compte;
+						$echecT[] = $bookkeeping->numero_compte;
 						continue;
 					}
 
@@ -3468,7 +3472,10 @@ class BookKeeping extends CommonObject
 
 		if (!empty($echecImplode)) {
 			$nbEchec = count(explode(',', $echecImplode));
-			setEventMessages($nbEchec == 1 ? $langs->trans('NoAccountChangedWithAccountNumber') . ' ' . $echecImplode : $langs->trans('NoAccountsChangedWithAccountNumber') . ' ' . $echecImplode, null, 'errors'
+			setEventMessages(
+				$nbEchec == 1 ? $langs->trans('NoAccountChangedWithAccountNumber') . ' ' . $echecImplode : $langs->trans('NoAccountsChangedWithAccountNumber') . ' ' . $echecImplode,
+				null,
+				'errors'
 			);
 		}
 
@@ -3731,7 +3738,6 @@ class BookKeeping extends CommonObject
 	 * @param	string		$code_journal	Accounting journal code
 	 * @param	int			$docdate		Date of the document
 	 * @return	int							int Return integer -1 if KO, 1 if OK
-	 *
 	 */
 	public function newReturnAccount(array $toselect, $code_journal, $docdate)
 	{
@@ -3753,7 +3759,7 @@ class BookKeeping extends CommonObject
 		$alreadyExtourneT = array();
 		if ($resqlAlreadyExtourne) {
 			while ($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)) {
-				$alreadyExtourneT []= $obj4->piece_num;
+				$alreadyExtourneT [] = $obj4->piece_num;
 			}
 		}
 

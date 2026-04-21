@@ -36,6 +36,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -85,7 +86,7 @@ if (isModEnabled('mailmanspip')) {
 }
 
 $object = new Adherent($db);
-$extrafields = new ExtraFields($db);
+
 $upload_dir = null;
 
 // fetch optionals attributes and labels

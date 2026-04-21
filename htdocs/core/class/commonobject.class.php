@@ -4914,7 +4914,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array|int						Array of record, -1 if empty
+	 * @return 	string[]|int					Array of record, -1 if empty
 	 */
 	public static function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
@@ -4946,7 +4946,7 @@ abstract class CommonObject
 	 * @param	int		$fk_object_where		id of object we need to get linked items
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array|int						Array of record, -1 if empty
+	 * @return 	int<-1,max>						Array of records, -1 if empty argument
 	 */
 	public static function getCountOfItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
@@ -6957,7 +6957,7 @@ abstract class CommonObject
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
 	{
-		global $langs, $user;
+		global $langs, $extrafields, $user;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED') || empty($this->array_options)) {
 			return 0;
@@ -6971,8 +6971,10 @@ abstract class CommonObject
 
 		// Check parameters
 		$langs->load('admin');
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
+		if (!isset($extrafields) || !is_object($extrafields)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+		}
 		$target_extrafields = $extrafields->fetch_name_optionals_label($this->table_element);
 
 		// Eliminate copied source object extra fields that do not exist in target object
@@ -7436,7 +7438,7 @@ abstract class CommonObject
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
-		global $langs, $user, $hookmanager;
+		global $langs, $user, $extrafields, $hookmanager;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -7451,8 +7453,10 @@ abstract class CommonObject
 		if (!empty($this->array_options) && isset($this->array_options["options_".$key])) {
 			// Check parameters
 			$langs->load('admin');
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
+			if (!isset($extrafields) || !is_object($extrafields)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+				$extrafields = new ExtraFields($this->db);
+			}
 			$extrafields->fetch_name_optionals_label($this->table_element);
 
 			$value = $this->array_options["options_".$key];

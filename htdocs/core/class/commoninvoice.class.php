@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -615,7 +615,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// List of payments
 		if (empty($mode) || $mode == 1) {
-			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".($field3 ? ", ".$this->db->sanitize($field3) : "") . ($field4 ? ", ".$this->db->sanitize($field4) : "");
+			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".($field3 ? ", ".$this->db->sanitize($field3) : "") . (", ".$this->db->sanitize($field4));
 			$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
 			$sql .= " WHERE pf.".$this->db->sanitize($field)." = ".((int) $this->id);
 			$sql .= " AND pf.".$this->db->sanitize($field2)." = p.rowid";
@@ -734,7 +734,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// If not a draft invoice and not temporary invoice
 		if ($tmppart !== 'PROV') {
-			if ($this instanceOf Facture) {
+			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
 				if ((int) $this->email_sent_counter > 0) {
@@ -906,7 +906,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// If not a draft invoice and not temporary invoice
 		if ($tmppart !== 'PROV') {
-			if ($this instanceOf Facture) {
+			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
 				if ((int) $this->email_sent_counter > 0) {
@@ -987,6 +987,10 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getVentilExportCompta($mode = 0)
 	{
+		if (!isModEnabled('accounting')) {
+			return 0;
+		}
+
 		$alreadydispatched = 0;
 
 		$type = 'customer_invoice';
@@ -1253,7 +1257,7 @@ abstract class CommonInvoice extends CommonObject
 			'paye'        => $paye,
 			'alreadypaid' => $alreadypaid,
 			'type'        => $type,
-			'paramsBadge'=>& $paramsBadge
+			'paramsBadge' => & $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -1438,7 +1442,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql		.= " AND type	= 'ban'";	// To exclude record done for some online payments
 				$sql		.= " AND traite	= 0";		// Not yet in a transfer receipt
 				dol_syslog(get_class($this)."::demande_prelevement - get pending requests not yet in receipt", LOG_DEBUG);
-				$resql= $this->db->query($sql);
+				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$total_already_requested += $obj ? (float) $obj->total_requested : 0;
