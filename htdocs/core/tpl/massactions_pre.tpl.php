@@ -375,6 +375,36 @@ if ($massaction == 'presend') {
 	print dol_get_fiche_end();
 }
 
+if ($massaction == 'premassmail') {
+	dol_syslog('massactions_pre.tpl.php::if massaction == premassmail', LOG_DEBUG);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
+	$formmailing = new FormMailing($db);
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+	$mailingstatic = new Mailing($db);
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	$projectstatic = new Project($db);
+
+	$fpresult = $projectstatic->fetch($projectid);
+	if ($fpresult) {
+		$toptext = $projectstatic->title;
+		$toplist = $mailingstatic->fetchMassMailingIds($projectid);
+	} elseif ($projectid > 0) {
+		$toptext = $langs->trans("ProjectId").' '.$projectid.' '.$langs->trans("EMailings");
+		$toplist = $mailingstatic->fetchMassMailingIds($projectid);
+	} else {
+		$toptext = $langs->trans("ListOfEMailings");
+		$toplist = $mailingstatic->fetchMassMailingIds(0);
+	}
+
+	$htmlname = 'mailing';
+	$page = $_SERVER["PHP_SELF"];
+	$endtext = $langs->trans("Other").' '.$langs->trans("EMailings");
+	$title = '<h4><label for="massmail_selection_choices_'.$htmlname.'">'.$toptext.':</label></h4>';
+	$formmailing->formMultiSelectMassMailing($page, $htmlname, $title, $toplist, $toptext, $endlist, $endtext, 10, 'width: 100%;');
+
+	print '<br>';
+}
+
 if ($massaction == 'edit_extrafields') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 	$elementtype = $objecttmp->element;

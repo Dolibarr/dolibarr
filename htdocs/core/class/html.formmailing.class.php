@@ -59,4 +59,91 @@ class FormMailing extends Form
 		// Note -1 is used for error, so we use -2 for tempty value
 		return Form::selectarray($htmlname, $options, $selectedid, ($show_empty ? -2 : 0), 0, 0, '', 1, 0, 0, '', $morecss);
 	}
+
+	/**
+	 * Output a form with Multi Selection of Mass Mailings
+	 *
+	 * @param 	string 		$page 		Page
+	 * @param	string		$htmlname	Name of HTML field
+	 * @param 	string 		$title 		Text above the multi select form., default is '' and not shown, could be a <h4>...</h4>
+	 * @param	int[] 		$toplist 	List of mass mailing ids in top/main optgroup
+	 * @param 	string 		$toptext 	Text in top/main optgroup (optional) - default is '' and not shown
+	 * @param	int[] 		$endlist 	List of mass mailing ids in below optgroup (optional) - default array() - not used, not shown
+	 * @param 	string 		$endtext 	Text in below optgroup (optional) - default is '' and not shown
+	 * @param	int 		$size 		How heigh the table should be in lines, default is 16
+	 * @param	string 		$morecss 	More css
+	 * @param	int			$nooutput 	No print output. Return it only.
+	 *
+	 * @return 	string 					HTML
+	 */
+	public function formMultiSelectMassMailing($page, $htmlname, $title = '', $toplist, $toptext = '', $endlist = array(), $endtext = '', $size = 16, $morecss = '', $nooutput = 0)
+	{
+		dol_syslog(__CLASS__.'::'.__METHOD__.'::', LOG_DEBUG);
+		global $langs;
+		$langs->load("mails");
+
+		$out = '';
+		$out .= '<form action="'.$page.'">';
+		if (!empty($title)) {
+			$out .= $title;
+		}
+
+		$out .= '<div id="massmail_selection_choices">';
+		$out .= '<select class="select" name="massmail_selection_choices_'.$htmlname.'" id="massmail_selection_choices_'.$htmlname.'" multiple size="'.$size.'" style="'.$morecss.'">';
+
+		if (!empty($toptext)) {
+			$out .= '  <optgroup class="optgroup" label="'.$toptext.'">';
+		}
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		foreach ($toplist as $mailingid) {
+			$fmresult = $mailingstatic->fetch($mailingid);
+			if ($fmresult) {
+				$out .= '    <option class="option" value="mailing_'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
+			} else {
+				dol_syslog(__CLASS__.'::'.__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
+			}
+		}
+		$out .= '    <option class="option" value="" disabled>&mdash;&mdash;&mdash;</option>';
+		if (!empty($toptext)) {
+			$out .= '  </optgroup>';
+		}
+
+		if (!empty($endtext)) {
+			$out .= '  <optgroup class="optgroup" label="'.$endtext.'">';
+		}
+		foreach ($endlist as $mailingid) {
+			$fmresult = $mailingstatic->fetch($mailingid);
+			if ($fmresult) {
+				$out .= '    <option class="option" value="mailing_'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
+			} else {
+				dol_syslog(__CLASS__.'::'.__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
+			}
+		}
+		if (!empty($endtext)) {
+			$out .= '  </optgroup>';
+		}
+
+		$out .= '</select>';
+		$out .= '</div>';
+
+		$out .= '<br>';
+
+		$actionname = $htmlname;
+		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
+		$out .= '<!-- 3 buttons Add, Delete and Cancel -->';
+		$out .= '<input type="submit" class="butAction button-add small reposition" name="button_'.$actionname.'" value="'.$langs->trans("Add").'">';
+		$out .= '<input type="submit" class="butActionDelete button-delete small reposition" name="button_delete_'.$actionname.'" value="'.$langs->trans("Delete").'">';
+		$out .= '<input type="submit" class="button button-cancel reposition" name="button_cancel_'.$actionname.'" value="'.$langs->trans("Cancel").'" />';
+		$out .= '</div><br>';
+
+		$out .= '</form>';
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		} else {
+			return $out;
+		}
+	}
 }
