@@ -206,9 +206,9 @@ class ToolReports extends McpTool
 		if (!empty($args['thirdparty_name'])) {
 			$name = $this->db->escape($args['thirdparty_name']);
 
-			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe 
-			WHERE nom LIKE '%" . $name . "%' 
-			AND entity IN (" . getEntity('societe') . ") 
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe
+			WHERE nom LIKE '%" . $name . "%'
+			AND entity IN (" . getEntity('societe') . ")
 			LIMIT 1";
 
 			$resql = $this->db->query($sql);
@@ -356,7 +356,9 @@ class ToolReports extends McpTool
 			return [[$langs->transnoentitiesnoconv("Error") => "Invalid transaction type"]];
 		}
 
-		$sql = "SELECT * FROM (" . implode(" UNION ", $queries) . ") as combined_transactions ";
+		$sql = "SELECT * FROM (";
+		$sql .= implode(" UNION ", $queries);
+		$sql .= ") as combined_transactions ";
 		$whereParts = [];
 		if ($dateStart > 0) {
 			$whereParts[] = "date_entry >= '" . $this->db->idate($dateStart) . "'";
