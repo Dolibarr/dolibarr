@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2026		John BOTELLA
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +35,12 @@ function quickmemoAdminPrepareHead()
 	// $extrafields = new ExtraFields($db);
 	// $extrafields->fetch_name_optionals_label('myobject');
 
-	$langs->load("quickmemo@quickmemo");
+	$langs->load("quickmemo");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dolBuildUrl(dol_buildpath("/quickmemo/admin/setup.php", 1));
+	$head[$h][0] = dolBuildUrl(DOL_DOCUMENT_ROOT."/quickmemo/admin/setup.php");
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;

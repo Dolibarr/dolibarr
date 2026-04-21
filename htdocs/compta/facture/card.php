@@ -89,7 +89,7 @@ if (isModEnabled('incoterm')) {
 if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
-
+var_dump($_POST);
 // General $Variables
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');

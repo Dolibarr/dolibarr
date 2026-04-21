@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1110,7 +1110,7 @@ class Memo extends CommonObject
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("quickmemo@quickmemo");
+			//$langs->load("quickmemo");
 			$this->labelStatus[self::STATUS_TPL] = $langs->transnoentitiesnoconv('Template');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_ARCHIVED] = $langs->transnoentitiesnoconv('Archived');
