@@ -829,11 +829,12 @@ $arrayofmassactions = array(
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'premassmail' => img_picto('', 'mail-bulk', 'class="pictofixedwidth"').$langs->trans("EditMailing"),
 );
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'premassmail', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
