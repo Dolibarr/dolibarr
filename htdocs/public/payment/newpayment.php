@@ -7,7 +7,7 @@
  * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,7 +354,7 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 	/**
-	 * @var array<strint,mixed>		$stripearrayofkeys
+	 * @var array<string,mixed>		$stripearrayofkeys
 	 * @var array<int,mixed>		$stripearrayofkeysbyenv
 	 */
 }
@@ -1807,7 +1807,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	}
 
 
-		// Add hook to complete the form
+	// Add hook to complete the form
 	$parameters = array('mode' => 'renewal');
 	$reshook = $hookmanager->executeHooks('membershipNewSubscriptionPublicForm', $parameters, $object, $action);
 	if ($reshook < 0) {
@@ -1818,7 +1818,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	// TODO Move this into previous hook
 	if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER') && $action != 'dopayment') {
 		$country_id = 0;
-		if ($member->thirdparty instanceOf Societe) {
+		if ($member->thirdparty instanceof Societe) {
 			$country_id = $member->thirdparty->country_id;
 		}
 		$checkednature = $member->morphy;
@@ -1848,7 +1848,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'"'.($action != 'dopayment' ? ' required autofocus' : '').'>';
 		} else {
 			$arraybudget = array('50' => '<= 100 000', '100' => '<= 200 000', '200' => '<= 500 000', '300' => '<= 1 500 000', '600' => '<= 3 000 000', '1000' => '<= 5 000 000', '2000' => '5 000 000+');
-			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, ($checkednature === 'mor' ? 'required' :''), 0, 0, 0, '');
+			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, ($checkednature === 'mor' ? 'required' : ''), 0, 0, 0, '');
 		}
 		print ' € or $';
 

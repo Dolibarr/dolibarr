@@ -153,7 +153,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array<string,mixed>>
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>
 	 * @phpstan-var array<string, array{
 	 * type: string,
 	 * label: string,
@@ -4914,7 +4914,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array|int						Array of record, -1 if empty
+	 * @return 	string[]|int					Array of record, -1 if empty
 	 */
 	public static function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
@@ -4946,7 +4946,7 @@ abstract class CommonObject
 	 * @param	int		$fk_object_where		id of object we need to get linked items
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	array|int						Array of record, -1 if empty
+	 * @return 	int<-1,max>						Array of records, -1 if empty argument
 	 */
 	public static function getCountOfItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{

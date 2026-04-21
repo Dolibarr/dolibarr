@@ -112,7 +112,14 @@ if (empty($instructions)) {
 	}
 } else {
 	if ($function == 'textgenerationemail' || $function == 'textgenerationwebpage') {
-		print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+		if ($format == 'html') {
+			print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+		} else {
+			// We must not use dolPrintText because dolPrintText format data including accent in htmlentities for a HTML output. We need a non formatted output.
+			//print dol_string_onlythesehtmltags('"Ça va" est une expression française et ceci une balise <a> html', 1, 1, 1);
+			print dol_string_onlythesehtmltags($generatedContent, 1, 1, 1);
+			//print dol_string_nohtmltag($generatedContent);
+		}
 	} elseif ($function == 'imagegeneration') {
 		// TODO
 	} elseif ($function == 'videogeneration') {

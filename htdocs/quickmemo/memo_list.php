@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,34 +23,13 @@
  *		\brief      List page for memo
  */
 
-// General defined Options
-//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');					// Force use of CSRF protection with tokens even for GET
-//if (! defined('MAIN_AUTHENTICATION_MODE')) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
-//if (! defined('MAIN_LANG_DEFAULT'))        define('MAIN_LANG_DEFAULT', 'auto');					// Force LANG (language) to a particular value
-//if (! defined('MAIN_SECURITY_FORCECSP'))   define('MAIN_SECURITY_FORCECSP', 'none');				// Disable all Content Security Policies
-//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');					// Disable browser notification
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');						// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined('NOLOGIN'))                  define('NOLOGIN', '1');						// Do not use login - if this page is public (can be called outside logged session). This includes the NOIPCHECK too.
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       	  		// Do not load ajax.lib.php library
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');					// Do not create database handler $db
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');					// Do not load html.form.class.php
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');					// Do not load and show top and left menu
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');					// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');					// Do not load object $langs
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');					// Do not load object $user
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');			// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');			// Do not check injection attack on POST parameters
-//if (! defined('NOSESSION'))                define('NOSESSION', '1');						// On CLI mode, no need to use web sessions
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');					// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');					// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-
-
 // Load Dolibarr environment
 require '../main.inc.php';
 /**
  * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -97,13 +76,11 @@ $pagenext = $page + 1;
 
 // Initialize technical objects
 $object = new Memo($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->quickmemo->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-//$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -511,21 +488,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-quickmemo page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
