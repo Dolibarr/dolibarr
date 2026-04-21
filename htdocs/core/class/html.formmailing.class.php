@@ -63,7 +63,7 @@ class FormMailing extends Form
 	/**
 	 * Output a form with Multi Selection of Mass Mailings
 	 *
-	 * @param 	string 		$page 		Page
+	 * @param 	string 		$page 		Page - if empty no form tags are printed, else they are
 	 * @param	string		$htmlname	Name of HTML field
 	 * @param 	string 		$title 		Text above the multi select form., default is '' and not shown, could be a <h4>...</h4>
 	 * @param	int[] 		$toplist 	List of mass mailing ids in top/main optgroup
@@ -83,7 +83,9 @@ class FormMailing extends Form
 		$langs->load("mails");
 
 		$out = '';
-		$out .= '<form action="'.$page.'">';
+		if (!empty($page)) {
+			$out .= '<form action="'.$page.'">';
+		}
 		if (!empty($title)) {
 			$out .= $title;
 		}
@@ -131,13 +133,16 @@ class FormMailing extends Form
 
 		$actionname = $htmlname;
 		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
+		$out .= '<input type="hidden" name="massaction" value="confirm_premassmail">';
 		$out .= '<!-- 3 buttons Add, Delete and Cancel -->';
-		$out .= '<input type="submit" class="butAction button-add small reposition" name="button_'.$actionname.'" value="'.$langs->trans("Add").'">';
-		$out .= '<input type="submit" class="butActionDelete button-delete small reposition" name="button_delete_'.$actionname.'" value="'.$langs->trans("Delete").'">';
-		$out .= '<input type="submit" class="button button-cancel reposition" name="button_cancel_'.$actionname.'" value="'.$langs->trans("Cancel").'" />';
+		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_delete_'.$actionname.'" name="button_'.$actionname.'" value="'.$langs->trans("Add").'">';
+		$out .= '<input type="submit" class="butActionDelete button-delete small reposition" id="button_delete_'.$actionname.'" name="button_delete_'.$actionname.'" value="'.$langs->trans("Delete").'">';
+		$out .= '<input type="submit" class="button button-cancel reposition" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 		$out .= '</div><br>';
 
-		$out .= '</form>';
+		if (!empty($page)) {
+			$out .= '</form>';
+		}
 
 		if (empty($nooutput)) {
 			print $out;
