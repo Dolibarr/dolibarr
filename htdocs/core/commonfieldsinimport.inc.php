@@ -15,9 +15,9 @@ if (empty($keyforalias)) {
 
 dol_include_once($keyforclassfile);
 if (class_exists($keyforclass)) {
+	/** @var CommonObject $tmpobject */
 	$tmpobject = new $keyforclass($this->db);
 	'@phan-var-force CommonObject $tmpobject';
-	/** @var CommonObject $tmpobject */
 
 	// Add common fields
 	foreach ($tmpobject->fields as $keyfield => $valuefield) {

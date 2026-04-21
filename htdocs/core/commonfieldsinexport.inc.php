@@ -22,9 +22,9 @@ if (empty($keyforalias)) {
 
 dol_include_once($keyforclassfile);
 if (class_exists($keyforclass)) {
+	/** @var CommonObject $tmpobject */
 	$tmpobject = new $keyforclass($this->db);  // @phpstan-ignore property.nonObject
 	'@phan-var-force CommonObject $tmpobject';
-	/** @var CommonObject $tmpobject */
 
 
 	// Add common fields
