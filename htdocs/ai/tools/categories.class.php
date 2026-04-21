@@ -35,11 +35,11 @@ class ToolCategories extends McpTool
 	/**
 	 * 	Constructor
 	 *
-	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	DoliDB					Database handler
 	 */
-	public function __construct(DoliDB $db)
+	public function __construct(DoliDB )
 	{
-		$this->db = $db;
+		$this->db = ;
 	}
 
 	/**
@@ -64,7 +64,7 @@ class ToolCategories extends McpTool
 			return $this->categoryTypeMapCache;
 		}
 
-		$tmpCat = new Categorie($db);
+		$tmpCat = new Categorie($this->db);
 
 		$this->categoryTypeMapCache = $tmpCat->MAP_ID;
 
@@ -547,7 +547,7 @@ class ToolCategories extends McpTool
 			return ["error" => "Missing 'category_id' or 'category_name' argument. One must be provided to get category details."];
 		}
 
-		$cat = new Categorie($db);
+		$cat = new Categorie($this->db);
 		$result = $cat->fetch($category_id);
 		if ($result <= 0) {
 			return ["error" => "Category with ID {$category_id} not found."];
@@ -720,7 +720,7 @@ class ToolCategories extends McpTool
 			return ["error" => "Permission Denied: User does not have rights to create categories of type '{$scope}'."];
 		}
 
-		$cat = new Categorie($db);
+		$cat = new Categorie($this->db);
 		$cat->label = $label;
 		$cat->description = $description;
 		$cat->type = (string) $category_type;
@@ -733,7 +733,7 @@ class ToolCategories extends McpTool
 
 		// Handle parent category
 		if ($parent_category_id > 0) {
-			$parent_cat = new Categorie($db);
+			$parent_cat = new Categorie($this->db);
 			$parent_fetch_result = $parent_cat->fetch($parent_category_id);
 			if ($parent_fetch_result <= 0) {
 				return ["error" => "Parent category with ID {$parent_category_id} not found."];
