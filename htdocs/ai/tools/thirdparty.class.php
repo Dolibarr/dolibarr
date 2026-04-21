@@ -32,6 +32,17 @@ require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
  */
 class ToolThirdParty extends McpTool
 {
+
+	/**
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 */
+	public function __construct(DoliDB  $db)
+	{
+		$this->db = $db;
+	}
+
 	/**
 	 * Returns an array of tool definitions, including name, description, and input schema.
 	 *
@@ -188,7 +199,6 @@ class ToolThirdParty extends McpTool
 	 */
 	private function search(array $args)
 	{
-		global $db;
 		if (!$this->user->hasRight('societe', 'lire')) {
 			return ["error" => "Permission Denied"];
 		}
@@ -211,7 +221,7 @@ class ToolThirdParty extends McpTool
 			$sql .= " AND s.rowid = " . (int) $query;
 			$limit = 1;
 		} else {
-			$q = $db->escape($query);
+			$q = $this->db->escape($query);
 			$sql .= " AND (s.nom LIKE '%" . $q . "%'";
 			$sql .= " OR s.name_alias LIKE '%" . $q . "%'";
 			$sql .= " OR s.code_client LIKE '%" . $q . "%'";
@@ -230,16 +240,16 @@ class ToolThirdParty extends McpTool
 		$sql .= " ORDER BY s.nom ASC";
 		$sql .= " LIMIT " . (int) $limit;
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!$resql) {
-			dol_syslog("Search DB Error: " . $db->lasterror(), LOG_ERR);
+			dol_syslog("Search DB Error: " . $this->db->lasterror(), LOG_ERR);
 			return ["error" => "DB Error"];
 		}
 
 		$data = [];
 
-		while ($obj = $db->fetch_object($resql)) {
+		while ($obj = $this->db->fetch_object($resql)) {
 			$roles = [];
 
 			// Cast strictly to ensure type safety in logic
@@ -268,7 +278,7 @@ class ToolThirdParty extends McpTool
 			];
 		}
 
-		$db->free($resql);
+		$this->db->free($resql);
 
 		return $data;
 	}
@@ -283,7 +293,6 @@ class ToolThirdParty extends McpTool
 	 */
 	private function getDetails(array $args): array
 	{
-		global $db;
 		if (!$this->user->hasRight('societe', 'lire')) {
 			return ["error" => "Permission Denied"];
 		}
@@ -292,7 +301,7 @@ class ToolThirdParty extends McpTool
 			return ["error" => "ID is required"];
 		}
 
-		$soc = new Societe($db);
+		$soc = new Societe($this->db);
 
 		// Fetch returns > 0 on success, 0 on not found, < 0 on error
 		$result = $soc->fetch((int) $args['id']);
@@ -328,7 +337,7 @@ class ToolThirdParty extends McpTool
 	 */
 	private function create(array $args)
 	{
-		global $db, $conf;
+		global $conf;
 
 		// Check permissions
 		if (!$this->user->hasRight('societe', 'creer')) {
@@ -340,7 +349,7 @@ class ToolThirdParty extends McpTool
 			return ["error" => "Name is required"];
 		}
 
-		$soc = new Societe($db);
+		$soc = new Societe($this->db);
 
 		// Assign properties with strict casting to prevent null issues in strict mode
 		$soc->nom = (string) $args['name'];
@@ -424,7 +433,6 @@ class ToolThirdParty extends McpTool
 	 */
 	private function update(array $args)
 	{
-		global $db;
 		if (!$this->user->hasRight('societe', 'creer') && !$this->user->hasRight('societe', 'modifier')) {
 			return ["error" => "Permission Denied to update."];
 		}
@@ -433,7 +441,7 @@ class ToolThirdParty extends McpTool
 			return ["error" => "ID is required for update."];
 		}
 
-		$soc = new Societe($db);
+		$soc = new Societe($this->db);
 
 		$result = $soc->fetch((int) $args['id']);
 		if ($result <= 0) {
@@ -495,7 +503,7 @@ class ToolThirdParty extends McpTool
 	 */
 	private function listContacts(array $args)
 	{
-		global $db, $langs;
+		global $langs;
 
 		if (!$this->user->hasRight('societe', 'lire')) {
 			return ["error" => "Permission Denied"];
@@ -521,7 +529,7 @@ class ToolThirdParty extends McpTool
 		$link_text       = $langs->transnoentitiesnoconv("Show");
 
 		// Verify thirdparty exists first
-		$soc = new Societe($db);
+		$soc = new Societe($this->db);
 		if ($soc->fetch($socid) <= 0) {
 			return ["error" => "Thirdparty not found with ID: " . $socid];
 		}
@@ -533,16 +541,16 @@ class ToolThirdParty extends McpTool
 		$sql .= " AND t.entity IN (" . getEntity('socpeople') . ")";
 		$sql .= " ORDER BY t.lastname ASC, t.firstname ASC";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (! $resql) {
-			dol_syslog("DB Error in listContacts: " . $db->lasterror(), LOG_ERR);
+			dol_syslog("DB Error in listContacts: " . $this->db->lasterror(), LOG_ERR);
 			return ["error" => "DB Error"];
 		}
 
 		$data = [];
 
-		while ($obj = $db->fetch_object($resql)) {
+		while ($obj = $this->db->fetch_object($resql)) {
 			// Absolute URL
 			$absoluteUrl = DOL_URL_ROOT . "/contact/card.php?id=" . $obj->rowid;
 
@@ -559,7 +567,7 @@ class ToolThirdParty extends McpTool
 			];
 		}
 
-		$db->free($resql);
+		$this->db->free($resql);
 
 		return $data;
 	}
@@ -575,7 +583,6 @@ class ToolThirdParty extends McpTool
 	 */
 	private function addContact(array $args)
 	{
-		global $db;
 		if (!$this->user->hasRight('societe', 'creer')) {
 			return ["error" => "Permission Denied to create contacts."];
 		}
@@ -585,7 +592,7 @@ class ToolThirdParty extends McpTool
 		}
 
 		$identifier = $args['thirdparty_identifier'];
-		$soc = new Societe($db);
+		$soc = new Societe($this->db);
 		$res = 0;
 
 		// Fetch Thirdparty
@@ -602,7 +609,7 @@ class ToolThirdParty extends McpTool
 		}
 
 		// Prepare Contact
-		$contact = new Contact($db);
+		$contact = new Contact($this->db);
 		$contact->socid = $soc->id; // Link to the fetched thirdparty
 		$contact->firstname = (string) ($args['firstname'] ?? '');
 		$contact->lastname = (string) $args['lastname'];
