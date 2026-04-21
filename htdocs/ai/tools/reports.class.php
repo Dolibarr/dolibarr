@@ -36,6 +36,17 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ToolReports extends McpTool
 {
+
+	/**
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 */
+	public function __construct(DoliDB  $db)
+	{
+		$this->db = $db;
+	}
+
 	/**
 	 * Returns an array of tool definitions.
 	 *
@@ -187,16 +198,15 @@ class ToolReports extends McpTool
 	 */
 	private function resolveThirdparty($args)
 	{
-		global $db;
 
 		if (!empty($args['thirdparty_id'])) {
 			return (int) $args['thirdparty_id'];
 		}
 
 		if (!empty($args['thirdparty_name'])) {
-			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '%" . $db->escape($args['thirdparty_name']) . "%' AND entity IN (" . getEntity('societe') . ") LIMIT 1";
-			$resql = $db->query($sql);
-			if ($resql && $obj = $db->fetch_object($resql)) {
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '%" . $this->db->escape($args['thirdparty_name']) . "%' AND entity IN (" . getEntity('societe') . ") LIMIT 1";
+			$resql = $this->db->query($sql);
+			if ($resql && $obj = $this->db->fetch_object($resql)) {
 				return $obj->rowid;
 			}
 		}
@@ -212,7 +222,7 @@ class ToolReports extends McpTool
 	 */
 	private function getSalesReport(array $args): array
 	{
-		global $db, $langs;
+		global $langs;
 
 		$langs->loadLangs(array("main", "bills", "companies"));
 
@@ -226,8 +236,8 @@ class ToolReports extends McpTool
 				LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid
 				WHERE f.entity IN (" . getEntity('facture') . ")";
 
-		$sql .= " AND f.datef >= '" . $db->idate($dateStart) . "'";
-		$sql .= " AND f.datef <= '" . $db->idate($dateEnd) . "'";
+		$sql .= " AND f.datef >= '" . $this->db->idate($dateStart) . "'";
+		$sql .= " AND f.datef <= '" . $this->db->idate($dateEnd) . "'";
 
 		// Status Filter: Valid (1) and Paid (2). Exclude Draft (0) and Abandoned (3).
 		$sql .= " AND f.fk_statut IN (1, 2)";
@@ -238,12 +248,12 @@ class ToolReports extends McpTool
 
 		$sql .= " ORDER BY f.datef DESC LIMIT " . ((int) $limit);
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		$list = [];
 		$totalSum = 0.0;
 
 		if ($resql) {
-			while ($r = $db->fetch_object($resql)) {
+			while ($r = $this->db->fetch_object($resql)) {
 				$totalSum += (float) $r->total_ttc;
 
 				// Determine Localized Status
@@ -264,13 +274,13 @@ class ToolReports extends McpTool
 
 				$list[] = [
 					$langs->transnoentitiesnoconv("Ref") => $refHtml,
-					$langs->transnoentitiesnoconv("Date") => dol_print_date($db->jdate($r->datef), 'day'),
+					$langs->transnoentitiesnoconv("Date") => dol_print_date($this->db->jdate($r->datef), 'day'),
 					$langs->transnoentitiesnoconv("Customer") => $r->nom,
 					$langs->transnoentitiesnoconv("Amount") => price($r->total_ttc),
 					$langs->transnoentitiesnoconv("Status") => $statusLabel
 				];
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 		}
 
 		if (empty($list)) {
@@ -297,7 +307,7 @@ class ToolReports extends McpTool
 	 */
 	private function getThirdpartyTransactions(array $args): array
 	{
-		global $db, $langs;
+		global $langs;
 
 		$langs->loadLangs(array("main", "bills", "orders", "propal"));
 
@@ -343,10 +353,10 @@ class ToolReports extends McpTool
 		$sql = "SELECT * FROM (" . implode(" UNION ", $queries) . ") as combined_transactions ";
 		$whereParts = [];
 		if ($dateStart > 0) {
-			$whereParts[] = "date_entry >= '" . $db->idate($dateStart) . "'";
+			$whereParts[] = "date_entry >= '" . $this->db->idate($dateStart) . "'";
 		}
 		if ($dateEnd > 0) {
-			$whereParts[] = "date_entry <= '" . $db->idate($dateEnd) . "'";
+			$whereParts[] = "date_entry <= '" . $this->db->idate($dateEnd) . "'";
 		}
 
 		if (!empty($whereParts)) {
@@ -355,12 +365,12 @@ class ToolReports extends McpTool
 
 		$sql .= " ORDER BY date_entry DESC";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		$list = [];
 		$totalAmt = 0.0;
 
 		if ($resql) {
-			while ($r = $db->fetch_object($resql)) {
+			while ($r = $this->db->fetch_object($resql)) {
 				$totalAmt += (float) $r->amount;
 
 				$statusTxt = "";
@@ -401,12 +411,12 @@ class ToolReports extends McpTool
 				$list[] = [
 					$langs->transnoentitiesnoconv("Type") => $langs->transnoentitiesnoconv($r->source_type),
 					$langs->transnoentitiesnoconv("Ref") => $refHtml,
-					$langs->transnoentitiesnoconv("Date") => dol_print_date($db->jdate($r->date_entry), 'day'),
+					$langs->transnoentitiesnoconv("Date") => dol_print_date($this->db->jdate($r->date_entry), 'day'),
 					$langs->transnoentitiesnoconv("Amount") => price($r->amount),
 					$langs->transnoentitiesnoconv("Status") => $statusTxt
 				];
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 		}
 
 		if (empty($list)) {
@@ -433,7 +443,7 @@ class ToolReports extends McpTool
 	 */
 	private function getPurchaseReport(array $args): array
 	{
-		global $db, $langs;
+		global $langs;
 
 		$langs->loadLangs(array("main", "bills", "companies"));
 
@@ -451,14 +461,14 @@ class ToolReports extends McpTool
 					LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid
 					WHERE f.entity IN (" . getEntity('facture_fourn') . ")
 					AND f.fk_soc = " . (int) $socid . "
-					AND f.datef >= '" . $db->idate($dateStart) . "'
-					AND f.datef <= '" . $db->idate($dateEnd) . "'
+					AND f.datef >= '" . $this->db->idate($dateStart) . "'
+					AND f.datef <= '" . $this->db->idate($dateEnd) . "'
 					AND f.fk_statut > 0
 					ORDER BY f.datef DESC";
 
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql) {
-				while ($r = $db->fetch_object($resql)) {
+				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_ttc;
 
 					$url = DOL_URL_ROOT . "/fourn/facture/card.php?id=" . $r->rowid;
@@ -466,12 +476,12 @@ class ToolReports extends McpTool
 
 					$list[] = [
 						$langs->transnoentitiesnoconv("Ref") => $refHtml,
-						$langs->transnoentitiesnoconv("Date") => dol_print_date($db->jdate($r->datef), 'day'),
+						$langs->transnoentitiesnoconv("Date") => dol_print_date($this->db->jdate($r->datef), 'day'),
 						$langs->transnoentitiesnoconv("Supplier") => $r->nom,
 						$langs->transnoentitiesnoconv("Amount") => price($r->total_ttc)
 					];
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 			}
 		} else {  // Global Grouped Report
 			$sqlGroup = "";
@@ -489,15 +499,15 @@ class ToolReports extends McpTool
 				FROM " . MAIN_DB_PREFIX . "facture_fourn as f
 				LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid
 				WHERE f.entity IN (" . getEntity('facture_fourn') . ")
-				AND f.datef >= '" . $db->idate($dateStart) . "'
-				AND f.datef <= '" . $db->idate($dateEnd) . "'
+				AND f.datef >= '" . $this->db->idate($dateStart) . "'
+				AND f.datef <= '" . $this->db->idate($dateEnd) . "'
 				AND f.fk_statut > 0
 				GROUP BY group_key
 				ORDER BY total_amount DESC";
 
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql) {
-				while ($r = $db->fetch_object($resql)) {
+				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_amount;
 					$list[] = [
 						$colName => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
@@ -505,7 +515,7 @@ class ToolReports extends McpTool
 						$langs->transnoentitiesnoconv("Amount") => price($r->total_amount)
 					];
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 			}
 		}
 
@@ -539,7 +549,7 @@ class ToolReports extends McpTool
 	 */
 	private function getInventoryReport(array $args): array
 	{
-		global $db, $langs;
+		global $langs;
 
 		$langs->loadLangs(array("products", "stocks"));
 
@@ -576,13 +586,13 @@ class ToolReports extends McpTool
 
 		$sql .= " ORDER BY p.ref ASC LIMIT 200";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		$list = [];
 		$totalValuation = 0.0;
 		$totalItems = 0;
 
 		if ($resql) {
-			while ($r = $db->fetch_object($resql)) {
+			while ($r = $this->db->fetch_object($resql)) {
 				$stockVal = $r->stock_level * $r->pmp;
 				$totalValuation += $stockVal;
 				$totalItems += (int) $r->stock_level;
@@ -598,7 +608,7 @@ class ToolReports extends McpTool
 					$langs->transnoentitiesnoconv("TotalValue") => price($stockVal)
 				];
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 		}
 
 		if (empty($list)) {
@@ -624,7 +634,7 @@ class ToolReports extends McpTool
 	 */
 	private function getFinancialReport(array $args): array
 	{
-		global $db, $langs;
+		global $langs;
 
 		$langs->loadLangs(array("compta", "bills"));
 		$dateStart = dol_stringtotime($args['date_start']);
@@ -633,23 +643,23 @@ class ToolReports extends McpTool
 		// Income (Customer Invoices - Validated/Paid, no Drafts)
 		$sqlIncome = "SELECT SUM(total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture
 					  WHERE entity IN (" . getEntity('facture') . ")
-					  AND datef >= '" . $db->idate($dateStart) . "'
-					  AND datef <= '" . $db->idate($dateEnd) . "'
+					  AND datef >= '" . $this->db->idate($dateStart) . "'
+					  AND datef <= '" . $this->db->idate($dateEnd) . "'
 					  AND fk_statut IN (1, 2)";
 
-		$resIncome = $db->query($sqlIncome);
-		$objIncome = $db->fetch_object($resIncome);
+		$resIncome = $this->db->query($sqlIncome);
+		$objIncome = $this->db->fetch_object($resIncome);
 		$income = $objIncome && $objIncome->total ? (float) $objIncome->total : 0.0;
 
 		// Expenses (Supplier Invoices - Validated, no Drafts)
 		$sqlExpense = "SELECT SUM(total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture_fourn
 					   WHERE entity IN (" . getEntity('facture_fourn') . ")
-					   AND datef >= '" . $db->idate($dateStart) . "'
-					   AND datef <= '" . $db->idate($dateEnd) . "'
+					   AND datef >= '" . $this->db->idate($dateStart) . "'
+					   AND datef <= '" . $this->db->idate($dateEnd) . "'
 					   AND fk_statut > 0";
 
-		$resExpense = $db->query($sqlExpense);
-		$objExpense = $db->fetch_object($resExpense);
+		$resExpense = $this->db->query($sqlExpense);
+		$objExpense = $this->db->fetch_object($resExpense);
 		$expense = $objExpense && $objExpense->total ? (float) $objExpense->total : 0.0;
 
 		$net = $income - $expense;
