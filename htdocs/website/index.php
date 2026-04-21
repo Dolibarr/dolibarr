@@ -4161,7 +4161,7 @@ if ($action == 'editcss') {
 	$head = websiteconfigPrepareHead($object);
 	print dol_get_fiche_head($head, 'general', $langs->trans("General"), 0, 'website');
 
-	print '<!-- Edit Website properties -->'."\n";
+	print '<!-- Edit Website properties (CSS, Language, ...) -->'."\n";
 	print '<table class="border centpercent">';
 
 	// Website
@@ -4188,7 +4188,7 @@ if ($action == 'editcss') {
 	$htmltext = '';
 	print $form->textwithpicto($langs->trans('MainLanguage'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_LANG');
 	print '</td><td>';
-	print img_picto('', 'language', 'class="picotfixedwidth"');
+	print img_picto('', 'language', 'class="pictofixedwidth"');
 	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, array(), 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td>';
 	print '</tr>';
@@ -4198,7 +4198,7 @@ if ($action == 'editcss') {
 	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
 	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
-	print img_picto('', 'language', 'class="picotfixedwidth"');
+	print img_picto('', 'language', 'class="pictofixedwidth"');
 	print '<input type="text" class="flat maxwidth200" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
 	print '</td>';
 	print '</tr>';

@@ -318,7 +318,7 @@ foreach ($systemfunctions as $systemfunction) {
 
 if (empty($dolibarr_website_allow_custom_php) || ($dolibarr_website_allow_custom_php == 1 && $notdisabledsystemfunction)) {
 	print '<center><br><br>';
-	print 'Website features are protected to be disabled if the PHP system functions ('.implode(',', $systemfunctions).') are not disabled for the website context.<br>';
+	print 'Website features are DISABLED if the PHP system functions ('.implode(',', $systemfunctions).') are NOT disabled for the website context.<br>';
 	print 'The value "'.$notdisabledsystemfunction.'" has NOT been found into the php parameter <b>current disable_functions</b> ';
 	//print '<textarea cols="100" rows="5">';
 	$form = new Form($db);

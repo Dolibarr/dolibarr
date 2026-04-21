@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,14 @@
  */
 
 /**
- *      \file       admin/knowledgerecord_extrafields.php
- *		\ingroup    knowledgemanagement
- *		\brief      Page to setup extra fields of knowledgerecord
+ *      \file       admin/categorie_lang_extrafields.php
+ *		\ingroup    categorie
+ *		\brief      Page to setup extra fields of categorie lang
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,19 +39,23 @@ require '../main.inc.php';
  * @var User $user
  */
 
-require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('knowledgemanagement', 'admin'));
+$langs->loadLangs(array('admin', 'categories'));
 
 $form = new Form($db);
 
 // List of supported format
-$type2label = ExtraFields::getListOfTypesLabels();
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) {
+	$type2label[$key] = $langs->transnoentitiesnoconv($val);
+}
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'knowledgemanagement_knowledgerecord'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'categorie_lang'; // Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) {
 	accessforbidden();
@@ -69,26 +74,33 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("KnowledgeRecord");
+$textobject = $langs->transnoentitiesnoconv("Category");
 
 $help_url = '';
-$page_name = 'KnowledgeManagementSetup';
+$page_name = "CategoriesTranslationsExtrafields";
 
-llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-knowledgerecord_extrafields');
+llxHeader('', $langs->trans($page_name), $help_url);
 
 
-$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
-
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 
-$head = knowledgemanagementAdminPrepareHead();
+$head = categoriesadmin_prepare_head();
 
-print dol_get_fiche_head($head, 'extra', $langs->trans("KnowledgeRecordExtraFields"), -1, 'knowledgemanagement');
+print dol_get_fiche_head($head, 'translationAttributes', $langs->trans($page_name), -1, 'categorie');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
+
+
+// Buttons
+if ($action != 'create' && $action != 'edit') {
+	print '<div class="tabsAction">';
+	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
+	print "</div>";
+}
 
 
 /*
