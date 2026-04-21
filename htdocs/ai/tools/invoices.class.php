@@ -434,12 +434,9 @@ class ToolInvoices extends McpTool
 			return $customer;
 		}
 
-		// Like
-		$like = '%' . $this->db->escape($identifier) . '%';
-
 		$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe
-			WHERE (nom LIKE '" . $like . "'
-			OR code_client LIKE '" . $like . "')
+			WHERE (nom LIKE '%" . $this->db->escape($identifier) . "%'
+			OR code_client LIKE '%" . $this->db->escape($identifier) . "%')
 			AND entity IN (" . getEntity('societe') . ")
 			LIMIT 5";
 
