@@ -1834,7 +1834,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 			$pp = 1;
 		}
 
-		// Do not set a default amount MEMBER_NEWFORM_AMOUNT if you use MEMBER_NEWFORM_DOLIBARRTURNOVER
 		$s = $langs->trans("AreYouAPreferredPartner", '<a href="https://partners.dolibarr.org" target="_blank">{s1}</a>');
 		$s = str_replace('{s1}', 'Peferred Partner', $s);
 		print '<tr id="trbudget" class="trcompany"><td><label for="pp" class="small">'.$s.'</label></td><td>';
@@ -1963,10 +1962,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 	// Set amount for the subscription from the the type and options:
 	// - First check the amount of the member type if there is no previous payment.
 	$amount = ($member->last_subscription_amount ? $member->last_subscription_amount : (empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid]));
-	// - If not found, take the default amount
-	if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-		$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-	}
 
 	// - If an amount was posted from the form (for example from page with types of membership)
 	if ($caneditamount && !GETPOST('reload') && GETPOSTISSET('amount') && GETPOSTFLOAT('amount', 'MT') > 0) {
