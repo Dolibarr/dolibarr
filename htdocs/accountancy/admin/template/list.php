@@ -29,6 +29,7 @@ require '../../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -68,7 +69,6 @@ $pagenext = $page + 1;
 
 // Initialize technical objects
 $object = new BookkeepingTemplate($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->accounting->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage));
 
