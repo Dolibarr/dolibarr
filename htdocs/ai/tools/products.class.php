@@ -38,6 +38,17 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  */
 class ToolProducts extends McpTool
 {
+
+	/**
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 */
+	public function __construct(DoliDB  $db)
+	{
+		$this->db = $db;
+	}
+
 	/**
 	 * Returns an array of tool definitions, including name, description, and input schema.
 	 *
@@ -200,8 +211,7 @@ class ToolProducts extends McpTool
 	 */
 	private function findProduct($identifier, ?string $type = null)
 	{
-		global $db;
-		$product = new Product($db);
+		$product = new Product($this->db);
 		// Cast strictly to string for string manipulation
 		$searchString = trim((string) $identifier);
 
@@ -253,61 +263,61 @@ class ToolProducts extends McpTool
 
 		// Custom SQL Search (Barcode, Label, Ref - Exact Match)
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "product";
-		$sql .= " WHERE (barcode = '" . $db->escape($searchString) . "' OR label = '" . $db->escape($searchString) . "' OR ref = '" . $db->escape($searchString) . "')";
+		$sql .= " WHERE (barcode = '" . $this->db->escape($searchString) . "' OR label = '" . $this->db->escape($searchString) . "' OR ref = '" . $this->db->escape($searchString) . "')";
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 		$sql .= $sqlTypeFilter;
 		$sql .= " LIMIT 1";
 
-		$res = $db->query($sql);
+		$res = $this->db->query($sql);
 		if ($res) {
-			$numRows = $db->num_rows($res);
+			$numRows = $this->db->num_rows($res);
 			if ($numRows > 0) {
-				$row = $db->fetch_object($res);
+				$row = $this->db->fetch_object($res);
 				if ($row) {
 					$product->fetch((int) $row->rowid);
-					$db->free($res);
+					$this->db->free($res);
 					return $product;
 				}
 			}
-			$db->free($res);
+			$this->db->free($res);
 		}
 
 		// Loose match (LIKE) if exact match fails
 		$sql = "SELECT rowid, ref, label FROM " . MAIN_DB_PREFIX . "product";
-		$sql .= " WHERE (ref LIKE '%" . $db->escape($searchString) . "%' OR label LIKE '%" . $db->escape($searchString) . "%')";
+		$sql .= " WHERE (ref LIKE '%" . $this->db->escape($searchString) . "%' OR label LIKE '%" . $this->db->escape($searchString) . "%')";
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 		$sql .= " AND tosell = 1"; // Only fetch products available for sale
 		$sql .= $sqlTypeFilter;
 		$sql .= " LIMIT 5";
 
-		$res = $db->query($sql);
+		$res = $this->db->query($sql);
 
 		if ($res) {
-			$numRows = $db->num_rows($res);
+			$numRows = $this->db->num_rows($res);
 			if ($numRows > 0) {
 				// If exactly one match found via loose search, use it
 				if ($numRows == 1) {
-					$row = $db->fetch_object($res);
+					$row = $this->db->fetch_object($res);
 					if ($row) {
 						$product->fetch((int) $row->rowid);
-						$db->free($res);
+						$this->db->free($res);
 						return $product;
 					}
 				}
 
 				// If multiple matches, return list for ambiguity error
 				$matchList = [];
-				while ($row = $db->fetch_object($res)) {
+				while ($row = $this->db->fetch_object($res)) {
 					$matchList[] = $row->ref . " - " . $row->label;
 				}
-				$db->free($res);
+				$this->db->free($res);
 
 				return [
 					"error"   => "Multiple products found for '" . $searchString . "'",
 					"matches" => $matchList
 				];
 			}
-			$db->free($res);
+			$this->db->free($res);
 		}
 
 		$typeHint = ($type !== null) ? " (of type '{$type}')" : "";
@@ -352,7 +362,7 @@ class ToolProducts extends McpTool
 	 */
 	private function search(array $args)
 	{
-		global $langs, $db; // Required for price() formatting
+		global $langs;
 
 		// Check Permissions
 		// Note: This requires read access to BOTH products and services.
@@ -373,7 +383,7 @@ class ToolProducts extends McpTool
 		$sql .= " WHERE p.entity IN (" . getEntity('product') . ")";
 
 		if (!empty($query)) {
-			$q_escaped = $db->escape(strtolower($query));
+			$q_escaped = $this->db->escape(strtolower($query));
 			$sql .= " AND (LOWER(p.ref) LIKE '%" . $q_escaped . "%' OR LOWER(p.label) LIKE '%" . $q_escaped . "%')";
 		}
 
@@ -386,18 +396,18 @@ class ToolProducts extends McpTool
 		}
 
 		$sql .= " ORDER BY p.ref ASC";
-		$sql .= $db->plimit($limit, $offset);
+		$sql .= $this->db->plimit($limit, $offset);
 
 		dol_syslog(__METHOD__ . " SQL: " . $sql, LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!$resql) {
-			dol_syslog(__METHOD__ . " Database error: " . $db->lasterror(), LOG_ERR);
-			return ["error" => "Database error during search: " . $db->lasterror()];
+			dol_syslog(__METHOD__ . " Database error: " . $this->db->lasterror(), LOG_ERR);
+			return ["error" => "Database error during search: " . $this->db->lasterror()];
 		}
 
 		$data = [];
-		while ($obj = $db->fetch_object($resql)) {
+		while ($obj = $this->db->fetch_object($resql)) {
 			// Determine type string
 			$typeStr = ($obj->fk_product_type == 0) ? "product" : "service";
 
@@ -416,7 +426,7 @@ class ToolProducts extends McpTool
 				"url"             => dol_buildpath('/product/card.php', 1) . "?id=" . $obj->rowid
 			];
 		}
-		$db->free($resql);
+		$this->db->free($resql);
 
 		return [
 			"count"   => count($data),
@@ -560,7 +570,7 @@ class ToolProducts extends McpTool
 	 */
 	private function getPendingCustomerOrdersQty(int $product_id): float
 	{
-		global $conf, $db;
+		global $conf;
 
 		$qty = 0.0;
 
@@ -577,16 +587,16 @@ class ToolProducts extends McpTool
 		$sql .= " AND c.fk_statut IN (1, 2)";
 		$sql .= " AND c.entity IN (" . getEntity('commande') . ")";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
+			$obj = $this->db->fetch_object($resql);
 			// Check isset, as SUM() returns NULL if no rows match
 			if ($obj && isset($obj->pending_qty)) {
 				$qty = (float) $obj->pending_qty;
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 		} else {
-			dol_syslog(__METHOD__ . " Database error: " . $db->lasterror(), LOG_ERR);
+			dol_syslog(__METHOD__ . " Database error: " . $this->db->lasterror(), LOG_ERR);
 		}
 
 		return $qty;
@@ -601,7 +611,7 @@ class ToolProducts extends McpTool
 	 */
 	private function getPendingSupplierOrdersQty(int $product_id): float
 	{
-		global $conf, $db;
+		global $conf;
 
 		$qty = 0.0;
 
@@ -618,16 +628,16 @@ class ToolProducts extends McpTool
 		$sql .= " AND cf.fk_statut IN (1, 2, 3, 4)";
 		$sql .= " AND cf.entity IN (" . getEntity('supplier_order') . ")";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
+			$obj = $this->db->fetch_object($resql);
 			// Handle NULL result from SUM() if no rows exist
 			if ($obj && isset($obj->pending_qty)) {
 				$qty = (float) $obj->pending_qty;
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 		} else {
-			dol_syslog(__METHOD__ . " Database error: " . $db->lasterror(), LOG_ERR);
+			dol_syslog(__METHOD__ . " Database error: " . $this->db->lasterror(), LOG_ERR);
 		}
 
 		return $qty;
@@ -728,7 +738,7 @@ class ToolProducts extends McpTool
 	 */
 	private function analyze(array $args)
 	{
-		global $conf, $db;
+		global $conf;
 
 		// Ensure Product class is loaded
 		dol_include_once('/product/class/product.class.php');
@@ -768,28 +778,28 @@ class ToolProducts extends McpTool
 
 		if (!empty($conf->facture->enabled)) {
 			$ninety_days_ago = dol_time_plus_duree(dol_now(), -90, 'd');
-			$date90daysAgoFormatted = $db->idate($ninety_days_ago);
+			$date90daysAgoFormatted = $this->db->idate($ninety_days_ago);
 
 			$sql = "SELECT SUM(d.qty) as qty_sold";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as d";
 			$sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON d.fk_facture = f.rowid";
 			$sql .= " WHERE d.fk_product = " . ((int) $prod->id);
-			$sql .= " AND f.datef >= '" . $db->escape($date90daysAgoFormatted) . "'";
+			$sql .= " AND f.datef >= '" . $this->db->escape($date90daysAgoFormatted) . "'";
 			// Status: 1=Validated(Unpaid), 2=Paid. Exclude Draft(0) and Abandoned(3).
 			$sql .= " AND f.fk_statut IN (1, 2)";
 			$sql .= " AND f.entity IN (" . getEntity('invoice') . ")";
 
 			dol_syslog(__METHOD__ . " sales SQL: " . $sql, LOG_DEBUG);
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 
 			if ($resql) {
-				$obj = $db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 				if ($obj && isset($obj->qty_sold)) {
 					$qtySold90 = (float) $obj->qty_sold;
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 			} else {
-				dol_syslog(__METHOD__ . " - Error calculating sales: " . $db->lasterror(), LOG_ERR);
+				dol_syslog(__METHOD__ . " - Error calculating sales: " . $this->db->lasterror(), LOG_ERR);
 			}
 		}
 
@@ -853,7 +863,6 @@ class ToolProducts extends McpTool
 	 */
 	private function getSupplierPrices(array $args)
 	{
-		global $db;
 
 		if (!$this->user->hasRight('produit', 'lire') || !$this->user->hasRight('service', 'lire')) {
 			return ["error" => "Permission Denied: User does not have read access to products/services."];
@@ -888,13 +897,13 @@ class ToolProducts extends McpTool
 		$sql .= " ORDER BY pfp.unitprice ASC";
 
 		dol_syslog("ToolProducts::getSupplierPrices SQL: " . $sql, LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!$resql) {
-			return ["error" => "Database error fetching supplier prices: " . $db->lasterror()];
+			return ["error" => "Database error fetching supplier prices: " . $this->db->lasterror()];
 		}
 
-		while ($obj = $db->fetch_object($resql)) {
+		while ($obj = $this->db->fetch_object($resql)) {
 			$supplierPrices[] = [
 				"id" => (int) $obj->rowid,
 				"supplier_id" => (int) $obj->fk_soc,
@@ -911,12 +920,12 @@ class ToolProducts extends McpTool
 				"multicurrency_unit_price" => (float) ($obj->multicurrency_unitprice ?? 0),
 				"delivery_time_days" => $obj->delivery_time_days ? (int) $obj->delivery_time_days : null,
 				"packaging" => (float) ($obj->packaging ?? 0),
-				"date_created" => $obj->datec ? dol_print_date($db->jdate($obj->datec), 'dayrfc') : null,
-				"date_modified" => $obj->tms ? dol_print_date($db->jdate($obj->tms), 'dayrfc') : null,
+				"date_created" => $obj->datec ? dol_print_date($this->db->jdate($obj->datec), 'dayrfc') : null,
+				"date_modified" => $obj->tms ? dol_print_date($this->db->jdate($obj->tms), 'dayrfc') : null,
 				"url" => dol_buildpath('/fourn/card.php', 1) . "?id=" . $obj->fk_soc
 			];
 		}
-		$db->free($resql);
+		$this->db->free($resql);
 
 		return [
 			"product_id" => (int) $prod->id,
