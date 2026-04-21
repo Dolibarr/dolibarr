@@ -31,6 +31,18 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
  */
 class ToolCrudObjects extends McpTool
 {
+
+	/**
+	 * 	Constructor
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 */
+	public function __construct(DoliDB  $db)
+	{
+		$this->db = $db;
+	}
+
+
 	/**
 	 * Configuration Map.
 	 *
@@ -295,7 +307,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	public function execute(string $name, array $args)
 	{
-		global $user, $langs, $conf, $db, $mysoc;
+		global $user, $langs, $conf, $mysoc;
 
 		// Ensure $this->user is the authenticated global user
 		$this->user = $user;
@@ -305,7 +317,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		if (!is_object($mysoc) || empty($mysoc->id)) {
-			$mysoc = new Societe($db);
+			$mysoc = new Societe($this->db);
 			$mysoc->setMysoc($conf);
 		}
 
@@ -697,8 +709,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	private function findProduct($identifier)
 	{
-		global $db;
-		$product = new Product($db);
+		$product = new Product($this->db);
 		// Cast strictly to string for string manipulation
 		$searchString = trim((string) $identifier);
 
@@ -723,59 +734,59 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		// Custom SQL Search (Barcode, Label, Ref - Exact Match)
 
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "product";
-		$sql .= " WHERE (barcode = '" . $db->escape($searchString) . "' OR label = '" . $db->escape($searchString) . "' OR ref = '" . $db->escape($searchString) . "')";
+		$sql .= " WHERE (barcode = '" . $this->db->escape($searchString) . "' OR label = '" . $this->db->escape($searchString) . "' OR ref = '" . $this->db->escape($searchString) . "')";
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 		$sql .= " LIMIT 1";
 
-		$res = $db->query($sql);
+		$res = $this->db->query($sql);
 		if ($res) {
-			$numRows = $db->num_rows($res);
+			$numRows = $this->db->num_rows($res);
 			if ($numRows > 0) {
-				$row = $db->fetch_object($res);
+				$row = $this->db->fetch_object($res);
 				if ($row) {
 					$product->fetch((int) $row->rowid);
-					$db->free($res);
+					$this->db->free($res);
 					return $product;
 				}
 			}
-			$db->free($res);
+			$this->db->free($res);
 		}
 
 		// Loose match (LIKE) if exact match fails
 		$sql = "SELECT rowid, ref, label FROM " . MAIN_DB_PREFIX . "product";
-		$sql .= " WHERE (ref LIKE '%" . $db->escape($searchString) . "%' OR label LIKE '%" . $db->escape($searchString) . "%')";
+		$sql .= " WHERE (ref LIKE '%" . $this->db->escape($searchString) . "%' OR label LIKE '%" . $this->db->escape($searchString) . "%')";
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 		$sql .= " AND tosell = 1"; // Only fetch products available for sale
 		$sql .= " LIMIT 5";
 
-		$res = $db->query($sql);
+		$res = $this->db->query($sql);
 
 		if ($res) {
-			$numRows = $db->num_rows($res);
+			$numRows = $this->db->num_rows($res);
 			if ($numRows > 0) {
 				// If exactly one match found via loose search, use it
 				if ($numRows == 1) {
-					$row = $db->fetch_object($res);
+					$row = $this->db->fetch_object($res);
 					if ($row) {
 						$product->fetch((int) $row->rowid);
-						$db->free($res);
+						$this->db->free($res);
 						return $product;
 					}
 				}
 
 				// If multiple matches, return list for ambiguity error
 				$matchList = [];
-				while ($row = $db->fetch_object($res)) {
+				while ($row = $this->db->fetch_object($res)) {
 					$matchList[] = $row->ref . " - " . $row->label;
 				}
-				$db->free($res);
+				$this->db->free($res);
 
 				return [
 					"error"   => "Multiple products found for '" . $searchString . "'",
 					"matches" => $matchList
 				];
 			}
-			$db->free($res);
+			$this->db->free($res);
 		}
 
 		return ["error" => "Product '" . $searchString . "' not found."];
@@ -855,7 +866,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	private function instantiate(string $type): CommonObject
 	{
-		global $db;
 		if (! isset($this->map[$type])) {
 			throw new Exception("Unknown type: " . $type);
 		}
@@ -872,7 +882,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			throw new Exception("Class '$className' not found for type '$type'");
 		}
 
-		return new $className($db);
+		return new $className($this->db);
 	}
 
 	/**
@@ -886,7 +896,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	private function updateLineUnit(string $type, int $lineId, int $unitId): void
 	{
-		global $db;
 		// Map document types to their specific detail tables
 		/** @var array<string, string> $tableMap */
 		$tableMap = [
@@ -904,14 +913,14 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		$table = $tableMap[$type];
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . $db->escape($table);
+		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->escape($table);
 		$sql .= " SET fk_unit = " . (int) $unitId;
 		$sql .= " WHERE rowid = " . (int) $lineId;
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (! $resql) {
-			dol_syslog("Error updating unit for line $lineId: " . $db->lasterror(), LOG_ERR);
+			dol_syslog("Error updating unit for line $lineId: " . $this->db->lasterror(), LOG_ERR);
 		}
 	}
 }
