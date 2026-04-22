@@ -42,6 +42,18 @@ class Cincoterm extends CommonDict
 	public $label = '';
 
 	/**
+	 * @var ?string      The description of the incoterm
+	 */
+	public $description = '';
+
+	/**
+	 * @var ?string
+	 * @deprecated
+	 * @see $description
+	 */
+	public $libelle = '';
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
@@ -82,8 +94,8 @@ class Cincoterm extends CommonDict
 				$this->id = $obj->rowid;
 				$this->code = $obj->code;
 				$this->label = $obj->label;
+				$this->libelle = $obj->description; // deprecated
 				$this->description = $obj->description;
-				$this->name = $obj->nom;
 				$this->active = $obj->active;
 			}
 			$this->db->free($resql);
