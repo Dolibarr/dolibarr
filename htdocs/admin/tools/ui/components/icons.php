@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program and files/directory inner it is free software: you can
  * redistribute it and/or modify it under the terms of the
@@ -49,8 +50,8 @@ $documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css'], GET
 $documentation->view = array('Components','Icons');
 $form = new Form($db);
 
-$mode=GETPOST('mode'); // ex : no-btn
-$displayMode = GETPOST('displayMode') == 'kanban' ?  'kanban' : 'icon-only';
+$mode = GETPOST('mode'); // ex : no-btn
+$displayMode = GETPOST('displayMode') == 'kanban' ? 'kanban' : 'icon-only';
 $revertDisplayMode = $displayMode == 'kanban' ? 'icon-only' : 'kanban';
 $revertDisplayName = $displayMode == 'kanban' ? $langs->trans('ViewList') : $langs->trans('ViewKanban');
 $switchDisplayLink = dol_buildpath($documentation->baseUrl . '/components/icons.php', 1) . '?displayMode=' . $revertDisplayMode;
@@ -114,7 +115,7 @@ if (!GETPOST('hidenavmenu')) {
 				<div class="right">
 					<?php
 					if ($mode != 'no-btn') {
-						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext'=>1]);
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext' => 1]);
 					}
 					?>
 				</div>
@@ -207,7 +208,7 @@ if (!GETPOST('hidenavmenu')) {
 				<div class="right">
 					<?php
 					if ($mode != 'no-btn') {
-						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext'=>1]);
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext' => 1]);
 					}
 					?>
 				</div>
@@ -218,11 +219,11 @@ if (!GETPOST('hidenavmenu')) {
 					$alreadyDisplay = [];
 					if ($fontAwesomeIcons) {
 						foreach ($fontAwesomeIcons as $iconData) {
-							$class= $iconData[1]??'fa';
+							$class = $iconData[1] ?? 'fa';
 							if (!empty($iconData[2])) {
-								$class.= ' fa-'.$iconData[2];
+								$class .= ' fa-'.$iconData[2];
 							} else {
-								$class.= ' fa-'.$iconData[0];
+								$class .= ' fa-'.$iconData[0];
 							}
 
 							if (in_array($class, $alreadyDisplay)) {
@@ -278,8 +279,8 @@ $documentation->docFooter();
  */
 function getImgPictoNameList()
 {
-	return array_merge(array_keys(getImgPictoConv()), array(
-		// Reduce this list to picto that are not already into getImgPictoConv()
+	$imgpicto = array_merge(array_keys(getImgPictoConv()), array(
+		// Keep in this list only picto that are NOT already into getImgPictoConv()
 		'1downarrow',
 		'1uparrow',
 		'1leftarrow',
@@ -288,97 +289,39 @@ function getImgPictoNameList()
 		'1downarrow_selected',
 		'1leftarrow_selected',
 		'1rightarrow_selected',
-		'accountancy',
-		'accounting_account',
-		'account',
-		'accountline',
-		'action',
-		'add',
-		'address',
-		'ai',
 		'angle-double-down',
 		'angle-double-up',
-		'asset',
-		'back',
-		'bank_account',
 		'barcode',
 		'bank',
 		'bell',
-		'bill',
-		'billa',
-		'billr',
-		'billd',
 		'birthday-cake',
-		'blockedlog',
-		'bom',
-		'bookcal',
-		'bookmark',
 		'briefcase-medical',
 		'bug',
 		'building',
-		'card',
-		'calendarlist',
-		'calendar',
-		'calendarmonth',
-		'calendarweek',
-		'calendarday',
-		'calendarperuser',
-		'calendarpertype',
 		'hourglass',
 		'cash-register',
-		'category',
-		'chart',
-		'check',
 		'clock',
 		'clone',
-		'close_title',
 		'code',
 		'cog',
-		'collab',
-		'company',
-		'contact',
-		'country',
-		'contract',
-		'conversation',
 		'cron',
-		'cross',
 		'cubes',
 		'check-circle',
 		'check-square',
 		'circle',
-		'stop-circle',
-		'currency',
-		'multicurrency',
 		'chevron-left',
 		'chevron-right',
 		'chevron-down',
 		'chevron-up',
-		'chevron-double-left',
-		'chevron-double-right',
-		'chevron-double-down',
-		'chevron-double-top',
-		'commercial',
-		'companies',
-		'delete',
 		'dolly',
-		'dollyrevert',
-		'donation',
 		'download',
-		'dynamicprice',
-		'edit',
 		'ellipsis-h',
-		'email',
-		'entity',
 		'envelope',
 		'eraser',
-		'establishment',
-		'expensereport',
 		'external-link-alt',
 		'external-link-square-alt',
 		'eye',
-		'filter',
 		'file',
-		'file-o',
 		'file-code',
 		'file-export',
 		'file-import',
@@ -388,92 +331,33 @@ function getImgPictoNameList()
 		'folder-open',
 		'folder-plus',
 		'font',
-		'generate',
 		'generic',
-		'globe',
 		'globe-americas',
-		'graph',
-		'grip',
-		'grip_title',
-		'group',
 		'hands-helping',
-		'help',
-		'holiday',
 		'id-card',
 		'images',
-		'incoterm',
-		'info',
-		'info_black',
-		'intervention',
-		'inventory',
-		'intracommreport',
-		'jobprofile',
 		'key',
-		'knowledgemanagement',
-		'label',
 		'language',
-		'layout',
-		'line',
 		'link',
 		'list',
-		'list-alt',
 		'listlight',
-		'loan',
 		'lock',
-		'lot',
 		'long-arrow-alt-right',
-		'margin',
 		'map-marker-alt',
-		'member',
-		'meeting',
 		'minus',
 		'money-bill-alt',
-		'movement',
-		'mrp',
 		'note',
-		'next',
 		'off',
 		'on',
-		'order',
 		'paragraph',
 		'play',
-		'pdf',
 		'phone',
-		'phoning',
-		'phoning_mobile',
-		'phoning_fax',
-		'playdisabled',
-		'previous',
-		'poll',
-		'pos',
-		'printer',
-		'product',
-		'propal',
-		'proposal',
-		'puce',
-		'resize',
 		'search',
-		'service',
-		'stats',
-		'stock',
-		'security',
-		'setup',
 		'share-alt',
-		'sign-out',
-		'split',
-		'stripe',
 		'stripe-s',
-		'switch_off',
-		'switch_on',
-		'switch_on_grey',
-		'switch_on_warning',
-		'switch_on_red',
-		'tools',
 		'unlink',
-		'uparrow',
 		'user',
 		'user-tie',
-		'vcard',
 		'wrench',
 		'discord',
 		'facebook',
@@ -482,7 +366,6 @@ function getImgPictoNameList()
 		'linkedin',
 		'github',
 		'google',
-		'jabber',
 		'meetup',
 		'microsoft',
 		'skype',
@@ -496,80 +379,26 @@ function getImgPictoNameList()
 		'viadeo',
 		'google-plus-g',
 		'whatsapp',
-		'generic',
 		'home',
-		'hrm',
-		'members',
-		'products',
-		'invoicing',
-		'partnership',
-		'payment',
-		'payment_vat',
 		'pencil-ruler',
-		'pictoconfirm',
-		'preview',
-		'project',
-		'projectpub',
-		'projecttask',
 		'question',
-		'refresh',
-		'region',
-		'salary',
-		'shipment',
-		'state',
-		'supplier_invoice',
-		'supplier_invoicea',
-		'supplier_invoicer',
-		'supplier_invoiced',
-		'technic',
-		'ticket',
-		'error',
-		'warning',
-		'recent',
-		'reception',
-		'recruitmentcandidature',
-		'recruitmentjobposition',
-		'replacement',
-		'resource',
-		'recurring',
 		'rss',
 		'search-plus',
 		'shapes',
-		'skill',
 		'square',
 		'sort-numeric-down',
-		'status',
-		'stop-circle',
-		'supplier',
-		'supplier_proposal',
-		'supplier_order',
 		'supplier_invoice',
 		'terminal',
-		'tick',
-		'timespent',
-		'title_setup',
-		'title_accountancy',
-		'title_bank',
-		'title_hrm',
-		'title_agenda',
-		'trip',
-		'uncheck',
 		'undo',
-		'url',
 		'user-cog',
 		'user-injured',
 		'user-md',
 		'upload',
-		'vat',
-		'website',
-		'workstation',
-		'webhook',
-		'world',
-		'private',
-		'conferenceorbooth',
-		'eventorganization',
 		'stamp',
-		'signature',
-		'webportal'
+		'signature'
 	));
+
+	asort($imgpicto);
+
+	return array_unique($imgpicto);
 }

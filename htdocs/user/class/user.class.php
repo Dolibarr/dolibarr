@@ -3994,7 +3994,7 @@ class User extends CommonObject
 	 *				fullpath = Full path composed of the ids: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
-	 *  @param		string	$filter				SQL filter on users. This parameter must NOT come from user input.
+	 *  @param		string	$filter				SQL filter on users. This parameter must NOT come from user input. Must use USF syntax.
 	 *	@return		int<-1,-1>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of user information (also: $this->users). Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')
@@ -4022,7 +4022,7 @@ class User extends CommonObject
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 		}
 		if ($filter) {
-			$sql .= " AND ".$filter;	// already sanitized
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 
 		dol_syslog(get_class($this)."::get_full_tree get user list", LOG_DEBUG);

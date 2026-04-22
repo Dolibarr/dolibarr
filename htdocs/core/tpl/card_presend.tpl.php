@@ -27,6 +27,7 @@
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $action
  * @var string $trackid
@@ -37,6 +38,11 @@
  * @var string[] $arrayoffamiliestoexclude	Example: array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  * @var string $file
  * @var ?string $inreplyto
+ * @var int $hidedetails
+ * @var int $hidedesc
+ * @var int $hideref
+ * @var string $recruitername
+ * @var string $recruitermail
  */
 '
 @phan-var-force int<0,1> $diroutput

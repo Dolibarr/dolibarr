@@ -620,10 +620,6 @@ if ($ispaymentok) {
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
-						// - If not found, take the default amount
-						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-						}
 						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 						//if (empty($amount)) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');

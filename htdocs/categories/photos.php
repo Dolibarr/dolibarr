@@ -161,11 +161,17 @@ if ($object->id) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Description
+	// Label
 	print '<tr><td class="titlefield notopnoleft">';
-	print $langs->trans("Description").'</td><td>';
-	print dol_htmlentitiesbr($object->description);
+	print $langs->trans("Label").'</td><td>';
+	print dol_htmlentitiesbr($object->label);
 	print '</td></tr>';
+
+	// Description
+	// print '<tr><td class="titlefield notopnoleft">';
+	// print $langs->trans("Description").'</td><td>';
+	// print dol_htmlentitiesbr($object->description);
+	// print '</td></tr>';
 
 	// Color
 	print '<tr><td class="notopnoleft">';

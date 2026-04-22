@@ -509,7 +509,8 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 	// Transaction ID
 	if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 		if ($object->status > $object::STATUS_DRAFT) {
-			$unalterablelogid = 'UNDEFINED';
+			$unalterablelogid = 'UNDEFINED'; // By default
+
 			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
 			$sql .= $db->order('rowid', 'DESC');
@@ -524,26 +525,26 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 			}
 
 			if ($unalterablelogid != 'UNDEFINED') {
-				$posy += 5;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
+				$posy += 3;
 			}
 
 			$isADuplicata = ($object->pos_print_counter >= 2);
 			if ($isADuplicata) {
-				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, '*** '.$outputlangs->trans("DUPLICATA").(getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT') ? ' (no '.($object->pos_print_counter - 1).')' : '').' ***', '', 'R');
+				$posy += 3;
 			}
 		}
 
 		if ($object->status == $object::STATUS_DRAFT) {
-			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, '*** '.strtoupper($outputlangs->trans("TemporaryReceipt")).' ***', '', 'R');
+			$posy += 3;
 		}
 	}
 }

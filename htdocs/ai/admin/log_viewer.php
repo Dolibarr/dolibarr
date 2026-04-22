@@ -87,6 +87,9 @@ $search_array = array(
 if (!$user->admin) {
 	accessforbidden();
 }
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
+}
 
 
 /*

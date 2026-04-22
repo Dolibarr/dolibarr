@@ -34,6 +34,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -44,7 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
@@ -84,7 +84,7 @@ if (!$sortorder) {
 }
 
 $object = new Adherent($db);
-$extrafields = new ExtraFields($db);
+
 $adht = new AdherentType($db);
 
 // fetch optionals attributes and labels

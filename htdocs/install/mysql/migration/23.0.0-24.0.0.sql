@@ -35,6 +35,11 @@
 
 -- V23 forgotten
 
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+-- VMYSQL4.1 DROP INDEX idx_categorie_project_fk_task ON llx_categorie_project_task;
+-- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
 
 -- V24 migration
 
@@ -211,6 +216,9 @@ UPDATE llx_cronjob set test = 'isModEnabled("project")' WHERE test = '$conf->pro
 UPDATE llx_cronjob set test = 'isModEnabled("sellyoursaas")' WHERE test = '$conf->sellyoursaas->enabled';
 UPDATE llx_cronjob set test = 'isModEnabled("scaninvoices")' WHERE test = '$conf->scaninvoices->enabled';
 
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+
 
 create table llx_product_lang_extrafields
 (
@@ -220,6 +228,15 @@ create table llx_product_lang_extrafields
   import_key                varchar(14)                          -- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_product_lang_extrafields ADD INDEX idx_product_lang_fk_object(fk_object);
+
+CREATE TABLE llx_categorie_lang_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_categorie_lang_extrafields ADD INDEX idx_categorie_lang_fk_object(fk_object);
 
 ALTER TABLE llx_adherent_type ADD COLUMN minimumamount double(24,8) DEFAULT NULL AFTER caneditamount;
 ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text AFTER minimumamount;

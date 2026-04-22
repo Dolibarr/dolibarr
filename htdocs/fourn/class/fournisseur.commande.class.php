@@ -14,7 +14,7 @@
  * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Noé Cendrier			<noe.cendrier@altairis.fr>
  *
@@ -1721,7 +1721,7 @@ class CommandeFournisseur extends CommonOrder
 						$line->rang,       // rang
 						$line->special_code,
 						isset($line->label) ? $line->label : ''
-						);
+					);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functional error
 						$this->db->rollback();
@@ -2188,7 +2188,7 @@ class CommandeFournisseur extends CommonOrder
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
+			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -3029,7 +3029,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->db->begin();
 
 		$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur';
-		$sql .= " SET fk_statut = ".$status;
+		$sql .= " SET fk_statut = ".((int) $status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setStatus", LOG_DEBUG);
@@ -3423,10 +3423,10 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
-		$clause = "WHERE";
+		$sanitizedclause = "WHERE";
 
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as co";
@@ -3434,9 +3434,9 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
+			$sanitizedclause = "AND";
 		}
-		$sql .= " ".$clause." co.entity IN (".getEntity('supplier_order').")";
+		$sql .= " ".$sanitizedclause." co.entity IN (".getEntity('supplier_order').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -25,15 +25,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'admin'));
@@ -74,7 +75,7 @@ if (!$sortorder) {
 
 // Initialize Objects
 $object = new Bookmark($db);
-$extrafields = new ExtraFields($db);
+
 $arrayfields = array();
 $hookmanager->initHooks(array('bookmarklist')); // Note that conf->hooks_modules contains array
 
