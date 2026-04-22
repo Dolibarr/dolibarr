@@ -212,9 +212,6 @@ $sql .= " WHERE b.fk_account = ".((int) $acct->id);
 if ($listofnum) {
 	$sql .= " AND b.num_releve IN (".$db->sanitize($listofnum, 1).")";
 }
-if (!isset($num)) {
-	$sql .= " OR b.num_releve is null";
-}
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.num_releve, b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
 // print $sql;
