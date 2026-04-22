@@ -373,7 +373,7 @@ class HookManager
 						}
 
 						// @phan-suppress-next-line PhanUndeclaredMethod  The method's existence is tested above.
-						$resactiontmp = (int) $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 						$resaction += $resactiontmp;
 
 						if (!empty($actionclassinstance->results) && is_array($actionclassinstance->results)) {
