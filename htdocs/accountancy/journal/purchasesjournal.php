@@ -365,6 +365,9 @@ if ($result) {
 			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
 			$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 			if ($tva_npr) { // If NPR, we add an entry for counterpartWe into tabother
+				if (!array_key_exists($obj->rowid, $tabother)) {
+					$tabother[$obj->rowid] = array();
+				}
 				if (!array_key_exists($compta_counterpart_tva_npr, $tabother[$obj->rowid])) {
 					$tabother[$obj->rowid][$compta_counterpart_tva_npr] = 0;
 				}

@@ -738,8 +738,7 @@ class AccountingJournal extends CommonObject
 	 * @param	?int						$date_start			Filter 'start date'
 	 * @param	?int						$date_end			Filter 'end date'
 	 * @param	'already'|'notyet'			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,
-	 * blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:''|int,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int,fk_docdet:int,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:float,sens:string,debit:float|string,credit:float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:int,entity:string}>>}>    Return integer <0 if KO, array
+	 * @return	int<-1,-1>|array<int,array{ref:string,error:?string,blocks:array<array<array{date:string,piece:string,account_accounting:string,subledger_account:string,label_operation:string,debit:string,credit:string}|array{doc_date:''|int,date_lim_reglement:string,doc_ref:string,date_creation:int,doc_type:string,fk_doc:int,fk_docdet:int,thirdparty_code:string,subledger_account:string,subledger_label:string,numero_compte:string,label_compte:string,label_operation:string,montant:float,sens:string,debit:float|string,credit:float|string,code_journal:string,journal_label:string,piece_num:string,import_key:string,fk_user_author:int,entity:string}>>}>    Return integer <0 if KO, array
 	 */
 	public function getDiscountCustomer(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
