@@ -42,11 +42,13 @@ class ToolProducts extends McpTool
 	/**
 	 * 	Constructor
 	 *
-	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	DoliDB		$db				Database handler
+	 * 	@param	User		$user			User object for permission checks
 	 */
-	public function __construct(DoliDB  $db)
+	public function __construct($db, $user)
 	{
 		$this->db = $db;
+		$this->user = $user;
 	}
 
 	/**
