@@ -572,7 +572,7 @@ class FormCompany extends Form
 		// Lookup the active juridical types for the active countries
 		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, c.label as country, c.code as country_code";
 		$sql .= " FROM " . $this->db->prefix() . "c_forme_juridique as f, " . $this->db->prefix() . "c_country as c";
-		$sql .= " WHERE f.fk_pays=c.rowid";
+		$sql .= " WHERE f.fk_pays = c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";
 		if ($country_codeid) {
 			$sql .= " AND c.code = '" . $this->db->escape((string) $country_codeid) . "'";
