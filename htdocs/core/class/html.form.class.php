@@ -11246,7 +11246,7 @@ class Form
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 			if (!empty($hookmanager->resPrint)) {
 				if (empty($object->next_prev_filter) && preg_match('/^\s*AND/i', $hookmanager->resPrint)) {
-					$object->next_prev_filter = preg_replace('/^\s*AND\s*/i', '', $hookmanager->resPrint);
+					$object->next_prev_filter = (string) preg_replace('/^\s*AND\s*/i', '', $hookmanager->resPrint);
 				} elseif (!empty($object->next_prev_filter) && !preg_match('/^\s*AND/i', $hookmanager->resPrint)) {
 					$object->next_prev_filter .= ' AND '.$hookmanager->resPrint;
 				} else {
@@ -11392,7 +11392,7 @@ class Form
 			$ret .= '';
 		} elseif ($object->element == 'accountingbookkeeping' && !empty($object->context['mode']) && $object->context['mode'] == '_tmp') {
 			$ret .= '<span class="valignmiddle">'.$langs->trans("Draft").'</span>';
-		} elseif ($object instanceOf Ticket) {
+		} elseif ($object instanceof Ticket) {
 			'@phan-var-force Ticket $object';
 			$ret .= '<span class="valignmiddle">'.dolPrintHTML(!empty($object->$fieldref) ? $object->$fieldref : "").'</span>';
 			$ret .= ' &nbsp; <span class="nobold small" title="'.dolPrintHTMLForAttribute($langs->trans("TicketTrackId")).'">('.$object->track_id.')</span>';

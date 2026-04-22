@@ -5283,7 +5283,7 @@ abstract class CommonObject
 				if ($obj->nb > 0) {
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
-					$haschild += $obj->nb;
+					$haschild += (int) $obj->nb;
 					if (is_numeric($element)) {	// very old usage array('table1', 'table2', ...)
 						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
 					} elseif (is_string($element)) { // old usage array('table1' => 'TranslateKey1', 'table2' => 'TranslateKey2', ...)

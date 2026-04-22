@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Jamal Elbaz             <jamelbaz@gmail.pro>
  * Copyright (C) 2016-2026	Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ class AccountancyCategory // extends CommonObject
 	public $lines_display;
 
 	/**
-	 * @var mixed Sum debit credit
+	 * @var float Sum debit credit
 	 */
 	public $sdc;
 
@@ -695,7 +695,7 @@ class AccountancyCategory // extends CommonObject
 							$this->sdc = $obj->credit - $obj->debit;
 						}
 						if (is_array($cpt)) {
-							$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+							$this->sdcperaccount[(string) $obj->accountancy_account] = $this->sdc;
 						}
 					}
 					$i++;

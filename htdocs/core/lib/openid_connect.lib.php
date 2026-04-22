@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 			$sanitized_login = substr($sanitized_login, 0, strpos($sanitized_login, '@'));
 		}
 		// Final fallback: replace any remaining bad characters
-		$sanitized_login = preg_replace('/['.preg_quote($badChars, '/').']/', '.', $sanitized_login);
+		$sanitized_login = (string) preg_replace('/['.preg_quote($badChars, '/').']/', '.', $sanitized_login);
 	}
 
 	$newuser = new User($db);
