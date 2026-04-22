@@ -101,6 +101,7 @@ activ
 addin
 amountin
 alltime
+Referers
 
 # other
 blacklists

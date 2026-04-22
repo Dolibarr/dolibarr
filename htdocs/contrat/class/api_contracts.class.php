@@ -36,9 +36,7 @@ class Contracts extends DolibarrApi
 	 */
 	public static $FIELDS = array(
 		'socid',
-		'date_contrat',
-		'commercial_signature_id',
-		'commercial_suivi_id'
+		'date_contrat'
 	);
 
 	/**

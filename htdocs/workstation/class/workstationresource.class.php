@@ -95,7 +95,7 @@ class WorkstationResource extends CommonObject
 	{
 		global $db;
 		$obj = new self($db);
-		return parent::getAllItemsLinkedByObjectID($fk_workstation, 'fk_resource', 'fk_workstation', $obj->table_element);
+		return array_map('intval', parent::getAllItemsLinkedByObjectID($fk_workstation, 'fk_resource', 'fk_workstation', $obj->table_element));
 	}
 
 	/**

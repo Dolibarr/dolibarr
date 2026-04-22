@@ -1765,9 +1765,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  * @param	string							$url				Relative path to file
  * @param	array<string,int|float|string>	$params     		params for the http query
  * @param	bool							$addtoken			does we need to add token
+ * @param	string							$anchor				Add an anchor #xxx at end of URL
  * @return string												path
  */
-function dolBuildUrl($url, $params = [], $addtoken = false)
+function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 {
 	global $db, $hookmanager;
 
@@ -1790,12 +1791,11 @@ function dolBuildUrl($url, $params = [], $addtoken = false)
 	if ($addtoken) {
 		$params = array_merge($params, ['token' => newToken()]);
 	}
-	// TODO TO REMOVE
-	if (getDolGlobalString('MAIN_DEBUG_DOL_BUILDURL')) {
-		$params = array_merge($params, ['debug' => 'debug']);
-	}
 	if ($params) {
 		$url .= '?' . http_build_query($params);
+	}
+	if ($anchor) {
+		$url .= '#' . preg_replace('/[^a-z]/i', '', $anchor);
 	}
 
 	return $url;
@@ -16983,7 +16983,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$libelle = '';
 
 			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
-				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
+				$out .= $langs->trans('TicketNewMessage').' - <em>'.img_picto($langs->trans('Private'), 'lock', 'class="valignmiddle"').' '.$langs->trans('Private').'</em>';
+				$summary = preg_replace('/\[[^\]]*\]\s*/', '', $actionstatic->label);
+				//if ($summary != $object->title) {
+				$out .= ' - '.dolPrintHTML($summary);
+				//}
 			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
 			} elseif (isset($histo[$key]['type'])) {

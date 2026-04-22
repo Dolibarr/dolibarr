@@ -12,7 +12,7 @@
  * Copyright (C) 2015		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2026  Frédéric France         	<frederic.france@free.fr>
- * Copyright (C) 2020-2022  Open-Dsi                	<support@open-dsi.fr>
+ * Copyright (C) 2020-2026  Open-Dsi                	<support@open-dsi.fr>
  * Copyright (C) 2024-2025  Charlene Benke      	    <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -270,7 +270,7 @@ $tabsql = array();
 $tabsql[DICT_FORME_JURIDIQUE] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
 $tabsql[DICT_DEPARTEMENTS] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[DICT_REGIONS] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec, c.sepa FROM ".MAIN_DB_PREFIX."c_country AS c";
+$tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.phone_code, c.trunk_prefix, c.active, c.favorite, c.eec, c.sepa FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[DICT_CIVILITY] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
@@ -364,7 +364,7 @@ $tabfield = array();
 $tabfield[DICT_FORME_JURIDIQUE] = "code,libelle,country";
 $tabfield[DICT_DEPARTEMENTS] = "code,libelle,region_id,region,country"; // "code,libelle,region,country_code-country"
 $tabfield[DICT_REGIONS] = "code,libelle,country_id,country";
-$tabfield[DICT_COUNTRY] = "code,label";
+$tabfield[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfield[DICT_CIVILITY] = "code,label";
 $tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
@@ -411,7 +411,7 @@ $tabfieldvalue = array();
 $tabfieldvalue[DICT_FORME_JURIDIQUE] = "code,libelle,country";
 $tabfieldvalue[DICT_DEPARTEMENTS] = "code,libelle,region"; // "code,libelle,region"
 $tabfieldvalue[DICT_REGIONS] = "code,libelle,country";
-$tabfieldvalue[DICT_COUNTRY] = "code,label";
+$tabfieldvalue[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldvalue[DICT_CIVILITY] = "code,label";
 $tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
@@ -458,7 +458,7 @@ $tabfieldinsert = array();
 $tabfieldinsert[DICT_FORME_JURIDIQUE] = "code,libelle,fk_pays";
 $tabfieldinsert[DICT_DEPARTEMENTS] = "code_departement,nom,fk_region";
 $tabfieldinsert[DICT_REGIONS] = "code_region,nom,fk_pays";
-$tabfieldinsert[DICT_COUNTRY] = "code,label";
+$tabfieldinsert[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldinsert[DICT_CIVILITY] = "code,label";
 $tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
@@ -613,7 +613,7 @@ $tabcomplete = array(
 		'picto' => 'region',
 		'help' => array('code' => $langs->trans("EnterAnyCode"))
 	),
-	'c_country' => array('picto' => 'country', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
+	'c_country' => array('picto' => 'country', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'phone_code' => 'e.g. 33', 'trunk_prefix' => 'e.g. 0')),
 	'c_civility' => array('picto' => 'contact', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
 	'c_actioncomm' => array('picto' => 'action', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'color' => $langs->trans("ColorFormat"), 'position' => $langs->trans("PositionIntoComboList"))),
 	'c_chargesociales' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
@@ -2117,6 +2117,12 @@ if ($id > 0) {
 			if ($value == 'country') {
 				$valuetoshow = $langs->trans("Country");
 			}
+			if ($value == 'phone_code') {
+				$valuetoshow = $langs->trans("PhoneCode");
+			}
+			if ($value == 'trunk_prefix') {
+				$valuetoshow = $langs->trans("TrunkPrefix");
+			}
 			if ($value == 'department_buyer') {
 				$valuetoshow = $langs->trans('DepartmentBuyer');
 			}
@@ -2434,7 +2440,7 @@ if ($id > 0) {
 							//var_dump($fieldlist);
 							$class = '';
 							$showfield = 1;
-							$valuetoshow = empty($obj->$value) ? '' : $obj->$value;
+							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
 							$titletoshow = '';
 
 							if ($value == 'entity') {

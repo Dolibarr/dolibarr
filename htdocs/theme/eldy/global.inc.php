@@ -838,7 +838,7 @@ input.pageplusone {
 .hmirror {
 	transform: scale(-1, 1);
 }
-.undertopmenu {
+.anchorundermenu {
 	scroll-margin-top: 80px;
 }
 
@@ -4406,12 +4406,6 @@ span.tabspan {
 .allwidth {
 	width: 100%;
 }
-
-#undertopmenu {
-	background-repeat: repeat-x;
-	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
-}
-
 
 .paddingrightonly {
 	border-collapse: collapse;
@@ -9131,7 +9125,7 @@ table.jPicker {
 /* ============================================================================== */
 
 .ai_dropdown {
-	min-width: 400px !important;
+	min-width: 500px !important;
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
