@@ -315,7 +315,14 @@ class ToolInvoices extends McpTool
 		}
 
 		if ($invoice->validate($user) < 0) {
-			return ["error" => "Validation failed: " . implode(', ', $invoice->errors)];
+			$error = $invoice->error;
+			if (!empty($invoice->errors)) {
+				$error .= ' ' . implode(', ', $invoice->errors);
+			}
+			if (empty(trim($error))) {
+				$error = 'Unknown error (validate returned < 0 with no message)';
+			}
+			return ["error" => "Validation failed: " . $error];
 		}
 
 		$invoice->fetch($invoice->id);
