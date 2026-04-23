@@ -278,7 +278,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 					$verified_mailings[] = $mailingid;
 					dol_syslog('Using mailing->fetch() to verify mailingid='.$mailingid, LOG_DEBUG);
 				} else {
-					dol_syslog('No '.$checkProjectAccessRight.' access OR user='.((int) $user->id).' is not a Contact to projectid='.$mailing_fk_project.' in mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
+					dol_syslog('No '.$checkProjectAccessRight.' access or user='.((int) $user->id).' is not a Contact to projectid='.$mailing_fk_project.' in mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
 					$verified_mailings = null;
 					$button_add_mailing = null;
 					$button_delete_mailing = null;
