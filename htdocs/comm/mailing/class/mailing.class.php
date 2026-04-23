@@ -595,10 +595,10 @@ class Mailing extends CommonObject
 		} else {
 			$checkProjectAccessRight = 'write';
 		}
-		if (isModEnabled('project')) {
-			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-			$mailingprojectstatic = new Project($this->db);
-		}
+		// do not want to load this at every iteration of the while loop
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		$mailingprojectstatic = new Project($this->db);
+
 
 		$records = array();
 

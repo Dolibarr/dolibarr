@@ -1165,11 +1165,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		global $conf, $langs, $user;
 		if (!$user->hasRight('mailing', 'write')) {
-			dol_syslog('User='.$user->id.' has no write access to mailing in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+			dol_syslog('User='.$user->id.' has no write access to mailing in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
 			return -1;
 		}
 		if (!$fk_mailing > 0) {
-			dol_syslog('No such fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+			dol_syslog('No such fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
 			return -2;
 		}
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
@@ -1177,7 +1177,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$fmresult = $mailingstatic->fetch($fk_mailing);
 		dol_syslog(__METHOD__.'::fetch mailingstatic='.$fk_mailing.' gave fmresult='.$fmresult, LOG_DEBUG);
 		if (!$fmresult) {
-			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
 			return -3;
 		}
 		if (!empty($this->fk_project)) {
@@ -1187,7 +1187,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if ($fapresult) {
 				$other = 'Project='.$attendeeprojectstatic->ref;
 			} else {
-				dol_syslog('Fetch failed fk_project='.$this->fk_project.' in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+				dol_syslog('Fetch failed fk_project='.$this->fk_project.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
 				return -4;
 			}
 		}

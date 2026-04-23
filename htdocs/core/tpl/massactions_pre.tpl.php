@@ -384,6 +384,9 @@ if ($massaction == 'premassmail') {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	$projectstatic = new Project($db);
 
+	if (!isset($projectid)) {
+		$projectid = 0;
+	}
 	$fpresult = $projectstatic->fetch($projectid);
 	if ($fpresult) {
 		$toptext = $projectstatic->title;

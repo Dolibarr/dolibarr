@@ -464,8 +464,6 @@ class EventAttendees extends DolibarrApi
 	 * @param   int     $id				ID of event attendee
 	 * @param   int     $mailingid      mailing ID to add to
 	 * @return  int						-1 for KO, Id >1 of created mailing_target if OK
-	 * @phan-return		ConferenceOrBoothAttendee
-	 * @phpstan-return	ConferenceOrBoothAttendee
 	 *
 	 * @url	POST addByIdToMassMailing/{id}/{mailingid}
 	 *
