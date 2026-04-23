@@ -318,6 +318,8 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 				} else {
 					$other = 'Project='.$attendeestatic->fk_project;
 				}
+			} else {
+				$other = 'Eventattendee='.$attendeeid;
 			}
 			$verified_attendees[] = array(
 					'fk_soc' => $attendeestatic->fk_soc,

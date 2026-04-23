@@ -1190,6 +1190,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 				dol_syslog('Fetch failed fk_project='.$this->fk_project.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
 				return -4;
 			}
+		} else {
+			$other = 'Eventattendee='.$attendeeid;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
@@ -1201,7 +1203,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$mailingtarget->lastname = $this->lastname;
 		$mailingtarget->firstname = $this->firstname;
 		$mailingtarget->email = $this->email;
-		$mailingtarget->other = $other;
+		$mailingtarget->other = (string) $other;
 		$mailingtarget->tag = $this->db->escape(dol_hash($conf->file->instance_unique_id.";".$this->email.";".$this->lastname.";".((int) $fk_mailing).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'));
 		$mailingtarget->source_id = $this->id;
 		$mailingtarget->source_type = $this->element;
