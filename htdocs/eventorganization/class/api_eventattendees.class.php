@@ -459,6 +459,132 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
+	 * Add eventattendee to a mass mailing by id
+	 *
+	 * @param   int     $id				ID of event attendee
+	 * @param   int     $mailingid      mailing ID to add to
+	 * @return  int						-1 for KO, Id >1 of created mailing_target if OK
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 *
+	 * @url	POST addByIdToMassMailing/{id}/{mailingid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	public function addByIdToMassMailing($id, $mailingid)
+	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$addresult = $this->_addToMassMailing($id, $mailingid);
+		return $addresult;
+	}
+
+	/**
+	 * Add eventattendee to a mass mailing by ref
+	 *
+	 * @param       string	$ref		Ref of object
+	 * @param		int     $mailingid	mailing ID to add to
+	 * @return		int					-1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @url	POST addByRefToMassMailing/{ref}/{mailingid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	public function addByRefToMassMailing($ref, $mailingid)
+	{
+		if ($ref == '' ) {
+			throw new RestException(400, 'No eventattendee with ref="" can exist');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$addresult = $this->_addToMassMailing(0, $ref, $mailingid);
+		return $addresult;
+	}
+
+	/**
+	 * Add eventattendee to a mass mailing
+	 *
+	 * @param   int     $id             event attendee ID
+	 * @param   string	$ref			Ref of event attendee
+	 * @param   int     $mailingid      mailing ID to add to
+	 * @return  int                     -1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	private function _addToMassMailing($id = 0, $ref = '', $mailingid)
+	{
+		if ($id < 1 && empty($ref)) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+        $accesstype = 'write';
+        $allowaccess = $this->_checkAccessRights($accesstype, 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied '.$accesstype.' access to Event attendees');
+		}
+		if ($id) {
+			$fetchresult = $this->event_attendees->fetch($id, '');
+		} else {
+			$fetchresult = $this->event_attendees->fetch(0, $ref);
+		}
+		if (!$fetchresult) {
+			throw new RestException(404, 'Event attendee with id '.$id.' not found');
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($mailingid);
+		if ($fmresult) {
+			$allowaccess = DolibarrApiAccess::$user->hasRight('mailing', $accesstype);
+            if (!$allowaccess) {
+                throw new RestException(403, 'denied '.$accesstype.' access to mass mailing');
+            }
+        } else {
+            throw new RestException(404, 'Mass mailing with id '.$id.' not found');
+		}
+
+        $addresult = $this->event_attendees->addToMassMailing($mailingid);
+		if ($addresult == 0) {
+			throw new RestException(409, 'Duplicate record already exists');
+		} elseif ($addresult == -1) {
+			throw new RestException(403, 'permission denied');
+		} elseif ($addresult == -2) {
+			throw new RestException(404, 'mailingid='.$mailingid.' not found');
+		} elseif ($addresult == -3) {
+			throw new RestException(500, 'Fetching the project in mailing='.$mailingid.' failed');
+		} else {
+			return $addresult;
+		}
+		// 	 *  @return		int						-1, Permission denied, -2 no fk_mailing, -3, fetch fk_mailing failed, -3, fetch fk_project failed, 0 if KO, Id of created mailing_target if OK
+
+	}
+
+	/**
 	 * Get properties of an event attendee
 	 *
 	 * Return an array with Event attendees

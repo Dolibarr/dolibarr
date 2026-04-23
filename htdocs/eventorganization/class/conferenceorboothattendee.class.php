@@ -1148,6 +1148,70 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		return dol_trunc($ret, $maxlen);
 	}
+
+	/**
+	 *  Add eventattendee to mass mailing
+	 *
+	 *  @param		int		$fk_mailing		The id of the mass mailing to add this event attendee to
+	 *  @return		int						-1, Permission denied, -2 no fk_mailing, -3, fetch fk_mailing failed, -3, fetch fk_project failed, 0 if KO, Id of created mailing_target if OK
+	 */
+	public function addToMassMailing($fk_mailing)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $conf, $langs, $user;
+		if (!$user->hasRight('mailing', 'write')) {
+			dol_syslog('User='.$user->id.' has no write access to mailing in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+			return -1;
+		}
+		if (!$fk_mailing > 0) {
+			dol_syslog('No such fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+			return -2;
+		}
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($fk_mailing);
+		dol_syslog(__METHOD__.'::fetch mailingstatic='.$fk_mailing.' gave fmresult='.$fmresult, LOG_DEBUG);
+		if (!$fmresult) {
+			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+			return -3;
+		}
+		if (!empty($this->fk_project)) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$attendeeprojectstatic = new Project($this->db);
+			$fapresult = $attendeeprojectstatic->fetch($this->fk_project);
+			if ($fapresult) {
+				$other = 'Project='.$attendeeprojectstatic->ref;
+			} else {
+				dol_syslog('Fetch failed fk_project='.$this->fk_project.' in '.__CLASS__.'::'.__METHOD__, LOG_ERROR);
+				return -4;
+			}
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
+		$mailingtarget = new MailingTarget($this->db);
+		$mailingtarget->fk_mailing = $fk_mailing;
+		// preparing for future
+		// $mailingtarget->fk_contact = $this->fk_contact;
+		// $mailingtarget->fk_socid = $this->fk_soc;
+		$mailingtarget->lastname = $this->lastname;
+		$mailingtarget->firstname = $this->firstname;
+		$mailingtarget->email = $this->email;
+		$mailingtarget->other = $other;
+		$mailingtarget->tag = $this->db->escape(dol_hash($conf->file->instance_unique_id.";".$this->email.";".$this->lastname.";".((int) $fk_mailing).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'));
+		$mailingtarget->source_id = $this->id;
+		$mailingtarget->source_type = $this->element;
+		$mailingtarget->statut = 0;
+		$mailingtarget->status = 0;
+		$mtcresult = $mailingtarget->create($user);
+		dol_syslog(__METHOD__.'::mtcresult='.$mtcresult, LOG_DEBUG);
+		if ($mtcresult > 0) {
+			return $mtcresult;
+		} else {
+			$this->error = $mailingtarget->error;
+			dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+			return 0;
+		}
+	}
 }
 
 
