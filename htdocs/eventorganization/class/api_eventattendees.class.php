@@ -530,7 +530,7 @@ class EventAttendees extends DolibarrApi
 	 * @throws RestException 409
 	 * @throws RestException 500
 	 */
-	private function _addToMassMailing($id = 0, $ref = '', $mailingid)
+	private function _addToMassMailing($id = 0, $ref = '', $mailingid = 0)
 	{
 		if ($id < 1 && empty($ref)) {
 			throw new RestException(400, 'No eventattendee with id<1 can exist');
@@ -581,7 +581,6 @@ class EventAttendees extends DolibarrApi
 			return $addresult;
 		}
 		// 	 *  @return		int						-1, Permission denied, -2 no fk_mailing, -3, fetch fk_mailing failed, -3, fetch fk_project failed, 0 if KO, Id of created mailing_target if OK
-
 	}
 
 	/**

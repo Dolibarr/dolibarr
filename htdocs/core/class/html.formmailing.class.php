@@ -76,7 +76,7 @@ class FormMailing extends Form
 	 *
 	 * @return 	string 					HTML
 	 */
-	public function formMultiSelectMassMailing($page, $htmlname, $title = '', $toplist, $toptext = '', $endlist = array(), $endtext = '', $size = 16, $morecss = '', $nooutput = 0)
+	public function formMultiSelectMassMailing($page, $htmlname, $title = '', $toplist = array(), $toptext = '', $endlist = array(), $endtext = '', $size = 16, $morecss = '', $nooutput = 0)
 	{
 		dol_syslog(__CLASS__.'::'.__METHOD__.'::', LOG_DEBUG);
 		global $langs;

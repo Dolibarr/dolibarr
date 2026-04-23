@@ -285,7 +285,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 					setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs-trans("ProjectId").' '.$mailing_fk_project.' &mdash; '.$langs->trans("YouAreNotContactOfProject"), null, 'errors');
 					break;
 				}
-		} else {
+			} else {
 				dol_syslog('Failed to fetch projectid='.$mailing_fk_project.' in mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
 				$verified_mailings = null;
 				$button_add_mailing = null;
