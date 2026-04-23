@@ -1186,6 +1186,7 @@ if (!defined('NOLOGIN')) {
 	// Overwrite main_checkbox_left_column from user setup
 	if (isset($user->conf->MAIN_CHECKBOX_LEFT_COLUMN)) {	// If a user setup exists
 		$conf->main_checkbox_left_column = getDolUserInt('MAIN_CHECKBOX_LEFT_COLUMN'); // Can be 0
+		$conf->global->MAIN_CHECKBOX_LEFT_COLUMN = $conf->main_checkbox_left_column; // Sync so getDolGlobalString() picks it up
 	}
 
 	// Replace conf->css by personalized value if theme not forced
