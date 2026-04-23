@@ -74,6 +74,7 @@
 @phan-var-force string $modelmail
 @phan-var-force ?string $search_all
 @phan-var-force ?Task $taskstatic
+@phan-var-force int $projectid
 ';
 
 if (!empty($sall) || !empty($search_all)) {
