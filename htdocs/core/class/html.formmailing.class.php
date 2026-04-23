@@ -70,7 +70,7 @@ class FormMailing extends Form
 	 * @param 	string 		$toptext 	Text in top/main optgroup (optional) - default is '' and not shown
 	 * @param	int[] 		$endlist 	List of mass mailing ids in below optgroup (optional) - default array() - not used, not shown
 	 * @param 	string 		$endtext 	Text in below optgroup (optional) - default is '' and not shown
-	 * @param	int 		$size 		How heigh the table should be in lines, default is 16
+	 * @param	int 		$size 		How high the table should be in lines, default is 16
 	 * @param	string 		$morecss 	More css
 	 * @param	int			$nooutput 	No print output. Return it only.
 	 *

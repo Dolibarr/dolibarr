@@ -542,8 +542,8 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(400, 'No mass mailing with id<1 can exist');
 		}
 
-        $accesstype = 'write';
-        $allowaccess = $this->_checkAccessRights($accesstype, 0);
+		$accesstype = 'write';
+		$allowaccess = $this->_checkAccessRights($accesstype, 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied '.$accesstype.' access to Event attendees');
 		}
@@ -561,14 +561,14 @@ class EventAttendees extends DolibarrApi
 		$fmresult = $mailingstatic->fetch($mailingid);
 		if ($fmresult) {
 			$allowaccess = DolibarrApiAccess::$user->hasRight('mailing', $accesstype);
-            if (!$allowaccess) {
-                throw new RestException(403, 'denied '.$accesstype.' access to mass mailing');
-            }
-        } else {
-            throw new RestException(404, 'Mass mailing with id '.$id.' not found');
+			if (!$allowaccess) {
+				throw new RestException(403, 'denied '.$accesstype.' access to mass mailing');
+			}
+		} else {
+			throw new RestException(404, 'Mass mailing with id '.$id.' not found');
 		}
 
-        $addresult = $this->event_attendees->addToMassMailing($mailingid);
+		$addresult = $this->event_attendees->addToMassMailing($mailingid);
 		if ($addresult == 0) {
 			throw new RestException(409, 'Duplicate record already exists');
 		} elseif ($addresult == -1) {
