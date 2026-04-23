@@ -462,12 +462,12 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search($db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search($db->sanitize($key), $db->escape($search[$key]), (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
-			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
+			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type']) && !empty($search[$key])) {
 				if (preg_match('/_dtstart$/', $key)) {
 					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
 				}
