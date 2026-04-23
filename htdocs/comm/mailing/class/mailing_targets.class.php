@@ -425,8 +425,8 @@ class MailingTarget extends CommonObject
 		$sql .= ", fk_soc = '".((int) $this->fk_soc)."'";
 		$sql .= ", fk_contact = '".((int) $this->fk_contact)."'";
 		$sql .= ", fk_attendee = '".((int) $this->fk_attendee)."'";
-		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
-		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
+		$sql .= ", lastname = '".$this->db->escape((string) $this->lastname)."'";
+		$sql .= ", firstname = '".$this->db->escape((string) $this->firstname)."'";
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
 		$sql .= ", other = '".$this->db->escape($this->other)."'";
 		$sql .= ", tag = '".$this->db->escape($this->tag)."'";

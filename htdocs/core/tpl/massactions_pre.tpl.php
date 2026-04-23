@@ -49,6 +49,7 @@
  * @var User $user
  *
  * @var string $action
+ * @var int $projectid
  * @var string $massaction
  * @var string $modelmail
  * @var string $sendto

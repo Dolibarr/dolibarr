@@ -1191,7 +1191,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 				return -4;
 			}
 		} else {
-			$other = 'Eventattendee='.$attendeeid;
+			$other = 'Eventattendee='.$this->id;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
