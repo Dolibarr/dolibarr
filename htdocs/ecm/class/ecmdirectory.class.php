@@ -291,14 +291,14 @@ class EcmDirectory extends CommonObject
 	/**
 	 *	Update cache of nb of documents into database
 	 *
-	 * 	@param	string	$value		'+' or '-' or new number
+	 * 	@param	string	$value		'+' (one more) or '-' (one less) or new number (like '5') or 'database' (recompute from database)
 	 *  @return int		         	<0 if KO, >0 if OK
 	 */
 	public function changeNbOfFiles($value)
 	{
 		global $conf;
 
-		if ($value == '+') {
+		if ($value == 'database') {
 			$relativepath = $conf->ecm->dir_output . '/' . $this->getRelativePath(); // Ex: dir1/dir2/dir3/
 			$relativepath = preg_replace('/^' . preg_quote(DOL_DATA_ROOT, '/') . '/', '', $relativepath);
 			$relativepath = trim($relativepath, '/');
