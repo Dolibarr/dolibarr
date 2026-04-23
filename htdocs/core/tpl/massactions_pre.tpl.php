@@ -405,7 +405,7 @@ if ($massaction == 'premassmail') {
 	$htmlname = 'mailing';
 	$page = '';
 	$endtext = $langs->trans("Other").' '.$langs->trans("EMailings");
-	$size = round(10 + log(count($toplist)) + log(count($endlist)));
+	$size = (int) round(10 + log(count($toplist)) + log(count($endlist)));
 	$title = '<h4><label for="massmail_selection_choices_'.$htmlname.'">'.$toptext.':</label></h4>';
 	$formmailing->formMultiSelectMassMailing($page, $htmlname, $title, $toplist, $toptext, $endlist, $endtext, $size, 'width: 100%;');
 

@@ -51,6 +51,11 @@ class MailingTarget extends CommonObject
 	public $fk_mailing;
 
 	/**
+	 * @var int Thirdparty id that this mailing_target is related to.
+	 */
+	public $fk_soc;
+
+	/**
 	 * @var int Contact id that this mailing_target is related to.
 	 */
 	public $fk_contact;

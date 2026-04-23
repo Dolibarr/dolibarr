@@ -249,7 +249,7 @@ $button_delete_mailing = GETPOST('button_delete_mailing', 'aZ09');
 if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	if (!$user->hasRight('mailing', 'write')) {
 		dol_syslog('User='.$user->id.' misses permissions to write mailings', LOG_WARNING);
-		setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs-trans("EditMailing"), null, 'errors');
+		setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs->trans("EditMailing"), null, 'errors');
 		$massaction = '';
 	}
 	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
@@ -282,7 +282,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 					$verified_mailings = null;
 					$button_add_mailing = null;
 					$button_delete_mailing = null;
-					setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs-trans("ProjectId").' '.$mailing_fk_project.' &mdash; '.$langs->trans("YouAreNotContactOfProject"), null, 'errors');
+					setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs->trans("ProjectId").' '.$mailing_fk_project.' &mdash; '.$langs->trans("YouAreNotContactOfProject"), null, 'errors');
 					break;
 				}
 			} else {
