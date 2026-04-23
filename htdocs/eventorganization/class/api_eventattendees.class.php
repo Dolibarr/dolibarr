@@ -484,7 +484,7 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(400, 'No mass mailing with id<1 can exist');
 		}
 
-		$addresult = $this->_addToMassMailing($id, $mailingid);
+		$addresult = $this->_addToMassMailing($id, '', $mailingid);
 		return $addresult;
 	}
 

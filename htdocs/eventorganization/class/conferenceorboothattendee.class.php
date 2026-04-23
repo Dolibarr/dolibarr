@@ -97,6 +97,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_contact' => array('type' => 'integer:Contact:contact/class/contact.class.php', 'label' => 'Contact', 'enabled' => 'isModEnabled("societe")', 'position' => 44, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "LinkToCompanyContact", 'picto' => 'contact', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
 		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
 		'fk_invoice' => array('type' => 'integer:Facture:compta/facture/class/facture.class.php', 'label' => 'Invoice', 'enabled' => 'isModEnabled("invoice")', 'position' => 57, 'notnull' => 0, 'visible' => 1, 'index' => 0, 'picto' => 'bill', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
@@ -145,6 +146,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var int
 	 */
 	public $fk_soc;
+	/**
+	 * @var int Contact id that this conferenceorboothattendee is related to.
+	 */
+	public $fk_contact;
 	/**
 	 * @var string
 	 */
@@ -1190,8 +1195,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 		$mailingtarget = new MailingTarget($this->db);
 		$mailingtarget->fk_mailing = $fk_mailing;
+		$mailingtarget->fk_contact = $this->fk_contact;
 		// preparing for future
-		// $mailingtarget->fk_contact = $this->fk_contact;
 		// $mailingtarget->fk_socid = $this->fk_soc;
 		$mailingtarget->lastname = $this->lastname;
 		$mailingtarget->firstname = $this->firstname;
