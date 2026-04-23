@@ -320,7 +320,6 @@ class MailingTargets // This can't be abstract as it is used for some method
 					$this->error = $this->db->error().' : '.$targetarray['email'];
 					$this->db->rollback();
 					return -1;
-					}
 				}
 			}
 		}
