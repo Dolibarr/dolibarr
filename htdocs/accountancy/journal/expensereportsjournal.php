@@ -359,15 +359,15 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 						$accountingaccount = new AccountingAccount($db);
 						$accountingaccount->fetch(0, $k, true);
-						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+						$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
 					} else {
-						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+						$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
 					}
 
 					$account_label = $accountingaccount->label;
 
 					// get compte id and label
-					if ($accountingaccount->fetch(0, $k, true)) {
+					if ($accountingaccount->id > 0) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $val["ref"];
@@ -431,9 +431,9 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
 							$accountingaccount = new AccountingAccount($db);
 							$accountingaccount->fetch(0, $k, true);
-							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = clone $accountingaccount;
 						} else {
-							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
+							$accountingaccount = clone $conf->cache['accountingaccountincurrententity_vat'][$k];
 						}
 
 						$account_label = $accountingaccount->label;
@@ -749,9 +749,9 @@ if (empty($action) || $action == 'view') {
 			if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(0, $k, true);
-				$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
+				$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
 			} else {
-				$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
+				$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
 			}
 
 			if ($mt) {
