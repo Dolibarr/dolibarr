@@ -1884,6 +1884,8 @@ DeliveriesOrderAbility=Support products deliveries receipts
 FreeLegalTextOnDeliveryReceipts=Free text on delivery receipts
 ##### FCKeditor #####
 AdvancedEditor=Advanced editor
+EditorBackend=WYSIWYG editor engine
+EditorBackendHelp=Select the JavaScript library used to render advanced editor fields. CKEditor 4 is the historical default. TinyMCE is an alternative backend (its library must be installed under public/includes/tinymce/).
 ActivateFCKeditor=Activate advanced editor for:
 FCKeditorForNotePublic=WYSIWYG creation/modification of the field "public notes" of elements
 FCKeditorForNotePrivate=WYSIWYG creation/modification of the field "private notes" of elements

@@ -123,6 +123,22 @@ if (GETPOST('action') == 'disable_specialchar') {
 	dolibarr_del_const($db, "FCKEDITOR_ENABLE_SPECIALCHAR", $conf->entity);
 }
 
+if (GETPOST('action', 'aZ09') == 'setbackend') {
+	$newbackend = GETPOST('editorbackend', 'aZ09');
+	if (in_array($newbackend, array('ckeditor', 'tinymce'), true)) {
+		$res = dolibarr_set_const($db, 'FCKEDITOR_EDITORNAME', $newbackend, 'chaine', 0, '', $conf->entity);
+		if ($res > 0) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			dol_syslog("admin/fckeditor.php: failed to save FCKEDITOR_EDITORNAME=".$newbackend.": ".$db->lasterror(), LOG_ERR);
+			setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');
+		}
+	} else {
+		dol_syslog("admin/fckeditor.php: invalid editor backend value: ".$newbackend, LOG_WARNING);
+		setEventMessages($langs->trans("ErrorBadValue"), null, 'errors');
+	}
+}
+
 if (GETPOST('save', 'alpha')) {
 	$error = 0;
 
@@ -160,6 +176,34 @@ print '<br>';
 if (empty($conf->use_javascript_ajax)) {
 	setEventMessages(null, array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), 'errors');
 } else {
+	// Editor backend choice (CKEditor vs TinyMCE)
+	$currentbackend = getDolGlobalString('FCKEDITOR_EDITORNAME', 'ckeditor');
+	if (!in_array($currentbackend, array('ckeditor', 'tinymce'), true)) {
+		$currentbackend = 'ckeditor';
+	}
+	print '<form name="formeditorbackend" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setbackend">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans("EditorBackend").'</td>';
+	print '<td class="center width100"></td>';
+	print "</tr>\n";
+	print '<tr class="oddeven">';
+	print '<td class="width20">'.img_object("", 'generic').'</td>';
+	print '<td>';
+	print '<select name="editorbackend" class="minwidth150">';
+	print '<option value="ckeditor"'.($currentbackend == 'ckeditor' ? ' selected' : '').'>CKEditor 4</option>';
+	print '<option value="tinymce"'.($currentbackend == 'tinymce' ? ' selected' : '').'>TinyMCE</option>';
+	print '</select>';
+	print ' '.$form->textwithpicto('', $langs->trans("EditorBackendHelp"));
+	print '</td>';
+	print '<td class="center width100"><input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
+	print '</tr>';
+	print '</table>'."\n";
+	print '</form>'."\n";
+	print '<br>';
+
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';

@@ -165,8 +165,8 @@ class DolEditor
 		}
 
 		// Define some properties
-		if (in_array($this->tool, array('textarea', 'ckeditor', 'ace'))) {
-			if ($this->tool == 'ckeditor' && !dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
+		if (in_array($this->tool, array('textarea', 'ckeditor', 'tinymce', 'ace'))) {
+			if (in_array($this->tool, array('ckeditor', 'tinymce')) && !dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
 				$this->content = dol_nl2br($content);
 			} else {
 				$this->content = $content;
@@ -227,10 +227,10 @@ class DolEditor
 
 		$this->content = (string) $this->content; // to avoid htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated
 
-		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
+		if (in_array($this->tool, array('textarea', 'ckeditor', 'tinymce'))) {
 			$found = 1;
 
-			$out .= "\n".'<!-- Output CKeditor '.dol_string_nohtmltag($this->htmlname).' toolbarname = '.dol_string_nohtmltag($this->toolbarname).' -->'."\n";
+			$out .= "\n".'<!-- Output '.dol_string_nohtmltag($this->tool).' '.dol_string_nohtmltag($this->htmlname).' toolbarname = '.dol_string_nohtmltag($this->toolbarname).' -->'."\n";
 
 			// Note: We do not put the attribute 'disabled' tag because on a read form, it change style with grey.
 			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'"';
@@ -348,6 +348,70 @@ class DolEditor
 				// Show the CKEditor javascript object once loaded is ready 'For debug)
 				//$out .= '; CKEDITOR.on(\'instanceReady\', function(ck) { ck.editor.removeMenuItem(\'maximize\'); ck.editor.removeMenuItem(\'Undo\'); ck.editor.removeMenuItem(\'undo\'); console.log(ck.editor); console.log(ck.editor.toolbar[0]); }); ';
 				$out .= '});'."\n";	// end document.ready
+				$out .= '</script>'."\n";
+			}
+
+			if ($this->tool == 'tinymce' && !empty($conf->use_javascript_ajax) && isModEnabled('fckeditor')) {
+				if (!defined('REQUIRE_TINYMCE')) {
+					define('REQUIRE_TINYMCE', '1');
+				}
+
+				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
+				$pickerenabled = $this->uselocalbrowser ? 'true' : 'false';
+
+				$out .= '<!-- Output tinymce toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
+				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
+				$out .= '$(document).ready(function () {'."\n";
+				$out .= '	if (typeof tinymce === "undefined") {'."\n";
+				$out .= '		console.error("TinyMCE library not loaded. Check that public/includes/tinymce/tinymce/tinymce.min.js exists and FCKEDITOR_EDITORNAME=tinymce.");'."\n";
+				$out .= '		return;'."\n";
+				$out .= '	}'."\n";
+				$out .= '	var toolbarName = "'.dol_escape_js($this->toolbarname).'";'."\n";
+				$out .= '	var toolbars = (window.dolTinymceToolbars || {});'."\n";
+				$out .= '	var toolbarStr = toolbars[toolbarName] || toolbars["dolibarr_details"] || "undo redo | bold italic | link | code";'."\n";
+				$out .= '	var pluginsStr = (typeof window.dolTinymcePluginsFor === "function") ? window.dolTinymcePluginsFor(toolbarName) : "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen table help wordcount";'."\n";
+				$out .= '	var tinyLang = "'.dol_escape_js($langs->defaultlang).'";'."\n";
+				$out .= '	var tinyConf = {'."\n";
+				$out .= '		selector: "textarea#'.dol_escape_js($this->htmlname).'",'."\n";
+				$out .= '		toolbar: toolbarStr,'."\n";
+				$out .= '		plugins: pluginsStr,'."\n";
+				$out .= '		menubar: false,'."\n";
+				$out .= '		branding: false,'."\n";
+				$out .= '		promotion: false,'."\n";
+				$out .= '		license_key: "gpl",'."\n";
+				$out .= '		readonly: '.($this->readonly ? 'true' : 'false').','."\n";
+				$out .= '		height: '.(int) $this->height.','."\n";
+				if ($this->width) {
+					$out .= '		width: "'.dol_escape_js($this->width).'",'."\n";
+				}
+				$out .= '		directionality: "'.dol_escape_js(strtolower($langs->trans("DIRECTION")) === 'rtl' ? 'rtl' : 'ltr').'",'."\n";
+				$out .= '		forced_root_block: false,'."\n";		// equivalent of CKEDITOR.ENTER_BR
+				$out .= '		convert_urls: false,'."\n";
+				$out .= '		relative_urls: false,'."\n";
+				$out .= '		entity_encoding: "raw",'."\n";
+				$out .= '		protect: [/<\?[\s\S]*?\?>/g],'."\n";	// protect PHP tags like CKEditor did
+				$out .= '		paste_data_images: true,'."\n";
+				$out .= '		toolbar_mode: '.($this->toolbarstartexpanded ? '"wrap"' : '"sliding"').','."\n";
+				$out .= '		browser_spellcheck: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false').','."\n";
+				$out .= '		language: (tinyLang && tinyLang.indexOf("en") === 0) ? "en" : tinyLang,'."\n";
+				$out .= '		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).','."\n";
+				if ($pickerenabled === 'true') {
+					$out .= '		file_picker_types: "file image media",'."\n";
+					$out .= '		file_picker_callback: function (cb, value, meta) {'."\n";
+					$out .= '			var url = (meta.filetype === "image") ? window.tinymceFilebrowserImageBrowseUrl : window.tinymceFilebrowserBrowseUrl;'."\n";
+					$out .= '			if (!url) { return; }'."\n";
+					$out .= '			var w = window.open(url, "tinymcePicker", "width=900,height=500");'."\n";
+					$out .= '			window.dolTinymcePickerCb = function (picked) { if (picked) { cb(picked); } if (w) { w.close(); } };'."\n";
+					$out .= '		},'."\n";
+				}
+				$out .= '		setup: function (editor) {'."\n";
+				$out .= '			editor.on("init", function () {'."\n";
+				$out .= '				console.log("tinymce '.dol_escape_js($this->htmlname).' instanceReady");'."\n";
+				$out .= '			});'."\n";
+				$out .= '		}'."\n";
+				$out .= '	};'."\n";
+				$out .= '	tinymce.init(tinyConf)'.$morejs.';'."\n";
+				$out .= '});'."\n";
 				$out .= '</script>'."\n";
 			}
 		}
