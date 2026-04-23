@@ -1196,8 +1196,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$mailingtarget = new MailingTarget($this->db);
 		$mailingtarget->fk_mailing = $fk_mailing;
 		$mailingtarget->fk_contact = $this->fk_contact;
-		// preparing for future
-		// $mailingtarget->fk_socid = $this->fk_soc;
+		$mailingtarget->fk_soc = $this->fk_soc;
 		$mailingtarget->lastname = $this->lastname;
 		$mailingtarget->firstname = $this->firstname;
 		$mailingtarget->email = $this->email;

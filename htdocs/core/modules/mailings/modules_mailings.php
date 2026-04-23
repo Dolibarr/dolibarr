@@ -211,11 +211,13 @@ class MailingTargets // This can't be abstract as it is used for some method
 			if (!empty($targetarray['email'])) { // avoid empty email address
 				$sql = "INSERT INTO ".$this->db->prefix()."mailing_cibles";
 				$sql .= " (fk_mailing,";
+				$sql .= " fk_soc,";
 				$sql .= " fk_contact,";
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
 				$sql .= " tag,";
 				$sql .= " source_type)";
 				$sql .= " VALUES (".((int) $mailing_id).",";
+				$sql .= (empty($targetarray['fk_soc']) ? '0' : (int) $targetarray['fk_soc']).",";
 				$sql .= (empty($targetarray['fk_contact']) ? '0' : (int) $targetarray['fk_contact']).",";
 				$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
