@@ -98,11 +98,9 @@ if (empty($reshook)) {
 	if (!empty($parameters['objectsrc']) && is_object($parameters['objectsrc'])
 		&& method_exists($parameters['objectsrc'], 'fetch_optionals')) {
 		$objectsrc = $parameters['objectsrc'];
+		'@phan-var-force CommonObject $objectsrc';
 		if ($objectsrc->fetch_optionals() > 0 && !empty($objectsrc->array_options)) {
-			$object->array_options = array_merge(
-				is_array($object->array_options ?? null) ? $object->array_options : array(),
-				$objectsrc->array_options
-			);
+			$object->array_options = array_merge($object->array_options ?? array(),	$objectsrc->array_options);
 		}
 	}
 
