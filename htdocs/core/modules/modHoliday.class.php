@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,36 +86,33 @@ class modHoliday extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("holiday");
 
 		// Constants
-		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r = 0;
-
-		$this->const[$r][0] = "HOLIDAY_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_holiday_madonna";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des congés';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "HOLIDAY_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "celebrate";
-		$this->const[$r][3] = 'Name of PDF model of holiday';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "HOLIDAY_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/holiday";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
+		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+		$this->const = [
+			[
+				"HOLIDAY_ADDON",
+				"chaine",
+				"mod_holiday_madonna",
+				'Nom du gestionnaire de numerotation des congés',
+				0,
+			],
+			[
+				"HOLIDAY_ADDON_PDF",
+				"chaine",
+				"celebrate",
+				'Name of PDF model of holiday',
+				0,
+			],
+			[
+				"HOLIDAY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/holiday",
+				"",
+				0,
+			],
+		];
 
 		// Array to add new pages in new tabs
 		//$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');	// We avoid to get one tab for each module. RH data are already in RH tab.

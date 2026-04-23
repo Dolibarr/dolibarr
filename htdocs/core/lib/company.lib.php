@@ -1944,7 +1944,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	$complete = (string) (!empty($filters['search_complete']) ? $filters['search_complete']: '');	// Can be 'na', '0', '50', '100'
+	$complete = (string) (!empty($filters['search_complete']) ? $filters['search_complete'] : '');	// Can be 'na', '0', '50', '100'
 	$percent = $complete !== '' ? $complete : -1;
 	if ((string) $complete == '0') {
 		$percent = '0';
@@ -2207,7 +2207,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					break;
 				}
 			}
-		} else {
+		} elseif ($objcon !== null) {
 			$sql2 = addMailingEventTypeSQL($actioncode, $objcon, $filterobj);
 			if (!empty($sql) && !empty($sql2)) {
 				$sql = $sql . " UNION " . $sql2;
@@ -2385,7 +2385,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= '</td>';
 		// Owner
 		$out .= '<td class="liste_titre">';
-		$out .= $form->select_dolusers(($filters['search_filtert'] > 0 ? $filters['search_filtert'] : ''), 'search_filtert', 1, null, 0, '', '', '0', 0, 0, '', 2, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		$out .= $form->select_dolusers((isset($filters['search_filtert']) && $filters['search_filtert'] > 0 ? $filters['search_filtert'] : ''), 'search_filtert', 1, null, 0, '', '', '0', 0, 0, '', 2, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		$out .= '</td>';
 		// Type
 		$out .= '<td class="liste_titre">';
@@ -2555,6 +2555,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			// Example $actionstatic->code = AC_COMPANY_MODIFY and $actionstatic->type_code = AC_OTH_AUTO
 			$out .= $actionstatic->getTypePicto();
 			$out .= $labelOfTypeToShow;
+			if (preg_match('/PRIVATE/', $actionstatic->code)) {
+				$out .= ' ' . img_picto($langs->trans("Private"), 'lock', 'class="valignmiddle"');
+			}
 			$out .= '</td>';
 
 			// Title/Label of event
@@ -2565,6 +2568,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$label = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="' . dol_escape_htmltag($label) . '">';
+				$label = preg_replace('/^\[[^\[]*\]/', '[...]', $label);
 				$out .= dol_trunc($label, 120);
 			}
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
@@ -2573,7 +2577,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$label .= ' - ' . $histo[$key]['note'];
 				$out .= '<a href="' . DOL_URL_ROOT . '/comm/mailing/card.php?id=' . $histo[$key]['id'] . '"';
 				$out .= ' title="' . dol_escape_htmltag($label) . '">';
-				//$out .= img_object($langs->trans("EMailing").'<br>'.$histo[$key]['note'], "email").' ';
+				$label = preg_replace('/^\[[^\[]*\]/', '[...]', $label);
 				$out .= dol_trunc($label, 120);
 				$out .= '</a>';
 			}
@@ -2841,7 +2845,7 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
  *  Add Mailing Event Type SQL
  *
  *  @param	string	    $actioncode		Action code
- *  @param	Object		$objcon		    objcon
+ *  @param	Contact		$objcon		    objcon
  *  @param	?Object		$filterobj      filterobj
  *  @return	string
  */

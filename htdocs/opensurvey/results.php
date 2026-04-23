@@ -1074,8 +1074,7 @@ for ($i = 0; $i < $nbcolonnes + 1; $i++) {
 	if (isset($sumfor[$i])) {
 		if ($i == 0) {
 			$meilleurecolonne = $sumfor[$i];
-		}
-		if (isset($sumfor[$i]) && $sumfor[$i] > $meilleurecolonne) {
+		} elseif ($sumfor[$i] > $meilleurecolonne) {
 			$meilleurecolonne = $sumfor[$i];
 		}
 	}

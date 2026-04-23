@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2015  Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2016  Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2020  Maxime DEMAREST              <maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2016       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Maxime DEMAREST             <maxime@indelog.fr>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 /**
  * @var Conf $conf
@@ -39,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/supplier_invoice.lib.php';
+} else {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
+}
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
@@ -175,7 +181,11 @@ print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup'
 
 print "<br>";
 
-$head = supplierorder_admin_prepare_head();
+if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+	$head = supplier_invoice_admin_prepare_head();
+} else {
+	$head = supplierorder_admin_prepare_head();
+}
 print dol_get_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -1, 'company');
 
 /*

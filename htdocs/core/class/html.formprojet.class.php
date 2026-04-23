@@ -535,19 +535,17 @@ class FormProjets extends Form
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
-	 * @param string $table_element Table of the element to update
-	 * @param int|string $socid If of thirdparty to use as filter or 'id1,id2,...'
-	 * @param string $morecss More CSS
-	 * @param int $limitonstatus Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
-	 * @param string $projectkey Equivalent key  to fk_projet for actual table_element
-	 * @param string $placeholder Placeholder
-	 * @return    int|string                        The HTML select list of element or '' if nothing or -1 if KO
+	 * @param string 		$table_element 	Table of the element to update
+	 * @param int|string 	$socid 			Id of thirdparty or 'all' or 'ifcompany' or 'none' or 'onlyifcompany' or 'only	If of thirdparty to use as filter or 'id1,id2,...'
+	 * @param string 		$morecss 		Add More CSS
+	 * @param int 			$limitonstatus 	Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
+	 * @param string 		$projectkey 	Equivalent key  to fk_projet for actual table_element
+	 * @param string 		$placeholder 	Placeholder
+	 * @return    int|string                The HTML select list of element or '' if nothing or -1 if KO
 	 */
 	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet", $placeholder = '')
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
 		if ($table_element == 'projet_task') {
 			return ''; // Special case of element we never link to a project (already always done)
 		}
@@ -568,8 +566,6 @@ class FormProjets extends Form
 		)) {
 			$linkedtothirdparty = true;
 		}
-
-		$sqlfilter = '';
 
 		//print $table_element;
 		switch ($table_element) {
@@ -623,11 +619,11 @@ class FormProjets extends Form
 		if ($linkedtothirdparty) {
 			$sql .= ", s.nom as name";
 		}
-		$sql .= " FROM " . $this->db->prefix() . $table_element . " as t";
+		$sql .= " FROM " . $this->db->prefix() . $this->db->sanitize($table_element) . " as t";
 		if ($linkedtothirdparty) {
 			$sql .= ", " . $this->db->prefix() . "societe as s";
 		}
-		$sql .= " WHERE " . $projectkey . " is null";
+		$sql .= " WHERE " . $this->db->sanitize($projectkey) . " is null";
 		if (!empty($socid) && $linkedtothirdparty) {
 			if (is_numeric($socid)) {
 				$sql .= " AND t.fk_soc = " . ((int) $socid);
@@ -640,9 +636,6 @@ class FormProjets extends Form
 		}
 		if ($linkedtothirdparty) {
 			$sql .= " AND s.rowid = t.fk_soc";
-		}
-		if ($sqlfilter) {
-			$sql .= " AND " . $sqlfilter;
 		}
 		$sql .= " ORDER BY ref DESC";
 

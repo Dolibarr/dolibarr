@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ function dol_getcache($memoryid, $filecache = 0)
  * 	Return shared memory address used to store dataset with key memoryid
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						Return integer <0 if KO, Memoy address of shared memory for key
+ * 	@return	int						Return integer <0 if KO, Memory address of shared memory for key
  */
 function dol_getshmopaddress($memoryid)
 {
@@ -289,7 +289,7 @@ function dol_getshmopaddress($memoryid)
 	if (empty($shmkeys[$memoryid])) {	// No room reserved for this memoryid, no way to use cache
 		return 0;
 	}
-	return $shmkeys[$memoryid] + $shmoffset;
+	return  (int) ($shmkeys[$memoryid] + $shmoffset);
 }
 
 /**

@@ -45,7 +45,7 @@ create table llx_facture_fourn
   remise				double(24,8)     DEFAULT 0,
 
   close_code			varchar(16),		              -- Code motif cloture sans paiement complet
-  close_missing_amount	double(24,8),					  -- Amount missing when closing with a not complete payment
+  close_missing_amount	double(24,8),					  -- TODO Amount missing when closing with a not complete payment
   close_note			varchar(128),		              -- Commentaire cloture sans paiement complet
 
   vat_reverse_charge    tinyint          DEFAULT 0,	      -- By default, supplier invoice not concerned by vat reverse charge

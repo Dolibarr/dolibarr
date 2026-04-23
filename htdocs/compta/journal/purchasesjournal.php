@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2025  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,7 +223,7 @@ $invoicestatic = new FactureFournisseur($db);
 $companystatic = new Fournisseur($db);
 
 foreach ($tabfac as $key => $val) {
-	$invoicestatic->id = $key;
+	$invoicestatic->id = (int) $key;
 	$invoicestatic->ref = $val["ref"];
 	$invoicestatic->type = $val["type"];
 

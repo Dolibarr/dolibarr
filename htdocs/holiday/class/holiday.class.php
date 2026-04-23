@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2026	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2584,7 +2584,7 @@ class Holiday extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:int}	$arraydata		Label of holiday type (if known)
+	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:float}	$arraydata		Label of holiday type (if known)
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -2634,7 +2634,7 @@ class Holiday extends CommonObject
 	 * @param	string		$newlang			Force a	lang or empty for auto
 	 *
 	 * @return	int								0 if OK, <> 0 if KO (this function is used also by cron so only 0 is OK)
-	*/
+	 */
 	public function sendPreviousMonthHRInformations($mailto = "", $template = "", $newlang = "")
 	{
 		global $conf, $langs, $user;
@@ -2642,8 +2642,8 @@ class Holiday extends CommonObject
 		$outputlangs = $langs;
 
 		$error = 0;
-		$this->output='';
-		$this->error='';
+		$this->output = '';
+		$this->error = '';
 		$arrayfields = array(
 			'user' => 'Employee',
 			'type' => 'Type',
