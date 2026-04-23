@@ -439,7 +439,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".((int) getEntity($object->element)).")";
+	$sql .= " WHERE t.entity IN (".$db->sanitize(getEntity($object->element)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }
