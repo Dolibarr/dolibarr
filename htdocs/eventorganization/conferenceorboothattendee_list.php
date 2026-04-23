@@ -322,6 +322,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 			$verified_attendees[] = array(
 					'fk_soc' => $attendeestatic->fk_soc,
 					'fk_contact' => $attendeestatic->fk_contact,
+					'fk_attendee' => $attendeeid,
 					'lastname' => $attendeestatic->lastname,
 					'firstname' => $attendeestatic->firstname,
 					'email' => $attendeestatic->email,

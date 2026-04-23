@@ -554,6 +554,7 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_mailing_cibles ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_mailing;
 ALTER TABLE llx_mailing_cibles ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
+ALTER TABLE llx_mailing_cibles ADD COLUMN fk_attendee integer DEFAULT NULL AFTER fk_contact;
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact)

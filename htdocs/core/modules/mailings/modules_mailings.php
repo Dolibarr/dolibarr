@@ -213,12 +213,14 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= " (fk_mailing,";
 				$sql .= " fk_soc,";
 				$sql .= " fk_contact,";
+				$sql .= " fk_attendee,";
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
 				$sql .= " tag,";
 				$sql .= " source_type)";
 				$sql .= " VALUES (".((int) $mailing_id).",";
 				$sql .= (empty($targetarray['fk_soc']) ? '0' : (int) $targetarray['fk_soc']).",";
 				$sql .= (empty($targetarray['fk_contact']) ? '0' : (int) $targetarray['fk_contact']).",";
+				$sql .= (empty($targetarray['fk_attendee']) ? '0' : (int) $targetarray['fk_attendee']).",";
 				$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['email'])."',";

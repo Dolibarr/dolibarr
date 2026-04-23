@@ -1195,8 +1195,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 		$mailingtarget = new MailingTarget($this->db);
 		$mailingtarget->fk_mailing = $fk_mailing;
-		$mailingtarget->fk_contact = $this->fk_contact;
 		$mailingtarget->fk_soc = $this->fk_soc;
+		$mailingtarget->fk_contact = $this->fk_contact;
+		$mailingtarget->fk_attendee = $this->id;
 		$mailingtarget->lastname = $this->lastname;
 		$mailingtarget->firstname = $this->firstname;
 		$mailingtarget->email = $this->email;

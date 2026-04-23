@@ -56,6 +56,11 @@ class MailingTarget extends CommonObject
 	public $fk_contact;
 
 	/**
+	 * @var int eventattendee id that this mailing_target is related to.
+	 */
+	public $fk_attendee;
+
+	/**
 	 * @var string lastname of the mailing_target
 	 */
 	public $lastname;
@@ -203,9 +208,11 @@ class MailingTarget extends CommonObject
 		//2025-10-09 06:35:13 DEBUG   192.168.127.1        54     33  sql=INSERT INTO llx_mailing_cibles (fk_mailing, fk_contact, email, statut) VALUES (4,  .((int) 0)., 'jon@jonb.dk',  .((int) )).
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " (fk_mailing, fk_contact, email, statut)";
+		$sql .= " (fk_mailing, fk_soc, fk_contact, fk_attendee, email, statut)";
 		$sql .= " VALUES (".((int) $this->fk_mailing).", ";
+		$sql .=  ((int) $this->fk_soc).", ";
 		$sql .=  ((int) $this->fk_contact).", ";
+		$sql .=  ((int) $this->fk_attendee).", ";
 		$sql .= "'".$this->db->escape($this->email)."', ";
 		$sql .=  ((int) $this->statut)." )";
 
@@ -410,7 +417,9 @@ class MailingTarget extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET fk_mailing = '".((int) $this->fk_mailing)."'";
+		$sql .= ", fk_soc = '".((int) $this->fk_soc)."'";
 		$sql .= ", fk_contact = '".((int) $this->fk_contact)."'";
+		$sql .= ", fk_attendee = '".((int) $this->fk_attendee)."'";
 		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
@@ -453,7 +462,9 @@ class MailingTarget extends CommonObject
 	{
 		$sql = "SELECT t.rowid";
 		$sql .= ", t.fk_mailing";
+		$sql .= ", t.fk_soc";
 		$sql .= ", t.fk_contact";
+		$sql .= ", t.fk_attendee";
 		$sql .= ", t.lastname";
 		$sql .= ", t.firstname";
 		$sql .= ", t.email";
@@ -477,7 +488,9 @@ class MailingTarget extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->fk_mailing = $obj->fk_mailing;
+				$this->fk_soc = $obj->fk_soc;
 				$this->fk_contact = $obj->fk_contact;
+				$this->fk_attendee = $obj->fk_attendee;
 				$this->lastname = $obj->lastname;
 				$this->firstname = $obj->firstname;
 				$this->email = $obj->email;
