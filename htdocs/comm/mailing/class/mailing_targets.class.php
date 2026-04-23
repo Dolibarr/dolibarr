@@ -207,7 +207,7 @@ class MailingTarget extends CommonObject
 		$sql .= " VALUES (".((int) $this->fk_mailing).", ";
 		$sql .=  ((int) $this->fk_contact).", ";
 		$sql .= "'".$this->db->escape($this->email)."', ";
-		$sql .=  ((int) $conf->statut)." )";
+		$sql .=  ((int) $this->statut)." )";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -229,6 +229,7 @@ class MailingTarget extends CommonObject
 				return -2;
 			}
 		} else {
+			dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;

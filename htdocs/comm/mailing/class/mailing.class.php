@@ -577,6 +577,7 @@ class Mailing extends CommonObject
 	/**
 	 * Load id of mass mailings, either in a project or not
 	 *
+	 * @param	User		$user			Object user to evaluate for project permissions
 	 * @param	int			$include      	Return only the mass mailing ids which is assigned to this project, 0 means return all mass mailing and is the default
 	 * @param	int			$exclude      	Return only the mass mailing ids which is not assigned to this project, 0 means return all mass mailing and is the default
 	 * @param	int			$limit        	limit
@@ -586,14 +587,22 @@ class Mailing extends CommonObject
 	 *
 	 * @return	int|int[]		-1 if KO, else OK either [] for nothing found or a list of id's
 	 */
-	public function fetchMassMailingIds($include = 0, $exclude = 0, $limit = 0, $offset = 0, $showmin = 0, $showmax = 3)
+	public function fetchMassMailingIds($user, $include = 0, $exclude = 0, $limit = 0, $offset = 0, $showmin = 0, $showmax = 3)
 	{
-
 		dol_syslog(__CLASS__.'::'.__METHOD__, LOG_DEBUG);
+		if (getDolGlobalInt('USER_ONLY_NEEDS_PROJECT_READ_FOR_MAILING_ADD')) {
+			$checkProjectAccessRight = 'read';
+		} else {
+			$checkProjectAccessRight = 'write';
+		}
+		if (isModEnabled('project')) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$mailingprojectstatic = new Project($this->db);
+		}
 
 		$records = array();
 
-		$sql = 'SELECT rowid';
+		$sql = 'SELECT rowid, fk_project';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
@@ -621,8 +630,15 @@ class Mailing extends CommonObject
 			while ($i < ($limit ? min($limit, $num) : $num)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$records[] = $obj->rowid;
-
+				$mailing_fk_project = $obj->fk_project;
+				if (is_null($mailing_fk_project)) {
+					$records[] = $obj->rowid;
+				} elseif ($mailingprojectstatic->fetch($mailing_fk_project)) {
+					$userHasProjectRights = $mailingprojectstatic->restrictedProjectArea($user, $checkProjectAccessRight);
+					if ($userHasProjectRights) {
+						$records[] = $obj->rowid;
+					}
+				}
 				$i++;
 			}
 			$this->db->free($resql);

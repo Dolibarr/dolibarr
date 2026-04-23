@@ -387,15 +387,15 @@ if ($massaction == 'premassmail') {
 	$fpresult = $projectstatic->fetch($projectid);
 	if ($fpresult) {
 		$toptext = $projectstatic->title;
-		$toplist = $mailingstatic->fetchMassMailingIds($projectid);
-		$endlist = $mailingstatic->fetchMassMailingIds(0, $projectid);
+		$toplist = $mailingstatic->fetchMassMailingIds($user, $projectid);
+		$endlist = $mailingstatic->fetchMassMailingIds($user, 0, $projectid);
 	} elseif ($projectid > 0) {
 		$toptext = $langs->trans("ProjectId").' '.$projectid.' '.$langs->trans("EMailings");
-		$toplist = $mailingstatic->fetchMassMailingIds($projectid);
-		$endlist = $mailingstatic->fetchMassMailingIds(0, $projectid);
+		$toplist = $mailingstatic->fetchMassMailingIds($user, $projectid);
+		$endlist = $mailingstatic->fetchMassMailingIds($user, 0, $projectid);
 	} else {
 		$toptext = $langs->trans("ListOfEMailings");
-		$toplist = $mailingstatic->fetchMassMailingIds(0);
+		$toplist = $mailingstatic->fetchMassMailingIds($user, 0);
 		$endlist = array();
 	}
 
