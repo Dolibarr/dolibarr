@@ -610,14 +610,14 @@ class Mailing extends CommonObject
 			$sql .= ' WHERE 1 = 1';
 		}
 		if ($include > 0) {
-			$sql .= ' AND fk_project = '.$include;
+			$sql .= ' AND fk_project = '.(int) $include;
 		}
 		if ($exclude > 0) {
-			$sql .= ' AND (fk_project != '.$exclude;
+			$sql .= ' AND (fk_project != '.(int) $exclude;
 			$sql .= ' OR fk_project IS NULL)';
 		}
-		$sql .= ' AND statut >= '.$showmin;
-		$sql .= ' AND statut <= '.$showmax;
+		$sql .= ' AND statut >= '.(int) $showmin;
+		$sql .= ' AND statut <= '.(int) $showmax;
 
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
