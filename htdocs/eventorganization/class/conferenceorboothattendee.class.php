@@ -1157,14 +1157,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 *  Add eventattendee to mass mailing
 	 *
-	 *  @param		int		$fk_mailing			The id of the mass mailing to add this event attendee to
-	 *  @param		int		$ignoreNoContact	Ignore that this email address has requested no contact (no marketing), default 0.
-	 *  @param		int		$otherMailSrc		If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = no other source. 1 = auto try in the following order: 2 = Contact, 3 = Thirdparty, 4 = email_company on attendee
-	 *  @param		int		$updateCounting		Set to 1 or higher if you really want to update recipient counting after each insert
+	 *  @param	int	$fk_mailing				The id of the mass mailing to add this event attendee to
+	 *  @param	int	$ignoreNoContact		Ignore that this email address has requested no contact (no marketing), default 0.
+	 *  @param	int	$otherMailSrc			If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = no other source. 1 = auto try in the following order: 2 = Contact, 3 = Thirdparty, 4 = email_company on attendee
+	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
 	 *
 	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 fetch fk_project failed, -5 no valid email found, -6 must respect NoContact, -7 no permission on the fk_project, 0 if KO, Id of created mailing_target if OK
 	 */
-	public function addToMassMailing($fk_mailing, $ignoreNoContact = 0, $otherMailSrc = 0, $updateCounting = 0)
+	public function addToMassMailing($fk_mailing, $ignoreNoContact = 0, $otherMailSrc = 0, $refreshNbOfTargets = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		global $conf, $langs, $user;
@@ -1256,8 +1256,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$mtcresult = $mailingtarget->create($user);
 			dol_syslog(__METHOD__.'::mtcresult='.$mtcresult, LOG_DEBUG);
 			if ($mtcresult > 0) {
-				if ($updateCounting) {
-					$mailingstatic->countNbOfTargets($fk_mailing);
+				if ($refreshNbOfTargets) {
+					$mailingstatic->refreshNbOfTargets();
 				}
 				return $mtcresult;
 			} else {
