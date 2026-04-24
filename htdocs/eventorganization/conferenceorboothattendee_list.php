@@ -252,130 +252,113 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs->trans("EditMailing"), null, 'errors');
 		$massaction = '';
 	}
-	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-	$mailingstatic = new Mailing($db);
-	$mailingprojectstatic = new Project($db);
-
-	require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-	$staticmailingtarget = new MailingTargets($db);
-
 	$langs->loadLangs(array("errors", "main", "mails", "companies"));
-	// verify that all mailings does actually exist
+	$ignoreNoContact = GETPOSTINT('ignoreNoContact') ? GETPOSTINT('ignoreNoContact') : 0;
+	$otherMailSrc = GETPOSTINT('otherMailSrc') ? GETPOSTINT('otherMailSrc') : 0;
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
-	$verified_mailings = array();
-	if (getDolGlobalInt('USER_ONLY_NEEDS_PROJECT_READ_FOR_MAILING_ADD')) {
-		$checkProjectAccessRight = 'read';
-	} else {
-		$checkProjectAccessRight = 'write';
+	if (empty($select_mailing)) {
+		setEventMessages($langs->trans("ListOfEMailings").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
 	}
-	foreach ($select_mailing as $mailingid) {
-		$fmresult = $mailingstatic->fetch($mailingid);
-		if ($fmresult) {
-			$mailing_fk_project = $mailingstatic->fk_project;
-			if (!is_null($mailing_fk_project) && $mailingprojectstatic->fetch($mailing_fk_project)) {
-				$userHasProjectRights = $mailingprojectstatic->restrictedProjectArea($user, $checkProjectAccessRight);
-				if ($userHasProjectRights > 0) {
-					$verified_mailings[] = $mailingid;
-					dol_syslog('Using mailing->fetch() to verify mailingid='.$mailingid, LOG_DEBUG);
-				} else {
-					dol_syslog('No '.$checkProjectAccessRight.' access or user='.((int) $user->id).' is not a Contact to projectid='.$mailing_fk_project.' in mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
-					setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs->trans("ProjectId").' '.$mailing_fk_project.' &mdash; '.$langs->trans("YouAreNotContactOfProject"), null, 'errors');
-					continue;
-				}
-			} else {
-				// this mailing has no project, so we can not verify any project rights
-				$verified_mailings[] = $mailingid;
-			}
-		} else {
-			dol_syslog('Failed to fetch mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
-			setEventMessages($langs->trans("ErrorRefNotFound", "mailingid=".$mailingid), null, 'errors');
-			continue;
-		}
+	if (empty($toselect)) {
+		setEventMessages($langs->trans("Attendees").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
 	}
 
-
-	// Verify all eventattendees actually exist and build array with necessary data for database insert
+	// Verify all eventattendees actually exist before actually inserting them, where successful insert verifies the mailing
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 	$attendeestatic = new ConferenceOrBoothAttendee($db);
-	$attendeeprojectstatic = new Project($db);
+	$mailingstatic = new Mailing($db);
 	$verified_attendees = array();
+	$verified_mailings = array();
+	$whatchanged = array();
+	$info_mesgs = array();
+	$info_warnings = array();
+	$info_errors = array();
 	foreach ($toselect as $attendeeid) {
 		$faresult = $attendeestatic->fetch($attendeeid);
 		if ($faresult) {
-			if (!empty($attendeestatic->fk_project)) {
-				$fapresult = $attendeeprojectstatic->fetch($attendeestatic->fk_project);
-				if ($fapresult) {
-					$other = 'Project='.$attendeeprojectstatic->ref;
+			$verified_attendees[] = $attendeeid;
+			foreach ($select_mailing as $mailingid) {
+				if ($button_add_mailing) {
+					$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignoreNoContact, $otherMailSrc);
+				}
+				if ($button_delete_mailing) {
+					dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
+					setEventMessages("Deletion waits for github PR #37920", null, 'mesgs');
+					// we should now remove all the toselect id's from each mailing
+					dol_syslog('Deletion waits for github PR #37920', LOG_DEBUG);
+					$changetomailing = null;
+				}
+				if ($button_add_mailing || $button_delete_mailing) {
+					if ($changetomailing > 0) {
+						if (isset($whatchanged[$mailingid])) {
+							$verified_mailings[] = $mailingid;
+						}
+						$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
+						$info_mesgs[$mailingid][] = '&emsp;'.$attendeestatic->email;
+					} elseif ($changetomailing == 0) {
+						$verified_mailings[] = $mailingid;
+						$fmresult = $mailingstatic->fetch($mailingid);
+						if ($fmresult) {
+							$vmailing_title = $mailingstatic->title;
+						} else {
+							$vmailing_title = 'Mailing ID '.$mailingid;
+						}
+						$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+					} elseif ($changetomailing == -6 && $ignoreNoContact) {
+						$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+					} else {
+						$info_errors[$mailingid][] = '&emsp;'.$attendeestatic->error;
+					}
 				} else {
-					$other = 'Project='.$attendeestatic->fk_project;
-				}
-			} else {
-				$other = 'Eventattendee='.$attendeeid;
-			}
-			// maybe we should ask which email source to use: Attendee, Contact of Attendee or Thirdparty or the email_company field of the Attendee
-			$email = isValidEmail($attendeestatic->email) ? $attendeestatic->email : '';
-			// GUI does not allow adding an eventattendee without any email, but the database structure does allow a null value
-			if (empty($email)) {
-				$contactstatic = new Contact($db);
-				if (!empty($attendeestatic->fk_contact) && ($contactstatic->fetch($attendeestatic->fk_contact))) {
-					$email = isValidEmail($contactstatic->email) ? $contactstatic->email : '';
+					dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
+					setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
 				}
 			}
-			if (empty($email)) {
-				$socstatic = new Societe($db);
-				if (!empty($attendeestatic->fk_contact) && ($socstatic->fetch($attendeestatic->fk_soc))) {
-					$email = isValidEmail($socstatic->email) ? $socstatic->email : '';
-				}
-			}
-			if (empty($email)) {
-				$email = isValidEmail($attendeestatic->email_company) ? $attendeestatic->email_company : '';
-			}
-			if (empty($email)) {
-				setEventMessages($langs->trans("EMailNotDefined").' for attendeeid='.$attendeeid.' or any of its '.$langs->trans("ThirdPartiesArea"), null, 'errors');
-				continue;
-			}
-			$verified_attendees[] = array(
-					'fk_soc' => $attendeestatic->fk_soc,
-					'fk_contact' => $attendeestatic->fk_contact,
-					'fk_attendee' => ((int) $attendeeid),
-					'lastname' => $attendeestatic->lastname,
-					'firstname' => $attendeestatic->firstname,
-					'email' => $email,
-					'other' => $other,
-					'source_url' => null,
-					'source_id' => ((int) $attendeeid),
-					'source_type' => ((string) $attendeestatic->module)
-			);
 		} else {
 			dol_syslog('fetch failed for attendee id='.$attendeeid.' in array toselect on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
 			setEventMessages($langs->trans("ErrorRefNotFound", "attendeeid=".$attendeeid), null, 'errors');
 			continue;
 		}
-		dol_syslog('Building attendeeid='.$attendeeid, LOG_DEBUG);
 	}
 
-	// We have now verified both all of the checked eventattendees and all of the selected mass mailings
-	if (!empty($verified_mailings) && !empty($verified_attendees)) {
-		if ($button_add_mailing) {
-			dol_syslog('button_add_mailing='.$button_add_mailing, LOG_DEBUG);
-			foreach ($verified_mailings as $vmailingid) {
-				$addresult = $staticmailingtarget->addTargetsToDatabase($vmailingid, $verified_attendees);
-				$fmresult = $mailingstatic->fetch($vmailingid);
-				if ($fmresult) {
-					$vmailing_title = $mailingstatic->title;
-				} else {
-					$vmailing_title = 'Mailing ID '.$vmailingid;
-				}
-				setEventMessages($langs->trans("XTargetsAdded", $addresult).' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
-				dol_syslog('Added '.$addresult.' targets to mailing='.$vmailingid.' in button_add_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_DEBUG);
-			}
+	// report information
+	$verbosereporting = 1;
+	foreach ($info_mesgs as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
 		}
-		if ($button_delete_mailing) {
-			dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
-			foreach ($verified_mailings as $vmailingid) {
-				setEventMessages("Deletion waits for github PR #37920", null, 'mesgs');
-				// we should now remove all the toselect id's from each mailing
-				dol_syslog('Deletion waits for github PR #37920', LOG_DEBUG);
-			}
+		if ($verbosereporting) {
+			setEventMessages($langs->trans("XTargetsAdded", count($value)).' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("XTargetsAdded", count($value)).' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
+		}
+	}
+	// report warnings
+	foreach ($info_warnings as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'warnings');
+	}
+	// report errors
+	foreach ($info_errors as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'errors');
+	}
+	foreach ($verified_mailings as $mailingid) {
+		if ($mailingstatic->fetch($mailingid)) {
+			$mailingstatic->countNbOfTargets($mailingid);
 		}
 	}
 }
