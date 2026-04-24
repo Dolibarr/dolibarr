@@ -254,7 +254,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	}
 	$langs->loadLangs(array("errors", "main", "mails", "companies"));
 	$ignorenocontact = GETPOSTINT('ignorenocontact') ? GETPOSTINT('ignorenocontact') : 0;
-	$othermailsrc = GETPOSTINT('othermailsrc') ? GETPOSTINT('othermailsrc') : 0;
+	$mailsrc = GETPOSTINT('select_mailsrc') ? GETPOSTINT('select_mailsrc') : 0;
 	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
 	if (empty($select_mailing)) {
@@ -281,7 +281,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 			$verified_attendees[] = $attendeeid;
 			foreach ($select_mailing as $mailingid) {
 				if ($button_add_mailing) {
-					$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $othermailsrc);
+					$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $mailsrc);
 				}
 				if ($button_delete_mailing) {
 					dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
@@ -1098,6 +1098,7 @@ $totalarray['nbfield'] = 0;
 
 // Fields title label
 // --------------------------------------------------------------------
+print '<!-- Fields title label -->';
 print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
@@ -1148,6 +1149,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 
 // Loop on record
 // --------------------------------------------------------------------
+print '<!-- // Loop on record -->';
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();

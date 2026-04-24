@@ -1159,14 +1159,15 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 *  @param	int	$fk_mailing				The id of the mass mailing to add this event attendee to
 	 *  @param	int	$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
-	 *  @param	int	$othermailsrc			If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = no other source. 1 = auto try in the following order: 2 = Contact, 3 = Thirdparty, 4 = email_company on attendee
+	 *  @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 1 = attendee, 2 = Contact, 3 = Thirdparty, 4 = email_company on attendee
 	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
 	 *
 	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 fetch fk_project failed, -5 no valid email found, -6 must respect NoContact, -7 no permission on the fk_project, 0 if KO, Id of created mailing_target if OK
 	 */
-	public function addToMassMailing($fk_mailing, $ignorenocontact = 0, $othermailsrc = 0, $refreshNbOfTargets = 0)
+	public function addToMassMailing($fk_mailing, $ignorenocontact = 0, $mailsrc = 0, $refreshNbOfTargets = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__.'::mailsrc='.$mailsrc, LOG_DEBUG);
 		global $conf, $langs, $user;
 		$langs->loadLangs(array("errors", "admin", "main", "mailings", "user", "stock"));
 		if (!$user->hasRight('mailing', 'write')) {
@@ -1213,25 +1214,30 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$other = 'Eventattendee='.$this->id;
 		}
 
-		$email = isValidEmail($this->email) ? $this->email : '';
 		// GUI does not allow adding an eventattendee without any email, but the database structure does allow a null value
-		if (empty($email) && ($othermailsrc == 1 || $othermailsrc == 2)) {
+		$email = '';
+		if ($mailsrc < 2) {
+			$email = isValidEmail($this->email) ? $this->email : '';
+			dol_syslog(__METHOD__.'::mailsrc < 2', LOG_DEBUG);
+		}
+		if (empty($email) && ($mailsrc == 0 || $mailsrc == 2)) {
+			dol_syslog(__METHOD__.'::mailsrc == 0 || mailsrc == 2', LOG_DEBUG);
 			$contactstatic = new Contact($this->db);
 			if (!empty($this->fk_contact) && ($contactstatic->fetch($this->fk_contact))) {
 				$email = isValidEmail($contactstatic->email) ? $contactstatic->email : '';
 			}
 		}
-		if (empty($email)  && ($othermailsrc == 1 || $othermailsrc == 3)) {
+		if (empty($email)  && ($mailsrc == 0 || $mailsrc == 3)) {
 			$socstatic = new Societe($this->db);
 			if (!empty($this->fk_contact) && ($socstatic->fetch($this->fk_soc))) {
 				$email = isValidEmail($socstatic->email) ? $socstatic->email : '';
 			}
 		}
-		if (empty($email)  && ($othermailsrc == 1 || $othermailsrc == 4)) {
+		if (empty($email)  && ($mailsrc == 0 || $mailsrc == 4)) {
 			$email = isValidEmail($this->email_company) ? $this->email_company : '';
 		}
 		if (empty($email)) {
-			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in attendee='.$this->id.' with othermailsrc='.$othermailsrc, LOG_ERR);
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in attendee='.$this->id.' with mailsrc='.$mailsrc, LOG_ERR);
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("EmailAttendee"));
 			return -5;
 		}
@@ -1244,9 +1250,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$mailingtarget->fk_soc = $this->fk_soc;
 			$mailingtarget->fk_contact = $this->fk_contact;
 			$mailingtarget->fk_attendee = $this->id;
-			$mailingtarget->lastname = $this->lastname;
-			$mailingtarget->firstname = $this->firstname;
-			$mailingtarget->email = $this->email;
+			$mailingtarget->lastname = (string) $this->lastname;
+			$mailingtarget->firstname = (string) $this->firstname;
+			$mailingtarget->email = $email;
 			$mailingtarget->other = (string) $other;
 			$mailingtarget->tag = $this->db->escape(dol_hash($conf->file->instance_unique_id.";".$this->email.";".$this->lastname.";".((int) $fk_mailing).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'));
 			$mailingtarget->source_id = $this->id;

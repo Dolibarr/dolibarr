@@ -131,6 +131,16 @@ class FormMailing extends Form
 
 		$out .= '<br>';
 
+		$out .= '<input type="checkbox" id="verbosereporting" name="verbosereporting" value="1"><label for="verbosereporting">'.$langs->trans("Show").' '.$langs->trans("ListOf", $langs->trans("EMails")).'</label><br>';
+		$out .= '<input type="checkbox" id="ignorenocontact" name="ignorenocontact" value="1"><label for="ignorenocontact">'.$langs->trans("EvenUnsubscribe").'</label><br>';
+		$out .= '<label for="select_mailsrc">'.$langs->trans("Source").' '.$langs->trans("ListOf", $langs->trans("Email")).'</label><br><select class="select" name="select_mailsrc" id="select_mailsrc">';
+		$out .= '    <option class="option" value="0">'.$langs->trans("auto").'</option>';
+		$out .= '    <option class="option" value="1">'.$langs->trans("Attendees").'</option>';
+		$out .= '    <option class="option" value="2">'.$langs->trans("SearchIntoContacts").'</option>';
+		$out .= '    <option class="option" value="3">'.$langs->trans("SearchIntoThirdparties").'</option>';
+		$out .= '    <option class="option" value="4">'.$langs->trans("EmailCompany").'</option>';
+		$out .= '</select>';
+
 		$actionname = $htmlname;
 		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
 		$out .= '<input type="hidden" name="massaction" value="confirm_premassmail">';
