@@ -332,7 +332,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	}
 
 	// We have now verified both all of the checked eventattendees and all of the selected mass mailings
-	if (!is_null($verified_mailings) && !is_null($verified_attendees)) {
+	if (!empty($verified_mailings) && !empty($verified_attendees)) {
 		if ($button_add_mailing) {
 			dol_syslog('button_add_mailing='.$button_add_mailing, LOG_DEBUG);
 			foreach ($verified_mailings as $vmailingid) {
