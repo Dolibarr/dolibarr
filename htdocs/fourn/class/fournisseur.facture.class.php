@@ -805,6 +805,7 @@ class FactureFournisseur extends CommonInvoice
 						$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->fk_unit,
 						0,
+						'',
 						0,
 						$_facrec->lines[$i]->ref_supplier,
 						$_facrec->lines[$i]->special_code,
