@@ -701,9 +701,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 					if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 						$accountingaccount = new AccountingAccount($db);
 						$accountingaccount->fetch(0, $k, true);	// $k is accounting account of the bank.
-						$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+						$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 					} else {
-						$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+						$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 					}
 
 					$account_label = $accountingaccount->label;
@@ -824,9 +824,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
 								$accountingaccount->fetch(0, $k, true);
-								$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
-								$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 							}
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -836,9 +836,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
 								$accountingaccount->fetch(0, $k, true);
-								$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
-								$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 							}
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -848,9 +848,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
 								$accountingaccount->fetch(0, $k, true);
-								$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
-								$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 							}
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -860,9 +860,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
 								$accountingaccount->fetch(0, $k, true);
-								$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
-								$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 							}
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -872,9 +872,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
 								$accountingaccount->fetch(0, $k, true);
-								$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
-								$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 							}
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -884,9 +884,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							if (empty($conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]])) {
 								$accountingaccount = new AccountingAccount($db);
 								$accountingaccount->fetch(0, $tabpay[$key]["account_various"], true);
-								$conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]] = clone $accountingaccount;
+								$conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]] = $accountingaccount;
 							} else {
-								$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]];
+								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$tabpay[$key]["account_various"]];
 							}
 							$bookkeeping->numero_compte = $tabpay[$key]["account_various"];
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -896,9 +896,9 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 							if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 								$accountingaccount = new AccountingAccount($db);
 								$accountingaccount->fetch(0, $k, true);
-								$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+								$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 							} else {
-								$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+								$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 							}
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $accountingaccount->label;

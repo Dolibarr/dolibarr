@@ -549,9 +549,9 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 					$accountingaccount = new AccountingAccount($db);
 					$accountingaccount->fetch(0, $k, true);
-					$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+					$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 				} else {
-					$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+					$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 				}
 
 				$label_account = $accountingaccount->label;
@@ -656,9 +656,9 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
 							$accountingaccount = new AccountingAccount($db);
 							$accountingaccount->fetch(0, $k, true);
-							$conf->cache['accountingaccountincurrententity_vat'][$k] = clone $accountingaccount;
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
 						} else {
-							$accountingaccount = clone $conf->cache['accountingaccountincurrententity_vat'][$k];
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
 						}
 
 						$label_account = $accountingaccount->label;
@@ -1193,9 +1193,9 @@ if (empty($action) || $action == 'view') {
 			if (empty($conf->cache['accountingaccountincurrententity'][$k])) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(0, $k, true);
-				$conf->cache['accountingaccountincurrententity'][$k] = clone $accountingaccount;
+				$conf->cache['accountingaccountincurrententity'][$k] = $accountingaccount;
 			} else {
-				$accountingaccount = clone $conf->cache['accountingaccountincurrententity'][$k];
+				$accountingaccount = $conf->cache['accountingaccountincurrententity'][$k];
 			}
 
 			print '<tr class="oddeven">';

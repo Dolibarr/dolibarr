@@ -1788,7 +1788,6 @@ abstract class CommonDocGenerator
 
 				// Reset enabled: only printable attribute determines PDF visibility
 				$enabled = 0;
-
 				$disableOnEmpty = 0;
 				$printable = 0;
 				if (!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
