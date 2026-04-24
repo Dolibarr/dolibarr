@@ -635,8 +635,10 @@ class Mailing extends CommonObject
 					$records[] = $obj->rowid;
 				} elseif ($mailingprojectstatic->fetch($mailing_fk_project)) {
 					$userHasProjectRights = $mailingprojectstatic->restrictedProjectArea($user, $checkProjectAccessRight);
-					if ($userHasProjectRights) {
+					if ($userHasProjectRights > 0) {
 						$records[] = $obj->rowid;
+					} else {
+						dol_syslog('Excluding mailingid='.$obj->rowid.' with projectid='.$mailing_fk_project.' because user='.$user->id.' does not have accessRight='.$checkProjectAccessRight, LOG_DEBUG);
 					}
 				}
 				$i++;
