@@ -274,32 +274,22 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 			$mailing_fk_project = $mailingstatic->fk_project;
 			if (!is_null($mailing_fk_project) && $mailingprojectstatic->fetch($mailing_fk_project)) {
 				$userHasProjectRights = $mailingprojectstatic->restrictedProjectArea($user, $checkProjectAccessRight);
-				if ($userHasProjectRights) {
+				if ($userHasProjectRights > 0) {
 					$verified_mailings[] = $mailingid;
 					dol_syslog('Using mailing->fetch() to verify mailingid='.$mailingid, LOG_DEBUG);
 				} else {
 					dol_syslog('No '.$checkProjectAccessRight.' access or user='.((int) $user->id).' is not a Contact to projectid='.$mailing_fk_project.' in mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
-					$verified_mailings = null;
-					$button_add_mailing = null;
-					$button_delete_mailing = null;
 					setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs->trans("ProjectId").' '.$mailing_fk_project.' &mdash; '.$langs->trans("YouAreNotContactOfProject"), null, 'errors');
-					break;
+					continue;
 				}
 			} else {
-				dol_syslog('Failed to fetch projectid='.$mailing_fk_project.' in mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
-				$verified_mailings = null;
-				$button_add_mailing = null;
-				$button_delete_mailing = null;
-				setEventMessages($langs->trans("ErrorRefNotFound", "projectid='.$mailing_fk_project.' in mailingid='.$mailingid"), null, 'errors');
-				break;
+				// this mailing has no project, so we can not verify any project rights
+				$verified_mailings[] = $mailingid;
 			}
 		} else {
 			dol_syslog('Failed to fetch mailingid='.$mailingid.' in array select_mailing on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
-			$verified_mailings = null;
-			$button_add_mailing = null;
-			$button_delete_mailing = null;
 			setEventMessages($langs->trans("ErrorRefNotFound", "mailingid=".$mailingid), null, 'errors');
-			break;
+			continue;
 		}
 	}
 
@@ -335,12 +325,8 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 			);
 		} else {
 			dol_syslog('fetch failed for attendee id='.$attendeeid.' in array toselect on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
-			$verified_mailings = null;
-			$button_add_mailing = null;
-			$button_delete_mailing = null;
-			$verified_attendees = null;
 			setEventMessages($langs->trans("ErrorRefNotFound", "attendeeid=".$attendeeid), null, 'errors');
-			break;
+			continue;
 		}
 		dol_syslog('Building attendeeid='.$attendeeid, LOG_DEBUG);
 	}
