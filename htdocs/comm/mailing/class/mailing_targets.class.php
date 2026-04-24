@@ -208,10 +208,6 @@ class MailingTarget extends CommonObject
 
 		$this->db->begin();
 
-
-		// 2025-10-09 06:33:26 DEBUG   192.168.127.1        52     33  sql=INSERT INTO llx_mailing_cibles (fk_mailing, fk_contact, email, statut) VALUES ('4',  .((int) 0)., 'jon@jonb.dk',  .((int) )).
-		//2025-10-09 06:35:13 DEBUG   192.168.127.1        54     33  sql=INSERT INTO llx_mailing_cibles (fk_mailing, fk_contact, email, statut) VALUES (4,  .((int) 0)., 'jon@jonb.dk',  .((int) )).
-
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " (fk_mailing, fk_soc, fk_contact, fk_attendee, email, statut)";
 		$sql .= " VALUES (".((int) $this->fk_mailing).", ";
@@ -241,10 +237,15 @@ class MailingTarget extends CommonObject
 				return -2;
 			}
 		} else {
-			dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return -1;
+			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->transnoentitiesnoconv("ErrorRecordAlreadyExists").' '.$this->db->escape($this->email);
+				$this->db->rollback();
+				return 0;
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
 		}
 	}
 
@@ -380,6 +381,25 @@ class MailingTarget extends CommonObject
 		dol_syslog("Mailing::valid", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Check if email address is found in llx_mailing_unsubscribe
+	 *
+	 *  @param	string	$email 		Email to check if it is listed in llx_mailing_unsubscribe
+	 * 	@return	int					-1 means DB error, 0 means this email is not UnSubscribed, any higher number means No Contact has been requested
+	 */
+	public function checkEmailUnsubscribed($email)
+	{
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$this->db->escape($email)."'";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			return $obj->nb;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
