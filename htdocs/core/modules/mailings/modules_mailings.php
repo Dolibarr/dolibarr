@@ -194,7 +194,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 * Add a list of targets into the database
 	 *
 	 * @param	int		$mailing_id    Id of emailing
-	 * @param	array<array{fk_soc?:int|non-zero-int,fk_contact?:int,fk_attendee?:int,lastname:string,firstname:string,email:string,other:string,source_url:string,source_id?:int,source_type:string,id?:int}>		$cibles		Array with targets
+	 * @param	array<array{fk_contact?:int,lastname:string,firstname:string,email:string,other:string,source_url:string,source_id?:int,source_type:string,id?:int}>		$cibles		Array with targets
 	 * @return  int      			   Return integer < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
@@ -211,16 +211,12 @@ class MailingTargets // This can't be abstract as it is used for some method
 			if (!empty($targetarray['email'])) { // avoid empty email address
 				$sql = "INSERT INTO ".$this->db->prefix()."mailing_cibles";
 				$sql .= " (fk_mailing,";
-				$sql .= " fk_soc,";
 				$sql .= " fk_contact,";
-				$sql .= " fk_attendee,";
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
 				$sql .= " tag,";
 				$sql .= " source_type)";
 				$sql .= " VALUES (".((int) $mailing_id).",";
-				$sql .= (empty($targetarray['fk_soc']) ? '0' : (int) $targetarray['fk_soc']).",";
 				$sql .= (empty($targetarray['fk_contact']) ? '0' : (int) $targetarray['fk_contact']).",";
-				$sql .= (empty($targetarray['fk_attendee']) ? '0' : (int) $targetarray['fk_attendee']).",";
 				$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['email'])."',";
