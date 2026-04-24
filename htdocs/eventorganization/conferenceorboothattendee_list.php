@@ -253,8 +253,8 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		$massaction = '';
 	}
 	$langs->loadLangs(array("errors", "main", "mails", "companies"));
-	$ignoreNoContact = GETPOSTINT('ignoreNoContact') ? GETPOSTINT('ignoreNoContact') : 0;
-	$otherMailSrc = GETPOSTINT('otherMailSrc') ? GETPOSTINT('otherMailSrc') : 0;
+	$ignorenocontact = GETPOSTINT('ignorenocontact') ? GETPOSTINT('ignorenocontact') : 0;
+	$othermailsrc = GETPOSTINT('othermailsrc') ? GETPOSTINT('othermailsrc') : 0;
 	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
 	if (empty($select_mailing)) {
@@ -281,7 +281,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 			$verified_attendees[] = $attendeeid;
 			foreach ($select_mailing as $mailingid) {
 				if ($button_add_mailing) {
-					$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignoreNoContact, $otherMailSrc);
+					$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $othermailsrc);
 				}
 				if ($button_delete_mailing) {
 					dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
@@ -306,7 +306,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 							$vmailing_title = 'Mailing ID '.$mailingid;
 						}
 						$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
-					} elseif ($changetomailing == -6 && $ignoreNoContact) {
+					} elseif ($changetomailing == -6 && $ignorenocontact) {
 						$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
 					} else {
 						$info_errors[$mailingid][] = '&emsp;'.$attendeestatic->error;
