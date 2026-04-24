@@ -255,6 +255,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	$langs->loadLangs(array("errors", "main", "mails", "companies"));
 	$ignoreNoContact = GETPOSTINT('ignoreNoContact') ? GETPOSTINT('ignoreNoContact') : 0;
 	$otherMailSrc = GETPOSTINT('otherMailSrc') ? GETPOSTINT('otherMailSrc') : 0;
+	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
 	if (empty($select_mailing)) {
 		setEventMessages($langs->trans("ListOfEMailings").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
@@ -273,6 +274,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	$info_mesgs = array();
 	$info_warnings = array();
 	$info_errors = array();
+	$changetomailing = null;
 	foreach ($toselect as $attendeeid) {
 		$faresult = $attendeestatic->fetch($attendeeid);
 		if ($faresult) {
@@ -322,7 +324,6 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	}
 
 	// report information
-	$verbosereporting = 1;
 	foreach ($info_mesgs as $key => $value) {
 		$fmresult = $mailingstatic->fetch($key);
 		if ($fmresult) {
