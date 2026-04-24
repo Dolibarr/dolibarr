@@ -66,12 +66,12 @@ class MailingTarget extends CommonObject
 	public $fk_attendee;
 
 	/**
-	 * @var ?string lastname of the mailing_target
+	 * @var string lastname of the mailing_target
 	 */
 	public $lastname;
 
 	/**
-	 * @var ?string firstname of the mailing_target
+	 * @var string firstname of the mailing_target
 	 */
 	public $firstname;
 
