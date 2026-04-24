@@ -259,7 +259,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 	$staticmailingtarget = new MailingTargets($db);
 
-	$langs->loadLangs(array("errors", "main", "mails"));
+	$langs->loadLangs(array("errors", "main", "mails", "companies"));
 	// verify that all mailings does actually exist
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
 	$verified_mailings = array();
@@ -311,17 +311,39 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 			} else {
 				$other = 'Eventattendee='.$attendeeid;
 			}
+			// maybe we should ask which email source to use: Attendee, Contact of Attendee or Thirdparty or the email_company field of the Attendee
+			$email = isValidEmail($attendeestatic->email) ? $attendeestatic->email : '';
+			// GUI does not allow adding an eventattendee without any email, but the database structure does allow a null value
+			if (empty($email)) {
+				$contactstatic = new Contact($db);
+				if (!empty($attendeestatic->fk_contact) && ($contactstatic->fetch($attendeestatic->fk_contact))) {
+					$email = isValidEmail($contactstatic->email) ? $contactstatic->email : '';
+				}
+			}
+			if (empty($email)) {
+				$socstatic = new Societe($db);
+				if (!empty($attendeestatic->fk_contact) && ($socstatic->fetch($attendeestatic->fk_soc))) {
+					$email = isValidEmail($socstatic->email) ? $socstatic->email : '';
+				}
+			}
+			if (empty($email)) {
+				$email = isValidEmail($attendeestatic->email_company) ? $attendeestatic->email_company : '';
+			}
+			if (empty($email)) {
+				setEventMessages($langs->trans("EMailNotDefined").' for attendeeid='.$attendeeid.' or any of its '.$langs->trans("ThirdPartiesArea"), null, 'errors');
+				continue;
+			}
 			$verified_attendees[] = array(
 					'fk_soc' => $attendeestatic->fk_soc,
 					'fk_contact' => $attendeestatic->fk_contact,
-					'fk_attendee' => $attendeeid,
+					'fk_attendee' => ((int) $attendeeid),
 					'lastname' => $attendeestatic->lastname,
 					'firstname' => $attendeestatic->firstname,
-					'email' => $attendeestatic->email,
+					'email' => $email,
 					'other' => $other,
 					'source_url' => null,
-					'source_id' => $attendeestatic->id,
-					'source_type' => $attendeestatic->module
+					'source_id' => ((int) $attendeeid),
+					'source_type' => ((string) $attendeestatic->module)
 			);
 		} else {
 			dol_syslog('fetch failed for attendee id='.$attendeeid.' in array toselect on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
