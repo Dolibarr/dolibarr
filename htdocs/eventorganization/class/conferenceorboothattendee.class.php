@@ -1159,7 +1159,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 *  @param	int	$fk_mailing				The id of the mass mailing to add this event attendee to
 	 *  @param	int	$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
-	 *  @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 1 = attendee, 2 = Contact, 3 = Thirdparty, 4 = email_company on attendee
+	 *  @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
 	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
 	 *
 	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 fetch fk_project failed, -5 no valid email found, -6 must respect NoContact, -7 no permission on the fk_project, 0 if KO, Id of created mailing_target if OK
@@ -1215,26 +1215,30 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		// GUI does not allow adding an eventattendee without any email, but the database structure does allow a null value
+		// numbers are deliberately set to 10, 20, 30, 40, such that there one day is room for inserting perhaps 35 for member?
 		$email = '';
-		if ($mailsrc < 2) {
+		if ($mailsrc <= 10) {
+			dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using attendee as source', LOG_DEBUG);
 			$email = isValidEmail($this->email) ? $this->email : '';
-			dol_syslog(__METHOD__.'::mailsrc < 2', LOG_DEBUG);
+			dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using attendee email='.$email.' as source', LOG_DEBUG);
 		}
-		if (empty($email) && ($mailsrc == 0 || $mailsrc == 2)) {
-			dol_syslog(__METHOD__.'::mailsrc == 0 || mailsrc == 2', LOG_DEBUG);
+		if ($mailsrc == 20 || (empty($email) && $mailsrc == 0)) {
 			$contactstatic = new Contact($this->db);
 			if (!empty($this->fk_contact) && ($contactstatic->fetch($this->fk_contact))) {
 				$email = isValidEmail($contactstatic->email) ? $contactstatic->email : '';
+				dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using contact email='.$email.' as source', LOG_DEBUG);
 			}
 		}
-		if (empty($email)  && ($mailsrc == 0 || $mailsrc == 3)) {
+		if ($mailsrc == 30 || (empty($email) && $mailsrc == 0)) {
 			$socstatic = new Societe($this->db);
 			if (!empty($this->fk_contact) && ($socstatic->fetch($this->fk_soc))) {
 				$email = isValidEmail($socstatic->email) ? $socstatic->email : '';
+				dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using thirdparty email='.$email.' as source', LOG_DEBUG);
 			}
 		}
-		if (empty($email)  && ($mailsrc == 0 || $mailsrc == 4)) {
+		if ($mailsrc == 40 || (empty($email) && $mailsrc == 0)) {
 			$email = isValidEmail($this->email_company) ? $this->email_company : '';
+			dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using email_company='.$email.' as source', LOG_DEBUG);
 		}
 		if (empty($email)) {
 			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in attendee='.$this->id.' with mailsrc='.$mailsrc, LOG_ERR);
