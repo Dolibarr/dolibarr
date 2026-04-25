@@ -286,7 +286,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 						$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $mailsrc);
 					}
 					if ($button_delete_mailing) {
-						$changetomailing = $attendeestatic->deleteFromMassMailing($mailingid, $ignorenocontact, $mailsrc);
+						$changetomailing = $attendeestatic->deleteFromMassMailing($mailingid, $mailsrc);
 					}
 					if ($button_add_mailing || $button_delete_mailing) {
 						if ($changetomailing > 0) {
