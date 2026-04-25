@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014 Florian Henry florian.henry@open-concept.pro
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026  		Jon Bendtsen            	<jon.bendtsen.github@jonb.dk>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by

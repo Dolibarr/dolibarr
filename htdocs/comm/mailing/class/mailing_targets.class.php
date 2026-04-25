@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2025		Cloned from htdocs/comm/mailing/class/mailing.class.php then modified
- * Copyright (C) 2025		Jon Bendtsen <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025-2026	Jon Bendtsen <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

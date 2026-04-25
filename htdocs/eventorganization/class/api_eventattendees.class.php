@@ -1,6 +1,6 @@
 <?php
 /*
-/* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+/* Copyright (C) 2025-2026  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
