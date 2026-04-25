@@ -482,7 +482,7 @@ class MailingTarget extends CommonObject
 	 *
 	 *	@param	int		$rowid      	Id of Mailing Target
 	 *	@param	int		$fk_mailing     fk_mailing of Mailing Target, default 0
-	 *	@param	int		$email      	Email of Mailing Target, default ''
+	 *	@param	string	$email      	Email of Mailing Target, default ''
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid, $fk_mailing = 0, $email = '')

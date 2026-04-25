@@ -353,7 +353,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		} else {
 			$vmailing_title = 'Mailing ID '.$key;
 		}
-		if (!is_null($value) || count($value) > 0) {
+		if (!is_null($value)) {
 			dol_syslog("count(value)=".count($value), LOG_DEBUG);
 			setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'warnings');
 		}
@@ -366,7 +366,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		} else {
 			$vmailing_title = 'Mailing ID '.$key;
 		}
-		if (!is_null($value) || count($value) > 0) {
+		if (!is_null($value)) {
 			setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'errors');
 		}
 	}
