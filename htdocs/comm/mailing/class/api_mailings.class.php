@@ -919,7 +919,7 @@ class Mailings extends DolibarrApi
 	 * @since	24.0.0	Initial implementation
 	 *
 	 * @param   string  $email		the email to be checked if it is unsubscribed
-	 * @return  string				-1 DB error, 0 not unsubscribed, 1 or higher unsubscribed
+	 * @return  array{unsubscribed:int}				-1 DB error, 0 not unsubscribed, 1 or higher unsubscribed
 	 *
 	 * @url	GET checkEmailUnsubscribed/{email}
 	 *
@@ -932,9 +932,11 @@ class Mailings extends DolibarrApi
 		$unsubscribed = $mailingtarget->checkEmailUnsubscribed($email);
 
 		if ($unsubscribed < 0) {
-			throw new RestException(500, 'Error : '.$mailingtarget->mailing->error);
+			throw new RestException(500, 'Error : '.$mailingtarget->error);
 		}
+		$out = array();
 		$out["unsubscribed"] = $unsubscribed;
+		$out["status"] = "success";
 		return $out;
 	}
 
