@@ -1439,6 +1439,15 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 					$modName = substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
+						if ($modName === 'modFournisseur' && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module modFournisseur skipped because MAIN_USE_NEW_SUPPLIERMOD is enabled", LOG_DEBUG);
+							continue;
+						}
+						if (in_array($modName, ['modSupplierInvoice', 'modSupplierOrder']) && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module ".$modName." skipped because MAIN_USE_NEW_SUPPLIERMOD is disabled", LOG_DEBUG);
+							continue;
+						}
+
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
