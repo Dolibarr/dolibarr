@@ -285,11 +285,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 						$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $mailsrc);
 					}
 					if ($button_delete_mailing) {
-						dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
-						setEventMessages("Deletion waits for github PR #37920", null, 'mesgs');
-						// we should now remove all the toselect id's from each mailing
-						dol_syslog('Deletion waits for github PR #37920', LOG_DEBUG);
-						$changetomailing = null;
+						$changetomailing = $attendeestatic->deleteFromMassMailing($mailingid, $ignorenocontact, $mailsrc);
 					}
 					if ($button_add_mailing || $button_delete_mailing) {
 						if ($changetomailing > 0) {
@@ -306,7 +302,9 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 							} else {
 								$vmailing_title = 'Mailing ID '.$mailingid;
 							}
-							$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+							if ($button_add_mailing) {
+								$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+							}
 						} elseif ($changetomailing == -6 && $ignorenocontact) {
 							$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
 						} else {
@@ -333,10 +331,17 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		} else {
 			$vmailing_title = 'Mailing ID '.$key;
 		}
+		$actionmessage = $langs->trans("Unknown").' '.$langs->trans("BulkActions").' '.$langs->trans("RecordsModified", count($value));
+		if ($button_add_mailing) {
+			$actionmessage = $langs->trans("XTargetsAdded", count($value));
+		}
+		if ($button_delete_mailing) {
+			$actionmessage = $langs->trans("RecordsDeleted", count($value));
+		}
 		if ($verbosereporting) {
-			setEventMessages($langs->trans("XTargetsAdded", count($value)).' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'mesgs');
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'mesgs');
 		} else {
-			setEventMessages($langs->trans("XTargetsAdded", count($value)).' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
 		}
 	}
 	// report warnings
@@ -347,7 +352,10 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		} else {
 			$vmailing_title = 'Mailing ID '.$key;
 		}
-		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'warnings');
+		if (!is_null($value) || count($value) > 0) {
+			dol_syslog("count(value)=".count($value), LOG_DEBUG);
+			setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'warnings');
+		}
 	}
 	// report errors
 	foreach ($info_errors as $key => $value) {
@@ -357,7 +365,9 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		} else {
 			$vmailing_title = 'Mailing ID '.$key;
 		}
-		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'errors');
+		if (!is_null($value) || count($value) > 0) {
+			setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'errors');
+		}
 	}
 	foreach ($verified_mailings as $mailingid) {
 		if ($mailingstatic->fetch($mailingid)) {
