@@ -1284,7 +1284,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
 	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
 	 *
-	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 fetch fk_project failed, -5 no valid email found, -6 must respect NoContact, -7 no permission on the fk_project, -8 deletion failed 0 if KO, Id of created mailing_target if OK
+	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 fetch fk_project failed, -5 no valid email found, -6 (this number is not used), -7 no permission on the fk_project, -8 deletion failed 0 if KO, Id of created mailing_target if OK
 	 */
 	public function deleteFromMassMailing($fk_mailing, $mailsrc = 0, $refreshNbOfTargets = 0)
 	{
