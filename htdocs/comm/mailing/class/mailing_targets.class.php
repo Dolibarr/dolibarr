@@ -480,30 +480,63 @@ class MailingTarget extends CommonObject
 	/**
 	 *	Get object from database
 	 *
-	 *	@param	int		$rowid      Id of Mailing Target
-	 *	@return	int					Return integer <0 if KO, >0 if OK
+	 *	@param	int		$rowid      	Id of Mailing Target
+	 *	@param	int		$fk_mailing     fk_mailing of Mailing Target, default 0
+	 *	@param	int		$email      	Email of Mailing Target, default ''
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($rowid)
+	public function fetch($rowid, $fk_mailing = 0, $email = '')
 	{
-		$sql = "SELECT t.rowid";
-		$sql .= ", t.fk_mailing";
-		$sql .= ", t.fk_soc";
-		$sql .= ", t.fk_contact";
-		$sql .= ", t.fk_attendee";
-		$sql .= ", t.lastname";
-		$sql .= ", t.firstname";
-		$sql .= ", t.email";
-		$sql .= ", t.other";
-		$sql .= ", t.tag";
-		$sql .= ", t.statut as status";
-		$sql .= ", t.source_url";
-		$sql .= ", t.source_id";
-		$sql .= ", t.source_type";
-		$sql .= ", t.date_envoi";
-		$sql .= ", t.tms as date_modification";
-		$sql .= ", t.error_text";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
-		$sql .= " WHERE t.rowid = ".(int) $rowid;
+		dol_syslog(__CLASS__.'::'.__METHOD__);
+
+		// testing parameter combinations
+		if ($rowid == 0 && ($fk_mailing == 0 || empty($email))) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::Wrong parameter combination, either rowid>0 or both fk_mailing>0 and not empty email', LOG_ERR);
+			return -3;
+		}
+
+		if ($rowid == 0 && $fk_mailing > 0 && !empty($email)) {
+			$sql = "SELECT t.rowid";
+			$sql .= ", t.fk_mailing";
+			$sql .= ", t.fk_soc";
+			$sql .= ", t.fk_contact";
+			$sql .= ", t.fk_attendee";
+			$sql .= ", t.lastname";
+			$sql .= ", t.firstname";
+			$sql .= ", t.email";
+			$sql .= ", t.other";
+			$sql .= ", t.tag";
+			$sql .= ", t.statut as status";
+			$sql .= ", t.source_url";
+			$sql .= ", t.source_id";
+			$sql .= ", t.source_type";
+			$sql .= ", t.date_envoi";
+			$sql .= ", t.tms as date_modification";
+			$sql .= ", t.error_text";
+			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
+			$sql .= " WHERE t.fk_mailing = ".(int) $fk_mailing;
+			$sql .= " AND t.email = '".$this->db->escape($email)."' ";
+		} else {
+			$sql = "SELECT t.rowid";
+			$sql .= ", t.fk_mailing";
+			$sql .= ", t.fk_soc";
+			$sql .= ", t.fk_contact";
+			$sql .= ", t.fk_attendee";
+			$sql .= ", t.lastname";
+			$sql .= ", t.firstname";
+			$sql .= ", t.email";
+			$sql .= ", t.other";
+			$sql .= ", t.tag";
+			$sql .= ", t.statut as status";
+			$sql .= ", t.source_url";
+			$sql .= ", t.source_id";
+			$sql .= ", t.source_type";
+			$sql .= ", t.date_envoi";
+			$sql .= ", t.tms as date_modification";
+			$sql .= ", t.error_text";
+			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
+			$sql .= " WHERE t.rowid = ".(int) $rowid;
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
