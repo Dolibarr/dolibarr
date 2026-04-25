@@ -254,7 +254,7 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 	}
 	$langs->loadLangs(array("errors", "main", "mails", "companies"));
 	$ignorenocontact = GETPOSTINT('ignorenocontact') ? GETPOSTINT('ignorenocontact') : 0;
-	$mailsrc = GETPOSTINT('select_mailsrc') ? GETPOSTINT('select_mailsrc') : 0;
+	$select_mailsrc = GETPOST('select_mailsrc', 'array:int') ?? array(0);
 	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
 	if (empty($select_mailing)) {
@@ -280,40 +280,42 @@ if ($massaction == 'confirm_premassmail' && $permissiontoread) {
 		if ($faresult) {
 			$verified_attendees[] = $attendeeid;
 			foreach ($select_mailing as $mailingid) {
-				if ($button_add_mailing) {
-					$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $mailsrc);
-				}
-				if ($button_delete_mailing) {
-					dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
-					setEventMessages("Deletion waits for github PR #37920", null, 'mesgs');
-					// we should now remove all the toselect id's from each mailing
-					dol_syslog('Deletion waits for github PR #37920', LOG_DEBUG);
-					$changetomailing = null;
-				}
-				if ($button_add_mailing || $button_delete_mailing) {
-					if ($changetomailing > 0) {
-						if (isset($whatchanged[$mailingid])) {
-							$verified_mailings[] = $mailingid;
-						}
-						$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
-						$info_mesgs[$mailingid][] = '&emsp;'.$attendeestatic->email;
-					} elseif ($changetomailing == 0) {
-						$verified_mailings[] = $mailingid;
-						$fmresult = $mailingstatic->fetch($mailingid);
-						if ($fmresult) {
-							$vmailing_title = $mailingstatic->title;
-						} else {
-							$vmailing_title = 'Mailing ID '.$mailingid;
-						}
-						$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
-					} elseif ($changetomailing == -6 && $ignorenocontact) {
-						$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
-					} else {
-						$info_errors[$mailingid][] = '&emsp;'.$attendeestatic->error;
+				foreach ($select_mailsrc as $mailsrc) {
+					if ($button_add_mailing) {
+						$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $mailsrc);
 					}
-				} else {
-					dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
-					setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
+					if ($button_delete_mailing) {
+						dol_syslog('button_add_mailing='.$button_delete_mailing, LOG_DEBUG);
+						setEventMessages("Deletion waits for github PR #37920", null, 'mesgs');
+						// we should now remove all the toselect id's from each mailing
+						dol_syslog('Deletion waits for github PR #37920', LOG_DEBUG);
+						$changetomailing = null;
+					}
+					if ($button_add_mailing || $button_delete_mailing) {
+						if ($changetomailing > 0) {
+							if (isset($whatchanged[$mailingid])) {
+								$verified_mailings[] = $mailingid;
+							}
+							$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
+							$info_mesgs[$mailingid][] = '&emsp;'.$attendeestatic->email;
+						} elseif ($changetomailing == 0) {
+							$verified_mailings[] = $mailingid;
+							$fmresult = $mailingstatic->fetch($mailingid);
+							if ($fmresult) {
+								$vmailing_title = $mailingstatic->title;
+							} else {
+								$vmailing_title = 'Mailing ID '.$mailingid;
+							}
+							$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+						} elseif ($changetomailing == -6 && $ignorenocontact) {
+							$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+						} else {
+							$info_errors[$mailingid][] = '&emsp;'.$attendeestatic->error;
+						}
+					} else {
+						dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
+						setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
+					}
 				}
 			}
 		} else {

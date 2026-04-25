@@ -133,8 +133,8 @@ class FormMailing extends Form
 
 		$out .= '<input type="checkbox" id="verbosereporting" name="verbosereporting" value="1"><label for="verbosereporting">'.$langs->trans("Show").' '.$langs->trans("ListOf", $langs->trans("EMails")).'</label><br>';
 		$out .= '<input type="checkbox" id="ignorenocontact" name="ignorenocontact" value="1"><label for="ignorenocontact">'.$langs->trans("EvenUnsubscribe").'</label><br>';
-		$out .= '<label for="select_mailsrc">'.$langs->trans("Source").' '.$langs->trans("ListOf", $langs->trans("Email")).'</label><br><select class="select" name="select_mailsrc" id="select_mailsrc">';
-		$out .= '    <option class="option" value="0">'.$langs->trans("auto").'</option>';
+		$out .= '<label for="select_mailsrc">'.$langs->trans("Source").' '.$langs->trans("ListOf", $langs->trans("Email")).'</label><br><select class="select" name="select_mailsrc[]" id="select_mailsrc" size="5" multiple>';
+		$out .= '    <option class="option" value="0" selected>'.$langs->trans("auto").'</option>';
 		$out .= '    <option class="option" value="10">'.$langs->trans("Attendees").'</option>';
 		$out .= '    <option class="option" value="20">'.$langs->trans("SearchIntoContacts").'</option>';
 		$out .= '    <option class="option" value="30">'.$langs->trans("SearchIntoThirdparties").'</option>';

@@ -1167,7 +1167,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function addToMassMailing($fk_mailing, $ignorenocontact = 0, $mailsrc = 0, $refreshNbOfTargets = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		dol_syslog(__METHOD__.'::mailsrc='.$mailsrc, LOG_DEBUG);
 		global $conf, $langs, $user;
 		$langs->loadLangs(array("errors", "admin", "main", "mailings", "user", "stock"));
 		if (!$user->hasRight('mailing', 'write')) {
@@ -1218,27 +1217,22 @@ class ConferenceOrBoothAttendee extends CommonObject
 		// numbers are deliberately set to 10, 20, 30, 40, such that there one day is room for inserting perhaps 35 for member?
 		$email = '';
 		if ($mailsrc <= 10) {
-			dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using attendee as source', LOG_DEBUG);
 			$email = isValidEmail($this->email) ? $this->email : '';
-			dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using attendee email='.$email.' as source', LOG_DEBUG);
 		}
 		if ($mailsrc == 20 || (empty($email) && $mailsrc == 0)) {
 			$contactstatic = new Contact($this->db);
 			if (!empty($this->fk_contact) && ($contactstatic->fetch($this->fk_contact))) {
 				$email = isValidEmail($contactstatic->email) ? $contactstatic->email : '';
-				dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using contact email='.$email.' as source', LOG_DEBUG);
 			}
 		}
 		if ($mailsrc == 30 || (empty($email) && $mailsrc == 0)) {
 			$socstatic = new Societe($this->db);
 			if (!empty($this->fk_contact) && ($socstatic->fetch($this->fk_soc))) {
 				$email = isValidEmail($socstatic->email) ? $socstatic->email : '';
-				dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using thirdparty email='.$email.' as source', LOG_DEBUG);
 			}
 		}
 		if ($mailsrc == 40 || (empty($email) && $mailsrc == 0)) {
 			$email = isValidEmail($this->email_company) ? $this->email_company : '';
-			dol_syslog(__METHOD__.'::mailsrc='.$mailsrc.' - using email_company='.$email.' as source', LOG_DEBUG);
 		}
 		if (empty($email)) {
 			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in attendee='.$this->id.' with mailsrc='.$mailsrc, LOG_ERR);
