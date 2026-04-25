@@ -1183,7 +1183,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 		$mailingstatic = new Mailing($this->db);
 		$fmresult = $mailingstatic->fetch($fk_mailing);
-		dol_syslog(__METHOD__.'::fetch mailingstatic='.$fk_mailing.' gave fmresult='.$fmresult, LOG_DEBUG);
 		if (!$fmresult) {
 			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
 			$this->error = $langs->trans("ObjectNotFound", $langs->trans("EMailings"));
@@ -1259,7 +1258,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$mailingtarget->statut = 0;
 			$mailingtarget->status = 0;
 			$mtcresult = $mailingtarget->create($user);
-			dol_syslog(__METHOD__.'::mtcresult='.$mtcresult, LOG_DEBUG);
 			if ($mtcresult > 0) {
 				if ($refreshNbOfTargets) {
 					$mailingstatic->refreshNbOfTargets();
@@ -1307,7 +1305,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 		$mailingstatic = new Mailing($this->db);
 		$fmresult = $mailingstatic->fetch($fk_mailing);
-		dol_syslog(__METHOD__.'::fetch mailingstatic='.$fk_mailing.' gave fmresult='.$fmresult, LOG_DEBUG);
 		if (!$fmresult) {
 			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
 			$this->error = $langs->trans("ObjectNotFound", $langs->trans("EMailings"));
@@ -1369,10 +1366,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$mailingtarget = new MailingTarget($this->db);
 
 		$mtfresult = $mailingtarget->fetch(0, $fk_mailing, $email);
-		dol_syslog(__METHOD__.'::mtfresult='.$mtfresult, LOG_DEBUG);
 		if ($mtfresult > 0) {
 			$delresult = $mailingtarget->delete($user);
-			dol_syslog(__METHOD__.'::delresult='.$delresult, LOG_DEBUG);
 			if ($delresult) {
 				if ($refreshNbOfTargets) {
 					$mailingstatic->refreshNbOfTargets();

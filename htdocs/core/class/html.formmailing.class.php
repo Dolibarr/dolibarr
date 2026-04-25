@@ -146,8 +146,6 @@ class FormMailing extends Form
 		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
 		$out .= '<input type="hidden" name="massaction" value="confirm_premassmail">';
 		$out .= '<!-- 3 buttons Add, Delete and Cancel -->';
-		require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-		$staticmailingtarget = new MailingTargets($this->db);
 		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_add_'.$actionname.'" name="button_add_'.$actionname.'" value="'.$langs->trans("Add").'">';
 		$out .= '<input type="submit" class="butActionDelete button-delete small reposition" id="button_delete_'.$actionname.'" name="button_delete_'.$actionname.'" value="'.$langs->trans("Delete").'">';
 		$out .= '<input type="submit" class="button button-cancel reposition" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
