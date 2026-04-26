@@ -3309,8 +3309,11 @@ class Ticket extends CommonObject
 					if ($mailfile->error) {
 						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
 						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiverstring).' : '.$mailfile->error);
-					} else {
+					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
+					} else {
+						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
+						dol_syslog('ErrorFailedToSendMail (no error details) from='.$from.' to='.$receiverstring, LOG_WARNING);
 					}
 				}
 			}
