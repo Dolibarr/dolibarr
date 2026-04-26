@@ -573,7 +573,7 @@ if (!$ret) {
 
 		if (is_object($project)) {
 			$head = project_prepare_head($project);
-			print dol_get_fiche_head($head, 'resource', $langs->trans("ProjectCard"), -1, 'project');
+			print dol_get_fiche_head($head, 'resource', $langs->trans("Project"), -1, 'project');
 
 			// Project card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/project/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
