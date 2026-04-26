@@ -4643,21 +4643,23 @@ if ($action == 'create') {
 		}
 
 		// Template to use by default
-		print '<tr><td>'.$langs->trans('Model').'</td>';
-		print '<td colspan="2">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-		$liste = ModelePDFFactures::liste_modeles($db);
-		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
-			$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
-			// Hidden conf
-			$paramkey = 'FACTURE_ADDON_PDF_'.$type;
-			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
-		} else {
-			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
+		$list = ModelePDFFactures::liste_modeles($db);
+		if (is_array($list) && count($list) > 0) {
+			print '<tr><td>'.$langs->trans('Model').'</td>';
+			print '<td colspan="2">';
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
+				$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
+				// Hidden conf
+				$paramkey = 'FACTURE_ADDON_PDF_'.$type;
+				$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
+			} else {
+				$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
+			}
+			print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+			print "</td></tr>";
 		}
-		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
 
 		// Multicurrency
 		if (isModEnabled('multicurrency')) {

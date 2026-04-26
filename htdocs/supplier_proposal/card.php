@@ -1641,14 +1641,16 @@ if ($action == 'create') {
 
 
 		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td colspan="2">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		$list = ModelePDFSupplierProposal::liste_modeles($db);
-		$preselected = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT', getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF'));
-		print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		print "</td></tr>";
+		if (count($list) > 0) {
+			print '<tr>';
+			print '<td>'.$langs->trans("DefaultModel").'</td>';
+			print '<td colspan="2">';
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			$preselected = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT', getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF'));
+			print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+			print "</td></tr>";
+		}
 
 		// Project
 		if (isModEnabled('project')) {

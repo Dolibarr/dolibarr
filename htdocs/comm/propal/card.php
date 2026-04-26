@@ -2560,14 +2560,17 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 		// Template to use by default
-		print '<tr class="field_model">';
-		print '<td class="titlefieldcreate">' . $langs->trans("DefaultModel") . '</td>';
-		print '<td class="valuefieldcreate">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
-		$liste = ModelePDFPropales::liste_modeles($db);
-		$preselected = getDolGlobalString('PROPALE_ADDON_PDF_ODT_DEFAULT', getDolGlobalString("PROPALE_ADDON_PDF"));
-		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
+		include_once DOL_DOCUMENT_ROOT . '/core/modules/propale/modules_propale.php';
+		$list = ModelePDFPropales::liste_modeles($db);
+		if (is_array($list) && count($list) > 0) {
+			print '<tr class="field_model">';
+			print '<td class="titlefieldcreate">' . $langs->trans("DefaultModel") . '</td>';
+			print '<td class="valuefieldcreate">';
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			$preselected = getDolGlobalString('PROPALE_ADDON_PDF_ODT_DEFAULT', getDolGlobalString("PROPALE_ADDON_PDF"));
+			print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+			print "</td></tr>";
+		}
 
 		// Multicurrency
 		if (isModEnabled("multicurrency")) {
