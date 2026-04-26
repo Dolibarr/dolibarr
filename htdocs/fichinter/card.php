@@ -1096,12 +1096,14 @@ if ($action == 'create') {
 		}
 
 		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td>';
 		$liste = ModelePDFFicheinter::liste_modeles($db);
-		print $form->selectarray('model', $liste, $conf->global->FICHEINTER_ADDON_PDF);
-		print "</td></tr>";
+		if (count($liste) > 0) {
+			print '<tr>';
+			print '<td>'.$langs->trans("DefaultModel").'</td>';
+			print '<td>';
+			print $form->selectarray('model', $liste, getDolGlobalString('FICHEINTER_ADDON_PDF'));
+			print "</td></tr>";
+		}
 
 		// Public note
 		print '<tr>';

@@ -105,7 +105,7 @@ if (empty($reshook)) {
 			$action = 'add_customer_price';
 		}
 
-		if (!$error && $prodcustprice !== null) {
+		if (!$error) {
 			$update_child_soc = GETPOSTINT('updatechildprice');
 
 			// add price by customer

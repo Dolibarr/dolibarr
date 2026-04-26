@@ -974,7 +974,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
 			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$morehtmlref .= '<input type="hidden" name="id" value="'.$object->id.'">';
-			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="">';
+			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="" spellcheck="false">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button valignmiddle" name="modify" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel valignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$morehtmlref .= '</form>';

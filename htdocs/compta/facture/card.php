@@ -4340,18 +4340,17 @@ if ($action == 'create') {
 					// Show credit note options only if we checked credit note and disable standard invoice if "create credit note" button is pressed
 					print '<script type="text/javascript">
 					jQuery(document).ready(function() {
-						if (jQuery("#radio_creditnote").is(":checked"))
-						{
+						if (jQuery("#radio_creditnote").is(":checked")) {
 							jQuery("#radio_standard").prop("disabled", true);
+							jQuery("#radio_deposit").prop("disabled", true);
 						} else {
 							jQuery("#radio_standard").prop("disabled", false);
+							jQuery("#radio_deposit").prop("disabled", false);
 						}
-						if (! jQuery("#radio_creditnote").is(":checked"))
-						{
+						if (! jQuery("#radio_creditnote").is(":checked")) {
 							jQuery("#credit_note_options").hide();
 						}
 						jQuery("#radio_creditnote").click(function() {
-
 							jQuery("#credit_note_options").show();
 						});
 						jQuery("#radio_standard, #radio_replacement, #radio_deposit, #radio_situation, #radio_situation_bis").click(function() {
@@ -4644,21 +4643,27 @@ if ($action == 'create') {
 		}
 
 		// Template to use by default
-		print '<tr><td>'.$langs->trans('Model').'</td>';
-		print '<td colspan="2">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-		$liste = ModelePDFFactures::liste_modeles($db);
-		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
-			$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
-			// Hidden conf
-			$paramkey = 'FACTURE_ADDON_PDF_'.$type;
-			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
-		} else {
-			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
+		$list = ModelePDFFactures::liste_modeles($db);
+		if (is_array($list) && count($list) > 0) {
+			if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
+				$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
+				// Hidden conf
+				$paramkey = 'FACTURE_ADDON_PDF_'.$type;
+				$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
+			} else {
+				$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
+			}
+			if (count($list) > 1) {
+				print '<tr><td>'.$langs->trans('Model').'</td>';
+				print '<td colspan="2">';
+				print img_picto('', 'pdf', 'class="pictofixedwidth"');
+				print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+				print "</td></tr>";
+			} else {
+				print '<input type="hidden" name="model" value="'.$preselected.'">';
+			}
 		}
-		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
 
 		// Multicurrency
 		if (isModEnabled('multicurrency')) {

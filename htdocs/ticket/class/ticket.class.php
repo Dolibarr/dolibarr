@@ -3308,18 +3308,12 @@ class Ticket extends CommonObject
 					$langs->load("other");
 					if ($mailfile->error) {
 						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
-						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiverstring).' : '.$mailfile->error);
+						dol_syslog('ErrorFailedToSendMail from='.$from.' to='.$receiverstring.' : '.$mailfile->error);
 					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
-						// Only surface the "feature disabled" notice when
-						// MAIN_DISABLE_ALL_MAILS is actually set. sendfile()
-						// can return false for transient SMTP errors or
-						// connection timeouts with an empty $mailfile->error,
-						// in which case the old unconditional message lied to
-						// administrators about why the send failed (#37994).
 						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
 					} else {
 						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
-						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiverstring).' : sendfile() returned false without a specific error');
+						dol_syslog('ErrorFailedToSendMail from='.$from.' to='.$receiverstring.' : (no error details)', LOG_WARNING);
 					}
 				}
 			}

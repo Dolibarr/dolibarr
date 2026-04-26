@@ -248,7 +248,7 @@ print '<br>';
 //$moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -257,7 +257,7 @@ print '<table class="tagtable nobottomiftotal liste">';
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<th class="wrapcolumntitle center maxwidthsearch liste_titre">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -318,7 +318,7 @@ if (!empty($arrayfields['cp.description']['checked'])) {
 	print '</th>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<th class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -328,7 +328,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 }
 if (!empty($arrayfields['cp.ref']['checked'])) {
@@ -365,7 +365,7 @@ if (!empty($arrayfields['cp.description']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.description']['label'], $_SERVER["PHP_SELF"], 'cp.description', '', $param, '', $sortfield, $sortorder);
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 }
 print '</tr>';
@@ -431,7 +431,7 @@ if ($num == 0) {
 
 		print '<tr class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 
@@ -484,7 +484,7 @@ if ($num == 0) {
 			print '</td>';
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 		print '</tr>';

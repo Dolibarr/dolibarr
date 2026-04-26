@@ -923,7 +923,7 @@ if ($action == 'create') {	// aaa
 	}
 
 	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td>';
-	print '<td><input id="subject" class="flat minwidth200 quatrevingtpercent" name="subject" id="subject" value="'.dolPrintHTMLForAttributeUrl($subject).'"></td></tr>';
+	print '<td><input id="subject" class="flat minwidth200 quatrevingtpercent" name="subject" id="subject" value="'.dolPrintHTMLForAttributeUrl($subject).'" spellcheck="false"></td></tr>';
 
 	// Background color
 	/* if (getDolGlobalString('EMAILING_CAN_EDIT_BACKGROUND_COLOR')) {
@@ -1623,7 +1623,7 @@ if ($action == 'create') {	// aaa
 			if ($object->messtype != 'sms') {
 				print '<tr><td class="fieldrequired titlefield">';
 				print $form->textwithpicto($langs->trans("MailTopic"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp');
-				print '</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" id="subject" name="subject" value="'.$object->sujet.'"></td></tr>';
+				print '</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" id="subject" name="subject" value="'.$object->sujet.'" spellcheck="false"></td></tr>';
 			}
 
 			$trackid = ''; // TODO To avoid conflicts with 2 mass emailing, we should set a trackid here, even if we use another one into email header.

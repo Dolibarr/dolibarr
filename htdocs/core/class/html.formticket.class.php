@@ -551,7 +551,7 @@ class FormTicket
 				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' spellcheck="false">';
 			}
 			print '</td></tr>';
 		}

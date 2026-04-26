@@ -2494,14 +2494,16 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Template to use by default
-		print '<tr><td>' . $langs->trans('DefaultModel') . '</td>';
-		print '<td>';
 		include_once DOL_DOCUMENT_ROOT . '/core/modules/commande/modules_commande.php';
-		$liste = ModelePDFCommandes::liste_modeles($db);
-		$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
-		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
+		$list = ModelePDFCommandes::liste_modeles($db);
+		if (is_array($list) && count($list) > 0) {
+			print '<tr><td>' . $langs->trans('DefaultModel') . '</td>';
+			print '<td>';
+			$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+			print "</td></tr>";
+		}
 
 		// Multicurrency
 		if (isModEnabled("multicurrency")) {
