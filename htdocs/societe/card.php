@@ -1610,7 +1610,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Default bank account
 			if (isModEnabled('bank')) {
 				print '<tr><td>';
-				print $langs->trans('PaymentBankAccount');
+				print $langs->trans('DefaultBankAccount');
 				print '</td>';
 				print '<td>';
 				$form->select_comptes(GETPOST('fk_account'), 'fk_account', 0, '', 1);
