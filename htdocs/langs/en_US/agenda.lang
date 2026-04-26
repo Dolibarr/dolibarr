@@ -23,6 +23,7 @@ ListOfEvents=List of events (default calendar)
 ActionsAskedBy=Events reported by
 ActionsToDoBy=Events assigned to
 ActionAssignedTo=Event assigned to
+AddUserByTags=Add user by tags
 ViewCal=Month view
 ViewDay=Day view
 ViewWeek=Week view

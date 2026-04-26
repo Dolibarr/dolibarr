@@ -299,17 +299,27 @@ if (empty($reshook) && (GETPOST('addassignedtogroup') || GETPOST('updateassigned
 	if (!is_array($groups)) {
 		$groups = [GETPOSTINT('assignedtogroup')];
 	}
-	$groupids = array_filter(array_map('intval', $groups), static function ($id) { return $id > 0; });
+	$groupids = array_filter(
+		array_map('intval', $groups),
+		static function ($id) {
+			return $id > 0;
+		}
+	);
 	if (!empty($groupids)) {
 		$assignedtouser = [];
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 		}
 		$transparency = GETPOST('transparency') ? GETPOST('transparency') : 1;
-		$sql = "SELECT ug.fk_user FROM " . MAIN_DB_PREFIX . "usergroup_user as ug"
-			. " INNER JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = ug.fk_user"
-			. " WHERE ug.fk_usergroup IN (" . $db->sanitize(implode(',', $groupids)) . ")"
-			. " AND u.statut <> 0";
+		$sql = sprintf(
+			"SELECT ug.fk_user FROM %susergroup_user as ug"
+			. " INNER JOIN %suser as u ON u.rowid = ug.fk_user"
+			. " WHERE ug.fk_usergroup IN (%s)"
+			. " AND u.statut <> 0",
+			MAIN_DB_PREFIX,
+			MAIN_DB_PREFIX,
+			$db->sanitize(implode(',', $groupids))
+		);
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND u.entity IS NOT NULL";
 		} else {
@@ -342,17 +352,27 @@ if (empty($reshook) && (GETPOST('addassignedtousertags') || GETPOST('updateassig
 	if (!is_array($tagids)) {
 		$tagids = [GETPOSTINT('assignedtousertags')];
 	}
-	$tagids = array_filter(array_map('intval', $tagids), static function ($id) { return $id > 0; });
+	$tagids = array_filter(
+		array_map('intval', $tagids),
+		static function ($id) {
+			return $id > 0;
+		}
+	);
 	if (!empty($tagids)) {
 		$assignedtouser = [];
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 		}
 		$transparency = GETPOST('transparency') ? GETPOST('transparency') : 1;
-		$sql = "SELECT cu.fk_user FROM " . MAIN_DB_PREFIX . "categorie_user as cu"
-			. " INNER JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = cu.fk_user"
-			. " WHERE cu.fk_categorie IN (" . $db->sanitize(implode(',', $tagids)) . ")"
-			. " AND u.statut <> 0";
+		$sql = sprintf(
+			"SELECT cu.fk_user FROM %scategorie_user as cu"
+			. " INNER JOIN %suser as u ON u.rowid = cu.fk_user"
+			. " WHERE cu.fk_categorie IN (%s)"
+			. " AND u.statut <> 0",
+			MAIN_DB_PREFIX,
+			MAIN_DB_PREFIX,
+			$db->sanitize(implode(',', $tagids))
+		);
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND u.entity IS NOT NULL";
 		} else {
@@ -1779,7 +1799,7 @@ if ($action == 'create') {
 	print '</div>';
 	print '</td></tr>';
 
-	print '<tr><td class="nowrap titlefieldcreate"><span>' . $langs->trans('Add user by tags') . '</span></td><td>';
+	print '<tr><td class="nowrap titlefieldcreate"><span>' . $langs->trans('AddUserByTags') . '</span></td><td>';
 	print img_picto('', 'tags', 'class="pictofixedwidth"');
 	print '<div class="divaddgroup">';
 	print $form->selectCategories(Categorie::TYPE_USER, 'assignedtousertags', null);

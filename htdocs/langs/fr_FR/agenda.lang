@@ -23,6 +23,7 @@ ListOfEvents=Liste des événements (calendrier par défaut)
 ActionsAskedBy=Événements enregistrés par
 ActionsToDoBy=Événements affectés à
 ActionAssignedTo=Evénement assigné à
+AddUserByTags=Ajouter utilisateur par étiquettes
 ViewCal=Vue mois
 ViewDay=Vue jour
 ViewWeek=Vue semaine
