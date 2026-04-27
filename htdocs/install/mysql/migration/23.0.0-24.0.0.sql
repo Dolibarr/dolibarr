@@ -196,11 +196,7 @@ INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_MODIFY','Stock transfer modified','Executed when a stock transfer is modified','stocktransfer',671);
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_VALIDATE','Stock transfer validated','Executed when a stock transfer is validated','stocktransfer',672);
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_UNVALIDATE','Stock transfer back to draft','Executed when a stock transfer is set back to draft','stocktransfer',673);
-INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_DESTOCK','Stock transfer source stock decremented','Executed when source warehouses stock is decremented for a stock transfer','stocktransfer',674);
-INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_DESTOCK_CANCEL','Stock transfer source stock decrement canceled','Executed when source warehouses stock decrement is canceled for a stock transfer','stocktransfer',675);
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CLOSE','Stock transfer closed','Executed when a stock transfer is closed after destination stock increment','stocktransfer',676);
-INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_ADDSTOCK','Stock transfer destination stock incremented','Executed when destination warehouses stock is incremented for a stock transfer','stocktransfer',677);
-INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_ADDSTOCK_CANCEL','Stock transfer destination stock increment canceled','Executed when destination warehouses stock increment is canceled for a stock transfer','stocktransfer',678);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 
