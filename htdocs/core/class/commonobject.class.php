@@ -1685,6 +1685,7 @@ abstract class CommonObject
 						'rowid' => $obj->rowid,
 						'code' => $obj->code,
 						'libelle' => $libelle_type,
+						'label' => $libelle_type,
 						'status' => (int) $obj->statuslink,
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
@@ -1988,6 +1989,7 @@ abstract class CommonObject
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		// phpcs:enable
 		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
