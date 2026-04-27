@@ -502,4 +502,8 @@ UPDATE llx_socpeople SET phone_perso = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(p
 UPDATE llx_socpeople SET phone_mobile = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone_mobile, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') WHERE phone_mobile IS NOT NULL AND phone_mobile != '';
 UPDATE llx_socpeople SET fax = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(fax, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') WHERE fax IS NOT NULL AND fax != '';
 
+
+--ALTER TABLE llx_facture ADD COLUMN retained_warranty_amount double(24,8) DEFAULT NULL AFTER retained_warranty;
+
+
 -- end of migration

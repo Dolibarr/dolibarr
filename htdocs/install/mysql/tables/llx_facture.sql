@@ -105,9 +105,10 @@ create table llx_facture
   situation_counter   smallint,  -- situation counter. The number into the serie: 1, 2, ...
   situation_final     smallint,  -- 0 by default, 1 it if is the final invoice.
 
-  retained_warranty							real DEFAULT NULL,  -- % of the retained warranty (to calculate the amount to pay later)
-  retained_warranty_date_limit				date DEFAULT NULL,
-  retained_warranty_fk_cond_reglement		integer  DEFAULT NULL,			-- payment condition of retained warranty
+  retained_warranty							real DEFAULT NULL,  		-- % of the retained warranty (to calculate the amount - on the inc tax basis - to pay later by getRetainedWarrantyAmount)
+  retained_warranty_amount 					double(24,8) DEFAULT NULL,	-- to store the amount of the retained warranty once calculated and rounded from the %
+  retained_warranty_date_limit				date DEFAULT NULL,			-- when we can request the retained warranty (used to update the flag payment late or not)
+  retained_warranty_fk_cond_reglement		integer  DEFAULT NULL,		-- payment condition of retained warranty
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format

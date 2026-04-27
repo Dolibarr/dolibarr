@@ -153,7 +153,7 @@ class MyObjectStats extends Stats
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_creation BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql .= " AND ".$this->where;
+		$sql .= ($this->where ? " AND ".$this->where : "");
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -176,7 +176,7 @@ class MyObjectStats extends Stats
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
-		$sql .= " WHERE ".$this->where;
+		$sql .= ($this->where ? " WHERE ".$this->where : "");
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -201,7 +201,7 @@ class MyObjectStats extends Stats
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_creation BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql .= " AND ".$this->where;
+		$sql .= ($this->where ? " AND ".$this->where : "");
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -226,7 +226,7 @@ class MyObjectStats extends Stats
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_creation BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql .= " AND ".$this->where;
+		$sql .= ($this->where ? " AND ".$this->where : "");
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -249,7 +249,7 @@ class MyObjectStats extends Stats
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
-		$sql .= " WHERE ".$this->where;
+		$sql .= ($this->where ? " WHERE ".$this->where : "");
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
 

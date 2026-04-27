@@ -103,6 +103,7 @@ if (!$usercanreadstatistic) {
 }
 
 // Security check
+$socid = 0;
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -171,7 +172,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 $filenamenb = $dir.'/myobjectnbinyear-'.$user->id.'-'.$year.'.png';
 $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
 
-/*
+
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
@@ -436,6 +437,7 @@ if ($mesg) {
 		print $px1->show();
 		print "<br>\n";
 	}
+	/*
 	if (isset($px2)) {
 		print $px2->show();
 		print "<br>\n";
@@ -444,6 +446,7 @@ if ($mesg) {
 		print $px3->show();
 		print "<br>\n";
 	}
+	*/
 }
 print '</td></tr></table>';
 
