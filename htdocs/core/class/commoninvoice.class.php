@@ -2666,7 +2666,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 *
 	 * @return bool                 True if line is a deposit, false otherwise
 	 */
-	protected function isDepositLine()
+	public function isDepositLine()
 	{
 		// Do not take into account lines of the type "deposit."
 		$reg = array();
