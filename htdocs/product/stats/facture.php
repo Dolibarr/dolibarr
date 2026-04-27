@@ -236,14 +236,13 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 	$massaction = '';
 } elseif ($massaction == 'confirm_premassmail' && $permissiontomailing && $permissiontoread) {
 	dol_syslog("product/stats/facture.php::if confirmmassaction presend && permissiontomailing && permissiontoread", LOG_DEBUG);
-	$langs->loadLangs(array("errors", "main", "mails", "companies"));
+	$langs->loadLangs(array("errors", "main", "mails", "companies", "margins"));
 	$ignorenocontact = GETPOSTINT('ignorenocontact') ? GETPOSTINT('ignorenocontact') : 0;
-	$showerrors = GETPOST('showerrors', 'array:string') ?? array('');
+	$showerrors = GETPOST('showerrors', 'array') ?? array('');
 	$select_contactsrc = GETPOST('select_contactsrc', 'array') ?? array(0);
 	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
 	$thirdpartyemail = GETPOSTINT('ThirdPartyEmail') ? GETPOSTINT('ThirdPartyEmail') : 0;
 	dol_syslog("product/stats/facture.php::thirdpartyemail=".$thirdpartyemail, LOG_DEBUG);
-	dol_syslog("product/stats/facture.php::ignorenocontact=".$ignorenocontact, LOG_DEBUG);
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
 	if (empty($select_mailing)) {
 		setEventMessages($langs->trans("ListOfEMailings").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
@@ -268,14 +267,44 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 			$verified_toselect[] = $itemid;
 			if ($thirdpartyemail > 0) {
 				$fetchsociete = $invoicestatic->fetch_thirdparty();
-				if (!$fetchsociete) {
+				if (!$fetchsociete && in_array("ThirdPartyEmail", $showerrors)) {
 					dol_syslog('product/stats/facture.php::failed fetching societe of invoice='.$itemid, LOG_ERR);
-					$error_message = $langs->trans("CustomerInvoice").'='.$itemid.' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("ThirdParty"));
+					$error_message = $langs->trans("CustomerInvoice").'='.$invoicestatic->ref.' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("ThirdParty"));
 					setEventMessages($error_message, null, 'errors');
 				}
 			}
-			// here we should if empty($list_of_contacts && in_array($showerrors, 'ContactForInvoices')) - report that there are no contacts for the given invoice
-			// we should also fetch each contact to make sure it is a good contact such that we don't fail once pr. mailing pr. invoice, but only once pr invoice.
+			$invoice_contact_list = array();
+			foreach ($select_contactsrc as $contact_code) {
+				$list_of_contacts = $invoicestatic->liste_contact(-1, 'external' , 0, $contact_code);
+				if (empty($list_of_contacts) && in_array("ContactForInvoices", $showerrors)) {
+					$invoice_type_contact = $invoicestatic->liste_type_contact('external', '', 1, 0, $contact_code);
+					$warn_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $invoice_type_contact[$contact_code]);
+					setEventMessages($warn_message, null, 'warnings');
+				} elseif (!empty($list_of_contacts)) {
+					dol_syslog("count(invoice_contact_list)=".count($invoice_contact_list), LOG_DEBUG);
+					$invoice_contact_list = array_merge($invoice_contact_list, $list_of_contacts);
+			        // Optional: Log total count
+					dol_syslog("Total contacts found so far: " . count($invoice_contact_list), LOG_DEBUG);				}
+			}
+			// fail once pr. invoice, not once pr. mailing pr. invoice
+			$verified_invoice_contact_list = array();
+			foreach ($invoice_contact_list as $contact_array) {
+				$fetchcontact = $contactstatic->fetch($contact_array['id']);
+				if ($fetchcontact) {
+					dol_syslog("count(verified_invoice_contact_list".count($verified_invoice_contact_list), LOG_DEBUG);
+					$verified_invoice_contact_list[] = $contact_array;
+					// we will still fail later if this contact does not have an email address
+				} else {
+					$warn_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("Contact").'='.$contact_array['id']);
+					setEventMessages($warn_message, null, 'warnings');
+				}
+			}
+			if (empty($verified_invoice_contact_list) && !empty($select_contactsrc) && in_array("ContactForInvoices", $showerrors)) {
+				$error_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("SearchIntoContacts"));
+				setEventMessages($error_message, null, 'errors');
+			}
+			dol_syslog("count(invoice_contact_list)=".count($invoice_contact_list), LOG_DEBUG);
+			dol_syslog("count(verified_invoice_contact_list)=".count($verified_invoice_contact_list), LOG_DEBUG);
 			dol_syslog("product/stats/facture.php::count(select_mailing)=".count($select_mailing), LOG_DEBUG);
 			foreach ($select_mailing as $mailingid) {
 				dol_syslog("product/stats/facture.php::mailingid=".$mailingid, LOG_DEBUG);
@@ -292,23 +321,19 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 					}
 					// we should record what changed as well as errors.
 				}
-				foreach ($select_contactsrc as $contact_code) {
-					$list_of_contacts = $invoicestatic->liste_contact(-1, 'external' , 0, $contact_code);
-					dol_syslog("product/stats/facture.php::count(list_of_contacts)=".count($list_of_contacts), LOG_DEBUG);
-					foreach ($list_of_contacts as $contact_array) {
-						$fetchcontact = $contactstatic->fetch($contact_array['id']);
-						if ($fetchcontact) {
-							$contactchangetomailing = 0; // to make sure isset is always true
-							if ($button_add_mailing) {
-								$other = $contact_array['label'].'@'.$langs->trans("CustomerInvoice").'='.$itemid;
-								$contactchangetomailing = $contactstatic->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
-							}
-							if ($button_delete_mailing) {
-								$contactchangetomailing = $contactstatic->deleteFromMassMailing($mailingid);
-							}
-							dol_syslog("product/stats/facture.php::contactchangetomailing=".$contactchangetomailing.' for contact code='.$contact_array['code'].' and contact id='.$contact_array['id'], LOG_DEBUG);
-							// we should record what changed as well as errors.
+				foreach ($verified_invoice_contact_list as $invoice_contact) {
+					$fetchcontact = $contactstatic->fetch($invoice_contact['id']);
+					if ($fetchcontact) {
+						$contactchangetomailing = 0; // to make sure isset is always true
+						if ($button_add_mailing) {
+							$other = $invoice_contact['label'].'@'.$langs->trans("CustomerInvoice").'='.$itemid;
+							$contactchangetomailing = $contactstatic->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
 						}
+						if ($button_delete_mailing) {
+							$contactchangetomailing = $contactstatic->deleteFromMassMailing($mailingid);
+						}
+						dol_syslog("product/stats/facture.php::contactchangetomailing=".$contactchangetomailing.' for contact code='.$invoice_contact['code'].' and contact id='.$invoice_contact['id'], LOG_DEBUG);
+						// we should record what changed as well as errors.
 					}
 				}
 			}
