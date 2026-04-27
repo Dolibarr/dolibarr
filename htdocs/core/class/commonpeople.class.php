@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026  		Jon Bendtsen            	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -400,6 +401,104 @@ trait CommonPeople
 		}
 	}
 
+	/**
+	 *  Add this "commonpeople" objects communication email adddress(es) to a mass mailing
+	 *
+	 *  @param	int	$fk_mailing				The id of the mass mailing to add this objects communication email adddress(es) to, see mailsrc
+	 *  @param	int	$source_id				The id of the object that this "commonpeople" object is assigned to
+	 *  @param	string	$source_type		The element of the object that this "commonpeople" object is assigned to
+	 *  @param	string	$other				The text that describes the source
+	 *  @param	int	$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
+	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 *
+	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 saved for future project check, -5 no valid email found, -6 must respect NoContact, -7 no permission on the fk_project, -8 empty source_id, -9 empty source_type, -10 other is empty, 0 if KO, Id of created mailing_target if OK
+	 */
+	public function addToMassMailing($fk_mailing, $source_id, $source_type, $other, $ignorenocontact = 0, $refreshNbOfTargets = 0)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__.'::ignorenocontact='.$ignorenocontact, LOG_DEBUG);
+		global $conf, $langs, $user;
+		$langs->loadLangs(array("errors", "admin", "main", "mailings", "user", "stock"));
+		if (isset($this->element)) {
+			$langs->loadLangs(array($this->element));
+		}
+		if (!$user->hasRight('mailing', 'write')) {
+			dol_syslog('User='.$user->id.' has no write access to mailing in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("None").': '.$langs->trans("Permission222");
+			return -1;
+		}
+		if (!$fk_mailing > 0) {
+			dol_syslog('No such fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("EMailings"));
+			return -2;
+		}
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($fk_mailing);
+		if (!$fmresult) {
+			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ObjectNotFound", $langs->trans("EMailings"));
+			return -3;
+		}
+
+		$email = isValidEmail(@$this->email) ? $this->email : '';
+		if (empty($email)) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in '.$this->element.'='.$this->id, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("Email"));
+			return -5;
+		}
+		if (empty($source_id)) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::Empty source_id', LOG_ERR);
+			$this->error = $langs->trans("ErrorBadValueForParameter", 'empty', 'source_id');
+			return -8;
+		}
+		if (empty($source_type)) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::Empty source_type', LOG_ERR);
+			$this->error = $langs->trans("ErrorBadValueForParameter", 'empty', 'source_type');
+			return -9;
+		}
+		if (empty($other)) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::Empty other', LOG_ERR);
+			$this->error = $langs->trans("ErrorBadValueForParameter", 'empty', 'other');
+			return -10;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
+		$mailingtarget = new MailingTarget($this->db);
+		$unsubscribed = $mailingtarget->checkEmailUnsubscribed($email);
+		if ($ignorenocontact > 0 || $unsubscribed == 0) {
+			$mailingtarget->fk_mailing = $fk_mailing;
+			$mailingtarget->fk_soc = $this->element == 'societe' ? $this->id : null;
+			$mailingtarget->fk_contact = $this->element == 'contact' ? $this->id : null;
+			$mailingtarget->fk_attendee = $this->element == 'conferenceorboothattendee' ? $this->id : null;
+			$mailingtarget->lastname = $this->lastname;
+			$mailingtarget->firstname = $this->firstname;
+			$mailingtarget->email = $email;
+			$mailingtarget->other = $other;
+			$mailingtarget->tag = $this->db->escape(dol_hash($conf->file->instance_unique_id.";".$this->email.";".$this->lastname.";".((int) $fk_mailing).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'));
+			$mailingtarget->source_id = $source_id;
+			$mailingtarget->source_type = $source_type;
+			$mailingtarget->statut = 0;
+			$mailingtarget->status = 0;
+			$mtcresult = $mailingtarget->create($user);
+			if ($mtcresult > 0) {
+				if ($refreshNbOfTargets) {
+					$mailingstatic->refreshNbOfTargets();
+				}
+				return $mtcresult;
+			} else {
+				$this->error = $mailingtarget->error;
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return 0;
+			}
+		} elseif ($unsubscribed > 0) {
+			$this->error = $email.' - '.$langs->trans("EmailOptedOut");
+			return -6;
+		} else {
+			$this->error = $mailingtarget->error;
+			return 0;
+		}
+	}
 
 	// Methods used by this Trait that must be implemented in the parent class.
 	// Note: this helps static type checking
