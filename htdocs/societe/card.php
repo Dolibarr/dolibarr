@@ -297,17 +297,36 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
 			$error++;
 		}
-		if (GETPOSTINT('customer') && GETPOSTINT('customer') < 0) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
+
+		if (
+			(GETPOSTINT('customer') && GETPOSTINT('customer') <= 0)
+			&& (GETPOSTINT('prospect') && GETPOSTINT('prospect') <= 0)
+			&& (GETPOSTINT('supplier') && GETPOSTINT('supplier') <= 0)
+			&& (GETPOSTISSET('nonature') && GETPOSTINT('nonature') <= 0)
+		) {
+			setEventMessages($langs->trans("ErrorNatureShouldBeChosen"), null, 'errors');
 			$error++;
-		}
-		if (GETPOSTINT('prospect') && GETPOSTINT('prospect') < 0) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Prospect")), null, 'errors');
-			$error++;
-		}
-		if (GETPOSTISSET('supplier') && GETPOSTINT('supplier') < 0) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
-			$error++;
+		} elseif (GETPOSTISSET('nonature') && GETPOSTINT('nonature') > 0) {
+			foreach (['prospect', 'customer', 'supplier'] as $nature) {
+				if (GETPOSTINT($nature) > 0) {
+					setEventMessages($langs->trans("ErrorNoneNatureChosen", $langs->transnoentitiesnoconv(ucfirst($nature))), null, 'errors');
+					$error++;
+					break;
+				}
+			}
+		} else {
+			if (GETPOSTINT('customer') && GETPOSTINT('customer') < 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
+				$error++;
+			}
+			if (GETPOSTINT('prospect') && GETPOSTINT('prospect') < 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Prospect")), null, 'errors');
+				$error++;
+			}
+			if (GETPOSTISSET('supplier') && GETPOSTINT('supplier') < 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
+				$error++;
+			}
 		}
 
 		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOSTINT('contact_no_email') == -1 && !empty(GETPOST('email', 'email'))) {
