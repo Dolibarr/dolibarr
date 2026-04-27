@@ -357,20 +357,16 @@ if (!empty($formSetup->items)) {
 }
 
 
-$hasRefGeneration = false;
-$hasDocGeneration = false;
+$refGenerationObjects = array_filter($myTmpObjects, static function ($myTmpObjectArray) {
+	return !empty($myTmpObjectArray['includerefgeneration']);
+});
 
-foreach ($myTmpObjects as $myTmpObjectArray) {
-	if (!empty($myTmpObjectArray['includerefgeneration'])) {
-		$hasRefGeneration = true;
-	}
-	if (!empty($myTmpObjectArray['includedocgeneration'])) {
-		$hasDocGeneration = true;
-	}
-}
+$docGenerationObjects = array_filter($myTmpObjects, static function ($myTmpObjectArray) {
+	return !empty($myTmpObjectArray['includedocgeneration']);
+});
 
 // Numbering models
-if ($hasRefGeneration) {
+if (!empty($refGenerationObjects)) {
 	$setupnotempty++;
 
 	print load_fiche_titre($langs->trans("NumberingModules"), '', '');
@@ -499,7 +495,7 @@ if ($hasRefGeneration) {
 }
 
 // Document templates generators
-if ($hasDocGeneration) {
+if (!empty($docGenerationObjects)) {
 	$setupnotempty++;
 
 	print load_fiche_titre($langs->trans("DocumentModules"), '', '');
