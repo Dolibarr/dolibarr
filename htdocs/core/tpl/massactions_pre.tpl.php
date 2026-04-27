@@ -390,7 +390,6 @@ if ($massaction == 'premassmail') {
 		$projectid = 0;
 	}
 	$fpresult = $projectstatic->fetch($projectid);
-	dol_syslog('fpresult='.$fpresult, LOG_DEBUG);
 	if ($fpresult > 0) {
 		$toptext = $projectstatic->title;
 		$toplist = $mailingstatic->fetchMassMailingIds($user, $projectid);
@@ -403,10 +402,6 @@ if ($massaction == 'premassmail') {
 		$toptext = $langs->trans("ListOfEMailings");
 		$toplist = $mailingstatic->fetchMassMailingIds($user, 0);
 		$endlist = array();
-		dol_syslog('count(toplist)='.count($toplist), LOG_DEBUG);
-		dol_syslog('count(endlist)='.count($endlist), LOG_DEBUG);
-		dol_syslog('log(count(toplist))='.log(count($toplist)), LOG_DEBUG);
-		dol_syslog('log(count(endlist))='.log(count($endlist)), LOG_DEBUG);
 	}
 
 	$htmlname = $objecttmp->element ?? 'unknown';

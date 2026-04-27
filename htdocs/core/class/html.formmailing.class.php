@@ -79,7 +79,7 @@ class FormMailing extends Form
 	 */
 	public function formMultiSelectMassMailing($page, $htmlname, $title = '', $toplist = array(), $toptext = '', $endlist = array(), $endtext = '', $size = 16, $morecss = '', $nooutput = 0)
 	{
-		dol_syslog(__CLASS__.'::'.__METHOD__.'::', LOG_DEBUG);
+		dol_syslog(__METHOD__.'::', LOG_DEBUG);
 		global $langs;
 		$langs->load("mails");
 
@@ -104,7 +104,7 @@ class FormMailing extends Form
 			if ($fmresult) {
 				$out .= '    <option class="option" value="'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
 			} else {
-				dol_syslog(__CLASS__.'::'.__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
+				dol_syslog(__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
 			}
 		}
 		$out .= '    <option class="option" value="" disabled>&mdash;&mdash;&mdash;</option>';
@@ -120,7 +120,7 @@ class FormMailing extends Form
 			if ($fmresult) {
 				$out .= '    <option class="option" value="'.$mailingstatic->id.'">'.$mailingstatic->title.'</option>';
 			} else {
-				dol_syslog(__CLASS__.'::'.__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
+				dol_syslog(__METHOD__.'::fetching mailing with id='.$mailingid.' failed with result='.$fmresult, LOG_ERR);
 			}
 		}
 		if (!empty($endtext)) {

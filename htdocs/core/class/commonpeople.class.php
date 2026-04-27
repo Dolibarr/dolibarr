@@ -402,11 +402,11 @@ trait CommonPeople
 	}
 
 	/**
-	 *  Add this "commonpeople" objects communication email adddress(es) to a mass mailing
+	 *  Add this objects communication email adddress to a mass mailing
 	 *
-	 *  @param	int	$fk_mailing				The id of the mass mailing to add this objects communication email adddress(es) to
-	 *  @param	int	$source_id				The id of the object that this "commonpeople" object is assigned to
-	 *  @param	string	$source_type		The element of the object that this "commonpeople" object is assigned to
+	 *  @param	int	$fk_mailing				The id of the mass mailing to add this objects communication email adddress to
+	 *  @param	int	$source_id				The id of the object that this new object is sourced from
+	 *  @param	string	$source_type		The element of the object that this object is sourced from
 	 *  @param	string	$other				The text that describes the source
 	 *  @param	int	$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
 	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
@@ -416,7 +416,6 @@ trait CommonPeople
 	public function addToMassMailing($fk_mailing, $source_id, $source_type, $other, $ignorenocontact = 0, $refreshNbOfTargets = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		dol_syslog(__METHOD__.'::ignorenocontact='.$ignorenocontact, LOG_DEBUG);
 		global $conf, $langs, $user;
 		$langs->loadLangs(array("errors", "admin", "main", "mailings", "user", "stock"));
 		if (isset($this->element)) {
@@ -518,9 +517,9 @@ trait CommonPeople
 	}
 
 	/**
-	 *  Delete this "commonpeople" objects communication email adddress(es) from a mass mailing
+	 *  Delete this objects communication email adddress from a mass mailing
 	 *
-	 *  @param	int	$fk_mailing				The id of the mass mailing to delete this objects communication email adddress(es) from
+	 *  @param	int	$fk_mailing				The id of the mass mailing to delete this objects communication email adddress from
 	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each delete
 	 *
 	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 (unused), -5 no valid email found, -6 (this number is not used), -7 no permission on the fk_project, -8 deletion failed 0 if KO, Id of created mailing_target if OK

@@ -180,7 +180,6 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	dol_syslog("product/stats/facture.php::if empty reshook", LOG_DEBUG);
 	$objectclass = 'Facture';
 	$objectlabel = 'Invoices';
 	$permissiontoread = $user->hasRight("facture", "lire");
@@ -221,7 +220,6 @@ if (empty($reshook)) {
 			exit;
 		}
 	} else {
-		dol_syslog("product/stats/facture.php::if empty reshook::else confirmmassaction presend", LOG_DEBUG);
 		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 	}
 }
@@ -285,17 +283,13 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 					$warn_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $invoice_type_contact[$contact_code]);
 					setEventMessages($warn_message, null, 'warnings');
 				} elseif (!empty($list_of_contacts)) {
-					dol_syslog("count(invoice_contact_list)=".count($invoice_contact_list), LOG_DEBUG);
 					$invoice_contact_list = array_merge($invoice_contact_list, $list_of_contacts);
-			        // Optional: Log total count
-					dol_syslog("Total contacts found so far: " . count($invoice_contact_list), LOG_DEBUG);				}
 			}
 			// fail once pr. invoice, not once pr. mailing pr. invoice
 			$verified_invoice_contact_list = array();
 			foreach ($invoice_contact_list as $contact_array) {
 				$fetchcontact = $contactstatic->fetch($contact_array['id']);
 				if ($fetchcontact) {
-					dol_syslog("count(verified_invoice_contact_list".count($verified_invoice_contact_list), LOG_DEBUG);
 					$verified_invoice_contact_list[] = $contact_array;
 					// we will still fail later if this contact does not have an email address
 				} else {
@@ -307,11 +301,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 				$error_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("SearchIntoContacts"));
 				setEventMessages($error_message, null, 'errors');
 			}
-			dol_syslog("count(invoice_contact_list)=".count($invoice_contact_list), LOG_DEBUG);
-			dol_syslog("count(verified_invoice_contact_list)=".count($verified_invoice_contact_list), LOG_DEBUG);
-			dol_syslog("product/stats/facture.php::count(select_mailing)=".count($select_mailing), LOG_DEBUG);
 			foreach ($select_mailing as $mailingid) {
-				dol_syslog("product/stats/facture.php::mailingid=".$mailingid, LOG_DEBUG);
 				if ($thirdpartyemail > 0 && $fetchsociete) {
 					$thirdpartychangetomailing = 0; // to make sure isset is always true
 					if ($button_add_mailing) {
