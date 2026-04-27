@@ -404,7 +404,7 @@ trait CommonPeople
 	/**
 	 *  Add this "commonpeople" objects communication email adddress(es) to a mass mailing
 	 *
-	 *  @param	int	$fk_mailing				The id of the mass mailing to add this objects communication email adddress(es) to, see mailsrc
+	 *  @param	int	$fk_mailing				The id of the mass mailing to add this objects communication email adddress(es) to
 	 *  @param	int	$source_id				The id of the object that this "commonpeople" object is assigned to
 	 *  @param	string	$source_type		The element of the object that this "commonpeople" object is assigned to
 	 *  @param	string	$other				The text that describes the source
@@ -496,6 +496,68 @@ trait CommonPeople
 			return -6;
 		} else {
 			$this->error = $mailingtarget->error;
+			return 0;
+		}
+	}
+
+	/**
+	 *  Delete this "commonpeople" objects communication email adddress(es) from a mass mailing
+	 *
+	 *  @param	int	$fk_mailing				The id of the mass mailing to delete this objects communication email adddress(es) from
+	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each delete
+	 *
+	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 (unused), -5 no valid email found, -6 (this number is not used), -7 no permission on the fk_project, -8 deletion failed 0 if KO, Id of created mailing_target if OK
+	 */
+	public function deleteFromMassMailing($fk_mailing, $refreshNbOfTargets = 0)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $conf, $langs, $user;
+		$langs->loadLangs(array("errors", "admin", "main", "mailings", "user", "stock"));
+		if (!$user->hasRight('mailing', 'write')) {
+			dol_syslog('User='.$user->id.' has no write access to mailing in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("None").': '.$langs->trans("Permission222");
+			return -1;
+		}
+		if (!$fk_mailing > 0) {
+			dol_syslog('No such fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("EMailings"));
+			return -2;
+		}
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($fk_mailing);
+		if (!$fmresult) {
+			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ObjectNotFound", $langs->trans("EMailings"));
+			return -3;
+		}
+
+		$email = isValidEmail(@$this->email) ? $this->email : '';
+		if (empty($email)) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in '.$this->element.'='.$this->id, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("Email"));
+			return -5;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
+		$mailingtarget = new MailingTarget($this->db);
+
+		$mtfresult = $mailingtarget->fetch(0, $fk_mailing, $email);
+		if ($mtfresult > 0) {
+			$delresult = $mailingtarget->delete($user);
+			if ($delresult) {
+				if ($refreshNbOfTargets) {
+					$mailingstatic->refreshNbOfTargets();
+				}
+				return $delresult;
+			} else {
+				$this->error = $mailingtarget->error;
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return -8;
+			}
+		} else {
+			$this->error = $mailingtarget->error;
+			dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
 			return 0;
 		}
 	}

@@ -291,7 +291,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 						$thirdpartychangetomailing = $invoicestatic->thirdparty->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
 					}
 					if ($button_delete_mailing) {
-						$thirdpartychangetomailing = $invoicestatic->thirdparty->deleteFromMassMailing($mailingid, $itemid); // adjust parameters later
+						$thirdpartychangetomailing = $invoicestatic->thirdparty->deleteFromMassMailing($mailingid);
 					}
 					// we should record what changed as well as errors.
 				}
@@ -307,7 +307,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 								$contactchangetomailing = $contactstatic->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
 							}
 							if ($button_delete_mailing) {
-								$contactchangetomailing = $contactstatic->deleteFromMassMailing($mailingid, $itemid); // adjust parameters later
+								$contactchangetomailing = $contactstatic->deleteFromMassMailing($mailingid);
 							}
 							dol_syslog("product/stats/facture.php::contactchangetomailing=".$contactchangetomailing.' for contact code='.$contact_array['code'].' and contact id='.$contact_array['id'], LOG_DEBUG);
 							// we should record what changed as well as errors.
