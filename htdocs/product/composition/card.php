@@ -814,7 +814,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="total-row right">';
 				print '<td></td><td></td><td></td>';
 				print '<td colspan="' . ($colspan_counter + 4) . '" class="titlefield">' . $langs->trans("PotentialKitsFromStock") . '</td>';
-				// Calculate the value to display. If $potential_kit_stock is null or 0, show 0.
+					// Calculate the value to display. If $potential_kit_stock is null or 0, show 0.
 				$stock_to_display = ($potential_kit_stock !== null && $potential_kit_stock > 0) ? $potential_kit_stock : 0;
 				print '<td class="total-value">' . price($stock_to_display) . '</td>';
 				print '</tr>';
