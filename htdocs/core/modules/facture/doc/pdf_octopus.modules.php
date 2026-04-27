@@ -1813,7 +1813,7 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->SetTextColor(40, 40, 40);
 					$pdf->SetFillColor(255, 255, 255);
 
-					$retainedWarranty = $object->getRetainedWarrantyAmount();
+					$retainedWarranty = $object->getRetainedWarrantyAmount('MT');
 					$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
 
 					// Billed - retained warranty
@@ -3109,7 +3109,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			if (! empty($previousInvoice->retained_warranty) && !getDolGlobalString('USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL')) {
-				$retenue_garantie_anterieure += $previousInvoice->getRetainedWarrantyAmount();
+				$retenue_garantie_anterieure += $previousInvoice->getRetainedWarrantyAmount('MT');
 			}
 
 			// grand total
@@ -3371,7 +3371,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		// Retained warranty
-		$retenue_garantie = $object->getRetainedWarrantyAmount();
+		$retenue_garantie = $object->getRetainedWarrantyAmount('MT');
 		if ($retenue_garantie == -1) {
 			$retenue_garantie = 0;
 		}

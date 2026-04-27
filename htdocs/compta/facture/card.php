@@ -4507,7 +4507,7 @@ if ($action == 'create') {
 		print $form->getSelectConditionsPaiements((int) $cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
 		print '</td></tr>';
 
-		// Warranty
+		// Retained warranty
 		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$rwStyle = 'display:none;';
 			if (in_array(GETPOSTINT('type'), $retainedWarrantyInvoiceAvailableType)) {
