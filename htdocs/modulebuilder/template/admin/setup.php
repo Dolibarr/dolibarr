@@ -351,13 +351,18 @@ if (!empty($formSetup->items)) {
 }
 
 
-$refGenerationObjects = array_filter($myTmpObjects, static function ($myTmpObjectArray) {
-	return !empty($myTmpObjectArray['includerefgeneration']);
-});
+$refGenerationObjects = array();
+$docGenerationObjects = array();
 
-$docGenerationObjects = array_filter($myTmpObjects, static function ($myTmpObjectArray) {
-	return !empty($myTmpObjectArray['includedocgeneration']);
-});
+foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+	if (!empty($myTmpObjectArray['includerefgeneration'])) {
+		$refGenerationObjects[$myTmpObjectKey] = $myTmpObjectArray;
+	}
+
+	if (!empty($myTmpObjectArray['includedocgeneration'])) {
+		$docGenerationObjects[$myTmpObjectKey] = $myTmpObjectArray;
+	}
+}
 
 // Numbering models
 if (!empty($refGenerationObjects)) {
@@ -376,7 +381,7 @@ if (!empty($refGenerationObjects)) {
 
 	clearstatcache();
 
-	foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+	foreach ($refGenerationObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		if (empty($myTmpObjectArray['includerefgeneration'])) {
 			continue;
 		}
@@ -506,7 +511,7 @@ if (!empty($docGenerationObjects)) {
 
 	clearstatcache();
 
-	foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+	foreach ($docGenerationObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		if (empty($myTmpObjectArray['includedocgeneration'])) {
 			continue;
 		}
