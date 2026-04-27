@@ -133,6 +133,7 @@ $formproject = null;
 $objectsrc = null;
 $note_public = null;
 $note_private = null;
+$classname = null;
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -2543,7 +2544,7 @@ if ($action == 'create' && $usercancreate) {
 			print '</td></tr>';
 		}
 
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($classname)) {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva

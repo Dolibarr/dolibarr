@@ -17,7 +17,7 @@
  * Copyright (C) 2021-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
@@ -233,6 +233,7 @@ $diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user-
 
 $now = dol_now();
 $error = 0;
+$sql = '';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Facture($db);
@@ -285,7 +286,7 @@ $arrayfields = array(
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '0', 'position' => 85),
-	'ba.label' => array('label' => "DefaultBankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (isModEnabled('bank')?'1':'0'), 'position' => 192),
+	'ba.label' => array('label' => "DefaultBankAccount", 'langfile' => 'banks', 'checked' => '0', 'enabled' => (isModEnabled('bank') ? '1' : '0'), 'position' => 192),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 90),
 	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 91),

@@ -17,7 +17,7 @@
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Lenin Rivas					<lenin.rivas777@gmail.com>
  *
@@ -929,7 +929,7 @@ if (empty($reshook)) {
 			if (isModEnabled('tax') && $close_code == $object::CLOSECODE_WITHHOLDINGTAX) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 				$resteapayer = GETPOSTFLOAT("resteapayer");
-				$amount = (double) ($resteapayer > 0 ? $resteapayer * -1 : $resteapayer);
+				$amount = (float) ($resteapayer > 0 ? $resteapayer * -1 : $resteapayer);
 				if ($amount < 0) {
 					$db->begin();
 					$tempTva = new Tva($db);
@@ -1254,6 +1254,9 @@ if (empty($reshook)) {
 
 		$dateinvoice = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
 		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
+
+		$classname = null;
+
 
 		// Replacement invoice
 		if (GETPOST('type') == Facture::TYPE_REPLACEMENT) {
@@ -2922,59 +2925,62 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'addline' && $usercancreate && (
-			(GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines', 'alpha') !== '') ||
-			(GETPOST('submitforallmark', 'alpha') && GETPOST('markforalllines', 'alpha') !== ''))) {
+		(GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines', 'alpha') !== '') ||
+			(GETPOST('submitforallmark', 'alpha') && GETPOST('markforalllines', 'alpha') !== '')
+	)) {
 		$outlangs = $langs;
 		$margin_rate = GETPOSTISSET('marginforalllines') ? GETPOST('marginforalllines', 'int') : '';
 		$mark_rate = GETPOSTISSET('markforalllines') ? GETPOST('markforalllines', 'int') : '';
-		foreach ($object->lines as &$line) if ($line->subprice > 0) {
-			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
-				continue;
-			}
-			$subprice_multicurrency = $line->subprice;
-			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
-			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
-			} else {
-				$line->subprice = (float) $line->pa_ht;
-			}
+		foreach ($object->lines as &$line) {
+			if ($line->subprice > 0) {
+				if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+					continue;
+				}
+				$subprice_multicurrency = $line->subprice;
+				if (is_numeric($margin_rate) && $margin_rate > 0) {
+					$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
+				} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
+					$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
+				} else {
+					$line->subprice = (float) $line->pa_ht;
+				}
 
-			$prod = new Product($db);
-			$res = $prod->fetch($line->fk_product);
-			if ($res > 0) {
-				if ($prod->price_min > $line->subprice) {
-					$price_subprice = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
-					$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
-					setEventMessages($prod->ref . ' - ' . $prod->label . ' (' . $price_subprice . ' < ' . $price_price_min . ' ' . strtolower($langs->trans("MinPrice")) . ')' . "\n", null, 'warnings');
+				$prod = new Product($db);
+				$res = $prod->fetch($line->fk_product);
+				if ($res > 0) {
+					if ($prod->price_min > $line->subprice) {
+						$price_subprice = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
+						$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
+						setEventMessages($prod->ref . ' - ' . $prod->label . ' (' . $price_subprice . ' < ' . $price_price_min . ' ' . strtolower($langs->trans("MinPrice")) . ')' . "\n", null, 'warnings');
+					} else {
+						setEventMessages($prod->error, $prod->errors, 'errors');
+					}
 				} else {
 					setEventMessages($prod->error, $prod->errors, 'errors');
 				}
-			} else {
-				setEventMessages($prod->error, $prod->errors, 'errors');
-			}
-			// Manage $line->subprice and $line->multicurrency_subprice
-			$multicurrency_subprice = (float) $line->subprice * $line->multicurrency_subprice / $subprice_multicurrency;
-			// Update DB
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->product_ref, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $multicurrency_subprice);
-			// Update $object with new margin info
-			if ($result > 0) {
-				if (is_numeric($margin_rate) && empty($mark_rate)) {
-					$line->marge_tx = $margin_rate;
-				} elseif (is_numeric($mark_rate) && empty($margin_rate)) {
-					$line->marque_tx = $mark_rate;
-				}
-				$line->total_ht = $line->qty * (float) $line->subprice;
-				$line->total_tva = $line->tva_tx * $line->qty * (float) $line->subprice;
-				$line->total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $line->subprice;
 				// Manage $line->subprice and $line->multicurrency_subprice
-				$line->multicurrency_total_ht = $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
-				$line->multicurrency_total_tva = $line->tva_tx * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
-				$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
-				// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
-				$line->multicurrency_subprice = $multicurrency_subprice;
-			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$multicurrency_subprice = (float) $line->subprice * $line->multicurrency_subprice / $subprice_multicurrency;
+				// Update DB
+				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->product_ref, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $multicurrency_subprice);
+				// Update $object with new margin info
+				if ($result > 0) {
+					if (is_numeric($margin_rate) && empty($mark_rate)) {
+						$line->marge_tx = $margin_rate;
+					} elseif (is_numeric($mark_rate) && empty($margin_rate)) {
+						$line->marque_tx = $mark_rate;
+					}
+					$line->total_ht = $line->qty * (float) $line->subprice;
+					$line->total_tva = $line->tva_tx * $line->qty * (float) $line->subprice;
+					$line->total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $line->subprice;
+					// Manage $line->subprice and $line->multicurrency_subprice
+					$line->multicurrency_total_ht = $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
+					$line->multicurrency_total_tva = $line->tva_tx * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
+					$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice_multicurrency * $line->multicurrency_subprice / $line->subprice;
+					// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
+					$line->multicurrency_subprice = $multicurrency_subprice;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 	} elseif ($action == 'updatetitleline' && GETPOSTISSET("save") && $usercancreate && !GETPOST('cancel', 'alpha')) {
@@ -4478,7 +4484,9 @@ if ($action == 'create') {
 						$res = include $tpl;
 					}
 				}
-				if ($res) { break; }
+				if ($res) {
+					break;
+				}
 			}
 
 			print '</td></tr>';
@@ -4726,7 +4734,7 @@ if ($action == 'create') {
 		}
 
 		// Lines from source (TODO Show them also when creating invoice from template invoice)
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($classname)) {
 			$langs->loadLangs(array('orders', 'propal'));
 
 			// TODO for compatibility
@@ -5494,7 +5502,9 @@ if ($action == 'create') {
 					$res = include $tpl;
 				}
 			}
-			if ($res) { break; }
+			if ($res) {
+				break;
+			}
 		}
 
 		print '</td></tr>';
@@ -6210,7 +6220,7 @@ if ($action == 'create') {
 		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 			// Total already paid
 			print '<tr>';
-			print '<td colspan="'.($nbcols+1).'" class="right">';
+			print '<td colspan="'.($nbcols + 1).'" class="right">';
 			print '<span class="opacitymedium">';
 			if ($object->type != Facture::TYPE_DEPOSIT) {
 				print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
@@ -6292,7 +6302,7 @@ if ($action == 'create') {
 			// Partially paid or abandoned 'badcustomer'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
 				print '<tr>';
-				print '<td colspan="'.($nbcols+1).'" class="nowrap right">';
+				print '<td colspan="'.($nbcols + 1).'" class="nowrap right">';
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Abandoned"), $langs->trans("HelpAbandonBadCustomer"), - 1);
 				print '</span>';
@@ -6307,7 +6317,7 @@ if ($action == 'create') {
 			// Partially paid or abandoned 'product_returned'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
 				print '<tr>';
-				print '<td colspan="'.($nbcols+1).'" class="nowrap right">';
+				print '<td colspan="'.($nbcols + 1).'" class="nowrap right">';
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("ProductReturned"), $langs->trans("HelpAbandonProductReturned"), - 1);
 				print '</span>';
@@ -6322,7 +6332,7 @@ if ($action == 'create') {
 			// Partially paid or abandoned 'abandoned'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
 				print '<tr>';
-				print '<td colspan="'.($nbcols+1).'" class="nowrap right">';
+				print '<td colspan="'.($nbcols + 1).'" class="nowrap right">';
 				$text = $langs->trans("HelpAbandonOther");
 				if ($object->close_note) {
 					$text .= '<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
@@ -6342,7 +6352,7 @@ if ($action == 'create') {
 
 			// Billed
 			print '<tr>';
-			print '<td colspan="'.($nbcols+1).'" class="right">';
+			print '<td colspan="'.($nbcols + 1).'" class="right">';
 			print '<span class="opacitymedium">';
 			print $langs->trans("Billed");
 			print '</td>';
@@ -6352,7 +6362,7 @@ if ($action == 'create') {
 
 			// Remainder to pay
 			print '<tr>';
-			print '<td colspan="'.($nbcols+1).'" class="right">';
+			print '<td colspan="'.($nbcols + 1).'" class="right">';
 			print '<span class="opacitymedium">';
 			print $langs->trans('RemainderToPay');
 			if ($resteapayeraffiche < 0) {
@@ -6367,7 +6377,7 @@ if ($action == 'create') {
 			// Remainder to pay Multicurrency
 			if (isModEnabled('multicurrency') && $object->multicurrency_code && ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)) {
 				print '<tr>';
-				print '<td colspan="'.($nbcols+1).'" class="right">';
+				print '<td colspan="'.($nbcols + 1).'" class="right">';
 				print '<span class="opacitymedium">';
 				print $langs->trans('RemainderToPayMulticurrency');
 				if ($resteapayeraffiche < 0) {
@@ -6395,14 +6405,14 @@ if ($action == 'create') {
 				$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
 
 				print '<tr>';
-				print '<td colspan="'.($nbcols+1).'" class="right">'.$langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')).' :</td>';
+				print '<td colspan="'.($nbcols + 1).'" class="right">'.$langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')).' :</td>';
 				//print '<td></td>';
 				print '<td class="right">'.price($billedWithRetainedWarranty).'</td>';
 				print '</tr>';
 
 				// retained warranty
 				print '<tr>';
-				print '<td colspan="'.($nbcols+1).'" class="right">';
+				print '<td colspan="'.($nbcols + 1).'" class="right">';
 				print $langs->trans("RetainedWarranty").' ('.$object->retained_warranty.'%)';
 				print !empty($object->retained_warranty_date_limit) ? ' '.$langs->trans("ToPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')) : '';
 				print '</td>';
@@ -6417,7 +6427,7 @@ if ($action == 'create') {
 
 			// Total already paid back
 			print '<tr>';
-			print '<td colspan="'.($nbcols+1).'" class="right">';
+			print '<td colspan="'.($nbcols + 1).'" class="right">';
 			print '<span class="opacitymedium">'.$langs->trans('AlreadyPaidBack').'</span>';
 			print '</td>';
 			//print '<td></td>';
@@ -6426,13 +6436,13 @@ if ($action == 'create') {
 
 			// Billed
 			print '<tr>';
-			print '<td colspan="'.($nbcols+1).'" class="right"><span class="opacitymedium">'.$langs->trans("Billed").'</span></td>';
+			print '<td colspan="'.($nbcols + 1).'" class="right"><span class="opacitymedium">'.$langs->trans("Billed").'</span></td>';
 			//print '<td></td>';
 			print '<td class="right">'.price($sign * $object->total_ttc).'</td>';
 			print '</tr>';
 
 			// Remainder to pay back
-			print '<tr><td colspan="'.($nbcols+1).'" class="right">';
+			print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
 			print '<span class="opacitymedium">'.$langs->trans('RemainderToPayBack');
 			if ($resteapayeraffiche > 0) {
 				print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
@@ -6448,7 +6458,7 @@ if ($action == 'create') {
 			// Remainder to pay back Multicurrency
 			if (isModEnabled('multicurrency') && (($object->multicurrency_code && $object->multicurrency_code != $conf->currency) || $object->multicurrency_tx != 1)) {
 				print '<tr>';
-				print '<td colspan="'.($nbcols+1).'" class="right">';
+				print '<td colspan="'.($nbcols + 1).'" class="right">';
 				print '<span class="opacitymedium">'.$langs->trans('RemainderToPayBackMulticurrency');
 				if ($resteapayeraffiche > 0) {
 					print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
