@@ -310,24 +310,6 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		}
 		return true;
 	}
-
-	/**
-	 * Check if a line is a deposit line
-	 *
-	 * @param  CommonInvoiceLine $line  Invoice line object
-	 * @return bool             True if line is a deposit, false otherwise
-	 */
-	protected function isDepositLine($line)
-	{
-		// Do not take into account lines of the type "deposit."
-		$reg = array();
-		if (preg_match('/^\((.*)\)$/', $line->desc, $reg)) {
-			if ($reg[1] == 'DEPOSIT') {
-				return true;
-			}
-		}
-		return false;
-	}
 }
 
 /**

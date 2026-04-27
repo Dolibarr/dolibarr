@@ -485,7 +485,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// If DEPOSIT, this line is completely ignored for calculations.
-					if ($this->isDepositLine($line)) {
+					if ($line->isDepositLine()) {
 						continue;
 					}
 

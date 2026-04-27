@@ -346,7 +346,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$nbService = 0;
 				foreach ($object->lines as $line) {
 					// If DEPOSIT, this line is completely ignored for calculations.
-					if ($this->isDepositLine($line)) {
+					if ($line->isDepositLine()) {
 						continue;
 					}
 
