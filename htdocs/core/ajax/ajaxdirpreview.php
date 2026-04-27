@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010	    Pierre Morin            <pierre.morin@auguria.net>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
@@ -51,10 +51,15 @@ if (!defined('NOREQUIREAJAX')) {
  * @var User $user
  *
  * @var string $module
- * @var string $mode
+ * @var ?string $mode
  * @var string $websitekey
+ * @var string $dolibarr_main_data_root
  * @var int $pageid
  */
+
+'
+@phan-var-force ?string $mode
+';
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
@@ -104,11 +109,20 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	// When no an ajax call (include from other file)
 	/**
 	 * @var string $module
+	 * @var int $section
+	 * @var string $action
+	 * @var string $dolibarr_main_data
+	 * @var string $showonrightsize
+	 * @var string $sortfield
+	 * @var string $sortorder
 	 */
 	'
 	@phan-var-force int $section
+	@phan-var-force string $action
 	@phan-var-force string $module
 	@phan-var-force string $showonrightsize
+	@phan-var-force string $sortfield
+	@phan-var-force string $sortorder
 	';
 
 	$rootdirfordoc = $conf->ecm->dir_output;
