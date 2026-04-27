@@ -422,7 +422,13 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 				}
 
 				// Check amount and currency
-				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				// Handle zero-decimal currencies that don't use cents/subunits
+				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
+					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
+				} else {
+					$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents for most currencies
+				}
 				$expectedCurrency = strtolower($currencyCodeType);
 
 				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
@@ -614,10 +620,6 @@ if ($ispaymentok) {
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
-						// - If not found, take the default amount
-						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-						}
 						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 						//if (empty($amount)) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');

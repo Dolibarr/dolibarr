@@ -139,7 +139,7 @@ class FormAI extends Form
 			$out .= ($out ? '<br>' : '');
 			$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
+			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, '', 1, 0, 0, '', 'minwidth250 ai_summarize'.$htmlContent.'_select');
 			$out .= '</div>';
 		}
 
@@ -148,7 +148,7 @@ class FormAI extends Form
 			$out .= ($out ? '<br>' : '');
 			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, 'minwidth250 ai_rephraser'.$htmlContent.'_select', 1);
+			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, '', 1, 0, 0, '', 'minwidth250 ai_rephraser'.$htmlContent.'_select');
 			$out .= '</div>';
 		}
 

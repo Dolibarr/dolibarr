@@ -43,8 +43,8 @@ function getListOfAIFeatures()
 
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
-		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
 		'textspellchecker' => array('label' => $langs->trans('TextSpellChecker'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER),
+		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
 
 		'textgenerationextrafield' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("ExtrafieldFiller").')', 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER),
 
@@ -194,7 +194,7 @@ function getListOfAIServices()
 }
 
 /**
- * Tests the connection to an AI service using its API key and URL.
+ * Tests the connection to an AI service using its API key and URL by sending message "Hello"
  *
  * This function supports multiple AI providers (Google Gemini, Anthropic Claude, and OpenAI-compatible APIs like
  * Mistral, Groq, and DeepSeek). It constructs a minimal, provider-specific request payload and sends it
@@ -235,7 +235,7 @@ function testAIConnection(string $service, string $key, string $url): array
 
 	$model = '';
 	if (empty($model)) {
-		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL');
+		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL_TEXT');
 	}
 
 	$data = [];
@@ -393,9 +393,9 @@ function getListForAISummarize()
 function getListForAIRephraseStyle()
 {
 	$arrayforaierephrasestyle = array(
+		'spellchecker' => 'RephraseSpellChecker',
 		'professional' => 'RephraseStyleProfessional',
 		'humouristic' => 'RephraseStyleHumouristic',
-		'spellchecker' => 'RephraseSpellChecker'
 	);
 
 	return $arrayforaierephrasestyle;

@@ -163,10 +163,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
 		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice')) {
 		// Count on delivery date (use invoice date as delivery is unknown)
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
@@ -174,9 +174,9 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
 		$sql .= " ,'' as datep";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-		$sql .= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
@@ -193,7 +193,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		}
-		$sql .= " AND f.rowid = d.".$fk_facture;
+		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
 		$sql .= " AND s.rowid = f.fk_soc";
 		if ($y && $m) {
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
@@ -214,25 +214,25 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
-		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
+		$sql .= " pf.".$db->sanitize($fk_payment)." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep, pa.ref as payment_ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-		$sql .= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
-		$sql .= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f,";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($paymentfacturetable)." as pf,";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($paymenttable)." as pa,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-		$sql .= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
@@ -249,10 +249,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		}
-		$sql .= " AND f.rowid = d.".$fk_facture;
+		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
 		$sql .= " AND s.rowid = f.fk_soc";
-		$sql .= " AND pf.".$fk_facture2." = f.rowid";
-		$sql .= " AND pa.rowid = pf.".$fk_payment;
+		$sql .= " AND pf.".$db->sanitize($fk_facture2)." = f.rowid";
+		$sql .= " AND pa.rowid = pf.".$db->sanitize($fk_payment);
 		if ($y && $m) {
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
@@ -270,9 +270,9 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture).", pf.rowid";
 	}
 
 	dol_syslog("Tax.lib.php::tax_by_thirdparty", LOG_DEBUG);
@@ -358,19 +358,19 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')
 		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice')) {
 		// Count on invoice date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-		$sql .= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
@@ -387,7 +387,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		}
-		$sql .= " AND f.rowid = d.".$fk_facture;
+		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
 		$sql .= " AND s.rowid = f.fk_soc";
 		if ($y && $m) {
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
@@ -406,35 +406,35 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
-		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
+		$sql .= " pf.".$db->sanitize($fk_payment)." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep, pa.ref as payment_ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-		$sql .= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
-		$sql .= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f,";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($paymentfacturetable)." as pf,";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($paymenttable)." as pa,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-		$sql .= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
+		$sql .= " ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
 		$sql .= " AND f.type IN (0,1,2,3,5)";
-		$sql .= " AND f.rowid = d.".$fk_facture;
+		$sql .= " AND f.rowid = d.".$db->sanitize($fk_facture);
 		$sql .= " AND s.rowid = f.fk_soc";
-		$sql .= " AND pf.".$fk_facture2." = f.rowid";
-		$sql .= " AND pa.rowid = pf.".$fk_payment;
+		$sql .= " AND pf.".$db->sanitize($fk_facture2)." = f.rowid";
+		$sql .= " AND pa.rowid = pf.".$db->sanitize($fk_payment);
 		if ($y && $m) {
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
@@ -452,9 +452,9 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture).", pf.rowid";
 	}
 
 	dol_syslog("Tax.lib.php::tax_by_thirdparty", LOG_DEBUG);
@@ -547,7 +547,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
-		$sql .= " WHERE e.entity = ".$conf->entity;
+		$sql .= " WHERE e.entity = ".((int) $conf->entity);
 		$sql .= " AND e.fk_statut in (6)";
 		if ($y && $m) {
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
@@ -716,10 +716,10 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
 		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice')) {
 		// Count on delivery date (use invoice date as delivery is unknown)
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
@@ -727,9 +727,9 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount,";
 		$sql .= " '' as datep";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$invoicedettable." as d ON d.".$fk_facture."=f.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
@@ -763,27 +763,27 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
+		$sql .= " pf.".$db->sanitize($fk_payment)." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep, pa.ref as payment_ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymentfacturetable." as pf ON pf.".$fk_facture2." = f.rowid";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymenttable." as pa ON pa.rowid = pf.".$fk_payment;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($paymentfacturetable)." as pf ON pf.".$db->sanitize($fk_facture2)." = f.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($paymenttable)." as pa ON pa.rowid = pf.".$db->sanitize($fk_payment);
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$invoicedettable." as d ON d.".$fk_facture." = f.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
@@ -807,7 +807,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture).", pf.rowid";
 	}
 
 	dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
@@ -897,19 +897,19 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	if (($direction == 'sell' && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')
 		|| ($direction == 'buy' && getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice')) {
 		// Count on invoice date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$invoicedettable." as d ON d.".$fk_facture." = f.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
@@ -945,25 +945,25 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
-		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
 		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
+		$sql .= " pf.".$db->sanitize($fk_payment)." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep, pa.ref as payment_ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymentfacturetable." as pf ON pf.".$fk_facture2." = f.rowid";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymenttable." as pa ON pa.rowid = pf.".$fk_payment;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($invoicetable)." as f";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($paymentfacturetable)." as pf ON pf.".$db->sanitize($fk_facture2)." = f.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($paymenttable)." as pa ON pa.rowid = pf.".$db->sanitize($fk_payment);
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$invoicedettable." as d ON d.".$fk_facture." = f.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
@@ -985,9 +985,9 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
+		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture).", pf.rowid";
 	}
 
 	dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
@@ -1076,7 +1076,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql = '';
 
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.ref as pref, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
@@ -1084,7 +1084,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid";
-		$sql .= " WHERE e.entity = ".$conf->entity;
+		$sql .= " WHERE e.entity = ".((int) $conf->entity);
 		$sql .= " AND e.fk_statut in (6)";
 		if ($y && $m) {
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ function getBlockedLogVersionToShow()
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
- *  @param	string		$withtabsetup					Add also the tab "Setup"
+ *  @param	int		$withtabsetup					Add also the tab "Setup"
  *  @return	array<array{0:string,1:string,2:string}>	Array of head
  */
 function blockedlogadmin_prepare_head($withtabsetup)
@@ -508,7 +509,8 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 	// Transaction ID
 	if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 		if ($object->status > $object::STATUS_DRAFT) {
-			$unalterablelogid = 'UNDEFINED';
+			$unalterablelogid = 'UNDEFINED'; // By default
+
 			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
 			$sql .= $db->order('rowid', 'DESC');
@@ -523,26 +525,26 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 			}
 
 			if ($unalterablelogid != 'UNDEFINED') {
-				$posy += 5;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
+				$posy += 3;
 			}
 
 			$isADuplicata = ($object->pos_print_counter >= 2);
 			if ($isADuplicata) {
-				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, '*** '.$outputlangs->trans("DUPLICATA").(getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT') ? ' (no '.($object->pos_print_counter - 1).')' : '').' ***', '', 'R');
+				$posy += 3;
 			}
 		}
 
 		if ($object->status == $object::STATUS_DRAFT) {
-			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, '*** '.strtoupper($outputlangs->trans("TemporaryReceipt")).' ***', '', 'R');
+			$posy += 3;
 		}
 	}
 }

@@ -131,6 +131,18 @@ repos:
         language: script
         entry: ./dev/tools/fixaltlanguages_pre-commit.sh
         pass_filenames: true
+      - id: php-stan
+        name: Run local PHPStan
+        language: script
+        entry: ./dev/tools/phpstan/allow_phpstan_in_precommit.sh
+        pass_filenames: true
+        stages: [pre-commit]
+      - id: phan
+        name: Run local Phan
+        language: script
+        entry: ./dev/tools/phan/allow_phan_in_precommit.sh
+        pass_filenames: true
+        stages: [pre-commit]
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php

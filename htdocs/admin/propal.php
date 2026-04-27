@@ -162,6 +162,18 @@ if ($action == 'updateMask') {
 			$error++;
 		}
 	}
+	if (GETPOSTISSET('PROPOSAL_ALLOW_ONLINESIGN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ALLOW_ONLINESIGN", GETPOST('PROPOSAL_ALLOW_ONLINESIGN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOSTISSET('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN", GETPOST('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
+			$error++;
+		}
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -682,9 +694,20 @@ print '</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
 print '<td>';
-print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
+print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 1, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
 print '</td></tr>';
 
+/*
+if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SecurityToken").'</td><td>';
+	print '<input class="minwidth300"  type="text" id="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" name="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" value="' . getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN').'" spellcheck="false">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+	}
+	print '</td></tr>';
+}
+*/
 
 // Notifications
 print '<tr class="oddeven">';
@@ -709,6 +732,11 @@ print '</form>';
 
 print "</table>\n<br>";
 
+$constname = 'PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN';
+
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword($constname);
 
 
 // End of page
