@@ -136,6 +136,9 @@ class FormMailing extends Form
 		$out .= '<input type="checkbox" id="ignorenocontact" name="ignorenocontact" value="1"><label for="ignorenocontact">'.$langs->trans("EvenUnsubscribe").'</label><br>';
 		$out .= '<br>';
 
+		$transThirdPartyEmail = $langs->trans("ThirdPartyEmail");
+		$transContactForInvoices = $langs->trans("ContactForInvoices");
+
 		$out .= '<!-- select and options for '.$htmlname .' -->';
 		if ($htmlname == 'conferenceorboothattendee' ) {
 			$out .= '<label for="select_mailsrc">'.$langs->trans("Source").' '.$langs->trans("ListOf", $langs->trans("Email")).'</label>';
@@ -151,9 +154,6 @@ class FormMailing extends Form
 			$facturestatic = new Facture($this->db);
 			$contacttypes = $facturestatic->liste_type_contact('external', 'rowid', 1, 1) ?? array();
 			$size = (int) round(3 + (log(count($contacttypes)) > 0 ? log(count($contacttypes)) : 0));
-
-			$transThirdPartyEmail = $langs->trans("ThirdPartyEmail");
-			$transContactForInvoices = $langs->trans("ContactForInvoices");
 
 			$out .= '<h4>'.$langs->trans("Email").' '.$langs->trans("Sources").'</h4>';
 			$out .= '<div id="checkbox_ThirdPartyEmail">';

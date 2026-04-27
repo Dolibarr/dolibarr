@@ -179,10 +179,10 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+$permissiontoread = $user->hasRight("facture", "lire");
 if (empty($reshook)) {
 	$objectclass = 'Facture';
 	$objectlabel = 'Invoices';
-	$permissiontoread = $user->hasRight("facture", "lire");
 	$permissiontoadd = $user->hasRight("facture", "creer");
 	$permissiontodelete = $user->hasRight("facture", "supprimer");
 	$uploaddir = $conf->invoice->dir_output;
@@ -273,6 +273,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 		$fetchinvoiceresult = $invoicestatic->fetch($itemid);
 		if ($fetchinvoiceresult) {
 			$verified_toselect[] = $itemid;
+			$fetchsociete = null;
 			if ($thirdpartyemail > 0) {
 				$fetchsociete = $invoicestatic->fetch_thirdparty();
 				if (!$fetchsociete && in_array("ThirdPartyEmail", $showerrors)) {
@@ -351,7 +352,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 					if ($fetchcontact) {
 						$contactchangetomailing = 0; // to make sure isset is always true
 						if ($button_add_mailing) {
-							$other = $invoice_contact['label'].'@'.$langs->trans("CustomerInvoice").'='.$itemid;
+							$other = (string) $invoice_contact['label'].'@'.$langs->trans("CustomerInvoice").'='.$itemid;
 							$contactchangetomailing = $contactstatic->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
 						}
 						if ($button_delete_mailing) {
@@ -440,7 +441,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 
 	$total_changes = 0;
 	foreach ($select_mailing as $mailingid) {
-		$total_changes = $total_changes + $whatchanged[$mailingid];
+		$total_changes += $whatchanged[$mailingid];
 	}
 	setEventMessages($langs->trans("GrandTotal").' '.$langs->trans("RecordsModified", $total_changes), null, 'mesgs');
 
