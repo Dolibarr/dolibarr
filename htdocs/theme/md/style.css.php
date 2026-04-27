@@ -7984,7 +7984,6 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
-	/* color: var(--colortext); */
 	color: var(--colortext);
 }
 .dropdown dd ul li:hover:not(.liinputsearch) {
