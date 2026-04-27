@@ -681,7 +681,7 @@ if ($id > 0 || !empty($ref)) {
 					// Stock
 					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
-						}
+					}
 					// Check if the component has a required quantity and stock.
 					if ($value['nb'] > 0 && is_numeric($value['stock'])) {
 					// Calculate how many full kits this component can support.
