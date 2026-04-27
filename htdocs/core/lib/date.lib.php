@@ -1104,9 +1104,6 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$numholidays = 0;
 		if ($lastday) {
 			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
-			var_dump($numholidays);
-			var_dump($timestampStart);
-			var_dump($timestampEnd);
 			if ($numholidays == 1) {
 				return 0;
 			}
