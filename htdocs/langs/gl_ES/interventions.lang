@@ -85,3 +85,5 @@ TypeContact_fichinter_internal_INTERVENING=Intervención
 TypeContact_fichinter_external_BILLING=Contacto co cliente de facturación de intervención
 TypeContact_fichinter_external_CUSTOMER=Contacto co cliente de seguimento da intervención
 NotARecurringInterventionalTemplate=Non é un modelo de intervención recorrente
+ShowInterventionModel=Amosarr modelo de intervención
+CreateRepeatableIntervention=Crear intervención recorrente

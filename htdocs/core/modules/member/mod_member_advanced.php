@@ -36,6 +36,11 @@ class mod_member_advanced extends ModeleNumRefMembers
 	public $name = 'Advanced';
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 40;
+
 	// variables not inherited
 
 	/**
@@ -115,9 +120,9 @@ class mod_member_advanced extends ModeleNumRefMembers
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe		$objsoc		Object third party
-	 *  @param  Adherent	$object		Object we need next value for
-	 *  @return	string|-1				Value if OK, -1 if KO
+	 *  @param  ?Societe	$objsoc		Object third party
+	 *  @param  ?Adherent	$object		Object we need next value for
+	 *  @return	string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

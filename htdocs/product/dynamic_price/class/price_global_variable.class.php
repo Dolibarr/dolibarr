@@ -3,6 +3,7 @@
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,9 @@ class PriceGlobalVariable
 	 */
 	public $id;
 
+	/**
+	 * @var ?string
+	 */
 	public $code;
 
 	/**
@@ -57,6 +61,9 @@ class PriceGlobalVariable
 	 */
 	public $description;
 
+	/**
+	 * @var int|string|float
+	 */
 	public $value;
 
 	/**
@@ -109,6 +116,7 @@ class PriceGlobalVariable
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
+			/*
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
@@ -118,6 +126,7 @@ class PriceGlobalVariable
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			}
+			*/
 		}
 
 		// Commit or rollback
@@ -228,10 +237,10 @@ class PriceGlobalVariable
 	/**
 	 *  Delete object in database
 	 *
-	 * 	@param	int		$rowid		 Row id of global variable
-	 *	@param  User	$user        User that deletes
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 * 	@param	int			$rowid		 Row id of global variable
+	 *	@param  User		$user        User that deletes
+	 *  @param  int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int						 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
@@ -239,6 +248,7 @@ class PriceGlobalVariable
 
 		$this->db->begin();
 
+		/*
 		if (!$error) {
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -250,6 +260,7 @@ class PriceGlobalVariable
 				//// End call triggers
 			}
 		}
+		*/
 
 		if (!$error) {
 			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
@@ -317,7 +328,7 @@ class PriceGlobalVariable
 	/**
 	 *    List all price global variables
 	 *
-	 *    @return	array|int				Array of price global variables, <0 if ko
+	 *    @return	PriceGlobalVariable[]|int<-1,-1>	Array of price global variables, <0 if ko
 	 */
 	public function listGlobalVariables()
 	{

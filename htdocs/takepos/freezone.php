@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2018 Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,12 +48,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 global $mysoc;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
 $idline = GETPOSTINT('idline');
 $action = GETPOST('action', 'aZ09');
@@ -65,7 +75,7 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
-	$invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$place.')');
+	$invoice->fetch(0, '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$place.')');
 }
 
 
@@ -126,10 +136,10 @@ top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 <form>
 <input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">
 <?php
-if ($action == "freezone") {
+if ($action == "freezone" && $user->hasRight('takepos', 'run')) {
 	echo '<input type="text" id="number" name="number" class="takepospay" style="width:15%;" placeholder="'.$langs->trans(getDolGlobalString("TAKEPOS_CHANGE_PRICE_HT") ? 'AmountHT' : 'AmountTTC').'">';
 }
-if ($action == "addnote") {
+if ($action == "addnote" && $user->hasRight('takepos', 'run')) {
 	echo '<input type="hidden" id="number" name="number" value="'.$idline.'">';
 }
 ?>
@@ -137,7 +147,7 @@ if ($action == "addnote") {
 <input type="submit" class="button takepospay clearboth" value="OK" onclick="Save(); return false;">
 </form>
 <?php
-if ($action == 'freezone' && !getDolGlobalString("TAKEPOS_USE_DEFAULT_VATRATE_FOR_FREEZONE")) {
+if ($action == 'freezone' && !getDolGlobalString("TAKEPOS_USE_DEFAULT_VATRATE_FOR_FREEZONE") && $user->hasRight('takepos', 'run')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);

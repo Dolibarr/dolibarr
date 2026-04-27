@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2021 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,14 @@ if (!defined('NOREQUIRETRAN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $hookmanager->initHooks(array('rowinterface'));
 
@@ -123,6 +132,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'stocktransfer_stocktransferline' && $fk_element == 'fk_stocktransfer' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 		$perm = 1;
+	} elseif ($table_element_line == 'expeditiondet' && $user->hasRight('expedition', 'creer')) {
+		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
 		$tmpmodule = $tmparray[0];
@@ -133,7 +144,12 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	}
 	// Overwrite $perm by hook
 	$parameters = array('roworder' => &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
-	$row = new GenericObject($db);
+	if ($table_element_line == 'expeditiondet') {
+		dol_include_once('/expedition/class/expedition.class.php');
+		$row = new Expedition($db);
+	} else {
+		$row = new GenericObject($db);
+	}
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;
 	$row->id = $element_id;

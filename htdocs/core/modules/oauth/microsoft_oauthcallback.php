@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,15 @@
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -96,6 +106,7 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 try {
 	$nameofservice = ucfirst(strtolower($genericstring));
 	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
+	'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 } catch (Exception $e) {
 	print $e->getMessage();
 	exit;
@@ -132,7 +143,8 @@ if (!getDolGlobalString($keyforparamtenant)) {
  * Actions
  */
 
-if ($action == 'delete') {
+if ($action == 'delete' && (!empty($user->admin) || $user->id == GETPOSTINT('userid'))) {
+	$storage->userid = GETPOSTINT('userid');
 	$storage->clearToken($genericstring);
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -196,8 +208,12 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	$params = array();
 	if ($state) {
-		$url = $apiService->getAuthorizationUri(array('state' => $state));
+		$params['state'] = $state;
+	}
+	if (!empty($params)) {
+		$url = $apiService->getAuthorizationUri($params);
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
 	}

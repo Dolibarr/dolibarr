@@ -35,4 +35,4 @@ IntracommReportTypeDeclaration=Τύπος δήλωσης
 IntracommReportDownload=λήψη αρχείου XML
 # Invoice
 IntracommReportTransportMode=Τρόπος μεταφοράς
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=Διαγραφή αναφοράς intracomm

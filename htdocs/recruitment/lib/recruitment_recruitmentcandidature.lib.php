@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +26,8 @@
 /**
  * Prepare array of tabs for RecruitmentCandidature
  *
- * @param	RecruitmentJobPosition	$object		RecruitmentCandidature
- * @return 	array					Array of tabs
+ * @param	RecruitmentCandidature	$object		RecruitmentCandidature
+ * @return 	array<array{0:string,1:string,2:string}>	Array of tabs
  */
 function recruitmentCandidaturePrepareHead($object)
 {

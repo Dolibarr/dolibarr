@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2007-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2007-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -71,11 +80,11 @@ if ($cancel) {
 	$action = '';
 }
 
-//include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+//include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 
-include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 
 if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'update' && !$cancel) {
@@ -164,8 +173,10 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('adheren
 
 $form = new Form($db);
 
+$title = $langs->trans("SubscriptionCard");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
-llxHeader('', $langs->trans("SubscriptionCard"), $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-subscription-card');
 
 
 dol_htmloutput_errors($errmsg);
@@ -334,7 +345,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public)).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
@@ -362,7 +373,7 @@ if ($rowid && $action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
-		if (empty($bankline->rappro) || empty($bankline)) {
+		if (empty($bankline) || empty($bankline->rappro)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated").'" href="#">'.$langs->trans("Modify")."</a></div>";
@@ -392,13 +403,19 @@ if ($rowid && $action != 'edit') {
 	$somethingshown = $formfile->numoffiles;
 	*/
 	// Show links to link elements
-	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
-	$somethingshown = $form->showLinkedObjectBlock($object, '');
+	$object->fetchObjectLinked();
 
-	// Show links to link elements
-	/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-	*/
+	print '<!-- Show links to link members thirdpartys elements -->';
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('societe'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
+	$compatibleImportElementsList = array();
+	$id = $object->fk_adherent;
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
+	// without that include PHP Warning:  Undefined variable $id in /var/www/html/core/actions_dellink.inc.php on line 47
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 	print '</div><div class="fichehalfright">';
 

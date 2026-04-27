@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,10 +125,9 @@ class modRecruitment extends DolibarrModules
 		$this->langfiles = array("recruitment");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'RecruitmentWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -217,7 +216,7 @@ class modRecruitment extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->recruitment->enabled',
+			//      'test' => 'isModEnabled('recruitment')',
 			//      'priority' => 50,
 			//  ),
 		);
@@ -279,8 +278,8 @@ class modRecruitment extends DolibarrModules
 			'url' => '/recruitment/recruitmentjobposition_card.php?action=create',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->rights->recruitment->recruitmentjobposition->write', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("recruitment","recruitmentjobposition", "write")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -293,7 +292,7 @@ class modRecruitment extends DolibarrModules
 			'url' => '/recruitment/recruitmentjobposition_list.php',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms' => '$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
@@ -307,8 +306,8 @@ class modRecruitment extends DolibarrModules
 			'url' => '/recruitment/recruitmentcandidature_card.php?action=create',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms' => '$user->rights->recruitment->recruitmentjobposition->write', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("recruitment","recruitmentjobposition", "write")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -321,7 +320,7 @@ class modRecruitment extends DolibarrModules
 			'url' => '/recruitment/recruitmentcandidature_list.php',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
-			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms' => '$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
@@ -417,9 +416,6 @@ class modRecruitment extends DolibarrModules
 		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration' => 1, 'includedocgeneration' => 1);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'MyObject') {
-				continue;
-			}
 			if ($myTmpObjectArray['includedocgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_recruitmentjobposition.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
@@ -428,7 +424,7 @@ class modRecruitment extends DolibarrModules
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

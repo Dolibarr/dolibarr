@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +28,21 @@
  */
 class SimpleOpenID
 {
+	/**
+	 * @var string
+	 */
 	public $openid_url_identity;
+	/**
+	 * @var array{openid_server?:string,trust_root?:string,cancel?:string,approved?:string}
+	 */
 	public $URLs = array();
+	/**
+	 * @var array{}|array{0:string,1:string}
+	 */
 	public $error = array();
+	/**
+	 * @var array{required:string[],optional:string[]}
+	 */
 	public $fields = array(
 		'required' => array(),
 		'optional' => array(),
@@ -100,7 +114,7 @@ class SimpleOpenID
 	/**
 	 * SetRequiredFields
 	 *
-	 * @param	string|array	$a		Server
+	 * @param	string|string[]	$a		Server
 	 * @return	void
 	 */
 	public function SetRequiredFields($a)
@@ -117,7 +131,7 @@ class SimpleOpenID
 	/**
 	 * SetOptionalFields
 	 *
-	 * @param	string|array	$a		Server
+	 * @param	string|string[]	$a		Server
 	 * @return	void
 	 */
 	public function SetOptionalFields($a)
@@ -178,7 +192,7 @@ class SimpleOpenID
 	/**
 	 * SetOpenIDServer
 	 *
-	 * @return	array
+	 * @return	array{code:string,description:string}
 	 */
 	public function GetError()
 	{
@@ -226,7 +240,7 @@ class SimpleOpenID
 	 * splitResponse
 	 *
 	 * @param	string	$response		Server
-	 * @return	array
+	 * @return	array<string,string>
 	 */
 	public function splitResponse($response)
 	{
@@ -274,7 +288,7 @@ class SimpleOpenID
 	/**
 	 * array2url
 	 *
-	 * @param 	array	$arr		An array
+	 * @param 	array<string,string>	$arr		An array
 	 * @return false|string		false if KO, string of url if OK
 	 */
 	public function array2url($arr)
@@ -329,7 +343,7 @@ class SimpleOpenID
 	 * HTML2OpenIDServer
 	 *
 	 * @param string	$content	Content
-	 * @return array				Array of servers
+	 * @return array{0:string[],1:string[]}		Array of servers
 	 */
 	public function HTML2OpenIDServer($content)
 	{

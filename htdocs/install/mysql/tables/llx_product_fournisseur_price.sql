@@ -29,7 +29,7 @@ create table llx_product_fournisseur_price
   fk_soc				integer,
   ref_fourn				varchar(128),
   desc_fourn            text,
-  fk_availability		integer,	   
+  fk_availability		integer,
   price					double(24,8) DEFAULT 0,		-- price without tax for quantity
   quantity				double,
   remise_percent		double NOT NULL DEFAULT 0,
@@ -49,7 +49,7 @@ create table llx_product_fournisseur_price
   fk_supplier_price_expression	integer,            -- Link to the rule for dynamic price calculation
   delivery_time_days    integer,
   supplier_reputation varchar(10),
-  packaging			    real DEFAULT NULL,
+  packaging			    real DEFAULT NULL,            -- qty bought will be a multiple of this value
   fk_multicurrency		integer,
   multicurrency_code	varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,

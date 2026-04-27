@@ -53,11 +53,28 @@ $webPortalTheme = new WebPortalTheme();
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
+
+
+/**
+ _____   ____   _____   ____
+|_   _| |  _ \ |_   _| |  _ \
+  | |   | | | |  | |   | | | |
+  | |   | |_| |  | |   | |_| |
+  |_|   |____/   |_|   |____/
+
+TODO: This is a CSS file — remove all PHP.
+If you want customizations, use custom.css.php.
+Before doing so, ask yourself if it’s really necessary.
+
+You can also add a body class such as:
+  - direction-ltr
+  - direction-rtl
+  - login-form-right
+to change CSS behavior based on context.
+*/
+
+
 ?>
 @charset "UTF-8";
 /*!
@@ -73,7 +90,11 @@ if (empty($dolibarr_nocache)) {
 	"Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
 	"Segoe UI Symbol", "Noto Color Emoji";
 	--line-height: 1.5;
+	--font-weight-light: 200;
+	--font-weight-medium: 300;
 	--font-weight: 400;
+	--font-weight-semibold: 600;
+	--font-weight-bold: 700;
 	--font-size: 16px;
 	--border-radius: 0.25rem;
 	--border-width: 1px;
@@ -272,7 +293,7 @@ kbd {
 
 :where(:root) {
 	--background-color: #fff;
-	--color: hsl(<?php echo $webPortalTheme->primaryColorHsl['h']; ?>, <?php echo $webPortalTheme->primaryColorHsl['s']; ?>%, <?php echo $webPortalTheme->primaryColorHsl['l']; ?>%);
+	--color: hsl(202, 13.67%, 41.54%); /* This is default TEXT color not Primary color */
 	--h1-color: hsl(205, 30%, 15%);
 	--h2-color: #24333e;
 	--h3-color: hsl(205, 25%, 23%);
@@ -282,10 +303,11 @@ kbd {
 	--muted-color: hsl(205, 10%, 50%);
 	--muted-border-color: hsl(205, 20%, 94%);
 
+	--outline-button-background: var(--background-color);
 	--banner-background : #ededed;
-	--primary-color-hue : <?php echo $webPortalTheme->primaryColorHsl['h']; ?>;
-	--primary-color-saturation : <?php echo $webPortalTheme->primaryColorHsl['s']; ?>%;
-	--primary-color-lightness : <?php echo $webPortalTheme->primaryColorHsl['l']; ?>%;
+	--primary-color-hue : <?php echo $webPortalTheme->primaryColorHsl['h']; /* TODO : WHY ?? this is already in custom.css.php */ ?>;
+	--primary-color-saturation : <?php echo $webPortalTheme->primaryColorHsl['s']; /* TODO : WHY ?? this is already in custom.css.php */ ?>%;
+	--primary-color-lightness : <?php echo $webPortalTheme->primaryColorHsl['l']; /* TODO : WHY ?? this is already in custom.css.php */  ?>%;
 	--primary : hsl(var(--primary-color-hue), var(--primary-color-saturation), var(--primary-color-lightness));
 	--primary-hover: hsl(var(--primary-color-hue), 90%, 32%);
 	--primary-focus:  hsl(var(--primary-color-hue), var(--primary-color-saturation), var(--primary-color-lightness), 0.125);
@@ -510,7 +532,7 @@ kbd {
 
 [data-theme=dark] {
 	--background-color: #11191f;
-	--color: hsl(205, 16%, 77%);
+	--color: hsl(202deg 13.67% 41.54%);
 	--h1-color: hsl(205, 20%, 94%);
 	--h2-color: #e1e6eb;
 	--h3-color: hsl(205, 18%, 86%);
@@ -695,24 +717,24 @@ body > footer {
 
 @media (min-width: 576px) {
 	.container {
-		max-width: 510px;
+		max-width: 90%;
 		padding-right: 0;
 		padding-left: 0;
 	}
 }
 @media (min-width: 768px) {
 	.container {
-		max-width: 700px;
+		max-width: 90%;
 	}
 }
 @media (min-width: 992px) {
 	.container {
-		max-width: 920px;
+		max-width: 90%;
 	}
 }
 @media (min-width: 1200px) {
 	.container {
-		max-width: 1130px;
+		max-width: min(95%, 1800px);
 	}
 }
 
@@ -1120,12 +1142,12 @@ input[type=reset]:focus {
 
 :is(button, input[type=submit], input[type=button], [role=button]).outline,
 input[type=reset].outline {
-	--background-color: transparent;
+	--background-color: var(--outline-button-background);
 	--color: var(--primary);
 }
 :is(button, input[type=submit], input[type=button], [role=button]).outline:is([aria-current], :hover, :active, :focus),
 input[type=reset].outline:is([aria-current], :hover, :active, :focus) {
-	--background-color: transparent;
+	--background-color: var(--outline-button-background);
 	--color: var(--primary-hover);
 }
 
@@ -2079,6 +2101,178 @@ details[open] > summary::after {
 	background-position: left center;
 }
 
+
+
+details.dropdown {
+	position: relative;
+	border-bottom: none
+}
+
+details.dropdown>a:after,details.dropdown>button:after,details.dropdown>summary:after {
+	display: block;
+	width: 1rem;
+	height: calc(1rem * var(--line-height,1.5));
+	margin-inline-start:.25rem;float: right;
+	transform: rotate(0) translate(.2rem);
+	background-image: var(--icon-chevron);
+	background-position: right center;
+	background-size: 1rem auto;
+	background-repeat: no-repeat;
+	content: ""
+}
+
+nav details.dropdown {
+	margin-bottom: 0
+}
+
+details.dropdown>summary:not([role]) {
+	height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) * 2 + var(--border-width) * 2);
+	padding: var(--form-element-spacing-vertical) var(--form-element-spacing-horizontal);
+	border: var(--border-width) solid var(--form-element-border-color);
+	border-radius: var(--border-radius);
+	background-color: var(--form-element-background-color);
+	color: var(--form-element-placeholder-color);
+	line-height: inherit;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	transition: background-color var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition)
+}
+
+details.dropdown>summary:not([role]):active,details.dropdown>summary:not([role]):focus {
+	border-color: var(--form-element-active-border-color);
+	background-color: var(--form-element-active-background-color)
+}
+
+details.dropdown>summary:not([role]):focus {
+	box-shadow: 0 0 0 var(--outline-width) var(--form-element-focus-color)
+}
+
+details.dropdown>summary:not([role]):focus-visible {
+	outline: 0
+}
+
+details.dropdown>summary:not([role])[aria-invalid=false] {
+	--form-element-border-color: var(--form-element-valid-border-color);
+	--form-element-active-border-color: var(--form-element-valid-focus-color);
+	--form-element-focus-color: var(--form-element-valid-focus-color)
+}
+
+details.dropdown>summary:not([role])[aria-invalid=true] {
+	--form-element-border-color: var(--form-element-invalid-border-color);
+	--form-element-active-border-color: var(--form-element-invalid-focus-color);
+	--form-element-focus-color: var(--form-element-invalid-focus-color)
+}
+
+nav details.dropdown {
+	display: inline;
+	margin: calc(var(--nav-element-spacing-vertical) * -1) 0
+}
+
+nav details.dropdown>summary:after {
+	transform: rotate(0) translate(0)
+}
+
+nav details.dropdown>summary:not([role]) {
+	height: calc(1rem * var(--line-height) + var(--nav-link-spacing-vertical) * 2);
+	padding: calc(var(--nav-link-spacing-vertical) - var(--border-width) * 2) var(--nav-link-spacing-horizontal)
+}
+
+nav details.dropdown>summary:not([role]):focus-visible {
+	box-shadow: 0 0 0 var(--outline-width) var(--primary-focus)
+}
+
+details.dropdown>summary+ul {
+	display: flex;
+	z-index: 99;
+	position: absolute;
+	left: 0;
+	flex-direction: column;
+	width: 100%;
+	min-width: -moz-fit-content;
+	min-width: fit-content;
+	margin: 0;
+	margin-top: var(--outline-width);
+	padding: 0;
+	border: var(--border-width) solid var(--dropdown-border-color);
+	border-radius: var(--border-radius);
+	background-color: var(--dropdown-background-color);
+	box-shadow: var(--dropdown-box-shadow);
+	color: var(--dropdown-color);
+	white-space: nowrap;
+	opacity: 0;
+	transition: opacity var(--transition),transform 0s ease-in-out 1s
+}
+
+details.dropdown>summary+ul[dir=rtl] {
+	right: 0;
+	left: auto
+}
+
+:where(details.dropdown>summary+ul li) {
+	width: 100%;
+	margin-bottom: 0;
+	padding: calc(var(--form-element-spacing-vertical) * .5) var(--form-element-spacing-horizontal);
+	list-style: none
+}
+
+details.dropdown>summary+ul li:first-of-type {
+	margin-top: calc(var(--form-element-spacing-vertical) * .5)
+}
+
+details.dropdown>summary+ul li:last-of-type {
+	margin-bottom: calc(var(--form-element-spacing-vertical) * .5)
+}
+
+details.dropdown>summary+ul li a {
+	display: block;
+	margin: calc(var(--form-element-spacing-vertical) * -.5) calc(var(--form-element-spacing-horizontal) * -1);
+	padding: calc(var(--form-element-spacing-vertical) * .5) var(--form-element-spacing-horizontal);
+	overflow: hidden;
+	border-radius: 0;
+	color: var(--dropdown-color);
+	text-decoration: none;
+	text-overflow: ellipsis
+}
+
+details.dropdown>summary+ul li a:active,details.dropdown>summary+ul li a:focus,details.dropdown>summary+ul li a:focus-visible,details.dropdown>summary+ul li a:hover,details.dropdown>summary+ul li a[aria-current]:not([aria-current=false]) {
+	background-color: var(--dropdown-hover-background-color)
+}
+
+details.dropdown>summary+ul li label {
+	width: 100%
+}
+
+details.dropdown>summary+ul li:has(label):hover {
+	background-color: var(--dropdown-hover-background-color)
+}
+
+details.dropdown[open]>summary {
+	margin-bottom: 0
+}
+
+details.dropdown[open]>summary+ul {
+	transform: scaleY(1);
+	opacity: 1;
+	transition: opacity var(--transition),transform 0s ease-in-out 0s
+}
+
+details.dropdown[open]>summary:before {
+	display: block;
+	z-index: 1;
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	inset: 0;
+	background: 0 0;
+	content: "";
+	cursor: default
+}
+
+label>details.dropdown {
+	margin-top: calc(var(--spacing) * .25)
+}
 /**
  * Card (<article>)
  */

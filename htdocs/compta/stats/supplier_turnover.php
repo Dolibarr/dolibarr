@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +24,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -134,6 +144,9 @@ $form = new Form($db);
 $exportlink = '';
 $namelink = '';
 $builddate = dol_now();
+$periodlink = '';
+$name = '';
+$description = '';
 
 // TODO Report from bookkeeping not yet available, so we switch on report on business events
 /*if ($modecompta == "BOOKKEEPING") {
@@ -143,7 +156,7 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
-// Affiche en-tete du rapport
+// Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("PurchaseTurnover");
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
@@ -205,7 +218,7 @@ report_header($name, $namelink, $period, $periodlink, $description, $builddate, 
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {
-		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 	} else {
 		// Test if there is at least one line in bookkeeping
 		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -227,7 +240,7 @@ if (isModEnabled('accounting')) {
 		$nb = $db->num_rows($resql);
 		if ($nb == 0) {
 			$langs->load("errors");
-			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, 1);
+			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, '1');
 		}
 	}
 }
@@ -273,7 +286,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
 // TODO Add a filter on $date_start and $date_end to reduce quantity on data
-//print $sql;
 
 $minyearmonth = $maxyearmonth = 0;
 
@@ -391,7 +403,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				// Value turnover of month w/o VAT
 				print '<td class="right">';
 				if (!empty($cumulative_ht[$case])) {
-					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
+					$now_show_delta = 1; // We found the first month of the first year that generated revenue.
 					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cumulative_ht[$case], 1).'</a>';
 				} else {
 					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) {
@@ -473,11 +485,11 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	print '</tr>';
 }
 
-// Affiche total
+// Display total
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	if ($modecompta == 'CREANCES-DETTES') {
-		// Montant total HT
+		// Total amount without tax HT
 		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 			print '<td class="nowrap right">';
 			print($total_ht[$annee] ? price($total_ht[$annee]) : "0");
@@ -487,14 +499,14 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		}
 	}
 
-	// Montant total
+	// total amount
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 		print '<td class="nowrap right">'.($total[$annee] ? price($total[$annee]) : "0")."</td>";
 	} else {
 		print '<td>&nbsp;</td>';
 	}
 
-	// Pourcentage total
+	// total percentage
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
 		if ($total[$annee - 1] && $total[$annee]) {
 			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);

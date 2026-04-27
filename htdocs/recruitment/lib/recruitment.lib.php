@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return array<array{0:string,1:string,2:string}>
  */
 function recruitmentAdminPrepareHead()
 {
@@ -50,11 +51,6 @@ function recruitmentAdminPrepareHead()
 	$head[$h][2] = 'settings_candidatures';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/public_interface.php';
-	$head[$h][1] = $langs->trans("PublicUrl");
-	$head[$h][2] = 'publicurl';
-	$h++;
-
 	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/jobposition_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtrafieldsJobPosition");
 	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentjobposition']['count'];
@@ -71,6 +67,11 @@ function recruitmentAdminPrepareHead()
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'candidature_extrafields';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/public_interface.php';
+	$head[$h][1] = $langs->trans("PublicUrl");
+	$head[$h][2] = 'publicurl';
 	$h++;
 
 	// Show more tabs from modules

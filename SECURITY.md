@@ -1,29 +1,39 @@
 # Security Policy
 
-This file contains some policies about the security reports on Dolibarr ERP CRM project, one of the most popular Open Source ERP and CRM in the world.
+This file contains some policies about the security reports on Dolibarr ERP CRM project, a popular Open Source ERP and CRM used by millions of users.
 
 
 ## Supported Versions for security reports
 
-Security report are valid only on current stable version (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
+Security report are valid only on any current stable version for the last 5 major versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
 
 
 ## Reporting a Vulnerability
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
+- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
+
+NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
+
 <!--
+- Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
-- Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
+
+- Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
+
+NOTE: This is a private vulnerability report process: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourself (we have no CNA number), but you are free to do it yourself.
+
+Also, note that we are a project developed by volunteers and have no found for bounties.
 
 
 ## Hunting vulnerabilities on Dolibarr
 
 We believe that the future of software is online SaaS. This means software are more and more critical and no technology is perfect. Working with skilled security researchers is crucial in identifying weaknesses in our technology.
 
-If you believe you've found a security bug in our service, we are happy to work with you to resolve the issue promptly and ensure you are fairly rewarded for your discovery.
+If you believe you've found a security bug in our service, we are happy to work with you to resolve the issue promptly.
+We plan to re-open our bug bounty program (closed in end of 2024) in the future, but this is not yet available.
 
 Any type of denial-of-service attack is strictly forbidden, as well as any interference with network equipment and Dolibarr infrastructure.
 
@@ -108,8 +118,12 @@ Scope is the web application (backoffice) and the APIs.
 * Software or libraries versions, private IP disclosure, Stack traces or path disclosure when logged-in user is admin.
 * Vulnerabilities affecting outdated browsers or platforms, or vulnerabilities inside browsers themself.
 * Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the recommended fail2ban rules were not installed.  
-* SSL/TLS best practices
+* SSL/TLS practices (cypher enabled or not)
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
-* Vulnerabilities of type XSS exploited by using javascript into a website page (with permission to edit website pages) or by using php code into a website page
-  using the permission to edit php code are not qualified, except if this allow to get higher privileges (being able to set javascript or php code is the expected behaviour).
+* Vulnerabilities of type XSS exploited by using javascript into a website page of the website module or by using php code into a website page (being able to set javascript or php code is the expected behaviour in the website module), except if the user does not have the permission to edit page or php code.
+
+
+## Be informed of a new vulnerability
+
+You can get more information on how to be informed on a new vulnerability on the page https://wiki.dolibarr.org/index.php/Security_information

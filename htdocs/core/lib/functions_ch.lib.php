@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,7 +161,7 @@ function dol_ch_controle_bvrb($bvrb)
 	// Check (verify/validate)
 	$report = 0;
 	while (dol_strlen($bv) > 1) {
-		$match = substr($bv, 0, 1);
+		$match = (int) substr($bv, 0, 1);
 		$report = $tableau[$report][$match];
 		$bv = substr($bv, 1);
 	}

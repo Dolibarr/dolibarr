@@ -1,6 +1,8 @@
 <?php
-/* Copyright (c) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (c) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +26,23 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$graphwidth = DolGraph::getDefaultGraphSizeForStats('width', 700);
+$graphwidth = DolGraph::getDefaultGraphSizeForStats('width', '700');
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
-$mode = GETPOST('mode') ? GETPOST('mode') : '';
+$mode = GETPOST('mode');
 
 
 // Security check
@@ -41,10 +50,10 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
+$startyear = $year - (getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))) : 2);
 $endyear = $year;
 
 // Load translation files required by the page
@@ -62,33 +71,26 @@ if (!empty($conf->dol_use_jmobile)) {
 	$arrayjs = array();
 }
 
-$title = $langs->trans("Statistics");
-if ($mode == 'memberbycountry') {
-	$title = $langs->trans("MembersStatisticsByCountries");
-}
-if ($mode == 'memberbystate') {
-	$title = $langs->trans("MembersStatisticsByState");
-}
-if ($mode == 'memberbytown') {
-	$title = $langs->trans("MembersStatisticsByTown");
-}
-if ($mode == 'memberbyregion') {
-	$title = $langs->trans("MembersStatisticsByRegion");
-}
+$title = $langs->trans("MembershipStatistics");
 
-llxHeader('', $title, '', '', 0, 0, $arrayjs);
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, $arrayjs, '', '', 'mod-member page-stats_geo');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
 //dol_mkdir($dir);
+$data = array();
+$tab = null;
+$label = '';
 
 if ($mode) {
 	// Define sql
+	$sql = null;
 	if ($mode == 'memberbycountry') {
 		$label = $langs->trans("Country");
 		$tab = 'statscountry';
 
-		$data = array();
 		$sql = "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
@@ -156,45 +158,53 @@ if ($mode) {
 
 	// Define $data array
 	dol_syslog("Count member", LOG_DEBUG);
-	$resql = $db->query($sql);
+	if ($sql != null) {
+		$resql = $db->query($sql);
+	} else {
+		$resql = false;
+		dol_syslog(__FILE__.":No SQL, invalid mode '$mode'", LOG_ERR);
+	}
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			if ($mode == 'memberbycountry') {
-				$data[] = array('label' => (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
-					'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
-					'code' => $obj->code,
-					'nb' => $obj->nb,
+				$data[] = array(
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'code' => (string) $obj->code,
+					'nb' => (int) $obj->nb,
 					'lastdate' => $db->jdate($obj->lastdate),
 					'lastsubscriptiondate' => $db->jdate($obj->lastsubscriptiondate)
 				);
 			}
 			if ($mode == 'memberbyregion') { //+
 				$data[] = array(
-					'label' => (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
-					'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label2' => ($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
-					'nb' => $obj->nb,
+					'nb' => (int) $obj->nb,
 					'lastdate' => $db->jdate($obj->lastdate),
 					'lastsubscriptiondate' => $db->jdate($obj->lastsubscriptiondate)
 				);
 			}
 			if ($mode == 'memberbystate') {
-				$data[] = array('label' => (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
-					'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+				$data[] = array(
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label2' => ($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
-					'nb' => $obj->nb,
+					'nb' => (int) $obj->nb,
 					'lastdate' => $db->jdate($obj->lastdate),
 					'lastsubscriptiondate' => $db->jdate($obj->lastsubscriptiondate)
 				);
 			}
 			if ($mode == 'memberbytown') {
-				$data[] = array('label' => (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
-					'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
-					'label2' => ($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
-					'nb' => $obj->nb,
+				$data[] = array(
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label2' => (string) ($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
+					'nb' => (int) $obj->nb,
 					'lastdate' => $db->jdate($obj->lastdate),
 					'lastsubscriptiondate' => $db->jdate($obj->lastsubscriptiondate)
 				);
@@ -211,39 +221,34 @@ if ($mode) {
 
 $head = member_stats_prepare_head($memberstatic);
 
-print dol_get_fiche_head($head, $tab, '', -1, '');
+print dol_get_fiche_head($head, (string) $tab, '', -1, '');
 
 
 // Print title
 if ($mode && !count($data)) {
-	print $langs->trans("NoValidatedMemberYet").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
 	print '<br>';
 } else {
-	if ($mode == 'memberbycountry') {
-		print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc").'</span><br>';
+	if (empty($mode) || $mode == 'memberbycountry') {
+		print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc");
+		if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH")) {
+			print $langs->trans("MembersByCountryDesc2");
+		}
+		print '</span><br>';
 	} elseif ($mode == 'memberbystate') {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
 	} elseif ($mode == 'memberbytown') {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
 	} elseif ($mode == 'memberbyregion') {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
-	} else {
-		print '<span class="opacitymedium">'.$langs->trans("MembersStatisticsDesc").'</span><br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbystate">'.$langs->trans("MembersStatisticsByState").'</a><br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbytown">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
-		print '<br>'; //+
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbyregion">'.$langs->trans("MembersStatisticsByRegion").'</a><br>'; //+
 	}
 	print '<br>';
 }
 
 
 // Show graphics
-if (count($arrayjs) && $mode == 'memberbycountry') {
+if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH") && $mode == 'memberbycountry') {
+	global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	if (is_readable($color_file)) {
 		include $color_file;
@@ -265,10 +270,10 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 	$i = 0;
 	foreach ($data as $val) {
 		$valcountry = strtoupper($val['code']); // Should be ISO-3166 code (faster)
-		//$valcountry=ucfirst($val['label_en']);
-		if ($valcountry == 'Great Britain') {
-			$valcountry = 'United Kingdom';
-		}    // fix case of uk (when we use labels)
+		// $valcountry = ucfirst($val['label_en']);
+		// if ($valcountry == 'Great Britain') {
+		// 	$valcountry = 'United Kingdom';
+		// }    // fix case of uk (when we use labels)
 		print "\tdata.setValue(".$i.", 0, \"".$valcountry."\");\n";
 		print "\tdata.setValue(".$i.", 1, ".$val['nb'].");\n";
 		// Google's Geomap only supports up to 400 entries
@@ -298,27 +303,26 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 if ($mode) {
 	// Print array
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="liste centpercent">';
+	print '<table class="liste centpercent noborder">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$label.'</td>';
+	print '<th>'.$label.'</th>';
 	if (isset($label2)) {
-		print '<td class="center">'.$label2.'</td>';
+		print '<th class="center">'.$label2.'</th>';
 	}
-	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-	print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
-	print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+	print '<th class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></th>';
+	print '<th class="center">'.$langs->trans("LastMemberDate").'</th>';
+	print '<th class="center">'.$langs->trans("LatestSubscriptionDate").'</th>';
 	print '</tr>';
 
 	foreach ($data as $val) {
-		$year = isset($val['year']) ? $val['year'] : '';
 		print '<tr class="oddeven">';
 		print '<td>'.$val['label'].'</td>';
 		if (isset($label2)) {
 			print '<td class="center">'.$val['label2'].'</td>';
 		}
 		print '<td class="right">'.$val['nb'].'</td>';
-		print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
-		print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour', 'auto', null, false, 1).'</td>';
+		print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour', 'auto', null, false, 1).'</td>';
 		print '</tr>';
 	}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -47,7 +47,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -58,10 +58,19 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 */
 	public $name = 'Cactus';
 
+	/**
+	 * @var string
+	 */
 	public $prefixinvoice = 'SI';
 
+	/**
+	 * @var string
+	 */
 	public $prefixcreditnote = 'SA';
 
+	/**
+	 * @var string
+	 */
 	public $prefixdeposit = 'SD';
 
 
@@ -175,10 +184,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe				$objsoc     Object third party
-	 * @param  	FactureFournisseur	$object		Object invoice
-	 * @param   string				$mode       'next' for next value or 'last' for last value
-	 * @return 	string|-1      					Value if OK, -1 if KO
+	 * @param	?Societe			$objsoc		Object third party
+	 * @param  	?FactureFournisseur	$object		Object invoice
+	 * @param   string				$mode		'next' for next value or 'last' for last value
+	 * @return 	string|int<-1,0>				Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
