@@ -684,7 +684,7 @@ if ($id > 0 || !empty($ref)) {
 					}
 					// Check if the component has a required quantity and stock.
 					if ($value['nb'] > 0 && is_numeric($value['stock'])) {
-					// Calculate how many full kits this component can support.
+						// Calculate how many full kits this component can support.
 						$possible_with_this = floor($value['stock'] / $value['nb']);
 						// Keep the smallest value across all components (the limiting factor).
 						if ($potential_kit_stock === null || $possible_with_this < $potential_kit_stock) {
