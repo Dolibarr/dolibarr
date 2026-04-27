@@ -227,6 +227,12 @@ if (empty($reshook)) {
 // Massaction add/delete recipients to/from mass mailing
 $button_add_mailing = GETPOST('button_add_mailing', 'aZ09');
 $button_delete_mailing = GETPOST('button_delete_mailing', 'aZ09');
+if ($button_add_mailing && $button_delete_mailing) {
+    dol_syslog('Error: Both add and delete mailing buttons were pressed simultaneously.', LOG_ERR);
+    setEventMessages($langs->trans("Choose").' '.$langs->trans("Max").' 1 '.$langs->trans("Input"), null, 'errors');
+    header("Location: " . $_SERVER['HTTP_REFERER']);
+    exit;
+}
 $permissiontomailing = $user->hasRight('mailing', 'write');
 if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 	dol_syslog('User='.$user->id.' misses permissions to write mailings', LOG_WARNING);
@@ -284,6 +290,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 					setEventMessages($warn_message, null, 'warnings');
 				} elseif (!empty($list_of_contacts)) {
 					$invoice_contact_list = array_merge($invoice_contact_list, $list_of_contacts);
+				}
 			}
 			// fail once pr. invoice, not once pr. mailing pr. invoice
 			$verified_invoice_contact_list = array();
