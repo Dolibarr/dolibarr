@@ -72,7 +72,6 @@ return [
         'htdocs/core/class/html.formcompany.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/html.formmail.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/openid.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/class/rssparser.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/timespent.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/lib/admin.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/files.lib.php' => ['PhanUndeclaredProperty'],

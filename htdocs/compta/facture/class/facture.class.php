@@ -5745,7 +5745,7 @@ class Facture extends CommonInvoice
 				$ref = 0;
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$ref = $obj->maxsituationref;
+					$ref = (int) $obj->maxsituationref;
 				}
 				$ref++;
 			} else {

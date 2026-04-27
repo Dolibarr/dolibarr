@@ -551,7 +551,7 @@ class FormTicket
 				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' spellcheck="false">';
 			}
 			print '</td></tr>';
 		}
@@ -1910,19 +1910,18 @@ class FormTicket
 		$formai = new FormAI($this->db);
 
 		$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
-		$formmail->withlayout = $ckeditorenabledforticket ? 'email' : '';
-		$formmail->withaiprompt = 'text';
+		$formmail->withlayout = (string) $ckeditorenabledforticket ? 'email' : '';
+		$formmail->withaiprompt = isModEnabled('ai') ? 'text' : '';
 		$formai = new FormAI($this->db);
 
 		$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-		$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+		$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
 		$showlinktoailabel = $langs->trans("AIEnhancements");
 		$formatforouput = '';
 		$htmlname = 'message';
 
 		$formai->substit = $this->substit;
-		//$formai->substit_lines = $this->substit_lines;
 
 		// Fill $out
 		$db = $this->db;

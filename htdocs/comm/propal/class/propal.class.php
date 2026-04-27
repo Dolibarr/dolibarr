@@ -1586,7 +1586,7 @@ class Propal extends CommonObject
 		$object->user_validation_id = 0;
 		$object->date = $now;
 		$object->datep = $now; // deprecated
-		$object->fin_validite = $object->date + ($object->duree_validite * 24 * 3600);
+		$object->fin_validite = $object->date + (int) ($object->duree_validite * 24 * 3600);
 		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
 			$object->ref_client = '';
 			$object->ref_customer = '';

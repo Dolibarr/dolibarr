@@ -306,7 +306,6 @@ if ($resql) {
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->project->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 

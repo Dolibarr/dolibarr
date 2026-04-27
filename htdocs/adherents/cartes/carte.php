@@ -29,6 +29,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -60,7 +61,6 @@ $mesg = '';
 $adherentstatic = new Adherent($db);
 $object = new Adherent($db);
 
-$extrafields = new ExtraFields($db);
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 

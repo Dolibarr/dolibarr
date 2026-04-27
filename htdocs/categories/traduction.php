@@ -3,7 +3,7 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2016  Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,19 +29,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('categories', 'languages', 'mrp'));
@@ -63,6 +64,10 @@ if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
+$extralabels = $extrafields->fetch_name_optionals_label("categorie_lang");
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('categorietranslationcard', 'globalcard'));
 
 $type = $object->type;
 if (is_numeric($type)) {
@@ -73,21 +78,28 @@ if (is_numeric($type)) {
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $permissiontoadd = $user->hasRight('categorie', 'creer');
-
+$permissiontodelete = $user->hasRight('categorie', 'supprimer');
 
 /*
  * Actions
  */
 
 $error = 0;
-
+$parameters = [
+	'id' => $id,
+	'ref' => $label,
+];
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 // return to translation view if cancelled
-if ($cancel == $langs->trans("Cancel")) {
+if (empty($reshook) && $cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
 // delete a translation
-if ($action == 'delete' && $langtodelete && $user->hasRight('categorie', 'creer')) {
+if (empty($reshook) && $action == 'delete' && $langtodelete && $permissiontodelete) {
 	$res = $object->delMultiLangs($langtodelete, $user);
 	if ($res < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -99,7 +111,7 @@ if ($action == 'delete' && $langtodelete && $user->hasRight('categorie', 'creer'
 }
 
 // validation of addition
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
+if (empty($reshook) && $action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -148,7 +160,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd)
 }
 
 // validation of the edition
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
+if (empty($reshook) && $action == 'vedit' && $cancel != $langs->trans("Cancel") && $permissiontoadd) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -164,6 +176,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $permissiontoadd
 		if ($key == $current_lang) {
 			$object->label       = $libelle;
 			$object->description = dol_htmlcleanlastbr($desc);
+			$object->update($user);
 		} else {
 			$object->multilangs[$key]["label"]       = $libelle;
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($desc);
@@ -231,11 +244,17 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent tableforfield">';
 
-// Description
+// Label
 print '<tr><td class="titlefield notopnoleft">';
-print $langs->trans("Description").'</td><td>';
-print dol_htmlentitiesbr($object->description);
+print $langs->trans("Label").'</td><td>';
+print dol_htmlentitiesbr($object->label);
 print '</td></tr>';
+
+// Description
+// print '<tr><td class="titlefield notopnoleft">';
+// print $langs->trans("Description").'</td><td>';
+// print dol_htmlentitiesbr($object->description);
+// print '</td></tr>';
 
 // Color
 print '<tr><td class="notopnoleft">';
@@ -249,24 +268,24 @@ print '</div>';
 print dol_get_fiche_end();
 
 
-
 /*
  * Action bar
  */
 
 print "\n<div class=\"tabsAction\">\n";
 
-if ($action == '') {
-	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+if (empty($reshook)) {
+	if ($action == '' && $permissiontoadd) {
+		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'add', 'id' => $object->id, 'type' => $type], true).'">'.$langs->trans('Add').'</a>';
 		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
+			print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'id' => $object->id, 'type' => $type], true).'">'.$langs->trans('Update').'</a>';
 		}
 	}
 }
 
 print "\n</div>\n";
-
 
 
 if ($action == 'edit') {
@@ -281,7 +300,8 @@ if ($action == 'edit') {
 
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
-			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
+			$s = picto_from_langcode((string) $key);
+			print '<br><b><u>'.($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b> ' . $langs->trans('Language_'.$key).' :</u></b><br>';
 			print '<table class="border centpercent">';
 
 			// Label
@@ -314,7 +334,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode((string) $key);
 			print '<table class="border centpercent">';
-			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete', 'langtodelete' => $key, 'type' => $type], true).'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.($object->multilangs[$key]["description"] ?? '').'</td></tr>';
 			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
@@ -333,12 +353,12 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+if ($action == 'add' && $permissiontoadd) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<br>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$id.'">';

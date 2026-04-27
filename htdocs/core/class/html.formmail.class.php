@@ -1502,9 +1502,9 @@ class FormMail extends Form
 		$out .= '<td>';
 		if ($this->withtopicreadonly) {
 			$out .= $defaulttopic;
-			$out .= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
+			$out .= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" spellcheck="false">';
 		} else {
-			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" />';
+			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" spellcheck="false">';
 		}
 		$out .= "</td></tr>\n";
 		return $out;
@@ -1527,6 +1527,7 @@ class FormMail extends Form
 		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 		$out = '<div id="template-selector" class="template-selector email-layout-container hidden" style="display:none;">';
+		$out .= '<div>';
 
 		// Define list of email layouts to use
 		$layouts = array(
@@ -1614,7 +1615,7 @@ class FormMail extends Form
 
 		// Use the multiselect array function to create the dropdown
 		if (in_array('news', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
-			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="blogpost-select">Select Posts: </label>';
 			$out .= '<!-- select component for selection of blog posts -->'."\n";
 			// TODO WARNING: multiselectarray is ok only for very small list
@@ -1625,7 +1626,7 @@ class FormMail extends Form
 		if (in_array('product', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
-			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
 			$out .= '<!-- select component for selection of product -->'."\n";
 			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'inline-block valignmiddle', 0, '', null, 1);
@@ -1634,6 +1635,8 @@ class FormMail extends Form
 			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 			$out .= '</div>';
 		}
+
+		$out .= '</div>';
 
 		$out .= '<!-- Js code to manage choice of an email layout -->'."\n";
 		$out .= '<script type="text/javascript">

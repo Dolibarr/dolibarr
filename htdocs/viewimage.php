@@ -200,16 +200,10 @@ if ($cachestring) {
 	// We are here when param cache=xxx to force a cache policy:
 	//  xxx=1 means cache of 3600s
 	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
-	if (empty($dolibarr_nocache)) {
-		$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
-		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
-		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
-	} else {
-		// If any cache on files were disable by config file (for test purpose)
-		header('Cache-Control: no-cache');
-	}
-	//print $dolibarr_nocache; exit;
+	$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
+	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
+	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 }
 
 // If we have a hash public (hashp), we guess the original_file.

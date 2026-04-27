@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2026		John BOTELLA
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ function memoPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("quickmemo@quickmemo");
+	$langs->load("quickmemo");
 
 	$showtabofpagecontact = getDolGlobalInt('MAIN_QUICKMEMO_SHOW_PAGE_OF_CONTACT');
 	$showtabofpagenote = getDolGlobalInt('MAIN_QUICKMEMO_SHOW_PAGE_OF_NOTE');

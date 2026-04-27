@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *

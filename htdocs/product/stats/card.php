@@ -198,6 +198,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 if ($result || !($id > 0)) {
 	print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="page_y" value="">';
 	if (empty($id) || $notab) {
 		print '<input type="hidden" name="notab" value="1">';
 	}
@@ -255,7 +256,7 @@ if ($result || !($id > 0)) {
 	print '</td></tr>';
 
 	print '</table>';
-	print '<div class="center"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></div>';
+	print '<div class="center"><input type="submit" name="submit" class="button small reposition" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form><br>';
 
 	print '<br>';

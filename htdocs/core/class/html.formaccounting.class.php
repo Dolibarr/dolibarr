@@ -197,21 +197,18 @@ class FormAccounting extends Form
 			$selected = array();
 			$langs->load('accountancy');
 			while ($obj = $this->db->fetch_object($resql)) {
-				$label = $langs->trans($obj->label);
-
-				$select_value_in = $obj->rowid;
-				$select_value_out = $obj->rowid;
-
-				// Try to guess if we have found default value
-				if ($select_in == 1) {
-					$select_value_in = $obj->code;
+				// Build the full text directly here
+				$translatedLabel = $langs->trans($obj->label);
+				if (empty($translatedLabel) || $translatedLabel === $obj->label) {
+					$translatedLabel = $obj->label; // fallback to the raw label
 				}
-				if ($select_out == 1) {
-					$select_value_out = $obj->code;
-				}
+				$label = $obj->code . ' - ' . $translatedLabel;
+
+				$select_value_in  = ($select_in  == 1 ? $obj->code : $obj->rowid);
+				$select_value_out = ($select_out == 1 ? $obj->code : $obj->rowid);
+
 				// Remember guy's we store in database llx_accounting_bookkeeping the code of accounting_journal and not the rowid
 				if (!empty($selectedIds) && in_array($select_value_in, $selectedIds)) {
-					//var_dump("Found ".$selectid." ".$select_value_in);
 					$selected[] = $select_value_out;
 				}
 				$options[$select_value_out] = $label;
@@ -223,7 +220,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, '', 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
+		$out .= Form::multiselectarray($htmlname, $options, $selected, 0, 0, $morecss, 0, 0, '', 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
 
 		return $out;
 	}

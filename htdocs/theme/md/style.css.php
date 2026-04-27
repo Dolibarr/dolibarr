@@ -162,11 +162,7 @@ if (empty($user->id) && !empty($_SESSION['dol_login'])) {
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 if (GETPOST('theme', 'aZ09')) {
 	$conf->theme = GETPOST('theme', 'aZ09'); // If theme was forced on URL
@@ -589,9 +585,11 @@ input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):no
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single,
  .select2-container--focus span.selection span.select2-selection:not(.noborderfocus):not(.massactionselect) {
 <?php if (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
-	border: 1px solid #666 !important;
+	border: 1px solid var(--inputbordercolor) !important;
 <?php } else { ?>
-	border-bottom: 1px solid #666;
+	border-bottom: 1px solid var(--inputbordercolor) !important;
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
 <?php } ?>
 }
 
@@ -987,7 +985,7 @@ input.pageplusone {
 .hmirror {
 	transform: scale(-1, 1);
 }
-.undertopmenu {
+.anchorundermenu {
 	scroll-margin-top: 80px;
 }
 
@@ -1614,7 +1612,11 @@ span.fa.fa-plus-circle.paddingleft {
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
-	font-size: 1.5em; vertical-align: text-bottom;
+	font-size: 1.5em;
+}
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
+	vertical-align: text-bottom;
 }
 
 .divoverflow {
@@ -1755,10 +1757,10 @@ if ($conf->browser->layout == 'phone') {
 } ?>
 
 
-.a-filter, .a-mesure {
+.a-filter, .a-mesure, .a-selection {
 	border-radius: 50px;
 	background: var(--colortexttitlenotab);
-	color: #fff;
+	color: #fff !important;
 	padding: 8px 10px 8px 6px;
 }
 .a-filter:before {
@@ -1773,7 +1775,7 @@ if ($conf->browser->layout == 'phone') {
 	padding-right: 5px;
 	padding-left: 5px;
 }
-.a-filter-disabled, .a-mesure-disabled {
+.a-filter-disabled, .a-mesure-disabled, .a-mesure-disabled {
 	border-radius: 50px;
 	background: var(--colorbacktitle1);
 	padding: 8px;
@@ -4437,11 +4439,6 @@ a.tabTitle {
 	width: 100%;
 }
 
-#undertopmenu {
-	background-repeat: repeat-x;
-	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
-}
-
 .paddingrightonly {
 	border-collapse: collapse;
 	border: 0px;
@@ -6875,6 +6872,39 @@ div.cke_notifications_area .cke_notification_warning {
 
 
 /* ============================================================================== */
+/*  TinyMCE                                                                       */
+/* ============================================================================== */
+
+.tox .tox-edit-area::before {
+	border: none !important;
+}
+.tox.tox-tinymce {
+	margin-bottom: 6px;
+}
+.tox:not(.tox-tinymce-inline) .tox-editor-header {
+	padding: 0 !important;
+}
+.tox .tox-tbtn:not(.tox-tbtn--select):not(.tox-tbtn--bespoke):not(.tox-split-button__chevron) {
+	width: 30px !important;
+}
+.tox .tox-toolbar__group {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
+	width: 70px;
+}
+.tox:not(.tox-tinymce-inline) .tox-editor-header {
+	/*border-bottom: 1px solid #ddd !important;
+	box-shadow: unset !important; */
+	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 8px 8px -4px rgba(34,47,62,.07) !important;
+}
+.mce-content-body p {
+	margin: unset;
+}
+
+
+/* ============================================================================== */
 /*  ACE editor                                                                    */
 /* ============================================================================== */
 .ace_editor {
@@ -7406,11 +7436,15 @@ li.select2-selection__choice {
 .select2-container .select2-selection--multiple {
 	min-height: 28px !important;
 }
-
+.select2-container--default .select2-selection--multiple {
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+}
+<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	/* border: 1px solid #e4e4e4; */
 	border: none;
 }
+<?php } ?>
 
 .blockvmenusearch .select2-container--default .select2-selection--single
 {
@@ -7497,6 +7531,7 @@ li.select2-selection__choice {
 	border-radius: 0;
 	box-shadow: none !important;
 }
+<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 .select2-container--default.select2-container--focus .select2-selection--multiple {
 	border-top: none;
 	border-left: none;
@@ -7510,6 +7545,7 @@ li.select2-selection__choice {
 	border-radius: 0 !important;
 	line-height: normal;
 }
+<?php } ?>
 .select2-container--default .select2-selection--multiple .select2-selection__rendered {
 	line-height: 1.4em;
 }

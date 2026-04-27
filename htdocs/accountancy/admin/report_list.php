@@ -424,7 +424,7 @@ if ($tabname[$id]) {
 	// Line for title
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 	foreach ($fieldlist as $field => $value) {
@@ -462,7 +462,7 @@ if ($tabname[$id]) {
 	print '</td>';
 	print '<td></td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 	print '</tr>';
@@ -471,7 +471,7 @@ if ($tabname[$id]) {
 	print '<tr class="oddeven nodrag nodrop nohover">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 
@@ -500,7 +500,7 @@ if ($tabname[$id]) {
 	print '</td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 
@@ -550,7 +550,7 @@ if ($resql) {
 	print '<tr class="liste_titre liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		if ($filterfound) {
 			$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -580,7 +580,7 @@ if ($resql) {
 	}
 	print '<td class="liste_titre"></td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		if ($filterfound) {
 			$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -593,7 +593,7 @@ if ($resql) {
 	// Title of lines
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print getTitleFieldOfList('');
 	}
 	foreach ($fieldlist as $field => $value) {
@@ -625,7 +625,7 @@ if ($resql) {
 	}
 	print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList('');
 	}
 	print '</tr>';
@@ -648,7 +648,7 @@ if ($resql) {
 				$errors = $hookmanager->errors;
 
 				// Actions
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 
@@ -666,7 +666,7 @@ if ($resql) {
 				print '<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				// Actions
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 			} else {
@@ -694,7 +694,7 @@ if ($resql) {
 				$errors = $hookmanager->errors;
 
 				// Actions
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda marginleftonly marginrightonly" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a>';
@@ -748,7 +748,7 @@ if ($resql) {
 				print "</td>";
 
 				// Actions
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda paddingleft marginleftonly marginrightonly paddingright" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a>';

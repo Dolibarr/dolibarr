@@ -1063,7 +1063,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
-	global $mysoc, $user, $conf;
+	global $langs, $mysoc, $user, $conf;
 
 	if (empty($paramname)) {   // Explicit test for null for phan.
 		return 'BadFirstParameterForGETPOST';
@@ -1253,11 +1253,19 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
+	// Replace substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
+		if (preg_match('/__([A-Z0-9]+(?:_[A-Z0-9]+){0,3})__/i', $out)) {	// If there is at least one substitution key, we try to replace all known substitution keys
+			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $user, array('mycompany', 'date', 'system', 'user'));
+			complete_substitutions_array($substitutionarray, $langs, $user);
+
+			$out = make_substitutions($out, $substitutionarray, $langs);
+		}
+
+		/* old code
 		$reg = array();
 		$regreplace  = array();
 		$maxloop = 20;
@@ -1320,6 +1328,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$out = preg_replace('/REGREPLACE_' . $key . '/', $value, $out);
 			}
 		}
+		*/
 	}
 
 	// Check type of variable and make sanitization according to this
@@ -1765,9 +1774,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  * @param	string							$url				Relative path to file
  * @param	array<string,int|float|string>	$params     		params for the http query
  * @param	bool							$addtoken			does we need to add token
+ * @param	string							$anchor				Add an anchor #xxx at end of URL
  * @return string												path
  */
-function dolBuildUrl($url, $params = [], $addtoken = false)
+function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 {
 	global $db, $hookmanager;
 
@@ -1790,12 +1800,11 @@ function dolBuildUrl($url, $params = [], $addtoken = false)
 	if ($addtoken) {
 		$params = array_merge($params, ['token' => newToken()]);
 	}
-	// TODO TO REMOVE
-	if (getDolGlobalString('MAIN_DEBUG_DOL_BUILDURL')) {
-		$params = array_merge($params, ['debug' => 'debug']);
-	}
 	if ($params) {
 		$url .= '?' . http_build_query($params);
+	}
+	if ($anchor) {
+		$url .= '#' . preg_replace('/[^a-z]/i', '', $anchor);
 	}
 
 	return $url;
@@ -16765,7 +16774,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$out .= '<tr class="liste_titre">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			$out .= '<th class="liste_titre width50 middle">';
 			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 			$out .= $searchpicto;
@@ -16790,7 +16799,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$out .= '</th>';
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			$out .= '<th class="liste_titre width50 middle">';
 			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 			$out .= $searchpicto;

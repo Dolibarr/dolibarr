@@ -146,7 +146,7 @@ class DoliDBMysqli extends DoliDB
 						exit;
 					}
 
-					$collation = (empty($conf) ? 'utf8_unicode_ci' : $conf->db->dolibarr_main_db_collation);
+					$collation = (empty($conf) ? 'utf8_unicode_ci' : (string) $conf->db->dolibarr_main_db_collation);
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
@@ -179,7 +179,7 @@ class DoliDBMysqli extends DoliDB
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci
 
-					$collation = $conf->db->dolibarr_main_db_collation;
+					$collation = (string) $conf->db->dolibarr_main_db_collation;
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
@@ -1379,7 +1379,7 @@ if (class_exists('mysqli')) {
 			}
 			if (strpos($host, 'ssl://') === 0) {
 				$host = substr($host, 6);
-				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, 0);
 				// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
 				parent::ssl_set(null, null, "", null, null);
 				$flags = MYSQLI_CLIENT_SSL;

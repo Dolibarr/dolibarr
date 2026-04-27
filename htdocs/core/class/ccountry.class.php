@@ -62,6 +62,16 @@ class Ccountry extends CommonDict
 	 */
 	public $numeric_code;
 
+	/**
+	 * @var string
+	 */
+	public $phone_code;
+
+	/**
+	 * @var string
+	 */
+	public $trunk_prefix;
+
 
 	/**
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>
@@ -173,7 +183,9 @@ class Ccountry extends CommonDict
 		$sql .= " t.eec,";
 		$sql .= " t.active,";
 		$sql .= " t.favorite,";
-		$sql .= " t.numeric_code";
+		$sql .= " t.numeric_code,";
+		$sql .= " t.phone_code,";
+		$sql .= " t.trunk_prefix";
 		$sql .= " FROM ".$this->db->prefix()."c_country as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
@@ -199,6 +211,8 @@ class Ccountry extends CommonDict
 					$this->active = (int) $obj->active;
 					$this->favorite = $obj->favorite;
 					$this->numeric_code = $obj->numeric_code;
+					$this->phone_code = $obj->phone_code;
+					$this->trunk_prefix = $obj->trunk_prefix;
 				}
 
 				$this->db->free($resql);

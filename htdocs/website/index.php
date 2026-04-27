@@ -4161,7 +4161,7 @@ if ($action == 'editcss') {
 	$head = websiteconfigPrepareHead($object);
 	print dol_get_fiche_head($head, 'general', $langs->trans("General"), 0, 'website');
 
-	print '<!-- Edit Website properties -->'."\n";
+	print '<!-- Edit Website properties (CSS, Language, ...) -->'."\n";
 	print '<table class="border centpercent">';
 
 	// Website
@@ -4188,7 +4188,7 @@ if ($action == 'editcss') {
 	$htmltext = '';
 	print $form->textwithpicto($langs->trans('MainLanguage'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_LANG');
 	print '</td><td>';
-	print img_picto('', 'language', 'class="picotfixedwidth"');
+	print img_picto('', 'language', 'class="pictofixedwidth"');
 	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, array(), 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td>';
 	print '</tr>';
@@ -4198,7 +4198,7 @@ if ($action == 'editcss') {
 	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
 	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
-	print img_picto('', 'language', 'class="picotfixedwidth"');
+	print img_picto('', 'language', 'class="pictofixedwidth"');
 	print '<input type="text" class="flat maxwidth200" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
 	print '</td>';
 	print '</tr>';
@@ -5508,7 +5508,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
-			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 			$selectedfields = '';
 			$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -5545,7 +5545,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			}
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
@@ -5558,7 +5558,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			}
 			print '</tr>';
@@ -5583,7 +5583,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<tr>';
 
 					// Action column
-					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($conf->main_checkbox_left_column) {
 						print '<td class="nowrap center">';
 
 						print '<!-- Status of page -->'."\n";
@@ -5697,7 +5697,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print '<td class="nowrap center">';
 
 						print '<!-- Status of page -->'."\n";
@@ -5728,7 +5728,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<tr>';
 
 					// Action column
-					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($conf->main_checkbox_left_column) {
 						print '<td class="nowrap center">';
 						print '</td>';
 					}
@@ -5787,7 +5787,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Action column
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print '<td class="nowrap center">';
 						print '</td>';
 					}
@@ -5801,7 +5801,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print '<tr class="lite_titre">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					print '</td>';
 				}
@@ -5843,7 +5843,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				print '</td>';
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					print '</td>';
 				}

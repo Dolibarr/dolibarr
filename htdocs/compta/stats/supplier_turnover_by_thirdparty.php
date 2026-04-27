@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
  * Copyright (C) 2023       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -607,7 +607,7 @@ if (count($amount)) {
 		// Third party
 		$fullname = $name[$key];
 		if ($key > 0) {
-			$thirdparty_static->id = $key;
+			$thirdparty_static->id = (int) $key;
 			$thirdparty_static->name = $fullname;
 			$thirdparty_static->client = 1;
 			$linkname = $thirdparty_static->getNomUrl(1, 'supplier');

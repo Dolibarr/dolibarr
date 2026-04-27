@@ -315,7 +315,7 @@ print '<table class="noborder centpercent liste">';
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -376,7 +376,7 @@ if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop m
 }
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -388,7 +388,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
 }
 print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'minwidth50 ')."\n";
@@ -406,7 +406,7 @@ if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop m
 	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
 }
 print '</tr>';
@@ -473,7 +473,7 @@ if (is_array($blocks)) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td>';
 				print '</td>';
 			}
@@ -592,7 +592,7 @@ if (is_array($blocks)) {
 			}
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="liste_titre">';
 				print '</td>';
 			}
@@ -616,7 +616,7 @@ if (is_array($blocks)) {
 				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td>';
 					print '</td>';
 				}
@@ -685,7 +685,7 @@ if (is_array($blocks)) {
 				}
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre">';
 					print '</td>';
 				}
@@ -717,7 +717,7 @@ if (is_array($blocks)) {
 				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 
@@ -758,7 +758,7 @@ if (is_array($blocks)) {
 				}
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre"></td>';
 				}
 
@@ -769,7 +769,7 @@ if (is_array($blocks)) {
 				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 
@@ -810,7 +810,7 @@ if (is_array($blocks)) {
 				}
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre"></td>';
 				}
 

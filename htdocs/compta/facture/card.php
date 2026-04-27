@@ -211,14 +211,14 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/compta/facture/list.php';
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/compta/facture/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -473,26 +473,29 @@ if (empty($reshook)) {
 	} elseif ($action == 'classin' && $usercancreate) {
 		$object->fetch($id);
 		$object->setProject(GETPOSTINT('projectid'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setposinfo' && $usercancreate) {
 		$object->fetch($id);
 		$object->module_source = GETPOST('posmodule');
 		$object->pos_source = GETPOST('posterminal');
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setmode' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setretainedwarrantyconditions' && $usercancreate) {
 		$object->fetch($id);
 		$object->retained_warranty_fk_cond_reglement = 0; // To clean property
 		$result = $object->setRetainedWarrantyPaymentTerms(GETPOSTINT('retained_warranty_fk_cond_reglement'));
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		$old_rw_date_lim_reglement = $object->retained_warranty_date_limit;
@@ -505,19 +508,19 @@ if (empty($reshook)) {
 		}
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setretainedwarranty' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarranty(GETPOSTFLOAT('retained_warranty'));
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setretainedwarrantydatelimit' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setRetainedWarrantyDateLimit(GETPOSTDATE('retained_warranty_date_limit'));
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {	 // Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
@@ -561,7 +564,7 @@ if (empty($reshook)) {
 		$object->date_pointoftax = $date_pointoftax;
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		$object->fetch($id);
@@ -608,7 +611,7 @@ if (empty($reshook)) {
 		}
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setrevenuestamp' && $usercancreate) {
 		$object->fetch($id);
@@ -616,7 +619,7 @@ if (empty($reshook)) {
 		$result = $object->update($user);
 		$object->update_price(1);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -644,15 +647,30 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {	// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'set_dispute_status' && $usercancreate) {							// Set dispute status
 		$result = $object->setStatut(GETPOSTINT('dispute_status'), null, 'facture', 'FACTURE_MODIFY', 'dispute_status');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {			// Set tags
 		$result = $object->setCategories(GETPOST('categories', 'array'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setbankaccount' && $usercancreate) {								// Bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setDiscount($user, (float) price2num(GETPOST('remise_percent'), '', 2));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setabsolutediscount' && $usercancreate) {
 		// We have POST[remise_id] (common case) xor POST[remise_id_for_payment] (with unstable oldoption)
 		$db->begin();
@@ -738,9 +756,15 @@ if (empty($reshook)) {
 	} elseif ($action == 'setref' && $usercancreate) {
 		$object->fetch($id);
 		$object->setValueFrom('ref', GETPOST('ref'), '', 0, '', '', $user, 'BILL_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
 		$object->set_ref_client(GETPOST('ref_client', 'alpha'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setdemandreason' && $usercancreate) {
 		$result = $object->setInputReason($inputReasonId);
 		if ($result < 0) {
@@ -4316,18 +4340,17 @@ if ($action == 'create') {
 					// Show credit note options only if we checked credit note and disable standard invoice if "create credit note" button is pressed
 					print '<script type="text/javascript">
 					jQuery(document).ready(function() {
-						if (jQuery("#radio_creditnote").is(":checked"))
-						{
+						if (jQuery("#radio_creditnote").is(":checked")) {
 							jQuery("#radio_standard").prop("disabled", true);
+							jQuery("#radio_deposit").prop("disabled", true);
 						} else {
 							jQuery("#radio_standard").prop("disabled", false);
+							jQuery("#radio_deposit").prop("disabled", false);
 						}
-						if (! jQuery("#radio_creditnote").is(":checked"))
-						{
+						if (! jQuery("#radio_creditnote").is(":checked")) {
 							jQuery("#credit_note_options").hide();
 						}
 						jQuery("#radio_creditnote").click(function() {
-
 							jQuery("#credit_note_options").show();
 						});
 						jQuery("#radio_standard, #radio_replacement, #radio_deposit, #radio_situation, #radio_situation_bis").click(function() {
@@ -4620,21 +4643,27 @@ if ($action == 'create') {
 		}
 
 		// Template to use by default
-		print '<tr><td>'.$langs->trans('Model').'</td>';
-		print '<td colspan="2">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-		$liste = ModelePDFFactures::liste_modeles($db);
-		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
-			$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
-			// Hidden conf
-			$paramkey = 'FACTURE_ADDON_PDF_'.$type;
-			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
-		} else {
-			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
+		$list = ModelePDFFactures::liste_modeles($db);
+		if (is_array($list) && count($list) > 0) {
+			if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
+				$type = GETPOSTISSET('type') ? GETPOSTINT('type') : $object->type;
+				// Hidden conf
+				$paramkey = 'FACTURE_ADDON_PDF_'.$type;
+				$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
+			} else {
+				$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
+			}
+			if (count($list) > 1) {
+				print '<tr><td>'.$langs->trans('Model').'</td>';
+				print '<td colspan="2">';
+				print img_picto('', 'pdf', 'class="pictofixedwidth"');
+				print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+				print "</td></tr>";
+			} else {
+				print '<input type="hidden" name="model" value="'.$preselected.'">';
+			}
 		}
-		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
 
 		// Multicurrency
 		if (isModEnabled('multicurrency')) {

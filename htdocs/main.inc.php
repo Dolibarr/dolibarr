@@ -13,7 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020-2024  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
@@ -146,12 +146,13 @@ if (!defined('NOSESSION')) {
 }
 
 
-// Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
+// Init the 7 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager, $extrafields
 require_once 'master.inc.php';
 /**
  * The master.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var ?DoliDB $db                 May be null if NOREQUIREDB is defined
+ * @var ?ExtraFields $extrafields   May be null if NOREQUIREDB is defined
  * @var ?HookManager $hookmanager   May be null if NOHOOKMANAGER is defined
  * @var ?Translate $langs           May be null if NOREQUIRETRAN is defined
  * @var ?User $user                 May be null if NOREQUIREUSER is defined
@@ -2055,6 +2056,25 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					print 'CKEDITOR.disableAutoInline = true;'."\n";
 				}
 				print '</script>'."\n";
+			}
+
+			// TinyMCE (alternative WYSIWYG backend, selected by FCKEDITOR_EDITORNAME='tinymce')
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_EDITORNAME') == 'tinymce' && !defined('DISABLE_TINYMCE')) || defined('FORCE_TINYMCE')) {
+				print '<!-- Includes JS for TinyMCE -->'."\n";
+				$pathtinymce = DOL_URL_ROOT.'/public/includes/tinymce/tinymce/';
+				$jstinymce = 'tinymce.min.js';
+				if (defined('JS_TINYMCE') && constant('JS_TINYMCE')) {
+					$pathtinymce = constant('JS_TINYMCE');
+				}
+				print '<script src="'.$pathtinymce.$jstinymce.'?'.$ext.'"></script>'."\n";
+				print '<script nonce="'.getNonce().'">';
+				print '/* enable tinymce by main.inc.php */';
+				print 'var tinymceBasePath = \''.dol_escape_js($pathtinymce).'\';'."\n";
+				print 'var tinymceFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+				print 'var tinymceFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+				print '</script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/tinymce/config.js?'.$ext, 1).'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/tinymce-ckeditor-compat.js?'.$ext.'"></script>'."\n";
 			}
 
 			// Browser notifications (if NOREQUIREMENU is on, it is mostly a page for popup, so we do not enable notif too. We hide also for public pages).

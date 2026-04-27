@@ -31,13 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Libraries
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
  * @var Translate $langs
  * @var User $user
  */
+// Libraries
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
