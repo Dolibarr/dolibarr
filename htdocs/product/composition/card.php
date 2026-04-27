@@ -810,7 +810,7 @@ if ($id > 0 || !empty($ref)) {
 			// Stock
 			if (isModEnabled('stock')) {
 				// Add a new row for the potential kits stock.
-				$colspan_counter = 0;
+				$colspan_counter = null;
 				print '<tr class="total-row right">';
 				print '<td></td><td></td><td></td>';
 				print '<td colspan="' . ($colspan_counter + 4) . '" class="titlefield">' . $langs->trans("PotentialKitsFromStock") . '</td>';
