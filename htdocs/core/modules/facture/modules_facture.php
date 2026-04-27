@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -309,6 +309,24 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Check if a line is a deposit line
+	 *
+	 * @param  CommonInvoiceLine $line  Invoice line object
+	 * @return bool             True if line is a deposit, false otherwise
+	 */
+	protected function isDepositLine($line)
+	{
+		// Do not take into account lines of the type "deposit."
+		$reg = array();
+		if (preg_match('/^\((.*)\)$/', $line->desc, $reg)) {
+			if ($reg[1] == 'DEPOSIT') {
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
