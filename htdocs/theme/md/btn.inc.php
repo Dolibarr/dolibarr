@@ -106,6 +106,9 @@ div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefuse
 span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
+.paginationafterarrows .butAction {
+	font-size: 0.9em;
+}
 
 .butAction {
 	background: var(--butactionbg);
@@ -126,11 +129,11 @@ span.butAction, span.butActionDelete {
 
 	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
-	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
 	color: #444;
+	border: 1px solid transparent;	/* So for buttonRefused with a border, it will not have any flash effect */
 
 	/* border: 1px solid #aaa; */
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
@@ -348,10 +351,10 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	margin: 0 0 0 10px;
 	text-align: center;
 	color: var(--btncolortext);
-	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: #fbfbfb; */
+	border: 1px solid transparent;
 }
 /* *:not(.paginationafterarrows) > .btnTitle, *:not(.paginationafterarrows) > a.btnTitle { */
 .btnTitle, a.btnTitle {

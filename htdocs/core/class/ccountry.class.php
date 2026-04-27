@@ -3,6 +3,7 @@
  * Copyright (C) 2024-2026	MDW					    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke	        <charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,8 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 
 /**
  * 	Class to manage dictionary Countries (used by imports)
@@ -339,5 +341,31 @@ class Ccountry extends CommonDict
 	{
 		global $langs;
 		return $langs->trans($this->label);
+	}
+}
+
+/**
+ * 	Class to manage dictionary Countries (used by imports)
+ */
+class CcountryExtended extends Ccountry
+{
+	/**
+	 * @var Cstate[]
+	 */
+	public $states;
+
+	/**
+	 * @var Cregion[]
+	 */
+	public $regions;
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 	}
 }
