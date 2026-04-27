@@ -242,13 +242,15 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 	$select_contactsrc = GETPOST('select_contactsrc', 'array') ?? array(0);
 	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
 	$thirdpartyemail = GETPOSTINT('ThirdPartyEmail') ? GETPOSTINT('ThirdPartyEmail') : 0;
-	dol_syslog("product/stats/facture.php::thirdpartyemail=".$thirdpartyemail, LOG_DEBUG);
 	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
 	if (empty($select_mailing)) {
 		setEventMessages($langs->trans("ListOfEMailings").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
 	}
 	if (empty($toselect)) {
 		setEventMessages($langs->trans("Invoices").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+	if (empty($select_contactsrc) && !$thirdpartyemail) {
+		setEventMessages($langs->trans("ThirdPartiesArea").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
 	}
 
 	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
