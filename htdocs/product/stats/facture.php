@@ -253,8 +253,10 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 		setEventMessages($langs->trans("ThirdPartiesArea").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
 	}
 
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 	$contactstatic = new Contact($db);
+	$mailingstatic = new Mailing($db);
 	$verified_toselect = array();
 	$verified_mailings = array();
 	$whatchanged = array();
@@ -311,17 +313,41 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 			foreach ($select_mailing as $mailingid) {
 				dol_syslog("product/stats/facture.php::mailingid=".$mailingid, LOG_DEBUG);
 				if ($thirdpartyemail > 0 && $fetchsociete) {
-					dol_syslog("product/stats/facture.php::if fetchsociete", LOG_DEBUG);
 					$thirdpartychangetomailing = 0; // to make sure isset is always true
 					if ($button_add_mailing) {
-						dol_syslog("product/stats/facture.php::if button_add_mailing", LOG_DEBUG);
 						$other = $langs->trans("ThirdParty").'@'.$langs->trans("CustomerInvoice").'='.$itemid;
 						$thirdpartychangetomailing = $invoicestatic->thirdparty->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
 					}
 					if ($button_delete_mailing) {
 						$thirdpartychangetomailing = $invoicestatic->thirdparty->deleteFromMassMailing($mailingid);
 					}
-					// we should record what changed as well as errors.
+					if ($button_add_mailing || $button_delete_mailing) {
+						if ($thirdpartychangetomailing > 0) {
+							if (isset($whatchanged[$mailingid])) {
+								$verified_mailings[] = $mailingid;
+							}
+							$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
+							$info_mesgs[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->email;
+					} elseif ($thirdpartychangetomailing == 0) {
+							$verified_mailings[] = $mailingid;
+							$fmresult = $mailingstatic->fetch($mailingid);
+							if ($fmresult) {
+								$vmailing_title = $mailingstatic->title;
+							} else {
+								$vmailing_title = 'Mailing ID '.$mailingid;
+							}
+							if ($button_add_mailing && in_array("ThirdPartyEmail", $showerrors)) {
+								$info_warnings[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->error;
+							}
+						} elseif ($thirdpartychangetomailing == -6 && $ignorenocontact && in_array("ThirdPartyEmail", $showerrors)) {
+							$info_warnings[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->error;
+						} elseif (in_array("ThirdPartyEmail", $showerrors)) {
+							$info_errors[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->error;
+						}
+					} else {
+						dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
+						setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
+					}
 				}
 				foreach ($verified_invoice_contact_list as $invoice_contact) {
 					$fetchcontact = $contactstatic->fetch($invoice_contact['id']);
@@ -334,8 +360,34 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 						if ($button_delete_mailing) {
 							$contactchangetomailing = $contactstatic->deleteFromMassMailing($mailingid);
 						}
-						dol_syslog("product/stats/facture.php::contactchangetomailing=".$contactchangetomailing.' for contact code='.$invoice_contact['code'].' and contact id='.$invoice_contact['id'], LOG_DEBUG);
-						// we should record what changed as well as errors.
+
+						if ($button_add_mailing || $button_delete_mailing) {
+							if ($contactchangetomailing > 0) {
+								if (isset($whatchanged[$mailingid])) {
+									$verified_mailings[] = $mailingid;
+								}
+								$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
+								$info_mesgs[$mailingid][] = '&emsp;'.$contactstatic->email;
+						} elseif ($contactchangetomailing == 0) {
+								$verified_mailings[] = $mailingid;
+								$fmresult = $mailingstatic->fetch($mailingid);
+								if ($fmresult) {
+									$vmailing_title = $mailingstatic->title;
+								} else {
+									$vmailing_title = 'Mailing ID '.$mailingid;
+								}
+								if ($button_add_mailing && in_array("ContactForInvoices", $showerrors)) {
+									$info_warnings[$mailingid][] = '&emsp;'.$contactstatic->error;
+								}
+							} elseif ($contactchangetomailing == -6 && $ignorenocontact && in_array("ContactForInvoices", $showerrors)) {
+								$info_warnings[$mailingid][] = '&emsp;'.$contactstatic->error;
+							} elseif (in_array("ContactForInvoices", $showerrors)) {
+								$info_errors[$mailingid][] = '&emsp;'.$contactstatic->error;
+							}
+						} else {
+							dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
+							setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
+						}
 					}
 				}
 			}
@@ -388,6 +440,12 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
 		}
 	}
+
+	$total_changes = 0;
+	foreach ($select_mailing as $mailingid) {
+		$total_changes = $total_changes + $whatchanged[$mailingid];
+	}
+	setEventMessages($langs->trans("GrandTotal").' '.$langs->trans("RecordsModified", $total_changes), null, 'mesgs');
 
 	foreach ($verified_mailings as $mailingid) {
 		if ($mailingstatic->fetch($mailingid)) {
