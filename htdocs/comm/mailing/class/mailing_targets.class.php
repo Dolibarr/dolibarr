@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2025		Cloned from htdocs/comm/mailing/class/mailing.class.php then modified
- * Copyright (C) 2025		Jon Bendtsen <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025-2026	Jon Bendtsen <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,19 @@ class MailingTarget extends CommonObject
 	public $fk_mailing;
 
 	/**
+	 * @var int Thirdparty id that this mailing_target is related to.
+	 */
+	public $fk_soc;
+
+	/**
 	 * @var int Contact id that this mailing_target is related to.
 	 */
 	public $fk_contact;
+
+	/**
+	 * @var int eventattendee id that this mailing_target is related to.
+	 */
+	public $fk_attendee;
 
 	/**
 	 * @var string lastname of the mailing_target
@@ -198,16 +208,14 @@ class MailingTarget extends CommonObject
 
 		$this->db->begin();
 
-
-		// 2025-10-09 06:33:26 DEBUG   192.168.127.1        52     33  sql=INSERT INTO llx_mailing_cibles (fk_mailing, fk_contact, email, statut) VALUES ('4',  .((int) 0)., 'jon@jonb.dk',  .((int) )).
-		//2025-10-09 06:35:13 DEBUG   192.168.127.1        54     33  sql=INSERT INTO llx_mailing_cibles (fk_mailing, fk_contact, email, statut) VALUES (4,  .((int) 0)., 'jon@jonb.dk',  .((int) )).
-
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " (fk_mailing, fk_contact, email, statut)";
+		$sql .= " (fk_mailing, fk_soc, fk_contact, fk_attendee, email, statut)";
 		$sql .= " VALUES (".((int) $this->fk_mailing).", ";
+		$sql .=  ((int) $this->fk_soc).", ";
 		$sql .=  ((int) $this->fk_contact).", ";
+		$sql .=  ((int) $this->fk_attendee).", ";
 		$sql .= "'".$this->db->escape($this->email)."', ";
-		$sql .=  ((int) $conf->statut)." )";
+		$sql .=  ((int) $this->statut)." )";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -229,9 +237,15 @@ class MailingTarget extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return -1;
+			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->transnoentitiesnoconv("ErrorRecordAlreadyExists").' '.$this->db->escape($this->email);
+				$this->db->rollback();
+				return 0;
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
 		}
 	}
 
@@ -374,6 +388,25 @@ class MailingTarget extends CommonObject
 	}
 
 	/**
+	 *  Check if email address is found in llx_mailing_unsubscribe
+	 *
+	 *  @param	string	$email 		Email to check if it is listed in llx_mailing_unsubscribe
+	 * 	@return	int					-1 means DB error, 0 means this email is not UnSubscribed, any higher number means No Contact has been requested
+	 */
+	public function checkEmailUnsubscribed($email)
+	{
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$this->db->escape($email)."'";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			return $obj->nb;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
 	 *  Update an Mailing Target
 	 *
 	 *  @param  User	$user 		Object of user making change
@@ -409,9 +442,11 @@ class MailingTarget extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET fk_mailing = '".((int) $this->fk_mailing)."'";
+		$sql .= ", fk_soc = '".((int) $this->fk_soc)."'";
 		$sql .= ", fk_contact = '".((int) $this->fk_contact)."'";
-		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
-		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
+		$sql .= ", fk_attendee = '".((int) $this->fk_attendee)."'";
+		$sql .= ", lastname = '".$this->db->escape((string) $this->lastname)."'";
+		$sql .= ", firstname = '".$this->db->escape((string) $this->firstname)."'";
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
 		$sql .= ", other = '".$this->db->escape($this->other)."'";
 		$sql .= ", tag = '".$this->db->escape($this->tag)."'";
@@ -445,28 +480,63 @@ class MailingTarget extends CommonObject
 	/**
 	 *	Get object from database
 	 *
-	 *	@param	int		$rowid      Id of Mailing Target
-	 *	@return	int					Return integer <0 if KO, >0 if OK
+	 *	@param	int		$rowid      	Id of Mailing Target
+	 *	@param	int		$fk_mailing     fk_mailing of Mailing Target, default 0
+	 *	@param	string	$email      	Email of Mailing Target, default ''
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($rowid)
+	public function fetch($rowid, $fk_mailing = 0, $email = '')
 	{
-		$sql = "SELECT t.rowid";
-		$sql .= ", t.fk_mailing";
-		$sql .= ", t.fk_contact";
-		$sql .= ", t.lastname";
-		$sql .= ", t.firstname";
-		$sql .= ", t.email";
-		$sql .= ", t.other";
-		$sql .= ", t.tag";
-		$sql .= ", t.statut as status";
-		$sql .= ", t.source_url";
-		$sql .= ", t.source_id";
-		$sql .= ", t.source_type";
-		$sql .= ", t.date_envoi";
-		$sql .= ", t.tms as date_modification";
-		$sql .= ", t.error_text";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
-		$sql .= " WHERE t.rowid = ".(int) $rowid;
+		dol_syslog(__CLASS__.'::'.__METHOD__);
+
+		// testing parameter combinations
+		if ($rowid == 0 && ($fk_mailing == 0 || empty($email))) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::Wrong parameter combination, either rowid>0 or both fk_mailing>0 and not empty email', LOG_ERR);
+			return -3;
+		}
+
+		if ($rowid == 0 && $fk_mailing > 0 && !empty($email)) {
+			$sql = "SELECT t.rowid";
+			$sql .= ", t.fk_mailing";
+			$sql .= ", t.fk_soc";
+			$sql .= ", t.fk_contact";
+			$sql .= ", t.fk_attendee";
+			$sql .= ", t.lastname";
+			$sql .= ", t.firstname";
+			$sql .= ", t.email";
+			$sql .= ", t.other";
+			$sql .= ", t.tag";
+			$sql .= ", t.statut as status";
+			$sql .= ", t.source_url";
+			$sql .= ", t.source_id";
+			$sql .= ", t.source_type";
+			$sql .= ", t.date_envoi";
+			$sql .= ", t.tms as date_modification";
+			$sql .= ", t.error_text";
+			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
+			$sql .= " WHERE t.fk_mailing = ".(int) $fk_mailing;
+			$sql .= " AND t.email = '".$this->db->escape($email)."' ";
+		} else {
+			$sql = "SELECT t.rowid";
+			$sql .= ", t.fk_mailing";
+			$sql .= ", t.fk_soc";
+			$sql .= ", t.fk_contact";
+			$sql .= ", t.fk_attendee";
+			$sql .= ", t.lastname";
+			$sql .= ", t.firstname";
+			$sql .= ", t.email";
+			$sql .= ", t.other";
+			$sql .= ", t.tag";
+			$sql .= ", t.statut as status";
+			$sql .= ", t.source_url";
+			$sql .= ", t.source_id";
+			$sql .= ", t.source_type";
+			$sql .= ", t.date_envoi";
+			$sql .= ", t.tms as date_modification";
+			$sql .= ", t.error_text";
+			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as t";
+			$sql .= " WHERE t.rowid = ".(int) $rowid;
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -476,7 +546,9 @@ class MailingTarget extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->fk_mailing = $obj->fk_mailing;
+				$this->fk_soc = $obj->fk_soc;
 				$this->fk_contact = $obj->fk_contact;
+				$this->fk_attendee = $obj->fk_attendee;
 				$this->lastname = $obj->lastname;
 				$this->firstname = $obj->firstname;
 				$this->email = $obj->email;
