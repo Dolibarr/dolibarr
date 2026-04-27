@@ -468,9 +468,26 @@ trait CommonPeople
 		$unsubscribed = $mailingtarget->checkEmailUnsubscribed($email);
 		if ($ignorenocontact > 0 || $unsubscribed == 0) {
 			$mailingtarget->fk_mailing = $fk_mailing;
-			$mailingtarget->fk_soc = $this->element == 'societe' ? $this->id : null;
-			$mailingtarget->fk_contact = $this->element == 'contact' ? $this->id : null;
-			$mailingtarget->fk_attendee = $this->element == 'conferenceorboothattendee' ? $this->id : null;
+			if ($this->element == 'societe') {
+				$mailingtarget->fk_soc = $this->id;
+			} else {
+				$mailingtarget->fk_soc = isset($this->fk_soc) ? $this->fk_soc : null;
+			}
+			if ($this->element == 'contact') {
+				$mailingtarget->fk_contact = $this->id;
+			} else {
+				$mailingtarget->fk_contact = isset($this->fk_contact) ? $this->fk_contact : null;
+			}
+			if ($this->element == 'conferenceorboothattendee') {
+				$mailingtarget->fk_attendee = $this->id;
+			} else {
+				$mailingtarget->fk_attendee = isset($this->fk_attendee) ? $this->fk_attendee : null;
+			}
+			if ($this->element == 'member') {
+				$mailingtarget->fk_member = $this->id;
+			} else {
+				$mailingtarget->fk_member = isset($this->fk_member) ? $this->fk_member : null;
+			}
 			$mailingtarget->lastname = $this->lastname;
 			$mailingtarget->firstname = $this->firstname;
 			$mailingtarget->email = $email;
