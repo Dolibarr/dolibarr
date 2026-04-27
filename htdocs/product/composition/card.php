@@ -613,6 +613,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
+		$potential_kit_stock = null;
 		if (count($prods_arbo)) {
 			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
@@ -681,7 +682,20 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
-
+					// Check if the component has a required quantity and stock.
+					if ($value['nb'] > 0 && is_numeric($value['stock'])) {
+					// Calculate how many full kits this component can support.
+						$possible_with_this = floor($value['stock'] / $value['nb']);
+						// Keep the smallest value across all components (the limiting factor).
+						if ($potential_kit_stock === null || $possible_with_this < $potential_kit_stock) {
+							$potential_kit_stock = $possible_with_this;
+						}
+					} else {
+						// If a component has no required quantity or its stock is not available, no kit can be made.
+						$potential_kit_stock = 0;
+						// Optionally, break the loop early for efficiency.
+						break;
+					}
 					// Hook fields
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
@@ -795,6 +809,15 @@ if ($id > 0 || !empty($ref)) {
 
 			// Stock
 			if (isModEnabled('stock')) {
+				// Add a new row for the potential kits stock.
+				$colspan_counter = 0;
+				print '<tr class="total-row right">';
+				print '<td></td><td></td><td></td>';
+				print '<td colspan="' . ($colspan_counter + 4) . '" class="titlefield">' . $langs->trans("PotentialKitsFromStock") . '</td>';
+				// Calculate the value to display. If $potential_kit_stock is null or 0, show 0.
+				$stock_to_display = ($potential_kit_stock !== null && $potential_kit_stock > 0) ? $potential_kit_stock : 0;
+				print '<td class="total-value">' . price($stock_to_display) . '</td>';
+				print '</tr>';
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
