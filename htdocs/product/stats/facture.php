@@ -228,10 +228,10 @@ if (empty($reshook)) {
 $button_add_mailing = GETPOST('button_add_mailing', 'aZ09');
 $button_delete_mailing = GETPOST('button_delete_mailing', 'aZ09');
 if ($button_add_mailing && $button_delete_mailing) {
-    dol_syslog('Error: Both add and delete mailing buttons were pressed simultaneously.', LOG_ERR);
-    setEventMessages($langs->trans("Choose").' '.$langs->trans("Max").' 1 '.$langs->trans("Input"), null, 'errors');
-    header("Location: " . $_SERVER['HTTP_REFERER']);
-    exit;
+	dol_syslog('Error: Both add and delete mailing buttons were pressed simultaneously.', LOG_ERR);
+	setEventMessages($langs->trans("Choose").' '.$langs->trans("Max").' 1 '.$langs->trans("Input"), null, 'errors');
+	header("Location: " . $_SERVER['HTTP_REFERER']);
+	exit;
 }
 $permissiontomailing = $user->hasRight('mailing', 'write');
 if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
