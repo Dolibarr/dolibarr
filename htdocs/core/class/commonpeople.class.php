@@ -402,9 +402,9 @@ trait CommonPeople
 	}
 
 	/**
-	 *  Add this objects communication email adddress to a mass mailing
+	 *  Add this objects communication email address to a mass mailing
 	 *
-	 *  @param	int	$fk_mailing				The id of the mass mailing to add this objects communication email adddress to
+	 *  @param	int	$fk_mailing				The id of the mass mailing to add this objects communication email address to
 	 *  @param	int	$source_id				The id of the object that this new object is sourced from
 	 *  @param	string	$source_type		The element of the object that this object is sourced from
 	 *  @param	string	$other				The text that describes the source
@@ -517,9 +517,9 @@ trait CommonPeople
 	}
 
 	/**
-	 *  Delete this objects communication email adddress from a mass mailing
+	 *  Delete this objects communication email address from a mass mailing
 	 *
-	 *  @param	int	$fk_mailing				The id of the mass mailing to delete this objects communication email adddress from
+	 *  @param	int	$fk_mailing				The id of the mass mailing to delete this objects communication email address from
 	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each delete
 	 *
 	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 (unused), -5 no valid email found, -6 (this number is not used), -7 no permission on the fk_project, -8 deletion failed 0 if KO, Id of created mailing_target if OK

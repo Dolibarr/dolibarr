@@ -277,7 +277,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 			}
 			$invoice_contact_list = array();
 			foreach ($select_contactsrc as $contact_code) {
-				$list_of_contacts = $invoicestatic->liste_contact(-1, 'external' , 0, $contact_code);
+				$list_of_contacts = $invoicestatic->liste_contact(-1, 'external', 0, $contact_code);
 				if (empty($list_of_contacts) && in_array("ContactForInvoices", $showerrors)) {
 					$invoice_type_contact = $invoicestatic->liste_type_contact('external', '', 1, 0, $contact_code);
 					$warn_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $invoice_type_contact[$contact_code]);
@@ -318,7 +318,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 							}
 							$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
 							$info_mesgs[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->email;
-					} elseif ($thirdpartychangetomailing == 0) {
+						} elseif ($thirdpartychangetomailing == 0) {
 							$verified_mailings[] = $mailingid;
 							$fmresult = $mailingstatic->fetch($mailingid);
 							if ($fmresult) {
@@ -358,7 +358,7 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 								}
 								$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
 								$info_mesgs[$mailingid][] = '&emsp;'.$contactstatic->email;
-						} elseif ($contactchangetomailing == 0) {
+							} elseif ($contactchangetomailing == 0) {
 								$verified_mailings[] = $mailingid;
 								$fmresult = $mailingstatic->fetch($mailingid);
 								if ($fmresult) {
