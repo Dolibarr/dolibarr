@@ -829,9 +829,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$ferie = false;
 		$specialdayrule = array();
 
-		$jour  = (int) gmdate("d", $timestampStart);
-		$mois  = (int) gmdate("m", $timestampStart);
-		$annee = (int) gmdate("Y", $timestampStart);
+		$jour  = (int) dol_print_date($timestampStart, "d");
+		$mois  = (int) dol_print_date($timestampStart, "m");
+		$annee  = (int) dol_print_date($timestampStart, "Y");
 
 		//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$includesaturday." includesunday=".$includesunday."\n";
 		foreach ($arrayOfPublicHolidays as $entrypublicholiday) {
@@ -1104,6 +1104,9 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$numholidays = 0;
 		if ($lastday) {
 			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+			var_dump($numholidays);
+			var_dump($timestampStart);
+			var_dump($timestampEnd);
 			if ($numholidays == 1) {
 				return 0;
 			}
