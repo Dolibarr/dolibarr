@@ -1463,10 +1463,11 @@ class FormTicket
 	/**
 	 * Show the form to add message on ticket
 	 *
-	 * @param  	string  $width      	Width of form
+	 * @param  	string  $width      			Width of form
+	 * @param	string	$fromPublicInterface	Set to 1 if call is done for the public interface
 	 * @return 	void
 	 */
-	public function showMessageForm($width = '40%')
+	public function showMessageForm($width = '40%', $fromPublicInterface = 0)
 	{
 		global $conf, $langs, $user, $hookmanager, $form;
 
@@ -1610,7 +1611,6 @@ class FormTicket
 
 		print '});
 		</script>';
-
 
 		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1876,7 +1876,7 @@ class FormTicket
 			$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 		}
 
-		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($fromPublicInterface ? 2 : 1));		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 
 		print '<!-- Message line from showMessageForm -->';
 		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
@@ -1910,9 +1910,8 @@ class FormTicket
 		$formai = new FormAI($this->db);
 
 		$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
-		$formmail->withlayout = (string) $ckeditorenabledforticket ? 'email' : '';
-		$formmail->withaiprompt = isModEnabled('ai') ? 'text' : '';
-		$formai = new FormAI($this->db);
+		$formmail->withlayout = ((string) $ckeditorenabledforticket && !$fromPublicInterface) ? 'email' : '';
+		$formmail->withaiprompt = (isModEnabled('ai') && !$fromPublicInterface) ? 'text' : '';
 
 		$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
@@ -1941,8 +1940,10 @@ class FormTicket
 		if (!$ckeditorenabledforticket) {
 			$defaultmessage = dol_string_nohtmltag($defaultmessage, 2);
 		}
+
 		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $ckeditorenabledforticket, ROWS_6, '90%');
 		$doleditor->Create();
+
 		print '</td></tr>';
 
 		// Footer
