@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2025		Mohamed DAOUD       <mdaoud@dolicloud.com>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
@@ -394,7 +394,7 @@ class ExternalModules
 				$dolistoreProductsTotal = 0;
 			} else {
 				$dolistoreProducts = $this->adaptData($getDolistoreProducts['response']['products'], 'dolistore');
-				$dolistoreProductsTotal = $getDolistoreProducts['response']['total'];
+				$dolistoreProductsTotal = (int) $getDolistoreProducts['response']['total'];
 				$this->numberTotalOfProducts += $dolistoreProductsTotal;
 			}
 		}

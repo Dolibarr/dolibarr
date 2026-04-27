@@ -2306,16 +2306,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<table class="border centpercent">';
 
 		// Reference
-		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td>' . $langs->trans("Draft") . '</td></tr>';
-
-		// Reference client
-		print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td>';
-		if (getDolGlobalString('MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER') && !empty($origin) && !empty($originid)) {
-			print '<input type="text" name="ref_client" value="' . $ref_client . '"></td>';
-		} else {
-			print '<input type="text" name="ref_client" value="' . GETPOST('ref_client') . '"></td>';
-		}
-		print '</tr>';
+		//print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td>' . $langs->trans("Draft") . '</td></tr>';
 
 		// Thirdparty
 		print '<tr>';
@@ -2348,6 +2339,19 @@ if ($action == 'create' && $usercancreate) {
 			print '</td>';
 		}
 		print '</tr>' . "\n";
+
+		// Reference of order on customer side
+		if (getDolGlobalString('MAIN_ASK_CUSTOMER_REF_OF_SALE_ORDER_AT_CREATION') || getDolGlobalString('MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER')) {
+			print '<tr><td>';
+			if (getDolGlobalString('MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER') && !empty($origin) && !empty($originid)) {
+				print $langs->trans('RefProposal') . '</td><td>';
+				print '<input type="text" name="ref_client" value="' . $ref_client . '">';
+			} else {
+				print $form->textwithpicto($langs->trans('RefCustomer'), $langs->trans('RefOfOnCustomerSide', $langs->transnoentitiesnoconv("Order"))) . '</td><td>';
+				print '<input type="text" name="ref_client" value="' . GETPOST('ref_client') . '">';
+			}
+			print '</td></tr>';
+		}
 
 		// Contact of order
 		if ($socid > 0) {
@@ -2490,14 +2494,16 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Template to use by default
-		print '<tr><td>' . $langs->trans('DefaultModel') . '</td>';
-		print '<td>';
 		include_once DOL_DOCUMENT_ROOT . '/core/modules/commande/modules_commande.php';
-		$liste = ModelePDFCommandes::liste_modeles($db);
-		$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
-		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
+		$list = ModelePDFCommandes::liste_modeles($db);
+		if (is_array($list) && count($list) > 0) {
+			print '<tr><td>' . $langs->trans('DefaultModel') . '</td>';
+			print '<td>';
+			$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+			print "</td></tr>";
+		}
 
 		// Multicurrency
 		if (isModEnabled("multicurrency")) {

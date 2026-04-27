@@ -4,6 +4,7 @@
  * Copyright (C) 2012       Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -557,6 +558,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 			},
 			templateSelection: function (selection) {		/* Format visible output of selected value */
 				if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+				if (selection.element && $(selection.element).attr("data-select-html") != undefined) {
+					if (typeof htmlEntityDecodeJs === "function") {
+						return htmlEntityDecodeJs($(selection.element).attr("data-select-html"));
+					}
+				}
 				return selection.text;
 			},
 			escapeMarkup: function(markup) {

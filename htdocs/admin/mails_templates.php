@@ -1013,7 +1013,7 @@ if ($num > $listlimit) {
 // Title line with search boxes
 print '<tr class="liste_titre" id="Title line with search boxes">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center" width="64">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1057,7 +1057,7 @@ if (!empty($arrayfields['t.datec']['checked'])) {
 	print '<td></td>'; // datec / Date creation
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center" width="64">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1068,7 +1068,7 @@ print '</tr>';
 // Title of lines
 print '<tr class="liste_titre" id="Title of lines">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');
 }
 array_push($fieldlist, "tms", "datec");
@@ -1158,7 +1158,7 @@ foreach ($fieldlist as $field => $value) {
 
 print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');
 }
 print '</tr>';
@@ -1189,7 +1189,7 @@ if ($num) {
 				$colspan = 0;
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					print '</td>';
 					$colspan++;
@@ -1199,7 +1199,7 @@ if ($num) {
 					$colspan += fieldList($fieldlist, $obj, $tabname[25], $action);
 				}
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					print '</td>';
 					$colspan++;
@@ -1207,7 +1207,7 @@ if ($num) {
 				print "</tr>\n";
 
 				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center"></td>';
 				}
 				print '<td colspan="'.($colspan - 1).'" class="" style="padding-left: 20px; padding-right: 20px;">';
@@ -1279,7 +1279,7 @@ if ($num) {
 				print '</center>';
 				print '</td>';
 
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center"></td>';
 				}
 
@@ -1327,7 +1327,7 @@ if ($num) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
 				// Action column - Modify link / Delete link
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall" width="64">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
@@ -1446,7 +1446,7 @@ if ($num) {
 				print "</td>";
 
 				// Action column - Modify link / Delete link
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall" width="64">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';

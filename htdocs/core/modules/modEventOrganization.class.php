@@ -135,12 +135,23 @@ class modEventOrganization extends DolibarrModules
 		//$this->automatic_activation = array('FR'=>'EventOrganizationWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 
 		// Constants
-		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
-		// Example: $this->const=array(1 => array('EVENTORGANIZATION_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
-		//                             2 => array('EVENTORGANIZATION_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
-		// );
-		$this->const = array(1 => array('EVENTORGANIZATION_TASK_LABEL', 'chaine', '', '', 0));
-
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$this->const = array(
+			[
+				'EVENTORGANIZATION_TASK_LABEL',
+				'chaine',
+				'',
+				'',
+				0
+			],
+			[
+				"EVENTORGANIZATION_SECUREKEY",
+				"chaine",
+				getRandomPassword(true),
+				"",
+				0,
+			],
+		);
 
 
 		// Some keys to add into the overwriting translation tables

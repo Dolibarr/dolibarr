@@ -2380,12 +2380,7 @@ if ($action == 'create') {
 		print '<table class="border centpercent">';
 
 		// Reference
-		print '<tr class="field_ref"><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td class="valuefieldcreate">' . $langs->trans("Draft") . '</td></tr>';
-
-		// Ref customer
-		print '<tr class="field_ref_client"><td class="titlefieldcreate">' . $langs->trans('RefCustomer') . '</td><td class="valuefieldcreate">';
-		print '<input type="text" name="ref_client" value="' . (!empty($ref_client) ? $ref_client : GETPOST('ref_client')) . '"></td>';
-		print '</tr>';
+		//print '<tr class="field_ref"><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td class="valuefieldcreate">' . $langs->trans("Draft") . '</td></tr>';
 
 		// Third party
 		print '<tr class="field_socid">';
@@ -2426,6 +2421,15 @@ if ($action == 'create') {
 		}
 		print '</tr>' . "\n";
 
+		// Reference of proposal on customer side
+		if (getDolGlobalString('MAIN_ASK_CUSTOMER_REF_OF_PROPOSAL_AT_CREATION')) {
+			print '<tr class="field_ref_client"><td class="titlefieldcreate">';
+			print $form->textwithpicto($langs->trans('RefCustomer'), $langs->trans('RefOfOnCustomerSide', $langs->transnoentitiesnoconv("Proposal")));
+			print '</td><td class="valuefieldcreate">';
+			print '<input type="text" name="ref_client" value="' . (!empty($ref_client) ? $ref_client : GETPOST('ref_client')) . '"></td>';
+			print '</tr>';
+		}
+
 		if ($socid > 0) {
 			// Contacts (ask contact only if thirdparty already defined).
 			print '<tr class="field_contactid"><td class="titlefieldcreate">' . $langs->trans("DefaultContact") . '</td><td class="valuefieldcreate">';
@@ -2448,7 +2452,7 @@ if ($action == 'create') {
 
 		$newdatepropal = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');
 		// Date
-		print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">' . $langs->trans('DatePropal') . '</td><td class="valuefieldcreate">';
+		print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">' . $langs->trans('Date') . '</td><td class="valuefieldcreate">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
 		print $form->selectDate($newdatepropal ? $newdatepropal : $datepropal, '', 0, 0, 0, "addprop", 1, 1);
 		print '</td></tr>';
@@ -2556,14 +2560,17 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 		// Template to use by default
-		print '<tr class="field_model">';
-		print '<td class="titlefieldcreate">' . $langs->trans("DefaultModel") . '</td>';
-		print '<td class="valuefieldcreate">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
-		$liste = ModelePDFPropales::liste_modeles($db);
-		$preselected = getDolGlobalString('PROPALE_ADDON_PDF_ODT_DEFAULT', getDolGlobalString("PROPALE_ADDON_PDF"));
-		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
+		include_once DOL_DOCUMENT_ROOT . '/core/modules/propale/modules_propale.php';
+		$list = ModelePDFPropales::liste_modeles($db);
+		if (is_array($list) && count($list) > 0) {
+			print '<tr class="field_model">';
+			print '<td class="titlefieldcreate">' . $langs->trans("DefaultModel") . '</td>';
+			print '<td class="valuefieldcreate">';
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			$preselected = getDolGlobalString('PROPALE_ADDON_PDF_ODT_DEFAULT', getDolGlobalString("PROPALE_ADDON_PDF"));
+			print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+			print "</td></tr>";
+		}
 
 		// Multicurrency
 		if (isModEnabled("multicurrency")) {

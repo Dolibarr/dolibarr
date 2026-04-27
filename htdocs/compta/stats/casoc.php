@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -643,7 +643,7 @@ if (count($amount)) {
 		// Third party
 		$fullname = $name[$key];
 		if ($key > 0) {
-			$thirdparty_static->id = $key;
+			$thirdparty_static->id = (int) $key;
 			$thirdparty_static->name = $fullname;
 			$thirdparty_static->client = 1;
 			$linkname = $thirdparty_static->getNomUrl(1, 'customer');

@@ -75,11 +75,8 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	if (GETPOST('MEMBER_NEWFORM_AMOUNT') !== '') {
-		$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
-	} else {
-		$amount = '';
-	}
+	$amount = '';
+
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
 	$showtable = GETPOST('MEMBER_SHOW_TABLE');
@@ -89,7 +86,6 @@ if ($action == 'update') {
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", $showtable ? 0 : 1, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
@@ -106,6 +102,9 @@ if ($action == 'update') {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $forcemorphy, 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE')) {
+		$res = dolibarr_set_const($db, "MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE", GETPOST('MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE') == 'yes' ? 1 : 0, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {
@@ -272,14 +271,6 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, $langs->trans("No"), 0, 0, '', 0, 0, 0, '', 'width200');
 	print "</td></tr>\n";
 
-	// Amount
-	print '<tr class="oddeven" id="tramount"><td>';
-	print $langs->trans("DefaultAmount");
-	print '</td><td>';
-	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.getDolGlobalString('MEMBER_NEWFORM_AMOUNT').'">';
-	print ' <span class="opacitymedium">'.$langs->getCurrencySymbol($mysoc->currency_code).'</span>';
-	print "</td></tr>\n";
-
 	// Min amount
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MinimumAmount");
@@ -321,9 +312,9 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 
 	// Search a member after member creation form
 	print '<tr class="oddeven" id="trpayment"><td>';
-	print $langs->trans("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE");
+	print $form->textwithpicto($langs->trans("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE"), $langs->trans("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATEDesc"));
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE"); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE", getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE")); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	print '</table>';

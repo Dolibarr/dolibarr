@@ -1255,7 +1255,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 
 	if ($datep != $object->datep) {
 		if (!empty($object->datef)) {
-			$object->datef += $datep - $object->datep;
+			$object->datef += (int) $datep - $object->datep;
 		}
 		$object->datep = $datep;
 

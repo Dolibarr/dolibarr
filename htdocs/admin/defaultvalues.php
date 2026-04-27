@@ -218,12 +218,12 @@ $param = '&mode='.$mode;
 $enabledisablehtml = '<span class="divfilteralone">';
 if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=1'.$param.'">';
 } else {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=0'.$param.'">';
 }
-$enabledisablehtml .= $langs->trans("EnableDefaultValues");
+$enabledisablehtml .= '<span class="hideonsmartphone">'.$langs->trans("EnableDefaultValues").'</span>';
 if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off', 'class="paddingleft valignmiddle"');
 } else {
@@ -234,8 +234,7 @@ $enabledisablehtml .= '</span>';
 
 print load_fiche_titre($langs->trans("DefaultValues"), $enabledisablehtml, 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("DefaultValuesDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info hideonsmartphone">'.$langs->trans("DefaultValuesDesc")."</div>\n";
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
@@ -273,10 +272,10 @@ $head = defaultvalues_prepare_head();
 print dol_get_fiche_head($head, $mode, '', -1, '');
 
 if ($mode == 'sortorder') {
-	print info_admin($langs->trans("WarningSettingSortOrder")).'<br>';
+	print info_admin($langs->trans("WarningSettingSortOrder"), 0, 0, 'warning').'<br>';
 }
 if ($mode == 'mandatory') {
-	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
+	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly"), 0, 0, 'warning').'<br>';
 }
 
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -348,11 +347,11 @@ print '</td>';
 // Value
 if ($mode != 'focus' && $mode != 'mandatory') {
 	print '<td>';
-	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
+	print '<span class="nowraponall"><input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
 	if ($mode != 'sortorder') {
 		print $form->textwithpicto('', $texthelp, 1, 'list-alt', 'paddingleftimp cursorpointer', 0, 2, 'subsitutiontooltip');
 	}
-	print '</td>';
+	print '</span></td>';
 }
 // Limit to superadmin
 if (isModEnabled('multicompany') && !$user->entity) {

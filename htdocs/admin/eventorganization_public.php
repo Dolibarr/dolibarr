@@ -18,19 +18,13 @@
  */
 
 /**
- * \file    htdocs/admin/eventorganization.php
+ * \file    htdocs/admin/eventorganization_public.php
  * \ingroup eventorganization
  * \brief   EventOrganization setup page.
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Libraries
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  *
  * @var string $dolibarr_main_url_root
  */
+// Libraries
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Translations
 $langs->loadLangs(array("admin", "eventorganization", "categories"));
@@ -80,11 +78,12 @@ if (empty($action)) {
  */
 
 if ($cancel) {
-	$action  = '';
+	$action  = 'edit';
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+$action = 'edit';
 
 
 /*
@@ -171,7 +170,7 @@ if ($action == 'edit') {
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname, 'customerorprospect', 'form', '', '1');
 			} elseif ($val['type'] == 'securekey') { */
-			print '<input type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
+			print '<input type="text" class="flat width500" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" spellcheck="false">';
 			if (!empty($conf->use_javascript_ajax)) {
 				print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 			}

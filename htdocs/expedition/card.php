@@ -126,12 +126,12 @@ $extrafields->fetch_name_optionals_label($objectorder->table_element_line);
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
-if (empty($origin) && !empty($object->origin_type)) {
+if (empty($origin) && !empty($object->origin_type) && $object->origin_id > 0) {
 	$origin = $object->origin_type;
-} elseif (empty($origin) && !empty($object->origin)) {
-	$origin = (string) $object->origin;  // Cast to string because origin is type hinted as object too.
+} elseif (empty($origin) && is_string($object->origin) && $object->origin !== '' && $object->origin_id > 0) {
+	$origin = $object->origin;
 }
-if (empty($origin_id) && !empty($object->origin_id)) {
+if (empty($origin_id) && $object->origin_id > 0) {
 	$origin_id = $object->origin_id;
 }
 $origin_type = is_string($origin) ? $origin : '';
@@ -1620,7 +1620,7 @@ if ($action == 'create' && $usercancreate) {
 		// Document model
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$list = ModelePdfExpedition::liste_modeles($db);
-		if (is_countable($list) && count($list) > 1) {
+		if (is_array($list) && count($list) > 1) {
 			print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 			print '<td colspan="3">';
 			print img_picto('', 'pdf', 'class="pictofixedwidth"');
@@ -1831,7 +1831,7 @@ if ($action == 'create' && $usercancreate) {
 			// Document model
 			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 			$list = ModelePdfExpedition::liste_modeles($db);
-			if (is_countable($list) && count($list) > 1) {
+			if (is_array($list) && count($list) > 1) {
 				print "<tr><td>" . $langs->trans("DefaultModel") . "</td>";
 				print '<td colspan="3">';
 				print img_picto('', 'pdf', 'class="pictofixedwidth"');

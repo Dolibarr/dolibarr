@@ -2058,6 +2058,25 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '</script>'."\n";
 			}
 
+			// TinyMCE (alternative WYSIWYG backend, selected by FCKEDITOR_EDITORNAME='tinymce')
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_EDITORNAME') == 'tinymce' && !defined('DISABLE_TINYMCE')) || defined('FORCE_TINYMCE')) {
+				print '<!-- Includes JS for TinyMCE -->'."\n";
+				$pathtinymce = DOL_URL_ROOT.'/public/includes/tinymce/tinymce/';
+				$jstinymce = 'tinymce.min.js';
+				if (defined('JS_TINYMCE') && constant('JS_TINYMCE')) {
+					$pathtinymce = constant('JS_TINYMCE');
+				}
+				print '<script src="'.$pathtinymce.$jstinymce.'?'.$ext.'"></script>'."\n";
+				print '<script nonce="'.getNonce().'">';
+				print '/* enable tinymce by main.inc.php */';
+				print 'var tinymceBasePath = \''.dol_escape_js($pathtinymce).'\';'."\n";
+				print 'var tinymceFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+				print 'var tinymceFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+				print '</script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/tinymce/config.js?'.$ext, 1).'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/tinymce-ckeditor-compat.js?'.$ext.'"></script>'."\n";
+			}
+
 			// Browser notifications (if NOREQUIREMENU is on, it is mostly a page for popup, so we do not enable notif too. We hide also for public pages).
 			if (!defined('NOBROWSERNOTIF') && !defined('NOREQUIREMENU') && !defined('NOLOGIN')) {
 				$enablebrowsernotif = false;
