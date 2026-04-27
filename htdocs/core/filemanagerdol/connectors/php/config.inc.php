@@ -2,6 +2,8 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -32,6 +34,14 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 // is a security hole if anybody can access without
 // being an authenticated user.
 require_once '../../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var string $dolibarr_main_data_root
+ * @var string $dolibarr_main_url_root
+ */
+
 $uri = preg_replace('/^http(s?):\/\//i', '', $dolibarr_main_url_root);
 $pos = strstr($uri, '/'); // $pos contient alors url sans nom domaine
 if ($pos == '/') {
@@ -39,6 +49,12 @@ if ($pos == '/') {
 }
 //define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
+
+
+if (!empty($user->admin) && !$user->hasRight('website', 'write')) {
+	accessforbidden('Need to be admin or having write permission on website module');
+}
+
 
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").
 // WARNING: don't just set "$Config['Enabled'] = true ;", you must be sure that only

@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024 Frédéric France   	<frederic.france@free.fr>
+ * Copyright (C) 2025 MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +19,9 @@
 
 /**
  *      \file       htdocs/core/ajax/editinline.php
- *      \brief      Save edit inline changes
+ *      \ingroup    website
+ *      \brief      Save changes done into a website page when we are in "edit inline" mode.
  */
-
 
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
@@ -40,11 +42,18 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'alpha');
 $website_ref = GETPOST('website_ref');
 $page_id = GETPOST('page_id');
-$content = GETPOST('content', 'none');
+$content = GETPOST('content', 'restricthtml');
 $element_id = GETPOST('element_id');
 $element_type = GETPOST('element_type');
 
@@ -64,7 +73,7 @@ top_httphead();
 if (!empty($action) && $action === 'updatedElementContent' && $usercanmodify && !empty($content) && !empty($element_id) && !empty($website_ref) && !empty($page_id)) {
 	// Page object
 	$objectpage = new WebsitePage($db);
-	$res = $objectpage->fetch($page_id);
+	$res = $objectpage->fetch((int) $page_id);
 	if (!$res) {
 		print "Cannot find page with ID = " . $page_id . ".";
 		exit;

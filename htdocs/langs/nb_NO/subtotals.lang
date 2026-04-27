@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Delsummer
+SubTotalModuleDesc=Delsum og tittellinjer for visse dokumenter
+#
+# Admin
+#
+SubtotalSetup=Oppsett av delsummodul
+MaxSubtotalLevel=Maksimalt nivå
+SubtotalLineBackColor=Bakgrunnsfarge for nivå %s linjer
+NotSupportedByAllPDF=Vil fungere med nyere PDF-filer, men ikke med gamle. %s
+
+#
+# Card
+#
+AddTitleLine=Legg til tittellinje
+AddSubtotalLine=Legg til delsumlinje
+TitleNeedDesc=Du må angi en gyldig beskrivelse for å opprette en tittel.
+TitleAddedLevelTooHigh=Tittelnivået er for høyt lagt til (lagt til med nivå %s i stedet).
+TitleEditedLevelTooHigh=Redigert tittelnivå for høyt (redigert med nivå %s i stedet).
+DeleteSubtotalLine=Slett delsumlinje
+ConfirmDeleteSubtotalLine=Er du sikker på at du vil slette denne delsumlinjen?
+DeleteTitleLine=Slett tittellinjen
+ConfirmDeleteTitleLine=Er du sikker på at du vil slette denne tittellinjen?
+DeleteCorrespondingSubtotalLine=Slette den tilhørende delsumlinjen?
+SubtotalLevel=Nivå %s
+SubtotalLineDesc=Linjebeskrivelse
+SubtotalLineLevel=Linjenivå
+ShowUPOnPDF=Vis enhetspris på PDF
+ShowTotalExludingVATOnPDF=Vis totalbeløpet uten MVA i PDF-filen
+ForcePageBreak=Tving sideskift før tittel
+NoTitleError=Du har ingen tittellinje, eller de har allerede alle en tilsvarende delsumlinje
+CorrespondingTitleLine=Tilsvarende tittellinje
+SelectVATRate=Velg MVA-sats
+EnterRemisePercent=Angi rabattprosent
+ApplyVATForBlock=Bruk MVA for denne blokken
+ApplyDiscountForBlock=Legg til rabatt for denne blokken
+TitleUnderSameLevelSTLine=Tittelen på samme nivå må være under delsumlinjen for den forrige tittelen.
+TitleUnderSameLevelOrGreater=Tittelen må være under en tittel på samme nivå eller høyere.
+TitleAfterStLineOfSameLevelTitle=Tittelen må komme etter delsumlinjen i forrige tittel.
+PreviousTitleLevelTooHigh=Forrige tittel er to nivåer eller mer større enn den flyttede linjen.
+STLineUnderCorrespondingTitleDesc=Delsumlinjen må være under en tittel med samme nivå som har samme beskrivelse.
+STLineUnderCorrespondingTitle=Delsumlinjen må være under en tittel på samme nivå og med samme beskrivelse.
+STLineUnderTitle=Delsumlinjen må være under tittelen
+UnsupportedModuleError=Du kan ikke legge til en delsumlinje i en modul som ikke støttes
+CorrespondingTitleNotFound=Den tilhørende tittelen ble ikke funnet
+
+#
+# PDF
+#
+SubtotalOf=Delsum av %s:

@@ -8,13 +8,12 @@ Shipments=ການຂົນສົ່ງ
 ShowSending=ສະແດງການຂົນສົ່ງ
 Receivings=ໃບຮັບເງິນການຈັດສົ່ງ
 SendingsArea=ພື້ນທີ່ການຂົນສົ່ງ
-ListOfSendings=ລາຍຊື່ການຂົນສົ່ງ
 SendingMethod=ວິທີການຂົນສົ່ງ
 LastSendings=ການຂົນສົ່ງ %s ຫຼ້າສຸດ
 StatisticsOfSendings=ສະຖິຕິການຂົນສົ່ງ
 NbOfSendings=ຈໍານວນການຂົນສົ່ງ
 NumberOfShipmentsByMonth=ຈໍານວນການຈັດສົ່ງໂດຍເດືອນ
-SendingCard=ບັດຂົນສົ່ງ
+SendingCard=Shipment
 NewSending=ການຂົນສົ່ງໃຫມ່
 CreateShipment=ສ້າງການຂົນສົ່ງ
 QtyShipped=ຈຳ ນວນຖືກຈັດສົ່ງແລ້ວ
@@ -44,6 +43,7 @@ ConfirmCancelSending=ເຈົ້າແນ່ໃຈບໍວ່າເຈົ້�
 DocumentModelMerou=ຮູບແບບ Merou A5
 WarningNoQtyLeftToSend=ຄໍາເຕືອນ, ບໍ່ມີຜະລິດຕະພັນລໍຖ້າການຂົນສົ່ງ.
 StatsOnShipmentsOnlyValidated=ສະຖິຕິແມ່ນສະເພາະ ສຳ ລັບການຈັດສົ່ງທີ່ຖືກຕ້ອງ. ວັນທີທີ່ ນຳ ໃຊ້ແມ່ນວັນທີຂອງການກວດສອບຄວາມຖືກຕ້ອງຂອງການຂົນສົ່ງ (ວັນທີວາງແຜນການຈັດສົ່ງແມ່ນບໍ່ຮູ້ຕະຫຼອດເວລາ)
+DateShipping=Sending date
 DateDeliveryPlanned=ວັນທີຂອງການຈັດສົ່ງທີ່ວາງແຜນໄວ້
 RefDeliveryReceipt=ໃບຮັບເງິນການສົ່ງຄືນ
 StatusReceipt=ໃບຮັບເງິນການຈັດສົ່ງ
@@ -63,6 +63,12 @@ NoProductToShipFoundIntoStock=ບໍ່ພົບສິນຄ້າທີ່ຈ�
 WeightVolShort=ນ້ ຳ ໜັກ/Vol.
 ValidateOrderFirstBeforeShipment=ກ່ອນອື່ນmustົດທ່ານຕ້ອງກວດສອບ ຄຳ ສັ່ງກ່ອນທີ່ຈະສາມາດຈັດສົ່ງໄດ້.
 NoLineGoOnTabToAddSome=ບໍ່ມີແຖວ, ໄປໃສ່ແຖບ "%s" ເພື່ອເພີ່ມ
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+NoWarehouseInBase=No warehouse in base
+ShipmentUpdated=Shipment successfully updated
+ShipmentIncrementStockOnDelete = Increase stock on deletion
 
 # Sending methods
 # ModelDocument
@@ -71,16 +77,22 @@ DocumentModelStorm=ຮູບແບບເອກະສານທີ່ຄົບຖ�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=ບໍ່ໄດ້ກໍານົດ EXPEDITION_ADDON_NUMBER ຄົງທີ່
 SumOfProductVolumes=ຜົນລວມຂອງປະລິມານຜະລິດຕະພັນ
 SumOfProductWeights=ຜົນລວມຂອງນໍ້າ ໜັກ ຜະລິດຕະພັນ
-
 # warehouse details
 DetailWarehouseNumber= ລາຍລະອຽດສາງ
 DetailWarehouseFormat= W: %s (ຈໍານວນ: %d)
+DetailChildrenFormat=%s : %s (Qty: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=ສະແດງວັນທີສຸດທ້າຍຂອງການເຂົ້າຫຼັກຊັບໃນລະຫວ່າງການສ້າງການຂົນສົ່ງສໍາລັບເລກລໍາດັບຫຼືຊຸດ
 CreationOptions=ທາງເລືອກທີ່ມີຢູ່ໃນລະຫວ່າງການສ້າງການຂົນສົ່ງ
-
 ShipmentDistribution=ການແຜ່ກະຈາຍການຂົນສົ່ງ
-
 ErrorTooManyCombinationBatchcode=ບໍ່ມີການສົ່ງຕໍ່ສາຍ %s ເນື່ອງຈາກການລວມກັນຂອງສາງ, ສິນຄ້າ, ລະຫັດຊຸດຫຼາຍເກີນໄປ (%s).
 ErrorNoCombinationBatchcode=ບໍ່ສາມາດບັນທຶກແຖວ %s ເປັນການປະສົມປະສານຂອງ warehouse-product-lot/serial (%s, %s, %s) ບໍ່ພົບໃນສະຕັອກ.
-
 ErrorTooMuchShipped=ປະລິມານທີ່ສົ່ງມາບໍ່ຄວນຫຼາຍກວ່າປະລິມານທີ່ສັ່ງສຳລັບສາຍ %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
+TypeContact_shipping_external_BILLING=Customer invoice contact
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pre-select the batch/serial number with the earliest sell-by/eat-by date when creating a shipment

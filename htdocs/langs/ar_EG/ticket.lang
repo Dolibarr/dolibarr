@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - ticket
+TicketTypeShortPROJET=مشروع
+TicketTypeShortOTHER=أخرى
+TicketSeverityShortHIGH=مرتفع
+TicketCategoryShortOTHER=أخرى
+TypeContact_ticket_internal_CONTRIBUTOR=مساهم في المهمة (خارجي)
+SolvedClosed=مغلقة
+TicketPublicInterfaceTopicLabelAdmin=عنوان واجهة الحجز
+Unread=غير مقروء
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

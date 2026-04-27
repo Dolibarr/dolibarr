@@ -7,7 +7,7 @@
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2021      Udo Tamm             <dev@dolibit.de>
 --
--- 
+--
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 3 of the License, or
@@ -29,10 +29,10 @@
 --
 
 --
--- Types de charges 
+-- Types de charges
 --
 
--- insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (id of country, id of social charges = fk_pays id & free numbering, label, ...); 
+-- insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (id of country, id of social charges = fk_pays id & free numbering, label, ...);
 
 --
 -- France

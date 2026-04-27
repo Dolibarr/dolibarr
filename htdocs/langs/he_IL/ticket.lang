@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=כרטיסים
 Module56000Desc=מערכת כרטיסים לניהול הנפקה או בקשה
-
 Permission56001=ראה כרטיסים
 Permission56002=שנה כרטיסים
 Permission56003=מחק כרטיסים
 Permission56004=ניהול כרטיסים
 Permission56005=ראה כרטיסים של כל הצדדים השלישיים (לא יעיל עבור משתמשים חיצוניים, תמיד תהיה מוגבל לצד השלישי שהם תלויים בו)
 Permission56006=ייצוא כרטיסים
-
 Tickets=כרטיסים
 TicketDictType=כרטיס - סוגים
 TicketDictCategory=כרטיס - קבוצות
 TicketDictSeverity=כרטיס - חומרה
 TicketDictResolution=כרטיס - רזולוציה
-
 TicketTypeShortCOM=שאלה מסחרית
 TicketTypeShortHELP=בקשה לעזרה תפקודית
 TicketTypeShortISSUE=בעיה או באג
@@ -41,61 +33,51 @@ TicketTypeShortPROBLEM=בְּעָיָה
 TicketTypeShortREQUEST=בקשת שינוי או שיפור
 TicketTypeShortPROJET=פּרוֹיֶקט
 TicketTypeShortOTHER=אחר
-
 TicketSeverityShortLOW=נָמוּך
 TicketSeverityShortNORMAL=נוֹרמָלִי
 TicketSeverityShortHIGH=גָבוֹהַ
 TicketSeverityShortBLOCKING=קריטי, חוסם
-
 TicketCategoryShortOTHER=אחר
-
 ErrorBadEmailAddress=שדה '%s' שגוי
 MenuTicketMyAssign=הכרטיסים שלי
 MenuTicketMyAssignNonClosed=הכרטיסים הפתוחים שלי
 MenuListNonClosed=פתחו כרטיסים
-
 TypeContact_ticket_internal_CONTRIBUTOR=תוֹרֵם
 TypeContact_ticket_internal_SUPPORTTEC=משתמש שהוקצה
 TypeContact_ticket_external_SUPPORTCLI=פנייה ללקוח / מעקב אחר אירועים
 TypeContact_ticket_external_CONTRIBUTOR=תורם חיצוני
-
 OriginEmail=דוא"ל לכתב
+EmailReplyto=Reply-To in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=שלח הודעת כרטיס במייל
-
 ExportDataset_ticket_1=כרטיסים
-
 # Status
 Read=לקרוא
 Assigned=שהוקצה
 NeedMoreInformation=מחכה למשוב הכתב
 NeedMoreInformationShort=מחכה למשוב
-TicketAnswered=Answered
 Waiting=הַמתָנָה
-SolvedClosed=נפתר
+SolvedClosed=Closed
 Deleted=נמחק
-
 # Dict
-Type=סוּג
 Severity=חוּמרָה
 TicketGroupIsPublic=הקבוצה היא ציבורית
 TicketGroupIsPublicDesc=אם קבוצת כרטיסים היא ציבורית, היא תהיה גלויה בטופס בעת יצירת כרטיס מהממשק הציבורי
-
 # Email templates
 MailToSendTicketMessage=לשליחת אימייל מהודעת כרטיס
-
-#
 # Admin page
-#
 TicketSetup=הגדרת מודול כרטיסים
 TicketSettings=הגדרות
 TicketPublicAccess=ממשק ציבורי שאינו דורש זיהוי זמין בכתובת האתר הבאה
 TicketSetupDictionaries=סוג הכרטיס, חומרת הקודים והקודים האנליטיים ניתנים להגדרה מתוך מילונים
 TicketParamModule=הגדרת משתנה מודול
 TicketParamMail=הגדרת אימייל
-TicketEmailNotificationFrom=דואר אלקטרוני של השולח לקבלת הודעה על תשובות
-TicketEmailNotificationFromHelp=דואר אלקטרוני של השולח לשימוש לשליחת דוא"ל ההתראה כאשר ניתנת תשובה בתוך המשרד האחורי. לדוגמה noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=הודע על יצירת כרטיס לכתובת דואר אלקטרוני זו
-TicketEmailNotificationToHelp=אם קיימת, כתובת דואר אלקטרוני זו תקבל הודעה על יצירת כרטיס
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation (in addition to any other default recipients)
 TicketNewEmailBodyLabel=הודעת טקסט נשלחה לאחר יצירת כרטיס
 TicketNewEmailBodyHelp=הטקסט שצוין כאן יוכנס למייל המאשר את יצירת כרטיס חדש מהממשק הציבורי. מידע על התייעצות עם הכרטיס מתווסף אוטומטית.
 TicketParamPublicInterface=הגדרת ממשק ציבורי
@@ -116,7 +98,9 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=טקסט זה יופיע מעל א
 ExtraFieldsTicket=תכונות נוספות
 TicketCkEditorEmailNotActivated=עורך HTML אינו מופעל. אנא הצב את התוכן של FCKEDITOR_ENABLE_MAIL ל-1 כדי לקבל אותו.
 TicketsDisableEmail=אין לשלוח מיילים ליצירת כרטיסים או הקלטת הודעות
-TicketsDisableEmailHelp=כברירת מחדל, הודעות דוא"ל נשלחות כאשר נוצרים כרטיסים או הודעות חדשות. אפשר אפשרות זו כדי להשבית את *כל* התראות הדוא"ל
+TicketsDisableEmailHelp=By default, notification emails to third parties are sent when new tickets or messages are created for both backoffice and public interface. Enable this option to disable email notifications to thirdparties when creation is done from backoffice.
+TicketsNotifyThirdPartyFromBackOfficeByDefault=Notify third party by default on ticket creation from backoffice
+TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp=When creating a ticket from the backoffice, the option "Notify third party" will be checked by default
 TicketsLogEnableEmail=אפשר יומן באמצעות דואר אלקטרוני
 TicketsLogEnableEmailHelp=בכל שינוי יישלח מייל **לכל איש קשר** המשויך לכרטיס.
 TicketParams=פרמס
@@ -133,11 +117,13 @@ TicketsLimitViewAssignedOnlyHelp=רק כרטיסים שהוקצו למשתמש �
 TicketsActivatePublicInterface=הפעל ממשק ציבורי
 TicketsActivatePublicInterfaceHelp=ממשק ציבורי מאפשר לכל מבקר ליצור כרטיסים.
 TicketsAutoAssignTicket=הקצה אוטומטית את המשתמש שיצר את הכרטיס
-TicketsAutoAssignTicketHelp=בעת יצירת כרטיס, ניתן להקצות את המשתמש באופן אוטומטי לכרטיס.
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
+TicketAutoChangeStatusOnAnswer=Automatically assign a status when answering a ticket
+TicketAutoChangeStatusOnAnswerHelp=When a user answers to a ticket, the status will automatically be applied to the ticket
 TicketNumberingModules=מודול מספור כרטיסים
 TicketsModelModule=תבניות מסמכים לכרטיסים
 TicketNotifyTiersAtCreation=הודע לצד שלישי בעת היצירה
-TicketsDisableCustomerEmail=השבת תמיד הודעות דוא"ל כאשר כרטיס נוצר מממשק ציבורי
+TicketsDisableCustomerEmail=Always disable emails to third parties when a ticket is created from the backoffice
 TicketsPublicNotificationNewMessage=שלח/י אימייל/ים כאשר הודעה/הערה חדשה מתווספת לכרטיס
 TicketsPublicNotificationNewMessageHelp=שלח דוא"ל(ים) כאשר הודעה חדשה מתווספת מהממשק הציבורי (למשתמש שהוקצה או דוא"ל ההתראות אל (עדכון) ו/או דוא"ל ההתראות אל)
 TicketPublicNotificationNewMessageDefaultEmail=הודעות דוא"ל אל (עדכון)
@@ -152,15 +138,16 @@ TicketsAutoNotifyClose=הודע באופן אוטומטי לצד השלישי ב
 TicketsAutoNotifyCloseHelp=בעת סגירת כרטיס, יוצע לך לשלוח הודעה לאחד מאנשי הקשר של צד שלישי. בסגירה המונית, תישלח הודעה לאיש קשר אחד של הצד השלישי המקושר לכרטיס.
 TicketWrongContact=בתנאי שאנשי הקשר אינם חלק מאנשי הקשר הנוכחיים של הכרטיסים. אימייל לא נשלח.
 TicketChooseProductCategory=קטגוריית מוצרים לתמיכה בכרטיסים
-TicketChooseProductCategoryHelp=בחר את קטגוריית המוצרים של תמיכת כרטיסים. זה ישמש לקישור אוטומטי של חוזה לכרטיס.
+TicketChooseProductCategoryHelp=Select the product category for support. The category will be used to find all contracts that include a product in this category. All contracts found will be linked to the created ticket.
 TicketUseCaptchaCode=השתמש בקוד גרפי (CAPTCHA) בעת יצירת כרטיס
 TicketUseCaptchaCodeHelp=מוסיף אימות CAPTCHA בעת יצירת כרטיס חדש.
 TicketsAllowClassificationModificationIfClosed=אפשר לשנות סיווג של כרטיסים סגורים
 TicketsAllowClassificationModificationIfClosedHelp=אפשר לשנות סיווג (סוג, קבוצת כרטיסים, חומרה) גם אם הכרטיסים סגורים.
-
-#
+TicketAutoCheckNotifyThirdParty=Check by default “Notify third party” when creating a ticket
+TicketAutoCheckNotifyThirdPartyHelp=When creating a ticket, the option "Notify third-party" will be automatically checked.
+TicketAssignContactToMessage=Assign an external contact to a message
+TicketAssignContactToMessageHelp=When a known contact answer to a message, his name is displayed on the ticket messages list.
 # Index & list page
-#
 TicketsIndex=אזור הכרטיסים
 TicketList=רשימת כרטיסים
 TicketAssignedToMeInfos=דף זה מציג את רשימת הכרטיסים שנוצרה על ידי המשתמש הנוכחי או הוקצתה לו
@@ -171,14 +158,9 @@ TicketViewNonClosedOnly=צפו בכרטיסים פתוחים בלבד
 TicketStatByStatus=כרטיסים לפי סטטוס
 OrderByDateAsc=מיין לפי תאריך עולה
 OrderByDateDesc=מיין לפי תאריך יורד
-ShowAsConversation=הצג כרשימת שיחות
-MessageListViewType=הצג כרשימת טבלה
 ConfirmMassTicketClosingSendEmail=שלח באופן אוטומטי מיילים בעת סגירת כרטיסים
 ConfirmMassTicketClosingSendEmailQuestion=האם ברצונך להודיע לצד שלישי בעת סגירת כרטיסים אלה?
-
-#
 # Ticket card
-#
 Ticket=כַּרְטִיס
 TicketCard=כרטיס כרטיס
 CreateTicket=צור כרטיס
@@ -220,8 +202,8 @@ ConfirmAbandonTicket=האם אתה מאשר את סגירת הכרטיס לסט�
 ConfirmDeleteTicket=נא לאשר את מחיקת הכרטיס
 TicketDeletedSuccess=הכרטיס נמחק בהצלחה
 TicketMarkedAsClosed=כרטיס מסומן כסגור
-TicketDurationAuto=משך זמן מחושב
-TicketDurationAutoInfos=משך זמן מחושב אוטומטית מתוך התערבות הקשורה
+TicketDurationAuto=Duration of interventions
+TicketDurationAutoInfos=Duration calculated automatically from related interventions
 TicketUpdated=הכרטיס עודכן
 SendMessageByEmail=שלח הודעה במייל
 TicketNewMessage=הודעה חדשה
@@ -278,20 +260,14 @@ TicketsDelayFromLastResponseTooLong=יותר מדי זמן חלף מאז התש�
 TicketNoContractFoundToLink=לא נמצא חוזה מקושר אוטומטית לכרטיס זה. אנא קשר חוזה באופן ידני.
 TicketManyContractsLinked=חוזים רבים נקשרו אוטומטית לכרטיס זה. הקפד לוודא מה יש לבחור.
 TicketRefAlreadyUsed=ההפניה [%s] כבר בשימוש, ההפניה החדשה שלך היא [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=הכרטיס %s נקרא על ידי %s
 NoLogForThisTicket=אין עדיין יומן עבור כרטיס זה
 TicketLogAssignedTo=הכרטיס %s הוקצה ל-%s
 TicketLogPropertyChanged=כרטיס %s שונה: סיווג מ-%s ל-%s
 TicketLogClosedBy=הכרטיס %s נסגר על ידי %s
 TicketLogReopen=הכרטיס %s ייפתח מחדש
-
-#
 # Public pages
-#
 TicketSystem=מערכת כרטיסים
 ShowListTicketWithTrackId=הצג רשימת כרטיסים מזיהוי מסלול
 ShowTicketWithTrackId=הצגת כרטיס ממזהה מסלול
@@ -306,13 +282,14 @@ TicketNewEmailBodyCustomer=זהו הודעת דוא"ל אוטומטית לאשר
 TicketNewEmailBodyInfosTicket=מידע למעקב אחר הכרטיס
 TicketNewEmailBodyInfosTrackId=מספר מעקב אחר כרטיס: %s
 TicketNewEmailBodyInfosTrackUrl=תוכל לצפות בהתקדמות הכרטיס על ידי לחיצה על הקישור הבא
-TicketNewEmailBodyInfosTrackUrlCustomer=ניתן לצפות בהתקדמות הכרטיס בממשק הספציפי על ידי לחיצה על הקישור הבא
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=אתה יכול לעיין בהיסטוריה של כרטיס זה על ידי לחיצה על הקישור הבא
 TicketEmailPleaseDoNotReplyToThisEmail=נא לא להשיב ישירות למייל זה! השתמש בקישור כדי להשיב לממשק.
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=Please do not reply directly to this email!
 TicketPublicInfoCreateTicket=טופס זה מאפשר לך לרשום כרטיס תמיכה במערכת הניהול שלנו.
 TicketPublicPleaseBeAccuratelyDescribe=אנא תאר במדויק את בקשתך. ספק את מירב המידע האפשרי כדי לאפשר לנו לזהות נכון את בקשתך.
 TicketPublicMsgViewLogIn=נא להזין מזהה מעקב אחר כרטיסים
-TicketTrackId=מזהה מעקב ציבורי
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=אחד מזהה המעקב שלך
 ErrorTicketNotFound=כרטיס עם מזהה מעקב %s לא נמצא!
 Subject=נושא
@@ -330,7 +307,6 @@ NumberOfTicketsByMonth=מספר כרטיסים בחודש
 NbOfTickets=מספר כרטיסים
 ExternalContributors=תורמים חיצוניים
 AddContributor=הוסף תורם חיצוני
-
 # notifications
 TicketCloseEmailSubjectCustomer=הכרטיס סגור
 TicketCloseEmailBodyCustomer=זוהי הודעה אוטומטית להודיע לך שהכרטיס %s נסגר זה עתה.
@@ -342,12 +318,8 @@ TicketNotificationRecipient=מקבל הודעה
 TicketNotificationLogMessage=הודעת יומן
 TicketNotificationEmailBodyInfosTrackUrlinternal=הצג את הכרטיס לתוך הממשק
 TicketNotificationNumberEmailSent=דוא"ל הודעה נשלח: %s
-
 ActionsOnTicket=אירועים בכרטיס
-
-#
 # Boxes
-#
 BoxLastTicket=כרטיסים אחרונים שנוצרו
 BoxLastTicketDescription=הכרטיסים האחרונים שנוצרו על ידי %s
 BoxLastTicketContent=
@@ -366,4 +338,7 @@ BoxNumberOfTicketByDay=מספר כרטיסים חדשים לפי יום
 BoxNewTicketVSClose=מספר כרטיסים לעומת כרטיסים סגורים (היום)
 TicketCreatedToday=הכרטיס נוצר היום
 TicketClosedToday=הכרטיס נסגר היום
-KMFoundForTicketGroup=מצאנו נושאים ושאלות נפוצות שעשויות לענות על שאלתך, תודה שבדקנו אותם לפני הגשת הכרטיס
+KMFoundForTicketGroup=Checkout our FAQ
+SetTitle=Set title
+TicketSendToInternalCC=Force an email as CC recipient to all messages send from ticket page.
+TicketSendToInternalCCHelp=Enter the email you want to use automatically as a Carbon Copy recipient when sending an email from ticket page.

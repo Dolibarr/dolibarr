@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Записав
 AUTHORPAIEMENT=Оплачено
 AddTrip=Створити звіт про витрати
@@ -13,6 +13,8 @@ byEX_EXP=за рядком (обмеження до %s)
 byEX_MON=по місяцях (обмеження до %s)
 byEX_YEA=за роками (обмеження до %s)
 CANCEL_USER=Видалено
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Рахунок (з Плану рахунків), що використовується за замовчуванням для «користувачів» у звітах про витрати
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Спеціальний рахунок, визначений у картці користувача, використовуватиметься лише для обліку допоміжної книги. Він використовуватиметься для головної книги, а також як значення за замовчуванням для обліку допоміжної книги, якщо для користувача не визначено спеціальний бухгалтерський рахунок.
 CarCategory=Категорія транспортного засобу
 ClassifyRefunded=Класифікувати "Відшкодовано"
 CompanyVisited=Компанію/організацію відвідали
@@ -70,7 +72,8 @@ ExpenseReportRulesDesc=Ви можете визначити правила ма�
 ExpenseReportWaitingForApproval=Новий звіт про витрати подано на затвердження
 ExpenseReportWaitingForApprovalMessage=Новий звіт про витрати було подано і очікує на затвердження. <br> - Користувач: %s <br> - Період: %s <br> Натисніть тут, щоб перевірити: a0ecb2ec87f49fz
 ExpenseReportWaitingForReApproval=Звіт про витрати подано на повторне затвердження
-ExpenseReportWaitingForReApprovalMessage=Звіт про витрати подано та очікує на повторне затвердження. <br> %s, ви відмовилися затвердити звіт про витрати з цієї причини: %s. <br> Запропоновано нову версію, яка чекає вашого схвалення. <br> - Користувач: %s <br> - Період: %s <br> Натисніть тут, щоб перевірити: a0ecb2ec87f49fz
+ExpenseReportWaitingForReApprovalMessage=Звіт про витрати надіслано та очікує на повторне схвалення.<br>%s, ви відмовилися схвалити звіт про витрати з такої причини: %s.<br>Запропоновано нову версію, яка очікує на ваше схвалення.<br> - Користувач: %s<br> - Період: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Натисніть тут, щоб перевірити: %s
 ExpenseReportsIk=Конфігурація тарифів на пробіг
 ExpenseReportsRules=Правила звіту про витрати
 ExpenseReportsToApprove=Затвердити звіти про витрати
@@ -115,6 +118,9 @@ VALIDOR=Затверджено
 ValidateAndSubmit=Підтвердити та подати на затвердження
 ValidatedWaitingApproval=Перевірено (очікується схвалення)
 ValideTrip=Затвердити звіт про витрати
+ExpenseReportPayments=Платежі за звітом про витрати
+TaxUndefinedForThisCategory = Податок для цієї категорії не визначено
+errorComputeTtcOnMileageExpense=Помилка під час обчислення вартості пробігу
 
 ## Dictionary
 EX_BRE=Сніданок
@@ -150,3 +156,6 @@ TF_PEAGE=Плата за проїзд
 TF_TAXI=Таксі
 TF_TRAIN=Потяг
 TF_TRIP=Перевезення
+FailedToSetPaid=Не вдалося встановити як платне
+FailedToSetToCancel=Не вдалося скасувати
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

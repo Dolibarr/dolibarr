@@ -1,12 +1,12 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
-ManageLotSerial=استخدم رقم الدُفعة/السيريال
+ManageLotSerial=استخدم الحصة/الرقم التسلسلي
 ProductStatusOnBatch=نعم (الحصة مطلوبة)
 ProductStatusOnSerial=نعم (رقم تسلسلي فريد من نوعه مطلوب)
 ProductStatusNotOnBatch=رقم (حصة / الرقم التسلسلي لم يستخدم)
 ProductStatusOnBatchShort=حصة
 ProductStatusOnSerialShort=الرقم التسلسلي
 ProductStatusNotOnBatchShort=لا
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=%s أو %s إلزامي
 BatchSellOrEatByMandatoryNone=لا أحد
 BatchSellOrEatByMandatoryAll=%s و %s
 Batch=الكثير / المسلسل
@@ -50,3 +50,5 @@ ToReplace=يحل محل
 CantMoveNonExistantSerial=خطأ. أنت تطلب نقلًا على سجل لمسلسل لم يعد موجودًا بعد الآن. قد تأخذ نفس المسلسل في نفس المستودع عدة مرات في نفس الشحنة أو تم استخدامه بواسطة شحنة أخرى. قم بإزالة هذه الشحنة وإعداد واحدة أخرى.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=إصلاح تشغيل جدول الدفعة غير مكتمل باستخدام المعلمة '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= مطلوب تصحيح المخزون بسبب الرقم التسلسلي الفريد.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

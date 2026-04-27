@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020 Floiran Henry <florian.henry@scopen.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +32,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'products', 'companies'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
+
+$search_month = GETPOSTINT('search_month');
+$search_year = GETPOSTINT('search_year');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -44,7 +56,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsbom'));
 
 $option = '';
@@ -115,8 +127,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
+		print '<div class="clearboth"></div>';
+		print '<table class="noborder tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -279,8 +291,10 @@ if ($id > 0 || !empty($ref)) {
 			$option .= '&search_year='.urlencode((string) $search_year);
 		}
 
+		print '<span id="anchorundermenu" class="anchorundermenu"></span>';
 		print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="page_y" value="">';
 		if (!empty($sortfield)) {
 			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 		}

@@ -3,6 +3,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -554,5 +555,41 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
+	}
+
+	/**
+	 * testDolConvertFile
+	 *
+	 * @return void
+	 */
+	public function testDolConvertFile()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// If imagick not installed, you can install it with
+		// apt install imagemagick php7.4-imagick
+		if (class_exists('Imagick')) {
+			$filepdf = dirname(__FILE__).'/imgsvgwithjs.svg';
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(-4, $result, 'Convert of PDF file '.$filepdf.' into image should have return an error because it is not a real PDF, but this did not happen.');
+
+			$filepdf = dirname(__FILE__).'/file_pdf_with_js.pdf.jpg';
+			$result = dol_copy($filepdf, $conf->admin->dir_temp.'/testdolconvert.pdf');
+
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(1, $result, 'Failed to convert PDF file into '.$fileimage.', error '.$result);
+		} else {
+			print __METHOD__." skipped because Imagick is not installed.\n";
+		}
 	}
 }

@@ -36,9 +36,9 @@ abstract class ModeleBankAccountDoc extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -52,13 +52,14 @@ abstract class ModeleBankAccountDoc extends CommonDocGenerator
 		return $list;
 	}
 
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Write the document to disk
 	 *
 	 *	@param	Account		$object   		Object Account to generate
 	 *	@param	Translate	$outputlangs	Lang output object
-	 *	@return	int         				1 if OK, <=0 if KO
+	 *	@return	int<-1,1>      				1 if OK, <=0 if KO
 	 */
 	abstract public function write_file($object, $outputlangs);
 	// phpcs:enable

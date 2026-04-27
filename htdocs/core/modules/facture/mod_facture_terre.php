@@ -27,16 +27,25 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 
 /**
- *  \class      mod_facture_terre
- *  \brief      Class of numbering module Terre for invoices
+ *  Class of numbering module Terre for invoices
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
 	/**
-	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
-	 * @var string
+	 * @var string Sub-module name
 	 */
-	public $version = 'dolibarr';
+	public $name = 'Terre';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 40;
+
+	/**
+	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 */
+	public $version = 'dolibarr_deprecated';
 
 	/**
 	 * Prefix for invoices
@@ -73,7 +82,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefixinvoice = 'IN'; // We use correct standard code "IN = Invoice"
@@ -200,10 +209,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 * ALTER TABLE llx_facture ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'FA' THEN CAST(SUBSTRING(ref FROM 10) AS SIGNED) ELSE 0 END) PERSISTENT;
 	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
 	 *
-	 * @param   Societe		$objsoc		Object third party
-	 * @param   Facture		$invoice	Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string|int<-1,0>       	Next ref value or last ref if $mode is 'last', -1 or 0 if KO
+	 * @param	Societe		$objsoc		Object third party
+	 * @param   ?Facture	$invoice	Object invoice
+	 * @param   string		$mode		'next' for next value or 'last' for last value
+	 * @return  string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{

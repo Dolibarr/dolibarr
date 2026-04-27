@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -129,7 +130,33 @@ class ContratTest extends CommonClassTest
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
 		$this->assertNotEquals($localobject->date_creation, '');
 
-		return $localobject->id;
+		return $localobject;
+	}
+
+	/**
+	 * testContratUpdate
+	 *
+	 * @param	Contrat		$localobject	Object contract
+	 * @return	int
+	 *
+	 * @depends	testContratOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testContratUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->note_private = 'New private note';
+
+		$result = $localobject->update($user);
+
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
 	}
 
 	/**
@@ -138,7 +165,7 @@ class ContratTest extends CommonClassTest
 	 * @param	int		$id		Id of contract
 	 * @return	int
 	 *
-	 * @depends	testContratOther
+	 * @depends	testContratUpdate
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testContratDelete($id)

@@ -132,7 +132,7 @@ abstract class AbstractLexer
     }
 
     /**
-     * Retrieve the original lexer's input until a given position. 
+     * Retrieve the original lexer's input until a given position.
      *
      * @param integer $position
      *
