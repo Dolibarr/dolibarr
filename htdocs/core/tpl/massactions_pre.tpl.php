@@ -404,7 +404,7 @@ if ($massaction == 'premassmail') {
 		$endlist = array();
 	}
 
-	$htmlname = $objecttmp->element ?? 'unknown';
+	$htmlname = isset($objecttmp->element) ? $objecttmp->element : 'unknownelement';
 	$page = '';
 	$endtext = $langs->trans("Other").' '.$langs->trans("EMailings");
 	$size = (int) round(10 + ((log(count($toplist)) > 0 ? log(count($toplist)) : 0) + (log(count($endlist)) > 0 ? log(count($endlist)) : 0)));
