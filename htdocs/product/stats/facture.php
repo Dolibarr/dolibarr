@@ -252,8 +252,6 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 		setEventMessages($langs->trans("Invoices").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
 	}
 
-	// Verify all invoices actually exist before actually inserting their thirdparty + any contacts, where successful insert verifies the invoice
-
 	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 	$contactstatic = new Contact($db);
 	$verified_toselect = array();
@@ -271,12 +269,11 @@ if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
 			if ($thirdpartyemail > 0) {
 				$fetchsociete = $invoicestatic->fetch_thirdparty();
 				if (!$fetchsociete) {
-					// TODO we handle if fetching societe once pr invoice.
-
+					dol_syslog('product/stats/facture.php::failed fetching societe of invoice='.$itemid, LOG_ERR);
+					$error_message = $langs->trans("CustomerInvoice").'='.$itemid.' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("ThirdParty"));
+					setEventMessages($error_message, null, 'errors');
 				}
 			}
-
-
 			// here we should if empty($list_of_contacts && in_array($showerrors, 'ContactForInvoices')) - report that there are no contacts for the given invoice
 			// we should also fetch each contact to make sure it is a good contact such that we don't fail once pr. mailing pr. invoice, but only once pr invoice.
 			dol_syslog("product/stats/facture.php::count(select_mailing)=".count($select_mailing), LOG_DEBUG);
