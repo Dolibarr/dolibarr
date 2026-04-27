@@ -102,12 +102,6 @@ if (!class_exists('FormSetup')) {
 }
 $formSetup = new FormSetup($db);
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
-
 // Enter here all parameters in your setup page
 
 // Setup conf for selection of an URL
@@ -263,7 +257,7 @@ if ($action == 'updateMask') {
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
+			exit;
 		} else {
 			setEventMessages($module->error, null, 'errors');
 			dol_syslog($module->error, LOG_ERR);
