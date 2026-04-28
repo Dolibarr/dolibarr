@@ -2095,26 +2095,27 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</td></tr>';
 
 	// Bank country
-	$selectedid = GETPOST("account_country_id") ? GETPOST("account_country_id") : $bankaccount->fk_country;
-	if (empty($selectedid)) {
-		$selectedid = $mysoc->country_code;
+	$country_codeid = GETPOST("account_country_id") ? GETPOST("account_country_id") : $bankaccount->fk_country;
+	if (empty($country_codeid)) {
+		$country_codeid = $mysoc->country_code;
 	}
-	$bankaccount->country_code = getCountry($selectedid, '2'); // Force country code on account to have following field on bank fields matching country rules
+	$bankaccount->country_code = getCountry($country_codeid, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
-	print $form->select_country($selectedid, 'account_country_id');
+	print $form->select_country($country_codeid, 'account_country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
 	print '</td></tr>';
 
 	// Bank state
+	$selected_state_id = $bankaccount->state_id;
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
-	if ($selectedid) {
+	if ($country_codeid) {
 		print img_picto('', 'state', 'class="pictofixedwidth"');
-		print $formcompany->select_state($bankaccount->state_id, $selectedid, 'account_state_id');
+		print $formcompany->select_state($selected_state_id, $country_codeid, 'account_state_id');
 	} else {
 		print $countrynotdefined;
 	}
