@@ -10203,9 +10203,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
 			'__MYCOMPANY_URL__'     => $mysoc->url,
-			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone, '', 0, 0, '', " ", '', '', -1),
-			'__MYCOMPANY_PHONEMOBILE__' => dol_print_phone($mysoc->phone_mobile, '', 0, 0, '', " ", '', '', -1),
-			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_PHONE__'   => dol_print_phone((string) $mysoc->phone, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_PHONEMOBILE__' => dol_print_phone((string) $mysoc->phone_mobile, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_FAX__'     => dol_print_phone((string) $mysoc->fax, '', 0, 0, '', " ", '', '', -1),
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -10676,7 +10676,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				// Show structured communication
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
-					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication($object->ref, $object->type);
+					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication((string) $object->ref, $object->type);
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
@@ -10725,7 +10725,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					/** @var Propal $object */
 					$substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT . "/comm/propal/card.php?id=" . $object->id;
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref, 1, $object);
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', (string) $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'commande') {
 					'@phan-var-force Commande $object';
@@ -10742,14 +10742,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					/** @var Contrat $object */
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT . "/contrat/card.php?id=" . $object->id;
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', $object->ref, 1, $object);
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', (string) $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'fichinter') {
 					'@phan-var-force Fichinter $object';
 					/** @var Fichinter $object */
 					$substitutionarray['__URL_FICHINTER__'] = DOL_MAIN_URL_ROOT . "/fichinter/card.php?id=" . $object->id;
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref, 1, $object);
+					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', (string) $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					'@phan-var-force SupplierProposal $object';
