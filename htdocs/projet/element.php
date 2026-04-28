@@ -704,7 +704,7 @@ if (!empty($hookmanager->resArray)) {
 }
 
 if ($action == "addelement") {
-	$tablename = GETPOST("tablename");
+	$tablename = GETPOST("tablename", "aZ09");
 	$elementselectid = GETPOST("elementselect");
 	$result = $object->update_element($tablename, $elementselectid);
 	if ($result < 0) {
