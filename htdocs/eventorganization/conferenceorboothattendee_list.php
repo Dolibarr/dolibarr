@@ -243,7 +243,126 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// Massaction add/delete recipients to/from mass mailing
+$button_clone_attendee = GETPOST('button_clone_attendee', 'aZ09');
+if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissiontoadd) {
+	$langs->loadLangs(array("errors", "main", "mails", "companies"));
 
+	$oldobject_status = GETPOSTINT('oldobject_status') ? GETPOSTINT('oldobject_status') : -1; // default is not to change old attendee status
+	$newobject_status = GETPOSTINT('newobject_status') ? GETPOSTINT('newobject_status') : 0;  // default for new cloned attendee is draft
+	$notrigger = GETPOSTINT('notrigger') ? GETPOSTINT('notrigger') : 1;
+
+	$select_eventorg = GETPOST('select_eventorg', 'array:int') ?? array();
+	if (empty($select_eventorg)) {
+		setEventMessages($langs->trans("OrganizedEvent").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+	if (empty($toselect)) {
+		setEventMessages($langs->trans("Attendees").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+
+	// Verify all eventattendees actually exist before actually inserting them, where successful insert verifies the mailing
+	$attendeestatic = new ConferenceOrBoothAttendee($db);
+	$verified_attendees = array();
+	$verified_eventorgs = array();
+	$whatchanged = array();
+	$info_mesgs = array();
+	$info_warnings = array();
+	$info_errors = array();
+	$changetomailing = null;
+	$notrigger = 1;
+	foreach ($toselect as $attendeeid) {
+		dol_syslog('eventorganization/conferenceorboothattendee_list::foreach attendeeid='.$attendeeid, LOG_DEBUG);
+		$faresult = $attendeestatic->fetch($attendeeid);
+		if ($faresult) {
+			$verified_attendees[] = $attendeeid;
+			foreach ($select_eventorg as $target_event) {
+				dol_syslog('eventorganization/conferenceorboothattendee_list::foreach target_event='.$target_event, LOG_DEBUG);
+				$pfresult = $projectstatic->fetch($target_event);
+				if ($pfresult) {
+					$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
+					if ($userHasProjectRights) {
+						$attendeeclone = $attendeestatic->createFromClone($user, $attendeeid);
+						if (is_object($attendeeclone)) {
+							$attendeeclone->fk_project = $target_event;
+							if ($newobject_status != -1) {
+								$attendeeclone->status = $newobject_status;
+							}
+							$cloneresult = $attendeeclone->update($user, $notrigger);
+							$sourceresult = 0; // so it is always something
+							if ($oldobject_status != -1) {
+								$attendeestatic->status = $oldobject_status;
+								$sourceresult = $attendeeclone->update($user, $notrigger);
+							}
+							// we should record the changes
+						} elseif ($attendeeclone == -1) {
+							$cloneresult = -1;
+						} else {
+							// okay something is really wrong with cloning, we should log and report that
+						}
+					} else {
+						// this is bad, user does not have access rights to this project
+					}
+				} else {
+					// okay, fetching the project failed
+				}
+			}
+		} else {
+			dol_syslog('fetch failed for attendee id='.$attendeeid.' in array toselect on page eventorganization/conferenceorboothattendee_list.php massaction confirm_preclone', LOG_ERR);
+			setEventMessages($langs->trans("ErrorRefNotFound", "attendeeid=".$attendeeid), null, 'errors');
+			continue;
+		}
+	}
+
+	// 1. report errors first
+	foreach ($info_errors as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'errors');
+	}
+	// 2. report warnings
+	foreach ($info_warnings as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'warnings');
+	}
+	// 3. report success
+	foreach ($info_mesgs as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		$actionmessage = $langs->trans("Unknown").' '.$langs->trans("BulkActions").' '.$langs->trans("RecordsModified", count($value));
+		if ($button_add_mailing) {
+			$actionmessage = $langs->trans("XTargetsAdded", count($value));
+		}
+		if ($button_delete_mailing) {
+			$actionmessage = $langs->trans("RecordsDeleted", count($value));
+		}
+		if ($verbosereporting) {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'mesgs');
+		} else {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
+		}
+	}
+
+	$total_changes = 0;
+	foreach ($select_mailing as $mailingid) {
+		$total_changes += $whatchanged[$mailingid];
+	}
+	setEventMessages($langs->trans("GrandTotal").' '.$langs->trans("RecordsModified", $total_changes), null, 'mesgs');
+
+	dol_syslog("eventorganization/conferenceorboothattendee_list::END confirmmassaction confirm_preclone && permissiontoadd", LOG_DEBUG);
+}
 
 /*
  * View
