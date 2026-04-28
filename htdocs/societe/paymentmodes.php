@@ -192,6 +192,9 @@ if (empty($reshook)) {
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
+			$companybankaccount->currency_code   = GETPOST('account_currency_code', 'alpha');
+			$companybankaccount->fk_country      = GETPOSTINT('account_country_id');
+			$companybankaccount->state_id        = GETPOSTINT('account_state_id');
 			$companybankaccount->address         = GETPOST('address', 'alpha');
 
 			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
@@ -203,6 +206,9 @@ if (empty($reshook)) {
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, (string) $companybankaccount->id);
 			}
+
+			$companybankaccount->status          = GETPOSTINT('clos');
+
 
 			if (GETPOST('stripe_card_ref', 'alpha') && GETPOST('stripe_card_ref', 'alpha') != $companypaymentmode->stripe_card_ref) {
 				// If we set a stripe value that is different than previous one, we also set the stripe account
@@ -2064,6 +2070,52 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
 		print '</tr>';
 	}
+
+	// Currency
+	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
+	print '<td>';
+	$selectedcode = $object->currency_code;
+	if (!$selectedcode) {
+		$selectedcode = $conf->currency;
+	}
+	print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
+	//print $langs->trans("Currency".$conf->currency);
+	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
+	print '</td></tr>';
+
+	// Status
+	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
+	print '<td>';
+	print $form->selectarray("clos", $object->labelStatus, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $object->status), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
+	print '</td></tr>';
+
+	// Bank country
+	$selectedcode = '';
+	if (GETPOSTISSET("account_country_id")) {
+		$selectedcode = GETPOST("account_country_id") ? GETPOST("account_country_id") : $object->country_code;
+	} elseif (empty($selectedcode)) {
+		$selectedcode = $mysoc->country_code;
+	}
+	$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
+	print '<td>';
+	print img_picto('', 'country', 'class="pictofixedwidth"');
+	print $form->select_country($selectedcode, 'account_country_id');
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
+	print '</td></tr>';
+
+	// Bank state
+	print '<tr><td>'.$langs->trans('State').'</td><td>';
+	if ($selectedcode) {
+		print img_picto('', 'state', 'class="pictofixedwidth"');
+		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOSTINT("account_state_id") : 0, $selectedcode, 'account_state_id');
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
