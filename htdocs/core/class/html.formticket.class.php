@@ -1486,7 +1486,7 @@ class FormTicket
 	 * Show the form to add message on ticket
 	 *
 	 * @param  	string  $width      			Width of form
-	 * @param	int		$fromPublicInterface	Set to 1 if call is done for the public interface
+	 * @param	int	$fromPublicInterface	Set to 1 if call is done for the public interface
 	 * @return 	void
 	 */
 	public function showMessageForm($width = '40%', $fromPublicInterface = 0)
