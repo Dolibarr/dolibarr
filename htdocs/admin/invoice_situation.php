@@ -157,11 +157,7 @@ print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").
  *  Numbering module
  */
 
-if ($action == 'edit') {
-	print $formSetup->generateOutput(true);
-} else {
-	print $formSetup->generateOutput();
-}
+print $formSetup->generateOutput(true);
 
 if (count($formSetup->items) > 0) {
 	if ($action != 'edit') {
