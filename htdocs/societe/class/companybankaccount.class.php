@@ -335,6 +335,9 @@ class CompanyBankAccount extends Account
 	 */
 	public $datem;
 
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
+
 	/**
 	 *  Constructor
 	 *
@@ -342,6 +345,8 @@ class CompanyBankAccount extends Account
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		$this->socid = 0;
@@ -349,7 +354,12 @@ class CompanyBankAccount extends Account
 		$this->balance = 0;
 		$this->default_rib = 0;
 		$this->type = "ban";
-	}
+
+		$this->labelStatus = array(
+			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
+		);
+}
 
 
 	/**
