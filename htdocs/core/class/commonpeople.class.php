@@ -491,8 +491,16 @@ trait CommonPeople
 			} else {
 				$mailingtarget->fk_member = isset($this->fk_member) ? $this->fk_member : null;
 			}
-			$mailingtarget->lastname = $this->lastname;
-			$mailingtarget->firstname = $this->firstname;
+			if ($this->element == 'societe') {
+				$mailingtarget->lastname = null;
+			} else {
+				$mailingtarget->lastname = isset($this->lastname) ? $this->lastname : null;
+			}
+			if ($this->element == 'societe') {
+				$mailingtarget->firstname = isset($this->nom) ? $this->nom : null;;
+			} else {
+				$mailingtarget->firstname = isset($this->firstname) ? $this->firstname : null;
+			}
 			$mailingtarget->email = $email;
 			$mailingtarget->other = $other;
 			$mailingtarget->tag = $this->db->escape(dol_hash($conf->file->instance_unique_id.";".$this->email.";".$this->lastname.";".((int) $fk_mailing).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'));
