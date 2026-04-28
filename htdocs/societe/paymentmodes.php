@@ -2085,9 +2085,10 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</td></tr>';
 
 	// Status
+	$account_status = $bankaccount->status;
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $bankaccount->labelStatus, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $bankaccount->status), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
+	print $form->selectarray("clos", $bankaccount->labelStatus, $account_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Bank country
