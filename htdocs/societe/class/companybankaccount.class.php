@@ -359,7 +359,7 @@ class CompanyBankAccount extends Account
 			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
 			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
 		);
-}
+	}
 
 
 	/**
