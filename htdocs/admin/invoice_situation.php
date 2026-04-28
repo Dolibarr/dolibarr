@@ -152,23 +152,7 @@ print dol_get_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), 
 
 print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").'</span><br><br>';
 
-
-/*
- *  Numbering module
- */
-
 print $formSetup->generateOutput(true);
-
-if (count($formSetup->items) > 0) {
-	if ($action != 'edit') {
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-		print '</div>';
-	}
-} else {
-	print '<br>'.$langs->trans("NothingToSetup");
-}
-
 
 print dol_get_fiche_end();
 

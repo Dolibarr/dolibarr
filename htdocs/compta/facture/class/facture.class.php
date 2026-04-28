@@ -1412,6 +1412,9 @@ class Facture extends CommonInvoice
 		$this->date = dol_now();
 		$this->source = 0;
 
+		// Avoid updating the row ranks
+		$this->context['createfromclone'] = 1;
+
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
 			$line = new FactureLigne($this->db);
