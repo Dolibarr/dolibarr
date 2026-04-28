@@ -402,7 +402,7 @@ if ($massaction == 'preclone') {
 	foreach ($objecttmp->list_possible_status as $statusid) {
 		$status_list[$statusid] = $objecttmp->LibStatut($statusid, 1);
 	}
-	$htmlname = 'attendee';
+	$htmlname = 'eventorg';
 	$page = '';
 	$size = (int) round(3 + log(count($project_list)));
 	$toptext = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBoxFromList");

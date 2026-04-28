@@ -1002,7 +1002,7 @@ class FormProjets extends Form
 		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
 		$out .= '<input type="hidden" name="massaction" value="confirm_preclone">';
 		$out .= '<!-- 2 buttons Add and Cancel -->';
-		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_clone_'.$actionname.'" name="button_clone_'.$actionname.'" value="'.$langs->trans("Clone").'">';
+		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_clone_attendee" name="button_clone_attendee" value="'.$langs->trans("Clone").'">';
 		$out .= '<input type="submit" class="button button-cancel reposition" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 		$out .= '</div><br>';
 
