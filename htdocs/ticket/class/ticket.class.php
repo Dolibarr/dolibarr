@@ -1713,8 +1713,6 @@ class Ticket extends CommonObject
 
 			$this->status = Ticket::STATUS_READ;
 
-			$this->db->begin();
-
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".((int) $this->status) .", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
