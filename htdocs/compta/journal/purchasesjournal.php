@@ -148,6 +148,12 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 }
 
 $tabfac = array();
+$tabcompany = array();
+$tabht = array();
+$tabtva = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
 
 $result = $db->query($sql);
 if ($result) {
@@ -156,12 +162,6 @@ if ($result) {
 	$cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', $langs->trans("CodeNotDef"));
 	$cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 
-	$tabht = array();
-	$tabtva = array();
-	$tabttc = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabcompany = array();
 
 	$i = 0;
 	while ($i < $num) {
@@ -222,15 +222,16 @@ print "</tr>\n";
 $invoicestatic = new FactureFournisseur($db);
 $companystatic = new Fournisseur($db);
 
-foreach ($tabfac as $key => $val) {
-	$invoicestatic->id = (int) $key;
-	$invoicestatic->ref = $val["ref"];
-	$invoicestatic->type = $val["type"];
+if (count($tabfac) && count($tabht) && count($tabtva) && count($tablocaltax1) && count($tablocaltax2) && count($tabttc)) {  // Check for static analysis
+	foreach ($tabfac as $key => $val) {
+		$invoicestatic->id = (int) $key;
+		$invoicestatic->ref = $val["ref"];
+		$invoicestatic->type = $val["type"];
 
-	$companystatic->id = $tabcompany[$key]['id'];
-	$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->id = $tabcompany[$key]['id'];
+		$companystatic->name = $tabcompany[$key]['name'];
 
-	$lines = array(
+		$lines = array(
 		array(
 			'var' => $tabht[$key],
 			'label' => $langs->trans('Products'),
@@ -253,26 +254,27 @@ foreach ($tabfac as $key => $val) {
 			'nomtcheck' => true,
 			'inv' => true
 		)
-	);
+		);
 
-	foreach ($lines as $line) {
-		foreach ($line['var'] as $k => $mt) {
-			if (isset($line['nomtcheck']) || $mt) {
-				print '<tr class="oddeven">';
-				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
-				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td>";
-				print "<td>".$line['label']."</td>";
+		foreach ($lines as $line) {
+			foreach ($line['var'] as $k => $mt) {
+				if (isset($line['nomtcheck']) || $mt) {
+					print '<tr class="oddeven">';
+					print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+					print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
+					print "<td>".$k."</td>";
+					print "<td>".$line['label']."</td>";
 
-				if (isset($line['inv'])) {
-					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
-					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
-				} else {
-					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
-					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					if (isset($line['inv'])) {
+						print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+						print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
+					} else {
+						print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
+						print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					}
+
+					print "</tr>";
 				}
-
-				print "</tr>";
 			}
 		}
 	}
