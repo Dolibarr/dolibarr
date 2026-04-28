@@ -534,7 +534,7 @@ class CompanyBankAccount extends Account
 		}
 
 		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-		$sql .= " domiciliation as address,";
+		$sql .= " currency_code, fk_country, state_id, status, domiciliation as address,";
 		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
 		$sql .= " last_main_doc, model_pdf";
@@ -572,6 +572,10 @@ class CompanyBankAccount extends Account
 				$this->bic             = $obj->bic;
 				$this->iban            = dolDecrypt($obj->iban);
 
+				$this->currency_code   = $obj->currency_code;
+				$this->fk_country      = $obj->fk_country;
+				$this->state_id        = $obj->state_id;
+				$this->status          = $obj->status;
 				$this->address         = $obj->address;
 
 				$this->owner_name      = $obj->owner_name;

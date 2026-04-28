@@ -2016,6 +2016,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'" spellcheck="false"></td></tr>';
 
 	// Show fields of bank account
+	$companybankaccount->fetch($id);
 	$bankaccount = $companybankaccount;
 	// Code here is similar as in bank.php for users
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
@@ -2074,7 +2075,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 	print '<td>';
-	$selectedcode = $object->currency_code;
+	$selectedcode = $bankaccount->currency_code;
 	if (!$selectedcode) {
 		$selectedcode = $conf->currency;
 	}
@@ -2086,22 +2087,20 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	// Status
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $object->labelStatus, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $object->status), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
+	print $form->selectarray("clos", $bankaccount->labelStatus, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $bankaccount->status), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Bank country
-	$selectedcode = '';
-	if (GETPOSTISSET("account_country_id")) {
-		$selectedcode = GETPOST("account_country_id") ? GETPOST("account_country_id") : $object->country_code;
-	} elseif (empty($selectedcode)) {
-		$selectedcode = $mysoc->country_code;
+	$selectedid = GETPOST("account_country_id") ? GETPOST("account_country_id") : $bankaccount->fk_country;
+	if (empty($selectedid)) {
+		$selectedid = $mysoc->country_code;
 	}
-	$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
+	$bankaccount->country_code = getCountry($selectedid, '2'); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
-	print $form->select_country($selectedcode, 'account_country_id');
+	print $form->select_country($selectedid, 'account_country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -2109,9 +2108,9 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	// Bank state
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
-	if ($selectedcode) {
+	if ($selectedid) {
 		print img_picto('', 'state', 'class="pictofixedwidth"');
-		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOSTINT("account_state_id") : 0, $selectedcode, 'account_state_id');
+		print $formcompany->select_state($bankaccount->state_id, $selectedid, 'account_state_id');
 	} else {
 		print $countrynotdefined;
 	}
