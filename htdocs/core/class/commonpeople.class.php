@@ -464,7 +464,11 @@ trait CommonPeople
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 		$mailingtarget = new MailingTarget($this->db);
-		$unsubscribed = $mailingtarget->checkEmailUnsubscribed($email);
+		if ($ignorenocontact) {
+			$unsubscribed = 0;
+		} else {
+			$unsubscribed = $mailingtarget->checkEmailUnsubscribed($email);
+		}
 		if ($ignorenocontact > 0 || $unsubscribed == 0) {
 			$mailingtarget->fk_mailing = $fk_mailing;
 			if ($this->element == 'societe') {
