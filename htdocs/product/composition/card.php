@@ -613,7 +613,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
-		$potential_kit_stock = null;
+		$potential_kit_stock = 0;
 		if (count($prods_arbo)) {
 			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
