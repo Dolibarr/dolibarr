@@ -492,14 +492,14 @@ trait CommonPeople
 				$mailingtarget->fk_member = isset($this->fk_member) ? $this->fk_member : null;
 			}
 			if ($this->element == 'societe') {
-				$mailingtarget->lastname = null;
+				$mailingtarget->lastname = '';
 			} else {
-				$mailingtarget->lastname = isset($this->lastname) ? $this->lastname : null;
+				$mailingtarget->lastname = isset($this->lastname) ? $this->lastname : '';
 			}
 			if ($this->element == 'societe') {
-				$mailingtarget->firstname = isset($this->nom) ? $this->nom : null;;
+				$mailingtarget->firstname = isset($this->nom) ? $this->nom : '';
 			} else {
-				$mailingtarget->firstname = isset($this->firstname) ? $this->firstname : null;
+				$mailingtarget->firstname = isset($this->firstname) ? $this->firstname : '';
 			}
 			$mailingtarget->email = $email;
 			$mailingtarget->other = $other;
