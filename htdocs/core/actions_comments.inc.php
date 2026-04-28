@@ -34,13 +34,15 @@
  * @var ?string $action
  * @var int $withproject
  * @var int $idcomment
+ * @var int $id
  */
 
 // Next should be define in the including php source file
 '
+@phan-var-force ?string $action
 @phan-var-force int $withproject
 @phan-var-force int $idcomment
-@phan-var-force ?string $action
+@phan-var-force int $id
 ';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/comment.class.php';
