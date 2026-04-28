@@ -50,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var Societe $mysoc
  * @var User $user
  */
 
@@ -904,6 +905,8 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+
+$countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $title = $langs->trans("ThirdParty");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
