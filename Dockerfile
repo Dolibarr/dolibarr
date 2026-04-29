@@ -4,14 +4,13 @@ FROM php:8.1-apache
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev \
     libzip-dev zip unzip libxml2-dev \
+    libicu-dev \
     && docker-php-ext-configure gd \
         --with-freetype --with-jpeg \
     && docker-php-ext-install \
         gd pdo pdo_mysql mysqli \
-        zip xml calendar intl
-
-# Activation du module Apache rewrite
-RUN a2enmod rewrite
+       zip xml calendar intl \
+    && a2enmod rewrite
 
 # Dossier de travail
 WORKDIR /var/www/html
@@ -24,6 +23,7 @@ RUN mkdir -p /var/documents \
 
 EXPOSE 80
 CMD ["apache2-foreground"]
+<<<<<<< HEAD
 FROM eclipse-temurin:19 as builder
 WORKDIR application
 ARG ARTIFACT_NAME
@@ -84,3 +84,5 @@ COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
 ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+=======
+>>>>>>> acfc112f994f0b3fe16f17b5bcb41872d4ada21e
