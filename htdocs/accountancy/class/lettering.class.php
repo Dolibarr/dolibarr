@@ -517,8 +517,8 @@ class Lettering extends BookKeeping
 		$error = 0;
 		$affected_rows = 0;
 
-		// Generate a string with n char 'A' (for manual/auto matching)  @phan-suppress-next-line PhanParamSuspiciousOrder
-		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), 'A');
+		// Generate a string with n char 'A' (for manual/auto matching)
+		$letter = str_repeat('A', getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3));
 
 		// Check for unreconcilable accounts
 		$pcgId = getDolGlobalInt('CHARTOFACCOUNTS');
