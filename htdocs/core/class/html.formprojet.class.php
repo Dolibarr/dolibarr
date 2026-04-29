@@ -967,9 +967,9 @@ class FormProjets extends Form
 		$out .= '<select class="select" name="select_'.$htmlname.'[]" id="select_'.$htmlname.'" multiple size="'.$size.'" style="'.$morecss.'">';
 
 		foreach ($toplist as $key => $value) {
-            $project_id = $value["rowid"];
-            $project_title = $value["title"];
-		    $out .= '    <option class="option" value="'.$project_id.'">'.$project_title.'</option>';
+			$project_id = $value["rowid"];
+			$project_title = $value["title"];
+			$out .= '    <option class="option" value="'.$project_id.'">'.$project_title.'</option>';
 		}
 
 		$out .= '</select>';
@@ -983,7 +983,7 @@ class FormProjets extends Form
 		$out .= '    <option class="option" value="-1" selected>'.$langs->trans("IsBefore").'</option>';
 		$out .= '    <option class="option" value="" disabled>&mdash;&mdash;&mdash;</option>';
 		foreach ($status_list as $key => $value) {
-		    $out .= '    <option class="option" value="'.$key.'">'.$value.'</option>';
+			$out .= '    <option class="option" value="'.$key.'">'.$value.'</option>';
 		}
 		$out .= '</select>';
 		$out .= '</div><br>';
@@ -994,7 +994,7 @@ class FormProjets extends Form
 		$out .= '    <option class="option" value="-1" selected>'.$langs->trans("Copy").'</option>';
 		$out .= '    <option class="option" value="" disabled>&mdash;&mdash;&mdash;</option>';
 		foreach ($status_list as $key => $value) {
-		    $out .= '    <option class="option" value="'.$key.'">'.$value.'</option>';
+			$out .= '    <option class="option" value="'.$key.'">'.$value.'</option>';
 		}
 		$out .= '</select>';
 		$out .= '</div>';
