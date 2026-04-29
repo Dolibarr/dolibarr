@@ -976,6 +976,7 @@ class FormProjets extends Form
 		$out .= '</div>';
 
 		$out .= '<br>';
+		$out .= '<input type="checkbox" id="verbosereporting" name="verbosereporting" value="1"><label for="verbosereporting">'.$langs->trans("Show").' '.$langs->trans("ListOf", $langs->trans("CloneOf", $langs->trans("Attendee"))).'</label><br>';
 		$out .= '<div id="oldobject_status">';
 		$out .= '<label for="oldobject_status"><h4>'.$langs->trans("Source").' &mdash; '.$langs->trans("SetToStatus").'</h4></label>';
 		$out .= '<select class="select" name="oldobject_status" id="oldobject_status" size="6">';
@@ -1001,6 +1002,7 @@ class FormProjets extends Form
 		$actionname = $htmlname;
 		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
 		$out .= '<input type="hidden" name="massaction" value="confirm_preclone">';
+		$out .= '<input type="checkbox" id="notrigger" name="notrigger" value="1" checked><label for="notrigger">'.$langs->trans("NoTrigger").' '.$langs->trans("CloneOf", $langs->trans("Attendee")).'</label><br><br>';
 		$out .= '<!-- 2 buttons Add and Cancel -->';
 		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_clone_attendee" name="button_clone_attendee" value="'.$langs->trans("Clone").'">';
 		$out .= '<input type="submit" class="button button-cancel reposition" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
