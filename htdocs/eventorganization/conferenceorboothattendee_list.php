@@ -266,6 +266,7 @@ if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissionto
 
 	// Verify all eventattendees actually exist before actually inserting them, where successful insert verifies the mailing
 	$attendeestatic = new ConferenceOrBoothAttendee($db);
+	$attendeeclone = new ConferenceOrBoothAttendee($db);
 	$verified_attendees = array();
 	$verified_eventorgs = array();
 	$whatchanged = array();

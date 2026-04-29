@@ -47,6 +47,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<td>'.$objectlink->getNomUrl(1).'</td>';
 	echo '<!-- relationtype should be here -->';
 	$relationtype = '';
+	$translation= '';
 	if ($object->id < $objectlink->id) {
 		$relationtype = $objectlink->getRelationtypeByValues($object->id, $object->element, $objectlink->id, $objectlink->element);
 		if ($relationtype == 'clone') {

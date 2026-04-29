@@ -50,6 +50,7 @@
  * @var string $action
  * @var string $massaction
  * @var string $modelmail
+ * @var string $projectid
  * @var string $sendto
  * @var string $topicmail
  * @var string $trackid
