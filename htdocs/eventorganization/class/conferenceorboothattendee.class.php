@@ -320,9 +320,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
+	 * @param	int 	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, $fromid, $notrigger = 0)
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -368,18 +369,18 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result = $object->createCommon($user);
+		$result = $object->createCommon($user, $notrigger);
 		if ($result < 0) {
 			$error++;
 			$this->setErrorsFromObject($object);
 		} else {
 			$object->ref = (string) $object->id;
-			$result = $object->update($user);
+			$result = $object->update($user, $notrigger);
 		}
 
 		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
+			if ($this->copy_linked_contact($object, 'internal', $notrigger) < 0) {
 				$error++;
 			}
 		}
@@ -387,7 +388,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (!$error) {
 			// copy external contacts if same company
 			if (!empty($this->fk_soc) && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
+				if ($this->copy_linked_contact($object, 'external', $notrigger) < 0) {
 					$error++;
 				}
 			}
