@@ -322,7 +322,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  	int 	$fromid     Id of object to clone
 	 * @param	int 	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @param	int 	$nolink		0=make link between source and clone, 1=do not link
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @return ConferenceOrBoothAttendee|int
 	 */
 	public function createFromClone(User $user, $fromid, $notrigger = 0, $nolink = 0)
 	{

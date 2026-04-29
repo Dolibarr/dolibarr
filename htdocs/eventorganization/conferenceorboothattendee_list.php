@@ -286,6 +286,8 @@ if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissionto
 					if ($userHasProjectRights) {
 						$attendeeclone = $attendeestatic->createFromClone($user, $attendeeid, $notrigger, $nolink);
 						if (is_object($attendeeclone)) {
+							// @phan-suppress-next-line PhanTypeMismatchReturn
+							/** @var ConferenceOrBoothAttendee $attendeeclone */
 							// basic clone successful, let's report that
 							$whatchanged[$target_event] = isset($whatchanged[$target_event]) ? $whatchanged[$target_event] + 1 : 1;
 
