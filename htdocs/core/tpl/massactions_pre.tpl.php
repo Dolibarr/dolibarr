@@ -50,7 +50,7 @@
  * @var string $action
  * @var string $massaction
  * @var string $modelmail
- * @var string $projectid
+ * @var int $projectid
  * @var string $sendto
  * @var string $topicmail
  * @var string $trackid
@@ -66,6 +66,7 @@
 @phan-var-force int[] $toselect
 @phan-var-force ?string $uploaddir
 @phan-var-force int<0,1> $withmaindocfilemail
+@phan-var-force int $projectid
 @phan-var-force string $sendto
 @phan-var-force string $massaction
 @phan-var-force int[] $arrayofselected

@@ -74,7 +74,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	if (get_class($objectlink) == 'ConferenceOrBoothAttendee') {
 		print dol_print_date($objectlink->date_subscription);
 	} else {
-		print dol_print_date($objectlink->date);
+		print dol_print_date($objectlink->date_creation);
 	}
 	print '</td>';
 	echo '<td class="right">';

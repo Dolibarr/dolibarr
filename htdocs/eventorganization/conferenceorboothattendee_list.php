@@ -290,21 +290,21 @@ if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissionto
 							$whatchanged[$target_event] = isset($whatchanged[$target_event]) ? $whatchanged[$target_event] + 1 : 1;
 
 							// update clone with new project and possible new status as well
-							$cloneprojectresult = $attendeeclone->setProject($target_event, $notrigger);
+							$cloneprojectresult = (int) $attendeeclone->setProject($target_event, $notrigger);
 							if (!$cloneprojectresult) {
-								$warn_message = $langs->trans("Clone").' '.$attendeeclone->getNomUrl().' '.$langs->trans("ResultKo").' '.$langs->trans("SetProject").' = <i>'.$projectstatic->getNomUrl().'</i>';
+								$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetProject").' = <i>'.$projectstatic->getNomUrl().'</i>';
 								$info_warnings[$target_event][] = '&emsp;'.$warn_message;
 							}
 							if ($newobject_status_id != -1) {
-								$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
+								$clonestatusresult = (int) $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
 								if (!$clonestatusresult) {
-									$warn_message = $langs->trans("Clone").' '.$attendeeclone->getNomUrl().' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+									$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
 									$info_warnings[$target_event][] = '&emsp;'.$warn_message;
 								}
 							} else {
-								$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
+								$clonestatusresult = (int) $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
 								if (!$clonestatusresult) {
-									$warn_message = $langs->trans("Clone").' '.$attendeeclone->getNomUrl().' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+									$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
 									$info_warnings[$target_event][] = '&emsp;'.$warn_message;
 								}
 							}
@@ -312,9 +312,9 @@ if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissionto
 							// possible update old status
 							$sourcestatusresult = 0;
 							if ($oldobject_status_id != -1) {
-								$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
+								$sourcestatusresult = (int) $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
 								if (!$sourcestatusresult) {
-									$warn_message = $langs->trans("Source").' '.$attendeestatic->getNomUrl().' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
+									$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
 									$info_warnings[$target_event][] = '&emsp;'.$warn_message;
 								}
 							}
