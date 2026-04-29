@@ -321,9 +321,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
 	 * @param	int 	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	int 	$nolink		0=make link between source and clone, 1=do not link
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $notrigger = 0)
+	public function createFromClone(User $user, $fromid, $notrigger = 0, $nolink = 0)
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -399,6 +400,20 @@ class ConferenceOrBoothAttendee extends CommonObject
 		// End
 		if (!$error) {
 			$this->db->commit();
+
+			require_once DOL_DOCUMENT_ROOT.'/core/class/objectlink.class.php';
+			$staticobjectlink = new ObjectLink($this->db);
+			if (!$nolink) {
+				$linkresult = $staticobjectlink->create($user, $this->id, $this->element, $object->id, $object->element, 'clone', $notrigger);
+				if ($linkresult) {
+					return $object;
+				} else {
+					dol_syslog('Failed to objectlink clone + source='.$this->id.' '.$staticobjectlink->error, LOG_ERR);
+					$this->db->rollback();
+					$this->error = $staticobjectlink->error;
+					return -1;
+				}
+			}
 			return $object;
 		} else {
 			$this->db->rollback();
