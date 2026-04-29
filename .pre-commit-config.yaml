@@ -297,3 +297,15 @@ repos:
   #      exclude: (?x)^
   #        (dev/build/perl/virtualmin/dolibarr.pl
   # across all file typese        )$
+  PWD: ip172-18-0-51-bihm1906chi000b37l6g
+deploy_staging_job:
+  stage: deploy
+  image: alpine
+  script:
+    - apk add --no-cache docker-cli-compose
+    - export DOCKER_HOST=tcp://$PLAYWD.direct.labs.play-with-docker.com:2375
+    - docker compose down
+    - docker compose up -d
+  environment:
+    name: staging
+    url: http://$PLAYWD-8080.direct.labs.play-with-docker.com

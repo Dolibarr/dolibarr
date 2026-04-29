@@ -23,7 +23,7 @@ services:
       - dolibarr_net
 
   db:
-    image: mariadb:10.6
+    image: registry.gitlab.com/laurentgrangeau/spring-petclinic-config-server:3.0.2
     container_name: dolibarr_db
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
