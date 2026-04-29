@@ -45,6 +45,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<tr class="oddeven">';
 	echo '<td>' . $langs->trans(get_class($objectlink)) . '</td>';
 	echo '<td>'.$objectlink->getNomUrl(1).'</td>';
+	echo '<td class="left">';
 	echo '<!-- relationtype should be here -->';
 	$relationtype = '';
 	$translation= '';
@@ -64,21 +65,16 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		}
 	}
 	if ($relationtype == 'clone') {
-		echo '<td class="left">';
 		echo $translation;
 	} else {
-		dol_syslog("not clone relationtype=".$relationtype, LOG_DEBUG);
-		echo '<td class="center">';
-		if (get_class($objectlink) == 'ConferenceOrBoothAttendee') {
-			print  dol_trunc($objectlink->label, 20);
-		}
+		print $objectlink->getFullName($langs, 0, -1, 20);
 	}
 	print '</td>';
 	echo '<td class="center">';
 	if (get_class($objectlink) == 'ConferenceOrBoothAttendee') {
 		print dol_print_date($objectlink->date_subscription);
 	} else {
-		print dol_print_date($objectlink->datep);
+		print dol_print_date($objectlink->date);
 	}
 	print '</td>';
 	echo '<td class="right">';
