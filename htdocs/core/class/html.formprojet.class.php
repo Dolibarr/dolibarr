@@ -1002,7 +1002,8 @@ class FormProjets extends Form
 		$actionname = $htmlname;
 		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
 		$out .= '<input type="hidden" name="massaction" value="confirm_preclone">';
-		$out .= '<input type="checkbox" id="notrigger" name="notrigger" value="1" checked><label for="notrigger">'.$langs->trans("NoTrigger").' '.$langs->trans("CloneOf", $langs->trans("Attendee")).'</label><br><br>';
+		$out .= '<input type="checkbox" id="notrigger" name="notrigger" value="1" checked><label for="notrigger">'.$langs->trans("NoTrigger").' '.$langs->trans("CloneOf", $langs->trans("Attendee")).'</label><br>';
+		$out .= '<input type="checkbox" id="objlink" name="objlink" value="1" checked><label for="objlink">'.$langs->trans("Create").' '.$langs->trans("LinkedObject").'</label><br><br>';
 		$out .= '<!-- 2 buttons Add and Cancel -->';
 		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_clone_attendee" name="button_clone_attendee" value="'.$langs->trans("Clone").'">';
 		$out .= '<input type="submit" class="button button-cancel reposition" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
