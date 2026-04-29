@@ -1443,16 +1443,17 @@ abstract class CommonObject
 	/**
 	 *    Copy contact from one element to current
 	 *
-	 *    @param    CommonObject    $objFrom    Source element
-	 *    @param    'internal'|'external'	$source	Nature of contact ('internal' or 'external')
+	 *    @param    CommonObject    		$objFrom    Source element
+	 *    @param    'internal'|'external'	$source		Nature of contact ('internal' or 'external')
+	 *    @param	int<0,1>				$notrigger	0=launch triggers after, 1=disable triggers
 	 *    @return   int                         >0 if OK, <0 if KO
 	 */
-	public function copy_linked_contact($objFrom, $source = 'internal')
+	public function copy_linked_contact($objFrom, $source = 'internal', $notrigger = 0)
 	{
 		// phpcs:enable
 		$contacts = $objFrom->liste_contact(-1, $source);
 		foreach ($contacts as $contact) {
-			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0) {
+			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source'], $notrigger) < 0) {
 				return -1;
 			}
 		}
