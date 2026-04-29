@@ -254,6 +254,8 @@ if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissionto
 	$oldobject_status_txt = ($oldobject_status_id < 0) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
 	$newobject_status_txt = ($newobject_status_id < 0) ? ($langs->trans("Copy").' '.$langs->trans("Source")) : $object->LibStatut($newobject_status_id, 1);
 	$notrigger = GETPOSTINT('notrigger') ? GETPOSTINT('notrigger') : 0;
+	$nolink = GETPOSTINT('objlink') ? 0 : 1;
+	dol_syslog("nolink=".$nolink, LOG_DEBUG);
 	$select_eventorg = GETPOST('select_eventorg', 'array:int') ?? array();
 	if (empty($select_eventorg)) {
 		setEventMessages($langs->trans("OrganizedEvent").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
@@ -281,7 +283,7 @@ if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissionto
 					$verified_eventorgs[] = $target_event;
 					$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
 					if ($userHasProjectRights) {
-						$attendeeclone = $attendeestatic->createFromClone($user, $attendeeid, $notrigger);
+						$attendeeclone = $attendeestatic->createFromClone($user, $attendeeid, $notrigger, $nolink);
 						if (is_object($attendeeclone)) {
 							// basic clone successful, let's report that
 							$whatchanged[$target_event] = isset($whatchanged[$target_event]) ? $whatchanged[$target_event] + 1 : 1;
