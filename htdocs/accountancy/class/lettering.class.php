@@ -581,6 +581,7 @@ class Lettering extends BookKeeping
 		if (count($fiscalYearRows) > 1) {
 			$db = $this->db;
 			$periods = array_map(
+				/** @param object $row */
 				function ($row) use ($db) {
 					return dol_print_date($db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($db->jdate($row->date_end), 'day');
 				},
