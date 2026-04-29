@@ -5190,6 +5190,39 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *	fetch object link Relationtype By Values, not id
+	 *
+	 *  @param		int		$fk_source		source id of object we link from
+	 *  @param		string	$sourcetype		type of the source object
+	 *  @param		int		$fk_target		target id of object we link to
+	 *  @param		string	$targettype 	type of the target object
+	 *	@return 	int			        	Return integer <0 if KO, >0 if OK
+	 */
+	public function getRelationtypeByValues($fk_source, $sourcetype, $fk_target, $targettype)
+	{
+		$sql = "SELECT relationtype FROM";
+		$sql .= " ".MAIN_DB_PREFIX.'element_element';
+		$sql .= " WHERE fk_source=".((int) $fk_source);
+		$sql .= " AND sourcetype='".$this->db->escape($sourcetype)."'";
+		$sql .= " AND fk_target=".((int) $fk_target);
+		$sql .= " AND targettype='".$this->db->escape($targettype)."'";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			if ($obj) {
+				return $obj->relationtype;
+			} else {
+				$this->error = $this->db->error();
+				return null;
+			}
+		} else {
+			$this->error = $this->db->error();
+			return null;
+		}
+	}
 
 	/**
 	 * 	Get special code of a line
