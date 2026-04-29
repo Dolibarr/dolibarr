@@ -517,6 +517,7 @@ class Lettering extends BookKeeping
 		$error = 0;
 		$affected_rows = 0;
 
+		// Generate a string with n char 'A' (for manual/auto matching)  @phan-suppress-next-line PhanParamSuspiciousOrder
 		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), 'A');
 
 		// Check for unreconcilable accounts
@@ -578,16 +579,14 @@ class Lettering extends BookKeeping
 
 		// Cross-fiscal-year matching is forbidden
 		if (count($fiscalYearRows) > 1) {
+			$db = $this->db;
 			$periods = array_map(
-				static fn($row) => dol_print_date($this->db->jdate($row->date_start), 'day')
-					. ' – '
-					. dol_print_date($this->db->jdate($row->date_end), 'day'),
+				function ($row) use ($db) {
+					return dol_print_date($db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($db->jdate($row->date_end), 'day');
+				},
 				$fiscalYearRows
 			);
-			$this->errors[] = $langs->transnoentitiesnoconv(
-				'ErrorMatchingCrossFiscalYear',
-				implode(', ', $periods)
-			);
+			$this->errors[] = $langs->transnoentitiesnoconv('ErrorMatchingCrossFiscalYear', implode(', ', $periods));
 			return -1;
 		}
 
