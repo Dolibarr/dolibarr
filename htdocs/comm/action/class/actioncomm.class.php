@@ -2363,7 +2363,7 @@ class ActionComm extends CommonObject
 
 					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
 					$event = array();
-					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
+					$event['uid'] = 'dolibarragenda-'.$obj->id."@".dol_getprefix('email');
 					$event['type'] = $type;
 
 					$datestart = (int) $this->db->jdate($obj->datep) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
@@ -2402,6 +2402,8 @@ class ActionComm extends CommonObject
 						$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
 						$event['url'] = $link_subscription;
+					} else {
+						$event['url'] = $dolibarr_main_url_root.'/comm/action/card.php?id='.$obj->id;
 					}
 
 					$event['created'] = (int) $this->db->jdate($obj->datec) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
@@ -2488,7 +2490,7 @@ class ActionComm extends CommonObject
 						$urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;
 						$url               = $urlwithroot.'/holiday/card.php?id='.$obj->rowid;
 
-						$event['uid']          = 'dolibarrholiday-'.$this->db->database_name.'-'.$obj->rowid."@".$_SERVER["SERVER_NAME"];
+						$event['uid']          = 'dolibarrholiday-'.$obj->rowid."@".dol_getprefix('email');
 						$event['author']       = dolGetFirstLastname($obj->firstname, $obj->lastname);
 						$event['type']         = 'event';
 						$event['category']     = "Holiday";
