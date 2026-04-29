@@ -1107,6 +1107,9 @@ textarea.centpercent {
 .lineheightsmall {
 	line-height: 1.2em;
 }
+.lineheightmedium {
+	line-height: 1.5em;
+}
 .line-height-large {
 	line-height: 1.8em;
 }
@@ -1492,9 +1495,11 @@ span.fa.fa-plus-circle.paddingleft {
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
 	font-size: 1.5em;
+}
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
 	vertical-align: text-bottom;
 }
-
 .divoverflow {
 	overflow: hidden;
 	white-space: nowrap;
@@ -1634,10 +1639,15 @@ div.divsearchfield {
 }
 
 .a-filter, .a-mesure {
+	padding: 8px 10px 8px 6px;
+}
+.a-selection {
+	padding: 8px 10px 8px 10px;
+}
+.a-filter, .a-mesure, .a-selection {
 	border-radius: 50px;
 	background: var(--colortexttitlenotab);
-	color: #fff;
-	padding: 8px 10px 8px 6px;
+	color: #fff !important;
 }
 .a-filter:before {
 	content: "\f0b0";
@@ -1651,7 +1661,7 @@ div.divsearchfield {
 	padding-right: 5px;
 	padding-left: 5px;
 }
-.a-filter-disabled, .a-mesure-disabled {
+.a-filter-disabled, .a-mesure-disabled, .a-selection-disabled {
 	border-radius: 50px;
 	background: var(--colorbacktitle1);
 	padding: 8px;

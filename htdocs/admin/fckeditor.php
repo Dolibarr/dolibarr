@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'fckeditor', 'errors'));
+$langs->loadLangs(array('admin', 'fckeditor', 'errors', 'website'));
 
 $action = GETPOST('action', 'aZ09');
 // Possible modes are:
@@ -276,7 +276,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 	print '</form>'."\n";
 
-	print '<br>'."\n";
+	print '<br><br><br>'."\n";
 
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -287,23 +287,16 @@ if (empty($conf->use_javascript_ajax)) {
 	//show_skin(null, 1);
 	//print '<br>'."\n";
 
-	$listofmodes = array('dolibarr_readonly', 'dolibarr_details', 'dolibarr_notes', 'dolibarr_mailings', 'Full', 'Full_inline');
+	$listofmodes = array('dolibarr_readonly' => 'ReadOnly', 'dolibarr_details' => 'DetailOfLines', 'dolibarr_notes' => 'Notes', 'dolibarr_mailings' => 'Emails', 'Full' => 'AllFeatures', 'Full_inline' => 'EditInLine');
 	$linkstomode = '';
-	foreach ($listofmodes as $newmode) {
-		if ($linkstomode) {
-			$linkstomode .= ' - ';
+	foreach ($listofmodes as $newmode => $newmodelabel) {
+		if (!$linkstomode) {
+			$linkstomode = '<span class="opacitymedium">'.$langs->trans("Mode").': </span>';
 		}
-		$linkstomode .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
-		if ($mode == $newmode) {
-			$linkstomode .= '<strong>';
-		}
-		$linkstomode .= $newmode;
-		if ($mode == $newmode) {
-			$linkstomode .= '</strong>';
-		}
+		$linkstomode .= '<a class="a-selection'.($mode != $newmode ? '-disabled' : '').' marginleftonly marginrightonly reposition nounderline" href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
+		$linkstomode .= $langs->trans($newmodelabel);
 		$linkstomode .= '</a>';
 	}
-	$linkstomode .= '';
 	print load_fiche_titre($langs->trans("TestSubmitForm"), $linkstomode, '');
 	print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
 	if ($mode != 'Full_inline') {

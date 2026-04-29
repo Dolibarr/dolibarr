@@ -184,6 +184,8 @@ if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
 	$day = ($day ? $day : date("d"));
 }
 
+$labelbytype = array();  // Ensure variable exists
+
 $object = new ActionComm($db);
 
 // Load translation files required by the page

@@ -1072,24 +1072,28 @@ if ($action == 'create' || $action == 'presend') {
 		if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
 			// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
 			if (isModEnabled('contract')) {
-				$langs->load('contracts');
-				$morehtmlref .= '<br>';
-				if ($permissiontoedit) {
-					$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
-					if ($action == 'edit_contrat') {
-						$formcontract = new FormContract($db);
-						$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
+				// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+				// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+				if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+					$langs->load('contracts');
+					$morehtmlref .= '<br>';
+					if ($permissiontoedit) {
+						$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
+						if ($action == 'edit_contrat') {
+							$formcontract = new FormContract($db);
+							$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
+						} else {
+							$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
+							$morehtmlref .=  img_edit($langs->trans('SetContract'));
+							$morehtmlref .=  '</a>';
+						}
 					} else {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
-						$morehtmlref .=  img_edit($langs->trans('SetContract'));
-						$morehtmlref .=  '</a>';
-					}
-				} else {
-					if (!empty($object->fk_contract)) {
-						$contratstatic = new Contrat($db);
-						$contratstatic->fetch($object->fk_contract);
-						//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-						$morehtmlref .= $contratstatic->getNomUrl(0, 0, 1);
+						if (!empty($object->fk_contract)) {
+							$contratstatic = new Contrat($db);
+							$contratstatic->fetch($object->fk_contract);
+							//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+							$morehtmlref .= $contratstatic->getNomUrl(0, 0, 1);
+						}
 					}
 				}
 			}
@@ -1603,9 +1607,9 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->backtopage = $backtopage;
 
 			$formticket->withtitletopic = 1;
-			//$formticket->topic_title = $langs->trans('Message').' '.$langs->trans('Summary');
 
-			$formticket->showMessageForm('100%');
+			$formticket->showMessageForm('100%', 0);
+
 			print '</div>';
 		}
 

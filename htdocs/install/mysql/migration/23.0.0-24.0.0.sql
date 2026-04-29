@@ -198,6 +198,12 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_type varchar(10)  NUL
 
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(Hello)__<br><br>__(HolidayHrInformationsPreviousMonthContent)__:<br>__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__<br><br>__SENDEREMAIL_SIGNATURE__', null, 0);
 
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CREATE','Stock transfer created','Executed when a stock transfer is created','stocktransfer',670);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_MODIFY','Stock transfer modified','Executed when a stock transfer is modified','stocktransfer',671);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_VALIDATE','Stock transfer validated','Executed when a stock transfer is validated','stocktransfer',672);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_UNVALIDATE','Stock transfer back to draft','Executed when a stock transfer is set back to draft','stocktransfer',673);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CLOSE','Stock transfer closed','Executed when a stock transfer is closed after destination stock increment','stocktransfer',676);
+
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
@@ -501,5 +507,9 @@ UPDATE llx_socpeople SET phone = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, 
 UPDATE llx_socpeople SET phone_perso = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone_perso, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') WHERE phone_perso IS NOT NULL AND phone_perso != '';
 UPDATE llx_socpeople SET phone_mobile = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone_mobile, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') WHERE phone_mobile IS NOT NULL AND phone_mobile != '';
 UPDATE llx_socpeople SET fax = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(fax, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') WHERE fax IS NOT NULL AND fax != '';
+
+
+--ALTER TABLE llx_facture ADD COLUMN retained_warranty_amount double(24,8) DEFAULT NULL AFTER retained_warranty;
+
 
 -- end of migration

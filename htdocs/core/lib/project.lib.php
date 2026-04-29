@@ -193,6 +193,9 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('project')) {
 				$nbElements += $project->getElementCount('project_task', 'projet_task');
 			}
+			if (isModEnabled('stocktransfer')) {
+				$nbElements += $project->getElementCount('stocktransfer', 'stocktransfer_stocktransfer', 'fk_project');
+			}
 			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock_mouvement', 'stock');
 			}

@@ -218,7 +218,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		$colspan++;
 	}
 
-	print '<tr class="oddeven">';
+	print '<tr class="">';
 	print '<td colspan="'.$colspan.'"><span class="opacitymedium">';
 	print $langs->trans("None");
 	print '</span></td>';

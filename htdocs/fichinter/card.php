@@ -1086,13 +1086,17 @@ if ($action == 'create') {
 
 		// Contract
 		if (isModEnabled('contract') && is_object($formcontract)) {
-			$langs->load("contracts");
-			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
-			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
-			if ($numcontrat == 0) {
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
+			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+			// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+			if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+				$langs->load("contracts");
+				print '<tr><td>'.$langs->trans("Contract").'</td><td>';
+				$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
+				if ($numcontrat == 0) {
+					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
+				}
+				print '</td></tr>';
 			}
-			print '</td></tr>';
 		}
 
 		// Model
@@ -1463,35 +1467,39 @@ if ($action == 'create') {
 
 	// Contract
 	if (isModEnabled('contract')) {
-		$langs->load('contracts');
-		print '<tr>';
-		print '<td>';
+		// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+		// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+		if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+			$langs->load('contracts');
+			print '<tr>';
+			print '<td>';
 
-		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('Contract');
-		print '</td>';
-		if ($action != 'editcontract') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
-			print img_edit($langs->trans('SetContract'), 1);
-			print '</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editcontract') {
-			$formcontract = new FormContract($db);
-			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
-		} else {
-			if ($object->fk_contrat) {
-				$contratstatic = new Contrat($db);
-				$contratstatic->fetch($object->fk_contrat);
-				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-				print $contratstatic->getNomUrl(0, 0, 1);
-			} else {
-				print "&nbsp;";
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans('Contract');
+			print '</td>';
+			if ($action != 'editcontract') {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
+				print img_edit($langs->trans('SetContract'), 1);
+				print '</a></td>';
 			}
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editcontract') {
+				$formcontract = new FormContract($db);
+				$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
+			} else {
+				if ($object->fk_contrat) {
+					$contratstatic = new Contrat($db);
+					$contratstatic->fetch($object->fk_contrat);
+					//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+					print $contratstatic->getNomUrl(0, 0, 1);
+				} else {
+					print "&nbsp;";
+				}
+			}
+			print '</td>';
+			print '</tr>';
 		}
-		print '</td>';
-		print '</tr>';
 	}
 
 	// Other attributes

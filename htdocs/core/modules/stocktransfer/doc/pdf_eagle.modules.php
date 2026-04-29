@@ -535,7 +535,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->startTransaction();
 
-					if (method_exists($object->lines[$i], 'fetch_product')) {
+					if (is_object($object->lines[$i]) && method_exists($object->lines[$i], 'fetch_product')) {
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;

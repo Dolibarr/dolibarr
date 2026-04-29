@@ -753,7 +753,7 @@ class FormCompany extends Form
 			return $socid;
 		} else {
 			// Search to list thirdparties
-			$sql = "SELECT s.rowid, s.nom as name ";
+			$sql = "SELECT s.rowid, s.nom as name, s.name_alias";
 			if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
 				$sql .= ", s.code_client, s.code_fournisseur";
 			}
@@ -807,19 +807,20 @@ class FormCompany extends Form
 						if (is_array($limitto) && count($limitto) && !in_array($obj->rowid, $limitto)) {
 							$disabled = 1;
 						}
+						$nameAlias = !empty($obj->name_alias) ? ' (' . $obj->name_alias . ')' : '';
 						if ($selected > 0 && $selected == $obj->rowid) {
 							print '<option value="' . $obj->rowid . '"';
 							if ($disabled) {
 								print ' disabled';
 							}
-							print ' selected>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
+							print ' selected>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . $nameAlias . '</option>';
 							$firstCompany = $obj->rowid;
 						} else {
 							print '<option value="' . $obj->rowid . '"';
 							if ($disabled) {
 								print ' disabled';
 							}
-							print '>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
+							print '>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . $nameAlias . '</option>';
 						}
 						$i++;
 					}

@@ -25,8 +25,6 @@
  */
 
 /**
- * @var Societe $mysoc
- * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -34,7 +32,10 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var CommonObject $object
+ *
  * @var int		$id
+ * @var int 	$error
  * @var string 	$dolibarr_main_url_root
  * @var string 	$action
  * @var ?string $subject
@@ -47,9 +48,9 @@
 '
 @phan-var-force Societe      $mysoc
 @phan-var-force CommonObject $object
+@phan-var-force int 		 $error
 ';
 
-$error = 0;
 
 /*
  * Add file in email form

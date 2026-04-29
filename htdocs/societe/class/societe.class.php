@@ -1703,6 +1703,7 @@ class Societe extends CommonObject
 			$sql .= ",cond_reglement_supplier = ".(!empty($this->cond_reglement_supplier_id) ? "'".$this->db->escape((string) $this->cond_reglement_supplier_id)."'" : "null");
 			$sql .= ",transport_mode_supplier = ".(!empty($this->transport_mode_supplier_id) ? "'".$this->db->escape((string) $this->transport_mode_supplier_id)."'" : "null");
 			$sql .= ",fk_shipping_method = ".(!empty($this->shipping_method_id) ? "'".$this->db->escape((string) $this->shipping_method_id)."'" : "null");
+			$sql .= ",fk_account = ".($this->fk_account > 0 ? (int) $this->fk_account : "null");
 
 			$sql .= ",client = ".(!empty($this->client) ? $this->client : 0);
 			$sql .= ",fournisseur = ".(!empty($this->fournisseur) ? $this->fournisseur : 0);

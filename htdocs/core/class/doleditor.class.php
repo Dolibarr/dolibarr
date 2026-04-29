@@ -242,6 +242,7 @@ class DolEditor
 				} else {
 					$out .= 'calc('.$this->cols.' - 20px)';	// The with in percent minus the margin.
 				}
+				$out .= '"';
 			} else {
 				$out   .= ' cols="'.$this->cols.'"';
 			}

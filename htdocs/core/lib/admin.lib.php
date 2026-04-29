@@ -6,6 +6,7 @@
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1438,6 +1439,15 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 					$modName = substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
+						if ($modName === 'modFournisseur' && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module modFournisseur skipped because MAIN_USE_NEW_SUPPLIERMOD is enabled", LOG_DEBUG);
+							continue;
+						}
+						if (in_array($modName, ['modSupplierInvoice', 'modSupplierOrder']) && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module ".$modName." skipped because MAIN_USE_NEW_SUPPLIERMOD is disabled", LOG_DEBUG);
+							continue;
+						}
+
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
@@ -1606,6 +1616,15 @@ function activateModulesRequiredByCountry($country_code)
 					$modName = substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
+						if ($modName === 'modFournisseur' && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module modFournisseur skipped because MAIN_USE_NEW_SUPPLIERMOD is enabled", LOG_DEBUG);
+							continue;
+						}
+						if (in_array($modName, ['modSupplierInvoice', 'modSupplierOrder']) && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module ".$modName." skipped because MAIN_USE_NEW_SUPPLIERMOD is disabled", LOG_DEBUG);
+							continue;
+						}
+
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';

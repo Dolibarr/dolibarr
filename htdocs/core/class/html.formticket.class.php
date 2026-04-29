@@ -551,7 +551,7 @@ class FormTicket
 				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' spellcheck="false">';
+				print '<input class="text minwidth400imp" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' spellcheck="false">';
 			}
 			print '</td></tr>';
 		}
@@ -562,12 +562,12 @@ class FormTicket
 		// If public form, display more information
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
-			$toolbarname = 'dolibarr_details';	// TODO Allow image so use can do paste of image into content but disallow file manager
+			$toolbarname = 'dolibarr_details';	// TODO Allow image so user can do paste of image into content but we disallow file manager
 			print '<div class="warning hideonsmartphone">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
-		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($this->ispublic ? 2 : 1));		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 		if (!$ckeditorenabledforticket) {
 			$msg = dol_string_nohtmltag($msg, 2);
 		}
@@ -724,12 +724,12 @@ class FormTicket
 					print '<tr><td>'.$langs->trans("Contact").'</td><td>';
 					// If no socid, set to -1 to avoid full contacts list
 					$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
-					print img_picto('', 'contact', 'class="paddingright"');
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
 					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 					print $form->select_contact($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 1, 'maxwidth300 widthcentpercentminusx', true);
 
 					print ' ';
-					$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
+					$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly maxwidth200');
 					print '</td></tr>';
 				}
 			} else {
@@ -771,14 +771,21 @@ class FormTicket
 		}
 
 		if ($subelement != 'contract' && $subelement != 'contrat') {
-			if (isModEnabled('contract') && !$this->ispublic) {
-				$langs->load('contracts');
-				$formcontract = new FormContract($this->db);
-				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
-				print img_picto('', 'contract', 'class="pictofixedwidth"');
-				// socid is for internal users null and not 0 or -1
-				print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contractid'), 'contractid', 0, 1, 1, 1);
-				print '</td></tr>';
+			if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
+				// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
+				if (isModEnabled('contract') && !$this->ispublic) {
+					// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+					// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+					if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+						$langs->load('contracts');
+						$formcontract = new FormContract($this->db);
+						print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
+						print img_picto('', 'contract', 'class="pictofixedwidth"');
+						// socid is for internal users null and not 0 or -1
+						print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contractid'), 'contractid', 0, 1, 1, 1);
+						print '</td></tr>';
+					}
+				}
 			}
 		}
 
@@ -842,9 +849,9 @@ class FormTicket
 
 		if ($withdolfichehead) {
 			print dol_get_fiche_end();
+		} else {
+			print '<br><br>';
 		}
-
-		print '<br><br>';
 
 		if ($mode == 'create') {
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
@@ -1463,10 +1470,11 @@ class FormTicket
 	/**
 	 * Show the form to add message on ticket
 	 *
-	 * @param  	string  $width      	Width of form
+	 * @param  	string  $width      			Width of form
+	 * @param	int		$fromPublicInterface	Set to 1 if call is done for the public interface
 	 * @return 	void
 	 */
-	public function showMessageForm($width = '40%')
+	public function showMessageForm($width = '40%', $fromPublicInterface = 0)
 	{
 		global $conf, $langs, $user, $hookmanager, $form;
 
@@ -1610,7 +1618,6 @@ class FormTicket
 
 		print '});
 		</script>';
-
 
 		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1876,7 +1883,7 @@ class FormTicket
 			$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 		}
 
-		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($fromPublicInterface ? 2 : 1));		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 
 		print '<!-- Message line from showMessageForm -->';
 		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
@@ -1910,9 +1917,8 @@ class FormTicket
 		$formai = new FormAI($this->db);
 
 		$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
-		$formmail->withlayout = (string) $ckeditorenabledforticket ? 'email' : '';
-		$formmail->withaiprompt = isModEnabled('ai') ? 'text' : '';
-		$formai = new FormAI($this->db);
+		$formmail->withlayout = ((string) $ckeditorenabledforticket && !$fromPublicInterface) ? 'email' : '';
+		$formmail->withaiprompt = (isModEnabled('ai') && !$fromPublicInterface) ? 'text' : '';
 
 		$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
@@ -1941,8 +1947,10 @@ class FormTicket
 		if (!$ckeditorenabledforticket) {
 			$defaultmessage = dol_string_nohtmltag($defaultmessage, 2);
 		}
+
 		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $ckeditorenabledforticket, ROWS_6, '90%');
 		$doleditor->Create();
+
 		print '</td></tr>';
 
 		// Footer
@@ -1994,6 +2002,6 @@ class FormTicket
 			print '</script>';
 		}
 
-		print "<!-- End form TICKET -->\n";
+		print "<!-- End message_form TICKET -->\n";
 	}
 }

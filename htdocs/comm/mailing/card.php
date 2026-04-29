@@ -1457,7 +1457,6 @@ if ($action == 'create') {	// aaa
 			// Ref customer
 			$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', 0, 1);
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
-			$morehtmlref .= '</div>';
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
@@ -1497,6 +1496,7 @@ if ($action == 'create') {	// aaa
 					$morehtmlref .= ' <small>(<a href="' . DOL_URL_ROOT . '/comm/mailing/list.php?projectid='.$object->fk_project.'" target="_blank">' .$langs->trans("Other").' '.$langs->trans("EMailings").' for '.$langs->trans("Project").': '. $proj->title. '</a>)</small>';
 				}
 			}
+			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
@@ -1561,19 +1561,24 @@ if ($action == 'create') {	// aaa
 			print '<tr><td>';
 			print $langs->trans("MAIN_MAIL_SENDMODE");
 			print '</td><td>';
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
-			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
-				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
-			} else {
-				$text = $listofmethods['mail'];
-			}
-			print $text;
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
-					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+			if ($object->messtype != 'sms') {
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+					$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+					$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+				} else {
+					$text = $listofmethods['mail'];
 				}
-			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+				print $text;
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
+					}
+				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
+				}
+			} else {
+				print 'SMS ';
 				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
 			}
 			print '</td></tr>';
