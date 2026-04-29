@@ -59,7 +59,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	const STATUS_CANCELED = 9;
 
 	/**
-	 * @var array[int] list of possible statuses for this object
+	 * @var array<int, int> list of possible statuses for this object
 	 */
 	public $list_possible_status = [self::STATUS_DRAFT, self::STATUS_VALIDATED, self::STATUS_USED, self::STATUS_CANCELED];
 

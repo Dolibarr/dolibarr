@@ -5197,7 +5197,7 @@ abstract class CommonObject
 	 *  @param		string	$sourcetype		type of the source object
 	 *  @param		int		$fk_target		target id of object we link to
 	 *  @param		string	$targettype 	type of the target object
-	 *	@return 	int			        	Return integer <0 if KO, >0 if OK
+	 *	@return 	string|null			    Return integer <0 if KO, >0 if OK
 	 */
 	public function getRelationtypeByValues($fk_source, $sourcetype, $fk_target, $targettype)
 	{

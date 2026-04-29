@@ -2117,7 +2117,7 @@ class Project extends CommonObject
 	 * @param	int			$showmin 		event organization project with status below this value will not be shown. Default is 0 (draft)
 	 * @param	int			$showmax 		event organization project with status above this value will not be shown. Default is 1 (validated)
 	 *
-	 * @return	int|array{rowid:int, ref:string, label:string, date:string, date_end_event:string, location:string, max_attendees:int, public:int, fk_statut:int}		-1 if KO, else OK either [] for nothing found or a list of id's
+	 * @return int|list<int>|list<array{rowid:int, ref:string, title:string, date_start_event:string, date_end_event:string, location:string, max_attendees:int, public:int, fk_statut:int}>
 	 */
 	public function fetchEventOrgIds($user, $timeline = 1, $fromdate = 0, $mode = 0, $limit = 0, $offset = 0, $showmin = 0, $showmax = 1)
 	{
