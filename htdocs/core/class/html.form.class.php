@@ -1720,7 +1720,7 @@ class Form
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('THIRDPARTY_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
+			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('THIRDPARTY_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' spellcheck="false" />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
@@ -1744,7 +1744,7 @@ class Form
 	 * This call select_contacts() or ajax depending on setup. This component is not able to support multiple select.
 	 *
 	 * Return HTML code of the SELECT of list of all contacts (for a third party or all).
-	 * This also set the number of contacts found into $this->num
+	 * This also set the number of contacts found into $this->num if not using ajax mode.
 	 *
 	 * @param 	int 			$socid 				Id of third party or 0 for all or -1 for empty list
 	 * @param 	int|string 		$selected 			ID of preselected contact id
@@ -1778,9 +1778,7 @@ class Form
 		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && !$forcecombo) {
-			if (is_null($events)) {
-				$events = array();
-			}
+			$ajaxoptions = array();
 
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 
@@ -1802,11 +1800,11 @@ class Form
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 
-			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
+			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' spellcheck="false" />';
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT'), 0, $events);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
 			$multiple = false;

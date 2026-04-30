@@ -1107,6 +1107,9 @@ textarea.centpercent {
 .lineheightsmall {
 	line-height: 1.2em;
 }
+.lineheightmedium {
+	line-height: 1.5em;
+}
 .line-height-large {
 	line-height: 1.8em;
 }

@@ -208,7 +208,7 @@ if ($mysoc->country_code == 'FR') {
 	}
 }
 if ($infotoshow) {
-	print info_admin($infotoshow, 0, 0, 'info');
+	print info_admin($infotoshow, 0, 0, 'info', 'hideonsmartphone', '', '', 'CERTIF_LNE = '.(defined('CERTIF_LNE') ? (int) constant('CERTIF_LNE') : 0));
 }
 
 print '<br>';
