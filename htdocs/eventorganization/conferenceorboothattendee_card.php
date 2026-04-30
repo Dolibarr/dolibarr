@@ -639,7 +639,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		$select_event_org = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBox");
 		$formquestion = [
-			// 1. Multi-select: Projects (Width 100%)
+			// 1. Single-select: new Project
 			[
 				'name'     => 'select_eventorg',
 				'label'    => $select_event_org,
@@ -649,7 +649,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'moreattr' => '',
 			],
 
-			// 2. Single-select: Source Status (Width 50%)
+			// 2. Single-select: Source Status after clone
 			[
 				'name'     => 'oldobject_status',
 				'label'    => $langs->trans("Source").' &ndash; '.$langs->trans("SetToStatus"),
@@ -659,7 +659,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'morecss'  => '',
 			],
 
-			// 3. Single-select: Clone Status (Width 50%)
+			// 3. Single-select: Clone Status after clone
 			[
 				'name'     => 'newobject_status',
 				'label'    => $langs->trans("Clone").' &ndash; '.$langs->trans("SetToStatus"),
@@ -669,7 +669,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'morecss'  => '',
 			],
 
-			// 4. Checkbox: No trigger clone of attendee
+			// 4. Checkbox: Auto trigger clone of attendee
 			[
 				'name'    => 'autotrigger',
 				'label'   => $langs->trans("AutomaticTrigger").' '.$langs->trans("CloneOf", $langs->trans("Attendee")),
@@ -690,9 +690,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			]
 		];
 
-		//$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone_attendee', $formquestion, 'yes', 1);
-//		$newformconfirm = $formproject->formMultiSelectEventOrg4Clone($page, $htmlname, $title, $status_list, $project_list, $toptext, $size, 'width: 100%;');
 	}
 
 	// Action clone object
@@ -757,21 +755,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$faresult = $attendeeclone->fetch($newid);
 					// 0. refetch with $newid so we are sure we have the object
 				}
-				dol_syslog("newid=".$newid, LOG_DEBUG);
 
 				if ($faresult) {
-					dol_syslog('faresult='.$faresult, LOG_DEBUG);
 					// 1. change status on clone
 					if ($newobject_status_id != -1) {
 						$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
-						dol_syslog('clonestatusresult='.$clonestatusresult, LOG_DEBUG);
 						if (!$clonestatusresult) {
 							$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
 							setEventMessages($warn_message, $attendeeclone->error, 'warnings');
 						}
 					} else {
 						$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
-						dol_syslog('clonestatusresult='.$clonestatusresult, LOG_DEBUG);
 						if (!$clonestatusresult) {
 							$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
 							setEventMessages($warn_message, $attendeeclone->error, 'warnings');
@@ -780,7 +774,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// 2. change status on old object
 					if ($oldobject_status_id != -1) {
 						$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
-						dol_syslog('sourcestatusresult='.$sourcestatusresult, LOG_DEBUG);
 						if (!$sourcestatusresult) {
 							$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
 							setEventMessages($warn_message, $attendeestatic->error, 'warnings');
