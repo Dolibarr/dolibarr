@@ -607,7 +607,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'clone') {
 		// Create an array for form
 
-		$langs->loadLangs(array("admin", "errors", "main", "mails", "companies", "accountancy"));
+		$langs->loadLangs(array("admin", "errors", "main", "mails", "companies", "accountancy", "eventorganization"));
 		$projectstatic = new Project($db);
 		$projectid = $object->fk_project;
 		if (isset($projectstatic->date_start_event)) {
@@ -627,17 +627,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		foreach ($project_list as $key => $value) {
 			$reformat_list[$value["rowid"]] = $value["title"];
 		}
+		// 655360? well, 640k is enough for everybody :-D and if I used -1 then it would show very fain where as with 655360 the text is clearly seen, and I can not use 0, because that is draft :-(
 		$source_status_list = array();
-		$source_status_list[-1] = $langs->trans("IsBefore");
+		$source_status_list[655360] = $langs->trans("IsBefore");
 		foreach ($object->list_possible_status as $statusid) {
 			$source_status_list[(int) $statusid] = $object->LibStatut($statusid, 1);
 		}
 		$clone_status_list = array();
-		$clone_status_list[-1] = $langs->trans("Copy");
+		$clone_status_list[655360] = $langs->trans("Copy");
 		foreach ($object->list_possible_status as $statusid) {
 			$clone_status_list[(int) $statusid] = $object->LibStatut($statusid, 1);
 		}
-		$select_event_org = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBox");
+		$select_event_org = $langs->trans("OrganizedEvent");
 		/**
 		 * @var array<array{
 		 *   name: string,
@@ -664,7 +665,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'label'    => $langs->trans("Source").' &ndash; '.$langs->trans("SetToStatus"),
 				'type'     => 'select',
 				'values'   => (array) $source_status_list,
-				'default'  => -1,
+				'default'  => 655360,
 			],
 
 			// 3. Single-select: Clone Status after clone
@@ -673,7 +674,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'label'    => $langs->trans("Clone").' &ndash; '.$langs->trans("SetToStatus"),
 				'type'     => 'select',
 				'values'   => (array) $clone_status_list,
-				'default'  => -1,
+				'default'  => 655360,
 			],
 
 			// 4. Checkbox: Auto trigger clone of attendee
@@ -713,10 +714,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$oldobject_status_id = GETPOSTINT('oldobject_status');
 		$newobject_status_id = GETPOSTINT('newobject_status');
-		$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) -1; // default is not to change old attendee status
-		$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? (int) $newobject_status_id : (int) -1;  // default for new cloned attendee is the same as the old
-		$oldobject_status_txt = ($oldobject_status_id < 0) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
-		$newobject_status_txt = ($newobject_status_id < 0) ? ($langs->trans("Copy").' '.$langs->trans("Source")) : $object->LibStatut($newobject_status_id, 1);
+		$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) 655360; // default is not to change old attendee status
+		$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? (int) $newobject_status_id : (int) 655360;  // default for new cloned attendee is the same as the old
+		$oldobject_status_txt = ($oldobject_status_id == 655360) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
+		$newobject_status_txt = ($newobject_status_id == 655360) ? ($langs->trans("Copy").' '.$langs->trans("Source")) : $object->LibStatut($newobject_status_id, 1);
 
 		$autotrigger = GETPOST('autotrigger', 'alpha') ? GETPOST('autotrigger', 'alpha') : null;
 		$nolink = GETPOST('objlink', 'alpha') ? GETPOST('objlink', 'alpha') : 0; // we do want to link objects
@@ -764,7 +765,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			if ($faresult) {
 				// 1. change status on clone
-				if ($newobject_status_id != -1) {
+				if ($newobject_status_id != 655360) {
 					$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
 					if (!$clonestatusresult) {
 						$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
@@ -778,7 +779,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 				// 2. change status on old object
-				if ($oldobject_status_id != -1) {
+				if ($oldobject_status_id != 655360) {
 					$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
 					if (!$sourcestatusresult) {
 						$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
