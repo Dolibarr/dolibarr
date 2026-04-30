@@ -128,6 +128,8 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 }
 
 
+$classname = '';
+
 /*
  * Actions
  */

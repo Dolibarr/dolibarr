@@ -2306,8 +2306,8 @@ function dolSlugify($stringtoslugify)
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param	int|string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \ .
+ *  @param	int<0,1>	$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)

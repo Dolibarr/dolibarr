@@ -9,6 +9,7 @@
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,20 +35,28 @@
  * @var Conf $conf
  * @var User $user
  *
- * @var int $disableedit
- * @var int $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * @var int $outputalsopricetotalwithtax
- * @var int $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
+ * @var int<0,1> $disableedit
+ * @var int<0,1> $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * @var int<0,1> $outputalsopricetotalwithtax
+ * @var int<0,1> $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
+ * @var string   $action
  */
 
- // Protection to avoid direct call of template
+// Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
 
-'@phan-var-force CommonObject|Facture $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObject|Facture $this
+@phan-var-force CommonObject $object
+@phan-var-force int<0,1> $disableedit
+@phan-var-force int<0,1> $inputalsopricewithtax
+@phan-var-force int<0,1> $outputalsopricetotalwithtax
+@phan-var-force int<0,1> $usemargins
+@phan-var-force string   $action
+';
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 

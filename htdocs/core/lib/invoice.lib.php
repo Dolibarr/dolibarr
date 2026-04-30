@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017      	Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2017       ATM-CONSULTING			<contact@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -526,7 +526,7 @@ function getNumberInvoicesPieChart($mode)
 
 				$dolgraph->setLegend($legend);
 
-				$dolgraph->SetDataColor(array_values($colorseries));
+				$dolgraph->SetDataColor($colorseries);
 				$dolgraph->setShowLegend(2);
 				$dolgraph->setShowPercent(1);
 				$dolgraph->SetType(array('bars', 'bars', 'bars', 'bars', 'bars', 'bars'));
