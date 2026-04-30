@@ -723,12 +723,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($pfresult) {
 				$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
 				if ($userHasProjectRights) {
-				// we REALLY want to trigger creation with the correct project
-				$changes = array();
-				$changes["fk_project"] = $select_eventorg;
-				$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink, $changes);
+					// we REALLY want to trigger creation with the correct project
+					$changes = array();
+					$changes["fk_project"] = $select_eventorg;
+					$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink, $changes);
 				} else {
-				$result = null;
+					$result = null;
 				}
 			} else {
 				$result = null;
@@ -755,25 +755,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($faresult) {
 				// 1. change status on clone
 				if ($newobject_status_id != -1) {
-				$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
-				if (!$clonestatusresult) {
-					$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
-					setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
-				}
+					$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
+					if (!$clonestatusresult) {
+						$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+						setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
+					}
 				} else {
-				$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
-				if (!$clonestatusresult) {
-					$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
-					setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
-				}
+					$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
+					if (!$clonestatusresult) {
+						$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+						setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
+					}
 				}
 				// 2. change status on old object
 				if ($oldobject_status_id != -1) {
-				$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
-				if (!$sourcestatusresult) {
-					$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
-					setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
-				}
+					$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
+					if (!$sourcestatusresult) {
+						$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
+						setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
+					}
 				}
 			} else {
 				setEventMessages($objectutil->error, $objectutil->errors, 'errors');
