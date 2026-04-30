@@ -703,8 +703,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$oldobject_status_id = GETPOST('oldobject_status', 'alpha');
 		$newobject_status_id = GETPOST('newobject_status', 'alpha');
-		$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? $oldobject_status_id : -1; // default is not to change old attendee status
-		$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? $newobject_status_id : -1;  // default for new cloned attendee is the same as the old
+		$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) -1; // default is not to change old attendee status
+		$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? (int) $newobject_status_id : (int) -1;  // default for new cloned attendee is the same as the old
 		$oldobject_status_txt = ($oldobject_status_id < 0) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
 		$newobject_status_txt = ($newobject_status_id < 0) ? ($langs->trans("Copy").' '.$langs->trans("Source")) : $object->LibStatut($newobject_status_id, 1);
 
@@ -724,6 +724,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
 				if ($userHasProjectRights) {
 				// we REALLY want to trigger creation with the correct project
+				$changes = array();
 				$changes["fk_project"] = $select_eventorg;
 				$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink, $changes);
 				} else {
