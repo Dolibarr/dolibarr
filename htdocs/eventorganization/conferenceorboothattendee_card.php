@@ -646,8 +646,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'label'    => $select_event_org,
 				'type'     => 'select',
 				'values'   => (array) $reformat_list,
-				'morecss'  => '',
-				'moreattr' => '',
 			],
 
 			// 2. Single-select: Source Status after clone
@@ -657,7 +655,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'type'     => 'select',
 				'values'   => (array) $source_status_list,
 				'default'  => 'i',
-				'morecss'  => '',
 			],
 
 			// 3. Single-select: Clone Status after clone
@@ -667,7 +664,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'type'     => 'select',
 				'values'   => (array) $clone_status_list,
 				'default'  => 'c',
-				'morecss'  => '',
 			],
 
 			// 4. Checkbox: Auto trigger clone of attendee
