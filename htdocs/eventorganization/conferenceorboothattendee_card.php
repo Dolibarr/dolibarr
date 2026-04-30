@@ -603,12 +603,231 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
-	// Clone confirmation
+	// Clone pre confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+
+		$langs->loadLangs(array("admin", "errors", "main", "mails", "companies", "accountancy"));
+		$projectstatic = new Project($db);
+		$projectid = $object->fk_project;
+		if (isset($projectstatic->date_start_event)) {
+			$fromdate = $projectstatic->date_start_event;
+		} else {
+			$fpresult = $projectstatic->fetch($projectid);
+			if ($fpresult) {
+				$fromdate = $projectstatic->date_start_event;
+			} else {
+				setEventMessages($langs->trans("ErrorRefNotFound", $langs->trans("Project")), null, 'errors');
+				dol_syslog('massaction_pre.tpl.php::failed fetching project='.$projectid, LOG_ERR);
+				$fromdate = 0;
+			}
+		}
+		$project_list = $projectstatic->fetchEventOrgIds($user, 1, $fromdate, 1);
+		$reformat_list = array();
+		foreach ($project_list as $key => $value) {
+			$reformat_list[$value["rowid"]] = $value["title"];
+		}
+		$source_status_list = array();
+		$source_status_list['i'] = $langs->trans("IsBefore");
+		foreach ($object->list_possible_status as $statusid) {
+			$source_status_list[(string) $statusid] = $object->LibStatut($statusid, 1);
+		}
+		$clone_status_list = array();
+		$clone_status_list['c'] = $langs->trans("Copy");
+		foreach ($object->list_possible_status as $statusid) {
+			$clone_status_list[(string) $statusid] = $object->LibStatut($statusid, 1);
+			dol_syslog('key="'.((string) $statusid).'"  value="'.$object->LibStatut($statusid, 1).'"', LOG_DEBUG);
+		}
+		$select_event_org = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBox");
+		$formquestion = [
+			// 1. Multi-select: Projects (Width 100%)
+			[
+				'name'     => 'select_eventorg',
+				'label'    => $select_event_org,
+				'type'     => 'select',
+				'values'   => $reformat_list,
+				'morecss'  => '',
+				'moreattr' => '',
+			],
+
+			// 2. Single-select: Source Status (Width 50%)
+			[
+				'name'     => 'oldobject_status',
+				'label'    => $langs->trans("Source").' &ndash; '.$langs->trans("SetToStatus"),
+				'type'     => 'select',
+				'values'   => $source_status_list,
+				'default'  => 'i',
+				'morecss'  => '',
+			],
+
+			// 3. Single-select: Clone Status (Width 50%)
+			[
+				'name'     => 'newobject_status',
+				'label'    => $langs->trans("Clone").' &ndash; '.$langs->trans("SetToStatus"),
+				'type'     => 'select',
+				'values'   => $clone_status_list,
+				'default'  => 'c',
+				'morecss'  => '',
+			],
+
+			// 4. Checkbox: No trigger clone of attendee
+			[
+				'name'    => 'autotrigger',
+				'label'   => $langs->trans("AutomaticTrigger").' '.$langs->trans("CloneOf", $langs->trans("Attendee")),
+				'type'    => 'checkbox',
+				'value'   => 1,
+				'default' => 1,
+				'inputko' => 1,
+			],
+
+			// 5. Checkbox: Create linked object
+			[
+				'name'    => 'objlink',
+				'label'   => $langs->trans("Create").' '.$langs->trans("LinkedObject"),
+				'type'    => 'checkbox',
+				'value'   => 1,
+				'default' => 0,
+				'inputko' => 1,
+			]
+		];
+
+		//$formquestion = array();
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone_attendee', $formquestion, 'yes', 1);
+//		$newformconfirm = $formproject->formMultiSelectEventOrg4Clone($page, $htmlname, $title, $status_list, $project_list, $toptext, $size, 'width: 100%;');
 	}
+
+	// Action clone object
+	$select_eventorg = GETPOSTINT('select_eventorg') ?? 0;
+	if ($action == 'confirm_clone_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_eventorg < 1) {
+		setEventMessages($langs->trans("SelectAProjectFirst"), null, 'errors');
+	} elseif ($action == 'confirm_clone_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_eventorg > 0) {
+		$attendeestatic = new ConferenceOrBoothAttendee($db);
+		$prefetch = $attendeestatic->fetch($id);
+		dol_syslog("oldid=".$id, LOG_DEBUG);
+		// because ELSE we change the project on the source when we change the project on the clone
+		$oldobject_status_id = GETPOST('oldobject_status', 'alpha');
+		$newobject_status_id = GETPOST('newobject_status', 'alpha');
+		$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? $oldobject_status_id : -1; // default is not to change old attendee status
+		$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? $newobject_status_id : -1;  // default for new cloned attendee is the same as the old
+		dol_syslog("oldobject_status_id=".$oldobject_status_id, LOG_DEBUG);
+		dol_syslog("newobject_status_id=".$newobject_status_id, LOG_DEBUG);
+
+		$oldobject_status_txt = ($oldobject_status_id < 0) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
+		$newobject_status_txt = ($newobject_status_id < 0) ? ($langs->trans("Copy").' '.$langs->trans("Source")) : $object->LibStatut($newobject_status_id, 1);
+
+		$autotrigger = GETPOST('autotrigger', 'alpha') ? GETPOST('autotrigger', 'alpha') : null;
+		$nolink = GETPOST('objlink', 'alpha') ? GETPOST('objlink', 'alpha') : 0; // we do want to link objects
+		$notrigger = ($autotrigger == 'on') ? 0 : 1;
+		$nolink = ($nolink == 'on') ? 0 : 1;
+		dol_syslog("nolink=".$nolink, LOG_DEBUG);
+		dol_syslog("notrigger=".$notrigger, LOG_DEBUG);
+		dol_syslog("autotrigger=".$autotrigger, LOG_DEBUG);
+
+		// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
+		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+		} else {
+			// these lines are copied from actions_addupdatedelete.inc.php
+			// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+			$objectutil = dol_clone($attendeestatic, 1);
+			// We used native clone to keep this->db valid and allow to use later all the methods of object.
+			// $objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth', 'int'), GETPOSTINT('newdateday', 'int'), GETPOSTINT('newdateyear', 'int'));
+			// ...
+			dol_syslog("select_eventorg=".$select_eventorg, LOG_DEBUG);
+			if ($select_eventorg > 0) {
+				$pfresult = $projectstatic->fetch($select_eventorg);
+				if ($pfresult) {
+					$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
+					if ($userHasProjectRights) {
+						// we should support changing project, because we REALLY want to trigger with the correct project!!
+						$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink);
+					} else {
+						$result = null;
+					}
+				} else {
+					$result = null;
+					setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectRef")), null, 'errors');
+				}
+			} else {
+				$result = null;
+				setEventMessages($langs->trans("SelectAProjectFirst"), null, 'errors');
+			}
+
+			if (is_object($result) || $result > 0) {
+				$newid = 0;
+				if (is_object($result)) {
+					$newid = $result->id;
+					$attendeeclone = $result;
+					$faresult = 1;
+				} else {
+					$newid = $result;
+					$attendeeclone = new ConferenceOrBoothAttendee($db);
+					$faresult = $attendeeclone->fetch($newid);
+					// 0. refetch with $newid so we are sure we have the object
+				}
+				dol_syslog("newid=".$newid, LOG_DEBUG);
+
+				if ($faresult) {
+					// 1. change project
+					// product creation should happen in the correct project!!
+					$cloneprojectresult = (int) $attendeeclone->setProject($select_eventorg, 1); // no trigger on project change
+					dol_syslog('cloneprojectresult='.$cloneprojectresult, LOG_DEBUG);
+					if (!$cloneprojectresult) {
+						$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetProject").' = <i>'.$projectstatic->getNomUrl().'</i>';
+						setEventMessages($warn_message, $attendeeclone->error, 'warnings');
+					}
+					// 2. change status on clone
+					if ($newobject_status_id != -1) {
+						$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
+						dol_syslog('clonestatusresult='.$clonestatusresult, LOG_DEBUG);
+						if (!$clonestatusresult) {
+							$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+							setEventMessages($warn_message, $attendeeclone->error, 'warnings');
+						}
+					} else {
+						$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
+						dol_syslog('clonestatusresult='.$clonestatusresult, LOG_DEBUG);
+						if (!$clonestatusresult) {
+							$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+							setEventMessages($warn_message, $attendeeclone->error, 'warnings');
+						}
+					}
+					// 3. change status on old object
+					if ($oldobject_status_id != -1) {
+						$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
+						dol_syslog('sourcestatusresult='.$sourcestatusresult, LOG_DEBUG);
+						if (!$sourcestatusresult) {
+							$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
+							setEventMessages($warn_message, $attendeestatic->error, 'warnings');
+						}
+					}
+				} else {
+					$error++;
+					setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+					$action = '';
+					$newid = null;
+				}
+
+				if (!empty($newid) && empty($noback)) {
+					$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $newid;
+					echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+					echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
+					exit;
+					// header() method does not work gives this error
+					// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
+				} else {
+					$error++;
+					setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectId")), null, 'errors');
+					$action = '';
+				}
+			} else {
+				$error++;
+				setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+				$action = '';
+			}
+		}
+	}
+
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
