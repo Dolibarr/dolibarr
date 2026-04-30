@@ -636,7 +636,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$clone_status_list['c'] = $langs->trans("Copy");
 		foreach ($object->list_possible_status as $statusid) {
 			$clone_status_list[(string) $statusid] = $object->LibStatut($statusid, 1);
-			dol_syslog('key="'.((string) $statusid).'"  value="'.$object->LibStatut($statusid, 1).'"', LOG_DEBUG);
 		}
 		$select_event_org = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBox");
 		$formquestion = [
@@ -703,15 +702,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	} elseif ($action == 'confirm_clone_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_eventorg > 0) {
 		$attendeestatic = new ConferenceOrBoothAttendee($db);
 		$prefetch = $attendeestatic->fetch($id);
-		dol_syslog("oldid=".$id, LOG_DEBUG);
-		// because ELSE we change the project on the source when we change the project on the clone
+
 		$oldobject_status_id = GETPOST('oldobject_status', 'alpha');
 		$newobject_status_id = GETPOST('newobject_status', 'alpha');
 		$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? $oldobject_status_id : -1; // default is not to change old attendee status
 		$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? $newobject_status_id : -1;  // default for new cloned attendee is the same as the old
-		dol_syslog("oldobject_status_id=".$oldobject_status_id, LOG_DEBUG);
-		dol_syslog("newobject_status_id=".$newobject_status_id, LOG_DEBUG);
-
 		$oldobject_status_txt = ($oldobject_status_id < 0) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
 		$newobject_status_txt = ($newobject_status_id < 0) ? ($langs->trans("Copy").' '.$langs->trans("Source")) : $object->LibStatut($newobject_status_id, 1);
 
@@ -719,28 +714,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$nolink = GETPOST('objlink', 'alpha') ? GETPOST('objlink', 'alpha') : 0; // we do want to link objects
 		$notrigger = ($autotrigger == 'on') ? 0 : 1;
 		$nolink = ($nolink == 'on') ? 0 : 1;
-		dol_syslog("nolink=".$nolink, LOG_DEBUG);
-		dol_syslog("notrigger=".$notrigger, LOG_DEBUG);
-		dol_syslog("autotrigger=".$autotrigger, LOG_DEBUG);
 
+		// Some of these lines are copied from actions_addupdatedelete.inc.php
 		// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			// these lines are copied from actions_addupdatedelete.inc.php
 			// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
 			$objectutil = dol_clone($attendeestatic, 1);
 			// We used native clone to keep this->db valid and allow to use later all the methods of object.
 			// $objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth', 'int'), GETPOSTINT('newdateday', 'int'), GETPOSTINT('newdateyear', 'int'));
 			// ...
-			dol_syslog("select_eventorg=".$select_eventorg, LOG_DEBUG);
 			if ($select_eventorg > 0) {
 				$pfresult = $projectstatic->fetch($select_eventorg);
 				if ($pfresult) {
 					$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
 					if ($userHasProjectRights) {
-						// we should support changing project, because we REALLY want to trigger with the correct project!!
-						$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink);
+						// we REALLY want to trigger creation with the correct project
+						$changes["fk_project"] = $select_eventorg;
+						$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink, $changes);
 					} else {
 						$result = null;
 					}
@@ -768,15 +760,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				dol_syslog("newid=".$newid, LOG_DEBUG);
 
 				if ($faresult) {
-					// 1. change project
-					// product creation should happen in the correct project!!
-					$cloneprojectresult = (int) $attendeeclone->setProject($select_eventorg, 1); // no trigger on project change
-					dol_syslog('cloneprojectresult='.$cloneprojectresult, LOG_DEBUG);
-					if (!$cloneprojectresult) {
-						$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetProject").' = <i>'.$projectstatic->getNomUrl().'</i>';
-						setEventMessages($warn_message, $attendeeclone->error, 'warnings');
-					}
-					// 2. change status on clone
+					dol_syslog('faresult='.$faresult, LOG_DEBUG);
+					// 1. change status on clone
 					if ($newobject_status_id != -1) {
 						$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
 						dol_syslog('clonestatusresult='.$clonestatusresult, LOG_DEBUG);
@@ -792,7 +777,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							setEventMessages($warn_message, $attendeeclone->error, 'warnings');
 						}
 					}
-					// 3. change status on old object
+					// 2. change status on old object
 					if ($oldobject_status_id != -1) {
 						$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
 						dol_syslog('sourcestatusresult='.$sourcestatusresult, LOG_DEBUG);
@@ -813,7 +798,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
 					echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
 					exit;
-					// header() method does not work gives this error
+					// header() method does not work, it gives this error
 					// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
 				} else {
 					$error++;
