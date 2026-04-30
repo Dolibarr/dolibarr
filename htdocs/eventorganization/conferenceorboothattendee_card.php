@@ -699,7 +699,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Reason: The function expects 'string[]' (indexed 0,1,2), but Dolibarr requires associative arrays (Key=>Label) for selects.
 		// Our keys (-1, 1, 5) are valid for the runtime logic but violate the strict 'string[]' type hint.
-		// phan-suppress-next-line PhanTypeMismatchArgument
+		/** @phan-suppress-next-line PhanTypeMismatchArgument */
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone_attendee', $formquestion, 'yes', 1);
 	}
 
