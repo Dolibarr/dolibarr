@@ -638,6 +638,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$clone_status_list[(string) $statusid] = $object->LibStatut($statusid, 1);
 		}
 		$select_event_org = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBox");
+		// Define the expected structure to satisfy static analysis tools (Phan/PHPStan)
+		/**
+		 * @var array<array{
+		 *   name: string,
+		 *   label: string,
+		 *   type: 'select'|'checkbox',
+		 *   values?: array<string, string>,
+		 *   default?: string|int,
+		 *   morecss?: string,
+		 *   moreattr?: string,
+		 *   value?: int,
+		 *   inputko?: int
+		 * }>
+		 */
 		$formquestion = [
 			// 1. Single-select: new Project
 			[
