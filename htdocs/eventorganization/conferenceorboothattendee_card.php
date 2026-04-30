@@ -630,12 +630,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$source_status_list = array();
 		$source_status_list['i'] = $langs->trans("IsBefore");
 		foreach ($object->list_possible_status as $statusid) {
-			$source_status_list[(string) $statusid] = $object->LibStatut($statusid, 1);
+			$source_status_list[(int) $statusid] = $object->LibStatut($statusid, 1);
 		}
 		$clone_status_list = array();
 		$clone_status_list['c'] = $langs->trans("Copy");
 		foreach ($object->list_possible_status as $statusid) {
-			$clone_status_list[(string) $statusid] = $object->LibStatut($statusid, 1);
+			$clone_status_list[(int) $statusid] = $object->LibStatut($statusid, 1);
 		}
 		$select_event_org = $langs->trans("EventOrganization").' &mdash; '.$langs->trans("ExtrafieldCheckBox");
 		// Define the expected structure to satisfy static analysis tools (Phan/PHPStan)
