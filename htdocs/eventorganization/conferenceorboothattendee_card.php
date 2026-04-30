@@ -628,12 +628,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$reformat_list[$value["rowid"]] = $value["title"];
 		}
 		$source_status_list = array();
-		$source_status_list['i'] = $langs->trans("IsBefore");
+		$source_status_list[-1] = $langs->trans("IsBefore");
 		foreach ($object->list_possible_status as $statusid) {
 			$source_status_list[(int) $statusid] = $object->LibStatut($statusid, 1);
 		}
 		$clone_status_list = array();
-		$clone_status_list['c'] = $langs->trans("Copy");
+		$clone_status_list[-1] = $langs->trans("Copy");
 		foreach ($object->list_possible_status as $statusid) {
 			$clone_status_list[(int) $statusid] = $object->LibStatut($statusid, 1);
 		}
@@ -654,7 +654,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'label'    => $langs->trans("Source").' &ndash; '.$langs->trans("SetToStatus"),
 				'type'     => 'select',
 				'values'   => (array) $source_status_list,
-				'default'  => 'i',
+				'default'  => -1,
 			],
 
 			// 3. Single-select: Clone Status after clone
@@ -663,7 +663,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'label'    => $langs->trans("Clone").' &ndash; '.$langs->trans("SetToStatus"),
 				'type'     => 'select',
 				'values'   => (array) $clone_status_list,
-				'default'  => 'c',
+				'default'  => -1,
 			],
 
 			// 4. Checkbox: Auto trigger clone of attendee
@@ -698,8 +698,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$attendeestatic = new ConferenceOrBoothAttendee($db);
 		$prefetch = $attendeestatic->fetch($id);
 
-		$oldobject_status_id = GETPOST('oldobject_status', 'alpha');
-		$newobject_status_id = GETPOST('newobject_status', 'alpha');
+		$oldobject_status_id = GETPOSTINT('oldobject_status');
+		$newobject_status_id = GETPOSTINT('newobject_status');
 		$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) -1; // default is not to change old attendee status
 		$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? (int) $newobject_status_id : (int) -1;  // default for new cloned attendee is the same as the old
 		$oldobject_status_txt = ($oldobject_status_id < 0) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
