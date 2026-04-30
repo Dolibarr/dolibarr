@@ -176,20 +176,21 @@ if (isALNERunningVersion()) {
 	}
 }
 </style>
+
 <center>
-<div style="font-size: 1.5em">
+<div style="font-size: 1.3em">
+<br><!-- Need a margin to avoid that the print of the ticket is cut by the browser -->
 <?php
-echo '<b>'.$mysoc->name.'</b>';
+echo '<b>'.dolPrintHTML($mysoc->name).'</b>';
 
 if (GETPOST('specimen')) {
 	print '<br>';
-	print '!!!!! SPECIMEN !!!!!';
+	print '!!! SPECIMEN !!!';
 }
 ?>
 </div>
 </center>
 <br>
-<p class="left">
 <?php
 $constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
 if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
@@ -202,12 +203,11 @@ if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) 
 	if (getDolGlobalString($constFreeText)) {
 		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
+	print '<p class="left">';
 	print nl2br($newfreetext);
+	print '<p>';
 }
-?>
-</p>
 
-<?php
 if ($object->status == Facture::STATUS_DRAFT) {
 	$canprintifnotvalidate = true;
 	if (isALNERunningVersion()) {
@@ -236,13 +236,14 @@ if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specim
 	if (empty($facid) || GETPOST('specimen')) {
 		print '99999';
 	} else {
-		print $object->ref;
+		print dolPrintHTML($object->ref);
 	}
 } else {
-	print $object->ref;
+	print dolPrintHTML($object->ref);
 }
 // POS terminal
-print '<br>'.$langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : ($object->pos_source ? $object->pos_source : 'Backoffice'));
+print "<br>\n";
+print $langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : ($object->pos_source ? $object->pos_source : 'Backoffice'));
 if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
@@ -255,10 +256,12 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	}
 }
 // Date
-print "<br>".$langs->trans('Date').": ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
+print "<br>\n";
+print $langs->trans('Date').": ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
 // Date of printing
 if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
-	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel');
+	print "<br>\n";
+	print $langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel');
 }
 // Transaction ID
 if (isALNERunningVersion() && isModEnabled('blockedlog')) {
@@ -277,7 +280,8 @@ if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 			}
 		}
 
-		print "<br>".$langs->trans("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
+		print "<br>\n";
+		print $langs->trans("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
 	}
 }
 
@@ -295,14 +299,14 @@ $isADuplicata = ($object->pos_print_counter >= 2);
 
 if ($object->status != $object::STATUS_CLOSED) {
 	// Not yet paid completely
-	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
+	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';
 } else {
 	if ($isADuplicata) {
 		print '<br><b>*** '.$langs->transnoentities("DUPLICATA");
 		if (getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT')) {
 			print ' (no '.($object->pos_print_counter - 1).')';
 		}
-		print ' ***</b>';	// Hard coded string
+		print ' ***</b>';
 	}
 }
 ?>
@@ -317,7 +321,7 @@ if ($object->status != $object::STATUS_CLOSED) {
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
 						  } ?></th>
-		<?php  if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
+		<?php if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("TotalHT");
 						  } ?></th>
@@ -573,9 +577,10 @@ if (isALNEQualifiedVersion() || isALNERunningVersion()) {
 		$labelidprof = $langs->trans("VATIntra");
 		print ' - '.$labelidprof.': '.$mysoc->tva_intra;
 	}
-	print "</i></center><br>\n";
+	print "</i></center>\n";
 }
 
+print "<br>\n<!-- Need a margin to avoid that the print of the ticket is cut by the browser -->";
 
 if (!GETPOST('forcenoautoopen') && !GETPOST('specimen') && empty($nojs)) {
 	?>

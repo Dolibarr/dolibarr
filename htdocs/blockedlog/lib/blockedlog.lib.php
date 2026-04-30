@@ -191,21 +191,21 @@ function getHashUniqueIdOfRegistration($algo = 'sha256')
  * the restrictions (it is not a check to say if we are or not in a mode with restrictions activated, but if we are in a context that has a sense to activate them).
  * It can be used to show warnings or alerts to end users.
  *
- * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version
+ * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version (to avoid return false on such version)
  * @param   int<0,1>	$ignoremodule		Set this to 1 to not take into account if module BlockedLog is on, so function can be used during module activation.
- * @return 	string							'' if false or a string if true
+ * @return 	string							'' if false, or a string if true
  */
 function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 {
 	global $mysoc;
 
-	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
+	// For Dev/Debug purpose: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
 	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return 'CERTIF_LNE_IS_2';
 	}
 
-	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
+	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version, it can't be the certified versions.
 		return '';
 	}
 	if ($mysoc->country_code != 'FR') {
@@ -218,7 +218,8 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 		return '';
 	}
 
-	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');	// all conditions are ok to become a LNE certified version
+	// all conditions are ok to become a LNE certified version
+	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');
 }
 
 
@@ -226,7 +227,7 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  * Return if the application is executed with the LNE requirements on.
  * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done
+ * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done and we suppose it is true.
  * @return 	boolean								True or false
  */
 function isALNERunningVersion($blockedlogtestalreadydone = 0)
