@@ -713,96 +713,87 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$notrigger = ($autotrigger == 'on') ? 0 : 1;
 		$nolink = ($nolink == 'on') ? 0 : 1;
 
-		// Some of these lines are copied from actions_addupdatedelete.inc.php
-		// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
-		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
-			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-		} else {
-			// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
-			$objectutil = dol_clone($attendeestatic, 1);
-			// We used native clone to keep this->db valid and allow to use later all the methods of object.
-			// $objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth', 'int'), GETPOSTINT('newdateday', 'int'), GETPOSTINT('newdateyear', 'int'));
-			// ...
-			if ($select_eventorg > 0) {
-				$pfresult = $projectstatic->fetch($select_eventorg);
-				if ($pfresult) {
-					$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
-					if ($userHasProjectRights) {
-						// we REALLY want to trigger creation with the correct project
-						$changes["fk_project"] = $select_eventorg;
-						$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink, $changes);
-					} else {
-						$result = null;
-					}
+		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+		$objectutil = dol_clone($attendeestatic, 1);
+		// We used native clone to keep this->db valid and allow to use later all the methods of object.
+		// $objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth', 'int'), GETPOSTINT('newdateday', 'int'), GETPOSTINT('newdateyear', 'int'));
+		// ...
+		if ($select_eventorg > 0) {
+			$pfresult = $projectstatic->fetch($select_eventorg);
+			if ($pfresult) {
+				$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
+				if ($userHasProjectRights) {
+				// we REALLY want to trigger creation with the correct project
+				$changes["fk_project"] = $select_eventorg;
+				$result = $objectutil->createFromClone($user, (($attendeestatic->id > 0) ? $attendeestatic->id : $id), $notrigger, $nolink, $changes);
 				} else {
-					$result = null;
-					setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectRef")), null, 'errors');
+				$result = null;
 				}
 			} else {
 				$result = null;
-				setEventMessages($langs->trans("SelectAProjectFirst"), null, 'errors');
+				setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectRef")), null, 'errors');
+			}
+		} else {
+			$result = null;
+			setEventMessages($langs->trans("SelectAProjectFirst"), null, 'errors');
+		}
+
+		if (is_object($result) || $result > 0) {
+			$newid = 0;
+			if (is_object($result)) {
+				$newid = $result->id;
+				$attendeeclone = $result;
+				$faresult = 1;
+			} else {
+				$newid = $result;
+				$attendeeclone = new ConferenceOrBoothAttendee($db);
+				$faresult = $attendeeclone->fetch($newid);
+				// 0. refetch with $newid so we are sure we have the object
 			}
 
-			if (is_object($result) || $result > 0) {
-				$newid = 0;
-				if (is_object($result)) {
-					$newid = $result->id;
-					$attendeeclone = $result;
-					$faresult = 1;
-				} else {
-					$newid = $result;
-					$attendeeclone = new ConferenceOrBoothAttendee($db);
-					$faresult = $attendeeclone->fetch($newid);
-					// 0. refetch with $newid so we are sure we have the object
+			if ($faresult) {
+				// 1. change status on clone
+				if ($newobject_status_id != -1) {
+				$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
+				if (!$clonestatusresult) {
+					$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+					setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
 				}
-
-				if ($faresult) {
-					// 1. change status on clone
-					if ($newobject_status_id != -1) {
-						$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
-						if (!$clonestatusresult) {
-							$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
-							setEventMessages($warn_message, $attendeeclone->error, 'warnings');
-						}
-					} else {
-						$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
-						if (!$clonestatusresult) {
-							$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
-							setEventMessages($warn_message, $attendeeclone->error, 'warnings');
-						}
-					}
-					// 2. change status on old object
-					if ($oldobject_status_id != -1) {
-						$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
-						if (!$sourcestatusresult) {
-							$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
-							setEventMessages($warn_message, $attendeestatic->error, 'warnings');
-						}
-					}
 				} else {
-					$error++;
-					setEventMessages($objectutil->error, $objectutil->errors, 'errors');
-					$action = '';
-					$newid = null;
+				$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
+				if (!$clonestatusresult) {
+					$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+					setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
 				}
-
-				if (!empty($newid) && empty($noback)) {
-					$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $newid;
-					echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
-					echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
-					exit;
-					// header() method does not work, it gives this error
-					// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
-				} else {
-					$error++;
-					setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectId")), null, 'errors');
-					$action = '';
+				}
+				// 2. change status on old object
+				if ($oldobject_status_id != -1) {
+				$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
+				if (!$sourcestatusresult) {
+					$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
+					setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
+				}
 				}
 			} else {
-				$error++;
 				setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 				$action = '';
+				$newid = null;
 			}
+
+			if (!empty($newid) && empty($noback)) {
+				$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $newid;
+				echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+				echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
+				exit;
+				// header() method does not work, it gives this error
+				// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
+			} else {
+				setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectId")), null, 'errors');
+				$action = '';
+			}
+		} else {
+			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+			$action = '';
 		}
 	}
 
