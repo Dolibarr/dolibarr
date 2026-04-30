@@ -5,7 +5,7 @@
  * Copyright (C) 2021 		Ferran Marcet 				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Rafael San José				<rsanjose@alxarafe.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,11 +124,11 @@ class modBom extends DolibarrModules
 		// Example: $this->const=array(0=>array('BILLOFMATERIALS_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('BILLOFMATERIALS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
-		$this->const = array(
-			1 => array('BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0),
-			2 => array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
-			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms', '', 0)
-		);
+		$this->const = [
+			['BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0],
+			['BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0],
+			['BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms', '', 0],
+		];
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(

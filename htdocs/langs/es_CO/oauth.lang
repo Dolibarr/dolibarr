@@ -17,7 +17,6 @@ OAUTH_GITHUB_ID=ID de GitHub de OAuth
 OAUTH_URL_FOR_CREDENTIAL=Vaya a <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">esta página<span class="fas fa-external-link-alt paddingleft"></span></a> para crear u obtener su ID y secreto de OAuth
 OAUTH_STRIPE_TEST_NAME=Prueba de rayas
 OAUTH_STRIPE_LIVE_NAME=Raya en vivo
-OAUTH_SECRET=secreto OAuth
 TokenExpired=Venció
 TokenNotExpired=No vencido
 ExpirationDate=Fecha de expiración

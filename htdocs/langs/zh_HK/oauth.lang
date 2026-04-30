@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=前往<a class="notasortlink" href="%s" target="_blank"
 OAUTH_STRIPE_TEST_NAME=Stripe 測試環境
 OAUTH_STRIPE_LIVE_NAME=Stripe 正式環境
 OAUTH_ID=OAuth 客戶端 ID
-OAUTH_SECRET=OAuth 密匙
-OAUTH_TENANT=OAuth 租户
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=已添加 OAuth 提供者
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=此提供者和标签的 OAuth 记录已存在
 URLOfOAuthServiceEndpoints=OAuth 服務端點的基底 URL

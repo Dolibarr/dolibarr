@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Ба <a class="notasortlink" href="%s" target="_blank" 
 OAUTH_STRIPE_TEST_NAME=Санҷиши хат
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID мизоҷи OAuth
-OAUTH_SECRET=Сирри OAuth
-OAUTH_TENANT=Иҷорагир OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Провайдери OAuth илова карда шуд
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Воридоти OAuth барои ин провайдер ва нишона аллакай мавҷуд аст
 URLOfOAuthServiceEndpoints=URL-и асосӣ барои нуқтаи ниҳоии хидмати OAuth

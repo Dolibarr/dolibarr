@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Joan <a class="notasortlink" href="%s" target="_blank" 
 OAUTH_STRIPE_TEST_NAME=Marra-proba
 OAUTH_STRIPE_LIVE_NAME=Marra Zuzenean
 OAUTH_ID=OAuth bezeroaren IDa
-OAUTH_SECRET=OAuth sekretua
-OAUTH_TENANT=OAuth maizterra
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth hornitzailea gehitu da
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Hornitzaile eta etiketa honetarako OAuth sarrera bat badago dagoeneko.
 URLOfOAuthServiceEndpoints=OAuth zerbitzuaren amaiera-puntuen oinarrizko URLa

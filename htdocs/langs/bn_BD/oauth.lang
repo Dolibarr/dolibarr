@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=<a class="notasortlink" href="%s" target="_blank" rel="
 OAUTH_STRIPE_TEST_NAME=স্ট্রাইপ টেস্ট
 OAUTH_STRIPE_LIVE_NAME=স্ট্রাইপ লাইভ
 OAUTH_ID=OAuth ক্লায়েন্ট আইডি
-OAUTH_SECRET=OAuth গোপন
-OAUTH_TENANT=OAuth ভাড়াটে
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth প্রদানকারী যোগ করা হয়েছে
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=এই প্রদানকারীর জন্য একটি OAuth এন্ট্রি এবং লেবেল ইতিমধ্যেই বিদ্যমান
 URLOfOAuthServiceEndpoints=OAuth পরিষেবার শেষ বিন্দুগুলির জন্য বেস URL

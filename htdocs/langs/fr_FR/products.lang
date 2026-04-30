@@ -52,6 +52,7 @@ Stock=Stock
 MenuStocks=Stocks
 Stocks=Stocks et emplacements (entrepôts) des produits
 Movements=Mouvements
+ProductStatus=produits ou services état
 Sell=Vente
 Buy=Achat
 OnSell=En vente
@@ -354,7 +355,7 @@ PackagingForThisProduct=Arrondir les quantités au multiple supérieur
 PackagingForThisProductDesc=Lors de l'ajout/la mise à jour d'une ligne dans un document, la quantité est ajustée pour correspondre au multiple supérieur le plus proche de la valeur définie sur produit.
 UseProductCustomerPackaging=Utilisez la fonction "%s" pour arrondir les quantités à certains multiples donnés (pour les ventes).
 PackagingForThisProductSell=Conditionnement de quantités (vente)
-QtyRecalculatedWithPackaging=La quantité de la ligne a été recalculée en fonction de l'emballage du fournisseur
+QtyRecalculatedWithPackaging=La quantité de la ligne a été recalculée conformément à la règle d'emballage sur les multiples de quantités
 
 #Attributes
 Attributes=Attributs

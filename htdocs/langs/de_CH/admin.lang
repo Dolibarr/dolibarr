@@ -525,7 +525,6 @@ MailToSendProposal=Angebote Kunde
 MailToSendOrder=Kundenbestellungen
 MailToSendIntervention=Arbeitseinsätze
 MailToSendReception=Lieferungen
-MailToExpenseReport=Spesenrapporte
 ModelModulesProduct=Vorlage für Produktdokumente
 SeeSubstitutionVars=Siehe * für eine Liste der Verfügbaren Variablen
 AddRemoveTabs=Tab hinzufügen oder entfernen

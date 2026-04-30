@@ -105,6 +105,7 @@ Staff=Employés
 StatusProspect1=Pour être contacté
 ChangeToContact=Changer l'état sur 'À contacter'
 DolibarrLogin=Connexion
+NoDolibarrAccess=Aucune connexion
 ExportDataset_company_1=Tierces parties (organisations/personnes physiques) et attributs
 ImportDataset_company_4=Représentants commerciaux tiers (affecter des représentants commerciaux/utilisateurs à des entreprises)
 PriceLevelLabels=Étiquettes de niveau de prix

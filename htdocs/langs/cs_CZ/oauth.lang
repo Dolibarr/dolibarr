@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Přejděte na <a class="notasortlink" href="%s" target=
 OAUTH_STRIPE_TEST_NAME=Test pruhů
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID klienta OAuth
-OAUTH_SECRET=Tajný klíč OAuth
-OAUTH_TENANT=Tenant OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Poskytovatel OAuth přidán
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Záznam OAuth pro tohoto poskytovatele a štítek již existuje.
 URLOfOAuthServiceEndpoints=Základní URL pro koncové body služby OAuth

@@ -431,7 +431,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	if ($contextpage == 'takepos') {
 		print "
 		<script>
-		parent.location.href='../../takepos/index.php?place='+parent.place;
+		location.href='cashcontrol_card.php?id=".$id."&contextpage=takepos';
 		</script>";
 		exit;
 	}

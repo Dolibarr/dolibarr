@@ -12,7 +12,7 @@ This run the actions:
 - phan.yml
 - phpstan.yml
 When all succeed, start:
-- Windows-ci;
+- windows-ci.yml
 
 See https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow
 
@@ -21,13 +21,13 @@ The other worklows are:
 -----------------------
 
 - ci-stale-issues-safe	to autoclose old issues.
-- ci-phpstan_baseline to update the phpstan baseline file.
-- ci-cache-clean-pr to clean cache when closing a PR.
-- ci-test to make CI tests
+- ci-phpstan_baseline 	to update the phpstan baseline file.
+- ci-cache-clean-pr 	to clean cache when closing a PR.
+- ci-test 				to make CI tests
+- ci-checkfiltesetlock 	to check we do not modify a file that is locked by a signature in dev/lockedfiles.txt
 
 Some tests workflows are:
 ------------------------
 
 - pr-18
-- pr-18-autolbal
 - test

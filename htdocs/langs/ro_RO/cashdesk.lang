@@ -179,6 +179,7 @@ CashControlEndDateMustBeBeforeNow=Nu este posibilă închiderea casei de marcat 
 CashControlEndDayMustNotBeInPast=It is not possible to make a daily cash register closing on a day in the future.
 TheoricalView=Vedere teoretică
 SentOrderToKitchen=Trimite comanda la bucătărie
+LifetimeAmountShort=Timp de viață
 LifetimeAmount=Lifetime amount (%s)
 LifetimeStatDate=Durata de viață
 AllTerminals=Toate terminalele

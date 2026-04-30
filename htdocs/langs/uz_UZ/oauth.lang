@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank"
 OAUTH_STRIPE_TEST_NAME=Strip testi
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth mijoz identifikatori
-OAUTH_SECRET=OAuth siri
-OAUTH_TENANT=OAuth ijarachisi
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth provayderi qoʻshildi
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Bu provayder va yorliq uchun OAuth yozuvi allaqachon mavjud
 URLOfOAuthServiceEndpoints=OAuth xizmatining soʻnggi nuqtalari uchun asosiy URL

@@ -163,5 +163,5 @@ TOTP=TOTP（時間ベースのワンタイムパスワード）
 UserRemovedFromGroup=ユーザ をグループから削除した
 UserSetInGroup=ユーザ がグループに設定された
 ColorGroup=グループの色
-NotHolidayApprover=Not allowed to approve holiday
-NotExpenseReportApprover=Not allowed to approve expense report
+NotHolidayApprover=休暇を承認できません
+NotExpenseReportApprover=経費報告書の承認は許可されていません

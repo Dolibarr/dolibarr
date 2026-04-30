@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=انتقل إلى <a class="notasortlink" href="%s" tar
 OAUTH_STRIPE_TEST_NAME=سترايب التجريبي -Stripe Test-
 OAUTH_STRIPE_LIVE_NAME=سترايب الحي -Stripe Live-
 OAUTH_ID=معرف عميل OAuth
-OAUTH_SECRET=سر OAuth
-OAUTH_TENANT=مستأجر OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=تمت إضافة موفر OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=إدخال OAuth لهذا الموفر وهذا التصنيف موجود بالفعل
 URLOfOAuthServiceEndpoints=عنوان رابط -URL- الأساسي لنقاط نهاية خدمة OAuth

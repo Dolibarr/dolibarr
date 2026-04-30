@@ -168,6 +168,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Eine Zahlungsart wurde auf Typ %s gesetzt,
 ErrorPHPNeedModule=Fehler, Ihr PHP muss das Modul <b>%s</b> installiert haben um diese Option zu benutzen.
 ErrorOpenIDSetupConfNotComplete=Aus Sicherheitsgründen müssen Sie außerdem die Dolibarr-Konfigurationsdatei conf.php anpassen, damit OpenID-Authentifizierung zugelassen wird.
 ErrorOpenIDSetupNotComplete=Sie haben im Dolibarr Konfigurationsfile eingestellt, dass die Anmeldung mit OpenID möglich ist, aber die URL zum OpenID Service ist noch nicht in %s definiert.
+OIDCAutocreateUserDisabled=Auto-creation of users on OIDC login is currently disabled. To enable it, add $dolibarr_main_authentication_autocreateuser=1 to your conf.php file.
+OIDCAutocreateUserEnabled=Auto-creation of users on OIDC login is enabled ($dolibarr_main_authentication_autocreateuser=1 is set in conf.php).
 ErrorWarehouseMustDiffers=Ursprungs- und Ziel-Lager müssen unterschiedlich sein
 ErrorBadFormat=Falsches Format!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fehler: Dieses Mitglied ist noch nicht mit einem Partner verbunden. Verknüpfen Sie das Mitglied zuerst mit einem vorhandenen Partner oder legen Sie einen neuen an, bevor Sie ein Abonnement mit Rechnung erstellen.
@@ -300,7 +302,7 @@ ErrorIsNotADraft=%s ist kein Entwurf
 ErrorExecIdFailed=Befehl "id" kann nicht ausgeführt werden
 ErrorBadCharIntoLoginName=Unzulässiges Zeichen im Feld %s
 ErrorRequestTooLarge=Fehler, Sitzungszeit abgelaufen oder Anfrage zu groß
-ErrorNotApproverForHoliday=Sie sind nicht der Genehmiger für den Urlaub %s
+ErrorNotApproverForHoliday=Sie sind nicht der Genehmiger für die Abwesenheit %s
 ErrorAttributeIsUsedIntoProduct=Dieses Attribut wird in mindestens einer Produktvariante verwendet
 ErrorAttributeValueIsUsedIntoProduct=Dieser Attributwert wird in mindestens einer Produktvariante verwendet
 ErrorPaymentInBothCurrency=Fehler, alle Beträge müssen in die gleiche Spalte eingetragen werden
@@ -467,4 +469,4 @@ SomeShipmentExists=Fehler, mit dem Auftrag ist eine Lieferung verknüpft. Lösch
 WarningEvaluationEmptyValidate=Die Bewertung kann nicht freigegeben werden, da die Kompetenzstufen nicht definiert sind
 ErrorBadParametersForDirectDebitFileCreate=Transferdatei für Bank kann nicht erstellt werden: Ein vom Format erwarteter Parameter ist nicht vorhanden.
 ErrorBadParametersForDirectDebitFileCreateDids=Transferdatei für Bank kann nicht erstellt werden: IDs von bestehenden Zahlungsanfragen wurden nicht angegeben.
-UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password
+UserDoesNotHaveRightsToChangeHisPassword=Dieser Benutzer hat nicht die Berechtigung, sein eigenes Passwort zu ändern.

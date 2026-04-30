@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Aneu a <a class="notasortlink" href="%s" target="_blank
 OAUTH_STRIPE_TEST_NAME=Prova de Stripe
 OAUTH_STRIPE_LIVE_NAME=Stripe en producció
 OAUTH_ID=Identificador de client d'OAuth
-OAUTH_SECRET=Secret d'OAuth
-OAUTH_TENANT=Inquilí d'OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=S'ha afegit el proveïdor OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Ja existeix una entrada d'OAuth per a aquest proveïdor i nom
 URLOfOAuthServiceEndpoints=URL base per als punts finals del servei OAuth

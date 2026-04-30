@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Siirry <a class="notasortlink" href="%s" target="_blank
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe -testi
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth-asiakastunnus
-OAUTH_SECRET=OAuth-salaisuus
-OAUTH_TENANT=OAuth-vuokralainen
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth-palveluntarjoaja lisätty
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Tämän palveluntarjoajan OAuth-merkintä ja -tunniste on jo olemassa
 URLOfOAuthServiceEndpoints=OAuth-palvelun päätepisteiden perus-URL-osoite

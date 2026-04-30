@@ -197,4 +197,4 @@ FieldsEdit=フィールド編集
 FieldsInsert=フィールド挿入
 FieldsView=フィールドビュー
 AIPromptExtrafield=AIプロンプト
-AIPromptExtrafieldDesc=Enter here a prompt that should return a value and only the value. The substition variables are replaced into the prompt before calling the AI API.
+AIPromptExtrafieldDesc=値のみを返すプロンプトを入力してください。置換変数は、AI API を呼び出す前にプロンプトに置き換えられます。

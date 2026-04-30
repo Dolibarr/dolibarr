@@ -58,8 +58,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./.github/scripts/get_changed_php.sh
 
-      #- name: Print changed files
-      #  run: echo "Changed files are ${{ steps.changed-files.outputs.all_changed_files }}"
+      - name: Print changed files
+        run: echo "Changed files are ${{ steps.changed-php.outputs.all_changed_files }}"
 
       # Action setup-python needs a requirements.txt or pyproject.toml
       # This ensures one of them exists.
@@ -169,7 +169,7 @@ jobs:
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ ! cancelled() }}
         with:
           name: precommit-logs

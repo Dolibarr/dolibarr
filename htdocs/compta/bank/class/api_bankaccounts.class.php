@@ -595,6 +595,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$url = sanitizeVal($url);
 		$label = sanitizeVal($label);
 		$type = sanitizeVal($type);
@@ -675,7 +679,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function updateLine($id, $line_id, $label)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -689,6 +693,10 @@ class BankAccounts extends DolibarrApi
 		$result = $accountLine->fetch($line_id);
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
+		}
+
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
 		}
 
 		$accountLine->label = sanitizeVal($label);
@@ -713,7 +721,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function deleteLine($id, $line_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -727,6 +735,10 @@ class BankAccounts extends DolibarrApi
 		$result = $accountLine->fetch($line_id);
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
+		}
+
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
 		}
 
 		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {

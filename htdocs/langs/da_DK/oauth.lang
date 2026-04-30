@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Gå til <a class="notasortlink" href="%s" target="_blan
 OAUTH_STRIPE_TEST_NAME=Stripe test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth-klient-id
-OAUTH_SECRET=OAuth-hemmelighed
-OAUTH_TENANT=OAuth lejer
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth-udbyder tilføjet
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Der findes allerede en OAuth-post for denne udbyder og etiket
 URLOfOAuthServiceEndpoints=Basis-URL for OAuth-tjenesteslutpunkter
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL leveret af OAuth-tjenesten til godkendelse
 Scopes=Tilladelser (omfang)
 ScopeUndefined=Tilladelser (omfang) udefinerede (se forrige fane)
-ScopesDesc=Example: "read", "write" with Mastodon or "none"
+ScopesDesc=Eksempel: "læs", "skriv" med Mastodon eller "ingen"
 TokenRawValue=Fuld token (objekt)
 AccessToken=Adgangstoken
 TokenExpired=Udløbet
@@ -50,4 +50,4 @@ RefreshToken=Opdater token
 RefreshTokenHelp=Brug Refresh Token til at få et nyt Adgangstoken
 OldTokenWasExpiredItHasBeenRefresh=Gammelt token var udløbet, det er blevet opdateret
 OldTokenWasNotExpiredButItHasBeenRefresh=Gammelt token var ikke udløbet, men det er blevet opdateret
-OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
+OAuthErrorStateDiffers=Værdien for state=%s er forskellig fra værdien i sessionen. Koden er afvist.

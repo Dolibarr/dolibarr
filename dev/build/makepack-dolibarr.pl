@@ -635,10 +635,8 @@ if ($nboftargetok) {
 				  . $BUILD . '"' . "\n";
 				$ret =
 `git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push '
-				  . $GITREMOTENAME
-				  . ' -f "$MAJOR.$MINOR.$BUILD"' . "\n";
-				$ret = `git push $GITREMOTENAME -f -"$MAJOR.$MINOR.$BUILD"`;
+				print "Run git push $GITREMOTENAME -f '$MAJOR.$MINOR.$BUILD'\n";
+				$ret = `git push $GITREMOTENAME -f "$MAJOR.$MINOR.$BUILD"`;
 
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
@@ -723,6 +721,8 @@ if ($nboftargetok) {
 
 		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3`;
+
+		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php`;
 
 		$ret = `rm -fr $BUILDROOT/$PROJECT/node_modules`;
 

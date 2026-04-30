@@ -168,6 +168,8 @@ ErrorPaymentModeDefinedToWithoutSetup=En betalingsmetode var sat til typen %s me
 ErrorPHPNeedModule=Fejl, din PHP skal have modulet <b>%s</b> installeret for at benytte denne funktion.
 ErrorOpenIDSetupConfNotComplete=Af sikkerhedsmæssige årsager skal du også konfigurere Dolibarr-konfigurationsfilen conf.php til at tillade OpenID-godkendelse.
 ErrorOpenIDSetupNotComplete=Do hare opsat din Dolibarr konfigurations fil til at tillade OpenID autentificering, men URL'en til OpenID servicen er ikke defineret i konstanten %s
+OIDCAutocreateUserDisabled=Auto-creation of users on OIDC login is currently disabled. To enable it, add $dolibarr_main_authentication_autocreateuser=1 to your conf.php file.
+OIDCAutocreateUserEnabled=Auto-creation of users on OIDC login is enabled ($dolibarr_main_authentication_autocreateuser=1 is set in conf.php).
 ErrorWarehouseMustDiffers=Kilde og destinations varehus skal være forskellige
 ErrorBadFormat=Forkert format!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fejl, dette medlem er endnu ikke knyttet til en tredjepart. Knyt medlem til en eksisterende tredjepart eller opret en ny tredjepart før oprettelsen af et abonnement med faktura.
@@ -467,4 +469,4 @@ SomeShipmentExists=Fejl, der er en forsendelse knyttet til ordren. Sletning afvi
 WarningEvaluationEmptyValidate=Kan ikke validere evalueringen, niveauer af færdigheder er ikke defineret
 ErrorBadParametersForDirectDebitFileCreate=Kan ikke oprette bankoverførselsfil: Forventet formatparameter er ikke angivet.
 ErrorBadParametersForDirectDebitFileCreateDids=Kan ikke oprette bankoverførselsfil: ID'er for eksisterende betalingsanmodninger er ikke angivet.
-UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password
+UserDoesNotHaveRightsToChangeHisPassword=Den bruger har ikke rettigheder til at ændre sin egen adgangskode

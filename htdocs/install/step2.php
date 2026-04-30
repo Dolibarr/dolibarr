@@ -503,7 +503,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 					}
 
 					//print 'x'.$file.'-'.$createdata.'<br>';
-					if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i', $file)) {
+					if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i', $file)) {  // @phpstan-ignore argument.invalidPregQuote
 						$tablefound++;
 						$tabledata[] = $file;
 					}

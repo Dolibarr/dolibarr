@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Buka <a class="notasortlink" href="%s" target="_blank" 
 OAUTH_STRIPE_TEST_NAME=Uji Garis
 OAUTH_STRIPE_LIVE_NAME=Garis Langsung
 OAUTH_ID=ID Klien OAuth
-OAUTH_SECRET=Rahasia OAuth
-OAUTH_TENANT=Penyewa OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Penyedia OAuth ditambahkan
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Entri OAuth untuk penyedia dan label ini sudah ada
 URLOfOAuthServiceEndpoints=URL dasar untuk titik akhir layanan OAuth

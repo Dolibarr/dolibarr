@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Vai a <a class="notasortlink" href="%s" target="_blank"
 OAUTH_STRIPE_TEST_NAME=Test delle strisce
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID cliente OAuth
-OAUTH_SECRET=OAuth segreto
-OAUTH_TENANT=Locatario OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Aggiunto provider OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Esiste già una voce OAuth per questo provider ed etichetta
 URLOfOAuthServiceEndpoints=URL di base per gli endpoint del servizio OAuth

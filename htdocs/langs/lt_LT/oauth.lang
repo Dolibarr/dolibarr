@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Eikite į <a class="notasortlink" href="%s" target="_bl
 OAUTH_STRIPE_TEST_NAME=Juostinis testas
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth kliento ID
-OAUTH_SECRET=OAuth slaptasis raktas
-OAUTH_TENANT=OAuth nuomininkas
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Pridėtas OAuth teikėjas
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Šio teikėjo ir žymės OAuth įrašas jau yra
 URLOfOAuthServiceEndpoints=Bazinis URL OAuth paslaugos galiniams taškams

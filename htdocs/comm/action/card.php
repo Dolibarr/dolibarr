@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				        <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -332,7 +332,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes' && $userc
 			//$object->fetch($id);
 			if (!empty($object->socpeopleassigned)) {
 				reset($object->socpeopleassigned);
-				$object->contact_id = key($object->socpeopleassigned);
+				$object->contact_id = (int) key($object->socpeopleassigned);
 			}
 			$result = $object->createFromClone($user, GETPOSTINT('socid'));
 			if ($result > 0) {
@@ -980,7 +980,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->contact_id = GETPOSTINT("contactid");
 		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
 			reset($object->socpeopleassigned);
-			$object->contact_id = key($object->socpeopleassigned);
+			$object->contact_id = (int) key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
 		$taskid = GETPOSTINT('taskid');
@@ -1255,7 +1255,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 
 	if ($datep != $object->datep) {
 		if (!empty($object->datef)) {
-			$object->datef += $datep - $object->datep;
+			$object->datef += (int) $datep - $object->datep;
 		}
 		$object->datep = $datep;
 
@@ -1583,7 +1583,7 @@ if ($action == 'create') {
 		*/
 
 		// limit date
-		$repeateventlimitdate = empty($repeateventlimitdate) ?  (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
+		$repeateventlimitdate = empty($repeateventlimitdate) ? (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
 
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
@@ -1651,7 +1651,9 @@ if ($action == 'create') {
 	print '<table class="border centpercent nobottom">';
 
 	// Assigned to user
-	print '<tr><td class="nowrap titlefieldcreate"><span>'.$langs->trans("ActionAffectedTo").'</span></td><td>';
+	print '<tr><td class="nowrap titlefieldcreate"><span>';
+	print $langs->trans("AssignedTo");
+	print '</span></td><td>';
 	$listofuserid = [];
 	$listofcontactid = [];
 	$listofotherid = [];
@@ -1850,7 +1852,7 @@ if ($action == 'create') {
 			print '</select>';
 			print ajax_combobox('taskid');
 		} else {
-			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 32, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 64, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
 		}
 		print '</td></tr>';
 	}
@@ -2021,7 +2023,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Add");
+	print $form->buttonsSaveCancel("Create");
 
 	print "</form>";
 }
@@ -2418,7 +2420,7 @@ if ($id > 0 && $action != 'create') {
 				</script>
 				<?php
 
-				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
+				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 64, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 				print '</td>';
@@ -2451,7 +2453,7 @@ if ($id > 0 && $action != 'create') {
 						$tid = GETPOSTINT("taskid");
 					}
 
-					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 64, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
 
 					print '</td>';
 				} else {

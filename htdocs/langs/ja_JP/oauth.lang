@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=<a class="notasortlink" href="%s" target="_blank" rel="
 OAUTH_STRIPE_TEST_NAME=ストライプテスト
 OAUTH_STRIPE_LIVE_NAME=ストライプライブ
 OAUTH_ID=OAuth クライアント ID
-OAUTH_SECRET=OAuthシークレット
-OAUTH_TENANT=OAuth テナント
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuthプロバイダーが追加された
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=このプロバイダーとラベルのOAuthエントリは既に存在する
 URLOfOAuthServiceEndpoints=OAuth サービス エンドポイントのベース URL
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=OAuth サービスが認証用に提供する URL
 Scopes=権限 (スコープ)
 ScopeUndefined=パーミッション (スコープ) 未定義 (前のタブを参照)
-ScopesDesc=Example: "read", "write" with Mastodon or "none"
+ScopesDesc=例: Mastodon で「read」、「write」、または「none」
 TokenRawValue=フルトークン（オブジェクト）
 AccessToken=アクセストークン
 TokenExpired=期限切れ
@@ -50,4 +50,4 @@ RefreshToken=リフレッシュトークン
 RefreshTokenHelp=リフレッシュトークンを使用して新しいアクセストークンを取得する
 OldTokenWasExpiredItHasBeenRefresh=古いトークンは期限切れ。更新された
 OldTokenWasNotExpiredButItHasBeenRefresh=古いトークンは期限切れではないが、更新された
-OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
+OAuthErrorStateDiffers=状態=%s の値がセッションの値と異なります。コード は拒否されます。

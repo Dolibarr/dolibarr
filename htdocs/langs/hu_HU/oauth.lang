@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Nyissa meg <a class="notasortlink" href="%s" target="_b
 OAUTH_STRIPE_TEST_NAME=Csíkos teszt
 OAUTH_STRIPE_LIVE_NAME=Stripe Élő
 OAUTH_ID=OAuth-ügyfélazonosító
-OAUTH_SECRET=OAuth titkos
-OAUTH_TENANT=OAuth-bérlő
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth-szolgáltató hozzáadva
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Ehhez a szolgáltatóhoz és címkéhez már létezik OAuth-bejegyzés
 URLOfOAuthServiceEndpoints=Az OAuth szolgáltatás végpontjainak alap URL-címe

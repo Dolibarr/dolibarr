@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Dodieties uz <a class="notasortlink" href="%s" target="
 OAUTH_STRIPE_TEST_NAME=Svītru tests
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth klienta ID
-OAUTH_SECRET=OAuth noslēpums
-OAUTH_TENANT=OAuth nomnieks
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Pievienots OAuth nodrošinātājs
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=OAuth ieraksts šim nodrošinātājam un iezīmei jau pastāv
 URLOfOAuthServiceEndpoints=Pamata URL OAuth pakalpojuma galapunktiem

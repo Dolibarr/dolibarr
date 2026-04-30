@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Đi tới <a class="notasortlink" href="%s" target="_bl
 OAUTH_STRIPE_TEST_NAME=Kiểm tra sọc
 OAUTH_STRIPE_LIVE_NAME=Sọc Trực Tiếp
 OAUTH_ID=ID ứng dụng khách OAuth
-OAUTH_SECRET=Bí mật OAuth
-OAUTH_TENANT=Đối tượng thuê OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Đã thêm nhà cung cấp OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Mục nhập OAuth cho nhà cung cấp và nhãn này đã tồn tại
 URLOfOAuthServiceEndpoints=URL cơ sở cho các điểm cuối dịch vụ OAuth

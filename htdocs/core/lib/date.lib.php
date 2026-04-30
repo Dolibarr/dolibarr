@@ -4,7 +4,7 @@
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 /**
  *  Return an array with timezone values
  *
- *  @return     array<int<-11,13>,string>   Array with timezone values
+ *  @return     array<int<-11,14>,string>   Array with timezone values
  */
 function get_tz_array()
 {
@@ -1323,7 +1323,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *  @param      string|int	$countryCodeOrId    Country Code or Id (company country code if not defined)
- *	@return    	int|string						Number of days or hours or string if error
+ *	@return    	float|string					Number of days or hours or string if error
  *  @seealso num_between_day(), num_public_holiday()
  */
 function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $countryCodeOrId = '')
@@ -1373,7 +1373,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 
 		// --- 3. Return Final Value ---
 		if ($inhour == 1) {
-			return $nbOpenDay * 24;
+			return (int) ($nbOpenDay * 24);  // Can be half a day, which is still int hours
 		}
 
 		return $nbOpenDay;

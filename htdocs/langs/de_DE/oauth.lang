@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Gehen Sie zu <a class="notasortlink" href="%s" target="
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth-Client-ID
-OAUTH_SECRET=OAuth-Geheimnis
-OAUTH_TENANT=OAuth-Mandant
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth-Anbieter hinzugefügt
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Ein OAuth-Eintrag für diesen Anbieter und dieses Label ist bereits vorhanden
 URLOfOAuthServiceEndpoints=Basis-URL für OAuth-Service-Endpunkte
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL, die vom OAuth-Dienst zur Authentifizierung bereitgestellt wird
 Scopes=Berechtigungen (Scopes)
 ScopeUndefined=Berechtigungen (Scopes) undefiniert (siehe vorheriges Tab)
-ScopesDesc=Example: "read", "write" with Mastodon or "none"
+ScopesDesc=Beispiel: "read", "write" mit Mastodon oder "none"
 TokenRawValue=Vollständiges Token (Objekt)
 AccessToken=Zugangs-Token
 TokenExpired=Abgelaufen
@@ -50,4 +50,4 @@ RefreshToken=Token aktualisieren
 RefreshTokenHelp=Verwenden Sie die Token-Aktualisierungsfunktion, um ein neues Zugriffs-Token zu erhalten.
 OldTokenWasExpiredItHasBeenRefresh=Das alte Token ist abgelaufen und wurde aktualisiert.
 OldTokenWasNotExpiredButItHasBeenRefresh=Das alte Token ist nicht abgelaufen, wurde aber aktualisiert
-OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
+OAuthErrorStateDiffers=Der Wert für state=%s weicht vom Wert in der Sitzung ab. Der Code wird abgelehnt.

@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank"
 OAUTH_STRIPE_TEST_NAME=Testi i vijave
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID-ja e klientit OAuth
-OAUTH_SECRET=Sekreti i OAuth
-OAUTH_TENANT=Qiramarrësi i OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=U shtua ofruesi i OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Një hyrje OAuth për këtë ofrues dhe etiketë ekziston tashmë
 URLOfOAuthServiceEndpoints=URL-ja bazë për pikat fundore të shërbimit OAuth

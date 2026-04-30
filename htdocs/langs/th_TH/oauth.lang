@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=ไปที่ <a class="notasortlink" href="%s" targe
 OAUTH_STRIPE_TEST_NAME=ทดสอบลายทาง
 OAUTH_STRIPE_LIVE_NAME=สไตรป์ไลฟ์
 OAUTH_ID=รหัสไคลเอ็นต์ OAuth
-OAUTH_SECRET=ข้อมูลลับ OAuth
-OAUTH_TENANT=ผู้เช่า OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=เพิ่มผู้ให้บริการ OAuth แล้ว
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=มีรายการ OAuth สำหรับผู้ให้บริการและป้ายกำกับนี้อยู่แล้ว
 URLOfOAuthServiceEndpoints=URL ฐานสำหรับจุดสิ้นสุดบริการ OAuth

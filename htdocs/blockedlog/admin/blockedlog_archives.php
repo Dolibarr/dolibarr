@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
  * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -49,14 +49,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
 
 // Get Parameters
-$action      = GETPOST('action', 'aZ09');
-$confirm     = GETPOST('confirm', 'aZ09');	// Used by the actions_linkedfiles.inc.php
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'aZ09');	// Used by the actions_linkedfiles.inc.php
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
-$backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-//$hmacexportkey = GETPOST('hmacexportkey', 'password');
-$withtab    = GETPOSTINT('withtab');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 $search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
@@ -115,7 +114,7 @@ $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
 // Access Control
-if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || !isModEnabled('blockedlog')) {
+if (((!$user->admin && !$user->hasRight('blockedlog', 'read')) || !isModEnabled('blockedlog')) && !userIsTaxAuditor()) {
 	accessforbidden();
 }
 
@@ -534,7 +533,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
 		$foundoldformat = 0;
 		$firstrecorddate = 0;
-		include_once DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+		global $foundoldformat, $firstrecorddate;
+		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 
 		// Add a final line with perpetual total for invoice validations
@@ -677,16 +677,19 @@ if ($withtab) {
 }
 
 $morehtmlcenter = '';
+$texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if (!isRegistrationDataSavedAndPushed()) {
-	$texttop = '';
+if (!userIsTaxAuditor()) {
+	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+	if (!isRegistrationDataSavedAndPushed()) {
+		$texttop = '';
+	}
 }
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
-$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+$head = blockedlogadmin_prepare_head($withtab);
 
 print dol_get_fiche_head($head, 'archives', '', -1);
 
@@ -694,15 +697,23 @@ print dol_get_fiche_head($head, 'archives', '', -1);
 //print '<br><br>';
 
 print '<div class="opacitymedium hideonsmartphone justify">';
-
-print $langs->trans("ArchivesDesc")."<br>";
-
+if (!userIsTaxAuditor()) {
+	print $langs->trans("ArchivesDesc")."<br>";
+} else {
+	print $langs->trans("ArchivesAuditorDesc")."<br>";
+}
 print "</div>\n";
 
 
 if ($action == 'check' || $action == 'checkconfirmed') {
 	print '<br>';
-	print '<div class="formconsumeproduce">';
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="urlfile" value="'.GETPOST('urlfile').'">';
+	print '<input type="hidden" name="action" value="checkconfirmed">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+	print '<div class="neutral">';
 
 	print '<b>'.$langs->trans("File").'</b> : '.GETPOST('urlfile').'<br>';
 
@@ -736,6 +747,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 	$registrationnumber = getHashUniqueIdOfRegistration();
 	$secretkey = $registrationnumber;
+	$inputregistrationnumber = '';
 
 	// Prepare to create a temporary file
 	$fullpathtmp = $upload_dir.'/temp/'.GETPOST('urlfile').'.tmp';
@@ -747,18 +759,59 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 	removeLastLine($fullpathtmp);
 
 	print $langs->trans("FileHasBeenEncodedWithASecretKeyStartingWith").' : '.$regnumber.'...<br>';
-	if (preg_match('/^'.$regnumber.'/', $secretkey)) {
+	if (preg_match('/^'.$regnumber.'/', $secretkey) && !userIsTaxAuditor()) {
 		print 'As this matches the 10 first characters of the full registration number of this instance, we will use the full registration number to control the archive file...';
 	} else {
-		print 'This archive file was not generated by this instance. The control of authenticity is possible only if you know the full registration number.';
-		print '<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("FullRegistrationNumber").'">';
+		$secretkey = '';	// The local registration number does not match the one of the archive file, so we won't use the local number to check authenticity.
+
+		if (GETPOST('inputregistrationnumber')) {
+			$inputregistrationnumber = GETPOST('inputregistrationnumber');
+			print 'We will use this value as full registration number ';
+			print '<input type="text" name="inputregistrationnumber" class="width300" placeholder="'.$langs->trans("FullRegistrationNumber").'" value="'.$inputregistrationnumber.'" spellcheck="false">';
+
+			$secretkey = $inputregistrationnumber;	// We will use the entered value to check authenticity
+		} else {
+			if (!userIsTaxAuditor() || !isModEnabled('captureserver')) {   // @phan-suppress-current-line UnknownModuleName
+				print 'This archive file was not generated by this instance.';
+				print 'The control of authenticity is possible only if you know the full registration number. ';
+				$inputregistrationnumber = '';
+
+				print $langs->trans("PleaseEnterFullRegistrationNumber").' ';
+			} else {
+				// Here module "captureserver" is on. We can search the full registration number and prefill value
+				$sql = "SELECT registerid from ".MAIN_DB_PREFIX."captureserver_captureserver";
+				$sql .= " WHERE registerid LIKE '".$db->escape($regnumber)."%'";
+				$sql .= " AND type = 'dolibarrregistration'";
+				$sql .= " LIMIT 1";
+
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$inputregistrationnumber = $obj->registerid;
+					}
+				}
+
+				if ($inputregistrationnumber) {
+					print $langs->trans("WeFoundThisFullRegistrationNumberForThisKey").' ';
+				} else {
+					print $langs->trans("WeDidNotFindThisFullRegistrationNumberForThisKey").'.<br>';
+					print $langs->trans("PleaseEnterFullRegistrationNumber").' ';
+				}
+			}
+			print '<input type="text" name="inputregistrationnumber" class="width300" placeholder="'.$langs->trans("FullRegistrationNumber").'" value="'.$inputregistrationnumber.'" spellcheck="false">';
+		}
 	}
 	print '<br><br>';
-	print '<center><a class="button small nomarginleft" href="'.$_SERVER["PHP_SELF"].'?action=checkconfirmed&urlfile='.urlencode(GETPOST('urlfile')).'">'.$langs->trans("ControlFile").'</a></center>';
 
-	//<input type="text" name="inputregistrationnumber" placeholder="'.$langs->trans("RegistrationNumber").'">';
+	print '<center>';
+	print '<input type="submit" class="button small" name="submit" value="'.$langs->trans("ControlFile").'">';
+	print '</center>';
 
 	print '</div>';
+
+	print '</form>';
+
 
 	if ($action == 'checkconfirmed') {
 		$totalhtamountforaction = $totalvatamountforaction = $totalamountforaction = array(
@@ -776,6 +829,13 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$previoushash = '';
 		$nbLinesModifiedInExportButKo = 0;
 		$nbLinesModifiedBeforeExport = 0;
+
+		$amounthtlifetime = array();
+		$amountvatlifetime = array();
+		$amountttclifetime = array();
+		$amounthtlifetime['BILL_VALIDATE'] = $amounthtlifetime['PAYMENT_CUSTOMER'] = null;
+		$amountvatlifetime['BILL_VALIDATE'] = $amountvatlifetime['PAYMENT_CUSTOMER'] = null;
+		$amountttclifetime['BILL_VALIDATE'] = $amountttclifetime['PAYMENT_CUSTOMER'] = null;
 
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
@@ -835,7 +895,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$block_static->action = $lineactioncode = (string) $line[3];
 					$block_static->module_source = (string) $line[4];
 					$block_static->pos_source = (string) $line[5];
-					$block_static->amounts_taxexcl = $lineamountht = ($line[6] === '' ? null : (float) $line[5]);
+					$block_static->amounts_taxexcl = $lineamountht = ($line[6] === '' ? null : (float) $line[6]);
 					$block_static->amounts = $lineamountttc = (float) $line[7];
 					$block_static->ref_object = $lineref = (string) $line[8];
 					$block_static->date_object = (int) $line[9];
@@ -915,10 +975,35 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					}
 				}
 
-
+				// Test if line is a summary line
 				if (preg_match('/^SUMMARY /', (string) $line[0])) {
 					// We are on a line for summary information
 					$lineanalyzed = 1;
+					/*
+					if (preg_match('/^SUMMARY TURNOVER BILLED/', (string) $line[0])) {
+						// Do nothing, we recalculate amount from previous lines
+					}
+					if (preg_match('/^SUMMARY TURNOVER PAID/', (string) $line[0])) {
+						// Do nothing, we recalculate amount from previous lines
+					}
+					*/
+					if (preg_match('/^SUMMARY LIFETIME BILLED/', (string) $line[0])) {
+						// We load data from line
+						$amountstring = (string) $line[0];
+						if (preg_match('/^SUMMARY LIFETIME BILLED[^\d]*\s:\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+/', $amountstring, $reg)) {
+							$amounthtlifetime['BILL_VALIDATE'] = (float) $reg[1];
+							$amountvatlifetime['BILL_VALIDATE'] = (float) $reg[2];
+							$amountttclifetime['BILL_VALIDATE'] = (float) $reg[3];
+						}
+					}
+					if (preg_match('/^SUMMARY LIFETIME PAID/', (string) $line[0])) {
+						$amountstring = (string) $line[0];
+						if (preg_match('/^SUMMARY LIFETIME PAID[^\d]*\s:\s([\d\.]+)/', $amountstring, $reg)) {
+							$amounthtlifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
+							$amountvatlifetime['PAYMENT_CUSTOMER'] = 0.0;
+							$amountttclifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
+						}
+					}
 				}
 
 				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', (string) $line[0], $reg)) {
@@ -949,7 +1034,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		print '<br><br>';
 
-		if ($recalculatedhashsign && $recalculatedhashsign == $hashsign) {
+		if ($recalculatedhashsign && hash_equals($recalculatedhashsign, $hashsign)) {
 			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileIntegrity").'</b> ';
 			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algosign.' = '.$recalculatedhashsign);
@@ -960,33 +1045,45 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		}
 		print '<br><br>';
 
-		if ($recalculatedhashauth && $recalculatedhashauth == $hashauth) {
-			print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
-			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
-			print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
-			print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algoauth.' = '.$recalculatedhashauth);
-		} elseif ($recalculatedhashsign == $hashsign) {
-			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
-			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
-			print ' '.$form->textwithpicto('', $langs->trans("FileNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+		if ($secretkey) {
+			if ($recalculatedhashauth && hash_equals($recalculatedhashauth, $hashauth)) {
+				print img_picto('', 'tick', 'class="valignmiddle pictofixedwidth"');
+				print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+				if (preg_match('/^'.$regnumber.'/', $secretkey) && !userIsTaxAuditor()) {
+					print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByThisInstance").'</span>';
+				} else {
+					print ' - <span class="opacitymedium">'.$langs->trans("FileWasGeneratedByTheInstanceWithRegistrationId").'</span>';
+				}
+				print ' '.$form->textwithpicto('', $langs->trans("FileContentMatchSignature").'<br><br>'.$algoauth.' = '.$recalculatedhashauth);
+			} elseif ($recalculatedhashsign && hash_equals($recalculatedhashsign, $hashsign)) {
+				print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+				print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+				print ' '.$form->textwithpicto('', $langs->trans("FileNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+			} else {
+				print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+				print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
+				print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorruptedOrNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+			}
 		} else {
-			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+			print img_picto('', 'cross', 'class="valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("FileAuthenticity").'</b> ';
-			print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorruptedOrNotFromInstance").'<br><br>Recalculated '.$recalculatedhashauth.' != Found in file '.$hashauth);
+			print ' '.$form->textwithpicto('', $langs->trans("AuthenticityCantBeVerifiedIfFullRegistrationNumberNotProvided"));
 		}
 		print '<br><br>';
 
-		if ($nbLinesModifiedInExportButKo) {
-			print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
-			print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
-			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
-			print '<br><br>';
+		/*
+		if (!userIsTaxAuditor()) {
+			if ($nbLinesModifiedInExportButKo) {
+				print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
+				print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
+				print '<br><br>';
+			}
 		}
+		*/
 
 		if ($nbLinesModifiedBeforeExport) {
 			print img_picto('', 'warning', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("nbLinesModifiedBeforeExport").'</b>';
-			//print ' '.$form->textwithpicto('', $langs->trans("FileHasBeenCorrupted").'<br>Recalculated '.$recalculatedhashsign.' != Found in file '.$hashsign);
 			print '<br><br>';
 		}
 
@@ -1001,7 +1098,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		print '<hr>';
 
-		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE');
+		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
 		foreach ($arraykeys as $key) {
 			$totalhttoshow = $totalhtamountforaction[$key];
 			$totalvattoshow = $totalvatamountforaction[$key];
@@ -1010,12 +1107,12 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
 			if ($key == 'BILL_VALIDATE') {
 				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
-			} elseif ($key == 'PAYMENT_CUSTOMER_CREATE') {
+			} elseif ($key == 'PAYMENT_CUSTOMER') {
 				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
 			}
 			print ': ';
 
-			if ($key == 'PAYMENT_CUSTOMER_CREATE') {
+			if ($key == 'PAYMENT_CUSTOMER') {
 				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
 			} else {
 				print $langs->trans("HT").': ';
@@ -1034,6 +1131,44 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 			print '<br>';
 		}
 
+		// Now print the value for lifetime amounts.
+		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
+		foreach ($arraykeys as $key) {
+			if (is_null($amounthtlifetime[$key])) {		// If not entry found, we discard
+				continue;
+			}
+			$totalhttoshow = $amounthtlifetime[$key];
+			$totalvattoshow = $amountvatlifetime[$key];
+			$totaltoshow = $amountttclifetime[$key];
+
+			print '<b>'.dolPrintHTML($langs->trans("LifetimeAmountShort").' '.$langs->trans('log'.$key)).'</b>';
+			if ($key == 'BILL_VALIDATE') {
+				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
+			} elseif ($key == 'PAYMENT_CUSTOMER') {
+				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
+			}
+			print ': ';
+
+			if ($key == 'PAYMENT_CUSTOMER') {
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			} else {
+				print $langs->trans("HT").': ';
+				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("VAT").': ';
+				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+
+				print ' - ';
+
+				print $langs->trans("TTC").': ';
+				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
+			}
+			print '<br>';
+		}
+
+
 		print '<br>';
 
 		$text = $langs->trans("IfIntegrityAuthenticityIsOkYouCanGetdetailByOpeningTheFile");
@@ -1051,17 +1186,20 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 if ($action != 'check' && $action != 'checkconfirmed') {
 	$htmltext = '';
 
-	$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
-	if ($mysoc->country_code == 'FR') {
-		$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+	if (!userIsTaxAuditor()) {
+		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
+		if ($mysoc->country_code == 'FR') {
+			$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+		}
+		//$htmltext .= $langs->trans("UnalterableLogTool1");
+		//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+
+		print info_admin($htmltext, 0, 0, 'warning');
+
+		print '<br>';
+	} else {
+		print '<br>';
 	}
-	//$htmltext .= $langs->trans("UnalterableLogTool1");
-	//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
-
-	print info_admin($htmltext, 0, 0, 'warning');
-
-
-	print '<br>';
 
 	$param = '';
 	if ($contextpage != getDolDefaultContextPage(__FILE__)) {
@@ -1127,33 +1265,34 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 	}
 
 
-	print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="export">';
+	if (!userIsTaxAuditor()) {
+		print '<form method="POST" id="exportArchives" action="'.$_SERVER["PHP_SELF"].'?output=file">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="export">';
 
-	print '<div class="right">';
+		print '<div class="right">';
 
-	print '<span class="hideonsmartphone">'.$langs->trans("RestrictYearToExport").': </span>';
-	// Month
-	print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', $langs->trans("Month"), 0, 'minwidth50 maxwidth75imp valignmiddle', true);
-	print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
+		print '<span class="hideonsmartphone">'.$langs->trans("RestrictYearToExport").': </span>';
+		// Month
+		print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', $langs->trans("Month"), 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+		print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
 
-	print ' ';
+		print ' ';
 
-	// Disabled, we will use the getHashUniqueIdOfRegistration() as secret HMAC
-	//print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
+		// Disabled, we will use the getHashUniqueIdOfRegistration() as secret HMAC
+		//print '<input type="text" name="hmacexportkey" class="valignmiddle minwidth150imp maxwidth300imp" required value="'.GETPOST('hmacexportkey').'" placeholder="'.$langs->trans("Password").'">';
 
-	print ' ';
+		print ' ';
 
-	print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
-	print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-	/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-		print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
-	}*/
-	print ' </div><br>';
+		print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+		print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
+		/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
+			print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
+		}*/
+		print ' </div><br>';
 
-	print '</form>';
-
+		print '</form>';
+	}
 
 	/*
 	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -1246,9 +1385,7 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 }
 
 
-if (GETPOST('withtab', 'alpha')) {
-	print dol_get_fiche_end();
-}
+print dol_get_fiche_end();
 
 print '<br><br>';
 

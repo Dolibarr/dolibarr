@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Idite na <a class="notasortlink" href="%s" target="_bla
 OAUTH_STRIPE_TEST_NAME=Test prugama
 OAUTH_STRIPE_LIVE_NAME=Stripe uživo
 OAUTH_ID=OAuth ID klijenta
-OAUTH_SECRET=OAuth tajna
-OAUTH_TENANT=OAuth stanar
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth pružatelj usluga je dodan
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=OAuth unos za ovog pružatelja i Oznaka već postoji
 URLOfOAuthServiceEndpoints=Osnovni URL za krajnje točke usluge OAuth

@@ -41,4 +41,4 @@ CurrencyCode=通貨コード
 CurrencyUnitPrice=外貨換算単価
 CurrencyPrice=外貨での価格
 MutltiCurrencyAutoUpdateCurrencies=すべての通貨レートを更新する
-MulticurrencyOriginalCurrency=original currency
+MulticurrencyOriginalCurrency=元の通貨

@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Отидете на <a class="notasortlink" href="%s" t
 OAUTH_STRIPE_TEST_NAME=Тест с ивици
 OAUTH_STRIPE_LIVE_NAME=Stripe на живо
 OAUTH_ID=OAuth ИД на клиента
-OAUTH_SECRET=OAuth тайна
-OAUTH_TENANT=Клиент на OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Добавен е доставчик на OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Вече съществува OAuth запис за този доставчик и етикет
 URLOfOAuthServiceEndpoints=Базов URL адрес за крайни точки на OAuth услугата
