@@ -676,6 +676,84 @@ class Lettering extends BookKeeping
 	}
 
 	/**
+	 * Delete matching code on general account
+	 * Deletes all lines sharing the same lettering_code+numero_compte in the same fiscal year
+	 *
+	 * @param  array $ids ids array
+	 * @return int        Nb of affected rows or <= 0 if error
+	 */
+	public function deleteGeneralMatching(array $ids = [])
+	{
+		global $conf;
+
+		$error = 0;
+
+		// Step 1: collect all (lettering_code, numero_compte, fiscal year) from selected ids
+		$sql  = "SELECT DISTINCT ab.lettering_code, ab.numero_compte, fy.date_start, fy.date_end";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
+		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
+		$sql .= "   AND fy.entity = " . (int) $conf->entity;
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " AND ab.matching_general = 1";
+		$sql .= " AND ab.lettering_code IS NOT NULL AND ab.lettering_code != ''";
+
+		dol_syslog(__METHOD__ . " - Collect lettering groups to delete", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			return -1;
+		}
+
+		$groups = [];
+		while ($obj = $this->db->fetch_object($resql)) {
+			$groups[] = [
+				'code'       => $obj->lettering_code,
+				'compte'     => $obj->numero_compte,
+				'date_start' => $obj->date_start,
+				'date_end'   => $obj->date_end,
+			];
+		}
+		$this->db->free($resql);
+
+		if (empty($groups)) {
+			return 0; // Nothing to delete (lines not matched or already unmatched)
+		}
+
+		// Step 2: for each group, delete all lines sharing the same code+account+fiscal year
+		$affected = 0;
+		foreach ($groups as $group) {
+			$sql  = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
+			$sql .= "  lettering_code = NULL";
+			$sql .= ", date_lettering = NULL";
+			$sql .= ", matching_general = 0";
+			$sql .= " WHERE numero_compte = '" . $this->db->escape($group['compte']) . "'";
+			$sql .= " AND lettering_code = '" . $this->db->escape($group['code']) . "'";
+			$sql .= " AND matching_general = 1";
+			$sql .= " AND doc_date BETWEEN '" . $this->db->escape($group['date_start']) . "' AND '" . $this->db->escape($group['date_end']) . "'";
+
+			dol_syslog(__METHOD__ . " - Delete gl matching group " . $group['code'] . "/" . $group['compte'], LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				break;
+			}
+			$affected += $this->db->affected_rows($resql);
+		}
+
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this) . "::deleteGeneralMatching " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
+			return -1 * $error;
+		}
+
+		return $affected;
+	}
+
+	/**
 	 * Lettering bookkeeping lines
 	 *
 	 * @param	int[]		$bookkeeping_ids		Lettering specific list of bookkeeping id
