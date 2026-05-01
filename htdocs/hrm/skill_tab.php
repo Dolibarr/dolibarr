@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var ?string $objecttype
  */
 
 // Load translation files required by the page
