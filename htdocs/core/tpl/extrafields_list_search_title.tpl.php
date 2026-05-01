@@ -38,6 +38,7 @@
 @phan-var-force string $sortfield
 @phan-var-force string $sortorder
 @phan-var-force string $param
+@phan-var-force ?array{nbfield?:int} $totalarray
 ';
 
 // Protection to avoid direct call of template

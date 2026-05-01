@@ -26,6 +26,7 @@
 '
 @phan-var-force string $blocname
 @phan-var-force string $title
+@phan-var-force array<string,null|string|int> $parameters
 ';
 
 // Protection to avoid direct call of template

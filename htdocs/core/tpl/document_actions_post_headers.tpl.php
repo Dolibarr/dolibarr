@@ -58,12 +58,13 @@ if (empty($langs) || !is_object($langs)) {
  * @var ?int<0,1> $permission
  * @var int<0,1> $permissiontoadd
  * @var ?string $savingdocmask
- * @var ?string $param
  * @var CommonObject $object
  * @var string $sortfield
  * @var string $sortorder
  */
 '
+@phan-var-force string $upload_dir
+
 @phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
 @phan-var-force ?int<0,1> $permtoedit
 @phan-var-force ?int<0,1> $permission
