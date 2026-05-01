@@ -616,7 +616,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoUnmatchingModified' : 'AccountancyOneUnmatchingModifiedSuccessfully'), '', 'mesgs');
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoUnmatchingModified' : 'AccountancyOneUnmatchingModifiedSuccessfully'), array(), 'mesgs');
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit;
 			}
@@ -1574,7 +1574,7 @@ while ($i < min($num, $limit)) {
 				print '<span class="badge badge-status1"><i class="fas fa-user fa-xs"></i> ' . dol_escape_htmltag($line->lettering_code) . '</span>';
 			}
 		} elseif (!empty($line->matching_general) && !empty($line->lettering_code)) {
-			print '<span class="badge badge-status4"><i class="fas fa-book fa-xs"></i> ' . dol_escape_htmltag($line->lettering_code) . '</span>';
+			print '<span class="badge badge-status4"><i class="fas fa-book fa-xs"></i> ' . dol_escape_htmltag((string) $line->lettering_code) . '</span>';
 		}
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;

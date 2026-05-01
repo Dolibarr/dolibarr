@@ -679,8 +679,8 @@ class Lettering extends BookKeeping
 	 * Delete matching code on general account
 	 * Deletes all lines sharing the same lettering_code+numero_compte in the same fiscal year
 	 *
-	 * @param  array $ids ids array
-	 * @return int        Nb of affected rows or <= 0 if error
+	 * @param int[] $ids ids array
+	 * @return int Nb of affected rows or -1 if error
 	 */
 	public function deleteGeneralMatching(array $ids = [])
 	{
