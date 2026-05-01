@@ -528,7 +528,6 @@ GeneralUnmatchingManual=Manual unmatching on general account
 Unlettering=Unmatching
 UnletteringAuto=Auto unmatching
 UnletteringManual=Manual unmatching
-GeneralUnmatchingManual=Manual unmatching on general account
 AccountancyNoMatchingModified=No matching modified
 AccountancyOneMatchingModifiedSuccessfully=One matching successfully modified
 AccountancyMatchingModifiedSuccessfully=%s matching successfully modified
