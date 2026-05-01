@@ -91,6 +91,7 @@ $title = $langs->trans("HomeArea").' - '.$appli;
 
 llxHeader('', $title);
 
+$boxwork = ''; // Ensure this is initialised
 
 $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 

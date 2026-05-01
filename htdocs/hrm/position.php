@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -180,6 +180,7 @@ if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
  */
 
 $parameters = array();
+$job = null;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -292,7 +293,7 @@ if ($action == 'create') {
 
 	//dol_set_focus('input[name="ref"]');
 }
-if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}

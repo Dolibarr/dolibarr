@@ -76,11 +76,14 @@ $TAuthorizedObjects = array('job', 'user');
 $skill = new SkillRank($db);
 
 // Initialize a technical objects
+$object = null;
 if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
 		$object = new Job($db);
-	} elseif ($objecttype == "user") {
+	} elseif ($objecttype == 'user') {
 		$object = new User($db);
+	} else {
+		accessforbidden('ErrorBadObjectType');
 	}
 } else {
 	accessforbidden('ErrorBadObjectType');

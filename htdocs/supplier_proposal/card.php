@@ -101,6 +101,7 @@ $object = new SupplierProposal($db);
 $extrafields = new ExtraFields($db);
 
 $objectsrc = null;
+$classname = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -157,6 +158,9 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
+$fournprice = 0;
+$buyingprice = 0;
 
 if (empty($reshook)) {
 	$backurlforlist = DOL_URL_ROOT.'/supplier_proposal/list.php';
@@ -425,6 +429,7 @@ if (empty($reshook)) {
 						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 					}
 
+					$classname = null;
 					$id = $object->create($user);
 					if ($id > 0) {
 						dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -1704,7 +1709,7 @@ if ($action == 'create') {
 
 
 		// Lines from source
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && $classname !== null) {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva

@@ -144,6 +144,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var string $toolTipFontColor
  */
 
+$menumanager = null;
+
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
 if (empty($user->id) && !empty($_SESSION['dol_login'])) {
@@ -2732,7 +2734,7 @@ td.showDragHandle {
 <?php } else { ?>
 	background: var(--colorbackvmenu1);
 	/* border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2); */
-	box-shadow: 3px 0 6px <?php echo ($left == 'left' ? -2 : 2); ?>px #eee;
+	box-shadow: 3px 0 6px <?php echo($left == 'left' ? -2 : 2); ?>px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
@@ -3514,78 +3516,78 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
 	<?php
-										// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+													// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-										$moduletomainmenu = array(
-											'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
-											'produit' => 'products', 'service' => 'products', 'stock' => 'products',
-											'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
-											'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
-											'fournisseur' => 'companies',
-											'barcode' => '', 'fckeditor' => '', 'categorie' => '',
-										);
-										$mainmenuused = 'home';
-										foreach ($conf->modules as $val) {
-											$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-										}
-										$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
-
-										$generic = 1;
-										// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-										$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-										// Put here list of menu entries we are sure we don't want
-										$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-										foreach ($mainmenuusedarray as $val) {
-											if (empty($val) || in_array($val, $divalreadydefined)) {
-												continue;
-											}
-											if (in_array($val, $divnotrequired)) {
-												continue;
-											}
-											//print "XXX".$val;
-
-											$found = 0;
-											$url = '';
-											$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
-											$iconformodule = getDolGlobalString($constformoduleicon);
-											if ($iconformodule) {
-												if (preg_match('/^fa\-/', $iconformodule)) {
-													// This is a fa icon
-												} else {
-													$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
-												}
-												$found = 1;
-											} else {
-												// Search img file in module dir
-												foreach ($conf->file->dol_document_root as $dirroot) {
-													if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-														$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-														$found = 1;
-														break;
+													$moduletomainmenu = array(
+														'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
+														'produit' => 'products', 'service' => 'products', 'stock' => 'products',
+														'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
+														'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
+														'fournisseur' => 'companies',
+														'barcode' => '', 'fckeditor' => '', 'categorie' => '',
+													);
+													$mainmenuused = 'home';
+													foreach ($conf->modules as $val) {
+														$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
 													}
-												}
-											}
+													$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-											// Output entry for menu icon in CSS
-											if (!$found) {
-												print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-												print 'div.mainmenu.'.$val.' span::before {'."\n";
-												print 'content: "\f249";'."\n";
-												print '}'."\n";
-												$generic++;
-											} else {
-												if ($url) {
-													print "div.mainmenu.".$val." {\n";
-													print "	background-image: url(".$url.");\n";
-													print " background-position-y: 3px;\n";
-													print " filter: saturate(0);\n";
-													print "}\n";
-												} else {
-													print '/* icon for module '.$val.' is a fa icon */'."\n";
-												}
-											}
-										}
-										// End of part to add more div class css
+													$generic = 1;
+													// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+													$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+													// Put here list of menu entries we are sure we don't want
+													$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+													foreach ($mainmenuusedarray as $val) {
+														if (empty($val) || in_array($val, $divalreadydefined)) {
+															continue;
+														}
+														if (in_array($val, $divnotrequired)) {
+															continue;
+														}
+														//print "XXX".$val;
+
+														$found = 0;
+														$url = '';
+														$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+														$iconformodule = getDolGlobalString($constformoduleicon);
+														if ($iconformodule) {
+															if (preg_match('/^fa\-/', $iconformodule)) {
+																// This is a fa icon
+															} else {
+																$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+															}
+															$found = 1;
+														} else {
+															// Search img file in module dir
+															foreach ($conf->file->dol_document_root as $dirroot) {
+																if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+																	$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+																	$found = 1;
+																	break;
+																}
+															}
+														}
+
+														// Output entry for menu icon in CSS
+														if (!$found) {
+															print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+															print 'div.mainmenu.'.$val.' span::before {'."\n";
+															print 'content: "\f249";'."\n";
+															print '}'."\n";
+															$generic++;
+														} else {
+															if ($url) {
+																print "div.mainmenu.".$val." {\n";
+																print "	background-image: url(".$url.");\n";
+																print " background-position-y: 3px;\n";
+																print " filter: saturate(0);\n";
+																print "}\n";
+															} else {
+																print '/* icon for module '.$val.' is a fa icon */'."\n";
+															}
+														}
+													}
+													// End of part to add more div class css
 }	// End test if $dol_hide_topmenu?>
 
 
@@ -7232,7 +7234,7 @@ div#ecm-layout-center {
 	bottom: 4px !important;
 <?php } ?>
 	<?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_UNDER_MENU')) { ?>
-	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
+	top: <?php print $disableimages ? '32' : ($heightmenu + 4); ?>px;
 	<?php } ?>
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
