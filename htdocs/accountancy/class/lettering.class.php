@@ -333,7 +333,7 @@ class Lettering extends BookKeeping
 				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
 					// Delete partial lettering code if set normal lettering
 					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
-					$sql2 .= " matching_general = NULL";
+					$sql2 .= " matching_general = 0";
 					$sql2 .= ", lettering_code = NULL";
 					$sql2 .= ", date_lettering = NULL";
 					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
@@ -447,7 +447,7 @@ class Lettering extends BookKeeping
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-		$sql .= " matching_general = NULL";
+		$sql .= " matching_general = 0";
 		$sql .= ", lettering_code = NULL";
 		$sql .= ", date_lettering = NULL";
 		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
