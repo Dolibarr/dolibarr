@@ -535,6 +535,7 @@ AccountancyMatchingModifiedSuccessfully=%s matching successfully modified
 AccountancyNoUnmatchingModified=No unmatching modified
 AccountancyOneUnmatchingModifiedSuccessfully=One unmatching successfully modified
 AccountancyUnmatchingModifiedSuccessfully=%s unmatching successfully modified
+CentralizedAccountCannotBeMatchable=This account is a centralizing account and cannot be set as matchable
 ## Closure
 AccountancyClosureStep1=Validate and lock the movements
 AccountancyClosureStep2=Close the fiscal period
