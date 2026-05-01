@@ -366,15 +366,6 @@ if (!$error) {
 		//print '</a>';
 		$error++;
 	}
-} else {
-	if ($db !== null) {
-		print $db->lasterror();
-	}
-	if ($db !== null && !$db->connected) {
-		print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
-	}
-	print $langs->trans("ErrorGoBackAndCorrectParameters");
-	$error++;
 }
 
 if (!$error && $db !== null && $db->connected) {
