@@ -349,7 +349,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 		$head = jobPrepareHead($object);
 		$listLink = dol_buildpath('/hrm/job_list.php', 1);
-	} elseif ($objecttype == "user") {
+	} elseif ($objecttype == "user") {  // Always true - @phpstan-ignore equal.alwaysTrue
 		require_once DOL_DOCUMENT_ROOT . "/core/lib/usergroups.lib.php";
 		$object->getRights();
 		$head = user_prepare_head($object);
@@ -560,8 +560,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<th>'.$langs->trans('SkillType').'</th>';
 		print '<th>'.$langs->trans('Label').'</th>';
 		print '<th>'.$langs->trans('Description').'</th>';
-		print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';
-		if ($objecttype === 'job') {
+		print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';  // Always true - @phpstan-ignore identical.alwaysTrue
+		if ($objecttype === 'job') {  // Always true - @phpstan-ignore identical.alwaysTrue
 			print '<th class="linecoledit"></th>';
 			print '<th class="linecoldelete"></th>';
 		}
@@ -581,9 +581,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<td>';
 				print $sk->description;
 				print '</td><td class="linecolrank">';
-				print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
+				print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');  // Always true - @phpstan-ignore equal.alwaysTrue
 				print '</td>';
-				if ($objecttype != 'user' && $permissiontoadd) {
+				if ($objecttype != 'user' && $permissiontoadd) {  // Always true - @phpstan-ignore notEqual.alwaysTrue
 					print '<td class="linecoledit"></td>';
 					print '<td class="linecoldelete">';
 					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->rowid . '&amp;token='.newToken().'">';
@@ -596,11 +596,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		print '</table>';
-		if ($objecttype != 'user' && $permissiontoadd) {
+		if ($objecttype != 'user' && $permissiontoadd) {  // Left always true - @phpstan-ignore notEqual.alwaysTrue
 			print '<td><input class="button pull-right" type="submit" value="' . $langs->trans('SaveRank') . '"></td>';
 		}
 		print '</div>';
-		if ($objecttype != 'user' && $permissiontoadd) {
+		if ($objecttype != 'user' && $permissiontoadd) {  // Left always true - @phpstan-ignore notEqual.alwaysTrue
 			print '</form>';
 		}
 	}
