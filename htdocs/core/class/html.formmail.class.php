@@ -1516,6 +1516,7 @@ class FormMail extends Form
 	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill once layout has been chosen
 	 * @param	string		$showlinktolayout	Show link to layout
 	 * @return  string                      	HTML for model email boxes
+	 * @see getContentPageTemplate()
 	 */
 	public function getEmailLayoutSelector($htmlContent = 'message', $showlinktolayout = 'email')
 	{

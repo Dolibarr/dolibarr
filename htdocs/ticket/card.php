@@ -1164,9 +1164,9 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="assign_user">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
-			//print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
-			print $form->select_dolusers(empty($object->fk_user_assign) ? $user->id : $object->fk_user_assign, 'fk_user_assign', 1);
+			print $form->select_dolusers(empty($object->fk_user_assign) ? $user->id : $object->fk_user_assign, 'fk_user_assign', 1, null, 0, '', '', '', 0, 0, '', 0, '', '', 1);
 			print ' <input type="submit" class="button smallpaddingimp" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
+			print ' <input type="submit" class="button smallpaddingimp" name="btn_cancel" value="'.$langs->trans("Cancel").'" />';
 			print '</form>';
 		}
 		print '</td></tr>';

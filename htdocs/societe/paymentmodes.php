@@ -34,6 +34,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var Societe $mysoc
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -44,15 +52,6 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var Societe $mysoc
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "banks", "bills", 'paypal', 'stripe', 'withdrawals'));
@@ -184,8 +183,6 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->status          = GETPOSTINT('clos');
-			$companybankaccount->clos            = $companybankaccount->status;
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
@@ -209,7 +206,6 @@ if (empty($reshook)) {
 			}
 
 			$companybankaccount->status          = GETPOSTINT('clos');
-
 
 			if (GETPOST('stripe_card_ref', 'alpha') && GETPOST('stripe_card_ref', 'alpha') != $companypaymentmode->stripe_card_ref) {
 				// If we set a stripe value that is different than previous one, we also set the stripe account
@@ -344,7 +340,6 @@ if (empty($reshook)) {
 			$companybankaccount->date_rum        = GETPOSTDATE('date_rum', '00:00:00');
 			$companybankaccount->datec           = dol_now();
 
-			//$companybankaccount->clos          = GETPOSTINT('clos');
 			$companybankaccount->status          = GETPOSTINT('clos');
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
@@ -960,7 +955,6 @@ if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoa
 	}
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
 }
-
 
 // View
 if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' && $action != 'createcard') {
@@ -2257,6 +2251,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		$size = 8;
 		$name = 'Unknown';
 		$content = 'NoContent';
+
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
@@ -2299,7 +2294,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			print $langs->trans($val);
 		}
 		print '</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.GETPOST($name).'" spellcheck="false"></td>';
+		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" id="'.$name.'" value="'.GETPOST($name).'" spellcheck="false"></td>';
 		print '</tr>';
 	}
 
@@ -2318,7 +2313,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	// Status
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $object->labelStatus, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $object->status), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
+	print $form->selectarray("clos", $companybankaccount->labelStatus, (GETPOSTISSET('clos') ? GETPOSTINT('clos') : $companybankaccount::STATUS_OPEN), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Bank country
@@ -2400,7 +2395,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print dol_get_fiche_end();
 
-	dol_set_focus('#bank');
+	dol_set_focus('#iban');
 
 	print $form->buttonsSaveCancel("Add");
 }

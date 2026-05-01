@@ -234,7 +234,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslinesrec';
 	$h++;
 
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 0) {	// Warning, implementation with value 1 is seriously bugged and a new one not compatible is expected to become stable
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 0) {	// Warning, implementation with value 1 is seriously bugged and the new one with value 2, not compatible with 1, is expected to become stable
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/invoice_situation.php');
 		$head[$h][1] = $langs->trans("InvoiceSituation");
 		$head[$h][2] = 'situation';

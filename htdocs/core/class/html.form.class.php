@@ -2473,7 +2473,7 @@ class Form
 	/**
 	 * Return select list of users
 	 *
-	 * @param string|int|User	$selected 		User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
+	 * @param string|int|User	$userselected 	User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
 	 * @param string 			$htmlname 		Field name in form
 	 * @param int<0,1>|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
 	 * @param int[]|null		$exclude 		Array list of users id to exclude
@@ -2494,17 +2494,25 @@ class Form
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
 		global $action;
 
+		// Convert $selected into an int (in case it is an object)
+		if (is_object($userselected)) {
+			$selected = (int) $userselected->id;
+		} else {
+			$selected = (int) $userselected;
+		}
+
 		// If no preselected user defined, we take current user
-		if ((is_numeric($selected) && ($selected < -4 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
+		if (($selected < -4 || empty($selected)) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
 			$selected = $user->id;
 		}
 
+		// Convert selected int into an array
 		if ($selected === '') {
 			$selected = array();
 		} elseif (!is_array($selected)) {
@@ -2588,12 +2596,14 @@ class Form
 			$sql .= " AND u.rowid IN (" . $this->db->sanitize($includeUsers) . ")";
 		}
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
-			$sql .= " AND u.statut <> 0";
+			$sql .= " AND (u.statut <> 0";
+			$sql .= " OR rowid IN (".$this->db->sanitize(implode(',', $selected)).")";	// We must always keep the selected users to avoid to loose it/them when updating
+			$sql .= ")";
 		}
-		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX') || $notdisabled) {
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
 			$sql .= " AND u.employee <> 0";
 		}
-		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX') || $notdisabled) {
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
 			$sql .= " AND u.fk_soc IS NULL";
 		}
 		if (!empty($morefilter)) {
@@ -2769,7 +2779,7 @@ class Form
 					if (!empty($disableline)) {
 						$out .= ' disabled';
 					}
-					if ((!empty($selected[0]) && is_object($selected[0])) ? $selected[0]->id == $obj->rowid : in_array($obj->rowid, $selected)) {
+					if (in_array($obj->rowid, $selected)) {
 						$out .= ' selected';
 					}
 					$out .= ' data-html="';
