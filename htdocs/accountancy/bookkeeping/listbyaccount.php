@@ -1571,6 +1571,7 @@ while ($i < min($num, $limit)) {
 		if ($type == 'sub') {
 			// Auxiliary account matching
 			if (!empty($line->lettering_code)) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 				print '<span class="badge badge-status1"><i class="fas fa-user fa-xs"></i> ' . dol_escape_htmltag((string) $line->lettering_code) . '</span>';
 			}
 		} elseif (!empty($line->matching_general) && !empty($line->lettering_code)) {
