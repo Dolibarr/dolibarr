@@ -610,8 +610,8 @@ while ($i < $imaxinloop && $resql !== null) {
 	$userstatic->login = $obj->login;
 	$userstatic->email = $obj->email;
 	$userstatic->socid = $obj->fk_soc;
-	$userstatic->statut = $obj->status;
-	$userstatic->status = $obj->status;
+	$userstatic->statut = (int) $obj->status;
+	$userstatic->status = (int) $obj->status;
 	$userstatic->gender = $obj->gender;
 	$userstatic->photo = $obj->photo;
 

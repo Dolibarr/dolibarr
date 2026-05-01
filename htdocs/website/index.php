@@ -1955,6 +1955,7 @@ if ($action == 'updatecss' && $usercanedit) {
 	}
 }
 
+$sourcetype = '';
 if ($action == "updatesecurity" && $usercanedit && GETPOST("btn_WEBSITE_SECURITY_FORCECSP")) {
 	$directivecsp = GETPOST("select_identifier_WEBSITE_SECURITY_FORCECSP");
 	$sourcecsp = GETPOST("select_source_WEBSITE_SECURITY_FORCECSP");

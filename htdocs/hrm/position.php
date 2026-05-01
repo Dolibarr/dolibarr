@@ -432,6 +432,7 @@ if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $a
 		}
 	}
 	// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+	$resql = null;
 	if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 		$num = $nbtotalofrecords;
 	} else {
@@ -449,7 +450,7 @@ if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $a
 	}
 
 	// Direct jump if only one record found
-	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page && $resql !== null) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: " . dol_buildpath('/hrm/position.php', 1) . '?id=' . $id);
@@ -649,7 +650,7 @@ if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $a
 	$i = 0;
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
-	while ($i < ($limit ? min($num, $limit) : $num)) {
+	while ($i < ($limit ? min($num, $limit) : $num) && $resql !== null) {
 		$obj = $db->fetch_object($resql);
 		if (empty($obj)) {
 			break; // Should not happen
@@ -746,7 +747,9 @@ if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $a
 	}
 
 
-	$db->free($resql);
+	if ($resql !== null) {
+		$db->free($resql);
+	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
