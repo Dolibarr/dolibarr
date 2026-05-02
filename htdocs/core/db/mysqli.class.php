@@ -366,7 +366,7 @@ class DoliDBMysqli extends DoliDB
 		} catch (Throwable $e) {
 			// Check if error is due to closed connection
 			$errorMessage = $e->getMessage();
-			if (preg_match('/[Mm]ysqli.*[Oo]bject.*[Ii]s.*[Aa]lready.*[Cc]losed|Call to a member function.*on null type/', $errorMessage)) {
+			if (preg_match('/mysqli.*object.*is.*already.*closed|Call to a member function.*on null type/i', $errorMessage)) {
 				$this->lasterror = 'mysqli object is already closed: '.$errorMessage;
 				$this->lasterrno = 'ERROR_DB_CONNECTION_CLOSED';
 				$this->connected = false;
