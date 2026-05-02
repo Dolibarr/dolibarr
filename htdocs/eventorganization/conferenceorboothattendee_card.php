@@ -766,13 +766,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($faresult) {
 				// 1. change status on clone
 				if ($newobject_status_id != 655360) {
-					$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger);
+					$clonestatusresult = $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger, 'auto');
 					if (!$clonestatusresult) {
 						$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
 						setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
 					}
 				} else {
-					$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger);
+					$clonestatusresult = $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger, 'auto');
 					if (!$clonestatusresult) {
 						$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
 						setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
@@ -780,7 +780,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				// 2. change status on old object
 				if ($oldobject_status_id != 655360) {
-					$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger);
+					$sourcestatusresult = $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger, 'auto');
 					if (!$sourcestatusresult) {
 						$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
 						setEventMessages($warn_message, [$attendeestatic->error], 'warnings');
