@@ -11592,7 +11592,7 @@ abstract class CommonObject
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
+	 *  @param  string  $triggercode    Trigger code to use, 'auto' will make it try to find the right triggercode to use based on the status to change to.
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 *  @see setStatut()
 	 */
@@ -11602,6 +11602,10 @@ abstract class CommonObject
 
 		$this->db->begin();
 
+		if ($triggercode == 'auto' && isset($this->list_possible_triggercode)) {
+			$triggercode = isset($this->list_possible_triggercode[$status]) ? $this->list_possible_triggercode[$status] : '';
+			dol_syslog(get_class($this).' change to status='.$status.' uses triggercode='.$triggercode, LOG_DEBUG);
+		}
 		$statusfield = 'status';
 		if (in_array($this->element, array('don', 'donation', 'shipping', 'project_task'))) {
 			$statusfield = 'fk_statut';
