@@ -63,6 +63,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $list_possible_status = [self::STATUS_DRAFT, self::STATUS_VALIDATED, self::STATUS_USED, self::STATUS_CANCELED];
 
+	/**
+	 * @var array<int, string> list of possible triggercode for this object
+	 */
+	public $list_possible_triggercode = [self::STATUS_DRAFT => 'CONFERENCEORBOOTHATTENDEE_UNVALIDATE', self::STATUS_VALIDATED => 'CONFERENCEORBOOTHATTENDEE_VALIDATE', self::STATUS_USED => 'CONFERENCEORBOOTHATTENDEE_USED', self::STATUS_CANCELED => 'CONFERENCEORBOOTHATTENDEE_CANCEL'];
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -322,9 +326,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @param  	int 	$fromid     Id of object to clone
 	 * @param	int 	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @param	int 	$nolink		0=make link between source and clone, 1=do not link
+	 * @param	array<string, mixed>	$changes	Default empty array else array[field] = value, naturally not id/rowid, but this could be used to create the clone in a different fk_project: $changes["fk_project"] = $newprojectid
 	 * @return ConferenceOrBoothAttendee|int
 	 */
-	public function createFromClone(User $user, $fromid, $notrigger = 0, $nolink = 0)
+	public function createFromClone(User $user, $fromid, $notrigger = 0, $nolink = 0, $changes = array())
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -344,6 +349,24 @@ class ConferenceOrBoothAttendee extends CommonObject
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
 		//	$line->fetch_optionals();
+
+		// handle changes to fields
+		foreach ($changes as $key => $value) {
+			if ($key == "fields") {
+				dol_syslog('this->fields MUST NOT BE CHANGED', LOG_ERR);
+				$this->error = 'this->fields MUST NOT BE CHANGED';
+				return -2;
+			} elseif (array_key_exists((string) $key, $this->fields)) {
+				dol_syslog('key='.$key.' changed from '.$object->$key, LOG_DEBUG);
+				$object->$key = $value;
+				dol_syslog('key='.$key.' changed to '.$value, LOG_DEBUG);
+			} else {
+				$error++;
+				dol_syslog('key='.$key.' was not found in $this->fields', LOG_ERR);
+				$this->error = 'key='.$key.' was not found in $this->fields';
+				return -3;
+			}
+		}
 
 		// Reset some properties
 		unset($object->id);
