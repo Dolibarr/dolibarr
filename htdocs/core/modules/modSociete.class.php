@@ -403,7 +403,6 @@ class modSociete extends DolibarrModules
 			's.client' => "Numeric", 's.fournisseur' => "Numeric",
 			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 's.phone' => "Text", 's.email' => "Text",
 			't.code' => "List:c_typent:libelle:code",
-			'st.code' => "List:c_stcomm:libelle:code",
 			'c.entity' => 'List:entity:label:rowid',
 			's.entity' => 'List:entity:label:rowid',
 		);
