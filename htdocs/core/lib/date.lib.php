@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2026      Joachim Küter        <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1323,12 +1324,16 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *  @param      string|int	$countryCodeOrId    Country Code or Id (company country code if not defined)
+ *  @param      int         $user_id            User id. When > 0, the 'numOpenDay' hook fires after the standard
+ *                                              calculation so modules can adjust the result for that user
+ *                                              (e.g. employees with fewer than 5 fixed working days, bridge days,
+ *                                              fixed half-days). Default 0 keeps the standard behavior unchanged.
  *	@return    	float|string					Number of days or hours or string if error
  *  @seealso num_between_day(), num_public_holiday()
  */
-function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $countryCodeOrId = '')
+function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $countryCodeOrId = '', $user_id = 0)
 {
-	global $langs, $mysoc;
+	global $langs, $mysoc, $hookmanager;
 
 	if (empty($countryCodeOrId) || $countryCodeOrId < 0) {
 		$countryCodeOrId = $mysoc->country_code;
@@ -1343,6 +1348,8 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	if (!is_int($timestampEnd) && !is_float($timestampEnd)) {
 		return 'ErrorBadParameter_num_open_day';
 	}
+
+	$nbOpenDay = 0; // expressed in days; inhour conversion happens at the end
 
 	if ($timestampStart < $timestampEnd) {
 		// --- 1. Calculate Gross Working Days ---
@@ -1370,31 +1377,46 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		if (($halfday == 1 || $halfday == 2) && date('Y-m-d', $timestampStart) != date('Y-m-d', $timestampEnd) && $isEndDayWorking) {
 			$nbOpenDay -= 0.5;
 		}
-
-		// --- 3. Return Final Value ---
-		if ($inhour == 1) {
-			return (int) ($nbOpenDay * 24);  // Can be half a day, which is still int hours
-		}
-
-		return $nbOpenDay;
 	} elseif ($timestampStart == $timestampEnd) {
-		$numholidays = 0;
+		$isSingleDayHoliday = false;
 		if ($lastday) {
 			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId, $lastday);
 			if ($numholidays == 1) {
-				return 0;
+				$isSingleDayHoliday = true;
 			}
 		}
-
-		$nbOpenDay = $lastday;
-
-		if ($inhour == 1) {
-			$nbOpenDay *= 24;
+		if (!$isSingleDayHoliday) {
+			$nbOpenDay = $lastday - 0.5 * abs((int) $halfday);
 		}
-		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} else {
 		return $langs->trans("Error");
 	}
+
+	// --- 3. Allow modules to adjust the result based on the user (e.g. per-employee
+	// individual workdays, bridge days, fixed half-days). Only fires when caller
+	// opts in by passing a non-zero $user_id, so existing call sites are unaffected.
+	if ($user_id > 0 && is_object($hookmanager)) {
+		$parameters = array(
+			'timestampStart'  => $timestampStart,
+			'timestampEnd'    => $timestampEnd,
+			'inhour'          => $inhour,
+			'lastday'         => $lastday,
+			'halfday'         => $halfday,
+			'countryCodeOrId' => $countryCodeOrId,
+			'user_id'         => $user_id,
+			'nbOpenDay'       => $nbOpenDay,
+		);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('numOpenDay', $parameters, $hookmanager, $action);
+		if ($reshook > 0 && isset($hookmanager->resArray['nbOpenDay'])) {
+			$nbOpenDay = $hookmanager->resArray['nbOpenDay'];
+		}
+	}
+
+	if ($inhour == 1) {
+		return (int) ($nbOpenDay * 24);
+	}
+	return $nbOpenDay;
 }
 
 
