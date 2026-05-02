@@ -325,7 +325,7 @@ if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissionto
 							// we should also try creating a link between the cloned objects
 
 							// all okay
-							if ($cloneprojectresult > 0 && $clonestatusresult >= 0 && $sourcestatusresult >= 0) {
+							if ($clonestatusresult >= 0 && $sourcestatusresult >= 0) {
 								$info_mesgs[$target_event][] = '&emsp;'.$langs->trans("NewObject", $langs->trans("Attendee")).' '.$attendeeclone->getNomUrl(1).' &mdash; '.$langs->trans("CloneOf", $attendeestatic->firstname.' '.$attendeestatic->lastname.' '.$attendeestatic->getNomUrl(1));
 							}
 						} elseif ($attendeeclone == -1) {
