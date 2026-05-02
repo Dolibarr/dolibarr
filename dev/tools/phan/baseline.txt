@@ -38,7 +38,6 @@ return [
         'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/compta/bank/class/account.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/bank/line.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/compta/bank/various_payment/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/bank/various_payment/document.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanUndeclaredProperty'],
