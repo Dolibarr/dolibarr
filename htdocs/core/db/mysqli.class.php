@@ -351,10 +351,30 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 
+		// PHP 8.4+: mysqli methods on closed connection throw Error (not Exception).
+		// Use Throwable to catch both. Also handle case where db object is already closed.
 		try {
-			$ret = $this->db->query($query, $result_mode);
-		} catch (Exception $e) {
-			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
+			// Verify the mysqli object is still valid before querying.
+			// In PHP 8.4, accessing properties of a closed mysqli may throw.
+			if ($this->db) {
+				$ret = $this->db->query($query, $result_mode);
+			} else {
+				$this->lasterror = 'Database connection is not initialized';
+				$this->lasterrno = 'ERROR_DB_CONNECTION_FAILED';
+				$ret = false;
+			}
+		} catch (Throwable $e) {
+			// Check if error is due to closed connection
+			$errorMessage = $e->getMessage();
+			if (preg_match('/[Mm]ysqli.*[Oo]bject.*[Ii]s.*[Aa]lready.*[Cc]losed|Call to a member function.*on null type/', $errorMessage)) {
+				$this->lasterror = 'mysqli object is already closed: '.$errorMessage;
+				$this->lasterrno = 'ERROR_DB_CONNECTION_CLOSED';
+				$this->connected = false;
+			} else {
+				$this->lasterror = $errorMessage;
+				$this->lasterrno = 'ERROR';
+			}
+			dol_syslog(get_class($this)."::query ".$this->lasterror, LOG_ERR);
 			$ret = false;
 		}
 

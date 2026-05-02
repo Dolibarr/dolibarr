@@ -1359,6 +1359,13 @@ class Cronjob extends CommonObject
 				// Ignore
 			}
 
+			// PHP 8.4+: Check if database connection is still open before proceeding.
+			// In PHP 8.4, mysqli methods on closed connection throw Error instead of returning false.
+			if (method_exists($dbs, 'ping') && !$dbs->ping()) {
+				// Connection is dead, do nothing.
+				return;
+			}
+
 			// If job is already closed, do nothing.
 			$sql = "SELECT processing, pid, datelastresult FROM ".MAIN_DB_PREFIX."cronjob WHERE rowid = ".((int) $cronjobid);
 			$resql = $dbs->query($sql);
