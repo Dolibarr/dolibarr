@@ -1179,7 +1179,8 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09') ? 1 : 0;
-		$objectpage->htmlheader = GETPOST('htmlheader', 'none');	// Must accept tags like '<script>' and '<link>'
+		$objectpage->htmlheader = GETPOST('htmlheader', 'restricthtmlallowlinkscript');	// Must accept tags like '<script>' and '<link>'
+
 		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS');
 		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
@@ -1642,7 +1643,7 @@ if ($action == 'updatecss' && $usercanedit) {
 			if (!$errorphpcheck) {
 				$htmlheadercontent = '';
 
-				/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
+				/* We disable php code since global htmlheader for all website is never executed as an include but only read by fgets_content.
 				$htmlheadercontent.= "<?php // BEGIN PHP\n";
 				$htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
 				$htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
@@ -4812,7 +4813,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	if (GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09')) {
 		$pageallowedinframes = 1;
 	}
-	if (GETPOST('htmlheader', 'none')) {		// Must accept tags like '<script>' and '<link>'
+	if (GETPOST('htmlheader', 'restricthtmlallowlinkscript')) {		// Must accept tags like '<script>' and '<link>'
 		$pagehtmlheader = GETPOST('htmlheader', 'none');
 	}
 
@@ -5164,6 +5165,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="'.dol_escape_htmltag($langs->trans("Anonymous")).'">';
 	print '</td></tr>';
 
+	// Web page header
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp = $langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
 	$htmlhelp .= $langs->trans("Examples").' :<br>';
@@ -5173,7 +5175,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $form->textwithpicto($langs->transnoentitiesnoconv('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
-	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', 120, 'ace', 'In', true, false, 'ace', ROWS_3, '100%', 0, $poscursor);
+	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', 160, 'ace', 'In', true, false, 'ace', ROWS_4, '100%', 0, $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
 
@@ -5188,12 +5190,13 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	print '</table>';
 
+
 	if ($action == 'createcontainer') {
 		$langs->load("website");
 
 		print '<div class="center tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
-		print '<input type="submit" class="button small" name="addcontainer" value="'.$langs->trans("Create").'">';
+		print '<input type="submit" class="button small buttonforacesave" name="addcontainer" value="'.$langs->trans("Create").'">';
 		print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';

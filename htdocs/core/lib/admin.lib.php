@@ -2245,6 +2245,7 @@ function GetContentPolicySources()
 		// Fetch directives
 		"fetch" => array(
 			"*" => array("label" => "*", "data-sourcetype" => "select"),
+			"blob" => array("label" => "blob:", "data-sourcetype" => "blob"),
 			"data" => array("label" => "data:", "data-sourcetype" => "data"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),

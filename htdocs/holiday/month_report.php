@@ -458,7 +458,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id).'</td>';
+			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 
 		if (!empty($arrayfields['date_start_month']['checked'])) {
@@ -474,7 +474,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days_month']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id).'</td>';
+			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
 			print '<td class="maxwidth300 small">';
