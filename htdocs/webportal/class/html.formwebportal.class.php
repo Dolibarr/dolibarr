@@ -1605,12 +1605,13 @@ class FormWebPortal extends Form
 	 * @param int<0,1>										$cache						1=Accept to use image in cache
 	 * @param ''|'user'|'environment'						$forcecapture				'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
 	 * @param int<0,1>										$noexternsourceoverwrite	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @param int<0,1>										$usesharelinkifavailable	Use 1 to use the share=key link if available. This is slower.
 	 * @return string																	HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
-	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0, $usesharelinkifavailable = 0)
 	{
-		$out = parent::showphoto($modulepart, $object, $width, $height, $caneditfield, $cssclass, $imagesize, $addlinktofullsize, $cache, $forcecapture, $noexternsourceoverwrite);
+		$out = parent::showphoto($modulepart, $object, $width, $height, $caneditfield, $cssclass, $imagesize, $addlinktofullsize, $cache, $forcecapture, $noexternsourceoverwrite, $usesharelinkifavailable);
 		$out = self::convertAllLink($out);
 
 		return $out;
