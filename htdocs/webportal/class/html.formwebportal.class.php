@@ -1608,7 +1608,7 @@ class FormWebPortal extends Form
 	 * @return string																	HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
-	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0, $usesharelinkifavailable = 0)
 	{
 		$out = parent::showphoto($modulepart, $object, $width, $height, $caneditfield, $cssclass, $imagesize, $addlinktofullsize, $cache, $forcecapture, $noexternsourceoverwrite);
 		$out = self::convertAllLink($out);
