@@ -663,11 +663,11 @@ class Categorie extends CommonObject
 	/**
 	 * 	Update category
 	 *
-	 *	@param	User	$user		Object user
-	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * 	@return	int		 			1 : OK
-	 *          					-1 : SQL error
-	 *          					-2 : invalid category
+	 *	@param	User	$user	Object user
+	 *  @param	int<0,1>		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * 	@return	int<-2,1>		1 : OK
+	 *          				-1 : SQL error
+	 *          				-2 : invalid category
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -706,6 +706,14 @@ class Categorie extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			// Multilangs
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				if ($this->setMultiLangs($user, $notrigger) < 0) {
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
 			$action = 'update';
 
 			// Actions on extra fields
@@ -2167,35 +2175,37 @@ class Categorie extends CommonObject
 
 			if ($key == $current_lang) {
 				$sql2 = '';
-				if ($this->db->num_rows($result)) { // if no line in database
+				if ($this->db->num_rows($result)) { // if there is already a description line for this language
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label = '".$this->db->escape($this->label)."',";
 					$sql2 .= " description = '".$this->db->escape($this->description)."'";
 					$sql2 .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
-				} elseif (isset($this->multilangs[$key])) {
+				} else { // if no line in database
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->label)."'";
-					$sql2 .= ", '".$this->db->escape($this->multilangs[$key]["description"])."')";
+					$sql2 .= ", '".$this->db->escape($this->description)."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
-				if ($sql2 && !$this->db->query($sql2)) {
+				if (!$this->db->query($sql2)) {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
-			} elseif (isset($this->multilangs[$key])) {
-				if ($this->db->num_rows($result)) { // if no line in database
+				$this->multilangs[$key]["label"] = $this->label;
+				$this->multilangs[$key]["description"] = $this->description;
+			} elseif (isset($this->multilangs[$key])) { // if there is already a description line for this language
+				if ($this->db->num_rows($result)) {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label='".$this->db->escape($this->multilangs[$key]["label"])."',";
 					$sql2 .= " description='".$this->db->escape($this->multilangs[$key]["description"])."'";
 					$sql2 .= " WHERE fk_category=".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
-				} else {
+				} else { // if no line in database
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->multilangs[$key]["label"])."'";
 					$sql2 .= ",'".$this->db->escape($this->multilangs[$key]["description"])."')";
 				}
 
-				// on ne sauvegarde pas des champs vides
-				if ($this->multilangs[$key]["label"] || $this->multilangs[$key]["description"] || $this->multilangs[$key]["note"]) {
+				// We do not save if main fields are empty
+				if ($this->multilangs[$key]["label"] || $this->multilangs[$key]["description"]) {
 					dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 				}
 				if (!$this->db->query($sql2)) {

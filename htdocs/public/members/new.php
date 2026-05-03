@@ -30,7 +30,6 @@
  *	\brief      Example of form to add a new member
  *
  *  Note that you can add following constant to change behaviour of page
- *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
  *  MEMBER_MIN_AMOUNT                   Minimum amount
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with 'all', 'paypal', 'paybox', 'stripe', ...
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
@@ -228,9 +227,13 @@ if ($reshook < 0) {
 }
 
 // Verify if we can find member
+
 if (empty($reshook) && getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE") && $action == 'add' && !GETPOSTISSET("nofetchmember")) {	// Test on permission not required here
 	$memberfound = false;
+
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') && GETPOSTISSET('login')) {
+		// Note that this allow to guess anonymous ID already used. But this is not a problem as it is an anonymous pseudonym.
+		// If we try to new account and option MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE was off, we also get the same error.
 		$sql = "SELECT rowid as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE a.login = '".$db->escape(GETPOST('login'))."'";
@@ -582,7 +585,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 				if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1') {
 					if (empty($adht->caneditamount)) {			// If edition of amount not allowed
-						// TODO Check amount is same than the amount required for the type of member or if not defined as the default amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+						// TODO Check amount is same than the amount required for the type of member
 						// It is not so important because a test is done on return of payment validation.
 					}
 
@@ -868,14 +871,14 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Firstname
-	print '<tr><td id="tdfirstname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+	print '<tr><td id="tdfirstname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'" spellcheck="false"></td></tr>'."\n";
 
 	// Lastname
-	print '<tr><td id="tdlastname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+	print '<tr><td id="tdlastname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'" spellcheck="false"></td></tr>'."\n";
 
 	// EMail
 	print '<tr><td>'.(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '</span>' : '').'</td>';
-	print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth150 maxwidth300 widthcentpercentminusx" maxlength="255" value="'.dol_escape_htmltag(GETPOST('member_email', "aZ09arobase")).'"></td></tr>'."\n";
+	print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth150 maxwidth300 widthcentpercentminusx" maxlength="255" value="'.dol_escape_htmltag(GETPOST('member_email', "aZ09arobase")).'" spellcheck="false"></td></tr>'."\n";
 
 	// Login
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
@@ -981,7 +984,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 	$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
 	foreach ($amountbytype as $k => $v) {
-		$amount = max(0, (float) $v, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), (float) getDolGlobalInt("MEMBER_NEWFORM_AMOUNT"), $minimumamountbytype[$k]);
+		$amount = max(0, (float) $v, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), $minimumamountbytype[$k]);
 		$amountbytype[$k] = $amount;
 	}
 
@@ -991,10 +994,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	// Set amount for the subscription from the type and options:
 	// - First check the amount of the member type.
 	$amount = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
-	// - If not found, take the default amount only if the user is authorized to edit it
-	if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-		$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-	}
 	// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 	if (empty($amount)) {
 		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
@@ -1016,7 +1015,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 	// TODO Move this into previous hook
 	if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
-		// Do not set a default amount MEMBER_NEWFORM_AMOUNT if you use MEMBER_NEWFORM_DOLIBARRTURNOVER
 		$s = $langs->trans("AreYouAPreferredPartner", '<a href="https://partners.dolibarr.org" target="_blank">{s1}</a>');
 		$s = str_replace('{s1}', 'Peferred Partner', $s);
 		print '<tr id="trbudget" class="trcompany"><td class="paddingrightonly"><label for="pp" class="small">'.$s.'</label></td><td>';
@@ -1147,17 +1145,13 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		}
 		print '</td><td class="nowrap">';
 
-		if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-			$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-		}
-
 		$amountformuladescription = $amountformuladescriptionbytype[$typeid];
 
 		$showedamount = $amount > 0 ? $amount : 0;
 		if ($caneditamount === "1") {
 			print '<input type="text" name="amount" id="amount" class="flat amount right width75" value="'.$showedamount.'">';
 			print '<input type="text" name="amount" id="amounthidden" class="flat amount width75 hidden" disabled value="'.$showedamount.'">';
-			print ' '.$langs->getCurrencySymbol($conf->currency).'<span class="opacitymedium hideifautoturnover small">';
+			print ' '.$langs->getCurrencySymbol($conf->currency).'<span class="opacitymedium amountdescription hideifautoturnover small">';
 			if (!getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
 				print ' - ';
 				if (empty($amountformuladescription)) {
@@ -1173,7 +1167,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		} else {
 			print '<input type="text" name="amount" id="amount" class="flat amount width75 right hidden" value="'.$showedamount.'">';
 			print '<input type="text" name="amount" id="amounthidden" class="flat amount width75" disabled value="'.$showedamount.'">';
-			print ' '.$langs->getCurrencySymbol($conf->currency).'<span class="opacitymedium hideifautoturnover hidden small">';
+			print ' '.$langs->getCurrencySymbol($conf->currency).'<span class="opacitymedium amountdescription hideifautoturnover hidden small">';
 			if (!getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
 				print ' - ';
 				print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
@@ -1207,23 +1201,22 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	print '</div>';
 
 	// Add JS to manage the background of amount depending on type
-	if ($conf->use_javascript_ajax) {
-		$typeid = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', GETPOSTINT('typeid'));
-		$adht = new AdherentType($db);
-		$adht->fetch($typeid);
-		$caneditamountbytype = $adht->caneditamountByType(1);		// Load the array of caneditamount per type
-		$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
-		$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
-		$amountformuladescriptionbytype = $adht->amountformuladescriptionbytype(1); // Load the array of amount ormula description per type
-		// Common PHP → JS variables
-		$caneditamountbytype_json = json_encode($caneditamountbytype);
-		$minimumamountbytype_json = json_encode($minimumamountbytype);
-		$amountbytype_json = json_encode($amountbytype);
-		$amountformuladescriptionbytype_json = json_encode($amountformuladescriptionbytype);
-		$currencysymbol = $langs->getCurrencySymbol($conf->currency);
+	$typeid = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', GETPOSTINT('typeid'));
+	$adht = new AdherentType($db);
+	$adht->fetch($typeid);
+	$caneditamountbytype = $adht->caneditamountByType(1);		// Load the array of caneditamount per type
+	$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
+	$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+	$amountformuladescriptionbytype = $adht->amountformuladescriptionbytype(1); // Load the array of amount ormula description per type
+	// Common PHP → JS variables
+	$caneditamountbytype_json = json_encode($caneditamountbytype);
+	$minimumamountbytype_json = json_encode($minimumamountbytype);
+	$amountbytype_json = json_encode($amountbytype);
+	$amountformuladescriptionbytype_json = json_encode($amountformuladescriptionbytype);
+	$currencysymbol = $langs->getCurrencySymbol($conf->currency);
 
+	if ($conf->use_javascript_ajax) {
 		print '<script>
-		jQuery(function($) {
 				// ----- Shared data -----
 				var amountByType = ' . $amountbytype_json . ';
 				var canEditAmountByType = ' . $caneditamountbytype_json . ';
@@ -1243,6 +1236,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 						}
 				};
 
+		jQuery(function($) {
 				// ----- Helpers -----
 				function getCurrentMin() {
 						let typeId = $("#typeid").val() || 0;
@@ -1278,12 +1272,12 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 								// Description formula or default text
 								if (amountFormulaDescription.trim() !== "") {
-										$("#amountdescription").html(" - " + amountFormulaDescription);
+										$(".amountdescription").html(" - " + amountFormulaDescription);
 								} else {
 										if (amountVal > 0) {
-												$("#amountdescription").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
+												$(".amountdescription").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
 										} else {
-												$("#amountdescription").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
+												$(".amountdescription").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
 										}
 								}
 
@@ -1300,13 +1294,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$("#amounthidden").val(formattedAmount).prop("disabled", true).removeClass("hidden");
 								$("#amount").addClass("hidden");
 								$(".hideifautoturnover").addClass("hidden");
-
-								if (amountVal > 0) {
-										$("#amountdescription").html(" - " + langs.trans("AnyAmountWithAdvisedAmount", formattedAmount + " " + currencySymbol));
-								} else {
-										$("#amountdescription").html(" - " + langs.trans("AnyAmountWithoutAdvisedAmount"));
-								}
-
 								$("#minimumamount").addClass("hidden");
 						}
 
@@ -1396,10 +1383,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			// - First check the amount of the member type.
 			$amount = empty($amountbytype[$objp->rowid]) ? 0 : $amountbytype[$objp->rowid];
 			$minimumamount = empty($minimumamountbytype[$objp->rowid]) ? 0 : $minimumamountbytype[$objp->rowid];
-			// - If not found, take the default amount only if the user is authorized to edit it
-			if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-				$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-			}
 			// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 			if (empty($amount)) {
 				$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');

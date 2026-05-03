@@ -1296,13 +1296,15 @@ if ($action == 'create' && $permissiontoadd) {
 		}
 
 		// Template to use by default
-		print '<tr><td>'.$langs->trans('Model').'</td>';
-		print '<td colspan="2">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 		$list = ModelePdfReception::liste_modeles($db);
-		print $form->selectarray('model', $list, getDolGlobalString('RECEPTION_ADDON_PDF'), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-		print "</td></tr>";
+		if (is_countable($list) && count($list) > 0) {
+			print '<tr><td>'.$langs->trans('Model').'</td>';
+			print '<td colspan="2">';
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
+			print $form->selectarray('model', $list, getDolGlobalString('RECEPTION_ADDON_PDF'), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+			print "</td></tr>";
+		}
 
 		// Note Public
 		$htmltext ='';

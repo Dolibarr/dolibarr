@@ -53,6 +53,8 @@ class FormContract
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a combo list with contracts qualified for a third party
+	 *  TODO This is a bugged function. It downloads all contracts into the select hanging the browser on large database.
+	 *  To allow its use, you must set the constant CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT.
 	 *
 	 *	@param	int		$socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
 	 *	@param  int		$selected   Id contract preselected
@@ -77,7 +79,7 @@ class FormContract
 		$ret = '';
 
 		// Search all contacts
-		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut, s.nom,";
+		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut as status, s.nom,";
 		$sql .= " c.ref_customer, c.ref_supplier";
 		$sql .= " FROM ".$this->db->prefix()."contrat as c";
 		$sql .= " INNER JOIN ".$this->db->prefix()."societe as s ON s.rowid = c.fk_soc";
@@ -88,7 +90,7 @@ class FormContract
 			if (!getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) {
 				$sql .= " AND (c.fk_soc=".((int) $socid)." OR c.fk_soc IS NULL)";
 			} elseif (getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') != 'all') {
-				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize(((int) $socid).",".((int) $conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)).")";
+				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize(((int) $socid).",".getDolGlobalInt('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')).")";
 				$sql .= " OR c.fk_soc IS NULL)";
 			}
 		}
@@ -102,7 +104,7 @@ class FormContract
 		if ($resql) {
 			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
-				$ret .= '<option value="0">&nbsp;</option>';
+				$ret .= '<option value="0">&nbsp;</option>'."\n";
 			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -127,17 +129,17 @@ class FormContract
 
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
-						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0) {
+						if (!empty($selected) && $selected == $obj->rowid && $obj->status > 0) {
 							$ret .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						} else {
 							$disabled = 0;
-							if ($obj->statut == 0) {
+							if ($obj->status == 0) {
 								$disabled = 1;
-								$labeltoshow .= ' ('.$langs->trans("Draft").')';
+								$labeltoshow .= ' ('.$langs->transnoentitiesnoconv("Draft").')';
 							}
 							if (!getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 								$disabled = 1;
-								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
+								$labeltoshow .= ' - '.$langs->transnoentitiesnoconv("LinkedToAnotherCompany");
 							}
 
 							if ($hideunselectables && $disabled) {
@@ -149,8 +151,8 @@ class FormContract
 								}
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat .= '>'.$labeltoshow;
-								$resultat .= '</option>';
+								$resultat .= '>'.dolPrintHTML($labeltoshow);
+								$resultat .= '</option>'."\n";
 							}
 							$ret .= $resultat;
 						}

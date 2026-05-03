@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -43,7 +44,6 @@ require_once '../lib/quickmemo.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('quickmemo', 'admin'));
 
-$extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
@@ -89,16 +89,6 @@ print dol_get_fiche_head($head, 'memo_extrafields', $langs->trans($page_name), -
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ((float) DOL_VERSION < 17) {	// On v17+, the "New Attribute" button is included into tpl.  @phpstan-ignore-line
-	if ($action != 'create' && $action != 'edit') {
-		print '<div class="tabsAction">';
-		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-		print "</div>";
-	}
-}
 
 
 /*

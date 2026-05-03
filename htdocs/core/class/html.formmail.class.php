@@ -266,7 +266,7 @@ class FormMail extends Form
 	public $withtoccuser = array();
 
 	/**
-	 * @var ModelMail[]
+	 * @var CEmailTemplate[]
 	 */
 	public $lines_model;
 
@@ -1102,6 +1102,7 @@ class FormMail extends Form
 					$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 				}
 
+				$out .= '<!-- Message line from get_form -->';
 				$out .= '<tr>';
 				$out .= '<td class="tdtop">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
@@ -1146,7 +1147,10 @@ class FormMail extends Form
 						}
 					}
 
-					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, true, $this->withfckeditor, 8, '95%');
+					$uselocalbrowser = getDolGlobalBool('FCKEDITOR_ENABLE_IMAGE_UPLOAD');
+					// $uselocalbrowser = true;
+
+					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, $uselocalbrowser, $this->withfckeditor, 8, '95%');
 					$out .= $doleditor->Create(1);
 				}
 				$out .= "</td></tr>\n";
@@ -1498,9 +1502,9 @@ class FormMail extends Form
 		$out .= '<td>';
 		if ($this->withtopicreadonly) {
 			$out .= $defaulttopic;
-			$out .= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
+			$out .= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" spellcheck="false">';
 		} else {
-			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" />';
+			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" spellcheck="false">';
 		}
 		$out .= "</td></tr>\n";
 		return $out;
@@ -1512,6 +1516,7 @@ class FormMail extends Form
 	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill once layout has been chosen
 	 * @param	string		$showlinktolayout	Show link to layout
 	 * @return  string                      	HTML for model email boxes
+	 * @see getContentPageTemplate()
 	 */
 	public function getEmailLayoutSelector($htmlContent = 'message', $showlinktolayout = 'email')
 	{
@@ -1523,6 +1528,7 @@ class FormMail extends Form
 		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 		$out = '<div id="template-selector" class="template-selector email-layout-container hidden" style="display:none;">';
+		$out .= '<div>';
 
 		// Define list of email layouts to use
 		$layouts = array(
@@ -1610,7 +1616,7 @@ class FormMail extends Form
 
 		// Use the multiselect array function to create the dropdown
 		if (in_array('news', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
-			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="blogpost-select">Select Posts: </label>';
 			$out .= '<!-- select component for selection of blog posts -->'."\n";
 			// TODO WARNING: multiselectarray is ok only for very small list
@@ -1621,7 +1627,7 @@ class FormMail extends Form
 		if (in_array('product', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
-			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
 			$out .= '<!-- select component for selection of product -->'."\n";
 			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'inline-block valignmiddle', 0, '', null, 1);
@@ -1630,6 +1636,8 @@ class FormMail extends Form
 			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 			$out .= '</div>';
 		}
+
+		$out .= '</div>';
 
 		$out .= '<!-- Js code to manage choice of an email layout -->'."\n";
 		$out .= '<script type="text/javascript">
@@ -1846,27 +1854,25 @@ class FormMail extends Form
 					if ($type_template == 'body') {
 						// Special case to use this->withbody as content
 						$defaultmessage = (string) $this->withbody;
-					} elseif ($type_template == 'facture_send') {
+					} elseif ($type_template == 'facture_send' || $type_template == 'facture' || $type_template == 'facture_relance') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
-					} elseif ($type_template == 'facture_relance') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder");
-					} elseif ($type_template == 'propal_send') {
+					} elseif ($type_template == 'propal_send' || $type_template == 'propal') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal");
-					} elseif ($type_template == 'supplier_proposal_send') {
+					} elseif ($type_template == 'supplier_proposal_send' || $type_template == 'supplier_proposal') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
-					} elseif ($type_template == 'order_send') {
+					} elseif ($type_template == 'order_send' || $type_template == 'order') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder");
-					} elseif ($type_template == 'order_supplier_send') {
+					} elseif ($type_template == 'order_supplier_send' || $type_template == 'order_supplier') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
-					} elseif ($type_template == 'invoice_supplier_send') {
+					} elseif ($type_template == 'invoice_supplier_send' || $type_template == 'invoice_supplier') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
-					} elseif ($type_template == 'shipping_send') {
+					} elseif ($type_template == 'shipping_send' || $type_template == 'shipping') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
-					} elseif ($type_template == 'reception_send') {
+					} elseif ($type_template == 'reception_send' || $type_template == 'reception') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
-					} elseif ($type_template == 'fichinter_send') {
+					} elseif ($type_template == 'fichinter_send' || $type_template == 'fichinter') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
-					} elseif ($type_template == 'actioncomm_send') {
+					} elseif ($type_template == 'actioncomm_send' || $type_template == 'actioncomm') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
 					} elseif (!empty($type_template)) {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");

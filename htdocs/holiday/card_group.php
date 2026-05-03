@@ -761,7 +761,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 				// option to notify the validator if the balance is less than the request
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $expediteur->country_id);
+					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $expediteur->country_id, $object->fk_user);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";

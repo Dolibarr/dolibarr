@@ -221,10 +221,10 @@ class ActionsTicket extends CommonHookActions
 		print '<table class="border tableforfield centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 
-		print '<table class="nobordernopadding centpercent"><tr><td class="none noborder">';
+		print '<table class="nobordernopadding centpercent "><tr><td class="noborder" style="border-bottom: none !important;">';
 		print $langs->trans('InitialMessage');
 		if ($action != 'edit_message_init' && $permissiontoadd && !in_array($object->status, $closeStatuses)) {
-			print '</td><td class="right noborder">';
+			print '</td><td class="right noborder" style="border-bottom: none !important;">';
 			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr></table>';
@@ -274,11 +274,11 @@ class ActionsTicket extends CommonHookActions
 	 * View html list of message for ticket
 	 *
 	 * @param 	bool 	$show_private 	Show private messages
-	 * @param 	bool 	$show_user    	Show user who make action
+	 * @param 	bool 	$show_author    Show who post the message
 	 * @param	Ticket	$object			Object ticket
 	 * @return 	void
 	 */
-	public function viewTicketMessages($show_private, $show_user, $object)
+	public function viewTicketMessages($show_private, $show_author, $object)
 	{
 		global $langs, $user;
 
@@ -303,26 +303,31 @@ class ActionsTicket extends CommonHookActions
 			print '<tr class="liste_titre">';
 
 			print '<td>';
+			print '<h4>';
 			print $langs->trans('TicketMessagesList');
+			print '</h4>';
 			print '</td>';
 
-			if ($show_user) {
+			if ($show_author) {
 				print '<td>';
-				print $langs->trans('User');
+				print '<h4>';
+				print $langs->trans('Author');
+				print '</h4>';
 				print '</td>';
 			}
 			print '</tr>';
 
+			$ticket_message_nr = 1;
 			foreach ($this->dao->cache_msgs_ticket as $id => $arraymsgs) {
 				if (!$arraymsgs['private']
 					|| ($arraymsgs['private'] == "1" && $show_private)
 				) {
 					//print '<tr>';
-					print '<tr class="oddeven nohover">';
+					print '<tr id="ticket_message_header_'.$ticket_message_nr.'" class="oddeven nohover">';
 					print '<td><strong>';
 					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
-					if ($show_user) {
+					if ($show_author) {
 						print '<td>';
 						if ($arraymsgs['fk_user_author'] > 0) {
 							$userstat = new User($this->db);
@@ -334,7 +339,10 @@ class ActionsTicket extends CommonHookActions
 						} elseif (isset($arraymsgs['fk_contact_author'])) {
 							$contactstat = new Contact($this->db);
 							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
-							if ($res) {
+							if ($res == 2) {
+								print img_picto('', 'email', 'class="pictofixedwidth"');
+								print $arraymsgs['fk_contact_author'];
+							} elseif ($res) {
 								print img_picto('', 'contact', 'class="pictofixedwidth"');
 								print $contactstat->getNomUrl(0, 'nolink');
 							} else {
@@ -347,8 +355,8 @@ class ActionsTicket extends CommonHookActions
 					}
 					print '</tr>';
 
-					print '<tr class="oddeven nohover borderbottom">';
-					print '<td'.($show_user ? ' colspan="2"' : '').'>';
+					print '<tr id="ticket_message_body_'.$ticket_message_nr.'" class="oddeven nohover">';
+					print '<td'.($show_author ? ' colspan="2"' : '').'>';
 					print $arraymsgs['message'];
 
 					//attachment
@@ -427,6 +435,7 @@ class ActionsTicket extends CommonHookActions
 					print '</td>';
 					print '</tr>';
 				}
+				$ticket_message_nr++;
 			}
 
 			print '</table>';
@@ -443,17 +452,16 @@ class ActionsTicket extends CommonHookActions
 	 * View list of message for ticket with timeline display
 	 *
 	 * @param	bool	$show_private	Show private messages
-	 * @param	bool	$show_user		Show user who make action
+	 * @param	bool	$show_author	Show who post the message
 	 * @param	Ticket	$object			Object ticket
 	 * @return void
 	 */
-	public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
+	public function viewTicketTimelineMessages($show_private, $show_author, Ticket $object)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		// Load logs in cache
-		$ret = $object->loadCacheMsgsTicket();
-		$action = GETPOST('action');
+		$object->loadCacheMsgsTicket();
 
 		if (is_array($object->cache_msgs_ticket) && count($object->cache_msgs_ticket) > 0) {
 			print '<section id="cd-timeline">';
@@ -473,7 +481,7 @@ class ActionsTicket extends CommonHookActions
 					print '<span class="cd-date">';
 					print dol_print_date($arraymsgs['datec'], 'dayhour');
 
-					if ($show_user) {
+					if ($show_author) {
 						if ($arraymsgs['fk_user_action'] > 0) {
 							$userstat = new User($this->db);
 							$res = $userstat->fetch($arraymsgs['fk_user_action']);

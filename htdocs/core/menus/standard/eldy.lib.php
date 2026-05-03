@@ -2588,7 +2588,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 				$titleindex .= ' | '.$langs->trans("SMSings");
 				$titlenew .= ' | '.$langs->trans("NewSMSing");
 			}
-			$newmenu->add(dolBuildUrl('/comm/mailing/index.php', ['leftmenu' => 'mailing']), $titleindex, 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 15, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add(dolBuildUrl('/comm/mailing/index.php', ['leftmenu' => 'mailing']), $titleindex, 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 15, '', '', '', img_picto('', 'mail-bulk', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add(dolBuildUrl('/comm/mailing/card.php', ['leftmenu' => 'mailing', 'action' => 'create']), $titlenew, 1, $user->hasRight('mailing', 'creer'));
 			$newmenu->add(dolBuildUrl('/comm/mailing/list.php', ['leftmenu' => 'mailing']), $titlelist, 1, $user->hasRight('mailing', 'lire'));
 		}

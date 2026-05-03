@@ -321,7 +321,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -1277,7 +1277,7 @@ class Facture extends CommonInvoice
 	 */
 	public function createFromClone(User $user, $fromid = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 
@@ -1368,6 +1368,7 @@ class Facture extends CommonInvoice
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
+
 		if ($result < 0) {
 			$error++;
 			$this->setErrorsFromObject($object);
@@ -1426,6 +1427,9 @@ class Facture extends CommonInvoice
 		// Closed order
 		$this->date = dol_now();
 		$this->source = 0;
+
+		// Avoid updating the row ranks
+		$this->context['createfromclone'] = 1;
 
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
@@ -1534,12 +1538,14 @@ class Facture extends CommonInvoice
 				$this->setErrorsFromObject($hookmanager);
 				$error++;
 			}
+		} else {
+			$error++;
+		}
 
-			if (!$error) {
-				return 1;
-			} else {
-				return -1;
-			}
+		unset($this->context['createfromclone']);
+
+		if (!$error) {
+			return 1;
 		} else {
 			return -1;
 		}
@@ -2666,14 +2672,12 @@ class Facture extends CommonInvoice
 
 	/**
 	 * Fetch previous and next situations invoices.
-	 * Return all previous and next invoices (both standard and credit notes).
+	 * Return all previous and next invoices (both standard and credit notes) into array tab_previous_situation_invoice and tab_next_situation_invoice.
 	 *
 	 * @return	void
 	 */
 	public function fetchPreviousNextSituationInvoice()
 	{
-		global $conf;
-
 		$this->tab_previous_situation_invoice = array();
 		$this->tab_next_situation_invoice = array();
 
@@ -5419,7 +5423,7 @@ class Facture extends CommonInvoice
 			$langs->load("bills");
 			$now = dol_now();
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->facture->client->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = getWarningDelay('invoice', 'client') / 60 / 60 / 24;
 			$response->label = $langs->trans("CustomerBillsUnpaid");
 			$response->labelShort = $langs->trans("Unpaid");
 			$response->url = DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=billing&leftmenu=customers_bills';
@@ -5745,7 +5749,7 @@ class Facture extends CommonInvoice
 				$ref = 0;
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$ref = $obj->maxsituationref;
+					$ref = (int) $obj->maxsituationref;
 				}
 				$ref++;
 			} else {
@@ -5930,15 +5934,15 @@ class Facture extends CommonInvoice
 			return false;
 		}
 
-		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		$hasDelay = $this->date_lim_reglement < ($now - getWarningDelay('invoice', 'client'));
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
 			$totalpaid = $this->getSommePaiement(0);
 			$totalpaid = (float) $totalpaid;
-			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
-			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {
-				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) {
+			$retainedWarrantyAmount = $this->getRetainedWarrantyAmount('MT');
+			if ($totalpaid >= 0 && $retainedWarrantyAmount >= 0) {
+				if (($totalpaid < $this->total_ttc - $retainedWarrantyAmount) && $this->date_lim_reglement < ($now - getWarningDelay('invoice', 'client'))) {
 					$hasDelay = 1;
-				} elseif ($totalpaid < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay)) {
+				} elseif ($totalpaid < $this->total_ttc && $this->retained_warranty_date_limit < ($now - getWarningDelay('invoice', 'client'))) {
 					$hasDelay = 1;
 				} else {
 					$hasDelay = 0;
@@ -5996,10 +6000,12 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * @param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
-	 * @return float or -1 if not available
+	 * Calculate the amount of the retained warranty (from the percentage).
+	 *
+	 * @param	int|string	$rounding		Minimum number of decimal to show. Can be 'MU', 'MT' or 0 to keep unchanged, or -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
+	 * @return 	float 						Value after calculation and rounding, or -1 if not available
 	 */
-	public function getRetainedWarrantyAmount($rounding = -1)
+	public function getRetainedWarrantyAmount($rounding = 'MT')
 	{
 		if (empty($this->retained_warranty)) {
 			return -1;
@@ -6024,12 +6030,14 @@ class Facture extends CommonInvoice
 				$this->fetchPreviousNextSituationInvoice();
 				$TPreviousIncoice = $this->tab_previous_situation_invoice;
 
+				// Sum the total including tax of all previous invoices, including the current one.
 				$total2BillWT = 0;
 				foreach ($TPreviousIncoice as &$fac) {
 					$total2BillWT += $fac->total_ttc;
 				}
 				$total2BillWT += $this->total_ttc;
 
+				// Take the percent
 				$retainedWarrantyAmount = $total2BillWT * $this->retained_warranty / 100;
 			} else {
 				return -1;
@@ -6039,15 +6047,15 @@ class Facture extends CommonInvoice
 			$retainedWarrantyAmount = $this->total_ttc * $this->retained_warranty / 100;
 		}
 
-		if ($rounding < 0) {
+		if (is_numeric($rounding) && $rounding < 0) {
 			$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
 		}
 
-		if ($rounding > 0) {
+		if (is_numeric($rounding) && $rounding > 0) {
 			return round($retainedWarrantyAmount, $rounding);
 		}
 
-		return $retainedWarrantyAmount;
+		return (float) price2num($retainedWarrantyAmount, $rounding);
 	}
 
 	/**

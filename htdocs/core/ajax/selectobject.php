@@ -94,6 +94,7 @@ if (!empty($objectfield)) {
 }
 
 $objecttmp = null;
+$filter = '';
 if ($objectdesc) {
 	// Example of value for $objectdesc:
 	// Bom:bom/class/bom.class.php:0:t.status=1
@@ -132,7 +133,7 @@ $sharedentities = getEntity(strtolower($objecttmp->element));
 
 $filter = str_replace(
 	array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__', '$ID$'),
-	array($conf->entity, $sharedentities, $user->id, $id),
+	array((string) $conf->entity, $sharedentities, (string) $user->id, (string) $id),
 	$filter
 );
 

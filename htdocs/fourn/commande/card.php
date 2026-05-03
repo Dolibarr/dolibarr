@@ -2019,6 +2019,13 @@ if ($action == 'create') {
 		}
 		print '</td>';
 
+		// Ref purchase order on vendor side
+		if (getDolGlobalString('MAIN_ASK_SUPPLIER_REF_OF_PURCHASE_ORDER_AT_CREATION')) {
+			print '<tr><td>'.$form->textwithpicto($langs->trans('RefSupplier'), $langs->trans('RefOfOnVendorSide', $langs->transnoentitiesnoconv("SupplierOrder")));
+			print '</td><td><input name="refsupplier" type="text"></td>';
+			print '</tr>';
+		}
+
 		if (!empty($societe->id) && $societe->id > 0) {
 			// Discounts for third party
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
@@ -2032,10 +2039,6 @@ if ($action == 'create') {
 
 			print '</td></tr>';
 		}
-
-		// Ref supplier
-		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
-		print '</tr>';
 
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';

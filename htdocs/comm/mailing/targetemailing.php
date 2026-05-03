@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024-2025	MDW	                <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW	                <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -632,6 +632,7 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd left valignmiddle">';
 					if ($allowaddtarget) {
+						$filter = false;
 						try {
 							$filter = $obj->formFilter();
 						} catch (Exception $e) {
