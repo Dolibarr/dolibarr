@@ -587,10 +587,10 @@ while ($i < $imaxinloop) {
 
 	$donationstatic->setVarsFromFetchObj($obj);
 
-	$donationstatic->id = $obj->rowid;
+	$donationstatic->id = (int) $obj->rowid;
 	$donationstatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 	$donationstatic->date = $db->jdate($obj->datedon);
-	$donationstatic->status = $obj->status;
+	$donationstatic->status = (int) $obj->status;
 	$donationstatic->lastname = $obj->lastname;
 	$donationstatic->firstname = $obj->firstname;
 	$object = $donationstatic;
@@ -684,7 +684,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
 
 		// Status
-		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+		print '<td class="center">'.$donationstatic->LibStatut($donationstatic->status, 5).'</td>';
 
 		// Action column
 		if (empty($conf->main_checkbox_left_column)) {

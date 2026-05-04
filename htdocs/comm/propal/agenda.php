@@ -96,6 +96,7 @@ $permissiontoread = $user->hasRight("propal", "lire");
 $permissiontoadd = $user->hasRight("propal", "creer");
 
 // Security check
+$socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
