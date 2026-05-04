@@ -445,7 +445,7 @@ if ($resql) {
 
 		$ret = 0;
 	} else {
-		print "No records found for receipt ".$num."\n";
+		print "No records found for receipt ".$bankreceiptnum."\n";
 
 		$ret = 0;
 	}
