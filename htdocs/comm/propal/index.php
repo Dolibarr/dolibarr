@@ -41,7 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('proposalindex'));
 
 // Load translation files required by the page
