@@ -431,3 +431,4 @@ ToggleMicrophone=Toggle Microphone
 TypeYourQuestion=Type your question...
 SendPrompt=Send
 ConfirmAiAction=Are you sure you want to %1$s using the %2$s tool?
+YourInstallIsOldThanksToUpgrade=Your Dolibarr version seems to be an old version. Thanks to request an upgrade from your customer dashboard.
