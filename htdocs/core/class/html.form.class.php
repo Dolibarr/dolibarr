@@ -9500,7 +9500,7 @@ class Form
 			$reshook = $hookmanager->executeHooks('selectForFormsListUrl', $parameters, $objecttmp, $action);
 			if (!empty($reshook)) {
 				$urloption = $hookmanager->resPrint;
-                $hookmanager->resPrint = '';
+				$hookmanager->resPrint = '';
 			}
 
 			// Activate the auto complete using ajax call.
