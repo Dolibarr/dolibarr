@@ -80,7 +80,7 @@ if (!isset($argv[3]) || !$argv[3]) {
 	exit(1);
 }
 $bankref = $argv[1];
-$bankreceiptnum = $argv[2] ?? 'all';
+$bankreceiptnum = $argv[2] ?: 'all';
 $model = $argv[3];
 $newlangid = 'en_EN'; // To force a new lang id
 
@@ -433,7 +433,7 @@ if ($resql) {
 	}
 
 	if ($numrows > 0) {
-		print "Found ".$numrows." records for receipt ".$num."\n";
+		print "Found ".$numrows." records for receipt ".$bankreceiptnum."\n";
 
 		// Genere en-tete
 		$objmodel->write_footer($outputlangs);
@@ -445,7 +445,7 @@ if ($resql) {
 
 		$ret = 0;
 	} else {
-		print "No records found for receipt ".$num."\n";
+		print "No records found for receipt ".$bankreceiptnum."\n";
 
 		$ret = 0;
 	}

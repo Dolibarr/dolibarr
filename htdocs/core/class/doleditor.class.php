@@ -396,7 +396,7 @@ class DolEditor
 				$out .= '		entity_encoding: "raw",'."\n";
 				$out .= '		protect: [/<\?[\s\S]*?\?>/g],'."\n";	// protect PHP tags like CKEditor did
 				$out .= '		paste_data_images: true,'."\n";
-				$out .= '		content_style: \'p { margin: unset; line-height: 1.2em; } .mce-content-body { margin: 10px; } \',';
+				$out .= '		content_style: \'p { margin: 8px 0 8px 0; line-height: 1.4em; } .mce-content-body { margin: 10px; } \',';
 				$out .= '		toolbar_mode: "sliding",'."\n";
 				$out .= '		browser_spellcheck: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false').','."\n";
 				$out .= '		language: (tinyLang && tinyLang.indexOf("en") === 0) ? "en" : tinyLang,'."\n";
