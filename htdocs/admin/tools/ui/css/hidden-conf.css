@@ -1,0 +1,71 @@
+.conf-container {
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
+}
+
+.conf-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.conf-item {
+	border: 1px solid #eee;
+	border-radius: 6px;
+	padding: 12px;
+	background: #fafafa;
+}
+
+.conf-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+}
+
+.conf-name {
+	font-weight: bold;
+	font-family: monospace;
+}
+
+.conf-body {
+	margin-top: 8px;
+}
+
+.conf-desc {
+	margin-bottom: 10px;
+	color: #333;
+}
+
+.conf-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	font-size: 12px;
+	color: #666;
+}
+
+.conf-meta-line {
+	margin-right: 10px;
+}
+
+#search-form-container  {
+	position: sticky;
+	top:0;
+}
+#search-form-container .search-tool-container {
+	margin: 0;
+}
+
+#hidden-conf-counter{
+	display: block;
+	position: absolute;
+	right: 10px;
+	bottom: 0;
+	transform: translateY(50%);
+}
+
+.conf-item summary.conf-title{
+	cursor: pointer;
+}

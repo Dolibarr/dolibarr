@@ -202,3 +202,10 @@ LangsLocalChangedTo = Language locale changed to %s. Translations will now use t
 CacheCleared = Cache cleared
 
 JSDolibarrhooksAjaxSpecial = Dom reloaded Hook
+
+# Hidden conf doc
+AddedInVersion = Added in version
+DocHiddenConfTitle = Hidden conf list
+DocHiddenConfDescription = Some options are not visible in the interface (often because they are deprecated or are beta features). In most cases you do not need these functions and their use may make the application unstable or may not work as expected.
+DocHiddenConfDisclaimer = This page contains the list of some advanced development parameters. In most cases, they are parameters for internal usage, development, external modules, features in development not stable or that may lead to security risk. For standard usage of Dolibarr, such parameters SHOULD NOT be used. All experimental options are NOT supported. They may be removed in a future, modified at any version and break stability of your application.
+HiddenConf = Hidden conf
