@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,9 @@ $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; //
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 
-$paiementid				= GETPOSTINT('paiementid');
+$paiementid = GETPOSTINT('paiementid');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_date_startday = GETPOSTINT('search_date_startday');
@@ -270,6 +271,7 @@ $num = $db->num_rows($resql);
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
+$arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
