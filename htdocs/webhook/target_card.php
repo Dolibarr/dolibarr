@@ -480,7 +480,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true), '', $permissiontoadd);
 
 			// Clone
+<<<<<<< HEAD
 			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone'], true), '', $permissiontoadd);
+=======
+			print dolGetButtonAction($langs->trans('ToClone'), '', 'clonde', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+>>>>>>> upstream/develop
 
 			// Webhook send test
 			print dolGetButtonAction($langs->trans('TestWebhookTarget'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'test'], true), '', $permissiontoadd);
