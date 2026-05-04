@@ -10453,12 +10453,6 @@ parameters:
 			path: ../../../htdocs/webhook/class/target.class.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/webhook/class/target.class.php
-
-		-
 			message: '#^Variable \$soc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -10721,12 +10715,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^Variable \$num in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../scripts/bank/export-bank-receipts.php
 
 		-
 			message: '#^Result of \|\| is always false\.$#'
