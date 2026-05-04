@@ -1487,7 +1487,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafieldsobjectkey = $contactstatic->table_element;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste,";
+	$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.fk_pays as country_id, t.fk_departement as state_id, t.civility, t.poste,";
 	$sql .= " t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo, t.fk_soc,";
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town, t.birthday,";
 	$sql .= " t.note_private, t.use_thirdparty_address";
@@ -1669,6 +1669,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			$contactstatic->address = $obj->address;
 			$contactstatic->zip = $obj->zip;
 			$contactstatic->town = $obj->town;
+			$contactstatic->country_id = $obj->country_id;
+			$contactstatic->state_id = $obj->state_id;
 			$contactstatic->use_thirdparty_address = isset($obj->use_thirdparty_address) && !is_null($obj->use_thirdparty_address) ? (int) $obj->use_thirdparty_address : null;
 			$contactstatic->phone_pro = $obj->phone_pro;
 			$contactstatic->phone_mobile = $obj->phone_mobile;
@@ -1696,7 +1698,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				}
 			}
 
-			$effectiveaddressobject = $contactstatic->getEffectiveAddressObject();
+			$effectiveaddressobject = $contactstatic->getEffectiveAddressObject($object);
 
 			print '<tr class="oddeven">';
 
@@ -2736,9 +2738,9 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 
-			print '<td class="tdoverflowmax400" title="' . dol_escape_htmltag((string) $effectiveaddressobject->address) . '">' . dol_escape_htmltag((string) $effectiveaddressobject->address) . '</td>';
-			print '<td class="tdoverflowmax100" title="' . dol_escape_htmltag((string) $effectiveaddressobject->zip) . '">' . dol_escape_htmltag((string) $effectiveaddressobject->zip) . '</td>';
-			print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag((string) $effectiveaddressobject->town) . '">' . dol_escape_htmltag((string) $effectiveaddressobject->town) . '</td>';
+			print '<td class="tdoverflowmax400" title="' . dol_escape_htmltag($obj->address) . '">' . dol_escape_htmltag($obj->address) . '</td>';
+			print '<td class="tdoverflowmax100" title="' . dol_escape_htmltag($obj->zip) . '">' . $obj->zip . '</td>';
+			print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->town) . '">' . $obj->town . '</td>';
 			print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->code_client) . '">' . $obj->code_client . '</td>';
 
 			print '<td class="center">';

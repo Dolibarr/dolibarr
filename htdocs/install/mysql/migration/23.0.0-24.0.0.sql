@@ -43,6 +43,11 @@ ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_
 
 -- V24 migration
 
+-- Add explicit contact address mode flag during 23->24 upgrade.
+-- Duplicate-column errors are tolerated by the Dolibarr SQL runner when upgrades are replayed.
+-- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
+-- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
+
 ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_user;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;

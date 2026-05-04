@@ -85,7 +85,7 @@ $socialnetworks = getArrayOfSocialNetworks();
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
 $objcanvas = null;
-$canvas = (!empty($object->canvas) ? $object->canvas : GETPOST("canvas"));
+$canvas = (!empty($object->canvas) ? $object->canvas : GETPOST("canvas", 'alphanohtml'));
 if (!empty($canvas)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db, $action);
@@ -183,10 +183,10 @@ if (empty($reshook)) {
 
 			// Creation user
 			$nuser = new User($db);
-			$result = $nuser->create_from_contact($object, GETPOST("login")); // Do not use GETPOST(alpha)
+			$result = $nuser->create_from_contact($object, GETPOST("login", 'alphanohtml'));
 
 			if ($result > 0) {
-				$result2 = $nuser->setPassword($user, GETPOST("password"), 0, 0, 1); // Do not use GETPOST(alpha)
+				$result2 = $nuser->setPassword($user, GETPOST("password", 'password'), 0, 0, 1);
 				if (is_int($result2) && $result2 < 0) {
 					$error = $nuser->error;
 					$errors = $nuser->errors;
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 			$object->canvas = $canvas;
 		}
 
-		$object->entity = ((GETPOSTISSET('entity') && GETPOST('entity') != '') ? GETPOSTINT('entity') : $conf->entity);
+		$object->entity = ((GETPOSTISSET('entity') && GETPOST('entity', 'int') != '') ? GETPOSTINT('entity') : $conf->entity);
 		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
@@ -278,7 +278,7 @@ if (empty($reshook)) {
 		$object->birthday_alert = (GETPOST('birthday_alert', 'alpha') == "on" ? 1 : 0);
 
 		//Default language
-		$object->default_lang = GETPOST('default_lang');
+		$object->default_lang = GETPOST('default_lang', 'aZ09');
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -399,7 +399,7 @@ if (empty($reshook)) {
 			// Photo save
 			$dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/contact/".$object->id."/photos";
 			$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-			if (GETPOST('deletephoto') && $object->photo) {
+			if (GETPOST('deletephoto', 'alpha') && $object->photo) {
 				$fileimg = $dir.'/'.$object->photo;
 				$dirthumbs = $dir.'/thumbs';
 				dol_delete_file($fileimg);
@@ -475,7 +475,7 @@ if (empty($reshook)) {
 			$object->roles = GETPOST("roles", 'array'); // Note GETPOSTISSET("role") is null when combo is empty
 
 			//Default language
-			$object->default_lang = GETPOST('default_lang');
+			$object->default_lang = GETPOST('default_lang', 'aZ09');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -693,7 +693,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<form method="post" name="formsoc" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add">';
-			print '<input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="'.((int) $object->use_thirdparty_address).'">';
+			print '<input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="'.($object->mustUseThirdpartyAddress() ? Contact::USE_THIRDPARTY_ADDRESS_YES : Contact::USE_THIRDPARTY_ADDRESS_NO).'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			if (!empty($objsoc)) {
 				print '<input type="hidden" name="entity" value="'.$objsoc->entity.'">';
@@ -746,7 +746,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 
 			$colspan = 3;
-			$addressdisplaystyle = ($showcustomaddressblock ? '' : ' style="display:none;"');
+			$addressdisplaystyle = '';
 
 			if ($socid > 0) {
 				print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
@@ -757,7 +757,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="address">'.$langs->trans("Address").'</label></td>';
-			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.(GETPOST("address", 'alpha') ? GETPOST("address", 'alpha') : $object->address).'</textarea></td>';
+			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea></td>';
 			print '</tr>';
 
 			// Zip / Town
@@ -792,6 +792,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->phone_pro)) == 0) {
+				$object->phone_pro = $objsoc->phone; // Predefined with third party
+			}
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->fax)) == 0) {
+				$object->fax = $objsoc->fax; // Predefined with third party
+			}
+
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
 			print '<td>';
@@ -820,6 +827,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
 			print '</td>';
 			print '</tr>';
+
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->email)) == 0) {
+				$object->email = $objsoc->email; // Predefined with third party
+			}
 
 			// Email
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
@@ -986,7 +997,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="contactid" value="'.$object->id.'">';
-			print '<input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="'.((int) $object->use_thirdparty_address).'">';
+			print '<input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="'.($object->mustUseThirdpartyAddress() ? Contact::USE_THIRDPARTY_ADDRESS_YES : Contact::USE_THIRDPARTY_ADDRESS_NO).'">';
 			if (!empty($backtopage)) {
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			}
@@ -1034,7 +1045,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
 			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
-			$addressdisplaystyle = ($showcustomaddressblock ? '' : ' style="display:none;"');
+			$addressdisplaystyle = '';
 			if ($object->socid > 0) {
 				print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
 				print '<td colspan="3">';
@@ -1046,7 +1057,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Address
 			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="3">';
-			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
+			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.dol_escape_htmltag(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
 			print '</td></tr>';
 
 			// Zip / Town
@@ -1378,7 +1389,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
 		// Effective address
-		print '<tr><td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($effectiveaddressobject->getFullAddress(1, "\n", getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT'))).'</td></tr>';
+		$effectivefulladdress = dol_escape_htmltag($effectiveaddressobject->getFullAddress(1, "\n", getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT')), 0, 1);
+		print '<tr><td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($effectivefulladdress).'</td></tr>';
 		print '<tr><td>'.$langs->trans("ContactAddress_AddressMode").'</td><td>'.($object->mustUseThirdpartyAddress() ? $langs->trans("ContactAddress_AddressModeThirdparty") : $langs->trans("ContactAddress_AddressModeContact")).'</td></tr>';
 
 		// Email

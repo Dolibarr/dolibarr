@@ -557,7 +557,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				$companytouseforaddress = $targetcompany;
 
 				if (method_exists($targetcontact, 'getEffectiveAddressObject')) {
-					if (is_object($targetcompany) && (int) $targetcontact->socid > 0 && (int) $targetcontact->socid !== (int) $targetcompany->id) {
+					if (method_exists($targetcontact, 'mustUseThirdpartyAddress') && $targetcontact->mustUseThirdpartyAddress() && is_object($targetcompany) && (int) $targetcontact->socid > 0 && (int) $targetcontact->socid !== (int) $targetcompany->id) {
 						$targetcontact->fetch_thirdparty();
 						if (!empty($targetcontact->thirdparty) && is_object($targetcontact->thirdparty)) {
 							$companytouseforaddress = $targetcontact->thirdparty;

@@ -227,7 +227,7 @@ class Contact extends CommonObject
 	/**
 	 * @var int|null 1 to use thirdparty address, 0 to use contact address, null for legacy fallback
 	 */
-	public ?int $use_thirdparty_address = null;
+	public $use_thirdparty_address = null;
 
 	/**
 	 * @var string Thirdparty name
@@ -389,6 +389,11 @@ class Contact extends CommonObject
 	 * @var CommonObject|null Cached effective address object for current lifecycle
 	 */
 	protected $_cached_effective_address_object;
+
+	/**
+	 * @var string Cache key matching the current effective address object
+	 */
+	protected $_cached_effective_address_cache_key = '';
 
 
 	/**
@@ -870,17 +875,20 @@ class Contact extends CommonObject
 	 */
 	public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
 	{
-		if ($this->_cached_effective_address_object instanceof CommonObject) {
+		$cachekey = $this->buildEffectiveAddressCacheKey($thirdparty);
+		if ($this->_cached_effective_address_object instanceof CommonObject && $this->_cached_effective_address_cache_key === $cachekey) {
 			return $this->_cached_effective_address_object;
 		}
 
 		if (!$this->mustUseThirdpartyAddress()) {
 			$this->_cached_effective_address_object = $this;
+			$this->_cached_effective_address_cache_key = $cachekey;
 			return $this->_cached_effective_address_object;
 		}
 
 		if ($thirdparty instanceof Societe && (int) $thirdparty->id > 0 && (int) $thirdparty->id === (int) $this->socid) {
 			$this->_cached_effective_address_object = $thirdparty;
+			$this->_cached_effective_address_cache_key = $cachekey;
 			return $this->_cached_effective_address_object;
 		}
 
@@ -888,6 +896,7 @@ class Contact extends CommonObject
 		$result = $thirdpartytoload->fetch((int) $this->socid);
 		if ($result > 0) {
 			$this->_cached_effective_address_object = $thirdpartytoload;
+			$this->_cached_effective_address_cache_key = $cachekey;
 			return $this->_cached_effective_address_object;
 		}
 
@@ -899,6 +908,7 @@ class Contact extends CommonObject
 		);
 
 		$this->_cached_effective_address_object = $this;
+		$this->_cached_effective_address_cache_key = $cachekey;
 		return $this->_cached_effective_address_object;
 	}
 
@@ -1636,6 +1646,8 @@ class Contact extends CommonObject
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowContact")];
 		}
+		$effectiveaddressobject = $this->getEffectiveAddressObject();
+
 		if (!empty($this->photo) && class_exists('Form')) {
 			$photo = '<div class="photointooltip floatright">';
 			$photo .= Form::showphoto('contact', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
@@ -1662,7 +1674,7 @@ class Contact extends CommonObject
 			$phonelist[] = dol_print_phone($this->phone_perso, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
 		}
 		$datas['phonelist'] = '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
-		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
+		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_escape_htmltag(dol_format_address($effectiveaddressobject, 1, ' ', $langs), 0, 1);
 
 		return $datas;
 	}
@@ -2008,6 +2020,33 @@ class Contact extends CommonObject
 	protected function resetEffectiveAddressCache(): void
 	{
 		$this->_cached_effective_address_object = null;
+		$this->_cached_effective_address_cache_key = '';
+	}
+
+	/**
+	 * Build a cache key for the current effective address inputs.
+	 *
+	 * The same Contact instance is often reused and manually rehydrated in lists.
+	 * The cache must therefore follow the current object state, not only the object identity.
+	 *
+	 * @param   Societe|null $thirdparty Preloaded thirdparty when already available
+	 * @return  string
+	 */
+	protected function buildEffectiveAddressCacheKey(?Societe $thirdparty = null): string
+	{
+		$keyparts = array(
+			(string) ((int) $this->id),
+			(string) ((int) $this->socid),
+			(string) (($thirdparty instanceof Societe && (int) $thirdparty->id > 0) ? (int) $thirdparty->id : (int) $this->socid),
+			($this->use_thirdparty_address === null ? 'null' : (string) ((int) $this->use_thirdparty_address)),
+			(string) $this->address,
+			(string) $this->zip,
+			(string) $this->town,
+			(string) ((int) $this->state_id),
+			(string) ((int) $this->country_id),
+		);
+
+		return sha1(implode("\0", $keyparts));
 	}
 
 	/**

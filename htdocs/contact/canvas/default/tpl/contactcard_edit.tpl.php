@@ -100,22 +100,22 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 <?php } ?>
 
-<tr class="contact-address-fields"<?php echo empty($this->control->tpl['show_custom_address_block']) ? ' style="display:none;"' : ''; ?>>
+<tr class="contact-address-fields">
 	<td><?php echo $langs->trans("Address"); ?></td>
-	<td colspan="3"><textarea class="flat" name="address" cols="70"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea class="flat" name="address" cols="70"><?php echo dol_escape_htmltag($this->control->tpl['address']); ?></textarea></td>
 </tr>
 
-<tr class="contact-address-fields"<?php echo empty($this->control->tpl['show_custom_address_block']) ? ' style="display:none;"' : ''; ?>>
+<tr class="contact-address-fields">
 	<td><?php echo $langs->trans("Zip").' / '.$langs->trans("Town"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_zip'].'&nbsp;'.$this->control->tpl['select_town']; ?></td>
 </tr>
 
-<tr class="contact-address-fields"<?php echo empty($this->control->tpl['show_custom_address_block']) ? ' style="display:none;"' : ''; ?>>
+<tr class="contact-address-fields">
 	<td><?php echo $langs->trans("Country"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_country'].$this->control->tpl['info_admin']; ?></td>
 </tr>
 
-<tr class="contact-address-fields"<?php echo empty($this->control->tpl['show_custom_address_block']) ? ' style="display:none;"' : ''; ?>>
+<tr class="contact-address-fields">
 	<td><?php echo $langs->trans('State'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_state']; ?></td>
 </tr>

@@ -131,11 +131,11 @@ abstract class ActionsContactCardCommon
 			}
 			if (GETPOSTISSET('use_different_address_than_thirdparty')) {
 				$this->object->use_thirdparty_address = $this->resolveUseThirdpartyAddressFromRequest((int) $this->object->socid);
-			} elseif (!isset($this->object->use_thirdparty_address)) {
+			} elseif ($action == 'create' && !isset($this->object->use_thirdparty_address)) {
 				$this->object->use_thirdparty_address = ($this->object->socid > 0 ? Contact::USE_THIRDPARTY_ADDRESS_YES : Contact::USE_THIRDPARTY_ADDRESS_NO);
 			}
 			$this->tpl['show_custom_address_block'] = ($this->object->socid <= 0 || !$this->object->mustUseThirdpartyAddress());
-			$this->tpl['use_thirdparty_address'] = (int) $this->object->use_thirdparty_address;
+			$this->tpl['use_thirdparty_address'] = ($this->object->mustUseThirdpartyAddress() ? Contact::USE_THIRDPARTY_ADDRESS_YES : Contact::USE_THIRDPARTY_ADDRESS_NO);
 
 			if ($conf->use_javascript_ajax) {
 				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript">
@@ -167,6 +167,22 @@ abstract class ActionsContactCardCommon
 
 			// Civility
 			$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
+
+			// Keep legacy thirdparty defaults for non-postal contact fields only.
+			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
+				if (dol_strlen(trim($this->object->phone_pro)) == 0) {
+					$this->object->phone_pro = $objsoc->phone;
+				}
+				if (dol_strlen(trim($this->object->fax)) == 0) {
+					$this->object->fax = $objsoc->fax;
+				}
+				if (dol_strlen(trim($this->object->email)) == 0) {
+					$this->object->email = $objsoc->email;
+				}
+				$this->tpl['phone_pro'] = $this->object->phone_pro;
+				$this->tpl['fax'] = $this->object->fax;
+				$this->tpl['email'] = $this->object->email;
+			}
 
 			// Zip
 			$this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
@@ -257,12 +273,12 @@ abstract class ActionsContactCardCommon
 			$this->tpl['civility'] = $this->object->getCivilityLabel();
 			$effectiveaddressobject = $this->object->getEffectiveAddressObject();
 
-			$this->tpl['address'] = dol_nl2br((string) $effectiveaddressobject->address);
+			$this->tpl['address'] = dol_nl2br(dol_escape_htmltag((string) $effectiveaddressobject->address, 0, 1));
 
-			$this->tpl['zip'] = (!empty($effectiveaddressobject->zip) ? $effectiveaddressobject->zip.'&nbsp;' : '');
+			$this->tpl['zip'] = (!empty($effectiveaddressobject->zip) ? dol_escape_htmltag($effectiveaddressobject->zip).'&nbsp;' : '');
 
 			$img = picto_from_langcode((string) $effectiveaddressobject->country_code);
-			$this->tpl['country'] = ($img ? $img.' ' : '').$effectiveaddressobject->country;
+			$this->tpl['country'] = ($img ? $img.' ' : '').dol_escape_htmltag((string) $effectiveaddressobject->country);
 
 			$this->tpl['phone_pro'] = dol_print_phone($this->object->phone_pro, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_perso'] = dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');

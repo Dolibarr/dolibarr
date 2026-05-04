@@ -125,4 +125,54 @@ class ContactDocSubstitutionTest extends PHPUnit\Framework\TestCase
 		$this->assertSame('France', $substitutions['contact_country']);
 		$this->assertSame('Jane', $substitutions['contact_firstname']);
 	}
+
+	/**
+	 * Empty effective state/country ids must not be forced to zero in substitutions.
+	 *
+	 * @return void
+	 */
+	public function testSubstitutionArrayKeepsEmptyEffectiveIdsEmpty(): void
+	{
+		$generator = new class($this->savdb) extends CommonDocGenerator {
+		};
+
+		$effective = new Societe($this->savdb);
+		$effective->address = 'Thirdparty avenue';
+		$effective->state_id = null;
+		$effective->country_id = null;
+
+		$contact = new class($this->savdb, $effective) extends Contact {
+			/**
+			 * @var Societe
+			 */
+			private $effective;
+
+			/**
+			 * @param DoliDB  $db
+			 * @param Societe $effective
+			 */
+			public function __construct($db, Societe $effective)
+			{
+				parent::__construct($db);
+				$this->effective = $effective;
+			}
+
+			/**
+			 * @param   Societe|null $thirdparty
+			 * @return  CommonObject
+			 */
+			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
+			{
+				return $this->effective;
+			}
+		};
+
+		$contact->lastname = 'Doe';
+		$contact->firstname = 'Jane';
+
+		$substitutions = $generator->get_substitutionarray_contact($contact, $this->savlangs, 'contact');
+
+		$this->assertNull($substitutions['contact_state_id']);
+		$this->assertNull($substitutions['contact_country_id']);
+	}
 }
