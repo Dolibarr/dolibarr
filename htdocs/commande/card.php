@@ -3644,7 +3644,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Clone
 				if ($usercancreate) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"] . '?action=clone&token=' . newToken() . '&id=' . $object->id . '&socid=' . $object->socid, '');
+					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"] . '?action=clone&token=' . newToken() . '&id=' . $object->id . '&socid=' . $object->socid, '');
 				}
 
 				// Cancel order

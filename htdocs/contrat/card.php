@@ -2366,7 +2366,7 @@ if ($action == 'create') {
 				// Clone
 				if ($user->hasRight('contrat', 'creer')) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
 				}
 
 				// Delete
