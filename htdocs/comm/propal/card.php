@@ -3738,7 +3738,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&token=' . newToken() . '&object=' . $object->element . '">' . $langs->trans("ToClone") . '</a>';
+					print '<a class="butAction butActionClone" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&token=' . newToken() . '&object=' . $object->element . '">' . $langs->trans("ToClone") . '</a>';
 				}
 
 				// Delete

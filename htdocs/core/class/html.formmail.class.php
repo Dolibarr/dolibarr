@@ -585,6 +585,7 @@ class FormMail extends Form
 			}
 
 			$modelmail_array = array();
+			$break = '';
 			if ($this->param['models'] != 'none') {
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
 				if ($result < 0) {
@@ -599,14 +600,24 @@ class FormMail extends Form
 						$labeltouse = $line->label;
 					}
 
+					if ($break != $line->lang) {
+						// New break for a new language, we add the break
+						$s = $line->lang;
+						$shtml = '----- '.$langs->trans("Language_".$line->lang).' -----';
+						$modelmail_array['separator_'.$line->lang] = array('label' => $s, 'data-html' => $shtml, 'disabled' => 'disabled');
+					}
+
 					// We escape the $labeltouse to store it into $modelmail_array.
-					$modelmail_array[$line->id] = dol_escape_htmltag($labeltouse);
+					$s = dol_escape_htmltag($labeltouse);
+					$shtml = dol_escape_htmltag($labeltouse);
 					if ($line->lang) {
-						$modelmail_array[$line->id] .= ' '.picto_from_langcode($line->lang);
+						$shtml = picto_from_langcode($line->lang).'</span> '.$shtml;
 					}
 					if ($line->private) {
-						$modelmail_array[$line->id] .= ' - <span class="opacitymedium">'.dol_escape_htmltag($langs->trans("Private")).'</span>';
+						$shtml .= ' - <span class="opacitymedium small">'.dol_escape_htmltag($langs->trans("Private")).'</span>';
 					}
+
+					$modelmail_array[$line->id] = array('label' => $s, 'data-html' => $shtml);
 				}
 			}
 
@@ -617,18 +628,23 @@ class FormMail extends Form
 				// If list of template is filled
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
 
-				$out .= $this->selectarray('modelmailselected', $modelmail_array, $model_mail_selected_id, $langs->trans('SelectMailModel'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 1, '', 0, 1);
+				$out .= $this->selectarray('modelmailselected', $modelmail_array, $model_mail_selected_id, $langs->trans('SelectMailModel'), 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 				if ($user->admin) {
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 
 				// Language selector for predefined message templates (only when multilang is enabled)
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-					$formadmin = new FormAdmin($this->db);
-					$currentlang = (is_object($outputlangs) ? $outputlangs->defaultlang : $langs->defaultlang);
-					$out .= ' &nbsp; ';
-					$out .= $formadmin->select_language($currentlang, 'lang_id', 0, array(), 1, 0, 0, 'maxwidth150');
+					// This feature is in conflict with the existing one where all templates are show with the language in a flag so user
+					// can choose the template in the correct language.To avoid duplicate and conflict selection, we currently enable this on a hidden constant.
+					// A solution to be compatible would be to wait the user has selected the template, and the combo to select language is shown if no language is forced for the template.
+					if (getDolGlobalInt('MAIN_MULTILANGS_ASK_LANG_IN_SEPARATE_COMBO')) {
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+						$formadmin = new FormAdmin($this->db);
+						$currentlang = (is_object($outputlangs) ? $outputlangs->defaultlang : $langs->defaultlang);
+						$out .= ' &nbsp; ';
+						$out .= $formadmin->select_language($currentlang, 'lang_id', 0, array(), 1, 0, 0, 'maxwidth150');
+					}
 				}
 
 				$out .= '<input type="submit" class="button reposition smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
@@ -1951,7 +1967,7 @@ class FormMail extends Form
 			$sql .= " AND active = ".((int) $active);
 		}
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";	// Return all languages
-		$sql .= $this->db->order("position,lang,label", "ASC");
+		$sql .= $this->db->order("lang,position,label", "ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);

@@ -2382,7 +2382,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&object='.$object->element.'&amp;token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $object->socid).'&action=clone&object='.urlencode($object->element).'&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 				}
 
 				// Delete
