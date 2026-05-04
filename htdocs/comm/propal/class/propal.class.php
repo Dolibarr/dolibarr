@@ -3562,8 +3562,8 @@ class Propal extends CommonObject
 			$response->warning_delay = $delay_warning / 60 / 60 / 24;
 			$response->label = $label;
 			$response->labelShort = $labelShort;
-			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?search_status='.$status.'&mainmenu=commercial&leftmenu=propals';
-			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?search_option=late&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
+			$response->url = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/list.php', ['search_status' => $status, 'mainmenu' => 'commercial', 'leftmenu' => 'propals']);
+			$response->url_late = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/list.php', ['search_option' => 'late', 'mainmenu' => 'commercial', 'leftmenu' => 'propals', 'sortfield' => 'p.datep', 'sortorder' => 'asc']);
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
@@ -3979,7 +3979,7 @@ class Propal extends CommonObject
 
 			if ($txttoshow) {
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
