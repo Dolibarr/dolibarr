@@ -1072,7 +1072,7 @@ class BonPrelevement extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Create a BAN payment order:
-	 *  - Select waiting requests from prelevement_demande (or use $did if provided)
+	 *  - Select waiting requests from prelevement_demande (or use $dids if provided)
 	 *  - Check BAN values
 	 *  - Then create a direct debit order or a credit transfer order
 	 *  - Link the order with the prelevement_demande lines
@@ -1098,7 +1098,7 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf, $langs, $user;
 
-		dol_syslog(__METHOD__ . " Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format." type=".$type." dids=".$dids." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " mode=".$mode." format=".$format." type=".$type." dids=".$dids." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
@@ -1127,7 +1127,7 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
-			$entities = $type != 'bank-transfer' ? getEntity('invoice', 1) : getEntity('supplier_invoice', 1);	// Return alist of entities
+			$entities = $type != 'bank-transfer' ? getEntity('invoice', 1) : getEntity('supplier_invoice', 1);	// Return a list of entities
 			$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
@@ -1138,6 +1138,7 @@ class BonPrelevement extends CommonObject
 			$societeOrUser = 'user';
 		}
 
+		/*
 		$thirdpartyBANId = 0;
 
 		// Check if there is an iban associated to the bank transfer request or if we take the default
@@ -1163,6 +1164,7 @@ class BonPrelevement extends CommonObject
 
 			$this->db->free($resql);
 		}
+		*/
 
 		$datetimeprev = dol_now('gmt');
 		// Choice of the date of the execution direct debit
@@ -1176,7 +1178,7 @@ class BonPrelevement extends CommonObject
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
 
-		// Read invoices
+		// Get all invoices to process into $factures
 		$factures = array();
 		$factures_prev = array();
 		$factures_prev_id = array();
@@ -1196,17 +1198,13 @@ class BonPrelevement extends CommonObject
 			$sql .= ", f.ref";
 			$sql .= ", sr.bic, sr.iban_prefix, 'FRST' as frstrecur, sr.default_rib, '' as rum";
 		}
-		$sql .= ", pd.fk_societe_rib as soc_rib_id";
+		$sql .= ", pd.fk_societe_rib as soc_rib_id";		// Forced payment IBAN to use in priority
 		$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";	// f is salary, facture or facture_fourn
-		$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$this->db->sanitize($sqlTable);
+		$sql .= " INNER JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$this->db->sanitize($sqlTable);
 		$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser)." as s ON s.rowid = f.".$this->db->sanitize($socOrUser);
-		$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser."_rib")." as sr ON s.rowid = sr.".$this->db->sanitize($socOrUser);
+		$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser."_rib")." as sr ON s.rowid = sr.".$this->db->sanitize($socOrUser);	// To get the default BAN of thirdparty
 		if ($sourcetype != 'salary') {
-			if (!empty($thirdpartyBANId)) {
-				$sql .= " AND sr.rowid = " . ((int) $thirdpartyBANId);
-			} else {
-				$sql .= " AND sr.default_rib = 1";
-			}
+			$sql .= " AND sr.default_rib = 1";
 			$sql .= " AND sr.type = 'ban'";
 		} else {
 			//$sql .= " AND sr.type = 'ban'";		// TODO Add AND sr.type = 'ban' for users too
@@ -1246,10 +1244,11 @@ class BonPrelevement extends CommonObject
 
 				// All fields:
 				// 0=rowid, 1=pfdrowid, 2=$socOrUser, 3=code_banque, 4=code_guichet, 5=number, 6=key,
-				// 7=amount, 8=name, 9=ref, 10=bic, 11=iban, 12=frstrecur, 13=default_rib, 14=rum, 15=soc_rib_id
+				// 7=amount, 8=company name, 9=invoice ref,
+				// 10=default bic, 11=default iban (=the BAN to use if no soc_rib_id set), 12=default frstrecur, 13=default_rib, 14=default rum, 15=soc_rib_id (=the BAN to use in priority)
 				$factures[$i] = $row;
 
-				// Decode BAN
+				// Decode default BAN
 				$factures[$i][11] = dolDecrypt($factures[$i][11]);
 
 				if ($row[7] == 0) {
@@ -1299,8 +1298,8 @@ class BonPrelevement extends CommonObject
 						}
 
 						// If a bank account was forced on llx_prelevement_demande (the direct debit or credit transfer request),
-						// we must use this oney,so we reload values from soc_rib_id
-						if (!empty($fac[14])) {
+						// we must use this one, so we reload values from soc_rib_id
+						if (!empty($fac[15])) {
 							$bankaccount = new CompanyBankAccount($this->db);
 							$bankaccount->fetch((int) $fac[15]);
 							if ($bankaccount->id > 0) {
