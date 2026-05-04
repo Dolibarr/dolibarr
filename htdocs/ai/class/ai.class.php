@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 
 /**
- * Class for AI
+ * Class for AI feature
  */
 class Ai
 {
@@ -331,7 +331,11 @@ class Ai
 				}
 			}
 
-			$localurl = 2;	// Accept both local and external endpoints
+			// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
+			// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
+			global $dolibarr_ai_allow_local_endpoints;
+			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
+
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
 
 			if (empty($response['http_code'])) {

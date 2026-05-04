@@ -157,6 +157,10 @@ button.dropdown-item.global-search-item {
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
+.ai_dropdown{
+	margin-top: 14px !important;
+	margin-left: -2px !important;
+}
 
 /* CSS to hide the arrow to show open/close */
 div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
@@ -471,7 +475,6 @@ li.liinputsearch {
 	position: sticky;
 	display: block;
 	top: 0;
-	background: var(--colorbackbody);
 	z-index: 1;
 }
 

@@ -169,7 +169,12 @@ class Notify
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
 		'ACTION_CREATE',
-		'CONTRACT_MODIFY'
+		'CONTRACT_MODIFY',
+		'STOCKTRANSFER_CREATE',
+		'STOCKTRANSFER_MODIFY',
+		'STOCKTRANSFER_VALIDATE',
+		'STOCKTRANSFER_UNVALIDATE',
+		'STOCKTRANSFER_CLOSE'
 	);
 
 	/**
@@ -1276,7 +1281,7 @@ class Notify
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
-					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $mailTemplateLabel);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {

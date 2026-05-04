@@ -1648,7 +1648,7 @@ class Ldap
 			$c = $result['count'];
 			$gids = array();
 			for ($i = 0; $i < $c; $i++) {
-				$gids[] = $result[$i]['gidnumber'][0];
+				$gids[] = (int) $result[$i]['gidnumber'][0];
 			}
 			rsort($gids);
 

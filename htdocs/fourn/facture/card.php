@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
@@ -166,14 +166,14 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/fourn/facture/list.php';
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/fourn/facture/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/fourn/facture/card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -281,7 +281,7 @@ if (empty($reshook)) {
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					if ($result < 0) {
-						dol_print_error($db, $object->error, $object->errors);
+						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 			}
@@ -497,7 +497,7 @@ if (empty($reshook)) {
 		$object->label = GETPOST('label');
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setdatef' && $usercancreate) {
 		$newdate = dol_mktime(0, 0, 0, GETPOSTINT('datefmonth'), GETPOSTINT('datefday'), GETPOSTINT('datefyear'), 'tzserver');
@@ -522,7 +522,7 @@ if (empty($reshook)) {
 
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setdate_lim_reglement' && $usercancreate) {
 		$object->fetch($id);
@@ -533,7 +533,7 @@ if (empty($reshook)) {
 		}
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
 		$db->begin();
@@ -1918,7 +1918,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $object->error, $object->errors);
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 
@@ -2376,7 +2376,7 @@ if ($action == 'create') {
 		print '<table class="border centpercent">';
 
 		// Ref
-		print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
+		//print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 		$exampletemplateinvoice = new FactureFournisseurRec($db);
 		$invoice_predefined = new FactureFournisseurRec($db);
@@ -2481,14 +2481,6 @@ if ($action == 'create') {
 				dol_print_error($db);
 			}
 		}
-
-		// Ref supplier
-		print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplierBill').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '')).'" type="text" spellcheck="false"';
-		if (!empty($societe->id) && $societe->id > 0) {
-			print ' autofocus';
-		}
-		print '></td>';
-		print '</tr>';
 
 		print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td>';
 
@@ -2742,9 +2734,20 @@ if ($action == 'create') {
 			}
 		}
 
-		print '</div>';
+		print '</div><br>';
 
 		print '</td></tr>';
+
+
+		// Ref supplier
+		print '<tr><td class="fieldrequired">';
+		print $form->textwithpicto($langs->trans('RefSupplierBill'), $langs->trans("RefOfOnVendorSide", $langs->trans("SupplierBill"))).'</td><td>';
+		print '<input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '')).'" type="text" spellcheck="false"';
+		if (!empty($societe->id) && $societe->id > 0) {
+			print ' autofocus';
+		}
+		print '></td>';
+		print '</tr>';
 
 
 		// Invoice Subtype
@@ -2767,7 +2770,7 @@ if ($action == 'create') {
 		}
 
 		// Label
-		print '<tr><td>'.$langs->trans('Label').'</td><td><input class="minwidth200" name="label" value="'.dol_escape_htmltag(GETPOST('label')).'" type="text"></td></tr>';
+		print '<tr><td>'.$langs->trans('Label').'</td><td><input class="minwidth300" name="label" value="'.dol_escape_htmltag(GETPOST('label')).'" type="text"></td></tr>';
 
 
 		// Date invoice
@@ -4353,7 +4356,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($action != 'edit' && $usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken().'">'.$langs->trans('ToClone').'</a>';
+					print '<a class="butAction butActionClone" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken().'">'.$langs->trans('ToClone').'</a>';
 				}
 
 				// Clone as predefined / Create template

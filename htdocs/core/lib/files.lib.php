@@ -2223,7 +2223,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
  */
 function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletefile = 1, $trackid = '')
 {
-	global $db, $user, $conf, $langs, $_FILES;
+	global $db, $langs;
 
 	$keytodelete = $filenb;
 	$keytodelete--;
@@ -2412,7 +2412,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
 	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a temporary directory. TODO Does this test work ?
-		$filename = basename($file);
+		//$filename = basename($file);
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
@@ -2449,12 +2449,49 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
 	}
 }
 
+/**
+ * Check if a file is a real PDF file by checking its signature and its MIME type.
+ * Testing first char may be enough. No need to use the finfo_file().
+ *
+ * @param 	string 	$filePath	File path to check
+ * @return 	bool				True if the file is a real PDF, false otherwise.
+ */
+function isRealPdf(string $filePath)
+{
+	if (!is_file($filePath) || !is_readable($filePath)) {
+		return false;
+	}
+
+	// Open file
+	$handle = fopen($filePath, 'rb');
+	if (!$handle) {
+		return false;
+	}
+	$header = fread($handle, 5);
+	fclose($handle);
+
+	if ($header !== '%PDF-') {
+		return false;
+	}
+
+	// Check using finfo_file
+	/*
+	$finfo = finfo_open(FILEINFO_MIME_TYPE);
+	$mime = finfo_file($finfo, $filePath);
+	finfo_close($finfo);
+	if ($mime !== 'application/pdf') {
+		return false;
+	}
+	*/
+
+	return true;
+}
 
 /**
- * 	Convert an image file or a PDF into another image format.
+ * 	Convert a PDF file into another image format.
  *  This need Imagick php extension. You can use dol_imageResizeOrCrop() for a function that need GD.
  *
- *  @param	string	$fileinput  Input file name
+ *  @param	string	$fileinput  Input full path name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
  *  @param  string  $page       Page number if we convert a PDF into png
@@ -2466,6 +2503,14 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 	if (class_exists('Imagick')) {
 		$image = new Imagick();
 		try {
+			// Imagick may have a support for Magick Scripting Language (MSL) that allows to run execution code with some files like SVG. So we need to check
+			// that file is really a PDF file.
+			// Note: The Imagick policy options can be disabled into /etc/ImageMagick*/policy.xml.
+			if (!isRealPdf($fileinput)) {
+				dol_syslog("We try to convert a PDF file with name ".$fileinput." but it is not a real PDF file (hack attempt ?).", LOG_WARNING);
+				return -4;
+			}
+
 			$filetoconvert = $fileinput.(($page != '') ? '['.$page.']' : '');
 			//var_dump($filetoconvert);
 			$ret = $image->readImage($filetoconvert);
@@ -2474,6 +2519,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 			dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." conversion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
 			return 0;
 		}
+
 		if ($ret) {
 			$ret = $image->setImageFormat($ext);
 			if ($ret) {
@@ -2990,14 +3036,18 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/'.$original_file;
 	} elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
-		/* the medias directory is by default a public directory accessible online for everybody, so test on permission per entity has no sense
-		if (isModEnabled('multicompany') && (empty($entity) || empty($conf->medias->multidir_output[$entity]))) {
-			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
-		} */
+		/* the medias directory is by default a public directory accessible online for everybody, so test on permission per entity is not done, it has no sense */
 		if (empty($entity)) {
 			$entity = 1;
 		}
-		$accessallowed = 1;
+		$accessallowed = 0;
+		if ($mode == 'write') {
+			if ($fuser->hasRight('website', 'write')) {
+				$accessallowed = 1;
+			}
+		} else {
+			$accessallowed = 1;		// As dir is public, we allow read access to all files in medias directory
+		}
 		$original_file = (empty($conf->medias->multidir_output[$entity]) ? (empty($conf->medias->dir_output) ? DOL_DATA_ROOT.'/medias' : $conf->medias->dir_output) : $conf->medias->multidir_output[$entity]).'/'.$original_file;
 	} elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log

@@ -625,12 +625,12 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-if (getDolGlobalInt('STRIPE_AUTO_RECORD_PAYOUT')) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("StripeUserAccountForActions").'</td><td>';
-	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'), 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
-	print '</td></tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("StripeUserAccountForActions").'</td><td>';
+print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'), 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+print '</td></tr>';
 
+if (getDolGlobalInt('STRIPE_AUTO_RECORD_PAYOUT')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');

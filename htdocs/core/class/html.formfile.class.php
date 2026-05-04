@@ -1566,7 +1566,7 @@ class FormFile
 						}
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
-						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'">';
+						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'" spellcheck="false">';
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);

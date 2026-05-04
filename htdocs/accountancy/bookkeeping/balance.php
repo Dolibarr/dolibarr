@@ -450,7 +450,7 @@ if ($action != 'export') {
 
 	print '<tr class="liste_titre_filter">';
 
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -466,7 +466,7 @@ if ($action != 'export') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -475,7 +475,7 @@ if ($action != 'export') {
 	print '</tr>'."\n";
 
 	print '<tr class="liste_titre">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
@@ -495,7 +495,7 @@ if ($action != 'export') {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
 	print '</tr>'."\n";
@@ -581,7 +581,7 @@ if ($action != 'export') {
 				if ($displayed_account != "") {
 					print '<tr class="liste_total">';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
-					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($conf->main_checkbox_left_column) {
 						print '<td></td>';
 					}
 					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
@@ -594,7 +594,7 @@ if ($action != 'export') {
 					} else {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
 					}
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print "<td></td>\n";
 					}
 					print '</tr>';
@@ -615,7 +615,7 @@ if ($action != 'export') {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			print $link;
 			print '</td>';
@@ -672,7 +672,7 @@ if ($action != 'export') {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			print $link;
 			print '</td>';
@@ -689,7 +689,7 @@ if ($action != 'export') {
 	if (!empty($show_subgroup)) {
 		print '<tr class="liste_total">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print "<td></td>\n";
 		}
 		print '<td class="right">'.$langs->trans("SubTotal").':</td>';
@@ -704,7 +704,7 @@ if ($action != 'export') {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print "<td></td>\n";
 		}
 		print '</tr>';
@@ -712,7 +712,7 @@ if ($action != 'export') {
 
 	print '<tr class="liste_total">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print "<td></td>\n";
 	}
 	print '<td class="right">'.$langs->trans("AccountBalance").':</td>';
@@ -727,7 +727,7 @@ if ($action != 'export') {
 		print '<td class="right nowraponall amount">' . price(price2num($total_debit - $total_credit, 'MT')) . '</td>';
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print "<td></td>\n";
 	}
 	print '</tr>';
@@ -735,7 +735,7 @@ if ($action != 'export') {
 	// Accounting result
 	if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
 		print '<tr class="liste_total">';
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print "<td></td>\n";
 		}
 		print '<td class="right">' . $langs->trans("AccountingResult") . ':</td>';
@@ -757,7 +757,7 @@ if ($action != 'export') {
 		print '<td class="right nowraponall amount' . $accountingResultClassCSS . '">' . $accountingResultCredit . '</td>';
 
 		print '<td></td>';
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print "<td></td>\n";
 		}
 		print '</tr>';

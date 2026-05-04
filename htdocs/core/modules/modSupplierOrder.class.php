@@ -121,21 +121,21 @@ class modSupplierOrder extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1152;
-		$this->rights[$r][1] = 'Consulter les commandes fournisseur';
+		$this->rights[$r][1] = 'Read purchase orders';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 1153;
-		$this->rights[$r][1] = 'Creer une commande fournisseur';
+		$this->rights[$r][1] = 'Create a purchase order';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 1154;
-		$this->rights[$r][1] = 'Valider une commande fournisseur';
+		$this->rights[$r][1] = 'Validate purchase orders';	// Advance permission because useless. "Validate" in dolibarr means "Create really" vs "Create as draft only".;
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supplier_order_advance';
@@ -143,21 +143,21 @@ class modSupplierOrder extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1155;
-		$this->rights[$r][1] = 'Approuver une commande fournisseur';
+		$this->rights[$r][1] = 'Approve purchase orders';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'approuver';
 
 		$r++;
 		$this->rights[$r][0] = 1156;
-		$this->rights[$r][1] = 'Commander une commande fournisseur';
+		$this->rights[$r][1] = 'Order a purchase order';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'commander';
 
 		$r++;
 		$this->rights[$r][0] = 1157;
-		$this->rights[$r][1] = 'Receptionner une commande fournisseur';
+		$this->rights[$r][1] = 'Receive a purchase order';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'receptionner';
@@ -172,7 +172,7 @@ class modSupplierOrder extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1158;
-		$this->rights[$r][1] = 'Supprimer une commande fournisseur';
+		$this->rights[$r][1] = 'Delete a purchase order';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
@@ -188,7 +188,7 @@ class modSupplierOrder extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1161;
-		$this->rights[$r][1] = 'Exporter les commande fournisseurs, attributs';
+		$this->rights[$r][1] = 'Export purchase orders';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';

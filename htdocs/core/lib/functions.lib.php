@@ -1063,7 +1063,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
-	global $mysoc, $user, $conf;
+	global $langs, $mysoc, $user, $conf;
 
 	if (empty($paramname)) {   // Explicit test for null for phan.
 		return 'BadFirstParameterForGETPOST';
@@ -1253,11 +1253,19 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
+	// Replace substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
+		if (preg_match('/__([A-Z0-9]+(?:_[A-Z0-9]+){0,3})__/i', $out)) {	// If there is at least one substitution key, we try to replace all known substitution keys
+			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $user, array('mycompany', 'date', 'system', 'user'));
+			complete_substitutions_array($substitutionarray, $langs, $user);
+
+			$out = make_substitutions($out, $substitutionarray, $langs);
+		}
+
+		/* old code
 		$reg = array();
 		$regreplace  = array();
 		$maxloop = 20;
@@ -1320,6 +1328,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$out = preg_replace('/REGREPLACE_' . $key . '/', $value, $out);
 			}
 		}
+		*/
 	}
 
 	// Check type of variable and make sanitization according to this
@@ -6900,15 +6909,16 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	Show information in HTML for admin users or standard users
  *
  *	@param	string		$text				Text info
- *	@param  integer		$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param  integer		$infoonimgalt		Info is shown only on alt of star picto, otherwise it is shown on output after the star picto
  *	@param	int			$nodiv				No div
  *  @param  string|int  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'info', 'error', 'warning', 'xxx'=Other
  *  @param	string		$morecss			More CSS ('', 'warning', 'error')
  *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string		$picto				'' or 'warning'
+ *  @param  string		$textonpictotooltip	Text to show in tooltip on picto
  *	@return	string							String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
+function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '', $textonpictotooltip = '')
 {
 	global $conf, $langs;
 
@@ -6925,7 +6935,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 			$fa = 'exclamation-triangle';
 		}
 		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">');
-		$result .= img_picto((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note'), $fa);
+		$result .= img_picto(((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).($textonpictotooltip ? ' : '.$textonpictotooltip : ''), $fa);
 		$result .= ' ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
@@ -16765,7 +16775,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$out .= '<tr class="liste_titre">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			$out .= '<th class="liste_titre width50 middle">';
 			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 			$out .= $searchpicto;
@@ -16790,7 +16800,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$out .= '</th>';
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			$out .= '<th class="liste_titre width50 middle">';
 			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 			$out .= $searchpicto;

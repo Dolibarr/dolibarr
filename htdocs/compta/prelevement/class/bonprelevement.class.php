@@ -717,7 +717,7 @@ class BonPrelevement extends CommonObject
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
 					$paiement->id_prelevement = $this->id;
 
-					$result = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
+					$result = $paiement->create($user, 1); // This use ->paiementid, that is ID of payment mode. closepaidinvoices=1 to convert deposit invoice to available credit
 
 					if ($result < 0) {
 						$error++;

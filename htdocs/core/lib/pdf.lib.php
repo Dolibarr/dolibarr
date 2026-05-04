@@ -1126,7 +1126,7 @@ function pdfWriteAlreadyPaid(&$docgenerator, &$index, &$pdf, $outputlangs, $outp
  *	Return array of possible substitutions for PDF content (without external module substitutions).
  *
  *	@param	Translate	    $outputlangs	Output language
- *	@param	null|string[]	$exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ *	@param	null|string[]	$exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', 'ticket', 'member', 'candidate'...)
  *	@param	?Object			$object         Object
  *	@param	int<0,2>        $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
  *  @param  null|string[]	$include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)

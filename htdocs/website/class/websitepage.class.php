@@ -279,13 +279,28 @@ class WebsitePage extends CommonObject
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
 
+		// Check there is no PHP into HTML header
+		$dataposted = trim($this->htmlheader);		// Must accept tags like '<script>' and '<link>'
+		$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
+		$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
 			$phpcontent = dolKeepOnlyPhpCode($this->content);
 
 			if ($phpcontent) {
-				$this->error = 'Error: you try to create a page with PHP content without having permissions for that.';
+				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			// Note: This one may be uselss because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+			$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to create a page with PHP content in HTML header without having permissions for that.';
 				$this->errors[] = $this->error;
 				return -1;
 			}

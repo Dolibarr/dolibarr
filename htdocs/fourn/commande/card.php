@@ -2019,6 +2019,13 @@ if ($action == 'create') {
 		}
 		print '</td>';
 
+		// Ref purchase order on vendor side
+		if (getDolGlobalString('MAIN_ASK_SUPPLIER_REF_OF_PURCHASE_ORDER_AT_CREATION')) {
+			print '<tr><td>'.$form->textwithpicto($langs->trans('RefSupplier'), $langs->trans('RefOfOnVendorSide', $langs->transnoentitiesnoconv("SupplierOrder")));
+			print '</td><td><input name="refsupplier" type="text"></td>';
+			print '</tr>';
+		}
+
 		if (!empty($societe->id) && $societe->id > 0) {
 			// Discounts for third party
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
@@ -2032,10 +2039,6 @@ if ($action == 'create') {
 
 			print '</td></tr>';
 		}
-
-		// Ref supplier
-		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
-		print '</tr>';
 
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -3055,7 +3058,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Cancel

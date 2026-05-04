@@ -1946,7 +1946,7 @@ if ($id > 0) {
 		print '<tr class="liste_titre_filter">';
 
 		// Action button
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="liste_titre center">';
 			if ($filterfound) {
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -2005,7 +2005,7 @@ if ($id > 0) {
 		$colspan++;
 
 		// Action button
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="liste_titre center">';
 			if ($filterfound) {
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -2023,7 +2023,7 @@ if ($id > 0) {
 		print '<tr class="liste_titre">';
 
 		// Action button
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print getTitleFieldOfList('');
 		}
 
@@ -2296,7 +2296,7 @@ if ($id > 0) {
 		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 
 		// Action button
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print getTitleFieldOfList('');
 		}
 		print '</tr>';
@@ -2385,7 +2385,7 @@ if ($id > 0) {
 				print '<tr class="oddeven" id="rowid-'.(empty($obj->rowid) ? '' : $obj->rowid).'">';
 
 				// Action button
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center maxwidthsearch nowraponall">';
 					// Modify link
 					if ($canbemodified) {
@@ -2714,7 +2714,7 @@ if ($id > 0) {
 					print "</td>";
 
 					// Action button
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print '<td class="center maxwidthsearch nowraponall">';
 						// Modify link
 						if ($canbemodified) {
