@@ -279,7 +279,7 @@ $invoicestatic = new Facture($db);
 $companystatic = new Client($db);
 
 foreach ($tabfac as $key => $val) {
-	$invoicestatic->id = $key;
+	$invoicestatic->id = (int) $key;
 	$invoicestatic->ref = $val["ref"];
 	$invoicestatic->type = $val["type"];
 

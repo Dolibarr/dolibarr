@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,11 +96,11 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 
 if (getDolGlobalString('MAIN_MOTD')) {
-	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
+	$motd = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
 
 	$substitutionarray = getCommonSubstitutionArray($langs);
 	complete_substitutions_array($substitutionarray, $langs);
-	$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
+	$texttoshow = make_substitutions($motd, $substitutionarray, $langs);
 
 	print "\n<!-- Start of welcome text -->\n";
 	print '<table class="centpercent notopnoleftnoright"><tr><td>';
@@ -121,6 +121,20 @@ if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 	//print "<br>";
 }
 */
+
+if (getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE') || getDolGlobalString('MAIN_FORCE_UPGRADE_URL')) {
+	$langs->loadLangs(array("other"));
+	if (is_numeric(getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE'))) {
+		$messagetoshow = $langs->trans("YourInstallIsOldThanksToUpgrade");
+	} else {
+		$messagetoshow = $langs->trans(getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE', "YourInstallIsOldThanksToUpgrade"));
+	}
+	if (getDolGlobalString('MAIN_FORCE_UPGRADE_URL')) {
+		$messagetoshow .= '<br><a href="'.getDolGlobalString('MAIN_FORCE_UPGRADE_URL').'" target="_blank">'.getDolGlobalString('MAIN_FORCE_UPGRADE_URL').'</a>';
+	}
+	print info_admin($messagetoshow, 0, 0, 'warning', 'clearboth');
+}
+
 
 /*
  * Show security warnings
@@ -480,7 +494,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	$valid_dashboardlines = array();
 	foreach ($dashboardlines as $workboardid => $tmp) {
 		if ($tmp instanceof WorkboardResponse) {
-			$tmp->id = $workboardid; // Complete the object to add its id into its name
+			$tmp->id = (string) $workboardid; // Complete the object to add its id into its name
 			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}

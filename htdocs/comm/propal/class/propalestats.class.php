@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (c) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,8 +148,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, COUNT(*) as nb";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -166,14 +166,13 @@ class PropaleStats extends Stats
 	 * Return propals number per year
 	 *
 	 * @return	array<array{0:int,1:int}>				Array of nb each year
-	 *
 	 */
 	public function getNbByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%Y') as dm, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -196,8 +195,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, SUM(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -221,8 +220,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, AVG(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -238,14 +237,14 @@ class PropaleStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array with nb, total amount, average for each year
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array with nb, total amount, average for each year
 	 */
 	public function getAllByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%Y') as year, COUNT(*) as nb, SUM(".$this->db->sanitize($this->field).") as total, AVG(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -269,8 +268,8 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->db->sanitize($this->field_line).") as total, AVG(tl.".$this->db->sanitize($this->field_line).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 0, 1)." ON p.rowid = tl.fk_propal";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1110,7 +1110,7 @@ class Memo extends CommonObject
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("quickmemo@quickmemo");
+			//$langs->load("quickmemo");
 			$this->labelStatus[self::STATUS_TPL] = $langs->transnoentitiesnoconv('Template');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_ARCHIVED] = $langs->transnoentitiesnoconv('Archived');
@@ -1279,23 +1279,33 @@ class Memo extends CommonObject
 	 * Get memo context
 	 *
 	 * @param string|array<string> $context Context
+	 * @param CommonObject|null    $object the common Dolibarr object
+	 *
 	 * @return mixed|string
 	 */
-	public static function getMemoContext($context)
+	public static function getMemoContext($context, $object = null)
 	{
 		global $db,$action, $hookmanager;
+
+		if (!isModEnabled('quickmemo')) {
+			return '';
+		}
 
 		if (!is_array($context)) {
 			$context = explode(':', $context);
 		}
 
-		$memoContext = '';
-		if (in_array('index', $context)) {
-			$memoContext = 'index';
-		} elseif (in_array('globalcard', $context)) {
-			$memoContext = 'card';
-		}
+		$contextMapping = self::getAvailableMemoContextMapping();
 
+		$memoContext = '';
+		foreach ($contextMapping as $key => $values) {
+			$values = (array) $values;
+
+			if (array_intersect($context, $values)) {
+				$memoContext = $key;
+				break;
+			}
+		}
 
 		$staticMemo = new self($db);
 
@@ -1303,7 +1313,7 @@ class Memo extends CommonObject
 		$parameters = array(
 			'memoContext' =>& $memoContext
 		);
-		$object = null;
+
 		$reshook = $hookmanager->executeHooks('getMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
@@ -1313,15 +1323,130 @@ class Memo extends CommonObject
 	}
 
 	/**
+	 * @param array<string, array<string>> $contextTabMapping memo context list and Dolibarr context associated
+	 * @param string $tabContext memo context
+	 * @param string $dolibarrContext Dolibarr context
+	 *
+	 * @return void
+	 */
+	static public function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
+	{
+		$dolibarrContext = trim($dolibarrContext) ?: $tabContext;
+
+		if (!isset($contextTabMapping[$tabContext])) {
+			$contextTabMapping[$tabContext] = [$dolibarrContext];
+			return;
+		}
+
+		if (!in_array($dolibarrContext, $contextTabMapping[$tabContext], true)) {
+			$contextTabMapping[$tabContext][] = $dolibarrContext;
+		}
+	}
+
+	/**
 	 * Get available memo context
 	 *
-	 * @return mixed|mixed[]|string[]
+	 * @param null $object the common Dolibarr object
+	 * @param bool $onlyActiveModules on true return only
+	 *
+	 * @return array<string, array<string>>
+	 */
+	public static function getAvailableMemoContextMapping($object = null, $onlyActiveModules = true)
+	{
+		global $db,$action, $hookmanager;
+
+		$contextTabMapping = [];
+
+		// Start Correction of no standard Dolibarr context and special context
+		if (isModEnabled('propal') || !$onlyActiveModules) {
+			self::completeMemoContextMapping($contextTabMapping, 'contactcard', 'proposalcontactcard');
+		}
+
+		if (isModEnabled('supplier_order') || !$onlyActiveModules) {
+			self::completeMemoContextMapping($contextTabMapping, 'contactcard', 'ordersuppliercontactcard');
+			self::completeMemoContextMapping($contextTabMapping, 'document', 'ordersuppliercarddocument');
+			self::completeMemoContextMapping($contextTabMapping, 'agenda', 'ordersuppliercardinfo');
+			self::completeMemoContextMapping($contextTabMapping, 'ordersupplierdispatch');
+		}
+
+		if (isModEnabled('contract') || !$onlyActiveModules) {
+			self::completeMemoContextMapping($contextTabMapping, 'agenda', 'agendacontract');
+		}
+
+		if (isModEnabled('order') || !$onlyActiveModules) {
+			self::completeMemoContextMapping($contextTabMapping, 'ordershipmentcard');
+		}
+
+		if (isModEnabled('shipping')) {
+			self::completeMemoContextMapping($contextTabMapping, 'contactcard', 'shipmentcontactcard');
+		}
+
+		if (isModEnabled('product')) {
+			self::completeMemoContextMapping($contextTabMapping, 'productpricecard');
+			self::completeMemoContextMapping($contextTabMapping, 'pricesuppliercard');
+			self::completeMemoContextMapping($contextTabMapping, 'producttranslationcard');
+			self::completeMemoContextMapping($contextTabMapping, 'productcompositioncard');
+			self::completeMemoContextMapping($contextTabMapping, 'stockproductcard');
+			self::completeMemoContextMapping($contextTabMapping, 'productstatsinvoice');
+			self::completeMemoContextMapping($contextTabMapping, 'productstatscard');
+			self::completeMemoContextMapping($contextTabMapping, 'tabproductmarginlist');
+		}
+
+		// End of corrections
+
+		// Generate standard context
+		// TODO : Common contexts such as document, agenda, contact card, and stat, which are used across most Dolibarr objects, are not defined as standard global contexts.
+		//  Instead of having dedicated contexts like global_document, global_agenda, global_contactcard, or global_stat (similar to global_card), pages currently mix global_card with object-specific contexts (e.g. product_document, propal_agenda, etc.).
+		//  This creates inconsistent context handling. These contexts should include both their object-specific context and a proper global context (e.g. global_document or global_agenda) depending on the active tab.
+		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats']; // for common object
+		$modules = ['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract', 'product', 'shipping'];
+		foreach ($modules as $module) {
+			if (!isModEnabled($module) && $onlyActiveModules) { continue; }
+
+			$moduleClean = str_replace('_', '', $module);
+
+			foreach ($commonCardContext as $context) {
+				self::completeMemoContextMapping($contextTabMapping, $context, $moduleClean.$context);
+			}
+		}
+
+		if (!empty($object) && !empty($object->element)) {
+			foreach ($commonCardContext as $context) {
+				self::completeMemoContextMapping($contextTabMapping, $context, $object->element.$context);
+			}
+		}
+
+		// Need to be at end of tests
+		self::completeMemoContextMapping($contextTabMapping, 'index');
+		self::completeMemoContextMapping($contextTabMapping, 'card', 'globalcard');
+
+		$staticMemo = new self($db);
+		$hookmanager->initHooks(array($staticMemo->element.'dao'));
+		$parameters = array(
+			'contextTabMapping' =>& $contextTabMapping,
+			'onlyActiveModules' => $onlyActiveModules
+		);
+
+		$reshook = $hookmanager->executeHooks('getAvailableMemoContextMapping', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return $hookmanager->resArray;
+		}
+
+		return $contextTabMapping;
+	}
+
+
+	/**
+	 * Get available memo context
+	 *
+	 * @return string[]
 	 */
 	public static function getAvailableMemoContext()
 	{
 		global $db,$action, $hookmanager;
 
-		$list = ['card', 'index'];
+		$contextMapping = self::getAvailableMemoContextMapping();
+		$list = array_keys($contextMapping);
 
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
@@ -1331,10 +1456,19 @@ class Memo extends CommonObject
 		$object = null;
 		$reshook = $hookmanager->executeHooks('getAvailableMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
-			return $hookmanager->resArray;
+			$list = $hookmanager->resArray;
 		}
 
-		return $list;
+		// Security check
+		$result = [];
+		foreach ($list as $k => $v) {
+			if (!is_string($v)) { continue; }
+			if (strlen($v) > 64) { continue; }
+			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) { continue; }
+			$result[] = $v;
+		}
+
+		return $result;
 	}
 
 
@@ -1485,6 +1619,10 @@ class Memo extends CommonObject
 	public static function loadQuickMemoJsInterface($jsConfVars)
 	{
 		global $user;
+
+		if (!isModEnabled('quickmemo')) {
+			return false;
+		}
 
 		// DO NOT LOAD TWICE
 		if (defined('QUICKMEMOJS')) {

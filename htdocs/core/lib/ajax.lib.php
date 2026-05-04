@@ -4,6 +4,7 @@
  * Copyright (C) 2012       Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +38,12 @@
  * @param string		$urloption			More parameters on URL request
  * @param int			$minLength			Minimum number of chars to trigger that Ajax search
  * @param int			$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
- * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
- *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                                      - Ex: array('disabled'=> )
- *                                                      - Ex: array('show'=> )
- *                                                      - Ex: array('update_textarea'=> )
- *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ * @param array<string,string|array<int|string,string|array<string,string>>>	$ajaxoptions	Multiple options array
+ *                                                                                              - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                                                                              - Ex: array('disabled'=> )
+ *                                                                                              - Ex: array('show'=> )
+ *                                                                                              - Ex: array('update_textarea'=> )
+ *                                                                                              - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  * @param string		$moreparams			More params provided to ajax call
  * @return string   						Script
  */
@@ -557,6 +558,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 			},
 			templateSelection: function (selection) {		/* Format visible output of selected value */
 				if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+				if (selection.element && $(selection.element).attr("data-select-html") != undefined) {
+					if (typeof htmlEntityDecodeJs === "function") {
+						return htmlEntityDecodeJs($(selection.element).attr("data-select-html"));
+					}
+				}
 				return selection.text;
 			},
 			escapeMarkup: function(markup) {

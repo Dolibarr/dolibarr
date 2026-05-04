@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				        <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -332,7 +332,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes' && $userc
 			//$object->fetch($id);
 			if (!empty($object->socpeopleassigned)) {
 				reset($object->socpeopleassigned);
-				$object->contact_id = key($object->socpeopleassigned);
+				$object->contact_id = (int) key($object->socpeopleassigned);
 			}
 			$result = $object->createFromClone($user, GETPOSTINT('socid'));
 			if ($result > 0) {
@@ -980,7 +980,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->contact_id = GETPOSTINT("contactid");
 		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
 			reset($object->socpeopleassigned);
-			$object->contact_id = key($object->socpeopleassigned);
+			$object->contact_id = (int) key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
 		$taskid = GETPOSTINT('taskid');
@@ -1255,7 +1255,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 
 	if ($datep != $object->datep) {
 		if (!empty($object->datef)) {
-			$object->datef += $datep - $object->datep;
+			$object->datef += (int) $datep - $object->datep;
 		}
 		$object->datep = $datep;
 
@@ -1583,7 +1583,7 @@ if ($action == 'create') {
 		*/
 
 		// limit date
-		$repeateventlimitdate = empty($repeateventlimitdate) ?  (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
+		$repeateventlimitdate = empty($repeateventlimitdate) ? (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
 
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
@@ -2996,7 +2996,7 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}

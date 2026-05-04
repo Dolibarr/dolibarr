@@ -3,7 +3,7 @@
  * Copyright (c) 2005-2013	Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2012     	Marcos García        	<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -129,14 +129,13 @@ class FichinterStats extends Stats
 	 * Return interventions number per year
 	 *
 	 * @return	array<array{0:int,1:int}>				Array of nb each year
-	 *
 	 */
 	public function getNbByYear()
 	{
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, 0";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -159,7 +158,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -183,7 +182,7 @@ class FichinterStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -198,14 +197,14 @@ class FichinterStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, 0 as total, 0 as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -226,7 +225,9 @@ class FichinterStats extends Stats
 	public function getAllByProduct($year, $limit = 0)
 	{
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, 0 as total, 0 as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1).", ".$this->db->sanitize($this->from_line, 0, 0, 1).", ".MAIN_DB_PREFIX."product as product";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1).",";
+		$sql .= " ".$this->db->sanitize($this->from_line, 0, 1, 1).",";
+		$sql .= " ".MAIN_DB_PREFIX."product as product";
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " AND c.rowid = tl.fk_fichinter AND tl.fk_product = product.rowid";

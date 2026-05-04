@@ -3,7 +3,7 @@
  * Copyright (c) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Waël Almoman         <info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -106,7 +106,7 @@ class AdherentStats extends Stats
 	public function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -123,7 +123,7 @@ class AdherentStats extends Stats
 	public function getNbByYear()
 	{
 		$sql = "SELECT date_format(p.dateadh,'%Y') as dm, count(*)";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -140,8 +140,8 @@ class AdherentStats extends Stats
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -158,8 +158,8 @@ class AdherentStats extends Stats
 	 */
 	public function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -172,12 +172,12 @@ class AdherentStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array with nb, total amount, average for each year
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array with nb, total amount, average for each year
 	 */
 	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 0, 1);
+		$sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->db->sanitize($this->field).") as total, avg(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
