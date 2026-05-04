@@ -1,0 +1,128 @@
+<?php
+/*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+global $conf, $db, $langs, $user;
+
+require_once dirname(__FILE__).'/../../../master.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+/**
+ * Test doc substitutions for effective contact address.
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ */
+class ContactDocSubstitutionTest extends PHPUnit\Framework\TestCase
+{
+	/**
+	 * @var Conf
+	 */
+	protected $savconf;
+
+	/**
+	 * @var DoliDB
+	 */
+	protected $savdb;
+
+	/**
+	 * @var Translate
+	 */
+	protected $savlangs;
+
+	/**
+	 * Save globals.
+	 *
+	 * @param string $name
+	 */
+	public function __construct($name = '')
+	{
+		parent::__construct($name);
+
+		global $conf, $db, $langs;
+		$this->savconf = $conf;
+		$this->savdb = $db;
+		$this->savlangs = $langs;
+	}
+
+	/**
+	 * Restore globals.
+	 *
+	 * @return void
+	 */
+	protected function setUp(): void
+	{
+		global $conf, $db, $langs;
+		$conf = $this->savconf;
+		$db = $this->savdb;
+		$langs = $this->savlangs;
+		if (is_object($conf)) {
+			$conf->loghandlers = array();
+		}
+	}
+
+	/**
+	 * Contact substitutions must use effective postal fields.
+	 *
+	 * @return void
+	 */
+	public function testSubstitutionArrayUsesEffectiveAddress(): void
+	{
+		$generator = new class($this->savdb) extends CommonDocGenerator {
+		};
+
+		$effective = new Societe($this->savdb);
+		$effective->address = 'Thirdparty avenue';
+		$effective->zip = '75001';
+		$effective->town = 'Paris';
+		$effective->country_id = 1;
+		$effective->country_code = 'FR';
+		$effective->country = 'France';
+
+		$contact = new class($this->savdb, $effective) extends Contact {
+			/**
+			 * @var Societe
+			 */
+			private $effective;
+
+			/**
+			 * @param DoliDB  $db
+			 * @param Societe $effective
+			 */
+			public function __construct($db, Societe $effective)
+			{
+				parent::__construct($db);
+				$this->effective = $effective;
+			}
+
+			/**
+			 * @param   Societe|null $thirdparty
+			 * @return  CommonObject
+			 */
+			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
+			{
+				return $this->effective;
+			}
+		};
+
+		$contact->lastname = 'Doe';
+		$contact->firstname = 'Jane';
+		$contact->address = 'Contact street';
+		$contact->country_code = 'FR';
+		$contact->country = 'France';
+
+		$substitutions = $generator->get_substitutionarray_contact($contact, $this->savlangs, 'contact');
+
+		$this->assertSame('Thirdparty avenue', $substitutions['contact_address']);
+		$this->assertSame('75001', $substitutions['contact_zip']);
+		$this->assertSame('Paris', $substitutions['contact_town']);
+		$this->assertSame('France', $substitutions['contact_country']);
+		$this->assertSame('Jane', $substitutions['contact_firstname']);
+	}
+}

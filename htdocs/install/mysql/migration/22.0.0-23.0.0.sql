@@ -140,6 +140,9 @@ ALTER TABLE llx_facture ADD COLUMN ip varchar(250);
 ALTER TABLE llx_facture ADD COLUMN pos_print_counter integer DEFAULT 0;
 ALTER TABLE llx_facture ADD COLUMN email_sent_counter integer DEFAULT 0;
 
+-- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
+-- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
+
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
 

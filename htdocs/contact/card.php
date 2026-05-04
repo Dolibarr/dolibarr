@@ -123,6 +123,21 @@ if ($object->priv && $object->user_creation_id != $user->id) {
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
+/**
+ * Resolve the persisted address mode from current contact form payload.
+ *
+ * @param   int $socid Linked thirdparty id
+ * @return  int
+ */
+function contactResolveUseThirdpartyAddressFromRequest(int $socid): int
+{
+	if ((int) $socid <= 0) {
+		return Contact::USE_THIRDPARTY_ADDRESS_NO;
+	}
+
+	return GETPOST('use_different_address_than_thirdparty', 'int') ? Contact::USE_THIRDPARTY_ADDRESS_NO : Contact::USE_THIRDPARTY_ADDRESS_YES;
+}
+
 
 /*
  *	Actions
@@ -235,6 +250,7 @@ if (empty($reshook)) {
 		$object->town = (string) GETPOST("town", 'alpha');
 		$object->country_id = GETPOSTINT("country_id");
 		$object->state_id = GETPOSTINT("state_id");
+		$object->use_thirdparty_address = contactResolveUseThirdpartyAddressFromRequest((int) $object->socid);
 		$object->socialnetworks = array();
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -435,6 +451,7 @@ if (empty($reshook)) {
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->state_id = GETPOSTINT("state_id");
 			$object->country_id = GETPOSTINT("country_id");
+			$object->use_thirdparty_address = contactResolveUseThirdpartyAddressFromRequest((int) $object->socid);
 
 			$object->email = (string) GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 			$object->no_email = GETPOSTINT("no_email");
@@ -632,12 +649,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->state_id = GETPOSTINT("state_id");
 
 			// We set country_id, country_code and label for the selected country
-			$object->country_id = GETPOST("country_id") ? GETPOSTINT("country_id") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
+			$object->country_id = GETPOST('country_id', 'int') ? GETPOSTINT("country_id") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
 			if ($object->country_id) {
 				$tmparray = getCountry($object->country_id, 'all');
 				$object->country_code = $tmparray['code'];
 				$object->country      = $tmparray['label'];
 			}
+			$object->socid = $socid;
+			if (GETPOSTISSET('use_different_address_than_thirdparty')) {
+				$object->use_thirdparty_address = contactResolveUseThirdpartyAddressFromRequest((int) $socid);
+			} elseif (!isset($object->use_thirdparty_address)) {
+				$object->use_thirdparty_address = ($socid > 0 ? Contact::USE_THIRDPARTY_ADDRESS_YES : Contact::USE_THIRDPARTY_ADDRESS_NO);
+			}
+			$showcustomaddressblock = ($socid <= 0 || !$object->mustUseThirdpartyAddress());
 
 			$linkback = '';
 
@@ -654,16 +678,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								document.formsoc.submit();
 							});
 
-							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
-								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
-								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								console.log("Set state_id to '.dol_escape_js((string) $objsoc->state_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js((string) $objsoc->state_id).'").trigger("change");
-								/* set country at end because it will trigger page refresh */
-								console.log("Set country id to '.dol_escape_js((string) $objsoc->country_id).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js((string) $objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
-                            });
+							function updateContactAddressMode() {
+								var useDifferent = $("#use_different_address_than_thirdparty").is(":checked");
+								$("#use_thirdparty_address").val(useDifferent ? "0" : "1");
+								$(".contact-address-fields").toggle(useDifferent || '.((int) ($socid <= 0)).');
+							}
+
+							$("#use_different_address_than_thirdparty").change(updateContactAddressMode);
+							updateContactAddressMode();
 						})'."\n";
 				print '</script>'."\n";
 			}
@@ -671,6 +693,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<form method="post" name="formsoc" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add">';
+			print '<input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="'.((int) $object->use_thirdparty_address).'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			if (!empty($objsoc)) {
 				print '<input type="hidden" name="entity" value="'.$objsoc->entity.'">';
@@ -723,45 +746,30 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 
 			$colspan = 3;
-			if ($conf->use_javascript_ajax && $socid > 0) {
-				$colspan = 2;
+			$addressdisplaystyle = ($showcustomaddressblock ? '' : ' style="display:none;"');
+
+			if ($socid > 0) {
+				print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
+				print '<td colspan="3">';
+				print $form->textwithpicto('', $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"));
+				print '<input type="checkbox" name="use_different_address_than_thirdparty" id="use_different_address_than_thirdparty" value="1"'.($showcustomaddressblock ? ' checked' : '').'>';
+				print '</td></tr>';
 			}
 
-			// Address
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->address)) == 0) {
-				$object->address = $objsoc->address; // Predefined with third party
-			}
-			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
+			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.(GETPOST("address", 'alpha') ? GETPOST("address", 'alpha') : $object->address).'</textarea></td>';
-
-			if ($conf->use_javascript_ajax && $socid > 0) {
-				$rowspan = 3;
-				if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
-					$rowspan++;
-				}
-
-				print '<td class="valignmiddle center" rowspan="'.$rowspan.'">';
-				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
-				print '</td>';
-			}
 			print '</tr>';
 
 			// Zip / Town
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->zip)) == 0) {
-				$object->zip = $objsoc->zip; // Predefined with third party
-			}
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->town)) == 0) {
-				$object->town = $objsoc->town; // Predefined with third party
-			}
-			print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 			print $formcompany->select_ziptown((GETPOST("zipcode", 'alpha') ? GETPOST("zipcode", 'alpha') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
 			print $formcompany->select_ziptown((GETPOST("town", 'alpha') ? GETPOST("town", 'alpha') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			print '</td></tr>';
 
 			// Country
-			print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 			print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-			print $form->select_country((GETPOSTISSET("country_id") ? GETPOST("country_id", 'alpha') : $object->country_id), 'country_id');
+			print $form->select_country((GETPOSTISSET("country_id") ? GETPOST("country_id", 'int') : $object->country_id), 'country_id');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -770,25 +778,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// State
 			if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 				if (getDolGlobalString('MAIN_SHOW_REGION_IN_STATE_SELECT') && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-					print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+					print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 				} else {
-					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+					print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 				}
 
 				if ($object->country_id) {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state(GETPOST("state_id", 'alpha') ? GETPOST("state_id", 'alpha') : $object->state_id, $object->country_code, 'state_id');
+					print $formcompany->select_state(GETPOST("state_id", 'int') ? GETPOST("state_id", 'int') : $object->state_id, $object->country_code, 'state_id');
 				} else {
 					print $countrynotdefined;
 				}
 				print '</td></tr>';
-			}
-
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->phone_pro)) == 0) {
-				$object->phone_pro = $objsoc->phone; // Predefined with third party
-			}
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->fax)) == 0) {
-				$object->fax = $objsoc->fax; // Predefined with third party
 			}
 
 			// Phone / Fax
@@ -819,10 +820,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
 			print '</td>';
 			print '</tr>';
-
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->email)) == 0) {
-				$object->email = $objsoc->email; // Predefined with third party
-			}
 
 			// Email
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
@@ -950,6 +947,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country_code = $tmparray['code'];
 				$object->country      = $tmparray['label'];
 			}
+			if (GETPOSTINT('socid') > 0) {
+				$object->socid = GETPOSTINT('socid');
+			}
+			if (GETPOSTISSET('use_different_address_than_thirdparty')) {
+				$object->use_thirdparty_address = contactResolveUseThirdpartyAddressFromRequest((int) $object->socid);
+			}
+			$showcustomaddressblock = ($object->socid <= 0 || !$object->mustUseThirdpartyAddress());
 
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
@@ -965,16 +969,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								document.formsoc.submit();
 							});
 
-							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
-								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
-								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								console.log("Set state_id to '.dol_escape_js((string) $objsoc->state_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js((string) $objsoc->state_id).'").trigger("change");
-								/* set country at end because it will trigger page refresh */
-								console.log("Set country id to '.dol_escape_js((string) $objsoc->country_id).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js((string) $objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
-							});
+							function updateContactAddressMode() {
+								var useDifferent = $("#use_different_address_than_thirdparty").is(":checked");
+								$("#use_thirdparty_address").val(useDifferent ? "0" : "1");
+								$(".contact-address-fields").toggle(useDifferent || '.((int) ($object->socid <= 0)).');
+							}
+
+							$("#use_different_address_than_thirdparty").change(updateContactAddressMode);
+							updateContactAddressMode();
 						})'."\n";
 				print '</script>'."\n";
 			}
@@ -984,6 +986,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="contactid" value="'.$object->id.'">';
+			print '<input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="'.((int) $object->use_thirdparty_address).'">';
 			if (!empty($backtopage)) {
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			}
@@ -1001,12 +1004,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Lastname
 			print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("lastname") ? GETPOST("lastname") : $object->lastname).'" autofocus="autofocus"></td>';
+				print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("lastname") ? GETPOST("lastname", 'alphanohtml') : $object->lastname).'" autofocus="autofocus"></td>';
 			print '</tr>';
 			print '<tr>';
 			// Firstname
 			print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-			print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("firstname") ? GETPOST("firstname") : $object->firstname).'"></td>';
+				print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("firstname") ? GETPOST("firstname", 'alphanohtml') : $object->firstname).'"></td>';
 			print '</tr>';
 
 			// Company
@@ -1031,29 +1034,31 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
 			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
+			$addressdisplaystyle = ($showcustomaddressblock ? '' : ' style="display:none;"');
+			if ($object->socid > 0) {
+				print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
+				print '<td colspan="3">';
+				print $form->textwithpicto('', $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"));
+				print '<input type="checkbox" name="use_different_address_than_thirdparty" id="use_different_address_than_thirdparty" value="1"'.($showcustomaddressblock ? ' checked' : '').'>';
+				print '</td></tr>';
+			}
 
 			// Address
-			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
+			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="3">';
-			print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
 			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
-			print '</div><div class="paddingrightonly valignmiddle inline-block">';
-			if (!empty($conf->use_javascript_ajax)) {
-				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
-			}
-			print '</div>';
-			print '</td>';
+			print '</td></tr>';
 
 			// Zip / Town
-			print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-			print $formcompany->select_ziptown((GETPOSTISSET("zipcode") ? GETPOST("zipcode") : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
-			print $formcompany->select_ziptown((GETPOSTISSET("town") ? GETPOST("town") : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+			print $formcompany->select_ziptown((GETPOSTISSET("zipcode") ? GETPOST("zipcode", 'alphanohtml') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
+			print $formcompany->select_ziptown((GETPOSTISSET("town") ? GETPOST("town", 'alphanohtml') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			print '</td></tr>';
 
 			// Country
-			print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
 			print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-			print $form->select_country(GETPOSTISSET("country_id") ? GETPOST("country_id") : $object->country_id, 'country_id');
+			print $form->select_country(GETPOSTISSET("country_id") ? GETPOST("country_id", 'int') : $object->country_id, 'country_id');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -1062,9 +1067,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// State
 			if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 				if (getDolGlobalString('MAIN_SHOW_REGION_IN_STATE_SELECT') && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-					print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+					print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
 				} else {
-					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+					print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
 				}
 
 				print img_picto('', 'state', 'class="pictofixedwidth"');
@@ -1353,6 +1358,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 		$morehtmlref .= '</div>';
+		$effectiveaddressobject = $object->getEffectiveAddressObject();
 
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
@@ -1370,6 +1376,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Job / position
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
+
+		// Effective address
+		print '<tr><td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($effectiveaddressobject->getFullAddress(1, "\n", getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT'))).'</td></tr>';
+		print '<tr><td>'.$langs->trans("ContactAddress_AddressMode").'</td><td>'.($object->mustUseThirdpartyAddress() ? $langs->trans("ContactAddress_AddressModeThirdparty") : $langs->trans("ContactAddress_AddressModeContact")).'</td></tr>';
 
 		// Email
 		if (isModEnabled('mailing')) {
@@ -1577,9 +1587,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</div>";
 
 		//Select mail models is same action as presend
-		if (GETPOST('modelselected')) {
-			$action = 'presend';
-		}
+			if (GETPOST('modelselected', 'alpha')) {
+				$action = 'presend';
+			}
 
 		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
