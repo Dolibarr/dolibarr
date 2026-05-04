@@ -53,7 +53,6 @@ ListShippingAssociatedProject=Listado de envíos relacionados con el proyecto.
 ListFichinterAssociatedProject=Listado de intervenciones relacionadas con el proyecto.
 ListExpenseReportsAssociatedProject=Listado de informes de gastos relacionados con el proyecto.
 ListDonationsAssociatedProject=Listado de donaciones relacionadas con el proyecto.
-ListVariousPaymentsAssociatedProject=List of manual journal entries related to the project
 ListSalariesAssociatedProject=Listado de pagos de salarios relacionados con el proyecto.
 ListActionsAssociatedProject=Listado de eventos relacionados con el proyecto.
 ListTaskTimeUserProject=Lista de tiempo consumido en las tareas del proyecto

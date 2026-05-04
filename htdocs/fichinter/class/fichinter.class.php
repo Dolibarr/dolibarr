@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015-2025  Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2015-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead            <william.mead@manchenumerique.fr>
@@ -1368,6 +1368,7 @@ class Fichinter extends CommonObject
 		$this->user_validation_id = 0;
 		$this->date_creation = '';
 		$this->date_validation = '';
+		$this->signed_status = 0;
 
 		$this->ref_client = '';
 

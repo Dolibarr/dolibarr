@@ -7,7 +7,7 @@
  * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,7 +354,7 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 	/**
-	 * @var array<strint,mixed>		$stripearrayofkeys
+	 * @var array<string,mixed>		$stripearrayofkeys
 	 * @var array<int,mixed>		$stripearrayofkeysbyenv
 	 */
 }
@@ -371,19 +371,13 @@ if ($tmpsource == 'membersubscription') {
 $valid = true;
 if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 	$tokenisok = false;
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-		if ($tmpsource && $REF) {
-			// Use the source in the hash to avoid duplicates if the references are identical
-			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $tmpsource.$REF, $SECUREKEY, '2');
-			// Do a second test for retro-compatibility (token may have been hashed with membersubscription in external module)
-			if ($tmpsource != $source) {
-				$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $source.$REF, $SECUREKEY, '2');
-			}
-		} else {
-			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), $SECUREKEY, '2');
+	if ($tmpsource && $REF) {
+		// Use the source in the hash to avoid duplicates if the references are identical
+		$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $tmpsource.$REF, $SECUREKEY, '2');
+		// Do a second test for retro-compatibility (token may have been hashed with membersubscription in external module)
+		if ($tmpsource != $source) {
+			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $source.$REF, $SECUREKEY, '2');
 		}
-	} else {
-		$tokenisok = (getDolGlobalString('PAYMENT_SECURITY_TOKEN') == $SECUREKEY);
 	}
 
 	if (! $tokenisok) {
@@ -1184,6 +1178,10 @@ if ($source == 'order') {
 	}
 	$object = $order;
 
+	if ($object->billed) {
+		$action = "";
+	}
+
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $order->total_ttc;
 		if (GETPOST("amount", 'alpha')) {
@@ -1809,7 +1807,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	}
 
 
-		// Add hook to complete the form
+	// Add hook to complete the form
 	$parameters = array('mode' => 'renewal');
 	$reshook = $hookmanager->executeHooks('membershipNewSubscriptionPublicForm', $parameters, $object, $action);
 	if ($reshook < 0) {
@@ -1820,7 +1818,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	// TODO Move this into previous hook
 	if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER') && $action != 'dopayment') {
 		$country_id = 0;
-		if ($member->thirdparty instanceOf Societe) {
+		if ($member->thirdparty instanceof Societe) {
 			$country_id = $member->thirdparty->country_id;
 		}
 		$checkednature = $member->morphy;
@@ -1836,7 +1834,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 			$pp = 1;
 		}
 
-		// Do not set a default amount MEMBER_NEWFORM_AMOUNT if you use MEMBER_NEWFORM_DOLIBARRTURNOVER
 		$s = $langs->trans("AreYouAPreferredPartner", '<a href="https://partners.dolibarr.org" target="_blank">{s1}</a>');
 		$s = str_replace('{s1}', 'Peferred Partner', $s);
 		print '<tr id="trbudget" class="trcompany"><td><label for="pp" class="small">'.$s.'</label></td><td>';
@@ -1850,7 +1847,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			print '<input type="text" name="budget" id="budget" class="flat turnover right width100" value="'.GETPOST('budget').'"'.($action != 'dopayment' ? ' required autofocus' : '').'>';
 		} else {
 			$arraybudget = array('50' => '<= 100 000', '100' => '<= 200 000', '200' => '<= 500 000', '300' => '<= 1 500 000', '600' => '<= 3 000 000', '1000' => '<= 5 000 000', '2000' => '5 000 000+');
-			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, ($checkednature === 'mor' ? 'required' :''), 0, 0, 0, '');
+			print $form->selectarray('budget', $arraybudget, GETPOSTINT('budget'), 1, 0, 0, ($checkednature === 'mor' ? 'required' : ''), 0, 0, 0, '');
 		}
 		print ' € or $';
 
@@ -1965,10 +1962,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 	// Set amount for the subscription from the the type and options:
 	// - First check the amount of the member type if there is no previous payment.
 	$amount = ($member->last_subscription_amount ? $member->last_subscription_amount : (empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid]));
-	// - If not found, take the default amount
-	if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-		$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-	}
 
 	// - If an amount was posted from the form (for example from page with types of membership)
 	if ($caneditamount && !GETPOST('reload') && GETPOSTISSET('amount') && GETPOSTFLOAT('amount', 'MT') > 0) {

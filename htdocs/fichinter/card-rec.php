@@ -370,11 +370,15 @@ if ($action == 'create') {
 
 		// Contrat
 		if (isModEnabled('contract')) {
-			$formcontract = new FormContract($db);
-			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
-			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
-			print "</td></tr>";
+			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+			// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+			if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+				$formcontract = new FormContract($db);
+				print "<tr><td>".$langs->trans("Contract")."</td><td>";
+				$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
+				$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
+				print "</td></tr>";
+			}
 		}
 		print "</table>";
 
@@ -580,34 +584,38 @@ if ($action == 'create') {
 
 			// Contract
 			if (isModEnabled('contract') && $contratstatic !== null) {
-				$langs->load('contracts');
-				print '<tr>';
-				print '<td>';
+				// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+				// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+				if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+					$langs->load('contracts');
+					print '<tr>';
+					print '<td>';
 
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('Contract');
-				print '</td>';
-				if ($action != 'contrat') {
-					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
-					print img_edit($langs->trans('SetContract'), 1);
-					print '</a></td>';
-				}
-				print '</tr></table>';
-				print '</td><td>';
-				if ($action == 'contrat') {
-					$formcontract = new FormContract($db);
-					$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
-				} else {
-					if ($object->fk_contrat) {
-						$contratstatic = new Contrat($db);
-						$contratstatic->fetch($object->fk_contrat);
-						print $contratstatic->getNomUrl(0, 0, 1);
-					} else {
-						print "&nbsp;";
+					print '<table class="nobordernopadding" width="100%"><tr><td>';
+					print $langs->trans('Contract');
+					print '</td>';
+					if ($action != 'contrat') {
+						print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
+						print img_edit($langs->trans('SetContract'), 1);
+						print '</a></td>';
 					}
+					print '</tr></table>';
+					print '</td><td>';
+					if ($action == 'contrat') {
+						$formcontract = new FormContract($db);
+						$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
+					} else {
+						if ($object->fk_contrat) {
+							$contratstatic = new Contrat($db);
+							$contratstatic->fetch($object->fk_contrat);
+							print $contratstatic->getNomUrl(0, 0, 1);
+						} else {
+							print "&nbsp;";
+						}
+					}
+					print '</td>';
+					print '</tr>';
 				}
-				print '</td>';
-				print '</tr>';
 			}
 			print "</table>";
 			print '</div>';

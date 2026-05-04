@@ -5,9 +5,9 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Florian HENRY           <florian.henry@scopen.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,6 +183,8 @@ if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
 	$mode = 'show_day';
 	$day = ($day ? $day : date("d"));
 }
+
+$labelbytype = array();  // Ensure variable exists
 
 $object = new ActionComm($db);
 
@@ -529,7 +531,7 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
-	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$newparam);
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
@@ -600,15 +602,15 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	}
 
 	// External calendars
-	if (is_array($showextcals) && count($showextcals) > 0) {
+	if (is_array($showextcals) && count($showextcals) > 0) { // @phpstan-ignore-line $showextcals is always an array
 		$s .= '<script type="text/javascript">'."\n";
 		$s .= 'jQuery(document).ready(function () {
 				jQuery("div input[name^=\"check_ext\"]").each(function(index, elem) {
 					var name = jQuery(elem).attr("name");
 					if (jQuery(elem).is(":checked")) {
-					    jQuery(".family_ext" + name.replace("check_ext", "")).show();
+						jQuery(".family_ext" + name.replace("check_ext", "")).show();
 					} else {
-					    jQuery(".family_ext" + name.replace("check_ext", "")).hide();
+						jQuery(".family_ext" + name.replace("check_ext", "")).hide();
 					}
 				});
 
@@ -1124,8 +1126,8 @@ if ($user->hasRight("holiday", "read")) {
 			$event->type = 'holiday';
 			$event->type_picto = 'holiday';
 
-			$event->datep                   = $db->jdate($obj->date_start) + (empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60;
-			$event->datef                   = $db->jdate($obj->date_end) + (empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1;
+			$event->datep                   = $db->jdate($obj->date_start) + (int) ((empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60);
+			$event->datef                   = $db->jdate($obj->date_end) + (int) ((empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1);
 			$event->date_start_in_calendar  = $event->datep;
 			$event->date_end_in_calendar    = $event->datef;
 
@@ -1398,8 +1400,8 @@ if (count($listofextcals)) {
 					$event->icalname = $namecal;
 					$event->icalcolor = $colorcal;
 					$usertime = 0; // We don't modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
-					$event->datep = $datestart + $usertime;
-					$event->datef = $dateend + $usertime;
+					$event->datep = (int) ($datestart + $usertime);
+					$event->datef = (int) ($dateend + $usertime);
 
 					if (isset($icalevent['SUMMARY']) && $icalevent['SUMMARY']) {
 						$event->label = dol_string_nohtmltag($icalevent['SUMMARY']);
@@ -1440,7 +1442,7 @@ if (count($listofextcals)) {
 
 					$event->date_start_in_calendar = $event->datep;
 
-					if ($event->datef != '' && $event->datef >= $event->datep) {
+					if ((int) $event->datef != 0 && $event->datef >= $event->datep) {
 						$event->date_end_in_calendar = $event->datef;
 					} else {
 						$event->date_end_in_calendar = $event->datep;
