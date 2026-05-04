@@ -433,7 +433,7 @@ if ($resql) {
 	}
 
 	if ($numrows > 0) {
-		print "Found ".$numrows." records for receipt ".$num."\n";
+		print "Found ".$numrows." records for receipt ".$bankreceiptnum."\n";
 
 		// Genere en-tete
 		$objmodel->write_footer($outputlangs);
