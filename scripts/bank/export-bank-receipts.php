@@ -80,7 +80,7 @@ if (!isset($argv[3]) || !$argv[3]) {
 	exit(1);
 }
 $bankref = $argv[1];
-$bankreceiptnum = $argv[2] ?? 'all';
+$bankreceiptnum = $argv[2] ?: 'all';
 $model = $argv[3];
 $newlangid = 'en_EN'; // To force a new lang id
 
