@@ -342,10 +342,10 @@ if ($search_all) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
-$massactionbutton = '';
-if ($massactionbutton) {
-	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-}
+// $massactionbutton = '';
+// if ($massactionbutton) {
+// 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+// }
 
 $moreforfilter = '';
 print '<div class="div-table-responsive">';
@@ -532,7 +532,7 @@ while ($i < $imaxinloop) {
 	print '<tr class="oddeven">';
 	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		if (/* $massactionbutton || */ $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($obj->id_paiement, $arrayofselected)) {
 				$selected = 1;
@@ -642,7 +642,7 @@ while ($i < $imaxinloop) {
 
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		if (/* $massactionbutton || */ $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($obj->id_paiement, $arrayofselected)) {
 				$selected = 1;
