@@ -974,7 +974,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
 			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$morehtmlref .= '<input type="hidden" name="id" value="'.$object->id.'">';
-			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="">';
+			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="" spellcheck="false">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button valignmiddle" name="modify" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel valignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$morehtmlref .= '</form>';
@@ -1072,24 +1072,28 @@ if ($action == 'create' || $action == 'presend') {
 		if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
 			// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
 			if (isModEnabled('contract')) {
-				$langs->load('contracts');
-				$morehtmlref .= '<br>';
-				if ($permissiontoedit) {
-					$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
-					if ($action == 'edit_contrat') {
-						$formcontract = new FormContract($db);
-						$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
+				// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+				// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+				if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+					$langs->load('contracts');
+					$morehtmlref .= '<br>';
+					if ($permissiontoedit) {
+						$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
+						if ($action == 'edit_contrat') {
+							$formcontract = new FormContract($db);
+							$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
+						} else {
+							$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
+							$morehtmlref .=  img_edit($langs->trans('SetContract'));
+							$morehtmlref .=  '</a>';
+						}
 					} else {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
-						$morehtmlref .=  img_edit($langs->trans('SetContract'));
-						$morehtmlref .=  '</a>';
-					}
-				} else {
-					if (!empty($object->fk_contract)) {
-						$contratstatic = new Contrat($db);
-						$contratstatic->fetch($object->fk_contract);
-						//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-						$morehtmlref .= $contratstatic->getNomUrl(0, 0, 1);
+						if (!empty($object->fk_contract)) {
+							$contratstatic = new Contrat($db);
+							$contratstatic->fetch($object->fk_contract);
+							//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+							$morehtmlref .= $contratstatic->getNomUrl(0, 0, 1);
+						}
 					}
 				}
 			}
@@ -1160,9 +1164,9 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="assign_user">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
-			//print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
-			print $form->select_dolusers(empty($object->fk_user_assign) ? $user->id : $object->fk_user_assign, 'fk_user_assign', 1);
+			print $form->select_dolusers(empty($object->fk_user_assign) ? $user->id : $object->fk_user_assign, 'fk_user_assign', 1, null, 0, '', '', '', 0, 0, '', 0, '', '', 1);
 			print ' <input type="submit" class="button smallpaddingimp" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
+			print ' <input type="submit" class="button smallpaddingimp" name="btn_cancel" value="'.$langs->trans("Cancel").'" />';
 			print '</form>';
 		}
 		print '</td></tr>';
@@ -1521,7 +1525,7 @@ if ($action == 'create' || $action == 'presend') {
 
 				// Clone
 				if ($permissiontoadd) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
 				}
 
 				// Delete ticket
@@ -1603,9 +1607,9 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->backtopage = $backtopage;
 
 			$formticket->withtitletopic = 1;
-			//$formticket->topic_title = $langs->trans('Message').' '.$langs->trans('Summary');
 
-			$formticket->showMessageForm('100%');
+			$formticket->showMessageForm('100%', 0);
+
 			print '</div>';
 		}
 

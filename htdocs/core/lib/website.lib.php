@@ -105,7 +105,7 @@ function dolKeepOnlyPhpCode($str)
 			}
 		}
 	}
-	return $newstr;
+	return str_replace(array("\r\n", "\r"), array("\n", "\n"), $newstr);
 }
 
 /**

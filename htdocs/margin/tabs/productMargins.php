@@ -300,7 +300,7 @@ if ($id > 0 || !empty($ref)) {
 				// --------------------------------------------------------------------
 				print '<tr class="liste_titre liste_titre_filter">';
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons('left');
 					print $searchpicto;
@@ -362,7 +362,7 @@ if ($id > 0 || !empty($ref)) {
 				print '</th>';
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons();
 					print $searchpicto;
@@ -373,7 +373,7 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<tr class="liste_titre">';
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				}
 				print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -392,7 +392,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				}
 				print "</tr>\n";
@@ -411,7 +411,7 @@ if ($id > 0 || !empty($ref)) {
 
 						print '<tr class="oddeven">';
 						// Action column
-						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						if ($conf->main_checkbox_left_column) {
 							print '<td class="nowrap center">';
 							print '</td>';
 						}
@@ -438,7 +438,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
 
 						// Action column
-						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						if (!$conf->main_checkbox_left_column) {
 							print '<td class="nowrap center">';
 							print '</td>';
 						}
@@ -462,7 +462,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print '<tr class="liste_total">';
 				$colspan = 4;
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					$colspan++; // add action column
 				}
 				print '<td colspan="'.$colspan.'">'.$langs->trans('TotalMargin')."</td>";
@@ -477,7 +477,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">&nbsp;</td>';
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					// add action column
 					print '<td class="center">';
 					print '</td>';

@@ -335,6 +335,9 @@ class CompanyBankAccount extends Account
 	 */
 	public $datem;
 
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
+
 	/**
 	 *  Constructor
 	 *
@@ -342,6 +345,8 @@ class CompanyBankAccount extends Account
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		$this->socid = 0;
@@ -349,6 +354,11 @@ class CompanyBankAccount extends Account
 		$this->balance = 0;
 		$this->default_rib = 0;
 		$this->type = "ban";
+
+		$this->labelStatus = array(
+			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
+		);
 	}
 
 
@@ -465,6 +475,10 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape(dolEncrypt($this->iban))."'";
+		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
+		$sql .= ",fk_country = '".((int) $this->fk_country)."'";
+		$sql .= ",state_id = '".((int) $this->state_id)."'";
+		$sql .= ",status = '".((int) $this->status)."'";
 		$sql .= ",domiciliation = '".$this->db->escape($this->address)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -530,7 +544,7 @@ class CompanyBankAccount extends Account
 		}
 
 		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-		$sql .= " domiciliation as address,";
+		$sql .= " currency_code, fk_country, state_id, status, domiciliation as address,";
 		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
 		$sql .= " last_main_doc, model_pdf";
@@ -568,6 +582,10 @@ class CompanyBankAccount extends Account
 				$this->bic             = $obj->bic;
 				$this->iban            = dolDecrypt($obj->iban);
 
+				$this->currency_code   = $obj->currency_code;
+				$this->fk_country      = $obj->fk_country;
+				$this->state_id        = $obj->state_id;
+				$this->status          = $obj->status;
 				$this->address         = $obj->address;
 
 				$this->owner_name      = $obj->owner_name;

@@ -2775,7 +2775,7 @@ class FactureFournisseur extends CommonInvoice
 				$facturestatic->status = $obj->status;
 
 				$response->nbtodo++;
-				$response->total += $obj->total_ht;
+				$response->total += (float) $obj->total_ht;
 
 				if ($facturestatic->hasDelay()) {
 					$response->nbtodolate++;

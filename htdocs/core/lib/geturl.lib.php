@@ -493,6 +493,7 @@ function isIPAllowed($iptocheck, $localurl)
  * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
+ * @see getRootURLFromURL()
  */
 function getDomainFromURL($url, $mode = 0)
 {
@@ -548,6 +549,7 @@ function getDomainFromURL($url, $mode = 0)
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
+ * @see getDomainFromURL()
  */
 function getRootURLFromURL($url)
 {

@@ -11,7 +11,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020-2026	Open-Dsi					<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ if (empty($reshook)) {
 		$object->priv = GETPOSTINT("priv");
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
-		$object->roles = GETPOST("roles", 'array');
+		$object->roles = GETPOST("roles", 'array');  // Suppose this is proper array, ideally verified @phpstan-ignore assign.propertyType
 
 		$object->status = 1; //Default status to Actif
 		$object->statut = 1; //Default status to Actif
@@ -454,6 +454,7 @@ if (empty($reshook)) {
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
+			// Suppose this is proper array, ideally verified @phpstan-ignore-next-line assign.propertyType
 			$object->roles = GETPOST("roles", 'array'); // Note GETPOSTISSET("role") is null when combo is empty
 
 			//Default language

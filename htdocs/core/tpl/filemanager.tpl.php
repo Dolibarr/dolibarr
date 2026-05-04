@@ -23,11 +23,12 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var EcmDirectory $ecmdir
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var EcmDirectory $ecmdir
  * @var Website $website
  *
  * @var string $action
@@ -36,6 +37,7 @@
  * @var string $filepathnoext
  * @var string $pageid
  * @var int $formalreadyopen
+ * @var string $websitekey
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -78,8 +80,8 @@ if ($module == 'ecm') {
 	$showroot = 0;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
-	$permtoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permtoadd = $user->hasRight("website", "write");
+	$permtoupload = $user->hasRight("website", "write");
 	$showroot = 1;
 }
 

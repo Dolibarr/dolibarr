@@ -925,6 +925,7 @@ class User extends CommonObject
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
+			'intervention' => 'ficheinter',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'facture@fournisseur',

@@ -130,7 +130,8 @@ class MyObject extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => 'Id', 'lang' => 'mymodule@mymodule'),
-		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object', 'lang' => 'mymodule@mymodule'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object', 'lang' => 'mymodule@mymodule'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => 'Help text for quantity', 'validate' => 1, 'lang' => 'mymodule@mymodule'),

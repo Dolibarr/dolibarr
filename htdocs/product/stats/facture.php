@@ -451,7 +451,9 @@ if ($id > 0 || !empty($ref)) {
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
 				// Action column
-				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+				if ($conf->main_checkbox_left_column) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+				}
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
@@ -463,6 +465,10 @@ if ($id > 0 || !empty($ref)) {
 				$parameters = array('param' => $option, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
+				// Action column
+				if (!$conf->main_checkbox_left_column) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+				}
 				print "</tr>\n";
 
 				if ($num > 0) {
@@ -483,7 +489,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<tr data-row-id="'.$invoicestatic->id.'" class="oddeven row-with-select status2">';
 
 						// Action column
-						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						if ($conf->main_checkbox_left_column) {
 							print '<td class="nowrap center">';
 							if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 								$selected = 0;
@@ -512,10 +518,29 @@ if ($id > 0 || !empty($ref)) {
 						$parameters = array();
 						$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						print $hookmanager->resPrint;
+
+						// Action column
+						if (!$conf->main_checkbox_left_column) {
+							print '<td class="nowrap center">';
+							if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+								$selected = 0;
+								if (in_array($invoicestatic->id, $arrayofselected)) {
+									$selected = 1;
+								}
+								print '<input id="cb'.$invoicestatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$invoicestatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+							}
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+
 						print "</tr>\n";
 						$i++;
 					}
 				}
+
+				// Total line
 				print '<tr class="liste_total">';
 				if ($num < $limit && empty($offset)) {
 					print '<td>'.$langs->trans("Total").'</td>';

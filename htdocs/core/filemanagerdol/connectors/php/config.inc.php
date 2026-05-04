@@ -50,9 +50,13 @@ if ($pos == '/') {
 //define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
 
-
-if (!empty($user->admin) && !$user->hasRight('website', 'write')) {
-	accessforbidden('Need to be admin or having write permission on website module');
+// By default, upload of iles with this tool is no more possible.
+if (!getDolGlobalString('WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES')) {
+	accessforbidden('Upload of files in medias directory using this legacy tool is no more allowed');
+}
+// If upload has been allowed with WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES set, we check permissions.
+if (!$user->hasRight('website', 'write')) {
+	accessforbidden('Need to have website write permission to upload files in medias directory.');
 }
 
 
@@ -109,7 +113,7 @@ $Config['ChmodOnUpload'] = $newmask;
 $newmask = '0755';
 $dirmaskdec = octdec($newmask);
 if (getDolGlobalString('MAIN_UMASK')) {
-	$dirmaskdec = octdec($conf->global->MAIN_UMASK);
+	$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 }
 $dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
 $newmask = decoct($dirmaskdec);

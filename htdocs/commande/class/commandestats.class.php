@@ -5,7 +5,7 @@
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,6 @@ class CommandeStats extends Stats
 	 * Return orders number per year
 	 *
 	 * @return	array<array{0:int,1:int}>				Array of nb each year
-	 *
 	 */
 	public function getNbByYear()
 	{
@@ -252,7 +251,7 @@ class CommandeStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
