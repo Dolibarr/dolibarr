@@ -2963,13 +2963,14 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	if (getDolGlobalString('PROJECT_LIMIT_YEAR_RANGE')) {
 		//Add the year filter input
-		print '<form method="get" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
-		print '<table width="100%">';
+		print '<form method="GET" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+		print '<table class="centpercent">';
 		print '<tr>';
 		print '<td>'.$langs->trans("Year").'</td>';
 		print '<td class="right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.((int) $project_year_filter).'"/>';
 		print "</tr>\n";
-		print '</table></form>';
+		print '</table>';
+		print '</form>';
 	}
 }
 
