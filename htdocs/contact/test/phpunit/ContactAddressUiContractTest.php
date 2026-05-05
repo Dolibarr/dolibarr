@@ -66,6 +66,8 @@ class ContactAddressUiContractTest extends PHPUnit\Framework\TestCase
 		$this->assertStringContainsString('dol_escape_htmltag(GETPOSTISSET("address") ? GETPOST("address", \'alphanohtml\') : $object->address)', $card);
 		$this->assertStringContainsString('dol_escape_htmltag(dol_format_address($effectiveaddressobject', $contactclass);
 		$this->assertStringContainsString('dol_nl2br(dol_escape_htmltag((string) $effectiveaddressobject->address', $canvasactions);
+		$this->assertStringContainsString("\$this->tpl['town'] = dol_escape_htmltag((string) \$effectiveaddressobject->town);", $canvasactions);
+		$this->assertStringContainsString("\$this->tpl['departement'] = dol_escape_htmltag((string) \$effectiveaddressobject->state);", $canvasactions);
 		$this->assertStringContainsString("dol_escape_htmltag(\$this->control->tpl['address'])", $create);
 		$this->assertStringContainsString("dol_escape_htmltag(\$this->control->tpl['address'])", $edit);
 	}

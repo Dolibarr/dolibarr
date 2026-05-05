@@ -177,6 +177,87 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * Create() must preserve legacy explicit contact addresses when a linked thirdparty exists.
+	 *
+	 * @return void
+	 */
+	public function testCreateKeepsContactAddressWhenOwnPostalFieldsAreProvided(): void
+	{
+		$dbstub = new class {
+			public $queries = array();
+
+			public function begin()
+			{
+			}
+
+			public function commit()
+			{
+			}
+
+			public function rollback()
+			{
+			}
+
+			public function idate($value)
+			{
+				return '2026-05-04 00:00:00';
+			}
+
+			public function escape($value)
+			{
+				return addslashes((string) $value);
+			}
+
+			public function query($sql)
+			{
+				$this->queries[] = $sql;
+				return true;
+			}
+
+			public function last_insert_id($table)
+			{
+				return 125;
+			}
+
+			public function lasterror()
+			{
+				return '';
+			}
+		};
+
+		$contact = new class($dbstub) extends Contact {
+			public function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
+			{
+				return 1;
+			}
+
+			public function update_perso($id, $user = null, $notrigger = 0)
+			{
+				return 1;
+			}
+
+			public function call_trigger($triggerName, $user)
+			{
+				return 1;
+			}
+		};
+
+		$contact->lastname = 'Doe';
+		$contact->firstname = 'Jane';
+		$contact->socid = 10;
+		$contact->address = '21 Jump Street';
+		$contact->zip = '33000';
+		$contact->town = 'Bordeaux';
+		$contact->use_thirdparty_address = null;
+
+		$result = $contact->create((object) array('id' => 1), 1);
+
+		$this->assertSame(125, $result);
+		$this->assertSame(Contact::USE_THIRDPARTY_ADDRESS_NO, $contact->use_thirdparty_address);
+		$this->assertStringContainsString(', 10, 0,', preg_replace('/\s+/', ' ', $dbstub->queries[0]));
+	}
+
+	/**
 	 * Update() must normalize legacy null to explicit thirdparty mode when own postal fields are empty.
 	 *
 	 * @return void

@@ -135,7 +135,25 @@ function contactResolveUseThirdpartyAddressFromRequest(int $socid): int
 		return Contact::USE_THIRDPARTY_ADDRESS_NO;
 	}
 
-	return GETPOST('use_different_address_than_thirdparty', 'int') ? Contact::USE_THIRDPARTY_ADDRESS_NO : Contact::USE_THIRDPARTY_ADDRESS_YES;
+	// Keep explicit user intent first, then preserve manually entered postal fields,
+	// and only fallback to the thirdparty address when nothing else was requested.
+	if (GETPOST('use_different_address_than_thirdparty', 'int')) {
+		return Contact::USE_THIRDPARTY_ADDRESS_NO;
+	}
+
+	if (GETPOSTINT('use_thirdparty_address') === Contact::USE_THIRDPARTY_ADDRESS_YES) {
+		return Contact::USE_THIRDPARTY_ADDRESS_YES;
+	}
+
+	if (dol_strlen(trim((string) GETPOST('address', 'alphanohtml'))) > 0
+		|| dol_strlen(trim((string) GETPOST('zipcode', 'alphanohtml'))) > 0
+		|| dol_strlen(trim((string) GETPOST('town', 'alphanohtml'))) > 0
+		|| GETPOSTINT('state_id') > 0
+		|| GETPOSTINT('country_id') > 0) {
+		return Contact::USE_THIRDPARTY_ADDRESS_NO;
+	}
+
+	return Contact::USE_THIRDPARTY_ADDRESS_YES;
 }
 
 
@@ -678,17 +696,34 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								document.formsoc.submit();
 							});
 
-							function updateContactAddressMode() {
-								var useDifferent = $("#use_different_address_than_thirdparty").is(":checked");
-								$("#use_thirdparty_address").val(useDifferent ? "0" : "1");
-								$(".contact-address-fields").toggle(useDifferent || '.((int) ($socid <= 0)).');
+							function contactHasOwnPostalValues() {
+								return $.trim($("#address").val()).length > 0
+									|| $.trim($("#zipcode").val()).length > 0
+									|| $.trim($("#town").val()).length > 0
+									|| parseInt($("#state_id").val(), 10) > 0
+									|| parseInt($("#selectcountry_id").val(), 10) > 0;
 							}
 
-							$("#use_different_address_than_thirdparty").change(updateContactAddressMode);
-							updateContactAddressMode();
+							function updateContactAddressMode(fromSocChange) {
+								var currentSocId = parseInt($("#socid").val(), 10) || 0;
+								// If postal fields were already typed before selecting a thirdparty,
+								// keep that intent instead of silently switching to the thirdparty address.
+								if (fromSocChange && currentSocId > 0 && contactHasOwnPostalValues()) {
+									$("#use_different_address_than_thirdparty").prop("checked", true);
+								}
+
+								var useDifferent = $("#use_different_address_than_thirdparty").is(":checked");
+								var useThirdpartyAddress = (currentSocId > 0 && !useDifferent);
+								$("#use_thirdparty_address").val(useThirdpartyAddress ? "1" : "0");
+								$(".contact-address-fields").toggle(!useThirdpartyAddress);
+							}
+
+							$("#use_different_address_than_thirdparty").change(function() { updateContactAddressMode(false); });
+							$("#socid").change(function() { updateContactAddressMode(true); });
+							updateContactAddressMode(false);
 						})'."\n";
-				print '</script>'."\n";
-			}
+					print '</script>'."\n";
+				}
 
 			print '<form method="post" name="formsoc" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -748,13 +783,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$colspan = 3;
 			$addressdisplaystyle = '';
 
-			if ($socid > 0) {
-				print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
-				print '<td colspan="3">';
-				print $form->textwithpicto('', $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"));
-				print '<input type="checkbox" name="use_different_address_than_thirdparty" id="use_different_address_than_thirdparty" value="1"'.($showcustomaddressblock ? ' checked' : '').'>';
-				print '</td></tr>';
-			}
+			print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
+			print '<td colspan="3">';
+			print $form->textwithpicto('', $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"));
+			print '<input type="checkbox" name="use_different_address_than_thirdparty" id="use_different_address_than_thirdparty" value="1"'.($showcustomaddressblock ? ' checked' : '').'>';
+			print '</td></tr>';
 
 			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea></td>';
@@ -980,17 +1013,34 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								document.formsoc.submit();
 							});
 
-							function updateContactAddressMode() {
-								var useDifferent = $("#use_different_address_than_thirdparty").is(":checked");
-								$("#use_thirdparty_address").val(useDifferent ? "0" : "1");
-								$(".contact-address-fields").toggle(useDifferent || '.((int) ($object->socid <= 0)).');
+							function contactHasOwnPostalValues() {
+								return $.trim($("#address").val()).length > 0
+									|| $.trim($("#zipcode").val()).length > 0
+									|| $.trim($("#town").val()).length > 0
+									|| parseInt($("#state_id").val(), 10) > 0
+									|| parseInt($("#selectcountry_id").val(), 10) > 0;
 							}
 
-							$("#use_different_address_than_thirdparty").change(updateContactAddressMode);
-							updateContactAddressMode();
+							function updateContactAddressMode(fromSocChange) {
+								var currentSocId = parseInt($("#socid").val(), 10) || 0;
+								// If postal fields were already typed before selecting a thirdparty,
+								// keep that intent instead of silently switching to the thirdparty address.
+								if (fromSocChange && currentSocId > 0 && contactHasOwnPostalValues()) {
+									$("#use_different_address_than_thirdparty").prop("checked", true);
+								}
+
+								var useDifferent = $("#use_different_address_than_thirdparty").is(":checked");
+								var useThirdpartyAddress = (currentSocId > 0 && !useDifferent);
+								$("#use_thirdparty_address").val(useThirdpartyAddress ? "1" : "0");
+								$(".contact-address-fields").toggle(!useThirdpartyAddress);
+							}
+
+							$("#use_different_address_than_thirdparty").change(function() { updateContactAddressMode(false); });
+							$("#socid").change(function() { updateContactAddressMode(true); });
+							updateContactAddressMode(false);
 						})'."\n";
-				print '</script>'."\n";
-			}
+					print '</script>'."\n";
+				}
 
 			print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1046,13 +1096,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
 			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 			$addressdisplaystyle = '';
-			if ($object->socid > 0) {
-				print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
-				print '<td colspan="3">';
-				print $form->textwithpicto('', $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"));
-				print '<input type="checkbox" name="use_different_address_than_thirdparty" id="use_different_address_than_thirdparty" value="1"'.($showcustomaddressblock ? ' checked' : '').'>';
-				print '</td></tr>';
-			}
+			print '<tr><td><label for="use_different_address_than_thirdparty">'.$langs->trans("ContactAddress_UseDifferentAddressThanThirdparty").'</label></td>';
+			print '<td colspan="3">';
+			print $form->textwithpicto('', $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"));
+			print '<input type="checkbox" name="use_different_address_than_thirdparty" id="use_different_address_than_thirdparty" value="1"'.($showcustomaddressblock ? ' checked' : '').'>';
+			print '</td></tr>';
 
 			// Address
 			print '<tr class="contact-address-fields"'.$addressdisplaystyle.'><td><label for="address">'.$langs->trans("Address").'</label></td>';

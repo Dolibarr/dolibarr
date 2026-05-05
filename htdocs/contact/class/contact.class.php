@@ -524,7 +524,13 @@ class Contact extends CommonObject
 			$this->socid = 0;
 		}
 		if (!isset($this->use_thirdparty_address)) {
-			$this->use_thirdparty_address = ($this->socid > 0 ? self::USE_THIRDPARTY_ADDRESS_YES : self::USE_THIRDPARTY_ADDRESS_NO);
+			if ($this->socid > 0) {
+				// Preserve backward compatibility: legacy callers may link a thirdparty
+				// and still expect explicit contact postal fields to remain authoritative.
+				$this->use_thirdparty_address = $this->getLegacyResolvedUseThirdpartyAddressValue();
+			} else {
+				$this->use_thirdparty_address = self::USE_THIRDPARTY_ADDRESS_NO;
+			}
 		}
 		if (empty($this->priv)) {
 			$this->priv = 0;

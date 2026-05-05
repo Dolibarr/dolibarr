@@ -146,14 +146,31 @@ abstract class ActionsContactCardCommon
 							document.formsoc.submit();
 						});
 
-						function updateContactAddressMode() {
-							var useDifferent = jQuery("#use_different_address_than_thirdparty").is(":checked");
-							jQuery("#use_thirdparty_address").val(useDifferent ? "0" : "1");
-							jQuery(".contact-address-fields").toggle(useDifferent || '.((int) ($this->object->socid <= 0)).');
+						function contactHasOwnPostalValues() {
+							return jQuery.trim(jQuery("#address").val()).length > 0
+								|| jQuery.trim(jQuery("#zipcode").val()).length > 0
+								|| jQuery.trim(jQuery("#town").val()).length > 0
+								|| parseInt(jQuery("#state_id").val(), 10) > 0
+								|| parseInt(jQuery("#selectcountry_id").val(), 10) > 0;
 						}
 
-						jQuery("#use_different_address_than_thirdparty").change(updateContactAddressMode);
-						updateContactAddressMode();
+						function updateContactAddressMode(fromSocChange) {
+							var currentSocId = parseInt(jQuery("#socid").val(), 10) || 0;
+							// If postal fields were already typed before selecting a thirdparty,
+							// keep that intent instead of silently switching to the thirdparty address.
+							if (fromSocChange && currentSocId > 0 && contactHasOwnPostalValues()) {
+								jQuery("#use_different_address_than_thirdparty").prop("checked", true);
+							}
+
+							var useDifferent = jQuery("#use_different_address_than_thirdparty").is(":checked");
+							var useThirdpartyAddress = (currentSocId > 0 && !useDifferent);
+							jQuery("#use_thirdparty_address").val(useThirdpartyAddress ? "1" : "0");
+							jQuery(".contact-address-fields").toggle(!useThirdpartyAddress);
+						}
+
+						jQuery("#use_different_address_than_thirdparty").change(function() { updateContactAddressMode(false); });
+						jQuery("#socid").change(function() { updateContactAddressMode(true); });
+						updateContactAddressMode(false);
 					})
 				</script>'."\n";
 			}
@@ -276,6 +293,8 @@ abstract class ActionsContactCardCommon
 			$this->tpl['address'] = dol_nl2br(dol_escape_htmltag((string) $effectiveaddressobject->address, 0, 1));
 
 			$this->tpl['zip'] = (!empty($effectiveaddressobject->zip) ? dol_escape_htmltag($effectiveaddressobject->zip).'&nbsp;' : '');
+			$this->tpl['town'] = dol_escape_htmltag((string) $effectiveaddressobject->town);
+			$this->tpl['departement'] = dol_escape_htmltag((string) $effectiveaddressobject->state);
 
 			$img = picto_from_langcode((string) $effectiveaddressobject->country_code);
 			$this->tpl['country'] = ($img ? $img.' ' : '').dol_escape_htmltag((string) $effectiveaddressobject->country);
@@ -371,6 +390,24 @@ abstract class ActionsContactCardCommon
 			return Contact::USE_THIRDPARTY_ADDRESS_NO;
 		}
 
-		return GETPOST('use_different_address_than_thirdparty', 'int') ? Contact::USE_THIRDPARTY_ADDRESS_NO : Contact::USE_THIRDPARTY_ADDRESS_YES;
+		// Keep explicit user intent first, then preserve manually entered postal fields,
+		// and only fallback to the thirdparty address when nothing else was requested.
+		if (GETPOST('use_different_address_than_thirdparty', 'int')) {
+			return Contact::USE_THIRDPARTY_ADDRESS_NO;
+		}
+
+		if (GETPOSTINT('use_thirdparty_address') === Contact::USE_THIRDPARTY_ADDRESS_YES) {
+			return Contact::USE_THIRDPARTY_ADDRESS_YES;
+		}
+
+		if (dol_strlen(trim((string) GETPOST('address', 'alphanohtml'))) > 0
+			|| dol_strlen(trim((string) GETPOST('zipcode', 'alphanohtml'))) > 0
+			|| dol_strlen(trim((string) GETPOST('town', 'alphanohtml'))) > 0
+			|| GETPOSTINT('state_id') > 0
+			|| GETPOSTINT('country_id') > 0) {
+			return Contact::USE_THIRDPARTY_ADDRESS_NO;
+		}
+
+		return Contact::USE_THIRDPARTY_ADDRESS_YES;
 	}
 }

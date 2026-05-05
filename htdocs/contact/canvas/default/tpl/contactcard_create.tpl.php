@@ -52,7 +52,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="use_thirdparty_address" id="use_thirdparty_address" value="<?php echo (int) $this->control->tpl['use_thirdparty_address']; ?>">
 <?php if ($this->control->tpl['company_id']) { ?>
-<input type="hidden" name="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
+<input type="hidden" name="socid" id="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
 <?php } ?>
 
 <table class="border allwidth">
@@ -79,7 +79,6 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 	<td colspan="3"><input name="poste" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['poste']; ?>"></td>
 </tr>
 
-<?php if (!empty($this->control->tpl['company_id'])) { ?>
 <tr>
 	<td><?php echo $langs->trans("ContactAddress_UseDifferentAddressThanThirdparty"); ?></td>
 	<td colspan="3">
@@ -87,7 +86,6 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 		<?php echo $langs->trans("ContactAddress_UseDifferentAddressThanThirdpartyHelp"); ?>
 	</td>
 </tr>
-<?php } ?>
 
 <tr class="contact-address-fields">
 	<td><?php echo $langs->trans("Address"); ?></td>
