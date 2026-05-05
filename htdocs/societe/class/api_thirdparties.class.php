@@ -326,7 +326,6 @@ class Thirdparties extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
@@ -336,6 +335,9 @@ class Thirdparties extends DolibarrApi
 				}
 				continue;
 			}
+			if ($field === 'price_level') {
+				continue;
+			}
 
 			$this->company->$field = $this->_checkValForAPI($field, $value, $this->company);
 		}
@@ -343,6 +345,14 @@ class Thirdparties extends DolibarrApi
 		if ($this->company->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
 		}
+
+		if (isset($request_data['price_level']) && getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$res = $this->company->setPriceLevel((int) $request_data['price_level'], DolibarrApiAccess::$user);
+			if ($res <= 0) {
+				throw new RestException(500, 'Failed to set price_level');
+			}
+		}
+
 		if (isModEnabled('mailing') && !empty($this->company->email) && isset($this->company->no_email)) {
 			$this->company->setNoEmail($this->company->no_email);
 		}
@@ -350,66 +360,79 @@ class Thirdparties extends DolibarrApi
 		return $this->company->id;
 	}
 
-	/**
-	 * Update third party
-	 *
-	 * @since	3.8.0	Initial implementation
-	 *
-	 * @param	int				$id				ID of thirdparty to update
-	 * @param	array 			$request_data	Data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 * @return	Object							Updated object
-	 * @phan-return Societe
-	 * @phpstan-return Societe
-	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 * @throws RestException 500
-	 */
-	public function put($id, $request_data = null)
-	{
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
-			throw new RestException(403);
-		}
-
-		$result = $this->company->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Thirdparty not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
+		/**
+		 * Update third party
+		 *
+		 * @since	3.8.0	Initial implementation
+		 *
+		 * @param	int				$id				ID of thirdparty to update
+		 * @param	array 			$request_data	Data
+		 * @phan-param ?array<string,string> $request_data
+		 * @phpstan-param ?array<string,string> $request_data
+		 * @return	Object							Updated object
+		 * @phan-return Societe
+		 * @phpstan-return Societe
+		 *
+		 * @throws RestException 401
+		 * @throws RestException 404
+		 * @throws RestException 500
+		 */
+		public function put($id, $request_data = null)
+		{
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+				throw new RestException(403);
 			}
-			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
-				continue;
+
+			$result = $this->company->fetch($id);
+			if (!$result) {
+				throw new RestException(404, 'Thirdparty not found');
 			}
-			if ($field == 'array_options' && is_array($value)) {
-				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+
+			if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+				throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			}
+
+			foreach ($request_data as $field => $value) {
+				if ($field == 'id') {
+					continue;
 				}
-				continue;
+				if ($field === 'caller') {
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+					$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+					continue;
+				}
+				if ($field == 'array_options' && is_array($value)) {
+					foreach ($value as $index => $val) {
+						$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+					}
+					continue;
+				}
+				// Special handling for price_level (not handled by update())
+				if ($field === 'price_level') {
+					$priceLevel = (int) $value;
+
+					if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+						$res = $this->company->setPriceLevel($priceLevel, DolibarrApiAccess::$user);
+						if ($res <= 0) {
+							throw new RestException(500, 'Failed to set price_level');
+						}
+					}
+
+					continue;
+				}
+				$this->company->$field = $this->_checkValForAPI($field, $value, $this->company);
 			}
-			$this->company->$field = $this->_checkValForAPI($field, $value, $this->company);
-		}
 
-		if (isModEnabled('mailing') && !empty($this->company->email) && isset($this->company->no_email)) {
-			$this->company->setNoEmail($this->company->no_email);
-		}
+			if (isModEnabled('mailing') && !empty($this->company->email) && isset($this->company->no_email)) {
+				$this->company->setNoEmail($this->company->no_email);
+			}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
-			return $this->get($id);
-		} else {
-			throw new RestException(500, $this->company->error);
+			if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
+				return $this->get($id);
+			} else {
+				throw new RestException(500, $this->company->error);
+			}
 		}
-	}
 
 	/**
 	 * Merge a third party into another third party
