@@ -276,6 +276,10 @@ $coldisplay++;
 		}
 		print '></td>';
 	}
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$coldisplay++;
+		print '<td class="right linecoluttc_currency">&nbsp;</td>';	// Multicurrency unit price including tax is computed automatically and not editable here — placeholder cell for header alignment
+	}
 	?>
 	<td class="right">
 	<?php $coldisplay++;
