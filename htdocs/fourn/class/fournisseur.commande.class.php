@@ -1694,6 +1694,7 @@ class CommandeFournisseur extends CommonOrder
 
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
+						(string) $line->desc,
 						(float) $line->subprice,
 						(float) $line->qty,
 						$line->tva_tx,
