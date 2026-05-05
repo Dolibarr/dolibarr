@@ -2184,7 +2184,7 @@ class CommandeFournisseur extends CommonOrder
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
-			
+
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -2193,7 +2193,7 @@ class CommandeFournisseur extends CommonOrder
 			$pu = $pu_ht = $tabprice[3];
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
-			
+
 			// MultiCurrency
 			$multicurrency_total_ht = $tabprice[16];
 			$multicurrency_total_tva = $tabprice[17];
@@ -2230,7 +2230,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
 			$this->line->subprice_ttc = (float) $pu_ttc;
-			
+
 			$this->line->rang = $rang;
 			$this->line->info_bits = $info_bits;
 
