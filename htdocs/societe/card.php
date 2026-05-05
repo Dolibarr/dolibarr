@@ -1608,7 +1608,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			*/
 
 			// Default bank account
-			if (isModEnabled('bank')) {
+			if (isModEnabled('bank') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_BANK_ACCOUNT')) {
 				print '<tr><td>';
 				print $langs->trans('DefaultBankAccount');
 				print '</td>';
@@ -2492,6 +2492,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '</td></tr>';
 
+				if (isModEnabled('bank') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_BANK_ACCOUNT')) {
+					// TODO
+					// Allow to edit field default bank account like we can in creation mode
+				}
 
 				// Barcode
 				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
