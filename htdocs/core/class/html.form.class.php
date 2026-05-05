@@ -2473,7 +2473,7 @@ class Form
 	/**
 	 * Return select list of users
 	 *
-	 * @param string|int|User	$userselected 	User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
+	 * @param string|int|User|array<int,int>	$userselected 	User id or User object of user preselected or Array of user selected. If 0 or < -4, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
 	 * @param string 			$htmlname 		Field name in form
 	 * @param int<0,1>|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
 	 * @param int[]|null		$exclude 		Array list of users id to exclude
@@ -2503,20 +2503,26 @@ class Form
 		// Convert $selected into an int (in case it is an object)
 		if (is_object($userselected)) {
 			$selected = (int) $userselected->id;
-		} else {
+		} elseif (is_numeric($userselected)) {
 			$selected = (int) $userselected;
+		} elseif (is_array($userselected)) {
+			$selected = $userselected;
+		} else {
+			$selected = -1;
 		}
 
 		// If no preselected user defined, we take current user
-		if (($selected < -4 || empty($selected)) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
+		if ((is_numeric($selected) && ((int) $selected < -4 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
 			$selected = $user->id;
 		}
 
 		// Convert selected int into an array
-		if ($selected === '') {
-			$selected = array();
-		} elseif (!is_array($selected)) {
-			$selected = array($selected);
+		if (!is_array($selected)) {
+			if ($selected === -1 || $selected === '') {
+				$selected = array();
+			} else {
+				$selected = array($selected);
+			}
 		}
 
 		// Exclude some users in $excludeUsers string
