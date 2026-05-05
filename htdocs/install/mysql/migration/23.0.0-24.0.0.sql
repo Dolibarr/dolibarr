@@ -210,6 +210,8 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
 
+ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_prelevement_demande integer DEFAULT 0;
+
 
 UPDATE llx_cronjob set test = 'isModEnabled("agenda")' WHERE test = '$conf->agenda->enabled';
 UPDATE llx_cronjob set test = 'isModEnabled("invoice")' WHERE test = '$conf->facture->enabled';

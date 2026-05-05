@@ -308,7 +308,7 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 				*/
 
-				// Check if module is in the remote malware list
+				// Check if module is in the remote malware blacklist (at URL DolibarrModules::URL_FOR_BLACKLISTED_MODULES)
 				if (!$error) {
 					if (GETPOST('checkforcompliance') == 'on') {
 						try {
@@ -1557,7 +1557,7 @@ if ($mode == 'deploy') {
 			print $langs->trans("YouCanSubmitFile").'<br><br><br>';
 
 			print '<span class="opacitymedium"><input class="paddingright" type="checkbox" name="checkforcompliance" id="checkforcompliance"'.(getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES') ? ' disabled="disabled"' : 'checked="checked"').'>';
-			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp")).'</label>';
+			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp").'<br><br>'.DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'</label>';
 			print '</span><br><br>';
 
 			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
