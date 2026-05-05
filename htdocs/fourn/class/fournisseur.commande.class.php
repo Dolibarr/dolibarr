@@ -1694,32 +1694,29 @@ class CommandeFournisseur extends CommonOrder
 
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
-						$line->desc,
-						$line->subprice,
-						$line->subprice_ttc,
-						$line->qty,
+						(float) $line->subprice,
+						(float) $line->qty,
 						$line->tva_tx,
-						$line->localtax1_tx,
-						$line->localtax2_tx,
-						$line->fk_product,
+						(float) $line->localtax1_tx,
+						(float) $line->localtax2_tx,
+						(int) $line->fk_product,
 						0,
-						$line->ref_supplier ? $line->ref_supplier : $line->ref_fourn, 			// $line->ref_fourn comes from field ref into table of lines. Value may be a ref that does not exists anymore, so we first try with value of product
-						$line->remise_percent,
+						(string) ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn), 			// $line->ref_fourn comes from field ref into table of lines. Value may be a ref that does not exists anymore, so we first try with value of product
+						(float) $line->remise_percent,
 						'HT',
-						0,
-						$line->product_type,
-						$line->info_bits,
+						(float) $line->subprice_ttc,
+						(int) $line->product_type,
+						(int) $line->info_bits,
 						0,
 						$line->date_start,
 						$line->date_end,
 						$line->array_options,
 						$line->fk_unit,
-						$line->multicurrency_subprice,  // pu_ht_devise
-						$line->multicurrency_subprice_ttc,  // pu_ttc_devise
-						$line->origin,     // origin
-						$line->origin_id,  // origin_id
-						$line->rang,       // rang
-						$line->special_code
+						(float) $line->multicurrency_subprice,  // pu_ht_devise
+						(string) $line->origin,     // origin
+						(int) $line->origin_id,  // origin_id
+						(int) $line->rang,       // rang
+						(int) $line->special_code
 					);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functional error
