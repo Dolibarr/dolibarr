@@ -188,6 +188,13 @@ if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 }
+
+// Force displaying form to attach files and documents
+$showHideAddButtonValue = 1;
+if (getDolGlobalInt('MAIN_DOCUMENTS_SHOW_FILE_ATTACHMENT_FORM')) {
+	$showHideAddButtonValue = 0;
+}
+
 // List of document
 $formfile->list_of_documents(
 	$filearray,
@@ -211,7 +218,7 @@ $formfile->list_of_documents(
 	0,
 	-1,
 	'',
-	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => $showHideAddButtonValue)
 );
 
 if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
@@ -219,6 +226,12 @@ if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
 	print '<div class="fichehalfright">';
 } else {
 	print "<br>";
+}
+
+// Force displaying form to link files and documents
+$showHideAddButtonValue = 1;
+if (getDolGlobalInt('MAIN_DOCUMENTS_SHOW_FILE_LINKING_FORM')) {
+	$showHideAddButtonValue = 0;
 }
 
 //List of links
@@ -229,7 +242,7 @@ $formfile->listOfLinks(
 	(string) GETPOSTINT('linkid'),
 	$param,
 	'formaddlink',
-	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => $showHideAddButtonValue)
 );
 
 if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
