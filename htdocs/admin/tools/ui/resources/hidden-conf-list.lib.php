@@ -481,11 +481,11 @@ function renderBadges(array $conf): string
 
 	foreach ($tags as $tag) {
 		$class = getTagBadgeClass($tag);
-		$html .= '<span class="badge ' . $class . '">' . dol_escape_htmltag($tag) . '</span> ';
+		$html .= '<span class="badge badge-pill ' . $class . '">' . dol_escape_htmltag($tag) . '</span> ';
 	}
 
 	if (!empty($conf['deprecated'])) {
-		$html .= '<span class="badge badge-danger">'. $langs->trans('deprecated') . '</span>';
+		$html .= '<span class="badge badge-pill badge-danger">'. $langs->trans('deprecated') . '</span>';
 	}
 
 	return $html;
