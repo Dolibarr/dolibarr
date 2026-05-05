@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - datapolicy
+Module4100Name =Política de privacidade de dados
+Module4100Desc =Módulo para gerenciar a privacidade de dados (conformidade com a LGPD)
+datapolicySetup =Configuração do módulo de política de privacidade
+datapolicySetupPage =Dependendo das leis do seu país (Exemplo <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artigo 5</a> da GDPR Européia), os dados pessoais devem ser mantidos por um período não superior à duração em que os dados são necessários para a finalidade para a qual foram coletados, exceto para fins de arquivamento.<br>Isso módulo fará uma anonimização automaticamente após uma certa duração sem eventos (a duração que você terá indicado abaixo) e se o objeto não tiver filhos de objetos comerciais existentes.
+DATAPOLICY_TIERS_PROSPECT =Prospecto de cliente
+DATAPOLICY_TIERS_PROSPECT_CLIENT =Prospecto/Cliente
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT =Nem prospecto/Nem cliente
+DATAPOLICY_CONTACT_PROSPECT =Prospecto de cliente
+DATAPOLICY_CONTACT_PROSPECT_CLIENT =Prospecto/Cliente
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT =Nem prospecto/Nem cliente
+DATAPOLICY_ADHERENT =Associado
+SendAgreementText =Você pode enviar um e-mail de LGPD para todos os seus contatos relevantes (que ainda não receberam um e-mail e para os quais você não registrou nada sobre o acordo GDPR deles). Para fazer isso, use o botão a seguir.
+SendAgreement =Enviar e-mails
+TXTLINKDATAPOLICYACCEPT =Texto para o link "acordo"
+TXTLINKDATAPOLICYREFUSE =Texto para o link "desacordo"
+DATAPOLICY_BLOCKCHECKBOX =LGPD: Tratamento de dados pessoais
+DATAPOLICY_date =Data de acordo/desacordo LGPD
+DATAPOLICY_send =Acordo de data e-mail enviado

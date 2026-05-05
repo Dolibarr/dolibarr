@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = Renginių organizavimas
+EventOrganizationDescription = Renginių organizavimas per modulių projektą
+EventOrganizationDescriptionLong= Tvarkyti renginio organizavimą (parodą, konferencijas, dalyvius ar pranešėjus, su viešais puslapiais pasiūlymams, balsavimui ar registracijai)
+EventOrganizationMenuLeft = Organizuoti renginiai
+EventOrganizationConferenceOrBoothMenuLeft = Konferencija arba stendas
+PaymentEvent=Renginio apmokėjimas
+EventFee=Renginio mokestis
+# Admin page
+NewRegistration=Registracija
+EventOrganizationSetup=Renginių organizavimo sąranka
+EventOrganization=Renginių organizavimas
+EventOrganizationSetupPage = Renginių organizavimo sąrankos puslapis
+EVENTORGANIZATION_TASK_LABEL = Užduočių, kurios bus automatiškai sukurtos patvirtinus projektą, etiketė
+EVENTORGANIZATION_TASK_LABELTooltip = Kai patvirtinate renginio organizavimą, kai kurios užduotys gali būti automatiškai sukurtos projekte<br><br>Pavyzdžiui: <br>Siųsti kvietimą į konferencijas<br>Siųsti kvietimą į stendus<br>Patvirtinti konferencijų pasiūlymus<br>Patvirtinti stendų paraišką<br>Atvira renginio prenumerata dalyviams<br>Išsiųsti renginio priminimą pranešėjams<br>Išsiųsti renginio priminimą stendų šeimininkams<br>Išsiųsti renginio priminimą dalyviams
+EVENTORGANIZATION_TASK_LABELTooltip2=Palikite tuščią, jei nereikia automatiškai kurti užduočių.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategorija, kurią reikia pridėti prie trečiųjų šalių, automatiškai sukuriama, kai kas nors pasiūlo konferenciją
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategorija, kurią galima pridėti prie trečiųjų šalių, automatiškai sukuriama, kai jos pasiūlo stendą
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = El. laiško, kurį reikia išsiųsti gavus pasiūlymą dėl konferencijos, šablonas.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = El. laiško, kurį reikia išsiųsti gavus pasiūlymą dėl stendo, šablonas.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = El. laiško, kuris bus išsiųstas apmokėjus registraciją į stendą, šablonas.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = El. laiško, kuris bus išsiųstas apmokėjus renginio registraciją, šablonas.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = El. laiško šablonas, naudojamas siunčiant el. laiškus iš funkcijos „Siųsti el. laiškus“ pranešėjams
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = El. laiško šablonas, naudojamas siunčiant el. laiškus iš dalyvių sąrašo funkcijos „Siųsti el. laiškus“
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Dalyvio kūrimo / pridėjimo formoje trečiųjų šalių sąrašas apribojamas iki trečiųjų šalių kategorijoje
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dalyvio kūrimo / pridėjimo formoje trečiųjų šalių sąrašas apribojamas iki trečiųjų šalių, kurių pobūdis yra toks:
+# Object
+OrganizedEvent=Organizuotas renginys
+EventOrganizationConfOrBooth= Konferencija arba stendas
+EventOrganizationConfOrBoothes=Konferencijos arba stendai
+ManageOrganizeEvent = Tvarkyti renginio organizavimą
+ConferenceOrBooth = Konferencija arba stendas
+ConferenceOrBoothTab = Konferencija arba stendas
+AmountPaid = Sumokėta suma
+DateOfRegistration = Registracijos data
+ConferenceOrBoothAttendee = Konferencijos ar stendo dalyvis
+ApplicantOrVisitor=Pareiškėjas arba lankytojas
+Speaker=Kalbėtojas
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = Jūsų užklausa dėl konferencijos gauta
+YourOrganizationEventBoothRequestWasReceived = Jūsų užklausa dėl kabinos gauta
+EventOrganizationEmailAskConf = Prašymas dėl konferencijos
+EventOrganizationEmailAskBooth = Prašymas dėl stendo
+EventOrganizationEmailBoothPayment = Jūsų kabinos apmokėjimas
+EventOrganizationEmailRegistrationPayment = Registracija į renginį
+EventOrganizationMassEmailAttendees = Bendravimas su dalyviais
+EventOrganizationMassEmailSpeakers = Bendravimas su pranešėjais
+ToSpeakers=Į garsiakalbius
+# Event
+AllowUnknownPeopleSuggestConf=Leisti žmonėms siūlyti konferencijas
+AllowUnknownPeopleSuggestConfHelp=Leiskite nepažįstamiems žmonėms siūlyti konferenciją, kurią jie nori surengti
+AllowUnknownPeopleSuggestBooth=Leisti žmonėms teikti paraiškas dėl kabinos
+AllowUnknownPeopleSuggestBoothHelp=Leisti nepažįstamiems asmenims pretenduoti į kabiną
+PriceOfRegistration=Registracijos kaina
+PriceOfRegistrationHelp=Registracijos arba dalyvavimo renginyje kaina
+PriceOfBooth=Prenumeratos kaina stendui
+PriceOfBoothHelp=Prenumeratos kaina stendui
+EventOrganizationICSLinkProject=Nuoroda į renginio ICS
+EventOrganizationICSLink=Nuoroda į ICS konferencijoms
+ConferenceOrBoothInformation=Informacija apie konferenciją ar stendą
+ConferenceOrBoothFormat=Konferencijos arba kabinos režimas
+ConferenceOrBoothFormatID=Konferencijos arba kabinos režimo ID
+ConferenceOrBoothFormatCode=Konferencijos arba kabinos režimo kodas
+ConferenceOrBoothFormatLabel=Konferencijos arba kabinos režimo etiketė
+Attendees=Dalyviai
+ListOfAttendeesOfEvent=Renginių projektų dalyvių sąrašas
+ListOfConfOrBoothOfEvent=Konferencijų arba renginių projektų stendų sąrašas
+DownloadICSLink=Atsisiųsti ICS failą
+EVENTORGANIZATION_SECUREKEY=„Seed“, kad būtų užtikrintas viešo registracijos puslapio raktas, skirtas konferencijos pasiūlymui
+SERVICE_BOOTH_LOCATION=Paslauga, naudojama sąskaitos faktūros eilutei apie stendo vietą
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Paslauga, naudojama sąskaitos faktūros eilutei apie dalyvio prenumeratą renginiui
+NbVotes=Balsų skaičius
+# Status
+EvntOrgDraft = Projektas
+EvntOrgSuggested = Siūloma
+EvntOrgConfirmed = Patvirtinta
+EvntOrgNotQualified = Nekvalifikuotas
+EvntOrgDone = Atliktas
+EvntOrgCancelled = Atšauktas
+# Other
+SuggestForm = Pasiūlymų puslapis
+SuggestOrVoteForConfOrBooth = Pasiūlymų arba balsavimo puslapis
+EvntOrgRegistrationHelpMessage = Čia galite balsuoti už konferenciją arba pasiūlyti naują renginiui. Taip pat galite pateikti paraišką stendui renginio metu.
+EvntOrgRegistrationConfHelpMessage = Čia galite pasiūlyti naują konferenciją, kuri būtų skatinama renginio metu.
+EvntOrgRegistrationBoothHelpMessage = Čia galite pateikti paraišką stendui renginio metu.
+ListOfSuggestedConferences = Siūlomų konferencijų sąrašas
+ListOfSuggestedBooths=Siūlomos kabinos
+ListOfConferencesOrBooths=Renginių projekto konferencijos arba stendai
+SuggestConference = Pasiūlykite naują konferenciją
+SuggestBooth = Pasiūlykite stendą
+ViewAndVote = Peržiūrėkite ir balsuokite už siūlomus įvykius
+PublicAttendeeSubscriptionGlobalPage = Vieša nuoroda registracijai į renginį
+PublicAttendeeSubscriptionPage = Vieša nuoroda tik registracijai į šį renginį
+MissingOrBadSecureKey = Apsaugos raktas negalioja arba jo nėra
+EvntOrgWelcomeMessage = Ši forma leidžia jums užsiregistruoti kaip naujam renginio dalyviui
+EvntOrgDuration = Ši konferencija prasideda %s ir baigiasi %s.
+ConferenceAttendeeFee = Konferencijos dalyvio mokestis už renginį: „%s“, vykstantis nuo %s iki %s.
+BoothLocationFee = Renginio stendo vieta: „%s“, vykstantis nuo %s iki %s
+EventType = Įvykio tipas
+LabelOfBooth=Stendo etiketė
+LabelOfconference=Konferencijos etiketė
+ConferenceIsNotConfirmed=Registracija negalima, konferencija dar nepatvirtinta
+EventRegistrationAreClosed=Registracija į renginius baigta
+DateMustBeBeforeThan=%s turi būti prieš %s
+DateMustBeAfterThan=%s turi būti po %s
+MaxNbOfAttendeesReached=Pasiektas maksimalus dalyvių skaičius
+NewSubscription=Registracija
+OrganizationEventConfRequestWasReceived=Jūsų pasiūlymas dėl konferencijos gautas
+OrganizationEventBoothRequestWasReceived=Jūsų užklausa dėl stendo gauta
+OrganizationEventPaymentOfBoothWasReceived=Jūsų mokėjimas už stendą užregistruotas
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
+OrganizationEventBulkMailToAttendees=Tai priminimas apie jūsų dalyvavimą renginyje kaip dalyvio
+OrganizationEventBulkMailToSpeakers=Tai priminimas apie jūsų dalyvavimą renginyje kaip pranešėjo
+OrganizationEventLinkToThirdParty=Nuoroda į trečiąją šalį (klientą, tiekėją ar partnerį)
+OrganizationEvenLabelName=Viešas konferencijos arba stendo pavadinimas
+NewSuggestionOfBooth=Paraiška dėl stendo
+NewSuggestionOfConference=Prašymas surengti konferenciją
+EvntOrgRegistrationWelcomeMessage = Sveiki atvykę į konferencijos ar stendų pasiūlymų puslapį.
+EvntOrgRegistrationConfWelcomeMessage = Sveiki atvykę į konferencijos pasiūlymų puslapį.
+EvntOrgRegistrationBoothWelcomeMessage = Sveiki atvykę į stendų pasiūlymų puslapį.
+EvntOrgVoteHelpMessage = Čia galite peržiūrėti ir balsuoti už siūlomus projekto renginius
+VoteOk = Jūsų balsas priimtas.
+AlreadyVoted = Jau balsavote už šį įvykį.
+VoteError = Balsavimo metu įvyko klaida, bandykite dar kartą.
+SubscriptionOk=Jūsų registracija užregistruota
+AmountOfRegistrationPaid=Sumokėta registracijos suma
+ConfAttendeeSubscriptionConfirmation = Jūsų prenumeratos renginiui patvirtinimas
+Attendee = Dalyvis
+PaymentConferenceAttendee = Konferencijos dalyvio mokėjimas
+PaymentBoothLocation = Mokėjimas pagal stendo vietą
+DeleteConferenceOrBoothAttendee=Pašalinti dalyvį
+RegistrationAndPaymentWereAlreadyRecorder=Registracija ir mokėjimas jau buvo užregistruoti el. paštu <b>%s</b>
+EmailAttendee=Dalyvio el. pašto adresas
+EmailCompany=Įmonės el. paštas
+EmailCompanyForInvoice=Įmonės el. pašto adresas (sąskaitai faktūrai, jei skiriasi nuo dalyvio el. pašto adreso)
+ErrorSeveralCompaniesWithEmailContactUs=Rasta keletas įmonių su šiuo el. pašto adresu, todėl negalime automatiškai patvirtinti jūsų registracijos. Norėdami rankiniu būdu patvirtinti, susisiekite su mumis adresu %s.
+ErrorSeveralCompaniesWithNameContactUs=Kadangi buvo rasta keletas įmonių tokiu pavadinimu, negalime automatiškai patvirtinti jūsų registracijos. Norėdami rankiniu būdu patvirtinti, susisiekite su mumis adresu %s.
+NoPublicActionsAllowedForThisEvent=Šiam renginiui nėra viešų veiksmų, atvirų visuomenei
+MaxNbOfAttendees=Maksimalus dalyvių skaičius
+DateStartEvent=Renginio pradžios data
+DateEndEvent=Renginio pabaigos data
+ModifyStatus=Keisti būseną
+ConfirmModifyStatus=Patvirtinkite būsenos pakeitimą
+ConfirmModifyStatusQuestion=Ar tikrai norite modifikuoti pasirinktą (-us) įrašą (-us) %s?
+RecordsUpdated=%s Įrašai atnaujinti
+RecordUpdated=Įrašas atnaujintas
+NoRecordUpdated=Įrašas neatnaujintas
+ProfitPerValidatedAttendee=Pelnas vienam dalyviui
+Confirmed=Patvirtinta
+NotSelected=Nepasirinkta
+TheLinkIsAvailableOnTheProjectEventCard=Nuorodos, skirtos siūlyti konferenciją, balsuoti už ją arba pateikti paraišką dėl stendo, pateiktos projekto / renginio puslapyje.
+ShowedUp=Pasirodė

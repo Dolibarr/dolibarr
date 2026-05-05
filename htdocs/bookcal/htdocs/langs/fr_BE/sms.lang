@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - sms
+SmsSetup=Configuration SMS
+SmsTargets=Objectifs
+SmsRecipients=Objectifs
+SmsRecipient=Objectif
+SmsTo=Objectif
+SmsMessage=Message SMS
+ShowSms=Montrer SMS
+SmsStatusSentPartialy=Partiellement envoyé
+SmsStatusSentCompletely=Complètement envoyé
+SmsSuccessfulySent=SMS envoyé avec succès (du %s au %s)

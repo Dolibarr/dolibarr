@@ -1,0 +1,101 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = خواندن وظایف زمان‌بندی‌شده
+Permission23102 = ساخت/ویرایش  وظایف زمان‌بندی‌شده
+Permission23103 = حذف  وظایف زمان‌بندی‌شده
+Permission23104 = اجرای  وظایف زمان‌بندی‌شده
+# Admin
+CronSetup=برپاسازی مدیریت وظایف زمان‌بندی‌شده
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+KeyForCronAccess=کلیدامنیتی نشانی برای اجرای وظایف‌زمان‌بندی‌شده
+FileToLaunchCronJobs=خطفرمان برای بررسی و اجرای وظایف‌زمانی واجد شرایط
+CronExplainHowToRunUnix=در فضای لینوکس شما باید ورودی crontab زیر را استفاده کنید تا در هر 5 دقیقه فرمان اجرا شود
+CronExplainHowToRunWin=در فضای مایکروسافت ویندوز شما می‌توانید از ابزارهای وظایف زمان‌بندی شده استفاده کنید تا در هر 5 دقیقه دستور را اجرا کنید
+CronMethodDoesNotExists=Class %s does not contain any method %s
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
+CronJobDefDesc=نمایه‌های وظایف زمانی‌بندی شده در فایل توضیح واحد مربوطه تعریف می‌شوند. در هنگامی که این واحد فعال شد، این فایل‌ها بارگذاری شده و در دسترس خواهند بود و در نتیجه شما می‌توانید واظیف را از فهرست ابزارهای مدیر %s مدیریت کنید.
+CronJobProfiles=نمایه‌های از پیش تعیین شدۀ وظایف‌زمان‌بندی‌شده
+# Menu
+EnabledAndDisabled=فعال‌شده و غیرفعال‌شده
+# Page list
+CronLastOutput=آخرین خروجی پس از اجرا
+CronLastResult=آخرین کد نتیجه
+CronCommand=فرمان
+CronList=وظایف برنامه‌ریزی‌شده
+CronDelete=حذف وظایف‌برنامه‌ریزی‌شده
+CronConfirmDelete=آیا مطمئن هستید می‌خواهید این وظایف‌برنامه‌ریزی‌شده را حذف کنید؟
+CronExecute=Launch now
+CronConfirmExecute=آیا مطمئن هستید می‌خواهید اکنون این وظیفۀ برنامه‌ریزی شده را اجرا کنید؟
+CronInfo=واحد وظایف‌برنامه‌ریزی‌شده  به شما امکان اجرای خودکار و زمان‌بندی‌شدۀ وظایف را می‌دهد. این وظایف همچنین امکان اجرای دلخواه دستی نیز دارند.
+CronTask=وظیفه
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
+CronDtStart=قبل نیست
+CronDtEnd=بعد نیست
+CronDtNextLaunch=اجرای بعدی
+CronDtLastLaunch=تاریخ شروع آخرین اجرا
+CronDtLastResult=تاریخ پایان آخرین اجرا
+CronFrequency=بسآمد
+CronClass=کلاس
+CronMethod=متد
+CronModule=واحد
+CronNoJobs=هیچ وظیفه‌ای ثبت نشده
+CronPriority=اولویت
+CronLabel=برچسب
+CronNbRun=تعداد اجراها
+CronMaxRun=حداکثر تعداد اجراها
+CronEach=هر
+JobFinished=وظیفه اجرا شده و به سرانجام رسید
+Scheduled=Scheduled
+#Page card
+CronAdd=اضافه‌کردن وظیفه
+CronEvery=Run job every
+CronObject=نمونه/شیء برای ساخت
+CronArgs=مؤلفه‌ها
+CronSaveSucess=ذخیره با موفقیت
+CronNote=توضیح
+CronFieldMandatory=بخش %s الزامی است
+CronErrEndDateStartDt=تاریخ پایان نمی‌تواند قبل از تاریخ شروع باشد
+StatusAtInstall=وضعیت نصب واحد
+CronStatusActiveBtn=Enable scheduling
+CronStatusInactiveBtn=غیرفعال‌کردن
+CronTaskInactive=This job is disabled (not scheduled)
+CronId=شناسه
+CronClassFile=نام‌فایل حاوی کلاس
+CronModuleHelp=نام فهرست واحدهای Dolibarr (که همچنین با یک واحد خارجی Dolibarr نیز کار می‌کند). <BR> برای مثال برای فراخوان متد fetch از شیء محصولات Dolibarr از /htdocs/<u>product</u>/class/product.class.php استفاده می‌شود، مقدار واحد برابر است با <br><i>product</i>
+CronClassFileHelp=مسیر نسبی و نام فایل برای بارگذاری (مسیر به ریشۀ سرور وب نسبی است).<BR> برای مثال برای فراخوان متند fetch از شیء محصول Dolibarr از htdocs/product/class/<u>product.class.php</u>  استفاده می‌شود، مقدار مربوط به نام فایل کلاس برابر است با: <br><i> product/class/product.class.php </i>
+CronObjectHelp=نام شیء برای بارگذاری. <BR>برای مثال برای فراخوان متد fetch از شیء محصول Dolibarr از /htdocs/product/class/product.class.php استفاده شده، مقدار برای نام فایل کلاس برابر است با <br><i>Product</i>
+CronMethodHelp=نام شیء برای بارگذاری. <BR> برای مثال برای فراخوان متد fetch از شیء محصول Dolibarr از /htdocs/product/class/product.class.php استفاده شده، مقدار برای نام فایل کلاس برابر است با <br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=خط‌فرمان سامان برای اجرا
+CronCreateJob=ساخت یک وظیفۀ برنامه ریزی شدۀ جدید
+CronFrom=از
+# Info
+# Common
+CronType=نوع وظیفه
+CronType_method=روش-متد فراخوان یک کلاس PHP
+CronType_command=فرمان شل
+CronCannotLoadClass=امکان بارگذاری فایل کلاس %s (برای بارگذاری کلاس %s)
+CronCannotLoadObject=فایل کلاس %s بارگذاری شد، اما شیء %s درون آن پیدا نشد
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+JobDisabled=وظیفه غیرفعال است
+MakeLocalDatabaseDumpShort=پشتیبان‌گیری از پایگاه داده محلی
+MakeLocalDatabaseDump=نسخه‌برداری-dump از پایگاه دادۀ محلی. مؤلفه‌های مربوطه از قرار: فشرده‌سازی ('gz'  یا 'bz' یا 'none')، نوع پشتیبان‌گیری  ('mysql', 'pgsql', 'auto'), 1, 'auto' یا نام فایلی که ساخته می‌شود, تعداد فایل‌هائی که نگه‌داری می‌شود است
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+WarningCronDelayed=توجه، برای مقاصد بهینه‌سازی، زمان اجرای بعدی وظایف فعال، وظایف شما ممکن است حداکثر %s ساعت قبل از اجرا تاخیر داشته  باشد.
+DATAPOLICYJob=Data cleaner and anonymizer
+JobXMustBeEnabled=Job %s must be enabled
+EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
+ErrorInBatch=Error when running the job %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Ny aktiva
+AccountancyCodeAsset=Regnskapskode (aktiva)
+AccountancyCodeDepreciationAsset=Regnskapskode (aktiva avskrivningskonto)
+AccountancyCodeDepreciationExpense=Regnskapskode (aktiva kostnadskonto)
+AssetsLines=Aktiva
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
+DeleteType=Slett
+DeleteAnAssetType=Slett en aktivamodell
+ConfirmDeleteAssetType=Er du sikker på at du vil slette denne aktivamodellen?
+ShowTypeCard=Vis modell '%s'
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Aktiva
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Aktiva beskrivelse
+# Admin page
+AssetSetup=Aktiva oppsett
+AssetSetupPage=Innstillingsside for aktiva
+ExtraFieldsAssetModel=Komplementære attributter (aktivets modell)
+AssetsType=Aktivamodell
+AssetsTypeId=Aktivamodell-ID
+AssetsTypeLabel=Aktivamodell-etikett
+AssetsTypes=Aktivamodeller
+ASSET_ACCOUNTANCY_CATEGORY=Regnskapsgruppe for eiendeler
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Forholdsmessig periode i dager for beregning av amortisering over ett år
+# Menu
+MenuAssets=Eiendeler
+MenuNewAsset=Ny eiendel
+MenuAssetModels=Modell eiendeler
+MenuListAssets=Liste
+MenuNewAssetModel=Ny eiendelsmodell
+MenuListAssetModels=Liste
+# Module
+ConfirmDeleteAsset=Vil du virkelig fjerne denne eiendelen?
+# Tab
+AssetDepreciationOptions=Avskrivningsmuligheter
+AssetAccountancyCodes=Regnskapskonti
+AssetDepreciation=Avskrivninger
+# Asset
+Asset=Ressurs
+Assets=Aktiva
+AssetReversalAmountHT=Tilbakeføringsbeløp (uten avgifter)
+AssetAcquisitionValueHT=Anskaffelsesbeløp (uten avgifter)
+AssetRecoveredVAT=Gjenvunnet MVA
+AssetReversalDate=Reverseringsdato
+AssetDateAcquisition=Anskaffelsesdato
+AssetDateStart=Dato for oppstart
+AssetAcquisitionType=Type anskaffelse
+AssetAcquisitionTypeNew=Ny
+AssetAcquisitionTypeOccasion=Brukt
+AssetType=Type eiendel
+AssetTypeIntangible=Immateriell
+AssetTypeTangible=Håndgripelig
+AssetTypeInProgress=Pågår
+AssetTypeFinancial=Finansiell
+AssetNotDepreciated=Ikke avskrevet
+AssetDisposal=Avhending
+AssetConfirmDisposalAsk=Er du sikker på at du vil avhende eiendelen <b> %s </b>?
+AssetConfirmReOpenAsk=Er du sikker på at du vil gjenåpne ressursen <b> %s </b>?
+# Asset status
+AssetInDraft=Kladd
+AssetInProgress=Pågår
+AssetDisposed=Avhendet
+AssetRecorded=Regnskapsført
+# Asset disposal
+AssetDisposalDate=Dato for avhending
+AssetDisposalAmount=Avhendingsverdi
+AssetDisposalType=Type avhending
+AssetDisposalDepreciated=Avskriv overføringsåret
+AssetDisposalSubjectToVat=Avhending MVA-pliktig
+# Asset model
+AssetModel=Eiendel modell
+AssetModels=Eiendel modeller
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Økonomisk avskrivning
+AssetDepreciationOptionAcceleratedDepreciation=Akselerert avskrivning (skatt)
+AssetDepreciationOptionDepreciationType=Type avskrivning
+AssetDepreciationOptionDepreciationTypeLinear=Lineær
+AssetDepreciationOptionDepreciationTypeDegressive=Degressiv
+AssetDepreciationOptionDepreciationTypeExceptional=Eksepsjonell
+AssetDepreciationOptionDegressiveRate=Degressiv rate
+AssetDepreciationOptionDuration=Varighet
+AssetDepreciationOptionDurationType=Type varighet
+AssetDepreciationOptionDurationTypeAnnual=Årlig
+AssetDepreciationOptionDurationTypeMonthly=Månedlig
+AssetDepreciationOptionDurationTypeDaily=Daglig
+AssetDepreciationOptionRate=Takst (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Avskrivningsgrunnlag (ekskl. mva)
+AssetDepreciationOptionAmountBaseDeductibleHT=Egenandelsgrunnlag (ekskl. mva)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Totalbeløp siste avskrivning (ekskl. MVA)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Økonomisk avskrivning
+AssetAccountancyCodeAsset=Ressurs
+AssetAccountancyCodeDepreciationAsset=Avskrivninger
+AssetAccountancyCodeDepreciationExpense=Avskrivninger
+AssetAccountancyCodeValueAssetSold=Verdien av avhendet eiendel
+AssetAccountancyCodeReceivableOnAssignment=Tilgodehavende ved avhending
+AssetAccountancyCodeProceedsFromSales=Inntekter fra avhending
+AssetAccountancyCodeVatCollected=Innkrevd MVA
+AssetAccountancyCodeVatDeductible=Gjenvunnet merverdiavgift på eiendeler
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Akselerert avskrivning (skatt)
+AssetAccountancyCodeAcceleratedDepreciation=Konto
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Avskrivninger
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Tilbaketakelse/provisjon
+# Asset depreciation
+AssetBaseDepreciationHT=Avskrivningsgrunnlag (ekskl. mva)
+AssetDepreciationBeginDate=Start av avskrivning pr
+AssetDepreciationDuration=Varighet
+AssetDepreciationRate=Takst (%%)
+AssetDepreciationDate=Avskrivningsdato
+AssetDepreciationHT=Avskrivninger (ekskl. mva)
+AssetCumulativeDepreciationHT=Akkumulerte avskrivninger (ekskl. mva)
+AssetResidualHT=Restverdi (ekskl. mva)
+AssetDispatchedInBookkeeping=Avskrivninger bokført
+AssetFutureDepreciationLine=Fremtidige avskrivninger
+AssetDepreciationReversal=Reversering
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=ID-en til eiendelen eller modellen som ble funnet, er ikke oppgitt
+AssetErrorFetchAccountancyCodesForMode=Feil ved henting av regnskapskonto for '%s' avskrivningsmodus
+AssetErrorDeleteAccountancyCodesForMode=Feil ved sletting av regnskapskontoer fra '%s' avskrivningsmodus
+AssetErrorInsertAccountancyCodesForMode=Feil ved innsetting av regnskapskontoer for avskrivningsmodus '%s'
+AssetErrorFetchDepreciationOptionsForMode=Feil ved henting av alternativer for '%s' avskrivningsmodus
+AssetErrorDeleteDepreciationOptionsForMode=Feil ved sletting av '%s' alternativer for avskrivningsmodus
+AssetErrorInsertDepreciationOptionsForMode=Feil ved innsetting av '%s' alternativer for avskrivningsmodus
+AssetErrorFetchDepreciationLines=Feil ved henting av registrerte avskrivningslinjer
+AssetErrorClearDepreciationLines=Feil ved tømming av registrerte avskrivningslinjer (reversering og fremtidig)
+AssetErrorAddDepreciationLine=Feil ved å legge til en avskrivningslinje
+AssetErrorCalculationDepreciationLines=Feil ved beregning av avskrivningslinjene (gjenvinning og fremtidig)
+AssetErrorReversalDateNotProvidedForMode=Tilbakeføringsdatoen er ikke oppgitt for '%s' avskrivningsmetoden
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Tilbakeføringsdatoen må være større enn eller lik begynnelsen av inneværende regnskapsår for avskrivningsmetoden '%s'
+AssetErrorReversalAmountNotProvidedForMode=Tilbakeføringsbeløpet er ikke oppgitt for avskrivningsmodus '%s'.
+AssetErrorFetchCumulativeDepreciation=Feil ved henting av akkumulert avskrivningsbeløp fra avskrivningslinjen
+AssetErrorSetLastCumulativeDepreciation=Feil ved registrering av siste akkumulerte avskrivningsbeløp

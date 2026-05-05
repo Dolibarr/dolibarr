@@ -1,0 +1,35 @@
+README (english)
+------------------------------------
+Adding your own password generator module
+------------------------------------
+
+
+If you want to add your own password generator module. This is steps to follow to add your own password generator:
+
+
+***** STEP 1 *****
+
+Copy file
+htdocs/core/modules/security/generate/modGeneratePassNone.class.php
+into
+htdocs/core/modules/security/generate/modGeneratePassMygenerator.class.php
+
+You can choose value of your choice instead of "Mygenerator" in name of new file.
+
+
+***** STEP 2 *****
+
+Edit this file modGeneratePassMygenerator.class.php and change following text:
+
+"class modGeneratePassNone"     into    "class modGeneratePassMygenerator"
+
+Then add code inside the "getDecription" function.
+Then add code inside the "getExample" function.
+Then add code inside the "getNewGeneratedPassword" function.
+Then add code inside the "validatePassword" function.
+
+
+***** STEP 3 *****
+
+Once this file has been edited, you can go to the Dolibarr security setup,
+choose tab "passwords", you will see a new line generator in the "Rules to generate passwords" area.

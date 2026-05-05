@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - salaries
+Salary=Loon
+NewSalary=Nieuw loon
+AddSalary=Loon toevoegen
+AddSalaryPayment=Loonbetaling toevoegen
+SalaryPayment=Loonbetaling
+SalariesPayments=Lonen betalingen
+ShowSalaryPayment=Toon loonbetaling
+THM=Gemiddelde uurprijs
+TJM=Gemiddelde dagprijs
+CurrentSalary=Huidig loon
+LastSalaries=Laatste %slonen
+AllSalaries=Alle lonen
+SalariesStatistics=Loon statistieken
+SalariesAndPayments=Lonen en betalingen
+ConfirmDeleteSalaryPayment=Bent u zeker dat u deze loonbetaling wilt verwijderen?

@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=अंतर
+Margins=मार्जिन
+TotalMargin=कुल मार्जिन
+MarginOnProducts=मार्जिन / उत्पाद
+MarginOnServices=मार्जिन / सेवाएँ
+MarginRate=मार्जिन दर
+ModifyMarginRates=मार्जिन दरें संशोधित करें
+MarkRate=अंक दर
+DisplayMarginRates=मार्जिन दरें प्रदर्शित करें
+DisplayMarkRates=मार्क दरें प्रदर्शित करें
+InputPrice=इनपुट मूल्य
+margin=लाभ मार्जिन प्रबंधन
+margesSetup=लाभ मार्जिन प्रबंधन सेटअप
+MarginDetails=मार्जिन विवरण
+ProductMargins=उत्पाद मार्जिन
+CustomerMargins=ग्राहक मार्जिन
+SalesRepresentativeMargins=बिक्री प्रतिनिधि मार्जिन
+ContactOfInvoice=चालान का संपर्क
+UserMargins=उपयोगकर्ता मार्जिन
+ProductService=उत्पाद या सेवा
+AllProducts=सभी उत्पाद और सेवाएँ
+ChooseProduct/Service=उत्पाद या सेवा चुनें
+ForceBuyingPriceIfNull=यदि परिभाषित नहीं किया गया है तो क्रय/लागत मूल्य को विक्रय मूल्य पर लागू करें
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=वैश्विक छूट के लिए मार्जिन विधि
+UseDiscountAsProduct=एक उत्पाद के रूप में
+UseDiscountAsService=एक सेवा के रूप में
+UseDiscountOnTotal=उप-योग पर
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=यह निर्धारित करता है कि मार्जिन गणना के लिए वैश्विक छूट को उत्पाद, सेवा या केवल उप-योग के रूप में माना जाएगा।
+MARGIN_TYPE=मार्जिन गणना के लिए डिफ़ॉल्ट रूप से सुझाया गया क्रय/लागत मूल्य
+MargeType1=सर्वश्रेष्ठ विक्रेता मूल्य पर मार्जिन
+MargeType2=भारित औसत मूल्य पर मार्जिन (WAP)
+MargeType3=लागत मूल्य पर मार्जिन
+MarginTypeDesc=* सर्वोत्तम खरीद मूल्य पर मार्जिन = विक्रय मूल्य - उत्पाद कार्ड पर परिभाषित सर्वोत्तम विक्रेता मूल्य<br>* भारित औसत मूल्य (WAP) पर मार्जिन = विक्रय मूल्य - उत्पाद भारित औसत मूल्य (WAP) या सर्वोत्तम विक्रेता मूल्य यदि WAP अभी तक परिभाषित नहीं है<br>* लागत मूल्य पर मार्जिन = विक्रय मूल्य - उत्पाद कार्ड या WAP पर परिभाषित लागत मूल्य यदि लागत मूल्य परिभाषित नहीं है, या सर्वोत्तम विक्रेता मूल्य यदि WAP अभी तक परिभाषित नहीं है
+CostPrice=लागत मूल्य
+UnitCharges=यूनिट शुल्क
+Charges=प्रभार
+AgentContactType=वाणिज्यिक एजेंट संपर्क प्रकार
+AgentContactTypeDetails=प्रति संपर्क/पता मार्जिन रिपोर्ट के लिए किस संपर्क प्रकार (चालान पर लिंक) का उपयोग किया जाएगा, इसे परिभाषित करें। ध्यान दें कि किसी संपर्क पर सांख्यिकी पढ़ना विश्वसनीय नहीं है क्योंकि अधिकांश मामलों में संपर्क को चालान पर स्पष्ट रूप से परिभाषित नहीं किया जा सकता है।
+rateMustBeNumeric=दर एक संख्यात्मक मान होना चाहिए
+markRateShouldBeLesserThan100=अंक दर 100 से कम होनी चाहिए
+ShowMarginInfos=मार्जिन जानकारी दिखाएं
+CheckMargins=मार्जिन विवरण
+MarginPerSaleRepresentativeWarning=प्रति उपयोगकर्ता मार्जिन की रिपोर्ट प्रत्येक बिक्री प्रतिनिधि के मार्जिन की गणना करने के लिए तीसरे पक्ष और बिक्री प्रतिनिधियों के बीच लिंक का उपयोग करती है। चूँकि कुछ तृतीय पक्षों के पास कोई समर्पित बिक्री प्रतिनिधि नहीं हो सकता है और कुछ तृतीय पक्ष कई से जुड़े हो सकते हैं, इसलिए कुछ राशियाँ इस रिपोर्ट में शामिल नहीं हो सकती हैं (यदि कोई बिक्री प्रतिनिधि नहीं है) और कुछ अलग-अलग पंक्तियों में दिखाई दे सकती हैं (प्रत्येक बिक्री प्रतिनिधि के लिए)।

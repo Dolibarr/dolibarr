@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modul beállítása
+PaypalDesc=Ez a modul lehetővé teszi az ügyfelek számára a <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> keresztül történő fizetést. Ez felhasználható eseti vagy Dolibarr objektumhoz kapcsolódó fizetésre (számla, megrendelés, ...)
+PaypalOrCBDoPayment=Fizetés PayPal-lal (kártya vagy PayPal)
+PaypalDoPayment=Fizetés PayPal-lal
+PAYPAL_API_SANDBOX=Mód teszt/sandbox
+PAYPAL_API_USER=API felhasználónév
+PAYPAL_API_PASSWORD=API jelszó
+PAYPAL_API_SIGNATURE=API aláírás
+PAYPAL_SSLVERSION=Curl SSL verzió
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Csak "integrált" fizetés (hitelkártya+PayPal) vagy "PayPal" ajánlat
+PaypalModeIntegral=Integrál
+PaypalModeOnlyPaypal=Csak PayPal
+ONLINE_PAYMENT_CSS_URL=A CSS-stíluslap opcionális URL-je az online fizetési oldalon
+ThisIsTransactionId=Ez a tranzakció azonosítója: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=A PayPal fizetési URL-címet is adja meg, amikor e-mailben küld dokumentumot
+NewOnlinePaymentReceived=Új online fizetés érkezett
+NewOnlinePaymentFailed=Új online fizetés próbálkozott, de sikertelen
+ONLINE_PAYMENT_SENDEMAIL=E-mail cím minden fizetési kísérlet után (siker és sikertelenség esetén)
+ReturnURLAfterPayment=Visszaküldési URL fizetés után
+ValidationOfOnlinePaymentFailed=Az online fizetés ellenőrzése nem sikerült
+PaymentSystemConfirmPaymentPageWasCalledButFailed=A fizetést megerősítő oldalt a fizetési rendszer hívta meg, és hibát adott vissza
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API hívás sikertelen.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API hívás sikertelen.
+DetailedErrorMessage=Részletes hibaüzenet
+ShortErrorMessage=Rövid hibaüzenet
+ErrorCode=Hibakód
+ErrorSeverityCode=Hiba súlyossági kódja
+OnlinePaymentSystem=Online fizetési rendszer
+PaypalLiveEnabled=A PayPal "élő" mód engedélyezve (ellenkező esetben teszt/sandbox mód)
+PaypalImportPayment=PayPal fizetések importálása
+PostActionAfterPayment=Műveletek a kifizetések után
+ARollbackWasPerformedOnPostActions=Minden közzétételi művelet visszaállítása megtörtént. Szükség esetén kézzel kell végrehajtania a bejegyzési műveleteket.
+ValidationOfPaymentFailed=A fizetés ellenőrzése nem sikerült
+CardOwner=Kártyatartó
+PayPalBalance=Paypal jóváírás
+OnlineSubscriptionPaymentLine=Online előfizetés rögzítve: %s <br> Fizetve: %s <br> Eredeti IP-cím: %s <br> Tranzakció azonosítója:%s

@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Прочитайте заплановану роботу
+Permission23102 = Створити/оновити заплановану роботу
+Permission23103 = Видалити заплановану роботу
+Permission23104 = Виконати заплановану роботу
+# Admin
+CronSetup=Налаштування планового керування завданнями
+URLToLaunchCronJobs=URL для перевірки та запуску кваліфікованих завдань cron з браузера
+OrToLaunchASpecificJob=Або перевірити та запустити конкретне завдання з браузера
+KeyForCronAccess=Ключ безпеки для URL-адреси для запуску завдань cron
+FileToLaunchCronJobs=Командний рядок для перевірки та запуску кваліфікованих завдань cron
+CronExplainHowToRunUnix=У середовищі Unix ви повинні використовувати наступний запис crontab для запуску командного рядка кожні 5 хвилин
+CronExplainHowToRunWin=У середовищі Microsoft(tm) Windows ви можете використовувати інструменти запланованих завдань, щоб запускати командний рядок кожні 5 хвилин
+CronMethodDoesNotExists=Клас %s не містить жодного методу %s
+CronMethodNotAllowed=Метод %s класу %s знаходиться в чорному списку заборонених методів
+CronJobDefDesc=Профілі завдань Cron визначаються у файлі дескриптора модуля. Коли модуль активовано, вони завантажуються та доступні, тому ви можете адмініструвати завдання з меню інструментів адміністратора %s.
+CronJobProfiles=Список попередньо визначених профілів завдань cron
+# Menu
+EnabledAndDisabled=Увімкнено та вимкнено
+# Page list
+CronLastOutput=Останні результати виконання
+CronLastResult=Останній код результату
+CronCommand=Команда
+CronList=Заплановані роботи
+CronDelete=Видалити заплановані завдання
+CronConfirmDelete=Ви впевнені, що хочете видалити ці заплановані завдання?
+CronExecute=Запустити
+CronConfirmExecute=Ви впевнені, що хочете виконати ці заплановані завдання зараз?
+CronInfo=Модуль запланованих завдань дозволяє планувати завдання для їх автоматичного виконання. Роботи також можна запускати вручну.
+CronTask=Робота
+CronNone=Наступний запуск запланованого завдання
+CronNotYetRan=Ніколи не страчено
+CronDtStart=Не раніше
+CronDtEnd=Не після
+CronDtNextLaunch=Наступне виконання
+CronDtLastLaunch=Дата початку останнього виконання
+CronDtLastResult=Дата закінчення останнього виконання
+CronFrequency=Частота
+CronClass=клас
+CronMethod=Метод
+CronModule=Модуль
+CronNoJobs=Вакансії не зареєстровані
+CronPriority=Пріоритет
+CronLabel=Етикетка
+CronNbRun=Кількість запусків
+CronMaxRun=Максимальна кількість запусків
+CronEach=Кожен
+JobFinished=Робота запущена та завершена
+Scheduled=За розкладом
+#Page card
+CronAdd=Додайте вакансії
+CronEvery=Виконувати завдання кожні
+CronObject=Примірник/об’єкт для створення
+CronArgs=Параметри
+CronSaveSucess=Зберегти успішно
+CronNote=Коментар
+CronFieldMandatory=Поля %s є обов’язковими для заповнення
+CronErrEndDateStartDt=Дата завершення не може передувати даті початку
+StatusAtInstall=Статус при установці модуля
+CronStatusActiveBtn=Увімкнути розклад
+CronStatusInactiveBtn=Вимкнути
+CronTaskInactive=Це завдання вимкнено (не заплановано)
+CronId=id
+CronClassFile=Ім'я файлу з класом
+CronModuleHelp=Назва каталогу модуля Dolibarr (також робота із зовнішнім модулем Dolibarr). <BR> Наприклад, щоб викликати метод вибору продукту Dolibarr об’єкта /htdocs/ <u> product </u> /class/product.class.php, значення для модуля: a0342fccfda19bz78038018fcfda19b27bc03808fcfda19b27bc3e38
+CronClassFileHelp=Відносний шлях та ім’я файлу для завантаження (шлях відносно кореневого каталогу веб-сервера). <BR> Наприклад, щоб викликати метод отримання об'єкта Dolibarr Product htdocs/product/class/ <u> product.class.php </u> , значення для назви файлу класу a0342fccfda19bclass38fcfda19bclass19bclass38fcfda19bclass38
+CronObjectHelp=Ім'я об'єкта для завантаження. <BR> Наприклад, щоб викликати метод вибірки об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення для імені файлу класу: <br> <i> Product a0ae64758bac33z
+CronMethodHelp=Об'єктний метод для запуску. <BR> Наприклад, щоб викликати метод вибірки об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення для методу: <br> <i> fetch a0ae64758bac33z
+CronArgsHelp=Аргументи методу. <BR> Наприклад, щоб викликати метод вибірки об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення параметрів може бути <br> <i> 0, ProductRef </i>
+CronCommandHelp=Системний командний рядок для виконання.
+CronCreateJob=Створити нове завдання за розкладом
+CronFrom=Продавець
+# Info
+# Common
+CronType=Тип роботи
+CronType_method=Метод виклику класу PHP
+CronType_command=Команда оболонки
+CronCannotLoadClass=Не вдається завантажити файл класу %s (щоб використовувати клас %s)
+CronModuleNotEnabledInThisEntity=Модуль Cron не ввімкнено в цій сутності (використовувати метод %s об'єкта %s)
+CronCannotLoadObject=Файл класу %s завантажено, але об’єкт %s в ньому не знайдено
+UseMenuModuleToolsToAddCronJobs=Перейдіть до меню " <a href="%s"> Головна - Інструменти адміністратора - Заплановані завдання </a> ", щоб переглянути та відредагувати заплановані завдання.
+JobDisabled=Робота відключена
+MakeLocalDatabaseDumpShort=Резервне копіювання локальної бази даних
+MakeLocalDatabaseDump=Створіть локальний дамп бази даних. Параметри: стиснення ('gz' або 'bz' або 'none'), тип резервної копії ('mysql', 'pgsql', 'auto'), 1, 'auto' або ім'я файлу для створення, кількість файлів резервної копії для збереження
+MakeSendLocalDatabaseDumpShort=Надіслати резервну копію локальної бази даних
+MakeSendLocalDatabaseDump=Надсилайте резервну копію локальної бази даних електронною поштою. Параметри: до, від, тема, повідомлення, ім'я файлу (ім'я надісланого файлу), фільтр ("sql" лише для резервної копії бази даних)
+BackupIsTooLargeSend=На жаль, останній файл резервної копії завеликий для надсилання електронною поштою
+CleanUnfinishedCronjobShort=Очистити незавершені cronjob
+CleanUnfinishedCronjob=Очистити cronjob, який застряг в обробці, коли процес більше не виконується
+WarningCronDelayed=Увага, з метою продуктивності, незалежно від наступної дати виконання ввімкнених завдань, ваші завдання можуть бути відкладені максимум на %s годин перед запуском.
+DATAPOLICYJob=Засіб очищення та анонімізації даних
+JobXMustBeEnabled=Завдання %s має бути увімкнено
+EmailIfError=Email для попередження про помилку
+JobNotFound=Завдання %s не знайдено в списку завдань (спробуй вимкнути/увімкнути модуль)
+ErrorInBatch=Помилка під час виконання завдання %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Остання виконана запланована робота
+NextScheduledJobExecute=Наступне заплановано завдання для виконання
+NumberScheduledJobError=Кількість запланованих завдань з помилкою
+NumberScheduledJobNeverFinished=Кількість невиконаних запланованих завдань

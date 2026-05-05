@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Pochtachi va SPIP modulini sozlash
+MailmanTitle=Pochtachi pochta ro'yxati tizimi
+TestSubscribe=Pochtachi ro'yxatlariga obuna bo'lishni sinash uchun
+TestUnSubscribe=Pochtachi ro'yxatlariga obunani bekor qilishni tekshirish uchun
+MailmanCreationSuccess=Obuna testi muvaffaqiyatli bajarildi
+MailmanDeletionSuccess=Obunani bekor qilish testi muvaffaqiyatli bajarildi
+SynchroMailManEnabled=Pochta xizmatining yangilanishi amalga oshiriladi
+SynchroSpipEnabled=Spip yangilanishi amalga oshiriladi
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Pochtachi administrator paroli
+DescADHERENT_MAILMAN_URL=Pochtachi obunalari uchun URL manzili
+DescADHERENT_MAILMAN_UNSUB_URL=Pochtachi obunalarini bekor qilish uchun URL manzili
+DescADHERENT_MAILMAN_LISTS=Yangi a'zolarni avtomatik ravishda yozish uchun ro'yxat (lar) (vergul bilan ajratilgan)
+SPIPTitle=SPIP tarkibini boshqarish tizimi
+DescADHERENT_SPIP_SERVEUR=SPIP-server
+DescADHERENT_SPIP_DB=SPIP ma'lumotlar bazasi nomi
+DescADHERENT_SPIP_USER=SPIP ma'lumotlar bazasiga kirish
+DescADHERENT_SPIP_PASS=SPIP ma'lumotlar bazasi paroli
+AddIntoSpip=SPIP-ga qo'shing
+AddIntoSpipConfirmation=Ushbu a'zoni SPIP-ga qo'shishni xohlaysizmi?
+AddIntoSpipError=Foydalanuvchini SPIP-ga qo'shib bo'lmadi
+DeleteIntoSpip=SPIP-dan olib tashlash
+DeleteIntoSpipConfirmation=Ushbu a'zoni SPIP-dan olib tashlamoqchimisiz?
+DeleteIntoSpipError=Foydalanuvchini SPIP-dan o'chirib bo'lmadi
+SPIPConnectionFailed=SPIP-ga ulanib bo'lmadi
+SuccessToAddToMailmanList=%s xat yuboruvchilar ro'yxatiga muvaffaqiyatli qo'shildi %s yoki SPIP ma'lumotlar bazasi
+SuccessToRemoveToMailmanList=%s xat yuboruvchilar ro'yxatidan muvaffaqiyatli o'chirildi %s yoki SPIP ma'lumotlar bazasi

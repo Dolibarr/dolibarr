@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - margins
+MarkRate=Marquer le taux
+DisplayMarkRates=Taux d'affichage
+InputPrice=Prix ​​d'entrée
+margin=Gestion des marges bénéficiaires
+margesSetup=Configuration de la gestion des marges bénéficiaires
+MarginDetails=Détails de la marge
+ProductMargins=Marges du produit
+CustomerMargins=Les marges clients
+SalesRepresentativeMargins=Marges représentatives des ventes
+ContactOfInvoice=Contact de la facture
+UserMargins=Marges de l'utilisateur
+ProductService=Produit et service
+ChooseProduct/Service=Choisissez un produit ou un service
+ForceBuyingPriceIfNull=Force achat / prix de revient au prix de vente si non défini
+ForceBuyingPriceIfNullDetails=Si le prix d'achat/coût n'est pas renseigné lors de l'ajout d'une nouvelle ligne et que cette option est sur "ON", la marge sera de 0%% sur la nouvelle ligne (prix d'achat/coût = prix de vente). Si cette option est sur "OFF" (recommandée), la marge sera égale à la valeur suggérée par défaut (et peut être de 100%% si aucune valeur par défaut n'est trouvée).
+MARGIN_METHODE_FOR_DISCOUNT=Méthode de marge pour les réductions globales
+UseDiscountAsProduct=En tant que produit
+UseDiscountAsService=En tant que service
+UseDiscountOnTotal=Sur le sous-total
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Définit si une remise globale est traitée comme un produit, un service, ou seulement sur le sous-total pour le calcul de la marge.
+MARGIN_TYPE=Prix ​​d'achat / coût suggéré par défaut pour le calcul de la marge
+MargeType1=Marge sur le meilleur prix du vendeur
+MargeType2=Marge sur le prix moyen pondéré (WAP)
+MargeType3=Marge sur prix coûté
+MarginTypeDesc=* Marge sur meilleur prix d'achat = Prix de vente - Meilleur prix vendeur défini sur la fiche produit<br>* Marge sur Prix Moyen Pondéré (PMP) = Prix de vente - Prix Moyen Pondéré du Produit (PMP) ou meilleur prix vendeur si PMP pas encore défini<br>* Marge sur Prix de revient = Prix de vente - Prix de revient défini sur la fiche produit ou PMP si prix de revient non défini, ou meilleur prix vendeur si PMP pas encore défini
+CostPrice=Prix ​​de revient
+UnitCharges=Frais unitaires
+Charges=Des charges
+AgentContactType=Type de contact d'agent commercial
+AgentContactTypeDetails=Définissez quel type de contact (lié aux factures) sera utilisé pour le rapport de marge par contact/adresse. Notez que la lecture des statistiques sur un contact n'est pas fiable car dans la plupart des cas, le contact peut ne pas être défini explicitement sur les factures.
+rateMustBeNumeric=Le taux doit être une valeur numérique
+markRateShouldBeLesserThan100=Le taux de marquage devrait être inférieur à 100
+ShowMarginInfos=Afficher les infos de marge
+CheckMargins=Détail des marges
+MarginPerSaleRepresentativeWarning=Le rapport de marge par utilisateur utilise le lien entre les tiers et les représentants commerciaux pour calculer la marge de chaque représentant commercial. Étant donné que certains tiers peuvent ne pas avoir de représentant commercial dédié et que certains tiers peuvent être liés à plusieurs, certains montants peuvent ne pas être inclus dans ce rapport (s'il n'y a pas de représentant commercial) et certains peuvent apparaître sur des lignes différentes (pour chaque représentant commercial).

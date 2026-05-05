@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marjina
+Margins=Marjinak
+TotalMargin=Marjina osoa
+MarginOnProducts=Marjina / Produktuak
+MarginOnServices=Marjina / Zerbitzuak
+MarginRate=Marjina-tasa
+ModifyMarginRates=Aldatu marjina-tasak
+MarkRate=Marka-tasa
+DisplayMarginRates=Marjina-tasak erakutsi
+DisplayMarkRates=Erakutsi marka-tasak
+InputPrice=Sarrera prezioa
+margin=Irabazi-marjinen kudeaketa
+margesSetup=Irabazi-marjinen kudeaketaren konfigurazioa
+MarginDetails=Marjinaren xehetasunak
+ProductMargins=Produktuen marjinak
+CustomerMargins=Bezeroen marjinak
+SalesRepresentativeMargins=Salmenta-ordezkarien marjinak
+ContactOfInvoice=Fakturazio kontaktua
+UserMargins=Erabiltzailearen marjinak
+ProductService=Produktua edo zerbitzua
+AllProducts=Produktu eta zerbitzu guztiak
+ChooseProduct/Service=Aukeratu produktua edo zerbitzua
+ForceBuyingPriceIfNull=Behartu erosketa/kostu prezioa salmenta preziora, definitu gabe badago
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=Marjina-metodoa deskontu globaletarako
+UseDiscountAsProduct=Produktu gisa.
+UseDiscountAsService=Zerbitzu gisa.
+UseDiscountOnTotal=Azpitotalean
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Marjina kalkulatzeko deskontu global bat produktu, zerbitzu edo azpitotal gisa soilik hartzen den definitzen du.
+MARGIN_TYPE=Marjina kalkulatzeko lehenespenez iradokitako erosketa/kostu prezioa
+MargeType1=Saltzaile onenaren prezioaren marjina
+MargeType2=Batez besteko prezio haztatuaren (BHA) marjina
+MargeType3=Kostu Prezioaren gaineko Marjina
+MarginTypeDesc=* Erosketa prezio onenaren marjina = Salmenta prezioa - Produktuaren txartelean definitutako saltzailearen prezio onena<br>* Batez besteko prezio haztatuaren (BHA) marjina = Salmenta prezioa - Produktuaren batez besteko prezio haztatua (BHA) edo saltzailearen prezio onena BHA oraindik definitu ez badago<br>* Kostu prezioaren marjina = Salmenta prezioa - Produktuaren txartelean edo BHAn definitutako kostu prezioa, kostu prezioa definitu ez badago, edo saltzailearen prezio onena BHA oraindik definitu ez badago
+CostPrice=Kostu prezioa
+UnitCharges=Unitate-kargak
+Charges=Karguak
+AgentContactType=Merkataritza-agentearen kontaktu mota
+AgentContactTypeDetails=Zehaztu zein kontaktu mota (fakturetan lotuta) erabiliko den marjina-txostenerako kontaktu/helbide bakoitzeko. Kontuan izan kontaktu baten estatistikak irakurtzea ez dela fidagarria, kasu gehienetan kontaktua ez baitago esplizituki definituta fakturetan.
+rateMustBeNumeric=Tarifak zenbakizko balioa izan behar du
+markRateShouldBeLesserThan100=Marka-tasa 100 baino txikiagoa izan behar da
+ShowMarginInfos=Erakutsi marjinaren informazioa
+CheckMargins=Marjinen xehetasuna
+MarginPerSaleRepresentativeWarning=Erabiltzaile bakoitzeko marjinaren txostenak hirugarrenen eta salmenta-ordezkarien arteko lotura erabiltzen du salmenta-ordezkari bakoitzaren marjina kalkulatzeko. Hirugarren batzuek ez dute salmenta-ordezkari dedikaturik eta beste batzuk hainbatekin lotuta egon daitezkeenez, baliteke zenbateko batzuk ez sartzea txosten honetan (salmenta-ordezkaririk ez badago) eta beste batzuk lerro desberdinetan agertzea (salmenta-ordezkari bakoitzerako).

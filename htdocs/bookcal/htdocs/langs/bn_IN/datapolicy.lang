@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = ডেটা গোপনীয়তা নীতি
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = ডেটা গোপনীয়তা পরিচালনার মডিউল (জিডিপিআরের সাথে সামঞ্জস্যপূর্ণ)
+# Administration page
+datapolicySetup = মডিউল ডেটা গোপনীয়তা নীতি সেটআপ
+DataDeletion=তথ্য মুছে ফেলা
+DataAnonymization=ডেটার বেনামীকরণ
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = আপনার দেশের আইনের উপর নির্ভর করে (উদাহরণস্বরূপ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> GDPR এর ধারা 5</a>), ব্যক্তিগত তথ্য সংরক্ষণের উদ্দেশ্যে ব্যতীত, যে উদ্দেশ্যে তথ্য সংগ্রহ করা হয়েছিল তার সময়ের চেয়ে বেশি সময় ধরে সংরক্ষণ করতে হবে। <br> এই মডিউলটি একটি নির্দিষ্ট সময়কালের পরে স্বয়ংক্রিয়ভাবে একটি বেনামীকরণ করবে (যে সময়কাল আপনি নীচে নির্দেশ করবেন) এবং যদি বস্তুটির কোনও বিদ্যমান ব্যবসায়িক বস্তু শিশু না থাকে।
+NB_MONTHS = %s মাস
+ONE_YEAR = 1 বছর
+NB_YEARS = %s বছর
+DATAPOLICY_TIERS_CLIENT = ক্রেতা
+DATAPOLICY_TIERS_PROSPECT = সম্ভাবনা
+DATAPOLICY_TIERS_PROSPECT_CLIENT = প্রত্যাশা গ্রাহক
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
+DATAPOLICY_TIERS_FOURNISSEUR = সরবরাহকারী
+DATAPOLICY_CONTACT_CLIENT = ক্রেতা
+DATAPOLICY_CONTACT_PROSPECT = সম্ভাবনা
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = প্রত্যাশা গ্রাহক
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
+DATAPOLICY_CONTACT_FOURNISSEUR = সরবরাহকারী
+DATAPOLICY_ADHERENT = সদস্য
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = আপনি আপনার সমস্ত প্রাসঙ্গিক পরিচিতিদের একটি GDPR ইমেল পাঠাতে পারেন (যারা এখনও একটি ইমেল পাননি এবং যার জন্য আপনি তাদের GDPR চুক্তি সম্পর্কে কিছু নিবন্ধন করেননি)। এটি করতে, নিম্নলিখিত বোতামটি ব্যবহার করুন।
+SendAgreement = ইমেইল পাঠান
+AllAgreementSend = সব ইমেইল পাঠানো হয়েছে
+TXTLINKDATAPOLICYACCEPT = লিঙ্কের জন্য পাঠ্য "চুক্তি"
+TXTLINKDATAPOLICYREFUSE = "অসম্মতি" লিঙ্কের জন্য টেক্সট
+DelayForAnonymization=নাম প্রকাশে বিলম্ব
+DelayForDeletion=মুছে ফেলার জন্য বিলম্ব
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = জিডিপিআর: ব্যক্তিগত তথ্য প্রক্রিয়াকরণ
+DATAPOLICY_consentement = ব্যক্তিগত তথ্য প্রক্রিয়াকরণের জন্য সম্মতি প্রাপ্ত
+DATAPOLICY_opposition_traitement = তার ব্যক্তিগত তথ্য প্রক্রিয়াকরণের বিরোধিতা করে
+DATAPOLICY_opposition_prospection = অনুসন্ধানের উদ্দেশ্যে তার ব্যক্তিগত তথ্য প্রক্রিয়াকরণের বিরোধিতা করে
+# Notes added during an anonymization
+DATAPOLICY_date = চুক্তি/অসম্মতির তারিখ জিডিপিআর
+DATAPOLICY_send = চুক্তির তারিখ ইমেল পাঠানো হয়েছে
+MailSent = ইমেল পাঠানো হয়েছে
+NUMBER_MONTH_BEFORE_DELETION = মুছে ফেলার আগে কত মাস
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

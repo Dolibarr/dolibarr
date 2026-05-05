@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - bills
+BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
+CreateCreditNote=Crear factura de abono
+BillShortStatusConverted=Pagada
+ConfirmClassifyPaidPartiallyReasonProductReturned=Productos parcialmente devueltos
+CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
+Statut=Estatuto
+PaymentConditionShortPT_ORDER=Pedido
+PaymentTypeShortTRA=A validar
+VATIsNotUsedForInvoice=-
+LawApplicationPart1=-
+situationInvoiceShortcode_S=D
+SituationInvoiceProgressColTitle=Progresión

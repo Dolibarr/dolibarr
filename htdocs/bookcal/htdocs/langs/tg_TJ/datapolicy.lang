@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Сиёсати махфияти маълумот
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Модули идоракунии махфияти маълумот (Мутобиқат бо GDPR)
+# Administration page
+datapolicySetup = Танзими сиёсати махфияти модули маълумот
+DataDeletion=Нест кардани маълумот
+DataAnonymization=Анонимизатсияи маълумот
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Вобаста ба қонунҳои кишвари шумо (Мисол <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Моддаи 5</a>, маълумоти шахсӣ бояд аз мӯҳлате нигоҳ дошта шавад, ки барои мӯҳлат барои мӯҳлат нигоҳ доштани маълумоти шахсӣ барои мӯҳлат зиёд нест. он ҷамъоварӣ шудааст, ба истиснои мақсадҳои бойгонӣ.<br>Ин модул ба таври худкор пас аз як муддати муайян бидуни рӯйдодҳо (давомие, ки шумо дар зер нишон медиҳед) ва агар объект ягон кӯдаки объекти тиҷорӣ надошта бошад, беном мекунад.
+NB_MONTHS = %s моҳ
+ONE_YEAR = 1 сол
+NB_YEARS = %s сол
+DATAPOLICY_TIERS_CLIENT = Муштарӣ
+DATAPOLICY_TIERS_PROSPECT = дурнамо
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Имконият / муштарӣ
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = На перспектива / на муштарӣ
+DATAPOLICY_TIERS_FOURNISSEUR = Таъминкунанда
+DATAPOLICY_CONTACT_CLIENT = Муштарӣ
+DATAPOLICY_CONTACT_PROSPECT = дурнамо
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Имконият / муштарӣ
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = На перспектива / на муштарӣ
+DATAPOLICY_CONTACT_FOURNISSEUR = Таъминкунанда
+DATAPOLICY_ADHERENT = аъзо
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = Шумо метавонед почтаи электронии GDPR-ро ба ҳамаи тамосҳои дахлдори худ фиристед (онҳо то ҳол почтаи электронӣ нагирифтаанд ва шумо дар бораи созишномаи GDPR-и онҳо чизе сабт накардаед). Барои ин, тугмаи зеринро истифода баред.
+SendAgreement = Ирсоли почтаи электронӣ
+AllAgreementSend = Ҳама мактубҳо фиристода шуданд
+TXTLINKDATAPOLICYACCEPT = Матн барои истиноди "созишнома"
+TXTLINKDATAPOLICYREFUSE = Матн барои истинод "ихтилоф"
+DelayForAnonymization=Таъхир барои беномсозӣ
+DelayForDeletion=Таъхир барои нест кардан
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Коркарди маълумоти шахсӣ
+DATAPOLICY_consentement = Ризоият барои коркарди маълумоти шахсӣ гирифта шудааст
+DATAPOLICY_opposition_traitement = Ба коркарди маълумоти шахсии ӯ мухолиф аст
+DATAPOLICY_opposition_prospection = Ба коркарди маълумоти шахсии ӯ бо мақсади ҷустуҷӯ мухолиф аст
+# Notes added during an anonymization
+DATAPOLICY_date = Санаи созишнома/ихтилоф GDPR
+DATAPOLICY_send = Санаи созишномаи почтаи электронӣ фиристода шуд
+MailSent = Почтаи электронӣ фиристода шуд
+NUMBER_MONTH_BEFORE_DELETION = Шумораи моҳҳо пеш аз нест кардан
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

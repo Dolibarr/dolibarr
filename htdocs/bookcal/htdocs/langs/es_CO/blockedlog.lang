@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+Fingerprints=Huellas digitales y eventos archivados
+CompanyInitialKey=Clave inicial de la empresa (hash del bloque génesis)
+KoCheckFingerprintValidity=La entrada de registro archivada no es válida. Significa que alguien (¿hacker?) ha modificado algunos datos de este registro después de que se registró, O ha borrado el registro archivado anterior (verifique que exista la línea con el número anterior) O ha modificado la suma de comprobación del registro anterior.
+OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos de esta línea no se modificaron y la entrada sigue a la anterior.
+OkCheckFingerprintValidityButChainIsKo=El registro archivado parece válido en comparación con el anterior, pero la cadena estaba dañada anteriormente.
+AddedByAuthority=Almacenado en una autoridad remota
+NotAddedByAuthorityYet=Aún no almacenado en una autoridad remota
+BlockedLogBillDownload=Descarga de la factura del cliente
+BlockedlogInfoDialog=Detalles de registro
+ListOfTrackedEvents=Lista de eventos rastreados
+TooManyRecordToScanRestrictFilters=Demasiados registros para escanear / analizar. Restrinja la lista con filtros más restrictivos.
+LinkHasBeenDisabledForPerformancePurpose=Por motivos de rendimiento, no se muestra un enlace directo al documento después de la línea 100.
+logBILL_DELETE=Factura de cliente eliminada lógicamente
+logBILL_SENTBYMAIL=Factura de cliente enviada por correo
+logBILL_UNPAYED=Factura de cliente establecida sin pagar
+logBILL_VALIDATE=Factura del cliente validada
+logDONATION_PAYMENT_DELETE=Eliminación lógica de pago de donación
+logDON_DELETE=Eliminación lógica de donación
+logMEMBER_SUBSCRIPTION_DELETE=Eliminación lógica de suscripción de miembros
+logMODULE_RESET=Module BlockedLog fue deshabilitado
+logPAYMENT_ADD_TO_BANK=Pago agregado al banco
+logPAYMENT_CUSTOMER_CREATE=Pago de cliente creado
+logPAYMENT_CUSTOMER_DELETE=Eliminación lógica de pago del cliente
+logPAYMENT_VARIOUS_CREATE=Pago (no asignado a una factura) creado
+logPAYMENT_VARIOUS_DELETE=Pago (no asignado a una factura) eliminación lógica
+logPAYMENT_VARIOUS_MODIFY=Pago (no asignado a una factura) modificado

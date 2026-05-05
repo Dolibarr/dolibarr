@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox moduluaren konfigurazioa
+PayBoxDesc=Modulu honek bezeroek <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a>-en ordainketa egin ahal izateko orrialdeak eskaintzen ditu. Hau doako ordainketa baterako edo Dolibarr objektu jakin baten ordainketarako erabil daiteke (faktura, eskaera, ...).
+PayBoxDoPayment=Ordaindu Paybox-ekin
+YouWillBeRedirectedOnPayBox=Zure kreditu txartelaren informazioa sartzeko Paybox orrialde seguru batera birbideratuko zaitugu.
+SetupPayBoxToHavePaymentCreatedAutomatically=Konfiguratu zure Paybox <b>%s</b> URLarekin, Paybox-ek baliozkotzean ordainketa automatikoki sortzeko.
+YourPaymentHasBeenRecorded=Orrialde honek zure ordainketa erregistratu dela baieztatzen du. Eskerrik asko.
+YourPaymentHasNotBeenRecorded=Zure ordainketa EZ da erregistratu eta transakzioa bertan behera utzi da. Eskerrik asko.
+PAYBOX_CGI_URL_V2=Paybox CGI moduluaren ordainketa-helbidea
+NewPayboxPaymentReceived=Paybox ordainketa berria jaso da
+NewPayboxPaymentFailed=Paybox ordainketa berria saiatu da, baina huts egin du
+PAYBOX_PAYONLINE_SENDEMAIL=Ordainketa saiakeraren ondoren (arrakastatsua edo huts egin ondoren) posta elektroniko bidezko jakinarazpena
+PAYBOX_PBX_SITE=PBX gunearen balioa
+PAYBOX_PBX_RANG=PBX Rang-en balioa
+PAYBOX_PBX_IDENTIFIANT=PBX IDaren balioa
+PAYBOX_HMAC_KEY=HMAC gakoa

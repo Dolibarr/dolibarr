@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Řízení partnerství
+PartnershipDescription=Modul Řízení partnerství
+PartnershipDescriptionLong= Modul Řízení partnerství
+Partnership=Partnerství
+Partnerships=Partnerství
+AddPartnership=Přidat partnerství
+CancelPartnershipForExpiredMembers=Partnerství: Zrušit partnerství členů s vypršeným předplatným
+PartnershipCheckBacklink=Partnerství: Zkontrolujte odkazující zpětný odkaz
+# Menu
+NewPartnership=Nové partnerství
+NewPartnershipbyWeb=Vaše žádost o partnerství byla úspěšně přidána. Možná vás brzy budeme kontaktovat...
+ListOfPartnerships=Seznam partnerství
+# Admin page
+PartnershipSetup=Nastavení partnerství
+PartnershipAbout=O partnerství
+PartnershipAboutPage=Stránka o partnerství
+partnershipforthirdpartyormember=Status partnera musí být nastaven na „třetí stranu“ nebo „člena“.
+PARTNERSHIP_IS_MANAGED_FOR=Partnerství spravované pro
+PARTNERSHIP_BACKLINKS_TO_CHECK=Zpětné odkazy ke kontrole
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Počet dní před zrušením partnerství po vypršení předplatného
+ReferingWebsiteCheck=Kontrola odkazujících webových stránek
+ReferingWebsiteCheckDesc=Můžete povolit funkci, která ověřuje, zda vaši partneři přidali zpětný odkaz na domény vašich webových stránek na svých vlastních webových stránkách.
+PublicFormRegistrationPartnerDesc=Dolibarr vám může poskytnout veřejnou URL adresu/webovou stránku, aby externí návštěvníci mohli požádat o účast v partnerském programu.
+# Object
+DeletePartnership=Smazat partnerství
+PartnershipDedicatedToThisThirdParty=Partnerství věnované této třetí straně
+PartnershipDedicatedToThisMember=Partnerství věnované tomuto členovi
+DatePartnershipStart=Datum zahájení
+DatePartnershipEnd=Datum ukončení
+ReasonDecline=Důvod odmítnutí
+ReasonDeclineOrCancel=Důvod odmítnutí nebo zrušení
+PartnershipAlreadyExist=Partnerství již existuje
+ManagePartnership=Správa partnerství
+BacklinkNotFoundOnPartnerWebsite=Zpětný odkaz nebyl nalezen na partnerských webových stránkách
+ConfirmClosePartnershipAsk=Jste si jisti, že chcete toto partnerství zrušit?
+PartnershipType=Typ partnerství
+PartnershipRefApproved=Partnerství %s schváleno
+KeywordToCheckInWebsite=Pokud chcete zkontrolovat, zda je dané klíčové slovo přítomno na webových stránkách každého partnera, definujte toto klíčové slovo zde.
+PartnershipDraft=Návrh
+PartnershipAccepted=Přijato
+PartnershipRefused=Odmítnuto
+PartnershipCanceled=Zrušený
+PartnershipManagedFor=Partneři jsou
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerství bude brzy zrušeno
+SendingEmailOnPartnershipRefused=Partnerství odmítnuto
+SendingEmailOnPartnershipAccepted=Partnerství přijato
+SendingEmailOnPartnershipCanceled=Partnerství zrušeno
+YourPartnershipWillSoonBeCanceledTopic=Partnerství bude brzy zrušeno
+YourPartnershipRefusedTopic=Partnerství odmítnuto
+YourPartnershipAcceptedTopic=Partnerství přijato
+YourPartnershipCanceledTopic=Partnerství zrušeno
+YourPartnershipWillSoonBeCanceledContent=Rádi bychom vás informovali, že naše partnerství bude brzy zrušeno (neobnovili jsme partnerství nebo nebyly splněny podmínky pro jeho obnovení). Pokud jste tuto informaci obdrželi z důvodu chyby, kontaktujte nás.
+YourPartnershipRefusedContent=Rádi bychom vás informovali, že vaše žádost o partnerství byla zamítnuta. Nebyly splněny požadované předpoklady. V případě potřeby dalších informací nás prosím kontaktujte.
+YourPartnershipAcceptedContent=Rádi bychom Vás informovali, že Vaše žádost o partnerství byla přijata.
+YourPartnershipCanceledContent=Rádi bychom vás informovali, že naše partnerství bylo zrušeno. V případě potřeby dalších informací nás prosím kontaktujte.
+CountLastUrlCheckError=Počet chyb při poslední kontrole URL
+LastCheckBacklink=Datum poslední kontroly URL adresy
+NewPartnershipRequest=Nová žádost o partnerství
+NewPartnershipRequestDesc=Tento formulář vám umožňuje požádat o účast v jednom z našich partnerských programů. Pokud potřebujete s vyplněním tohoto formuláře pomoci, kontaktujte nás prosím e-mailem na adrese <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Tato stránka musí obsahovat alespoň jeden odkaz na jednu z následujících domén: %s
+IPOfApplicant=IP žadatele
+PartnershipToReopen=Pro znovuotevření
+PartnershipConfirmReOpenAsk=Jste si jisti, že chcete znovu otevřít toto partnerství <b> %s</b>?

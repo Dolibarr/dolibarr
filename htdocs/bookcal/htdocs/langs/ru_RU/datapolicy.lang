@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Политика конфиденциальности данных
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = модуль для управления конфиденциальностью данных (соответствие GDPR)
+# Administration page
+datapolicySetup = модуль Политика конфиденциальности данных настройка
+DataDeletion=Удаление данных
+DataAnonymization=Анонимизация данных
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = В зависимости от законов вашей страны (Пример <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Статья 5</a> GDPR), Личныйданные должны храниться в течение периода, не превышающего срока, в течение которого данные необходимы для цели, для которой они были собраны, за исключением архивных целей.<br>Это модуль выполнит анонимизацию автоматически после определенного периода без событий (период, который вы укажете ниже) и, если у объекта нет существующих дочерних бизнес-объектов.
+NB_MONTHS = %s месяцев
+ONE_YEAR = 1 год
+NB_YEARS = %s лет
+DATAPOLICY_TIERS_CLIENT = Клиент
+DATAPOLICY_TIERS_PROSPECT = Лид
+DATAPOLICY_TIERS_PROSPECT_CLIENT = перспектива/клиент
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ни перспектива/Нор клиент
+DATAPOLICY_TIERS_FOURNISSEUR = Поставщик
+DATAPOLICY_CONTACT_CLIENT = Клиент
+DATAPOLICY_CONTACT_PROSPECT = Лид
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = перспектива/клиент
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ни перспектива/Нор клиент
+DATAPOLICY_CONTACT_FOURNISSEUR = Поставщик
+DATAPOLICY_ADHERENT = Участник
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = Вы можете отправить электронное письмо о GDPR всем своим контактам (которые еще не получили электронное письмо и, для которого вы не зарегистрировали ничего об их соглашении GDPR). Для этого используйте кнопку следующий.
+SendAgreement = Отправить письма
+AllAgreementSend = Все письма отправлены
+TXTLINKDATAPOLICYACCEPT = Текст ссылка «соглашения»
+TXTLINKDATAPOLICYREFUSE = Текст для ссылка «несогласия»
+DelayForAnonymization=Задержка для анонимизации
+DelayForDeletion=Задержка удаления
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: обработка Личныйданных
+DATAPOLICY_consentement = Получено согласие на обработку Личныйданных.
+DATAPOLICY_opposition_traitement = Выступает против обработки своих Личныйданных
+DATAPOLICY_opposition_prospection = Выступает против обработки его Личныйданных в целях разведки
+# Notes added during an anonymization
+DATAPOLICY_date = дата согласия/несогласия GDPR
+DATAPOLICY_send = дата электронное письмо с соглашением отправлено
+MailSent = Письмо было отправлено
+NUMBER_MONTH_BEFORE_DELETION = номер месяцев до удаления
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

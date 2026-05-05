@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - eventorganization
+ModuleEventOrganizationName =Organização do Evento
+EventOrganizationDescription =Organização do Evento atraves do modulo Projetos
+EventOrganizationSetup=Configuracao de Organização do Evento
+EventOrganizationSetupPage =Organização do Eventos pagina de configuracao
+EvntOrgDraft =Minuta

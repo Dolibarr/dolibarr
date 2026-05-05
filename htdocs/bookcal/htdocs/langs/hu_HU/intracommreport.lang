@@ -1,0 +1,38 @@
+IntraCommReport=Intracomm jelentés
+IntraCommReports=Intracomm jelentések
+
+Module68000Name = Intracomm jelentés
+Module68000Desc = Intracomm jelentéskezelés (a francia DEB/DES formátum támogatása)
+IntracommReportSetup = Intracommreport modul beállítása
+IntracommReportAbout = Az intracommreportról
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Akkreditációs szám (a mellékelt CISD-től)
+INTRACOMMREPORT_TYPE_ACTEUR=A színész típusa
+INTRACOMMREPORT_ROLE_ACTEUR=A színész által játszott szerep
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Kötelezettségi szint a bemutatkozásnál
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=A szállítmányokra vonatkozó kötelezettség szintje
+INTRACOMMREPORT_CATEG_FRAISDEPORT=A "Szállítás" típusú szolgáltatások kategóriája
+INTRACOMMREPORT_NUM_DECLARATION=Bejelentő száma
+# Menu
+MenuIntracommReport=Intracomm jelentés
+MenuIntracommReportNew=Új deklaráció
+MenuIntracommReportList=Lista
+# View
+NewDeclaration=Új nyilatkozat
+Declaration=Nyilatkozat
+AnalysisPeriod=Elemzési időszak
+TypeOfDeclaration=Deklaráció típusa
+DEB=Árucsere nyilatkozat (DEB)
+DES=Szolgáltatáscsere nyilatkozat (DES)
+# Export page
+IntracommReportTitle=XML fájl elkészítése ProDouane formátumban
+# List
+IntracommReportList=A generált deklarációk listája
+IntracommReportNumber=Deklaráció száma
+IntracommReportPeriod=Az elemzés időszaka
+IntracommReportTypeDeclaration=Deklaráció típusa
+IntracommReportDownload=XML fájl letöltése
+# Invoice
+IntracommReportTransportMode=A szállítás módja
+DeleteIntraCommReport=IntraComm jelentés törlése

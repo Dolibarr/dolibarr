@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Настройка на модул PayPal
+PaypalDesc=Този модул позволява плащане от клиенти чрез <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Това може да се използва за ad-hoc плащане или за плащане, свързан с обект на Dolibarr (фактура, поръчка, .. .)
+PaypalOrCBDoPayment=Плащане с PayPal (Карта или PayPal)
+PaypalDoPayment=Плащане с PayPal
+PAYPAL_API_SANDBOX=Тестов режим (пясъчник)
+PAYPAL_API_USER=Потребителско име за API
+PAYPAL_API_PASSWORD=Парола за API
+PAYPAL_API_SIGNATURE=Подпис за API
+PAYPAL_SSLVERSION=Curl SSL версия
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предлага "интегрално" плащане (Кредитна карта + PayPal) или само PayPal
+PaypalModeIntegral=Интегрално
+PaypalModeOnlyPaypal=Само PayPal
+ONLINE_PAYMENT_CSS_URL=Допълнителен URL адрес на таблицата със CSS стилове в страницата за онлайн плащане
+ThisIsTransactionId=Това е идентификатора на транзакцията: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Добавяне на URL адрес за PayPal плащане при изпращане на документ по имейл
+NewOnlinePaymentReceived=Получено е ново онлайн плащане
+NewOnlinePaymentFailed=Нов опит за онлайн плащане не бе успешен
+ONLINE_PAYMENT_SENDEMAIL=Имейл адрес за известия след всеки опит за плащане (успешен и неуспешен)
+ReturnURLAfterPayment=URL адрес за пренасочване след плащане
+ValidationOfOnlinePaymentFailed=Проверката на онлайн плащането не е успешна
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Страницата за потвърждение на плащането беше извикана от платежната система, но върна грешка
+SetExpressCheckoutAPICallFailed=Извикването на SetExpressCheckout API не е успешно.
+DoExpressCheckoutPaymentAPICallFailed=Извикването на DoExpressCheckoutPayment API не е успешно.
+DetailedErrorMessage=Подробно съобщение за грешка
+ShortErrorMessage=Кратко съобщение за грешка
+ErrorCode=Код на грешка
+ErrorSeverityCode=Код на приоритет на грешка
+OnlinePaymentSystem=Система за онлайн разплащания
+PaypalLiveEnabled=Разрешен е режим "на живо" на PayPal (в противен случай тестов режим (пясъчник))
+PaypalImportPayment=Импортиране на PayPal плащания
+PostActionAfterPayment=Действия след плащане
+ARollbackWasPerformedOnPostActions=Извършена е отмяна на всички действия след плащане. Трябва да завършите действията ръчно, ако са необходими.
+ValidationOfPaymentFailed=Валидирането на плащането не е успешно
+CardOwner=Титуляр
+PayPalBalance=PayPal кредит
+OnlineSubscriptionPaymentLine=Онлайн абонамент, записан на %s<br>Платен чрез %s<br>Първоначален IP адрес: %s<br>ИД на транзакция: %s

@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Ish oqimi modulini sozlash
+WorkflowDesc=Ushbu modul ba'zi bir avtomatik harakatlarni ta'minlaydi. Odatiy bo'lib, ish oqimi ochiq (siz o'zingiz xohlagan tartibda ish qilishingiz mumkin), lekin bu erda siz ba'zi avtomatik harakatlarni faollashtirishingiz mumkin.
+ThereIsNoWorkflowToModify=Faollashtirilgan modullar bilan ishlash jarayonini o'zgartirishlar mavjud emas.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Tijorat taklifi imzolanganidan so'ng avtomatik ravishda savdo buyurtmasini yarating (yangi buyurtma taklif bilan bir xil miqdorda bo'ladi)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tijorat taklifi imzolangandan so'ng mijozning hisob-fakturasini avtomatik ravishda yarating (yangi hisob-faktura taklif bilan bir xil miqdorda bo'ladi)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Shartnoma tasdiqlangandan so'ng mijozning hisob-fakturasini avtomatik ravishda yarating
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Savdo buyurtmasi yopilgandan so'ng avtomatik ravishda mijozning hisob-fakturasini yarating (yangi hisob-faktura buyurtma bilan bir xil miqdorda bo'ladi)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Chipta yaratishda avtomatik ravishda intervensiya yarating.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Savdo buyurtmasi to'lovga o'rnatilganda, bog'langan manba takliflarini hisoblangan deb tasniflang (va buyurtma miqdori imzolangan bog'langan takliflarning umumiy miqdori bilan bir xil bo'lsa)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Mijoz hisob-fakturasi tasdiqlanganda, bog'langan manba takliflarini hisoblangan deb tasniflang (va agar hisob-faktura miqdori imzolangan bog'langan takliflarning umumiy miqdori bilan bir xil bo'lsa)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Mijoz hisob-fakturasi to'lanadigan qilib belgilanganda, bog'langan manba savdo buyurtmalarini hisoblangan deb tasniflang (va agar schyot-faktura miqdori bog'langan savdo buyurtmalarining umumiy miqdori bilan bir xil bo'lsa). Agar siz n ta buyurtma uchun 1 ta hisob-faktura yaratsangiz, bu barcha buyurtmalar uchun ham toʻlovni belgilashi mumkin.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Mijoz hisob-fakturasi tasdiqlanganda, barcha bog'langan manba sotish buyurtmalarini hisoblangan deb tasniflang (va agar schyot-faktura miqdori bog'langan manba savdo buyurtmalarining umumiy miqdori bilan bir xil bo'lsa). Agar siz n ta buyurtma uchun 1 ta umumiy hisob-faktura yaratsangiz, bu barcha manba buyurtmalarini toʻlovga oʻrnatishi mumkin.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Mijoz hisob-fakturasi tasdiqlanganda, bog'langan savdo buyurtmasini (agar bitta bo'lsa) hisoblangan deb tasniflang, agar bog'langan sotish buyurtmasining umumiy miqdori undan chiqarilgan barcha schyot-fakturalarning umumiy miqdoriga teng bo'lsa. Agar siz 1 ta buyurtma uchun n ta hisob-faktura yaratsangiz, bu barcha hisob-fakturalar tekshirilishi bilanoq buyurtmani toʻlovga oʻrnatish imkonini beradi.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Yuk jo'natish tasdiqlanganda, bog'langan manba savdo buyurtmalarini jo'natilgan deb tasniflang (va barcha jo'natmalar tomonidan jo'natilgan miqdor yangilash tartibidagi bilan bir xil bo'lsa)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Yuk yopilganda, bog'langan manba savdo buyurtmasini jo'natilgan deb tasniflang (va agar barcha jo'natmalar tomonidan jo'natilgan miqdor yangilash tartibidagi bilan bir xil bo'lsa)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Sotuvchi hisob-fakturasi tasdiqlanganda, bog'langan manba sotuvchisi taklifini hisoblangan deb tasniflang (va hisob-faktura miqdori bog'langan takliflarning umumiy miqdori bilan bir xil bo'lsa)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Sotuvchi hisob-fakturasi tasdiqlanganda, bog'langan manba xarid buyurtmasini to'langan deb tasniflang (va hisob-faktura miqdori bog'langan buyurtmalarning umumiy miqdori bilan bir xil bo'lsa)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Qabul tasdiqlanganda, bog'langan manba xarid buyurtmasini olingan deb tasniflang (va barcha qabullar tomonidan qabul qilingan miqdor yangilash uchun xarid buyurtmasi bilan bir xil bo'lsa)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Qabulxona yopilganda, bog'langan manba xarid buyurtmalarini qabul qilingan deb tasniflang (va agar xarid buyurtmasidan chiqarilgan barcha qabullar tomonidan qabul qilingan miqdor yangilash uchun xarid buyurtmasi bilan bir xil bo'lsa)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Mijoz hisob-fakturasi tasdiqlanganda, bog'langan manba jo'natmasini yopiq deb tasniflang (va hisob-faktura miqdori bog'langan jo'natmalarning umumiy miqdori bilan bir xil bo'lsa)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Mijoz hisob-fakturasi tasdiqlanganda, bog'langan manba jo'natmasini hisoblangan deb tasniflang (va agar hisob-faktura miqdori bog'langan jo'natmalarning umumiy miqdori bilan bir xil bo'lsa)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Xarid fakturasi tasdiqlanganda, bog'langan manba qabullarini yopiq deb tasniflang (va hisob-faktura miqdori bog'langan qabullarning umumiy miqdori bilan bir xil bo'lsa)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Xarid fakturasi tasdiqlanganda, bog'langan manba qabullarini hisoblangan deb tasniflang (va hisob-faktura miqdori bog'langan qabullarning umumiy miqdori bilan bir xil bo'lsa)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Chipta yaratilganda, uni mavjud shartnomalar bilan bog'lang, chipta bilan bir xil uchinchi tomon
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Avtomatik ravishda chiptani shartnomalar bilan bog'lashda, ota-onalarning shartnomalarini qidiring
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Chipta yopilganda chipta bilan bog'liq barcha aralashuvlarni yoping
+AutomaticCreation=Avtomatik yaratish
+AutomaticClassification=Avtomatik tasnif
+AutomaticClosing=Avtomatik yopish
+AutomaticLinking=Avtomatik ulanish

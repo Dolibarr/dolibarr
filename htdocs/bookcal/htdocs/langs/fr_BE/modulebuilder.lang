@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - modulebuilder
+DefinePropertiesFromExistingTable=Define properties from an existing table
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object

@@ -1,0 +1,361 @@
+<?php
+/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/product/dynamic_price/class/price_global_variable.class.php
+ *	\ingroup    product
+ *  \brief      Class for accessing price global variables table
+ */
+
+
+/**
+ *	Class for accessing price global variables table
+ */
+class PriceGlobalVariable
+{
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var ?string
+	 */
+	public $code;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+	 * @var int|string|float
+	 */
+	public $value;
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_global_variable";
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+
+	/**
+	 *  Create object into database
+	 *
+	 *  @param	User	$user        User that creates
+	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		$error = 0;
+
+		$this->checkParameters();
+
+		// Insert request
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
+		$sql .= "code, description, value";
+		$sql .= ") VALUES (";
+		$sql .= " ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
+		$sql .= " ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
+		$sql .= " ".((float) $this->value);
+		$sql .= ")";
+
+		$this->db->begin();
+
+		dol_syslog(__METHOD__);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
+
+			/*
+			if (!$notrigger) {
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action calls a trigger.
+
+				//// Call triggers
+				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+				//// End call triggers
+			}
+			*/
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return $this->id;
+		}
+	}
+
+
+	/**
+	 *  Load object in memory from the database
+	 *
+	 *  @param		int		$id    	Id object
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
+	 */
+	public function fetch($id)
+	{
+		$sql = "SELECT code, description, value";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE rowid = ".((int) $id);
+
+		dol_syslog(__METHOD__);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$this->id = $id;
+				$this->code			= $obj->code;
+				$this->description = $obj->description;
+				$this->value		= $obj->value;
+				$this->checkParameters();
+				return 1;
+			} else {
+				return 0;
+			}
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Update object into database
+	 *
+	 *  @param	User|null	$user       User that modifies
+	 *  @param  int			$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int     		   	 	Return integer <0 if KO, >0 if OK
+	 */
+	public function update($user = null, $notrigger = 0)
+	{
+		$error = 0;
+
+		$this->checkParameters();
+
+		// Update request
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
+		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
+		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
+		$sql .= " value = ".((float) $this->value);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(__METHOD__);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		// if (! $error)
+		// {
+		//     if (! $notrigger)
+		//     {
+		//         // Uncomment this and change MYOBJECT to your own tag if you
+		//         // want this action calls a trigger.
+
+		//         //// Call triggers
+		//         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//         //// End call triggers
+		//     }
+		// }
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+
+	/**
+	 *  Delete object in database
+	 *
+	 * 	@param	int			$rowid		 Row id of global variable
+	 *	@param  User		$user        User that deletes
+	 *  @param  int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int						 Return integer <0 if KO, >0 if OK
+	 */
+	public function delete($rowid, $user, $notrigger = 0)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		/*
+		if (!$error) {
+			if (!$notrigger) {
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action calls a trigger.
+
+				//// Call triggers
+				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+				//// End call triggers
+			}
+		}
+		*/
+
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
+			$sql .= " WHERE rowid = ".((int) $rowid);
+
+			dol_syslog(__METHOD__);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
+	 *	Initialise object with example values
+	 *	Id must be 0 if object instance is a specimen
+	 *
+	 *	@return int
+	 */
+	public function initAsSpecimen()
+	{
+		$this->id = 0;
+		$this->code = '';
+		$this->description = '';
+		$this->value = '';
+
+		return 1;
+	}
+
+	/**
+	 *	Checks if all parameters are in order
+	 *
+	 *	@return	void
+	 */
+	public function checkParameters()
+	{
+		// Clean parameters
+		if (isset($this->code)) {
+			$this->code = trim($this->code);
+		}
+		if (isset($this->description)) {
+			$this->description = trim($this->description);
+		}
+
+		// Check parameters
+		if (empty($this->value) || !is_numeric($this->value)) {
+			$this->value = 0;
+		}
+	}
+
+	/**
+	 *    List all price global variables
+	 *
+	 *    @return	PriceGlobalVariable[]|int<-1,-1>	Array of price global variables, <0 if ko
+	 */
+	public function listGlobalVariables()
+	{
+		$sql = "SELECT rowid, code, description, value";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " ORDER BY code";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$retarray = array();
+
+			while ($record = $this->db->fetch_array($resql)) {
+				$variable_obj = new PriceGlobalVariable($this->db);
+				$variable_obj->id = $record["rowid"];
+				$variable_obj->code = $record["code"];
+				$variable_obj->description = $record["description"];
+				$variable_obj->value = $record["value"];
+				$variable_obj->checkParameters();
+				$retarray[] = $variable_obj;
+			}
+
+			$this->db->free($resql);
+			return $retarray;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+}

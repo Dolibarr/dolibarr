@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler

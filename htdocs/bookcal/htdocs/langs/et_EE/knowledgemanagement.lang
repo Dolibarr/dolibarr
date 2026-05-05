@@ -1,0 +1,45 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+# Generic
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Teadmushaldussüsteem
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Teadmushalduse (KM) või klienditoe baasi haldamine
+# Admin page
+KnowledgeManagementSetup = Teadmushaldussüsteemi seadistamine
+KnowledgeManagementSetupPage = Teadmushaldussüsteemi seadistusleht
+# About page
+KnowledgeManagementAbout = Teadmushalduse kohta
+KnowledgeManagementAboutPage = Teadmushalduse leht
+KnowledgeManagementArea = Teadmushaldus
+MenuKnowledgeRecord = Teadmusbaas
+MenuKnowledgeRecordShort = Teadmusbaas
+ListKnowledgeRecord = Artiklite loend
+NewKnowledgeRecord = Uus artikkel
+ValidateReply = Lahenduse valideerimine
+KnowledgeRecords = Artiklid
+KnowledgeRecord = Artikkel
+KnowledgeRecordExtraFields = Artikli lisaväljad
+GroupOfTicket=Piletite grupp
+YouCanLinkArticleToATicketCategory=Saate artikli linkida piletigrupiga (nii et artikkel on selle grupi kõigil piletitel esile tõstetud).
+SuggestedForTicketsInGroup=Soovitatud piletite loomisel
+SetObsolete=Määra aegunuks
+ConfirmCloseKM=Kas kinnitate selle artikli sulgemist aegununa?
+ConfirmReopenKM=Kas soovite selle artikli olekuks "Valideeritud" taastada?
+BoxLastKnowledgerecordDescription=Viimased %s artiklid
+BoxLastKnowledgerecord=Viimased artiklid
+BoxLastKnowledgerecordContent=Viimased artiklid
+BoxLastKnowledgerecordModifiedContent=Viimati muudetud artiklid
+BoxLastModifiedKnowledgerecordDescription=Viimati muudetud artiklid %s
+BoxLastModifiedKnowledgerecord=Viimati muudetud artiklid

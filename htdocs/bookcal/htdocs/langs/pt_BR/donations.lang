@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - donations
+Donation=Doação
+Donations=Doações
+DonationRef=Ref. da doação
+AddDonation=Criar uma doação
+NewDonation=Nova doação
+DeleteADonation=Excluir uma doação
+ConfirmDeleteADonation=Tem certeza que quer excluir esta doação?
+PublicDonation=Doação pública
+DonationsArea=Área de doações
+DonationStatusPromiseNotValidated=Promessa não validada
+DonationStatusPaid=Doação recebida
+DonationStatusPromiseValidatedShort=Validada
+DonationTitle=Recibo de doação
+DonationDate=Data da doação
+DonationReceipt=Recibo de doação
+DonationsModels=Modelo de documento de recepção de doação
+DonationRecipient=Beneficiário da doação
+IConfirmDonationReception=O beneficiário declara ter recebido, como doação, o seguinte montante
+MinimumAmount=O montante mínimo é de %s
+DONATION_ART200=Mostrar o artigo 200 do CGI se estiver preocupado
+DONATION_ART238=Mostrar o artigo 238 do CGI se estiver preocupado
+DONATION_ART978=Mostrar artigo 978 do CGI se estiver preocupado
+DonationPayment=Pagamento da doação
+donationPublic=Doação pública
+AnyAmountForDonation=Qualquer quantia à sua escolha

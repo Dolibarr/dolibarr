@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Настройка модуля PayPal
+PaypalDesc=Этот модуль позволяет клиентам осуществлять платежи через <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Это можно использовать для специального платежа или для платежа, связанного с объектом Dolibarr (счет, заказ, ...)
+PaypalOrCBDoPayment=Оплата через PayPal (карта или PayPal)
+PaypalDoPayment=Оплата с PayPal
+PAYPAL_API_SANDBOX=Режим тестирования / песочницы
+PAYPAL_API_USER=API имя пользователя
+PAYPAL_API_PASSWORD=API пароль
+PAYPAL_API_SIGNATURE=API подпись
+PAYPAL_SSLVERSION=Версия Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предлагать «интегральный» платеж (кредитная карта + PayPal) или только «PayPal»
+PaypalModeIntegral=Интегральный
+PaypalModeOnlyPaypal=только PayPal
+ONLINE_PAYMENT_CSS_URL=Необязательный URL-адрес таблицы стилей CSS на странице онлайн-платежей
+ThisIsTransactionId=Это идентификатор транзакции: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Включите URL-адрес платежа PayPal при отправке документа по электронной почте
+NewOnlinePaymentReceived=Получен новый онлайн-платеж
+NewOnlinePaymentFailed=Попытка нового онлайн-платежа не удалась
+ONLINE_PAYMENT_SENDEMAIL=Адрес электронной почты для уведомлений после каждой попытки платежа (для успешной и неудачной)
+ReturnURLAfterPayment=Ссылка, куда будет возвращаться пользователь после оплаты
+ValidationOfOnlinePaymentFailed=Проверка онлайн-платежа не удалась
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Страница подтверждения платежа была вызвана платежной системой и вернула ошибку
+SetExpressCheckoutAPICallFailed=Ошибка вызова API SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=Ошибка вызова API DoExpressCheckoutPayment.
+DetailedErrorMessage=Подробное сообщение об ошибке
+ShortErrorMessage=Короткое сообщение об ошибке
+ErrorCode=Код ошибки
+ErrorSeverityCode=Код серьезности ошибки
+OnlinePaymentSystem=Система онлайн-платежей
+PaypalLiveEnabled=Включен "живой" режим PayPal (в противном случае тестовый/песочница)
+PaypalImportPayment=Импорт платежей PayPal
+PostActionAfterPayment=Публикация действий после платежей
+ARollbackWasPerformedOnPostActions=Откат был выполнен для всех действий с публикацией. Вы должны выполнить действия публикации вручную, если они необходимы.
+ValidationOfPaymentFailed=Проверка платежа не удалась
+CardOwner=Держатель карты
+PayPalBalance=Paypal кредит
+OnlineSubscriptionPaymentLine=Онлайн подписание, записано %s<br>Оплачено через %s<br>Исходный IP-адрес: %s<br> Транзакция ID: %s

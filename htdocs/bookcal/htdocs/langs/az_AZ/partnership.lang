@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Tərəfdaşlığın idarə edilməsi
+PartnershipDescription=Modul Tərəfdaşlığın idarə edilməsi
+PartnershipDescriptionLong= Modul Tərəfdaşlığın idarə edilməsi
+Partnership=Tərəfdaşlıq
+Partnerships=Tərəfdaşlıqlar
+AddPartnership=Tərəfdaşlıq əlavə edin
+CancelPartnershipForExpiredMembers=Tərəfdaşlıq: Abunəlik müddəti bitmiş üzvlərin ortaqlığını ləğv edin
+PartnershipCheckBacklink=Tərəfdaşlıq: İstinad geri bağlantısını yoxlayın
+# Menu
+NewPartnership=Yeni Tərəfdaşlıq
+NewPartnershipbyWeb=Tərəfdaşlıq sorğunuz uğurla əlavə edildi. Tezliklə sizinlə əlaqə saxlaya bilərik...
+ListOfPartnerships=Tərəfdaşlığın siyahısı
+# Admin page
+PartnershipSetup=Tərəfdaşlığın qurulması
+PartnershipAbout=Tərəfdaşlıq haqqında
+PartnershipAboutPage=Səhifə haqqında tərəfdaşlıq
+partnershipforthirdpartyormember=Tərəfdaş statusu "üçüncü tərəf" və ya "üzv" üçün təyin edilməlidir
+PARTNERSHIP_IS_MANAGED_FOR=Tərəfdaşlıq üçün idarə olunur
+PARTNERSHIP_BACKLINKS_TO_CHECK=Yoxlamaq üçün geri bağlantılar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Abunəlik müddəti bitdikdə ortaqlıq statusunun ləğv edilməsinə qədərki günlər
+ReferingWebsiteCheck=Saytın istinadını yoxlayın
+ReferingWebsiteCheckDesc=Partnyorlarınızın öz vebsaytlarında vebsayt domenlərinizə geri keçid əlavə etdiyini yoxlamaq üçün funksiyanı aktivləşdirə bilərsiniz.
+PublicFormRegistrationPartnerDesc=Dolibarr xarici ziyarətçilərin tərəfdaşlıq proqramının bir hissəsi olmaq üçün müraciət etməsinə icazə vermək üçün sizə ictimai URL/veb-sayt təqdim edə bilər.
+# Object
+DeletePartnership=Tərəfdaşlığı silin
+PartnershipDedicatedToThisThirdParty=Bu üçüncü tərəfə həsr olunmuş tərəfdaşlıq
+PartnershipDedicatedToThisMember=Bu üzvə həsr olunmuş tərəfdaşlıq
+DatePartnershipStart=Başlama tarixi
+DatePartnershipEnd=Bitmə vaxtı
+ReasonDecline=Səbəbdən imtina
+ReasonDeclineOrCancel=İmtina və ya ləğvetmə səbəbi
+PartnershipAlreadyExist=Tərəfdaşlıq artıq mövcuddur
+ManagePartnership=Tərəfdaşlığı idarə edin
+BacklinkNotFoundOnPartnerWebsite=Backlink partnyor saytında tapılmadı
+ConfirmClosePartnershipAsk=Bu tərəfdaşlığı ləğv etmək istədiyinizə əminsiniz?
+PartnershipType=Tərəfdaşlıq növü
+PartnershipRefApproved=%s tərəfdaşlığı təsdiq edildi
+KeywordToCheckInWebsite=Verilmiş açar sözün hər bir tərəfdaşın veb-saytında olmasını yoxlamaq istəyirsinizsə, bu açar sözü burada müəyyən edin
+PartnershipDraft=Qaralama
+PartnershipAccepted=Qəbul edildi
+PartnershipRefused=İmtina etdi
+PartnershipCanceled=Ləğv edildi
+PartnershipManagedFor=Tərəfdaşlar
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Tərəfdaşlıq tezliklə ləğv ediləcək
+SendingEmailOnPartnershipRefused=Tərəfdaşlıqdan imtina etdi
+SendingEmailOnPartnershipAccepted=Tərəfdaşlıq qəbul edildi
+SendingEmailOnPartnershipCanceled=Tərəfdaşlıq ləğv edildi
+YourPartnershipWillSoonBeCanceledTopic=Tərəfdaşlıq tezliklə ləğv ediləcək
+YourPartnershipRefusedTopic=Tərəfdaşlıqdan imtina etdi
+YourPartnershipAcceptedTopic=Tərəfdaşlıq qəbul edildi
+YourPartnershipCanceledTopic=Tərəfdaşlıq ləğv edildi
+YourPartnershipWillSoonBeCanceledContent=Sizə bildirmək istərdik ki, tərəfdaşlığımız tezliklə ləğv ediləcək (yenilənməmişik və ya tərəfdaşlığımız üçün ilkin şərt yerinə yetirilməmişdir). Əgər bunu xəta səbəbindən almısınızsa, bizimlə əlaqə saxlayın.
+YourPartnershipRefusedContent=Sizə bildirmək istərdik ki, tərəfdaşlıq sorğunuz rədd edilib. İlkin şərtlər yerinə yetirilməyib. Əlavə məlumat lazımdırsa, zəhmət olmasa bizimlə əlaqə saxlayın.
+YourPartnershipAcceptedContent=Sizə bildirmək istərdik ki, tərəfdaşlıq sorğunuz qəbul edilib.
+YourPartnershipCanceledContent=Sizə bildirmək istərdik ki, tərəfdaşlığımız ləğv edilib. Əlavə məlumat lazımdırsa, zəhmət olmasa bizimlə əlaqə saxlayın.
+CountLastUrlCheckError=Son URL yoxlaması üçün xətaların sayı
+LastCheckBacklink=Son URL yoxlamasının tarixi
+NewPartnershipRequest=Yeni tərəfdaşlıq tələbi
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Bu səhifədə aşağıdakı domenlərdən birinə ən azı bir keçid olmalıdır: %s
+IPOfApplicant=Ərizəçinin IP
+PartnershipToReopen=Yenidən açmaq üçün
+PartnershipConfirmReOpenAsk=Bu partnyorluğu yenidən açmaq istədiyinizə əminsinizmi <b> %s>TXPROTECT-aee83365837f49f-TXPROTECT-98?

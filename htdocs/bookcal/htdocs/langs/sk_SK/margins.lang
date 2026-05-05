@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Okraj
+Margins=Okraje
+TotalMargin=Celková marža
+MarginOnProducts=Margin / Produkty
+MarginOnServices=Marža / služby
+MarginRate=Marža rýchlosť
+ModifyMarginRates=Upravte sadzby marže
+MarkRate=Mark rýchlosť
+DisplayMarginRates=Zobrazenie okrajov ceny
+DisplayMarkRates=Zobraziť ceny značiek
+InputPrice=Vstupná cena
+margin=Ziskové marže riadenie
+margesSetup=Ziskové marže Nastavenie riadenia
+MarginDetails=Margin detaily
+ProductMargins=Produktové marže
+CustomerMargins=Zákazníkov marže
+SalesRepresentativeMargins=Marže obchodného zástupcu
+ContactOfInvoice=Kontakt na faktúru
+UserMargins=Používateľské okraje
+ProductService=Produkt alebo služba
+AllProducts=Všetky produkty a služby
+ChooseProduct/Service=Vyberte produkt alebo službu
+ForceBuyingPriceIfNull=Vnútiť nákupnú/nákladovú cenu predajnej cene, ak nie je definovaná
+ForceBuyingPriceIfNullDetails=Ak pri pridávaní nového riadku nie je uvedená nákupná/nákladová cena a táto možnosť je „ZAPNUTÁ“, marža bude 0%% na novom riadku (nákupná/nákladová cena = predajná cena). Ak je táto možnosť "VYPNUTÁ" (odporúča sa), okraj sa bude rovnať hodnote navrhnutej predvolene (a môže byť 100%%, ak nenájdete žiadnu predvolenú hodnotu).
+MARGIN_METHODE_FOR_DISCOUNT=Marža metóda pre globálne zľavy
+UseDiscountAsProduct=Ako produkt
+UseDiscountAsService=Ako služba
+UseDiscountOnTotal=Na medzisúčet
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definuje, či globálna zľava je považovaný za výrobok, služba, alebo iba na medzisúčet pre výpočet marže.
+MARGIN_TYPE=Nákupná/nákladová cena navrhnutá predvolene pre výpočet marže
+MargeType1=Marža za najlepšiu cenu predajcu
+MargeType2=Marža na váženej priemernej cene (WAP)
+MargeType3=Marža z ceny
+MarginTypeDesc=* Marža z najlepšej nákupnej ceny = Predajná cena – Najlepšia cena dodávateľa definovaná na karte produktu<br>* Marža z váženej priemernej ceny (WAP) = Predajná cena – vážená priemerná cena produktu (WAP) alebo najlepšia cena dodávateľa, ak ešte nie je definovaná WAP<br>* Marža na nákladovej cene = Predajná cena – Nákladová cena definovaná na karte produktu alebo WAP, ak nie je definovaná, alebo najlepšia cena dodávateľa, ak WAP ešte nie je definovaný
+CostPrice=Veľkoobchodná cena
+UnitCharges=Jednotkové náklady
+Charges=Poplatky
+AgentContactType=Typ kontaktu obchodného zástupcu
+AgentContactTypeDetails=Definujte, aký typ kontaktu (prepojený na faktúrach) sa použije pre správu o marži na kontakt/adresu. Upozorňujeme, že čítanie štatistík kontaktu nie je spoľahlivé, pretože vo väčšine prípadov nemusí byť kontakt explicitne definovaný na faktúrach.
+rateMustBeNumeric=Sadzba musí byť číselná hodnota
+markRateShouldBeLesserThan100=Hodnota známky by mala byť nižšia ako 100
+ShowMarginInfos=Zobraziť informácie o okrajoch
+CheckMargins=Detail okrajov
+MarginPerSaleRepresentativeWarning=Správa o marži na používateľa využíva prepojenie medzi tretími stranami a obchodnými zástupcami na výpočet marže každého obchodného zástupcu. Pretože niektoré tretie strany nemusia mať žiadneho vyhradeného obchodného zástupcu a niektoré tretie strany môžu byť prepojené s viacerými, niektoré sumy nemusia byť zahrnuté do tohto prehľadu (ak neexistuje obchodný zástupca) a niektoré sa môžu objaviť v iných riadkoch (pre každého obchodného zástupcu). .

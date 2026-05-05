@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - members
+MemberCard=Mitglied Kartei
+SetLinkToUser=Mit Benutzer verknüpfen
+SetLinkToThirdParty=Mit Partner verknüpfen
+MembersList=Liste aller Mitglieder
+MembersListToValid=freizugebende Mitglieder
+MemberId=Mitglied-ID
+MemberRef=Mitglied-Ref.
+MemberTypeId=Mitgliedsart ID
+MembersTypes=Mitgliedertypen
+MemberStatusNoSubscriptionShort=Bestätigt
+SubscriptionEndDate=Abonnementauslaufdatum
+NewMemberType=Neue Mitgliedsart
+HTPasswordExport=htpassword-Dateierstellung
+MenuMembersStats=Statistiken
+NameOrCompany=Name / Firma

@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=利润
+Margins=利润空间
+TotalMargin=总利润
+MarginOnProducts=利润 / 产品
+MarginOnServices=利润 / 服务
+MarginRate=利润率
+ModifyMarginRates=变更利润率
+MarkRate=标记税率
+DisplayMarginRates=显示利润率
+DisplayMarkRates=显示mark rates
+InputPrice=输入价格
+margin=利润和利润率管理
+margesSetup=盈利利润管理设置
+MarginDetails=利润明细
+ProductMargins=产品利润
+CustomerMargins=客户利润
+SalesRepresentativeMargins=销售代表利润率
+ContactOfInvoice=发票联系人
+UserMargins=用户利润
+ProductService=产品或服务
+AllProducts=全部产品和服务
+ChooseProduct/Service=选择产品或服务
+ForceBuyingPriceIfNull=如期尚未定义则强制设定买入/成本价格为销售价格
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=全局纯利润计算方法
+UseDiscountAsProduct=作为产品
+UseDiscountAsService=作为服务
+UseDiscountOnTotal=在小计
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定义全局折扣是被视为产品，服务还是仅作为保证金计算的小计。
+MARGIN_TYPE=默认情况下建议的购买/成本价格用于保证金计算
+MargeType1=最佳供应商价格的保证金
+MargeType2=加权平均价差 (WAP)
+MargeType3=成本价格保证金
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+CostPrice=成本价
+UnitCharges=费用单位
+Charges=费用
+AgentContactType=商业代理联络类型
+AgentContactTypeDetails= 定义用于每个联系人/地址利润报告的联系人类型 (发票上的链接)。请注意，读取联系人的统计数据并不可靠，因为在大多数情况下，发票上可能没有明确定义联系人。
+rateMustBeNumeric=税率必须为数字值
+markRateShouldBeLesserThan100=Mark rate 将低于 100
+ShowMarginInfos=显示利润信息
+CheckMargins=利润明细
+MarginPerSaleRepresentativeWarning=每个用户的利润报告使用合作方和销售代表之间的链接来计算每个销售代表的利润。由于某些合作方可能没有专门的销售代表，并且某些合作方可能与多个合作方有关联，因此某些金额可能不会包含在本报告中（如果没有销售代表），而某些金额可能会出现在不同的行中（针对每个销售代表） 。

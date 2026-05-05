@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Laen
+Loans=Laenud
+NewLoan=Uus laen
+ShowLoan=Näita laenu
+PaymentLoan=Laenumakse
+LoanPayment=Laenumakse
+ShowLoanPayment=Näita laenumakseid
+LoanCapital=Kapital
+Insurance=Kindlustus
+Interest=Intress
+Nbterms=Terminite arv
+Term=Termin
+LoanAccountancyCapitalCode=Raamatupidamiskonto kapital
+LoanAccountancyInsuranceCode=Raamatupidamiskonto kindlustus
+LoanAccountancyInterestCode=Raamatupidamiskonto intress
+ConfirmDeleteLoan=Kinnita selle laenu kustutamine
+LoanDeleted=Laen edukalt kustutatud
+ConfirmPayLoan=Kinnitage selle laenu tasumise klassifikatsioon
+LoanPaid=Laen makstud
+ListLoanAssociatedProject=Projektiga seotud laenude loetelu
+AddLoan=Loo laen
+FinancialCommitment=Rahaline kohustus
+InterestAmount=Intress
+CapitalRemain=Kapital jääb alles
+TermPaidAllreadyPaid = See tähtaeg on juba tasutud
+CantUseScheduleWithLoanStartedToPaid = Laenu puhul, mille makse on alanud, ei saa ajajoont genereerida
+CantModifyInterestIfScheduleIsUsed = Ajakava kasutamisel ei saa intressi muuta.
+# Admin
+ConfigLoan=Mooduli laenu konfiguratsioon
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapitali jaoks vaikimisi kasutatav konto (kontoplaanist) (laenumoodul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (kontoplaanist), mida vaikimisi intressi arvestamiseks kasutatakse (laenumoodul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Vaikimisi kindlustuse jaoks kasutatav konto (kontoplaanist) (laenumoodul)
+CreateCalcSchedule=Muuda finantskohustust

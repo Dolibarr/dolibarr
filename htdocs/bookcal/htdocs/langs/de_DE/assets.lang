@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Neues Anlagegut
+AccountancyCodeAsset=Buchungskonto (Anlagegut)
+AccountancyCodeDepreciationAsset=Buchungskonto (Abschreibung auf Anlagegut)
+AccountancyCodeDepreciationExpense=Buchungskonto (Aufwendungen für Abschreibungen)
+AssetsLines=Anlagegüter
+ConfirmValidateAsset=Sind Sie sicher, dass Sie das Anlagegut mit der Referenz <b>%s</b> freigeben wollen?
+DeleteType=Lösche Gruppe
+DeleteAnAssetType=Vorlage für Anlagegüter löschen
+ConfirmDeleteAssetType=Möchten Sie diese Vorlage für Anlagegüter wirklich löschen?
+ShowTypeCard=Vorlage '%s' anzeigen
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Anlagegüter
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Resourcenbeschreibung
+# Admin page
+AssetSetup=Resourcensetup
+AssetSetupPage=Resourcen Setupseite
+ExtraFieldsAssetModel=Ergänzende Attribute (Vorlage Anlagegüter)
+AssetsType=Vermögenswert-Modell
+AssetsTypeId=ID der Vorlage für Anlagegüter
+AssetsTypeLabel=Bezeichnung des Vermögenswert-Modells
+AssetsTypes=Vorlagen für Anlagegüter
+ASSET_ACCOUNTANCY_CATEGORY=Kontengruppe für Anlagevermögen
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Anteiliger Zeitraum in Tagen zur Berechnung der Amortisation über ein Jahr
+# Menu
+MenuAssets=Anlagegüter
+MenuNewAsset=Neues Anlagegut
+MenuAssetModels=Vorlagen für Anlagegüter
+MenuListAssets=Liste
+MenuNewAssetModel=Neue Vorlage für Anlagegüter
+MenuListAssetModels=Liste
+# Module
+ConfirmDeleteAsset=Möchten Sie diesen Vermögenswert wirklich entfernen?
+# Tab
+AssetDepreciationOptions=Abschreibungsmöglichkeiten
+AssetAccountancyCodes=Buchungskonten
+AssetDepreciation=Abschreibung
+# Asset
+Asset=Anlagegut
+Assets=Anlagegüter
+AssetReversalAmountHT=Stornobetrag (ohne Steuern)
+AssetAcquisitionValueHT=Anschaffungsbetrag (ohne Steuern)
+AssetRecoveredVAT=Zurückerstattete USt.
+AssetReversalDate=Stornodatum
+AssetDateAcquisition=Zugangsdatum
+AssetDateStart=Datum der Inbetriebnahme
+AssetAcquisitionType=Art des Erwerbs
+AssetAcquisitionTypeNew=Neu
+AssetAcquisitionTypeOccasion=Gebraucht
+AssetType=Art des Anlageguts
+AssetTypeIntangible=Immateriell
+AssetTypeTangible=Materiell
+AssetTypeInProgress=In Verwendung
+AssetTypeFinancial=Finanziell
+AssetNotDepreciated=Nicht abgeschrieben
+AssetDisposal=Abgang
+AssetConfirmDisposalAsk=Sind Sie sicher, dass Sie einen Abgang für den Vermögenswert <b> %s </b> verbuchen möchten?
+AssetConfirmReOpenAsk=Möchten Sie den Vermögenswert <b> %s </b> wirklich erneut öffnen?
+# Asset status
+AssetInDraft=Entwurf
+AssetInProgress=In Verwendung
+AssetDisposed=Abgang verbucht
+AssetRecorded=Abgerechnet
+# Asset disposal
+AssetDisposalDate=Datum des Abgangs
+AssetDisposalAmount=Veräußerungswert
+AssetDisposalType=Art des Abgangs
+AssetDisposalDepreciated=Abschreibung für das Jahr der Übertragung
+AssetDisposalSubjectToVat=Abgang USt.-pflichtig
+# Asset model
+AssetModel=Vorlage für das Anlagegut
+AssetModels=Vorlagen der Anlagegüter
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Wirtschaftliche Abschreibung
+AssetDepreciationOptionAcceleratedDepreciation=Beschleunigte Abschreibung (Steuer)
+AssetDepreciationOptionDepreciationType=Abschreibungsart
+AssetDepreciationOptionDepreciationTypeLinear=Linear
+AssetDepreciationOptionDepreciationTypeDegressive=Degressiv
+AssetDepreciationOptionDepreciationTypeExceptional=Außergewöhnlich
+AssetDepreciationOptionDegressiveRate=Degressive Rate
+AssetDepreciationOptionDuration=Dauer
+AssetDepreciationOptionDurationType=Dauer des Typs
+AssetDepreciationOptionDurationTypeAnnual=Jährlich
+AssetDepreciationOptionDurationTypeMonthly=Monatlich
+AssetDepreciationOptionDurationTypeDaily=Täglich
+AssetDepreciationOptionRate=Rate (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Abschreibungsgrundlage (ohne USt.)
+AssetDepreciationOptionAmountBaseDeductibleHT=Abzugsfähige Basis (exkl. USt.)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Gesamtbetrag letzte Abschreibung (exkl. USt.)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Wirtschaftliche Abschreibung
+AssetAccountancyCodeAsset=Anlagegut
+AssetAccountancyCodeDepreciationAsset=Abschreibung
+AssetAccountancyCodeDepreciationExpense=Abschreibungsaufwand
+AssetAccountancyCodeValueAssetSold=Wert des abgegangenen Anlageguts
+AssetAccountancyCodeReceivableOnAssignment=Forderung bei Abgang
+AssetAccountancyCodeProceedsFromSales=Erlös aus Abgang
+AssetAccountancyCodeVatCollected=Eingenommene USt.
+AssetAccountancyCodeVatDeductible=Zurückerstattete USt. auf Vermögenswerte
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Beschleunigte Abschreibung (Steuer)
+AssetAccountancyCodeAcceleratedDepreciation=Konto
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Abschreibungsaufwand
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Rücknahme/Bereitstellung
+# Asset depreciation
+AssetBaseDepreciationHT=Abschreibungsgrundlage (exkl. USt.)
+AssetDepreciationBeginDate=Abschreibungsbeginn am
+AssetDepreciationDuration=Dauer
+AssetDepreciationRate=Rate (%%)
+AssetDepreciationDate=Abschreibungsdatum
+AssetDepreciationHT=Abschreibung (exkl. USt.)
+AssetCumulativeDepreciationHT=Kumulierte Abschreibung (exkl. USt.)
+AssetResidualHT=Restwert (exkl. USt.)
+AssetDispatchedInBookkeeping=Abschreibung erfasst
+AssetFutureDepreciationLine=Zukünftige Abschreibung
+AssetDepreciationReversal=Umkehrung
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Die ID des Anlageguts oder das Modell wurde nicht bereitgestellt
+AssetErrorFetchAccountancyCodesForMode=Fehler beim Abrufen der Buchungskonten für den Abschreibungsmodus '%s'
+AssetErrorDeleteAccountancyCodesForMode=Fehler beim Löschen von Buchungskonten aus dem Abschreibungsmodus '%s'
+AssetErrorInsertAccountancyCodesForMode=Fehler beim Einfügen der Buchungskonten des Abschreibungsmodus '%s'
+AssetErrorFetchDepreciationOptionsForMode=Fehler beim Abrufen von Optionen für den Abschreibungsmodus „%s“.
+AssetErrorDeleteDepreciationOptionsForMode=Fehler beim Löschen der Optionen des Abschreibungsmodus '%s'
+AssetErrorInsertDepreciationOptionsForMode=Fehler beim Einfügen der Optionen des Abschreibungsmodus '%s'
+AssetErrorFetchDepreciationLines=Fehler beim Abrufen erfasster Abschreibungspositionen
+AssetErrorClearDepreciationLines=Fehler beim Bereinigen erfasster Abschreibungspositionen (Storno und Zukunft)
+AssetErrorAddDepreciationLine=Fehler beim Hinzufügen einer Abschreibungszeile
+AssetErrorCalculationDepreciationLines=Fehler bei der Berechnung der Abschreibungspositionen (Recovery und Zukunft)
+AssetErrorReversalDateNotProvidedForMode=Für die Abschreibungsmethode „%s“ ist kein Stornodatum vorgesehen
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Bei der Abschreibungsmethode '%s' muss das Stornodatum größer oder gleich dem Beginn des laufenden Geschäftsjahres sein
+AssetErrorReversalAmountNotProvidedForMode=Für den Abschreibungsmodus '%s' ist der Stornobetrag nicht vorgesehen.
+AssetErrorFetchCumulativeDepreciation=Fehler beim Abrufen des kumulierten Abschreibungsbetrags aus der Abschreibungsposition
+AssetErrorSetLastCumulativeDepreciation=Fehler beim Erfassen des letzten kumulierten Abschreibungsbetrags

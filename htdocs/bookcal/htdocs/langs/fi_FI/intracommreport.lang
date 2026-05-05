@@ -1,0 +1,38 @@
+IntraCommReport=Sisäinen raportti
+IntraCommReports=Sisäiset raportit
+
+Module68000Name = Intracomm-raportti
+Module68000Desc = Intracomm-raporttien hallinta (tuki ranskalaiselle DEB/DES-muodolle)
+IntracommReportSetup = Intracommreport-moduulin asetukset
+IntracommReportAbout = Tietoja intracommreportista
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (delivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Tyyppi d'näyttelijä
+INTRACOMMREPORT_ROLE_ACTEUR=Rooli joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les esittelyt
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Palveluluokka "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+# Menu
+MenuIntracommReport=Intracomm-raportti
+MenuIntracommReportNew=Uusi ilmoitus
+MenuIntracommReportList=Luettelo
+# View
+NewDeclaration=Uusi ilmoitus
+Declaration=julistus
+AnalysisPeriod=Analyysijakso
+TypeOfDeclaration=Ilmoituksen tyyppi
+DEB=Tavaranvaihtoilmoitus (DEB)
+DES=Palvelunvaihtoilmoitus (DES)
+# Export page
+IntracommReportTitle=XML-tiedoston tiedosto valmistelu ProDouane-muodossa
+# List
+IntracommReportList=Luettelo luoduista ilmoituksista
+IntracommReportNumber=Lukuisia ilmoituksia
+IntracommReportPeriod=Analyysijakso
+IntracommReportTypeDeclaration=Ilmoituksen tyyppi
+IntracommReportDownload=lataa XML tiedosto
+# Invoice
+IntracommReportTransportMode=Kuljetusmuoto
+DeleteIntraCommReport=Poista IntraComm-raportti

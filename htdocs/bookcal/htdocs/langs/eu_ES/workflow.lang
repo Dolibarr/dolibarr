@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Lan-fluxuaren moduluaren konfigurazioa
+WorkflowDesc=Modulu honek ekintza automatiko batzuk eskaintzen ditu. Berez, lan-fluxua irekita dago (gauzak nahi duzun ordenan egin ditzakezu) baina hemen ekintza automatiko batzuk aktibatu ditzakezu.
+ThereIsNoWorkflowToModify=Ez dago lan-fluxuen aldaketarik eskuragarri aktibatutako moduluekin.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Sortu automatikoki salmenta-eskaera bat merkataritza-proposamen bat sinatu ondoren (eskaera berriak proposamenaren zenbateko bera izango du)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Sortu automatikoki bezeroaren faktura bat merkataritza-proposamen bat sinatu ondoren (faktura berriak proposamenaren zenbateko bera izango du)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Kontratua balioztatu ondoren, bezeroaren faktura automatikoki sortu
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Salmenta-eskaera itxi ondoren, bezeroaren faktura automatikoki sortu (faktura berriak eskaeraren zenbateko bera izango du)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Txartela sortzean, automatikoki sortu esku-hartze bat.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Salmenta-eskaera bat fakturatuta dagoenean, lotutako iturri-proposamenak fakturatuta gisa sailkatu (eta eskaeraren zenbatekoa sinatutako lotutako proposamenen zenbateko osoaren berdina bada)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Bezeroaren faktura balioztatzen denean, lotutako iturri-proposamenak fakturatu gisa sailkatu (eta fakturaren zenbatekoa sinatutako lotutako proposamenen zenbateko osoaren berdina bada)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Bezero baten faktura ordainduta dagoenean, lotutako iturburuko salmenta-eskaerak fakturatu gisa sailkatu (eta fakturaren zenbatekoa lotutako salmenta-eskaeren zenbateko osoaren berdina bada). N eskaeretarako faktura 1 sortzen baduzu, baliteke eskaera guztiak ere fakturatu gisa ezartzea.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Bezeroaren faktura balioztatzen denean, lotutako iturburu-salmenta-eskaera guztiak fakturatu gisa sailkatu (eta fakturaren zenbatekoa lotutako iturburu-salmenta-eskaeren zenbateko osoaren berdina bada). N eskaeretarako faktura komun bat sortzen baduzu, baliteke iturburu-eskaera guztiak fakturatu gisa ezartzea.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Bezero baten faktura balioztatzen denean, lotutako salmenta-eskaera (bakarra badago) fakturatutzat sailkatu, lotutako salmenta-eskaeraren zenbateko osoa bertatik jaulkitako faktura guztien zenbateko osoaren berdina bada. Eskaera 1erako n faktura sortzen badituzu, honek eskaera fakturatutzat ezartzeko aukera ematen du faktura guztiak balioztatzen direnean.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bidalketa bat balioztatzen denean, lotutako iturriko salmenta-eskaerak bidalitako gisa sailkatu (eta bidalketa guztiek bidalitako kantitatea eguneratzeko eskaeran berdina bada)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Bidalketa bat ixten denean, lotutako iturburuko salmenta-eskaera bidalitzat sailkatu (eta bidalketa guztiek bidalitako kantitatea eguneratzeko eskaeran berdina bada)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Saltzaile baten faktura balioztatzen denean, lotutako iturri-saltzailearen proposamena fakturatu gisa sailkatu (eta fakturaren zenbatekoa lotutako proposamenen zenbateko osoaren berdina bada)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Saltzaile baten faktura balioztatzen denean, lotutako iturburuko erosketa-eskaera fakturatu gisa sailkatu (eta fakturaren zenbatekoa lotutako eskaeren zenbateko osoaren berdina bada)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Harrera bat balioztatzen denean, lotutako iturburuko erosketa-eskaera jasotzat sailkatu (eta harrera guztiek jasotako kantitatea eguneratzeko erosketa-eskaeran berdina bada)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Harrera bat ixten denean, sailkatu lotutako iturburuko erosketa-eskaerak jasotako gisa (eta erosketa-eskaeratik jaulkitako harrera guztiek jasotako kantitatea eguneratzeko erosketa-eskaeran dagoen berdina bada).
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Bezeroaren faktura balioztatzen denean, lotutako iturburu-bidalketa itxita gisa sailkatu (eta fakturaren zenbatekoa lotutako bidalketen zenbateko osoaren berdina bada)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Bezeroaren faktura balioztatzen denean, lotutako iturburu-bidalketa fakturatu gisa sailkatu (eta fakturaren zenbatekoa lotutako bidalketen zenbateko osoaren berdina bada)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Erosketa-faktura bat balioztatzen denean, lotutako iturri-harrerak itxita gisa sailkatu (eta fakturaren zenbatekoa lotutako harrera guztien zenbateko osoaren berdina bada)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Erosketa-faktura bat balioztatzen denean, lotutako iturri-harremanak fakturatu gisa sailkatu (eta fakturaren zenbatekoa lotutako harreren zenbateko osoaren berdina bada)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Txartel bat sortzen denean, lotu eskuragarri dauden kontratuekin, txartelarekin bat datorren hirugarren alderdi berarekin.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Txartel bat automatikoki kontratuekin lotzean, bilatu kontratuak guraso-enpresen artean
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Txartelarekin lotutako esku-hartze guztiak itxi txartel bat ixten denean
+AutomaticCreation=Sorkuntza automatikoa
+AutomaticClassification=Sailkapen automatikoa
+AutomaticClosing=Itxiera automatikoa
+AutomaticLinking=Lotura automatikoa

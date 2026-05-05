@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox module instellen
+PayBoxDesc=Deze module biedt pagina's waarmee klanten kunnen betalen met <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>. Dit kan worden gebruikt voor een gratis betaling of voor een betaling op een bepaald Dolibarr-object (factuur, bestelling, ...)
+PayBoxDoPayment=Betalen met Paybox
+YouWillBeRedirectedOnPayBox=U wordt doorverwezen naar een beveiligde Paybox pagina om uw creditcard informatie in te voeren
+SetupPayBoxToHavePaymentCreatedAutomatically=Stel uw Paybox in met url <b> %s </b> om de betaling automatisch te laten aanmaken na validatie door Paybox.
+YourPaymentHasBeenRecorded=Deze pagina bevestigd dat uw betaling succesvol in geregistreerd. Dank u.
+YourPaymentHasNotBeenRecorded=Uw betaling is NIET geboekt en de transactie is geannuleerd. Dankuwel.
+PAYBOX_CGI_URL_V2=URL van de Paybox CGI module voor betalingen
+NewPayboxPaymentReceived=Betaling met Paybox ontvangen
+NewPayboxPaymentFailed=Poging te betalen met Paybox mislukt
+PAYBOX_PAYONLINE_SENDEMAIL=E-mailmelding na betalingspoging (succesvol of mislukt)
+PAYBOX_PBX_SITE=Waarde PBX SITE
+PAYBOX_PBX_RANG=Waarde PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Waarde PBX ID
+PAYBOX_HMAC_KEY=HMAC-sleutel

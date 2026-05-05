@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - products
+ProductRef=Artikel Nr.
+SellingPriceTTC=Verkaufspreis (brutto)
+NoMatchFound=Keine Treffer gefunden
+Finished=Eigenerzeugung
+NewRefForClone=Artikel Nr. des neuen Produkts/Services

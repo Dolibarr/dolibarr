@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=पेपैल मॉड्यूल सेटअप
+PaypalDesc=यह मॉड्यूल ग्राहकों को <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> के माध्यम से भुगतान करने की अनुमति देता है। इसका उपयोग एड-हॉक भुगतान या डॉलीबार ऑब्जेक्ट (इनवॉइस, ऑर्डर, ...) से संबंधित भुगतान के लिए किया जा सकता है।
+PaypalOrCBDoPayment=पेपैल (कार्ड या पेपैल) के साथ भुगतान करें
+PaypalDoPayment=पेपैल से भुगतान करें
+PAYPAL_API_SANDBOX=मोड परीक्षण/सैंडबॉक्स
+PAYPAL_API_USER=एपीआई उपयोगकर्ता नाम
+PAYPAL_API_PASSWORD=एपीआई पासवर्ड
+PAYPAL_API_SIGNATURE=एपीआई हस्ताक्षर
+PAYPAL_SSLVERSION=कर्ल एसएसएल संस्करण
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY="अभिन्न" भुगतान (क्रेडिट कार्ड+पेपैल) या केवल "पेपैल" भुगतान की पेशकश करें
+PaypalModeIntegral=अभिन्न
+PaypalModeOnlyPaypal=केवल पेपैल
+ONLINE_PAYMENT_CSS_URL=ऑनलाइन भुगतान पृष्ठ पर CSS स्टाइलशीट का वैकल्पिक URL
+ThisIsTransactionId=यह लेनदेन की आईडी है: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=ईमेल द्वारा दस्तावेज़ भेजते समय PayPal भुगतान URL शामिल करें
+NewOnlinePaymentReceived=नया ऑनलाइन भुगतान प्राप्त हुआ
+NewOnlinePaymentFailed=नया ऑनलाइन भुगतान प्रयास किया गया लेकिन विफल रहा
+ONLINE_PAYMENT_SENDEMAIL=प्रत्येक भुगतान प्रयास के बाद सूचना हेतु ईमेल पता (सफलता और असफलता के लिए)
+ReturnURLAfterPayment=भुगतान के बाद वापसी URL
+ValidationOfOnlinePaymentFailed=ऑनलाइन भुगतान का सत्यापन विफल हुआ
+PaymentSystemConfirmPaymentPageWasCalledButFailed=भुगतान प्रणाली द्वारा भुगतान पुष्टिकरण पृष्ठ पर कॉल करने पर त्रुटि लौटी
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API कॉल विफल.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API कॉल विफल.
+DetailedErrorMessage=विस्तृत त्रुटि संदेश
+ShortErrorMessage=संक्षिप्त त्रुटि संदेश
+ErrorCode=त्रुटि कोड
+ErrorSeverityCode=त्रुटि गंभीरता कोड
+OnlinePaymentSystem=ऑनलाइन भुगतान प्रणाली
+PaypalLiveEnabled=पेपैल "लाइव" मोड सक्षम (अन्यथा परीक्षण/सैंडबॉक्स मोड)
+PaypalImportPayment=पेपैल भुगतान आयात करें
+PostActionAfterPayment=भुगतान के बाद की कार्रवाइयां पोस्ट करें
+ARollbackWasPerformedOnPostActions=सभी पोस्ट क्रियाओं पर रोलबैक किया गया था। यदि आवश्यक हो तो आपको पोस्ट क्रियाएँ मैन्युअल रूप से पूरी करनी होंगी।
+ValidationOfPaymentFailed=भुगतान का सत्यापन विफल हो गया है
+CardOwner=कार्ड धारक
+PayPalBalance=पेपैल क्रेडिट
+OnlineSubscriptionPaymentLine=%s<br> पर ऑनलाइन सदस्यता दर्ज की गई%s<br> के माध्यम से भुगतान किया गयामूल IP पता: %s<br>लेनदेन आईडी: %s

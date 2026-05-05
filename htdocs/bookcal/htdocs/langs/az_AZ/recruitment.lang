@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = İşə qəbul
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Yeni iş yerləri üçün işə qəbul kampaniyalarını idarə edin və izləyin
+# Admin page
+RecruitmentSetup = İşə qəbulun qurulması
+RecruitmentSetupPage = İşə qəbul modulu üçün əsas seçimlərin quraşdırılmasını buraya daxil edin
+RecruitmentArea=İşə qəbul sahəsi
+PublicInterfaceRecruitmentDesc=İş yerlərinin ictimai səhifələri açıq iş yerlərini göstərmək və onlara cavab vermək üçün ictimai URL-lərdir. Hər bir iş qeydində tapılan hər açıq iş üçün fərqli bir keçid var.
+EnablePublicRecruitmentPages=Açıq iş yerlərinin ictimai səhifələrini aktivləşdirin
+
+NbOfEmployeesExpected=İşçilərin gözlənilən nb
+JobLabel=İş yerinin etiketi
+WorkPlace=İş yeri
+DateExpected=Gözlənilən tarix
+FutureManager=Gələcək menecer
+ResponsibleOfRecruitement=İşə qəbuldan məsuldur
+IfJobIsLocatedAtAPartner=Əgər iş ortaq yerdə yerləşirsə
+PositionToBeFilled=İş mövqeyi
+PositionsToBeFilled=İş yerləri
+ListOfPositionsToBeFilled=Vəzifələrin siyahısı
+NewPositionToBeFilled=Yeni iş yerləri
+JobOfferToBeFilled=Doldurulacaq iş yeri
+ThisIsInformationOnJobPosition=Doldurulacaq iş yeri haqqında məlumat
+ContactForRecruitment=İşə qəbul üçün əlaqə saxlayın
+EmailRecruiter=E-poçt işə götürən
+ToUseAGenericEmail=Ümumi e-poçtdan istifadə etmək üçün. Müəyyən edilmədikdə, işə qəbul üzrə məsul şəxsin elektron poçtundan istifadə ediləcək
+NewCandidature=Yeni tətbiq
+ListOfCandidatures=Tətbiqlərin siyahısı
+Remuneration=Maaş
+RequestedRemuneration=Tələb olunan maaş
+ProposedRemuneration=Təklif olunan əmək haqqı
+ContractProposed=Təklif olunan müqavilə
+ContractSigned=Müqavilə imzalanıb
+ContractRefused=Müqavilə rədd edildi
+RecruitmentCandidature=Ərizə
+JobPositions=İş yerləri
+RecruitmentCandidatures=Proqramlar
+InterviewToDo=İzləmək üçün əlaqə
+AnswerCandidature=Ərizə cavabı
+YourCandidature=Sizin ərizəniz
+YourCandidatureAnswerMessage=Müraciətiniz üçün təşəkkür edirik.<br>...
+JobClosedTextCandidateFound=İş yeri bağlıdır. Vəzifə dolduruldu.
+JobClosedTextCanceled=İş yeri bağlıdır.
+ExtrafieldsJobPosition=Tamamlayıcı atributlar (iş vəzifələri)
+ExtrafieldsApplication=Tamamlayıcı atributlar (iş müraciətləri)
+MakeOffer=Təklif etmək
+WeAreRecruiting=İşə qəbul edirik. Bu doldurulmalı olan açıq vəzifələrin siyahısıdır...
+NoPositionOpen=Hazırda heç bir vəzifə açıq deyil
+ConfirmClose=Ləğv etməyi təsdiqləyin
+ConfirmCloseAsk=Bu işə qəbul namizədliyini ləğv etmək istədiyinizə əminsiniz
+Recruitment=İşə qəbul
+ApplyJobCandidature=Bu işə müraciət edin
+ErrorRecruitmmentCandidatureAlreadyExists= İşə qəbul üçün namizəd %s e-poçtu ilə artıq mövcuddur
+RecruitmentCandidatureSaved=İşə qəbul namizədi uğurla yadda saxlanıldı
+NoOpenJobOffer=Hazırda açıq iş təklifi yoxdur

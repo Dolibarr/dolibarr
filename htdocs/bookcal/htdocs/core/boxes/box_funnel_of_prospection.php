@@ -1,0 +1,354 @@
+<?php
+/* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016       Juan José Menent        <jmenent@2byte.es>
+ * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *  \file       htdocs/core/boxes/box_funnel_of_prospection.php
+ *  \ingroup    projet
+ *  \brief      Module to show the funnel of prospection
+ */
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
+
+/**
+ * Class to manage the box to show funnel of prospections
+ */
+class box_funnel_of_prospection extends ModeleBoxes
+{
+	public $boxcode  = "FunnelOfProspection";
+	public $boximg   = "object_projectpub";
+	public $boxlabel = "BoxTitleFunnelOfProspection";
+	public $depends  = array("projet");
+
+	public $version = 'dolibarr';
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param = '')
+	{
+		global $user, $langs;
+
+		// Load translation files required by the page
+		$langs->loadLangs(array('boxes', 'projects'));
+
+		$this->db = $db;
+
+		$this->enabled = getDolGlobalInt('PROJECT_USE_OPPORTUNITIES');
+
+		$this->hidden = !$user->hasRight('projet', 'lire');
+	}
+
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param   int		$max        Maximum number of records to load
+	 *  @return  void
+	 */
+	public function loadBox($max = 5)
+	{
+		global $conf;
+
+		// default values
+		$badgeStatus0 = '#cbd3d3'; // draft
+		$badgeStatus1 = '#bc9526'; // validated
+		$badgeStatus1b = '#bc9526'; // validated
+		$badgeStatus2 = '#9c9c26'; // approved
+		$badgeStatus3 = '#bca52b';
+		$badgeStatus4 = '#25a580'; // Color ok
+		$badgeStatus4b = '#25a580'; // Color ok
+		$badgeStatus5 = '#cad2d2';
+		$badgeStatus6 = '#cad2d2';
+		$badgeStatus7 = '#baa32b';
+		$badgeStatus8 = '#993013';
+		$badgeStatus9 = '#e7f0f0';
+		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
+			include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		}
+
+		$listofoppstatus = array();
+		$listofopplabel = array();
+		$listofoppposition = array();
+
+		$colorseriesstat = array();
+
+		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label, cls.position";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
+		$sql .= " WHERE active = 1";
+		$sql .= " AND cls.code NOT IN ('LOST', 'WON')";
+		$sql .= $this->db->order('cls.position,cls.rowid', 'ASC,ASC');
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num) {
+				$objp = $this->db->fetch_object($resql);
+
+				$listofoppstatus[$objp->rowid] = $objp->percent;
+				$listofopplabel[$objp->rowid] = $objp->label;
+				$listofoppposition[$objp->rowid] = $objp->position;
+
+				switch ($objp->code) {
+					case 'PROSP':
+						$colorseriesstat[$objp->rowid] = '-'.$badgeStatus0;
+						break;
+					case 'QUAL':
+						$colorseriesstat[$objp->rowid] = '-'.$badgeStatus1;
+						break;
+					case 'PROPO':
+						$colorseriesstat[$objp->rowid] = $badgeStatus1;
+						break;
+					case 'NEGO':
+						$colorseriesstat[$objp->rowid] = $badgeStatus4;
+						break;
+					default:
+						break;
+				}
+				$i++;
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		global $conf, $user, $langs;
+		$this->max = $max;
+
+		$this->info_box_head = array(
+			'text' => $langs->trans("Opportunities").' - '.$langs->trans("BoxTitleFunnelOfProspection"),
+			'nbcol' => 2,
+			'graph' => 1
+		);
+
+		if ($user->hasRight('projet', 'lire') || getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+			$sql = "SELECT p.fk_opp_status as opp_status, cls.code, cls.position, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
+			$sql .= " WHERE p.entity IN (".getEntity('project').")";
+			$sql .= " AND p.fk_opp_status = cls.rowid";
+			$sql .= " AND p.fk_statut = 1"; // Opened projects only
+			$sql .= " AND cls.active = 1"; 	// Active opportunities status only
+			$sql .= " AND cls.code NOT IN ('LOST', 'WON')";
+			$sql .= " GROUP BY p.fk_opp_status, cls.code, cls.position";
+			$sql .= " ORDER BY cls.position, p.fk_opp_status, cls.code";
+
+			$resql = $this->db->query($sql);
+
+			$form = new Form($this->db);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+
+				//$totalnb = 0;
+				$totaloppnb = 0;
+				$totalamount = 0;
+				$ponderated_opp_amount = 0;
+				//$valsnb = array();
+				$valsamount = array();
+				$dataseries = array();
+
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						//$valsnb[$obj->opp_status] = $obj->nb;
+						$valsamount[$obj->opp_status] = $obj->opp_amount;
+						//$totalnb += $obj->nb;
+						if ($obj->opp_status) {
+							$totaloppnb += $obj->nb;
+						}
+						if (!in_array($obj->code, array('WON', 'LOST'))) {
+							$totalamount += $obj->opp_amount;
+							$ponderated_opp_amount += $obj->ponderated_opp_amount;
+						}
+					}
+					$i++;
+				}
+				$this->db->free($resql);
+
+				$ponderated_opp_amount /= 100;
+
+				$stringtoprint = '';
+				$stringtoprint .= '<div class="div-table-responsive-no-min ">';
+				$listofstatus = array_keys($listofoppstatus);
+				$liststatus = array();
+				$data = array('');
+				$customlabels = array();
+				// Set array $data that contains the length of the bar (not the real value)
+				// and the array $customlabels that contains the real value to show
+				$maxamount = 0;
+
+				foreach ($listofstatus as $status) {
+					$customlabel = '';
+					$labelStatus = '';
+					$customlabelmore = '';
+
+					$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
+					if ($code) {
+						$labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code);
+					}
+					if (empty($labelStatus)) {
+						$labelStatus = $listofopplabel[$status];
+					}
+					$amount = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
+					$customlabel = price($amount, 0, $langs, 1, -1, 'MT', $conf->currency);
+
+					$amountforgraph = $amount;
+					if (getDolGlobalString('PROJECT_OPPORTUNITIES_CUMULATIVE_MODE')) {
+						// Add all other amount for next levels
+						$amountafter = 0;
+						foreach ($listofstatus as $status2) {
+							if ($listofoppposition[$status2] > $listofoppposition[$status]) {
+								$amountafter += $valsamount[$status2];
+							}
+						}
+						$amountforgraph += $amountafter;
+						//var_dump("For current status ".$status." the amountforgraph=".$amountforgraph);
+						$customlabelmore = price($amountafter, 0, $langs, 1, -1, 'MT', $conf->currency);
+					}
+
+					$data[] = $amountforgraph;
+					$liststatus[] = $labelStatus;
+					if (!$conf->use_javascript_ajax) {
+						$stringtoprint .= '<tr class="oddeven">';
+						$stringtoprint .= '<td>'.$labelStatus.'</td>';
+						$stringtoprint .= '<td class="nowraponall right amount"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
+						$stringtoprint .= "</tr>\n";
+					}
+
+					if (getDolGlobalString('PROJECT_OPPORTUNITIES_CUMULATIVE_MODE')) {
+						$customlabels[] = $customlabel.' + '.$customlabelmore;
+					} else {
+						$customlabels[] = $customlabel;
+					}
+
+					if ($maxamount < $amountforgraph) {
+						$maxamount = $amountforgraph;
+					}
+				}
+
+				// Permit to have a bar if value inferior to a certain value
+				$valuetoaddtomindata = $maxamount / 100;
+				foreach ($data as $key => $value) {
+					if ($value != "") {
+						$data[$key] = $valuetoaddtomindata + $value;
+					}
+				}
+				foreach ($data as $key => $value) {
+					if ($data[$key] == 0) {
+						$data[$key] = $valuetoaddtomindata;
+					}
+				}
+
+
+				$dataseries[] = $data;
+				if ($conf->use_javascript_ajax) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+					$dolgraph = new DolGraph();
+					$dolgraph->SetMinValue(0);
+					$dolgraph->SetData($dataseries);
+					$dolgraph->SetLegend($liststatus);
+					$dolgraph->setHideXValues(false);
+					$dolgraph->setHideYValues(true);
+					$dolgraph->SetDataColor(array_values($colorseriesstat));
+					$dolgraph->setShowLegend(2);
+					$dolgraph->setShowPercent(1);
+					$dolgraph->setMirrorGraphValues(true);
+					$dolgraph->setBorderWidth(2);
+					$dolgraph->setBorderSkip('false');
+					$dolgraph->SetType(array('horizontalbars'));
+					$dolgraph->SetHeight('150');
+					$dolgraph->SetWidth($conf->dol_optimize_smallscreen ? '300' : ((empty($_SESSION["dol_screenwidth"]) || $_SESSION["dol_screenwidth"] > 1600) ? '600' : '500'));
+					$dolgraph->setTooltipsTitles($liststatus);
+					$dolgraph->setTooltipsLabels($customlabels);
+					$dolgraph->mode = 'depth';
+					$dolgraph->draw('idgraphleadfunnel');
+
+					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);
+				}
+				$stringtoprint .= '</div>';
+
+				$line = 0;
+
+				$this->info_box_contents[$line][] = array(
+					'tr' => '',
+					'td' => 'class="center nopaddingleftimp nopaddingrightimp" colspan="2"',
+					'text' => $stringtoprint
+				);
+				$line++;
+				$this->info_box_contents[$line][] = array(
+					'tr' => 'class="oddeven"',
+					'td' => 'class="left "',
+					'maxlength' => 500,
+					'asis' => 1,
+					'text' => $langs->trans("OpportunityTotalAmount").'  <span class="opacitymedium hideonsmartphone">('.$langs->trans("WonLostExcluded").')</span>'
+				);
+				$this->info_box_contents[$line][] = array(
+					'tr' => 'class="oddeven"',
+					'td' => 'class="nowraponall right amount"',
+					'maxlength' => 500,
+					'text' => price($totalamount, 0, '', 1, -1, -1, $conf->currency)
+				);
+				$line++;
+				$this->info_box_contents[$line][] = array(
+					'tr' => 'class="oddeven"',
+					'td' => 'class="left "',
+					'maxlength' => 500,
+					'asis' => 1,
+					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' <span class="opacitymedium hideonsmartphone">('.$langs->trans("WonLostExcluded").')</span>', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
+
+				);
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="nowraponall right amount"',
+					'maxlength' => 500,
+					'text' => price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency)
+				);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedCustomers").'</span>'
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => '',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
+	}
+
+
+
+	/**
+	 *	Method to show box.  Called when the box needs to be displayed.
+	 *
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
+	 */
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+}

@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Pengaturan modul PayPal
+PaypalDesc=Modul ini memungkinkan pembayaran oleh pelanggan melalui <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Ini dapat digunakan untuk pembayaran ad-hoc atau untuk pembayaran yang terkait dengan objek Dolibarr (faktur, pesanan, ...)
+PaypalOrCBDoPayment=Bayar dengan PayPal (Kartu atau PayPal)
+PaypalDoPayment=Bayar dengan PayPal
+PAYPAL_API_SANDBOX=Tes mode / kotak pasir
+PAYPAL_API_USER=Nama pengguna API
+PAYPAL_API_PASSWORD=Kata sandi API
+PAYPAL_API_SIGNATURE=Tanda tangan API
+PAYPAL_SSLVERSION=Curl Versi SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tawarkan pembayaran "integral" (Kartu kredit + PayPal) atau "PayPal" saja
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Hanya PayPal
+ONLINE_PAYMENT_CSS_URL=URL opsional CSS stylesheet di halaman pembayaran online
+ThisIsTransactionId=Ini adalah id transaksi:<b>%s </b>
+PAYPAL_ADD_PAYMENT_URL=Sertakan url pembayaran PayPal saat Anda mengirim dokumen melalui email
+NewOnlinePaymentReceived=Pembayaran online baru diterima
+NewOnlinePaymentFailed=Pembayaran daring baru dicoba tetapi gagal
+ONLINE_PAYMENT_SENDEMAIL=Alamat email untuk pemberitahuan setelah setiap upaya pembayaran (untuk berhasil dan gagal)
+ReturnURLAfterPayment=Kembalikan URL setelah pembayaran
+ValidationOfOnlinePaymentFailed=Validasi pembayaran online gagal
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Halaman konfirmasi pembayaran dipanggil oleh sistem pembayaran menghasilkan kesalahan
+SetExpressCheckoutAPICallFailed=Panggilan API SetExpressCheckout gagal.
+DoExpressCheckoutPaymentAPICallFailed=Panggilan API DoExpressCheckoutPayment gagal.
+DetailedErrorMessage=Pesan Kesalahan Detail
+ShortErrorMessage=Pesan Kesalahan Pendek
+ErrorCode=Kode Kesalahan
+ErrorSeverityCode=Kode Keseriusan Kesalahan
+OnlinePaymentSystem=Sistem pembayaran online
+PaypalLiveEnabled=Mode "langsung" PayPal diaktifkan (jika tidak, uji / mode kotak pasir)
+PaypalImportPayment=Impor pembayaran PayPal
+PostActionAfterPayment=Poskan tindakan setelah pembayaran
+ARollbackWasPerformedOnPostActions=Kembalikan dilakukan pada semua tindakan Posting. Anda harus menyelesaikan tindakan posting secara manual jika diperlukan.
+ValidationOfPaymentFailed=Validasi pembayaran gagal
+CardOwner=Pemegang kartu
+PayPalBalance=Kredit Paypal
+OnlineSubscriptionPaymentLine=Langganan online dicatat pada %s<br>Dibayar melalui %s<br>Alamat IP asal: %s<br>ID Transaksi: %s

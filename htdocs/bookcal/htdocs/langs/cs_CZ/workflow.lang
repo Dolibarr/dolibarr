@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Nastavení workflow modulu
+WorkflowDesc=Tento modul poskytuje několik automatických akcí. Ve výchozím nastavení je pracovní postup otevřený (můžete dělat věci v pořadí, které chcete), ale zde můžete aktivovat některé automatické akce.
+ThereIsNoWorkflowToModify=Workflow zde není nastaven, můžete upravit modul pokud ho chcete aktivovat.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatické vytvoření objednávky prodeje po podpisu obchodního návrhu (nová objednávka bude mít stejnou částku jako návrh)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automaticky vytvořit zákaznickou fakturu po podpisu obchodního návrhu (nová faktura bude mít stejnou částku jako návrh)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automaticky vytvoří zákaznickou faktury poté, co smlouva byla ověřena
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automaticky vytvořit zákaznickou fakturu po uzavření prodejní objednávky (nová faktura bude mít stejnou částku jako objednávka)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Při vytváření tiketu automaticky vytvořit intervenci.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Pokud je prodejní objednávka nastavena na fakturaci, klasifikovat propojené zdrojové návrhy jako fakturované (a pokud je částka objednávky stejná jako celková částka podepsaných propojených návrhů).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Po ověření faktury zákazníka klasifikovat propojené zdrojové návrhy jako fakturované (a pokud je částka faktury stejná jako celková částka podepsaných propojených návrhů).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Pokud je faktura odběratele nastavena na zaplaceno, klasifikujte propojené zdrojové prodejní objednávky jako fakturované (a pokud je částka faktury stejná jako celková částka propojených prodejních objednávek). Pokud vygenerujete 1 fakturu pro n objednávek, může se stát, že všechny objednávky budou také fakturovány.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Po ověření faktury odběratele klasifikujte všechny propojené zdrojové prodejní objednávky jako fakturované (a pokud je částka faktury stejná jako celková částka propojených zdrojových prodejních objednávek). Pokud vygenerujete 1 společnou fakturu pro n objednávek, může to nastavit všechny zdrojové objednávky jako fakturované.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Po ověření faktury odběratele se propojená prodejní objednávka (pokud existuje pouze jedna) klasifikuje jako fakturovaná, pokud se celková částka propojené prodejní objednávky rovná celkové částce všech faktur z ní vystavených. Pokud vygenerujete n faktur pro 1 objednávku, umožní to nastavit objednávku jako fakturovanou, jakmile jsou ověřeny všechny faktury.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Po ověření zásilky klasifikovat propojené zdrojové prodejní objednávky jako odeslané (a pokud je množství odeslané všemi zásilkami stejné jako v objednávce k aktualizaci).
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Po uzavření zásilky klasifikovat propojenou zdrojovou prodejní objednávku jako odeslanou (a pokud je množství odeslané všemi zásilkami stejné jako v objednávce k aktualizaci).
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Po ověření faktury dodavatele klasifikovat propojený návrh zdrojového dodavatele jako fakturovaný (a pokud je částka faktury stejná jako celková částka propojených návrhů).
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Po ověření faktury dodavatele klasifikovat propojenou zdrojovou nákupní objednávku jako fakturovanou (a pokud je částka faktury stejná jako celková částka propojených objednávek).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Po ověření příjmu klasifikovat objednávku propojeného zdroje jako přijatou (a pokud je množství přijaté všemi příjmy stejné jako v objednávce k aktualizaci).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Po uzavření příjmu klasifikovat propojené zdrojové nákupní objednávky jako přijaté (a pokud je množství přijaté všemi příjmy vydanými z nákupní objednávky stejné jako v aktualizované nákupní objednávce).
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Po ověření faktury odběratele klasifikovat propojenou zdrojovou dodávku jako uzavřenou (a pokud je částka faktury stejná jako celková částka propojených dodávek).
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Po ověření faktury odběratele klasifikovat propojenou zdrojovou dodávku jako fakturovanou (a pokud je částka faktury stejná jako celková částka propojených dodávek).
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Po ověření nákupní faktury klasifikovat propojené zdroje příjmů jako uzavřené (a pokud je částka faktury stejná jako celková částka propojených příjmů)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Po ověření nákupní faktury klasifikovat propojené zdroje jako fakturované (a pokud je částka faktury stejná jako celková částka propojených příjmů)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Po vytvoření tiketu jej propojte s dostupnými smlouvami, které odpovídají stejné třetí straně jako tiket.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Při automatickém propojování tiketu se smlouvami vyhledávat smlouvy mezi smlouvami mateřských společností.
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Když je lístek uzavřen, ukončete všechny zásahy spojené s lístkem
+AutomaticCreation=Automatická tvorba
+AutomaticClassification=Automatická klasifikace
+AutomaticClosing=Automatické zavírání
+AutomaticLinking=Automatické propojení

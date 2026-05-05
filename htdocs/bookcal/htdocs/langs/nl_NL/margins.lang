@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marge
+Margins=Marges
+TotalMargin=Marge Totaal
+MarginOnProducts=Marge / Training
+MarginOnServices=Marge / Dienst
+MarginRate=Marge verhouding
+ModifyMarginRates=Margetarieven wijzigen
+MarkRate=Markerings verhouding
+DisplayMarginRates=Toon Marge Verhouding
+DisplayMarkRates=Toon Markeringsverhouding
+InputPrice=Voer Prijs in
+margin=Winst marge management
+margesSetup=Winst marge management setup
+MarginDetails=Marge details
+ProductMargins=Product marge
+CustomerMargins=Klant marges
+SalesRepresentativeMargins=Vertegenwoordiger marges
+ContactOfInvoice=Contact bij factuur
+UserMargins=Gebruiker marges
+ProductService=Trainning of Dienst
+AllProducts=Alle Trainingen en Diensten
+ChooseProduct/Service=Kies Training of Dienst
+ForceBuyingPriceIfNull=Forceren inkoop/kostprijs naar verkoopprijs als dit niet is gedefinieerd
+ForceBuyingPriceIfNullDetails=Als er geen koop-/kostprijs wordt opgegeven wanneer we een nieuwe regel toevoegen, en deze optie is "AAN", is de marge 0%% op de nieuwe regel (koop-/kostprijs = verkoopprijs). Als deze optie "UIT" is (aanbevolen), is de marge gelijk aan de standaard voorgestelde waarde (en kan 100%% zijn als er geen standaardwaarde kan worden gevonden).
+MARGIN_METHODE_FOR_DISCOUNT=Marge methode voor globale discounts
+UseDiscountAsProduct=Als een training
+UseDiscountAsService=Als een dienst
+UseDiscountOnTotal=Op subtotaal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definieert als een globale discount wordt behandelt als een training, een dienst, of alleen een subtotaal voor marge berekening.
+MARGIN_TYPE=Inkoop/kostprijs voorgesteld al standaard bij margeberekening
+MargeType1=Marge op de beste verkoopprijs
+MargeType2=Marge op gewogen inkoopprijs (GIP)
+MargeType3=Marge inkoopprijs
+MarginTypeDesc=* Marge op beste koopprijs = Verkoopprijs - Beste leveranciersprijs gedefinieerd op productkaart <br> * Marge op gewogen gemiddelde prijs (WAP) = verkoopprijs - Productgewogen gemiddelde prijs (WAP) of beste leveranciersprijs als WAP nog niet is gedefinieerd <br> * Marge op kostprijs = verkoopprijs - kostprijs gedefinieerd op productkaart of WAP als kostprijs niet is gedefinieerd, of beste leveranciersprijs als WAP nog niet is gedefinieerd
+CostPrice=Kostprijs
+UnitCharges=Unit toeslag
+Charges=Toeslag
+AgentContactType=Contact type used voor commissie
+AgentContactTypeDetails=Definieer welk contacttype (gekoppeld op facturen) zal worden gebruikt voor margerapport per contact / adres. Houd er rekening mee dat het lezen van statistieken over een contactpersoon niet betrouwbaar is, omdat de contactpersoon in de meeste gevallen mogelijk niet expliciet op de facturen wordt gedefinieerd.
+rateMustBeNumeric=Tarief moet een numerieke waarde zijn
+markRateShouldBeLesserThan100=Markeer tarief moet lager zijn dan 100 zijn
+ShowMarginInfos=Toon marge info
+CheckMargins=Marge details
+MarginPerSaleRepresentativeWarning=Het rapport van marge per gebruiker gebruikt de koppeling tussen derden en verkoopvertegenwoordigers om de marge van elke verkoopvertegenwoordiger te berekenen. Omdat sommige derde partijen mogelijk geen speciale verkoopvertegenwoordiger hebben en sommige derde partijen mogelijk aan meerdere zijn gekoppeld, zijn sommige bedragen mogelijk niet opgenomen in dit rapport (als er geen verkoopvertegenwoordiger is) en sommige kunnen op verschillende regels worden weergegeven (voor elke verkoopvertegenwoordiger) .

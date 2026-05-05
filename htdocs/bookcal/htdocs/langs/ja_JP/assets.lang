@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=新規資産
+AccountancyCodeAsset=会計コード(資産)
+AccountancyCodeDepreciationAsset=会計コード(減価償却資産勘定)
+AccountancyCodeDepreciationExpense=会計コード(減価償却費勘定)
+AssetsLines=資産
+ConfirmValidateAsset=このアセットを参照 <b>%s</b> で検証してもよろしいですか?
+DeleteType=削除
+DeleteAnAssetType=アセットモデルを削除する
+ConfirmDeleteAssetType=このアセットモデルを削除してもよいか？
+ShowTypeCard=モデル「%s」を表示
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=資産
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=資産の説明
+# Admin page
+AssetSetup=資産s設定
+AssetSetupPage=資産s設定ページ
+ExtraFieldsAssetModel=補完的な属性（アセットのモデル）
+AssetsType=資産モデル
+AssetsTypeId=アセットモデルID
+AssetsTypeLabel=アセットモデルラベル
+AssetsTypes=資産モデル
+ASSET_ACCOUNTANCY_CATEGORY=固定資産会計グループ
+ASSET_DEPRECIATION_DURATION_PER_YEAR=1年間の償却を計算するための日数比例期間
+# Menu
+MenuAssets=資産
+MenuNewAsset=新規資産
+MenuAssetModels=モデルアセット
+MenuListAssets=一覧
+MenuNewAssetModel=新しいアセットのモデル
+MenuListAssetModels=一覧
+# Module
+ConfirmDeleteAsset=このアセットを本当に削除するか？
+# Tab
+AssetDepreciationOptions=減価償却オプション
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=減価償却
+# Asset
+Asset=資産
+Assets=資産
+AssetReversalAmountHT=取消額（税抜き）
+AssetAcquisitionValueHT=取得金額（税抜き）
+AssetRecoveredVAT=回収されたVAT
+AssetReversalDate=取消日
+AssetDateAcquisition=取得日
+AssetDateStart=起動日
+AssetAcquisitionType=買収の種類
+AssetAcquisitionTypeNew=新規
+AssetAcquisitionTypeOccasion=中古
+AssetType=資産の種類
+AssetTypeIntangible=無形
+AssetTypeTangible=有形
+AssetTypeInProgress=進行中
+AssetTypeFinancial=金融
+AssetNotDepreciated=減価償却されていない
+AssetDisposal=廃棄
+AssetConfirmDisposalAsk=資産<b>%s</b>を破棄してもよいか？
+AssetConfirmReOpenAsk=アセット<b>%s</b>を再開してもよいか？
+# Asset status
+AssetInDraft=下書き
+AssetInProgress=進行中
+AssetDisposed=処分
+AssetRecorded=会計処理
+# Asset disposal
+AssetDisposalDate=処分日
+AssetDisposalAmount=処分価値
+AssetDisposalType=処分の種類
+AssetDisposalDepreciated=振替年度を減価償却する
+AssetDisposalSubjectToVat=VATの対象となる処分
+# Asset model
+AssetModel=アセットのモデル
+AssetModels=アセットのモデル
+# Asset depreciation options
+AssetDepreciationOptionEconomic=経済的減価
+AssetDepreciationOptionAcceleratedDepreciation=加速償却（税）
+AssetDepreciationOptionDepreciationType=減価償却タイプ
+AssetDepreciationOptionDepreciationTypeLinear=線形
+AssetDepreciationOptionDepreciationTypeDegressive=ディグレッシブ
+AssetDepreciationOptionDepreciationTypeExceptional=例外的
+AssetDepreciationOptionDegressiveRate=退行率
+AssetDepreciationOptionDuration=期間
+AssetDepreciationOptionDurationType=タイプ期間
+AssetDepreciationOptionDurationTypeAnnual=年間
+AssetDepreciationOptionDurationTypeMonthly=毎月
+AssetDepreciationOptionDurationTypeDaily=毎日
+AssetDepreciationOptionRate=レート（%%）
+AssetDepreciationOptionAmountBaseDepreciationHT=減価償却ベース（VATを除く）
+AssetDepreciationOptionAmountBaseDeductibleHT=控除可能なベース（VATを除く）
+AssetDepreciationOptionTotalAmountLastDepreciationHT=前回の減価償却総額（付加価値税を除く）
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=経済的減価
+AssetAccountancyCodeAsset=資産
+AssetAccountancyCodeDepreciationAsset=減価償却
+AssetAccountancyCodeDepreciationExpense=減価償却費
+AssetAccountancyCodeValueAssetSold=処分された資産の価値
+AssetAccountancyCodeReceivableOnAssignment=処分による売掛金
+AssetAccountancyCodeProceedsFromSales=処分による収入
+AssetAccountancyCodeVatCollected=徴収されたVAT
+AssetAccountancyCodeVatDeductible=資産の回収されたVAT
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=加速償却（税）
+AssetAccountancyCodeAcceleratedDepreciation=科目
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=減価償却費
+AssetAccountancyCodeProvisionAcceleratedDepreciation=所有/プロビジョニング
+# Asset depreciation
+AssetBaseDepreciationHT=減価償却基準（付加価値税を除く）
+AssetDepreciationBeginDate=減価償却の開始
+AssetDepreciationDuration=期間
+AssetDepreciationRate=レート（%%）
+AssetDepreciationDate=減価償却日
+AssetDepreciationHT=減価償却（VATを除く）
+AssetCumulativeDepreciationHT=減価償却累計額（付加価値税を除く）
+AssetResidualHT=残価（付加価値税を除く）
+AssetDispatchedInBookkeeping=減価償却が記録された
+AssetFutureDepreciationLine=将来の減価償却
+AssetDepreciationReversal=逆転
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=見つかったアセットまたはモデルの ID が提供されていない
+AssetErrorFetchAccountancyCodesForMode='%s'減価償却モードの会計勘定を取得するときにエラーが発生した
+AssetErrorDeleteAccountancyCodesForMode='%s'減価償却モードから会計勘定を削除するときにエラーが発生した
+AssetErrorInsertAccountancyCodesForMode=減価償却モード'%s'の会計勘定を挿入するときにエラーが発生した
+AssetErrorFetchDepreciationOptionsForMode='%s'減価償却モードのオプションを取得するときにエラーが発生した
+AssetErrorDeleteDepreciationOptionsForMode='%s'減価償却モードオプションを削除する際のエラー
+AssetErrorInsertDepreciationOptionsForMode='%s'減価償却モードオプションを挿入するときにエラーが発生した
+AssetErrorFetchDepreciationLines=記録された減価償却ラインを取得するときにエラーが発生した
+AssetErrorClearDepreciationLines=記録された減価償却ラインをパージするときのエラー（取消および将来）
+AssetErrorAddDepreciationLine=減価償却ラインを追加するときにエラーが発生した
+AssetErrorCalculationDepreciationLines=減価償却ラインの計算時のエラー（回収および将来）
+AssetErrorReversalDateNotProvidedForMode='%s'減価償却方法では、取消日は指定されていない。
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode='%s'減価償却方法の場合、取消日は現在の会計年度の開始日以上である必要がある。
+AssetErrorReversalAmountNotProvidedForMode=減価償却モード'%s'には、取消額は提供されない。
+AssetErrorFetchCumulativeDepreciation=減価償却ラインから減価償却累計額を取得する際のエラー
+AssetErrorSetLastCumulativeDepreciation=最後の減価償却累計額を記録する際のエラー

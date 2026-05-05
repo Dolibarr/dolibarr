@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Loan
+Loans=Loans
+NewLoan=New Loan
+ShowLoan=Show Loan
+PaymentLoan=Loan payment
+LoanPayment=Loan payment
+ShowLoanPayment=Show Loan Payment
+LoanCapital=Kapital
+Insurance=Insurance
+Interest=Interest
+Nbterms=Number of terms
+Term=Termin
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Confirm deleting this loan
+LoanDeleted=Loan Deleted Successfully
+ConfirmPayLoan=Confirm classify paid this loan
+LoanPaid=Loan Paid
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Kreirajte kredit
+FinancialCommitment=Finansijska obaveza
+InterestAmount=Interest
+CapitalRemain=Kapital ostaje
+TermPaidAllreadyPaid = Ovaj termin je već plaćen
+CantUseScheduleWithLoanStartedToPaid = Nije moguće generirati vremenski okvir za kredit s otplatom
+CantModifyInterestIfScheduleIsUsed = Ne možete mijenjati kamatu ako koristite raspored
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Račun (iz kontnog plana) koji će se standardno koristiti za kapital (modul zajma)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Račun (iz kontnog plana) koji se koristi za zatezne kamate (modul kredita)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Račun (iz kontnog plana) koji će se standardno koristiti za osiguranje (modul zajma)
+CreateCalcSchedule=Uredite finansijsku obavezu

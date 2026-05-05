@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Lozinka za korisnika <b>%s</b> na domeni <b>%s</b> mora se promjeniti.
+UserMustChangePassNextLogon=Korisnik mora promjeniti lozinku na domeni %s
+LDAPInformationsForThisContact=Podaci u LDAP bazi za kontakt
+LDAPInformationsForThisUser=Podaci u LDAP bazi za korisnika
+LDAPInformationsForThisGroup=Podaci u LDAP bazi za grupu
+LDAPInformationsForThisMember=Podaci u LDAP bazi za člana
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP atributi
+LDAPCard=LDAP kartica
+LDAPRecordNotFound=Podatak nije pronađen u LDAP bazi
+LDAPUsers=Korisnici u LDAP bazi
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=Datum prve pretplate
+LDAPFieldFirstSubscriptionAmount=Iznos prve pretplate
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype ID
+LDAPFieldSkypeExample=Primjer: skypeIme
+UserSynchronized=Korisnik sinhroniziran
+GroupSynchronized=Grupa sinhronizirana
+MemberSynchronized=Član sinhroniziran
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Kontakt sinhroniziran
+ForceSynchronize=Forsiraj sinhronizaciju Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Neuspješno čitanje LDAP baze. Provjerite postavke LDAP modula i pristupnost bazi.
+PasswordOfUserInLDAP=Password of user in LDAP

@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Танзимоти модули PayPal
+PaypalDesc=Ин модул имкон медиҳад, ки муштариён тавассути <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> пардохт кунанд. Ин метавонад барои пардохти муваққатӣ ё барои пардохти марбут ба объекти Dolibarr (инвойс, фармоиш, ...) истифода шавад.
+PaypalOrCBDoPayment=Бо PayPal пардохт кунед (Card ё PayPal)
+PaypalDoPayment=Бо PayPal пардохт кунед
+PAYPAL_API_SANDBOX=Санҷиши режим/қуттии рег
+PAYPAL_API_USER=Номи корбари API
+PAYPAL_API_PASSWORD=Рамзи API
+PAYPAL_API_SIGNATURE=Имзои API
+PAYPAL_SSLVERSION=Нусхаи Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Танҳо пардохти "интегралӣ" (корти кредитӣ+PayPal) ё танҳо "PayPal" -ро пешниҳод кунед
+PaypalModeIntegral=Интегралӣ
+PaypalModeOnlyPaypal=Танҳо PayPal
+ONLINE_PAYMENT_CSS_URL=URL -и ихтиёрии ҷадвали услуби CSS дар саҳифаи пардохти онлайн
+ThisIsTransactionId=Ин рамзи муомилот аст: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=Ҳангоми фиристодани ҳуҷҷат тавассути почтаи электронӣ, URL -и пардохти PayPal -ро дохил кунед
+NewOnlinePaymentReceived=Пардохти нави онлайн гирифта шуд
+NewOnlinePaymentFailed=Пардохти нави онлайн кӯшиш кард, аммо ноком шуд
+ONLINE_PAYMENT_SENDEMAIL=Суроғаи почтаи электронӣ барои огоҳиҳо пас аз ҳар як кӯшиши пардохт (барои муваффақият ва нокомӣ)
+ReturnURLAfterPayment=URL -ро пас аз пардохт баргардонед
+ValidationOfOnlinePaymentFailed=Санҷиши пардохти онлайн ноком шуд
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Саҳифаи тасдиқи пардохт аз ҷониби системаи пардохт даъват карда шуд, ки хато баргардонида шуд
+SetExpressCheckoutAPICallFailed=Занги SetExpressCheckout API ноком шуд.
+DoExpressCheckoutPaymentAPICallFailed=Занги DoExpressCheckoutPayment API ноком шуд.
+DetailedErrorMessage=Паёми хатогии муфассал
+ShortErrorMessage=Паёми хатои кӯтоҳ
+ErrorCode=Кодекси хато
+ErrorSeverityCode=Кодекси вазнинии хато
+OnlinePaymentSystem=Системаи пардохти онлайн
+PaypalLiveEnabled=Ҳолати "зинда" -и PayPal фаъол аст (дар акси ҳол ҳолати санҷиш/қуттии қуттиҳо)
+PaypalImportPayment=Пардохтҳои PayPal ворид кунед
+PostActionAfterPayment=Интишори амалҳо пас аз пардохт
+ARollbackWasPerformedOnPostActions=Баргардонидани ҳама амалҳои Post иҷро карда шуд. Агар лозим бошад, шумо бояд амалҳои интишорро дастӣ анҷом диҳед.
+ValidationOfPaymentFailed=Санҷиши пардохт ноком шуд
+CardOwner=Дорандаи корт
+PayPalBalance=Кредити PayPal
+OnlineSubscriptionPaymentLine=Обунаи онлайн дар %s<br>Пардохт тавассути %s<br>Суроғаи ибтидоии IP: %s<br>Идентификатсияи транзаксия: <spanteec24bz0f </span>

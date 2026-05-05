@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Rekrytointi
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Hallinnoi ja ja seuraa uusien työpaikkojen rekrytointikampanjoita
+# Admin page
+RecruitmentSetup = Rekrytointiasetukset
+RecruitmentSetupPage = Kirjoita tähän rekrytointimoduulin päävaihtoehtojen asetukset
+RecruitmentArea=Rekrytointialue
+PublicInterfaceRecruitmentDesc=Työpaikkojen julkiset sivut ovat julkisia URL-osoitteita, joissa näkyy ja vastaus avoimiin työpaikkoihin. Jokaiselle avoimelle työlle on yksi erilainen linkki, joka löytyy jokaisesta työtietueesta.
+EnablePublicRecruitmentPages=Ota käyttöön avoimien töiden julkiset sivut
+
+NbOfEmployeesExpected=Odotettu työntekijöiden määrä
+JobLabel=Työpaikan etiketti
+WorkPlace=Työpaikka
+DateExpected=Odotettu päiväys
+FutureManager=Tuleva manageri
+ResponsibleOfRecruitement=Vastaa rekrytoinnista
+IfJobIsLocatedAtAPartner=Jos työpaikka sijaitsee kumppanipaikalla
+PositionToBeFilled=Asema
+PositionsToBeFilled=Työpaikat
+ListOfPositionsToBeFilled=Luettelo työpaikoista
+NewPositionToBeFilled=Uusia työpaikkoja
+JobOfferToBeFilled=Työpaikka täytettävänä
+ThisIsInformationOnJobPosition=Tietoa täytettävästä työpaikasta
+ContactForRecruitment=Ota yhteyttä rekrytointiin
+EmailRecruiter=Sähköposti rekrytoija
+ToUseAGenericEmail=Yleisen sähköpostin käyttäminen. Jos sitä ei ole määritelty, käytetään rekrytointivastaavan sähköpostiosoitetta
+NewCandidature=Uusi sovellus
+ListOfCandidatures=Luettelo sovelluksista
+Remuneration=Palkka
+RequestedRemuneration=Haettu palkka
+ProposedRemuneration=Ehdotettu palkka
+ContractProposed=Ehdotettu sopimus
+ContractSigned=Sopimus allekirjoitettu
+ContractRefused=Sopimus hylätty
+RecruitmentCandidature=Sovellus
+JobPositions=Työpaikat
+RecruitmentCandidatures=Sovellukset
+InterviewToDo=Yhteystiedot seurattavia
+AnswerCandidature=Hakemuksen vastaus
+YourCandidature=Hakemuksesi
+YourCandidatureAnswerMessage=Kiitos hakemuksestasi.<br>...
+JobClosedTextCandidateFound=Työpaikka on suljettu. Paikka on täytetty.
+JobClosedTextCanceled=Työpaikka on suljettu.
+ExtrafieldsJobPosition=Täydentävät ominaisuudet (työpaikat)
+ExtrafieldsApplication=Täydentävät attribuutit (työhakemukset)
+MakeOffer=Tehdä tarjous
+WeAreRecruiting=Olemme rekrytoimassa. Tämä on lista avoimista työpaikoista, jotka täytetään...
+NoPositionOpen=Tällä hetkellä ei avoimia paikkoja
+ConfirmClose=Vahvista peruutus
+ConfirmCloseAsk=Haluatko varmasti peruuttaa tämän rekrytointiehdokkaan
+Recruitment=Rekrytointi
+ApplyJobCandidature=Hae tätä työpaikkaa
+ErrorRecruitmmentCandidatureAlreadyExists= Sähköpostiosoitteella %s on jo työhakemus.
+RecruitmentCandidatureSaved=Työhakemus tallennettu onnistuneesti
+NoOpenJobOffer=Ei avoimia työpaikkoja tällä hetkellä

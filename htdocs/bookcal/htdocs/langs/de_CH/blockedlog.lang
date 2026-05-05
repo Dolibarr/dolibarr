@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+Fingerprint=E-Mail-Signatur
+logBILL_VALIDATE=Rechnung freigegeben
+logMEMBER_SUBSCRIPTION_CREATE=Mitgliedsabonnement erstellt
+logMEMBER_SUBSCRIPTION_DELETE=Logische Löschung des Mitgliedsabonnements
+logMEMBER_SUBSCRIPTION_MODIFY=Mitgliedsabonnement geändert

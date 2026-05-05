@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Podešavanje PayPal modula
+PaypalDesc=Ovaj modul omogućava plaćanje od strane kupaca putem <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Ovo se može koristiti za ad-hoc plaćanje ili za plaćanje povezano s Dolibarr objektom (faktura, narudžba,...)
+PaypalOrCBDoPayment=Platite PayPal-om (karticom ili PayPal-om)
+PaypalDoPayment=Platite PayPal-om
+PAYPAL_API_SANDBOX=Mod test/sandbox
+PAYPAL_API_USER=API korisničko ime
+PAYPAL_API_PASSWORD=API lozinka
+PAYPAL_API_SIGNATURE=API potpis
+PAYPAL_SSLVERSION=Curl SSL verzija
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponudite "integralno" plaćanje (kreditna kartica+PayPal) ili samo "PayPal".
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Samo PayPal
+ONLINE_PAYMENT_CSS_URL=Opcioni URL CSS stilova na stranici za plaćanje na mreži
+ThisIsTransactionId=Ovo je ID transakcije: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Uključite PayPal url za plaćanje kada šaljete dokument e-poštom
+NewOnlinePaymentReceived=Primljena nova online uplata
+NewOnlinePaymentFailed=Pokušano novo plaćanje putem interneta, ali nije uspjelo
+ONLINE_PAYMENT_SENDEMAIL=Adresa e-pošte za obavještenja nakon svakog pokušaja plaćanja (za uspjeh i neuspjeh)
+ReturnURLAfterPayment=Povratni URL nakon uplate
+ValidationOfOnlinePaymentFailed=Provjera valjanosti online plaćanja nije uspjela
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Stranica za potvrdu plaćanja je pozvana od strane platnog sistema i vratila je grešku
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API poziv nije uspio.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API poziv nije uspio.
+DetailedErrorMessage=Detaljna poruka o grešci
+ShortErrorMessage=Kratka poruka o grešci
+ErrorCode=Kod greške
+ErrorSeverityCode=Kod ozbiljnosti greške
+OnlinePaymentSystem=Sistem plaćanja putem interneta
+PaypalLiveEnabled=PayPal "uživo" način rada je omogućen (inače test/sandbox mod)
+PaypalImportPayment=Uvezite PayPal plaćanja
+PostActionAfterPayment=Objavite akcije nakon plaćanja
+ARollbackWasPerformedOnPostActions=Vraćanje je izvršeno na svim radnjama Post. Radnje objave morate dovršiti ručno ako su potrebne.
+ValidationOfPaymentFailed=Provjera valjanosti plaćanja nije uspjela
+CardOwner=Držač kartice
+PayPalBalance=Paypal kredit
+OnlineSubscriptionPaymentLine=Online pretplata snimljena na %s<br>Plaćeno putem %s<br>Iriginalna IP adresa: %s<br>ID transakcije: <span>%s</span><br>ID transakcije: <span>b0cb04zf97 </span>

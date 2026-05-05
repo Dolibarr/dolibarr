@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = İşe Alım
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Yeni iş pozisyonları için işe alım kampanyalarını yönetin ve takip edin
+# Admin page
+RecruitmentSetup = İşe alım ayarları
+RecruitmentSetupPage = İşe alım modülü için ana seçeneklerin kurulumunu buraya girin
+RecruitmentArea=İşe alım alanı
+PublicInterfaceRecruitmentDesc=Genel iş ilanları sayfaları, açık iş ilanlarını gösterecek ve yanıtlayacak genel URL'lerdir. Her iş kaydında her açık iş için farklı bir bağlantı bulunur.
+EnablePublicRecruitmentPages=Açık işlerin genel sayfalarını etkinleştir
+
+NbOfEmployeesExpected=Beklenen çalışan sayısı
+JobLabel=İş pozisyonu etiketi
+WorkPlace=İş yeri
+DateExpected=Beklenen tarih
+FutureManager=Geleceğin yöneticisi
+ResponsibleOfRecruitement=İşe alım sorumlusu
+IfJobIsLocatedAtAPartner=İş ortak bir yerde bulunuyorsa
+PositionToBeFilled=İş pozisyonu
+PositionsToBeFilled=İş pozisyonları
+ListOfPositionsToBeFilled=İş pozisyonlarının listesi
+NewPositionToBeFilled=Yeni iş pozisyonları
+JobOfferToBeFilled=Doldurulacak iş pozisyonu
+ThisIsInformationOnJobPosition=Doldurulacak iş pozisyonuna ilişkin bilgiler
+ContactForRecruitment=İşe alım için iletişim
+EmailRecruiter=E-posta işe alım görevlisi
+ToUseAGenericEmail=Genel bir e-posta kullanmak için. Tanımlanmadığı takdirde işe alım sorumlusunun e-posta adresi kullanılacaktır
+NewCandidature=Yeni uygulama
+ListOfCandidatures=Uygulamaların listesi
+Remuneration=Maaş
+RequestedRemuneration=Talep edilen maaş
+ProposedRemuneration=Önerilen maaş
+ContractProposed=Sözleşme teklifi
+ContractSigned=Sözleşme imzalandı
+ContractRefused=Sözleşme reddedildi
+RecruitmentCandidature=Başvuru
+JobPositions=İş pozisyonları
+RecruitmentCandidatures=Uygulamalar
+InterviewToDo=Takip edilecek kişiler
+AnswerCandidature=Başvuru cevabı
+YourCandidature=Başvurunuz
+YourCandidatureAnswerMessage=Başvurunuz için teşekkür ederiz.<br>...
+JobClosedTextCandidateFound=İş pozisyonu kapalı. Pozisyon dolduruldu.
+JobClosedTextCanceled=İş pozisyonu kapalı.
+ExtrafieldsJobPosition=Tamamlayıcı nitelikler (iş pozisyonları)
+ExtrafieldsApplication=Tamamlayıcı nitelikler (iş başvuruları)
+MakeOffer=Bir teklif yapmak
+WeAreRecruiting=Personel alımı yapıyoruz. Bu doldurulacak açık pozisyonların listesidir...
+NoPositionOpen=Şu anda açık pozisyon yok
+ConfirmClose=İptal İşlemini Onayla
+ConfirmCloseAsk=Bu işe alım adaylığını iptal yapmak istediğinizden emin misiniz?
+Recruitment=İşe Alım
+ApplyJobCandidature=Bu işe başvur
+ErrorRecruitmmentCandidatureAlreadyExists= İşe alım adaylığı zaten %s e-postasıyla mevcut
+RecruitmentCandidatureSaved=İşe alım adaylığı başarıyla kaydedildi
+NoOpenJobOffer=Şu anda açık iş teklifi yok

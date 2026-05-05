@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Credit
+Loans=Credite
+NewLoan=Credit nou
+ShowLoan=Afișează credit
+PaymentLoan=Plată credit
+LoanPayment=Plată credit
+ShowLoanPayment=Afișează plată credit
+LoanCapital=Capital
+Insurance=Asigurări
+Interest=Dobândă
+Nbterms=Număr de rate
+Term=Rată
+LoanAccountancyCapitalCode=Cont contabil de capital
+LoanAccountancyInsuranceCode=Cont contabil de asigurare
+LoanAccountancyInterestCode=Cont contabil de dobândă
+ConfirmDeleteLoan=Confirmaţi ştergerea acestui credit
+LoanDeleted=Credit șters cu succes
+ConfirmPayLoan=Confirmați clasificarea împrumutului ca achitat
+LoanPaid=Credit achitat
+ListLoanAssociatedProject=Lista împrumuturilor asociate proiectului
+AddLoan=Creați împrumut
+FinancialCommitment=Angajament financiar
+InterestAmount=Dobândă
+CapitalRemain=Capital rămas de achitat
+TermPaidAllreadyPaid = Această rată este plătită deja
+CantUseScheduleWithLoanStartedToPaid = Nu se poate genera un grafic de rambursare pentru un împrumut cu o plată începută
+CantModifyInterestIfScheduleIsUsed = Nu poţi modifica dobânda dacă foloseşti scadenţar
+# Admin
+ConfigLoan=Configurare modul Credite - împrumuturi
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cont contabil (din Planul de Conturi) care va fi utilizat implicit pentru capital (modul Împrumuturi)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cont contabil (din Planul de Conturi) care va fi utilizat implicit pentru dobândă (modul Împrumuturi)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cont contabil (din Planul de Conturi) care va fi utilizat implicit pentru asigurare (modul Împrumuturi)
+CreateCalcSchedule=Editați angajamentul financiar

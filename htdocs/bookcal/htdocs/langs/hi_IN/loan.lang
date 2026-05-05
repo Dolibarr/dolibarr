@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=ऋृण
+Loans=ऋण
+NewLoan=नया ऋण
+ShowLoan=ऋण दिखाएं
+PaymentLoan=कर्ज़ भुगतान
+LoanPayment=कर्ज़ भुगतान
+ShowLoanPayment=ऋण भुगतान दिखाएं
+LoanCapital=पूंजी
+Insurance=बीमा
+Interest=दिलचस्पी
+Nbterms=पदों की संख्या
+Term=अवधि
+LoanAccountancyCapitalCode=लेखांकन खाता पूंजी
+LoanAccountancyInsuranceCode=लेखांकन खाता बीमा
+LoanAccountancyInterestCode=लेखांकन खाता ब्याज
+ConfirmDeleteLoan=इस ऋण को हटाने की पुष्टि करें
+LoanDeleted=ऋण सफलतापूर्वक हटा दिया गया
+ConfirmPayLoan=इस ऋण का भुगतान किया गया है इसकी पुष्टि करें
+LoanPaid=ऋण का भुगतान
+ListLoanAssociatedProject=परियोजना से जुड़े ऋण की सूची
+AddLoan=ऋण बनाएं
+FinancialCommitment=वित्तीय प्रतिबद्धता
+InterestAmount=दिलचस्पी
+CapitalRemain=पूंजी शेष
+TermPaidAllreadyPaid = यह अवधि पहले ही भुगतान की जा चुकी है
+CantUseScheduleWithLoanStartedToPaid = भुगतान शुरू होने के साथ ऋण के लिए समय-सीमा उत्पन्न नहीं की जा सकती
+CantModifyInterestIfScheduleIsUsed = यदि आप शेड्यूल का उपयोग करते हैं तो आप ब्याज में संशोधन नहीं कर सकते
+# Admin
+ConfigLoan=मॉड्यूल ऋण का विन्यास
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=पूंजी के लिए डिफ़ॉल्ट रूप से उपयोग किया जाने वाला खाता (खाता चार्ट से) (ऋण मॉड्यूल)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=ब्याज के लिए डिफ़ॉल्ट रूप से उपयोग किया जाने वाला खाता (खाता चार्ट से) (ऋण मॉड्यूल)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=बीमा के लिए डिफ़ॉल्ट रूप से उपयोग किया जाने वाला खाता (खाता चार्ट से) (ऋण मॉड्यूल)
+CreateCalcSchedule=वित्तीय प्रतिबद्धता संपादित करें

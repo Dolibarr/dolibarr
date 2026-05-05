@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - holiday
+HRM=إدارة الموارد البشرية (HRM)
+Holiday=الإجازات
+CPTitreMenu=الإجازات
+DateFinCP=تاريخ الانتهاء
+ApprovedCP=تمت الموافقة
+CancelCP=تم الإلغاء
+RefuseCP=مرفوض
+DescCP=الوصف
+ActionCancelCP=إلغاء
+StatutCP=الحالة
+MotifCP=السبب
+UserCP=المستخدم
+ActionByCP=تم التحديث بواسطة المستخدم
+users=المستخدمون
+NoticePeriod=فترة الإشعار

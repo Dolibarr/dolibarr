@@ -1,0 +1,564 @@
+<?php
+/* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
+ * Copyright (C) 2011-2023 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
+ * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 202        Ferran Marcet      <fmarcet@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/takepos/receipt.php
+ *	\ingroup    takepos
+ *	\brief      Page to show a receipt.
+ */
+
+
+// Include the main.inc.php (note: when file is included into send.php, $action is already set and main.inc.php was already loaded)
+/**
+ * @var string $action
+ */
+if (!isset($action)) {
+	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
+	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
+	//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+	//if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
+	if (!defined('NOTOKENRENEWAL')) {
+		define('NOTOKENRENEWAL', '1');
+	}
+	if (!defined('NOREQUIREMENU')) {
+		define('NOREQUIREMENU', '1');
+	}
+	if (!defined('NOREQUIREHTML')) {
+		define('NOREQUIREHTML', '1');
+	}
+	if (!defined('NOREQUIREAJAX')) {
+		define('NOREQUIREAJAX', '1');
+	}
+
+	require '../main.inc.php'; // If this file is called from send.php avoid load again
+}
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+$langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
+
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
+
+$facid = GETPOSTINT('facid');
+
+$action = GETPOST('action', 'aZ09');
+$gift = GETPOSTINT('gift');
+
+if (!$user->hasRight('takepos', 'run')) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
+/*
+ * View
+ */
+
+top_htmlhead('', '', 2);
+
+if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+	$sql .= " AND entity IN (".getEntity('invoice').")";
+
+	$resql = $db->query($sql);
+	$obj = $db->fetch_object($resql);
+	if ($obj) {
+		$facid = $obj->rowid;
+	}
+}
+$object = new Facture($db);
+if ($facid > 0 && !GETPOST('specimen')) {
+	$object->fetch($facid);
+} else {
+	$object->initAsSpecimen('takepos');
+}
+print '<body>';
+
+
+// Record entry in blocked logs each time we print a receipt
+//
+// This will also increase the counter of printings of the receipt
+// DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
+
+print "
+<script>
+
+	console.log('Call /blockedlog/ajax/block-add on output of receipt.php.');
+	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
+			, {
+				id: ".((int) $object->id)."
+									, element: '".dol_escape_js($object->element)."'
+									, action: 'DOC_PREVIEW'
+									, token: '".currentToken()."'
+			   }
+	);
+</script>";
+
+/*
+ * jQuery(document).ready(function () {
+});
+ */
+
+// Call to external receipt modules factory if it exists and if we can (not allowed in some cases)
+if (isALNERunningVersion()) {
+	// If LNE version, we force format. Custom templates is not allowed
+	$conf->global->TAKEPOS_SHOW_HT_RECEIPT = 1;
+	$conf->global->TAKEPOS_TICKET_VAT_GROUPPED = 1;
+} else {
+	$parameters = array();
+	$hookmanager->initHooks(array('takeposfrontend'));
+	$reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
+	if (!empty($hookmanager->resPrint)) {
+		print $hookmanager->resPrint;
+		return;	// Receipt page can be called by the takepos/send.php page that use ob_start/end so we must use return and not exit to stop page
+	}
+}
+
+// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
+?>
+
+<style>
+.right {
+	text-align: right;
+}
+.center {
+	text-align: center;
+}
+.left {
+	text-align: left;
+}
+.centpercent {
+	width: 100%;
+}
+@media only screen and (min-width: 1024px)
+{
+	body {
+		margin-left: 50px;
+		margin-right: 50px;
+	}
+}
+</style>
+<center>
+<div style="font-size: 1.5em">
+<?php
+echo '<b>'.$mysoc->name.'</b>';
+
+if (GETPOST('specimen')) {
+	print '<br>';
+	print '!!!!! SPECIMEN !!!!!';
+}
+?>
+</div>
+</center>
+<br>
+<p class="left">
+<?php
+$constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
+	$newfreetext = '';
+	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs, $object);
+	if (getDolGlobalString('TAKEPOS_HEADER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_HEADER'), $substitutionarray);
+	}
+	if (getDolGlobalString($constFreeText)) {
+		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
+	}
+	print nl2br($newfreetext);
+}
+?>
+</p>
+
+<?php
+if ($object->status == Facture::STATUS_DRAFT) {
+	$canprintifnotvalidate = true;
+	if (isALNERunningVersion()) {
+		$canprintifnotvalidate = false;
+		//$orderprinterallowed = false;
+	}
+
+	if (!$canprintifnotvalidate && empty($facid) && !GETPOST('specimen')) {
+		print "Error: Printing ticket is not allowed when invoice is not validated/paid.";
+		exit;
+	}
+}
+?>
+
+<p class="right">
+<?php
+// Invoice Ref
+if (getDolGlobalString('TAKEPOS_RECEIPT_NAME')) {
+	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
+} else {
+	print $langs->trans("InvoiceRef")." ";
+}
+if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specimen')) {
+	// Printing ticket is not allowed if invoice not yet validate.
+	// Reaching this code may happen for specimen or if a feature to validate invoice and print it before paying is implemented.
+	if (empty($facid) || GETPOST('specimen')) {
+		print '99999';
+	} else {
+		print $object->ref;
+	}
+} else {
+	print $object->ref;
+}
+// POS terminal
+print '<br>'.$langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : ($object->pos_source ? $object->pos_source : 'Backoffice'));
+if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
+	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
+		$soc = new Societe($db);
+		if ($object->socid > 0) {
+			$soc->fetch($object->socid);
+		} else {
+			$soc->fetch(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]));
+		}
+		print "<br>".$langs->trans("Customer").': '.$soc->name;
+	}
+}
+// Date
+print "<br>".$langs->trans('Date').": ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
+// Date of printing
+if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel');
+}
+// Transaction ID
+if (isALNERunningVersion() && isModEnabled('blockedlog')) {
+	if ($object->status > $object::STATUS_DRAFT) {
+		$unalterablelogid = 'UNDEFINED';
+		$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
+		$sql .= $db->order('rowid', 'DESC');
+		$sql .= $db->plimit(1);
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$unalterablelogid = $obj->signature;
+			}
+		}
+
+		print "<br>".$langs->trans("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
+	}
+}
+
+// $object->pos_print_counter is current value. It is increased by a parallel process when calling ajax block-add.php that
+// may have finished before or after this page start, so $object->pos_print_counter may be already up to date, but we use the value at begin
+// of this page start and we increase 1 to have correct value we want to show.
+$object->pos_print_counter += 1;
+
+// Show if it is a duplicata
+$isADuplicata = ($object->pos_print_counter >= 2);
+
+if ($object->status == $object::STATUS_CLOSED) {
+	if ($isADuplicata) {
+		print '<br><b>*** DUPLICATA (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
+	}
+} else {
+	// Not yet paid completely
+	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
+}
+?>
+</p>
+<br>
+
+<table class="centpercent" style="border-top-style: double;">
+	<thead>
+	<tr>
+		<th class="left"><?php print $langs->trans("Label"); ?></th>
+		<th class="right"><?php print $langs->trans("Qty"); ?></th>
+		<th class="right"><?php if ($gift != 1) {
+			print $langs->trans("Price");
+						  } ?></th>
+		<?php  if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
+		<th class="right"><?php if ($gift != 1) {
+			print $langs->trans("TotalHT");
+						  } ?></th>
+		<?php } ?>
+		<th class="right"><?php if ($gift != 1) {
+			print $langs->trans("TotalTTC");
+						  } ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php
+	if ($action == 'without_details') {
+		$qty = GETPOSTINT('qty') > 0 ? GETPOSTINT('qty') : 1;
+		print '<tr>';
+		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
+		print '<td class="right">' . $qty . '</td>';
+		print '<td class="right">' . price(price2num($object->total_ttc / $qty, 'MU'), 1) . '</td>';
+		if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) {
+			print '<td class="right">' . price($object->total_ht, 1) . '</td>';
+		}
+		print '<td class="right">' . price($object->total_ttc, 1) . '</td>';
+		print '</tr>';
+	} else {
+		foreach ($object->lines as $line) {
+			?>
+		<tr>
+			<td>
+			<?php if (!empty($line->product_label)) {
+				echo $line->product_label;
+			} else {
+				echo $line->desc;
+			} ?>
+			</td>
+			<td class="right"><?php echo $line->qty; ?></td>
+			<td class="right"><?php if ($gift != 1) {
+				echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
+							  } ?></td>
+			<?php
+			if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
+						<td class="right"><?php if ($gift != 1) {
+							echo price($line->total_ht, 1);
+										  } ?></td>
+				<?php
+			} ?>
+			<td class="right"><?php if ($gift != 1) {
+				echo price($line->total_ttc, 1);
+							  } ?></td>
+		</tr>
+			<?php
+		}
+	}
+	?>
+	</tbody>
+</table>
+<br>
+<table class="right centpercent">
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo $langs->trans("TotalHT");
+					  } ?></th>
+	<td class="right"><?php if ($gift != 1) {
+		echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></td>
+</tr>
+<?php
+if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
+	$vat_groups = array();
+	foreach ($object->lines as $line) {
+		if (!array_key_exists((string) $line->tva_tx, $vat_groups)) {
+			$vat_groups[(string) $line->tva_tx] = 0;
+		}
+		$vat_groups[(string) $line->tva_tx] += $line->total_tva;
+	}
+
+	// Loop on each VAT group
+	foreach ($vat_groups as $key => $val) {
+		?>
+	<tr>
+		<th align="right"><?php if ($gift != 1) {
+			echo $langs->trans("VAT").' '.vatrate($key, true);
+						  } ?></th>
+		<td align="right"><?php if ($gift != 1) {
+			echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+						  } ?></td>
+	</tr>
+		<?php
+	}
+} else { ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></th>
+</tr>
+<?php }
+
+// Now show local taxes if company uses them
+
+if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></th>
+</tr>
+<?php } ?>
+<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></th>
+</tr>
+<?php } ?>
+<tr>
+	<th class="right"><?php if ($gift != 1) {
+		echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+					  } ?></th>
+</tr>
+<?php
+if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
+	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+	$multicurrency = new MultiCurrency($db);
+	$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+	echo '<tr><th class="right">';
+	if ($gift != 1) {
+		echo ''.$langs->trans("TotalTTC").' '.$_SESSION["takeposcustomercurrency"].'</th><td class="right">'.price($object->total_ttc * $multicurrency->rate->rate, 1, '', 1, - 1, - 1, $_SESSION["takeposcustomercurrency"])."\n";
+	}
+	echo '</td></tr>';
+}
+
+// We force the feature when LNE is on, whatever is setup. When a payment is done, we always want to see it on receipt.
+if (isALNERunningVersion()) {
+	$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+}
+
+if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
+	if (empty($facid)) {
+		// Case of a specimen, we output demo data
+		echo '<tr>';
+		echo '<td class="right">';
+		echo $langs->transnoentitiesnoconv("PaymentTypeShortLIQ");
+		echo '</td>';
+		echo '<td class="right">';
+		$amount_payment = 0;
+		echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
+		echo '</td>';
+		echo '</tr>';
+	} else {
+		$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num,";
+		$sql .= " f.multicurrency_code,";
+		$sql .= " pf.amount as amount, pf.multicurrency_amount,";
+		$sql .= " cp.code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
+		$sql .= " ORDER BY p.datep";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$row = $db->fetch_object($resql);
+
+				echo '<tr>';
+				echo '<td class="right">';
+				echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
+				echo '</td>';
+				echo '<td class="right">';
+				$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+				//print "xx ".$row->multicurrency_amount." - ".$row->amount." - ".$amount_payment." - ".$object->multicurrency_tx;
+				if ((!isModEnabled('multicurrency') || $object->multicurrency_tx == 1) && $row->code == "LIQ" && $row->pos_change > 0) {
+					$amount_payment += $row->pos_change; // Show amount with excess received if it's cash payment
+					$currency = $conf->currency;
+				} else {
+					// We do not show change if payment into a different currency because not yet supported
+					$currency = $row->multicurrency_code;
+				}
+				echo price($amount_payment, 1, '', 1, - 1, - 1, $currency);
+				echo '</td>';
+				echo '</tr>';
+				if ((!isModEnabled('multicurrency') || $object->multicurrency_tx == 1) && $row->code == "LIQ" && $row->pos_change > 0) {
+					echo '<tr>';
+					echo '<td class="right">';
+					echo $langs->trans("Change");	// ChangeBack ?
+					echo '</td>';
+					echo '<td class="right">';
+					echo price($row->pos_change, 1, '', 1, - 1, - 1, $currency);
+					echo '</td>';
+					echo '</tr>';
+				}
+				$i++;
+			}
+		}
+	}
+}
+?>
+</table>
+
+<br>
+<br>
+<br>
+<?php
+$constFreeText = 'TAKEPOS_FOOTER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) {
+	$newfreetext = '';
+	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs, $object);
+	if (getDolGlobalString($constFreeText)) {
+		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
+	}
+	if (getDolGlobalString('TAKEPOS_FOOTER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_FOOTER'), $substitutionarray);
+	}
+	print $newfreetext;
+}
+
+if (isALNEQualifiedVersion() || isALNERunningVersion()) {
+	$langs->load("blockedlog");
+	print '<center class="small"><i>';
+	print $langs->trans("LNECertifiedPOSSystem")."<br>";
+	if ($mysoc->idprof2) {
+		$labelidprof = $langs->transcountry("ProfId2Short", $mysoc->country_code);
+		print $labelidprof.': '.$mysoc->idprof2;
+	} elseif ($mysoc->idprof1) {
+		$labelidprof = $langs->transcountry("ProfId1Short", $mysoc->country_code);
+		print $labelidprof.': '.$mysoc->idprof1;
+	} else {
+		print 'ERROR: SIREN/SIRET not defined. Ticket not valid !!!';
+	}
+	if ($mysoc->tva_intra) {
+		$labelidprof = $langs->trans("VATIntra");
+		print ' - '.$labelidprof.': '.$mysoc->tva_intra;
+	}
+	print "</i></center><br>\n";
+}
+
+
+if (!GETPOST('forcenoautoopen')) {
+	?>
+	<script type="text/javascript">
+	<?php
+	if ($facid) {
+		print 'window.print();';
+	} //Avoid print when is specimen
+	?>
+	</script>
+	<?php
+}
+
+print "</body>";
+?>
+</html>

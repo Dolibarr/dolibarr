@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=मेलमैन और एसपीआईपी मॉड्यूल सेटअप
+MailmanTitle=मेलमैन मेलिंग सूची प्रणाली
+TestSubscribe=मेलमैन सूचियों की सदस्यता का परीक्षण करने के लिए
+TestUnSubscribe=मेलमैन सूचियों से सदस्यता समाप्त करने का परीक्षण करने के लिए
+MailmanCreationSuccess=सदस्यता परीक्षण सफलतापूर्वक निष्पादित किया गया
+MailmanDeletionSuccess=सदस्यता रद्द करने का परीक्षण सफलतापूर्वक निष्पादित किया गया
+SynchroMailManEnabled=मेलमैन अपडेट किया जाएगा
+SynchroSpipEnabled=स्पिप अद्यतन किया जाएगा
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=मेलमैन एडमिनिस्ट्रेटर पासवर्ड
+DescADHERENT_MAILMAN_URL=मेलमैन सदस्यता के लिए URL
+DescADHERENT_MAILMAN_UNSUB_URL=मेलमैन सदस्यता समाप्ति हेतु URL
+DescADHERENT_MAILMAN_LISTS=नए सदस्यों के स्वतः नामांकन हेतु सूची(सूचियाँ) (अल्पविराम से अलग)
+SPIPTitle=एसपीआईपी सामग्री प्रबंधन प्रणाली
+DescADHERENT_SPIP_SERVEUR=एसपीआईपी सर्वर
+DescADHERENT_SPIP_DB=SPIP डेटाबेस नाम
+DescADHERENT_SPIP_USER=SPIP डेटाबेस लॉगिन
+DescADHERENT_SPIP_PASS=SPIP डेटाबेस पासवर्ड
+AddIntoSpip=SPIP में जोड़ें
+AddIntoSpipConfirmation=क्या आप वाकई इस सदस्य को SPIP में जोड़ना चाहते हैं?
+AddIntoSpipError=SPIP में उपयोगकर्ता को जोड़ने में विफल
+DeleteIntoSpip=SPIP से निकालें
+DeleteIntoSpipConfirmation=क्या आप वाकई इस सदस्य को SPIP से हटाना चाहते हैं?
+DeleteIntoSpipError=SPIP से उपयोगकर्ता को रोकने में विफल
+SPIPConnectionFailed=SPIP से कनेक्ट करने में विफल
+SuccessToAddToMailmanList=%s को मेलमैन सूची %s या SPIP डेटाबेस में सफलतापूर्वक जोड़ा गया
+SuccessToRemoveToMailmanList=%s को मेलमैन सूची %s या SPIP डेटाबेस से सफलतापूर्वक हटा दिया गया

@@ -1,0 +1,41 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Rasilimali
+MenuResourceAdd=Rasilimali mpya
+DeleteResource=Futa rasilimali
+ConfirmDeleteResourceElement=Thibitisha kufuta rasilimali ya kipengele hiki
+NoResourceInDatabase=Hakuna rasilimali katika hifadhidata.
+NoResourceLinked=Hakuna rasilimali iliyounganishwa
+ActionsOnResource=Matukio kuhusu rasilimali hii
+ResourcePageIndex=Orodha ya rasilimali
+ResourceSingular=Rasilimali
+ResourceCard=Kadi ya rasilimali
+AddResource=Unda rasilimali
+ResourceFormLabel_ref=Jina la rasilimali
+ResourceType=Aina ya rasilimali
+ResourceFormLabel_description=Maelezo ya rasilimali
+
+ResourcesLinkedToElement=Rasilimali zilizounganishwa na kipengele
+
+ShowResource=Onyesha rasilimali
+
+ResourceElementPage=Rasilimali za kipengele
+ResourceCreatedWithSuccess=Rasilimali imeundwa
+RessourceLineSuccessfullyDeleted=Mstari wa rasilimali umefutwa
+RessourceLineSuccessfullyUpdated=Mstari wa nyenzo umesasishwa
+ResourceLinkedWithSuccess=Nyenzo iliyounganishwa na mafanikio
+
+ConfirmDeleteResource=Thibitisha ili kufuta rasilimali hii
+RessourceSuccessfullyDeleted=Rasilimali imefutwa
+DictionaryResourceType=Aina ya rasilimali
+
+SelectResource=Chagua rasilimali
+
+IdResource=Nyenzo ya kitambulisho
+AssetNumber=Nambari ya serial
+ResourceTypeCode=Msimbo wa aina ya rasilimali
+ImportDataset_resource_1=Rasilimali
+
+ErrorResourcesAlreadyInUse=Baadhi ya rasilimali zinatumika
+ErrorResourceUseInEvent=%s imetumika katika %s tukio
+
+MaxUsers=Maximum users (places, seats, etc.)

@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal konfiguracji modułu
+PaypalDesc=Moduł ten umożliwia dokonywanie płatności przez klientów za pośrednictwem <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Można to wykorzystać do płatności ad hoc lub płatności związanej z obiektem Dolibarr (faktura, zamówienie, ...)
+PaypalOrCBDoPayment=Zapłać za pomocą PayPal (karta lub PayPal)
+PaypalDoPayment=Zapłać z PayPal-em
+PAYPAL_API_SANDBOX=Tryb testu / sandbox
+PAYPAL_API_USER=API użytkownika
+PAYPAL_API_PASSWORD=API hasło
+PAYPAL_API_SIGNATURE=Podpis API
+PAYPAL_SSLVERSION=Wersja Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferuj płatność „integralną” (karta kredytowa + PayPal) lub tylko „PayPal”
+PaypalModeIntegral=Integralny
+PaypalModeOnlyPaypal=Tylko PayPal
+ONLINE_PAYMENT_CSS_URL=Opcjonalny adres URL arkusza stylów CSS na stronie płatności online
+ThisIsTransactionId=Jest to id transakcji: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Wysyłając dokument pocztą e-mail, dołącz adres URL płatności PayPal
+NewOnlinePaymentReceived=Otrzymano nową płatność online
+NewOnlinePaymentFailed=Nowa płatność online została podjęta, ale nie powiodła się
+ONLINE_PAYMENT_SENDEMAIL=Adres e-mail do powiadomień po każdej próbie płatności (w przypadku sukcesu i niepowodzenia)
+ReturnURLAfterPayment=Zwróć adres URL po dokonaniu płatności
+ValidationOfOnlinePaymentFailed=Niepowodzenie potwierdzenia płatności online
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Strona potwierdzenia płatności została wywołana przez system płatności zwróciła błąd
+SetExpressCheckoutAPICallFailed=Wywołanie API poprzez SetExpressCheckout nie powiodło się
+DoExpressCheckoutPaymentAPICallFailed=Wywołanie API poprzez DoExpressCheckoutPayment nie powiodło się.
+DetailedErrorMessage=Szczegółowa informacja o błędzie
+ShortErrorMessage=Krotka informacja o błędzie
+ErrorCode=Kod błędu
+ErrorSeverityCode=Kod ważności błędu
+OnlinePaymentSystem=System płatności online
+PaypalLiveEnabled=Tryb „na żywo” PayPal włączony (w przeciwnym razie tryb testowy / piaskownicy)
+PaypalImportPayment=Importuj płatności PayPal
+PostActionAfterPayment=Opublikuj akcje po dokonaniu płatności
+ARollbackWasPerformedOnPostActions=Wszystkie akcje związane z wpisem zostały wycofane. Jeśli to konieczne, musisz ręcznie wykonać czynności związane z publikowaniem.
+ValidationOfPaymentFailed=Weryfikacja płatności nie powiodła się
+CardOwner=Posiadacz karty
+PayPalBalance=Kredyt PayPal
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

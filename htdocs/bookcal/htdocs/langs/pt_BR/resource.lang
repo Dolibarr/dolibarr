@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - resource
+DeleteResource=Excluir recurso
+ConfirmDeleteResourceElement=Confirmar exclusão do recurso para este elemento
+NoResourceInDatabase=Nenhum recurso no banco de dados
+NoResourceLinked=Nenhum recurso vinculado
+ActionsOnResource=Eventos com este recurso
+ResourceCard=Ficha de recurso
+AddResource=Criar recurso
+ResourceTypeID=ID do tipo de recurso
+ResourceTypeLabel=Etiqueta do tipo de recurso
+ResourcesLinkedToElement=Recursos vinculados ao elemento
+ResourceCreatedWithSuccess=Recurso criado com sucesso
+RessourceLineSuccessfullyDeleted=Linha de Recursos excluída com sucesso
+RessourceLineSuccessfullyUpdated=Linha de Recursos atualizada com sucesso
+ResourceLinkedWithSuccess=Recurso atribuído com sucesso
+ConfirmDeleteResource=Confirme para excluir este recurso
+RessourceSuccessfullyDeleted=Recurso excluido com sucesso
+DictionaryResourceType=Tipo de recurso
+SelectResource=Selecionar recurso

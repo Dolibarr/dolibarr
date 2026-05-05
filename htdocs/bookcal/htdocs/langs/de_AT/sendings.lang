@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - sendings
+StatusSendingValidatedShort=Bestätigt
+DateReceived=Datum des Warenerhalts
+DeliveryDate=Lieferdatum
+GoodStatusDeclaration=Haben die oben genannten Waren in einwandfreiem Zustand erhalten,
+TypeContact_shipping_external_BILLING=Debitorenrechnung Kontakt

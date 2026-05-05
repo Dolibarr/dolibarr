@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Configuración de OAuth
+ManualTokenGeneration=Generación de tokens manual
+TokenManager=Administrador de fichas
+IsTokenGenerated=¿Se genera token?
+NoAccessToken=No token de acceso guardado en la base de datos local
+HasAccessToken=Se generó un token y se guardó en la base de datos local
+ToCheckDeleteTokenOnProvider=Haga clic aquí para verificar / eliminar la autorización guardada por %s proveedor OAuth
+SeePreviousTab=Ver la pestaña anterior
+OAuthIDSecret=ID de OAuth y secreto
+TOKEN_EXPIRED=Token expiró
+TOKEN_EXPIRE_AT=Token caduca a las
+OAUTH_GITHUB_ID=Identificación de OAuth GitHub
+TokenExpired=Expirado

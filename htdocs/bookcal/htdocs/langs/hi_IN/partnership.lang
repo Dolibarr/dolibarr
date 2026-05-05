@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=साझेदारी प्रबंधन
+PartnershipDescription=मॉड्यूल साझेदारी प्रबंधन
+PartnershipDescriptionLong= मॉड्यूल साझेदारी प्रबंधन
+Partnership=साझेदारी
+Partnerships=भागीदारी
+AddPartnership=साझेदारी जोड़ें
+CancelPartnershipForExpiredMembers=साझेदारी: समाप्त हो चुकी सदस्यता वाले सदस्यों की साझेदारी रद्द करें
+PartnershipCheckBacklink=साझेदारी: रेफ़रिंग बैकलिंक की जाँच करें
+# Menu
+NewPartnership=नई साझेदारी
+NewPartnershipbyWeb=आपका भागीदारी अनुरोध सफलतापूर्वक जोड़ दिया गया है। हम जल्द ही आपसे संपर्क कर सकते हैं...
+ListOfPartnerships=साझेदारी की सूची
+# Admin page
+PartnershipSetup=साझेदारी की स्थापना
+PartnershipAbout=साझेदारी के बारे में
+PartnershipAboutPage=साझेदारी के बारे में पेज
+partnershipforthirdpartyormember=भागीदार का दर्जा 'तृतीय पक्ष' या 'सदस्य' पर सेट किया जाना चाहिए
+PARTNERSHIP_IS_MANAGED_FOR=साझेदारी का प्रबंधन
+PARTNERSHIP_BACKLINKS_TO_CHECK=जाँचने योग्य बैकलिंक्स
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=सदस्यता समाप्त होने पर साझेदारी की स्थिति रद्द करने से पहले दिनों की संख्या
+ReferingWebsiteCheck=वेबसाइट पर संदर्भ की जाँच
+ReferingWebsiteCheckDesc=आप यह जांचने के लिए एक सुविधा सक्षम कर सकते हैं कि आपके साझेदारों ने अपनी वेबसाइट पर आपके वेबसाइट डोमेन के लिए कोई बैकलिंक जोड़ा है या नहीं।
+PublicFormRegistrationPartnerDesc=डोलिबार आपको एक सार्वजनिक यूआरएल/वेबसाइट प्रदान कर सकता है, जिससे बाहरी आगंतुक साझेदारी कार्यक्रम का हिस्सा बनने का अनुरोध कर सकें।
+# Object
+DeletePartnership=साझेदारी मिटाएँ
+PartnershipDedicatedToThisThirdParty=इस तीसरे पक्ष को समर्पित साझेदारी
+PartnershipDedicatedToThisMember=इस सदस्य को समर्पित साझेदारी
+DatePartnershipStart=आरंभ करने की तिथि
+DatePartnershipEnd=अंतिम तिथि
+ReasonDecline=अस्वीकार करने का कारण
+ReasonDeclineOrCancel=इनकार या रद्दीकरण का कारण
+PartnershipAlreadyExist=साझेदारी पहले से मौजूद है
+ManagePartnership=साझेदारी प्रबंधित करें
+BacklinkNotFoundOnPartnerWebsite=पार्टनर वेबसाइट पर बैकलिंक नहीं मिला
+ConfirmClosePartnershipAsk=क्या आप वाकई इस साझेदारी को रद्द करना चाहते हैं?
+PartnershipType=साझेदारी का प्रकार
+PartnershipRefApproved=साझेदारी %s स्वीकृत
+KeywordToCheckInWebsite=यदि आप यह जांचना चाहते हैं कि दिया गया कीवर्ड प्रत्येक भागीदार की वेबसाइट में मौजूद है, तो इस कीवर्ड को यहां परिभाषित करें
+PartnershipDraft=मसौदा
+PartnershipAccepted=स्वीकृत
+PartnershipRefused=अस्वीकार करना
+PartnershipCanceled=रद्द
+PartnershipManagedFor=साझेदार हैं
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=साझेदारी जल्द ही रद्द कर दी जाएगी
+SendingEmailOnPartnershipRefused=साझेदारी से इनकार
+SendingEmailOnPartnershipAccepted=साझेदारी स्वीकृत
+SendingEmailOnPartnershipCanceled=साझेदारी रद्द
+YourPartnershipWillSoonBeCanceledTopic=साझेदारी जल्द ही रद्द कर दी जाएगी
+YourPartnershipRefusedTopic=साझेदारी से इनकार
+YourPartnershipAcceptedTopic=साझेदारी स्वीकृत
+YourPartnershipCanceledTopic=साझेदारी रद्द
+YourPartnershipWillSoonBeCanceledContent=हम आपको सूचित करना चाहते हैं कि हमारी साझेदारी जल्द ही रद्द कर दी जाएगी (हमें नवीनीकरण नहीं मिला या हमारी साझेदारी के लिए कोई शर्त पूरी नहीं हुई है)। अगर आपको यह किसी त्रुटि के कारण प्राप्त हुआ है तो कृपया हमसे संपर्क करें।
+YourPartnershipRefusedContent=हम आपको सूचित करना चाहते हैं कि आपकी भागीदारी का अनुरोध अस्वीकार कर दिया गया है। पूर्वापेक्षाएँ पूरी नहीं की गई हैं। यदि आपको अधिक जानकारी चाहिए तो कृपया हमसे संपर्क करें।
+YourPartnershipAcceptedContent=हम आपको सूचित करना चाहते हैं कि आपका साझेदारी अनुरोध स्वीकार कर लिया गया है।
+YourPartnershipCanceledContent=हम आपको सूचित करना चाहते हैं कि हमारी साझेदारी रद्द कर दी गई है। यदि आपको अधिक जानकारी चाहिए तो कृपया हमसे संपर्क करें।
+CountLastUrlCheckError=अंतिम URL जाँच में त्रुटियों की संख्या
+LastCheckBacklink=अंतिम URL जाँच की तिथि
+NewPartnershipRequest=नई साझेदारी का अनुरोध
+NewPartnershipRequestDesc=यह फ़ॉर्म आपको हमारे किसी भागीदारी कार्यक्रम का हिस्सा बनने का अनुरोध करने की अनुमति देता है। यदि आपको यह फ़ॉर्म भरने में सहायता की आवश्यकता है, तो कृपया ईमेल द्वारा संपर्क करें <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=इस पृष्ठ में निम्न में से किसी एक डोमेन का कम से कम एक लिंक अवश्य होना चाहिए: %s
+IPOfApplicant=आवेदक का आईपी
+PartnershipToReopen=पुनः खोलना
+PartnershipConfirmReOpenAsk=क्या आप वाकई इस साझेदारी को पुनः खोलना चाहते हैं <b> %s</b>?

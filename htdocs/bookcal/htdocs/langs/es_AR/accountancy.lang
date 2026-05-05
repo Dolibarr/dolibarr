@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna para exportar archivo
+ACCOUNTING_EXPORT_DATE=Formato de fecha para exportar archivo
+ACCOUNTING_EXPORT_PIECE=Exportar número de pieza
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportar con cuenta global
+ACCOUNTING_EXPORT_AMOUNT=Exportar monto
+ACCOUNTING_EXPORT_DEVISE=Exportar moneda
+Selectformat=Elegir el formato del archivo
+ACCOUNTING_EXPORT_FORMAT=Seleccione el formato para el archivo
+ACCOUNTING_EXPORT_PREFIX_SPEC=Especificar el prefijo para el nombre de archivo
+AccountancySetupDoneFromAccountancyMenu=La mayor parte de la configuración de la contabilidad se hace desde el menú %s
+Journalization=Contabilización
+Journals=Diarios Contables
+JournalFinancial=Diarios Financieros
+AssignDedicatedAccountingAccount=Nueva cuenta para asignar
+InvoiceLabel=Etiqueta de la factura
+AccountingReport=Informes de clientes
+AccountingJournalType5=Informe de gastos
+PdfBookkeepingTitle =Diarios Contables
+ConfirmMassDeleteBookkeepingWriting=Confirmar Eliminar en Masa
+Clone=Clonar

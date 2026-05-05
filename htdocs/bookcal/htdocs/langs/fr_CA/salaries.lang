@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte (issu du plan comptable) utilisé par défaut pour les « utilisateurs » sur les salaires
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Le compte dédié défini sur la fiche utilisateur sera utilisé uniquement pour la comptabilité auxiliaire. Celui-ci sera utilisé pour le Grand Livre, mais également comme valeur par défaut de la comptabilité auxiliaire si aucun compte comptable utilisateur dédié n'est défini sur l'utilisateur.
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Par défaut, laissez vide l'option « Créer automatiquement un paiement total » lors de la création d'un salaire
+Salary=Salaires
+NewSalaryPayment=Nouvelle carte de salaire
+AddSalaryPayment=Ajouter un paiement de salaire
+SalaryID=ID de salaire
+SalaryPayment=Paiement Salaire
+SalariesPayments=Paiements salaires
+ShowSalaryPayment=Afficher paiement de salaires
+THM=Taux horaire moyen
+TJM=Taux journalier moyen
+THMDescription=Cette valeur peut être utilisée pour calculer le coût du temps consommé sur un projet saisi par les utilisateurs si le module projet est utilisé
+TJMDescription=Cette valeur est actuellement à titre informatif uniquement et n'est utilisée pour aucun calcul
+LastSalaries=Derniers salaires de %s
+SalariesStatistics=Statistiques sur les salaires
+ConfirmDeleteSalaryPayment=Voulez-vous supprimer ce versement de salaire ?
+FillFieldFirst=Remplissez d'abord le champ employé
+UpdateAmountWithLastSalary=Montant défini du dernier salaire
+MakeTransferRequest=Faire une demande de transfert
+VirementOrder=Demande de virement bancaire
+PreviousWeekShort=La semaine précédente
+CurrentWeekShort=Semaine en cours

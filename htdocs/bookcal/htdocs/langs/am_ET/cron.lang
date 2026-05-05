@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = የታቀደውን ሥራ ያንብቡ
+Permission23102 = የታቀደ ሥራን ይፍጠሩ / ያዘምኑ
+Permission23103 = የታቀደውን ሥራ ሰርዝ
+Permission23104 = የታቀደውን ሥራ ያከናውኑ
+# Admin
+CronSetup=የታቀደ የሥራ አስተዳደር ማዋቀር
+URLToLaunchCronJobs=ዩአርኤል ለመፈተሽ እና ብቁ የሆኑ የክሮን ስራዎችን ከአሳሽ ለማስጀመር
+OrToLaunchASpecificJob=ወይም ከአሳሽ አንድ የተወሰነ ሥራ ለመፈተሽ እና ለመጀመር
+KeyForCronAccess=የክሮን ስራዎችን ለመጀመር የዩአርኤል የደህንነት ቁልፍ
+FileToLaunchCronJobs=ብቁ የሆኑ ክሮን ስራዎችን ለመፈተሽ እና ለመጀመር የትእዛዝ መስመር
+CronExplainHowToRunUnix=በዩኒክስ አካባቢ የትእዛዝ መስመሩን በየ 5 ደቂቃው ለማስኬድ የሚከተለውን ክሮንታብ ግቤት መጠቀም አለቦት
+CronExplainHowToRunWin=በማይክሮሶፍት(tm) ዊንዶውስ አካባቢ በየ5 ደቂቃው የትእዛዝ መስመሩን ለማስኬድ የታቀዱ የተግባር መሳሪያዎችን መጠቀም ይችላሉ።
+CronMethodDoesNotExists=ክፍል %s ምንም አይነት ዘዴ አልያዘም %s
+CronMethodNotAllowed=የክፍል %s ክፍል %s የተከለከሉ ዘዴዎች በብሎክ ዝርዝር ውስጥ አለ
+CronJobDefDesc=የክሮን የስራ መገለጫዎች በሞጁል ገላጭ ፋይል ውስጥ ተገልጸዋል። ሞጁል ሲነቃ ተጭነዋል እና ይገኛሉ ስለዚህ ከአስተዳዳሪ መሳሪያዎች ሜኑ %s ሆነው ስራዎቹን ማስተዳደር ይችላሉ።
+CronJobProfiles=አስቀድሞ የተገለጹ የክሮን የሥራ መገለጫዎች ዝርዝር
+# Menu
+EnabledAndDisabled=ነቅቷል እና ተሰናክሏል።
+# Page list
+CronLastOutput=የቅርብ ጊዜ አሂድ ውጤት
+CronLastResult=የቅርብ ጊዜ የውጤት ኮድ
+CronCommand=ትዕዛዝ
+CronList=የታቀዱ ስራዎች
+CronDelete=የታቀዱ ስራዎችን ሰርዝ
+CronConfirmDelete=እርግጠኛ ነዎት እነዚህን የታቀዱ ስራዎች መሰረዝ ይፈልጋሉ?
+CronExecute=አሁን አስጀምር
+CronConfirmExecute=እርግጠኛ ነዎት እነዚህን የታቀዱ ስራዎችን አሁን ማከናወን ይፈልጋሉ?
+CronInfo=መርሐግብር የተያዘለት የሥራ ሞጁል ሥራን በራስ-ሰር ለማስፈጸም ቀጠሮ ለመያዝ ያስችላል። ስራዎች እንዲሁ በእጅ ሊጀምሩ ይችላሉ.
+CronTask=ኢዮብ
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
+CronDtStart=በፊት አይደለም
+CronDtEnd=በኋላ አይደለም
+CronDtNextLaunch=ቀጣይ አፈጻጸም
+CronDtLastLaunch=የቅርብ ጊዜ አፈፃፀም የሚጀምርበት ቀን
+CronDtLastResult=የቅርብ ጊዜ አፈፃፀም ማብቂያ ቀን
+CronFrequency=ድግግሞሽ
+CronClass=ክፍል
+CronMethod=ዘዴ
+CronModule=ሞጁል
+CronNoJobs=ምንም ስራዎች አልተመዘገቡም።
+CronPriority=ቅድሚያ
+CronLabel=መለያ
+CronNbRun=የማስጀመሪያዎች ብዛት
+CronMaxRun=ከፍተኛው የማስጀመሪያዎች ብዛት
+CronEach=እያንዳንዱ
+JobFinished=ሥራ ተጀምሮ ተጠናቀቀ
+Scheduled=መርሐግብር ተይዞለታል
+#Page card
+CronAdd=ስራዎችን ያክሉ
+CronEvery=Run job every
+CronObject=ምሳሌ/ የሚፈጠር ነገር
+CronArgs=መለኪያዎች
+CronSaveSucess=በተሳካ ሁኔታ አስቀምጥ
+CronNote=አስተያየት
+CronFieldMandatory=መስኮች %s ግዴታ ነው
+CronErrEndDateStartDt=የማለቂያ ቀን ከመጀመሪያው ቀን በፊት ሊሆን አይችልም
+StatusAtInstall=በሞጁል ጭነት ላይ ያለ ሁኔታ
+CronStatusActiveBtn=መርሐግብርን አንቃ
+CronStatusInactiveBtn=አሰናክል
+CronTaskInactive=ይህ ሥራ ተሰናክሏል (በእቅድ አልተያዘም)
+CronId=መታወቂያ
+CronClassFile=የፋይል ስም ከክፍል ጋር
+CronModuleHelp=የዶሊባርር ሞጁል ማውጫ ስም (እንዲሁም ከውጫዊ Dolibarr ሞጁል ጋር ይሰራል)። <BR> ለምሳሌ የዶሊባርር ምርት ነገር /htdocs/<u>ምርትb0dca48 ለመደወል /class/product.class.php፣ የሞጁሉ ዋጋ<br><i>ምርት ነው</i>
+CronClassFileHelp=የሚጫኑበት አንጻራዊ ዱካ እና የፋይል ስም (ዱካ ከድር አገልጋይ ስርወ ማውጫ አንጻራዊ ነው)። <BR> ለምሳሌ የዶሊባርር ምርት ነገር htdocs/product/class/<u>product.class.php<span>ምርት.class.php</u>፣ የክፍል ፋይል ስም ዋጋ<br><i>ምርት/ክፍል ነው .class.php</i>
+CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=ለማስጀመር የነገር ዘዴ። <BR> ለምሳሌ የዶሊባርር ምርት ነገር /htdocs/product/class/product.class.php የማምጣት ዘዴን ለመጥራት የስልት ዋጋው ነው። <br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=ለማስፈጸም የስርዓት ትዕዛዝ መስመር.
+CronCreateJob=አዲስ የታቀደ ሥራ ፍጠር
+CronFrom=ከ
+# Info
+# Common
+CronType=የሥራ ዓይነት
+CronType_method=የ PHP ክፍል የጥሪ ዘዴ
+CronType_command=የሼል ትዕዛዝ
+CronCannotLoadClass=የክፍል ፋይልን መጫን አልተቻለም %s (ክፍል %s ለመጠቀም)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
+CronCannotLoadObject=የክፍል ፋይል %s ተጭኗል፣ ነገር ግን %s አልተገኘም
+UseMenuModuleToolsToAddCronJobs=ወደ ሜኑ ይሂዱ "<a href="%s">ቤት - የአስተዳዳሪ መሳሪያዎች - የታቀዱ ስራዎችን ለማየት እና ለማረም</a>"
+JobDisabled=ሥራ ተወግዷል
+MakeLocalDatabaseDumpShort=የአካባቢ የውሂብ ጎታ ምትኬ
+MakeLocalDatabaseDump=የአካባቢ የመረጃ ቋት ፍጠር። መለኪያዎች፡ መጭመቅ ('gz' ወይም 'bz' or 'none')፣ የመጠባበቂያ አይነት ('mysql'፣ 'pgsql'፣ 'auto')፣ 1፣ 'auto' ወይም filename to build፣ የሚቀመጡ የመጠባበቂያ ፋይሎች ብዛት ናቸው።
+MakeSendLocalDatabaseDumpShort=የአካባቢ የውሂብ ጎታ ምትኬን ይላኩ።
+MakeSendLocalDatabaseDump=የአካባቢያዊ የውሂብ ጎታ ምትኬን በኢሜል ይላኩ። ልኬቶች፡ ከ፣ ከ ርዕሰ ጉዳይ፣ መልእክት፣ የፋይል ስም (የተላከው ፋይል ስም) ማጣሪያ ('sql' ለዳታቤዝ መጠባበቂያ ብቻ)
+BackupIsTooLargeSend=ይቅርታ፣ የመጨረሻው የመጠባበቂያ ፋይል በኢሜይል ለመላክ በጣም ትልቅ ነው።
+CleanUnfinishedCronjobShort=ያልተጠናቀቀ ክሮንጆብን አጽዳ
+CleanUnfinishedCronjob=ሂደቱ በማይሰራበት ጊዜ በማቀነባበር ላይ የተጣበቀ ክሮንጆብን ያጽዱ
+WarningCronDelayed=ትኩረት፣ ለአፈጻጸም ዓላማ፣ የነቁ ስራዎች የሚፈጸሙበት የሚቀጥለው ቀን ምንም ይሁን ምን ስራዎችዎ ከመሮጥዎ በፊት ቢበዛ እስከ %s ሰዓታት ሊዘገዩ ይችላሉ።
+DATAPOLICYJob=የውሂብ ማጽጃ እና ማንነት የማያሳውቅ
+JobXMustBeEnabled=ስራ %s መንቃት አለበት
+EmailIfError=ለስህተት ማስጠንቀቂያ ኢሜይል ያድርጉ
+JobNotFound=ስራ %s በስራዎች ዝርዝር ውስጥ አልተገኘም (ሞጁሉን ለማሰናከል/የነቃ)
+ErrorInBatch=ስራውን ሲሰራ ስህተት %s
+
+# Cron Boxes
+LastExecutedScheduledJob=ለመጨረሻ ጊዜ የተከናወነው የታቀደ ሥራ
+NextScheduledJobExecute=ቀጣይ መርሐግብር የተያዘለት ሥራ ለማስፈጸም
+NumberScheduledJobError=በስህተት የታቀዱ ስራዎች ብዛት
+NumberScheduledJobNeverFinished=የታቀዱ ሥራዎች ብዛት አላለቀም።

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Configuració mòdul PayBox
+PayBoxDesc=Aquest mòdul ofereix pàgines per a permetre el pagament a <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> per part dels clients. Això es pot utilitzar per a un pagament gratuït o per a un pagament d'un objecte Dolibarr concret (factura, comanda, ...)
+PayBoxDoPayment=Pagueu amb Paybox
+YouWillBeRedirectedOnPayBox=Se us redirigirà a la pàgina de Paybox segura per a introduir la informació de la vostra targeta de crèdit
+SetupPayBoxToHavePaymentCreatedAutomatically=Configureu la vostra caixa de pagaments amb l'URL <b> %s </b> perquè el pagament es creï automàticament quan sigui validat per Paybox.
+YourPaymentHasBeenRecorded=Aquesta pàgina confirma que el pagament s'ha registrat correctament. Gràcies.
+YourPaymentHasNotBeenRecorded=El vostre pagament NO s'ha registrat i la transacció s'ha anul·lat. Gràcies.
+PAYBOX_CGI_URL_V2=URL del mòdul CGI de Paybox per al pagament
+NewPayboxPaymentReceived=S'ha rebut el nou pagament de Paybox
+NewPayboxPaymentFailed=S'ha provat el nou pagament de Paybox, però ha fallat
+PAYBOX_PAYONLINE_SENDEMAIL=Notificació per correu electrònic després de l'intent de pagament (èxit o fracàs)
+PAYBOX_PBX_SITE=Valor per PBX SITE
+PAYBOX_PBX_RANG=valor per PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valor per PBX ID
+PAYBOX_HMAC_KEY=Clau HMAC

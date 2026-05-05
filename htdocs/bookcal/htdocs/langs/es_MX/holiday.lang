@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - holiday
+MenuAddCP=Nueva solicitud de licencia
+AddCP=Hacer una solicitud de licencia
+DateDebCP=Fecha de inicio
+DateFinCP=Fecha de finalización
+ApprovedCP=Aprobado
+CancelCP=Cancelado
+RefuseCP=Rechazado
+ReviewedByCP=Será aprobado por
+SendRequestCP=Crear solicitud de licencia
+DelayToRequestCP=Las solicitudes de permiso deben ser hechas al menos <b> %s día(s) </b> antes.
+EditCP=Editar
+ActionCancelCP=Cancelar
+MotifCP=Razón

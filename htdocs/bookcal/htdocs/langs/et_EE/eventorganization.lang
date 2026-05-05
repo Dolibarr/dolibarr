@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = Ürituste korraldamine
+EventOrganizationDescription = Ürituste korraldamine mooduliprojekti kaudu
+EventOrganizationDescriptionLong= Ürituse (näituse, konverentside, osalejate või esinejate, avalike lehtedega ettepanekute, hääletamise või registreerimise) korralduse haldamine
+EventOrganizationMenuLeft = Korraldatud üritused
+EventOrganizationConferenceOrBoothMenuLeft = Konverents või boks
+PaymentEvent=Ürituse eest tasumine
+EventFee=Ürituse tasu
+# Admin page
+NewRegistration=Registreerimine
+EventOrganizationSetup=Ürituste korraldamise seadistamine
+EventOrganization=Ürituste korraldamine
+EventOrganizationSetupPage = Ürituse korraldamise seadistusleht
+EVENTORGANIZATION_TASK_LABEL = Ülesande nimi luuakse automaatselt, kui projekt kinnitatakse
+EVENTORGANIZATION_TASK_LABELTooltip = Kui valideerid sündmuse korraldamise, saab projektis automaatselt luua mõned ülesanded<br><br>Näiteks: <br>Saada konverentsikutse<br>Saada boksikutse<br>Valideeri konverentsiettepanekud<br>Valideeri boksitaotlus<br>Ava osalejatele ürituse tellimused<br>Saada esinejatele ürituse kohta meeldetuletus<br>Saada boksi korraldajatele ürituse kohta meeldetuletus<br>Saada osalejatele ürituse kohta meeldetuletus
+EVENTORGANIZATION_TASK_LABELTooltip2=Hoidke tühi, kui te ei vaja ülesandeid automaatselt luua.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kolmandatele osapooltele lisatav kategooria luuakse automaatselt, kui keegi konverentsi soovitab
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kolmandatele osapooltele lisatav kategooria luuakse automaatselt, kui nad pakuvad välja boksi
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Konverentsiettepaneku saamise järel saadetava meili mall.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Meili mall, mis saadetakse pärast boksi kohta ettepaneku saamist.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Pärast boksi registreerimise eest tasumist saadetava e-kirja mall.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Pärast üritusele registreerimise tasumist saadetava e-kirja mall.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = E-kirja mall, mida kasutatakse esinejatele e-kirjade saatmisel jaotisest „Saada e-kirju”
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Osalejate nimekirjas oleva massifunktsiooni "Saada e-kirju" kaudu e-kirjade saatmisel kasutatav e-kirja mall
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Osaleja loomise/lisamise vormil piirab kolmandate osapoolte loendi kategooriasse kuuluvate kolmandate osapooltega.
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Osaleja loomise/lisamise vormil piiratakse kolmandate osapoolte loendit kolmandate osapooltega, kelle olemus on järgmine:
+# Object
+OrganizedEvent=Korraldatud üritus
+EventOrganizationConfOrBooth= Konverents või boks
+EventOrganizationConfOrBoothes=Konverentsid või boksid
+ManageOrganizeEvent = Ürituse korralduse haldamine
+ConferenceOrBooth = Konverents või boks
+ConferenceOrBoothTab = Konverents või boks
+AmountPaid = Makstud summa
+DateOfRegistration = Registreerimise kuupäev
+ConferenceOrBoothAttendee = Konverentsi või boksi osaleja
+ApplicantOrVisitor=Taotleja või külastaja
+Speaker=Kõlar
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = Teie konverentsitaotlus on kätte saadud
+YourOrganizationEventBoothRequestWasReceived = Teie boksi taotlus on kätte saadud
+EventOrganizationEmailAskConf = Konverentsi taotlus
+EventOrganizationEmailAskBooth = Boksi taotlus
+EventOrganizationEmailBoothPayment = Teie boksi eest tasumine
+EventOrganizationEmailRegistrationPayment = Üritusele registreerimine
+EventOrganizationMassEmailAttendees = Osalejatega suhtlemine
+EventOrganizationMassEmailSpeakers = Esinejatega suhtlemine
+ToSpeakers=Kõlaritele
+# Event
+AllowUnknownPeopleSuggestConf=Luba inimestel konverentse soovitada
+AllowUnknownPeopleSuggestConfHelp=Luba tundmatutel inimestel soovitada konverentsi, mida nad tahavad teha
+AllowUnknownPeopleSuggestBooth=Luba inimestel boksile kandideerida
+AllowUnknownPeopleSuggestBoothHelp=Luba tundmatutel inimestel boksi kandideerida
+PriceOfRegistration=Registreerimise hind
+PriceOfRegistrationHelp=Üritusel registreerimise või osalemise eest makstav hind
+PriceOfBooth=Tellimuse hind boksis seismiseks
+PriceOfBoothHelp=Tellimuse hind boksis seismiseks
+EventOrganizationICSLinkProject=Lingi ICS sündmuse jaoks
+EventOrganizationICSLink=Lingi ICS konverentside jaoks
+ConferenceOrBoothInformation=Konverentsi või boksi teave
+ConferenceOrBoothFormat=Konverentsi- või boksirežiim
+ConferenceOrBoothFormatID=Konverentsi- või boksirežiimi ID
+ConferenceOrBoothFormatCode=Konverentsi- või boksirežiimi kood
+ConferenceOrBoothFormatLabel=Konverentsi- või boksirežiimi silt
+Attendees=Osalejad
+ListOfAttendeesOfEvent=Ürituse projektides osalejate nimekiri
+ListOfConfOrBoothOfEvent=Konverentside või ürituste projektide kabiinide loend
+DownloadICSLink=Laadige alla ICS-fail
+EVENTORGANIZATION_SECUREKEY=Seem, et kindlustada avaliku registreerimislehe võti konverentsi soovitamiseks
+SERVICE_BOOTH_LOCATION=Teenus, mida kasutatakse boksi asukoha arve rea jaoks
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Ürituse osaleja tellimuse arve rea jaoks kasutatav teenus
+NbVotes=Häälte arv
+# Status
+EvntOrgDraft = Mustand
+EvntOrgSuggested = Soovitatud
+EvntOrgConfirmed = Kinnitatud
+EvntOrgNotQualified = Pole kvalifitseeritud
+EvntOrgDone = Tehtud
+EvntOrgCancelled = Tühistatud
+# Other
+SuggestForm = Soovituste leht
+SuggestOrVoteForConfOrBooth = Soovituste või hääletuste leht
+EvntOrgRegistrationHelpMessage = Siin saate hääletada konverentsi poolt või soovitada üritusele uut. Samuti saate taotleda boksi ürituse ajal.
+EvntOrgRegistrationConfHelpMessage = Siin saate soovitada uut konverentsi, mida ürituse ajal ellu viia.
+EvntOrgRegistrationBoothHelpMessage = Siin saate taotleda boksi olemasolu ürituse ajal.
+ListOfSuggestedConferences = Soovitatud konverentside loend
+ListOfSuggestedBooths=Soovitatud boksid
+ListOfConferencesOrBooths=Ürituste projekti konverentsid või boksid
+SuggestConference = Soovita uut konverentsi
+SuggestBooth = Soovita boksi
+ViewAndVote = Vaadake ja hääletage soovitatud sündmuste poolt
+PublicAttendeeSubscriptionGlobalPage = Avalik link üritusele registreerimiseks
+PublicAttendeeSubscriptionPage = Avalik link ainult selle ürituse registreerimiseks
+MissingOrBadSecureKey = Turvavõti on kehtetu või puudub
+EvntOrgWelcomeMessage = See vorm võimaldab teil registreeruda üritusele uue osalejana
+EvntOrgDuration = See konverents algab kuupäeval %s ja lõpeb kuupäeval %s.
+ConferenceAttendeeFee = Konverentsi osavõtutasu üritusele: '%s', mis toimub vahemikus %s kuni %s.
+BoothLocationFee = Ürituse boksi asukoht: '%s', mis toimub ajavahemikus %s kuni %s
+EventType = Sündmuse tüüp
+LabelOfBooth=Boothi silt
+LabelOfconference=Konverentsi silt
+ConferenceIsNotConfirmed=Registreerimine pole võimalik, konverents pole veel kinnitatud
+EventRegistrationAreClosed=Ürituste registreerimine on lõppenud
+DateMustBeBeforeThan=%s peab olema enne %s
+DateMustBeAfterThan=%s peab olema pärast %s
+MaxNbOfAttendeesReached=Osalejate maksimaalne arv on saavutatud
+NewSubscription=Registreerimine
+OrganizationEventConfRequestWasReceived=Teie ettepanek konverentsi korraldamiseks on laekunud.
+OrganizationEventBoothRequestWasReceived=Teie boksi taotlus on kätte saadud
+OrganizationEventPaymentOfBoothWasReceived=Teie makse boksi eest on registreeritud
+OrganizationEventPaymentOfRegistrationWasReceived=Teie ürituse registreerimise eest tasumine on registreeritud
+OrganizationEventBulkMailToAttendees=See on meeldetuletus teie osalemise kohta üritusel osalejana
+OrganizationEventBulkMailToSpeakers=See on meeldetuletus teie osalemisest üritusel esinejana.
+OrganizationEventLinkToThirdParty=Link kolmandale osapoolele (klient, tarnija või partner)
+OrganizationEvenLabelName=Konverentsi või boksi avalik nimi
+NewSuggestionOfBooth=Boksi taotlus
+NewSuggestionOfConference=Konverentsi korraldamise avaldus
+EvntOrgRegistrationWelcomeMessage = Tere tulemast konverentsi või boksi soovituste lehele.
+EvntOrgRegistrationConfWelcomeMessage = Tere tulemast konverentsiettepanekute lehele.
+EvntOrgRegistrationBoothWelcomeMessage = Tere tulemast boksisoovituste lehele.
+EvntOrgVoteHelpMessage = Siin saate vaadata ja hääletada projekti jaoks soovitatud sündmuste poolt.
+VoteOk = Teie hääl on vastu võetud.
+AlreadyVoted = Oled selle ürituse poolt juba hääletanud.
+VoteError = Hääletuse ajal tekkis viga, palun proovige uuesti.
+SubscriptionOk=Teie registreering on registreeritud
+AmountOfRegistrationPaid=Registreerimistasu summa
+ConfAttendeeSubscriptionConfirmation = Ürituse tellimuse kinnitus
+Attendee = Osaleja
+PaymentConferenceAttendee = Konverentsi osaleja tasu
+PaymentBoothLocation = Boksi asukoha makse
+DeleteConferenceOrBoothAttendee=Eemalda osaleja
+RegistrationAndPaymentWereAlreadyRecorder=E-posti aadressile <b>%s</b> on juba registreeritud registreerimine ja makse.
+EmailAttendee=Osaleja e-posti aadress
+EmailCompany=Ettevõtte e-post
+EmailCompanyForInvoice=Ettevõtte e-posti aadress (arve jaoks, kui see erineb osaleja e-posti aadressist)
+ErrorSeveralCompaniesWithEmailContactUs=Selle e-posti aadressiga on leitud mitu ettevõtet, seega ei saa me teie registreeringut automaatselt kinnitada. Manuaalseks kinnitamiseks võtke meiega ühendust aadressil %s.
+ErrorSeveralCompaniesWithNameContactUs=Selle nimega ettevõtteid on leitud mitu, seega ei saa me teie registreeringut automaatselt kinnitada. Manuaalseks kinnitamiseks võtke meiega ühendust aadressil %s.
+NoPublicActionsAllowedForThisEvent=Selle sündmuse raames pole ühtegi avalikku toimingut avalikkusele avatud
+MaxNbOfAttendees=Maksimaalne osalejate arv
+DateStartEvent=Sündmuse alguskuupäev
+DateEndEvent=Sündmuse lõppkuupäev
+ModifyStatus=Muuda staatust
+ConfirmModifyStatus=Kinnita staatuse muutmine
+ConfirmModifyStatusQuestion=Kas olete kindel, et soovite valitud kirjeid %s muuta?
+RecordsUpdated=%s Kirjed on uuendatud
+RecordUpdated=Kirjet uuendati
+NoRecordUpdated=Kirjet pole uuendatud
+ProfitPerValidatedAttendee=Kasum osaleja kohta
+Confirmed=Kinnitatud
+NotSelected=Pole valitud
+TheLinkIsAvailableOnTheProjectEventCard=Lingid konverentsi soovitamiseks või hääletamiseks või boksi taotlemiseks on esitatud projekti/ürituse lehel.
+ShowedUp=Ilmus kohale

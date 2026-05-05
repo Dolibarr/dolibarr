@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=شراکت داری کا انتظام
+PartnershipDescription=ماڈیول پارٹنرشپ مینجمنٹ
+PartnershipDescriptionLong= ماڈیول پارٹنرشپ مینجمنٹ
+Partnership=شراکت داری
+Partnerships=شراکت داریاں
+AddPartnership=شراکت داری شامل کریں۔
+CancelPartnershipForExpiredMembers=شراکت: میعاد ختم ہونے والی سبسکرپشنز والے ممبران کی شراکت کو منسوخ کریں۔
+PartnershipCheckBacklink=شراکت: حوالہ دینے والے بیک لنک کو چیک کریں۔
+# Menu
+NewPartnership=نئی شراکت داری
+NewPartnershipbyWeb=آپ کی شراکت داری کی درخواست کامیابی کے ساتھ شامل کر دی گئی ہے۔ ہم جلد ہی آپ سے رابطہ کر سکتے ہیں...
+ListOfPartnerships=شراکت کی فہرست
+# Admin page
+PartnershipSetup=پارٹنرشپ سیٹ اپ
+PartnershipAbout=شراکت داری کے بارے میں
+PartnershipAboutPage=صفحہ کے بارے میں شراکت داری
+partnershipforthirdpartyormember=پارٹنر کی حیثیت 'تیسرے فریق' یا 'ممبر' پر سیٹ ہونی چاہیے
+PARTNERSHIP_IS_MANAGED_FOR=شراکت داری کا انتظام کیا گیا۔
+PARTNERSHIP_BACKLINKS_TO_CHECK=چیک کرنے کے لیے بیک لنکس
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=سبسکرپشن کی میعاد ختم ہونے پر شراکت کی حیثیت کو منسوخ کرنے سے پہلے دن کا نوٹ
+ReferingWebsiteCheck=ویب سائٹ کا حوالہ دیتے ہوئے چیک کریں۔
+ReferingWebsiteCheckDesc=آپ یہ چیک کرنے کے لیے ایک خصوصیت کو فعال کر سکتے ہیں کہ آپ کے شراکت داروں نے اپنی ویب سائٹ پر آپ کی ویب سائٹ کے ڈومینز میں بیک لنک شامل کیا ہے۔
+PublicFormRegistrationPartnerDesc=Dolibarr آپ کو ایک عوامی URL/ویب سائٹ فراہم کر سکتا ہے تاکہ بیرونی زائرین کو پارٹنرشپ پروگرام کا حصہ بننے کی درخواست کر سکے۔
+# Object
+DeletePartnership=شراکت کو حذف کریں۔
+PartnershipDedicatedToThisThirdParty=شراکت داری اس تیسرے فریق کے لیے وقف ہے۔
+PartnershipDedicatedToThisMember=شراکت داری اس رکن کے لیے وقف ہے۔
+DatePartnershipStart=شروع کرنے کی تاریخ
+DatePartnershipEnd=آخری تاریخ
+ReasonDecline=انکار کی وجہ
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=شراکت داری پہلے سے موجود ہے۔
+ManagePartnership=شراکت کا انتظام کریں۔
+BacklinkNotFoundOnPartnerWebsite=بیک لنک پارٹنر ویب سائٹ پر نہیں ملا
+ConfirmClosePartnershipAsk=کیا آپ واقعی اس شراکت کو منسوخ کرنا چاہتے ہیں؟
+PartnershipType=شراکت کی قسم
+PartnershipRefApproved=شراکت %s کی منظوری دے دی گئی۔
+KeywordToCheckInWebsite=اگر آپ یہ دیکھنا چاہتے ہیں کہ ہر ایک پارٹنر کی ویب سائٹ میں کوئی مطلوبہ لفظ موجود ہے تو اس کلیدی لفظ کی وضاحت یہاں کریں۔
+PartnershipDraft=مسودہ
+PartnershipAccepted=قبول کر لیا
+PartnershipRefused=انکار کر دیا
+PartnershipCanceled=منسوخ
+PartnershipManagedFor=شراکت دار ہیں۔
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=شراکت جلد ہی منسوخ کر دی جائے گی۔
+SendingEmailOnPartnershipRefused=شراکت سے انکار کر دیا۔
+SendingEmailOnPartnershipAccepted=شراکت قبول کر لی
+SendingEmailOnPartnershipCanceled=شراکت منسوخ کر دی گئی۔
+YourPartnershipWillSoonBeCanceledTopic=شراکت جلد ہی منسوخ کر دی جائے گی۔
+YourPartnershipRefusedTopic=شراکت سے انکار کر دیا۔
+YourPartnershipAcceptedTopic=شراکت قبول کر لی
+YourPartnershipCanceledTopic=شراکت منسوخ کر دی گئی۔
+YourPartnershipWillSoonBeCanceledContent=ہم آپ کو مطلع کرنا چاہتے ہیں کہ ہماری شراکت جلد ہی منسوخ کر دی جائے گی (ہمیں تجدید نہیں ملی یا ہماری شراکت داری کی کوئی شرط پوری نہیں ہوئی)۔ اگر آپ کو یہ غلطی کی وجہ سے موصول ہوا ہے تو براہ کرم ہم سے رابطہ کریں۔
+YourPartnershipRefusedContent=ہم آپ کو مطلع کرنا چاہتے ہیں کہ آپ کی شراکت کی درخواست مسترد کر دی گئی ہے۔ شرائط پوری نہیں کی گئیں۔ اگر آپ کو مزید معلومات کی ضرورت ہو تو براہ کرم ہم سے رابطہ کریں۔
+YourPartnershipAcceptedContent=ہم آپ کو مطلع کرنا چاہتے ہیں کہ آپ کی شراکت کی درخواست قبول کر لی گئی ہے۔
+YourPartnershipCanceledContent=ہم آپ کو مطلع کرنا چاہتے ہیں کہ ہماری شراکت منسوخ کر دی گئی ہے۔ اگر آپ کو مزید معلومات کی ضرورت ہو تو براہ کرم ہم سے رابطہ کریں۔
+CountLastUrlCheckError=آخری URL چیک کے لیے غلطیوں کی تعداد
+LastCheckBacklink=آخری URL چیک کی تاریخ
+NewPartnershipRequest=نئی شراکت داری کی درخواست
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=اس صفحہ میں درج ذیل ڈومین میں سے کسی ایک کا کم از کم ایک لنک ہونا چاہیے: %s
+IPOfApplicant=درخواست دہندہ کا IP
+PartnershipToReopen=To reopen
+PartnershipConfirmReOpenAsk=Are you sure you want to reopen this partnership <b> %s</b>?

@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - website
+DeleteWebsite=Verwijder website
+WEBSITE_CSS_URL=URL van extern CSS bestand
+MediaFiles=Mediabibliotheek
+EditMenu=Bewerk menu
+ViewSiteInNewTab=Bekijk de site in een nieuwe tab
+ViewPageInNewTab=Bekijk de pagina in een nieuwe tab
+SetAsHomePage=Zet als Homepagina
+ViewWebsiteInProduction=Bekijk website via de home URL's
+WebPortalMemberCardTitle=Lidmaatschapskaart
+WebPortalPartnershipCardMenu=Partnerschap
+WebPortalPartnership=Partnerschap
+backHome=Terug naar Home
+contactFormPhone =Telefoonnummer

@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - other
+Notify_BILL_VALIDATE=Factura de cliente validada
+Notify_BILL_PAYED=Factura de cliente pagada
+SeeModuleSetup=Ver la configuración del módulo %s
+ExternalSiteSetup=Establezca un enlace al sitio web externo
+ExternalSiteModuleNotComplete=El módulo SitioExterno no fue configurado apropiadamente.
+FTPFailedToRemoveFile=Error al remover archivo <b>%s</b>.
+FTPFailedToRemoveDir=Error al remover carpeta <b>%s</b>: revise los permisos y que la carpeta esté vacía.
+FailedToGetFile=Error al obtener archivos %s
+BookmarkTitle =Nombre del favorito
+BookmarksManagement =Administración de favoritos
+BookmarksMenuShortCut =Ctrl+Shift+M
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark =Elegir si el sitio vinculado debe abrirse en la pestaña actual o en una nueva
+CreateBookmark =Crear favorito
+ListOfBookmarks =Lista de favoritos
+NewBookmark =Nuevo favorito
+OpenANewWindow =Abrir en nueva pestaña
+ReplaceWindow =Reemplazar pestaña actual
+SetHereATitleForLink =Elegir un nombre para el favorito
+ShowBookmark =Mostrar favorito
+SubscribeToFoundation=Contribuye al proyecto Dolibarr, suscríbete a la fundación

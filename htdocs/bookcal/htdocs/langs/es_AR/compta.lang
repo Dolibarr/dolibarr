@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - compta
+Param=Preparar
+PaymentsNotLinkedToInvoice=Pago no está vinculado ninguna factura por lo que no está vinculado a un tercero
+PaymentsNotLinkedToUser=Pago no está vinculado a un usuario
+ByThirdParties=Por terceros
+CodeNotDef=Sin definir
+LinkedOrder=Enlazar a orden

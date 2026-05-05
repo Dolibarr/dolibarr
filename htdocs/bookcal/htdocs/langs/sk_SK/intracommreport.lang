@@ -1,0 +1,38 @@
+IntraCommReport=Správa Intracomm
+IntraCommReports=Správy Intracommu
+
+Module68000Name = Intracomm správa
+Module68000Desc = Správa správ v rámci komunikácie (podpora francúzskeho formátu DEB/DES)
+IntracommReportSetup = Nastavenie modulu intracommreport
+IntracommReportAbout = O intracommreporte
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les Introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expeditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategória služieb typu "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+# Menu
+MenuIntracommReport=Intracomm správa
+MenuIntracommReportNew=Nové vyhlásenie
+MenuIntracommReportList=Zoznam
+# View
+NewDeclaration=Nové vyhlásenie
+Declaration=Vyhlásenie
+AnalysisPeriod=Analytické obdobie
+TypeOfDeclaration=Typ vyhlásenia
+DEB=Deklarácia výmeny tovaru (DEB)
+DES=Vyhlásenie o výmene služieb (DES)
+# Export page
+IntracommReportTitle=Príprava súboru XML vo formáte ProDouane
+# List
+IntracommReportList=Zoznam vygenerovaných vyhlásení
+IntracommReportNumber=Číslo vyhlásenia
+IntracommReportPeriod=Obdobie analýzy
+IntracommReportTypeDeclaration=Typ vyhlásenia
+IntracommReportDownload=stiahnuť súbor XML
+# Invoice
+IntracommReportTransportMode=Dopravný režim
+DeleteIntraCommReport=Odstrániť správu IntraComm

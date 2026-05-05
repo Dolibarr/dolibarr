@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Partnerluse haldamine
+PartnershipDescription=Partnerluse haldamise moodul
+PartnershipDescriptionLong= Partnerluse haldamise moodul
+Partnership=Partnerlus
+Partnerships=Partnerlussuhted
+AddPartnership=Lisa partnerlus
+CancelPartnershipForExpiredMembers=Partnerlus: tühista aegunud tellimusega liikmete partnerlus
+PartnershipCheckBacklink=Partnerlus: kontrollige suunavat tagasilinki
+# Menu
+NewPartnership=Uus partnerlus
+NewPartnershipbyWeb=Teie partnerlustaotlus on edukalt lisatud. Võime teiega peagi ühendust võtta...
+ListOfPartnerships=Partnerluste loetelu
+# Admin page
+PartnershipSetup=Partnerluse loomine
+PartnershipAbout=Partnerlusest
+PartnershipAboutPage=Partnerluse leht
+partnershipforthirdpartyormember=Partneri staatus peab olema seatud „kolmandale osapoolele” või „liikmele”.
+PARTNERSHIP_IS_MANAGED_FOR=Partnerlus hallatakse ettevõtte jaoks
+PARTNERSHIP_BACKLINKS_TO_CHECK=Kontrollitavad tagasilingid
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Partnerluse tühistamisele järgnevate päevade arv, kui tellimus on aegunud
+ReferingWebsiteCheck=Veebisaidi viitamise kontroll
+ReferingWebsiteCheckDesc=Saate lubada funktsiooni, mis kontrollib, kas teie partnerid on oma veebisaidile lisanud tagasilingi teie veebisaidi domeenidele.
+PublicFormRegistrationPartnerDesc=Dolibarr saab teile pakkuda avalikku URL-i/veebisaiti, et võimaldada välistel külastajatel taotleda partnerlusprogrammiga liitumist.
+# Object
+DeletePartnership=Partnerluse kustutamine
+PartnershipDedicatedToThisThirdParty=Sellele kolmandale osapoolele pühendatud partnerlus
+PartnershipDedicatedToThisMember=Sellele liikmele pühendatud partnerlus
+DatePartnershipStart=Alguskuupäev
+DatePartnershipEnd=Lõppkuupäev
+ReasonDecline=Keeldumise põhjus
+ReasonDeclineOrCancel=Keeldumise või tühistamise põhjus
+PartnershipAlreadyExist=Partnerlus on juba olemas
+ManagePartnership=Partnerluse haldamine
+BacklinkNotFoundOnPartnerWebsite=Partneri veebisaidilt tagasilinki ei leitud
+ConfirmClosePartnershipAsk=Kas olete kindel, et soovite selle partnerluse tühistada?
+PartnershipType=Partnerluse tüüp
+PartnershipRefApproved=Partnerlus %s on heaks kiidetud
+KeywordToCheckInWebsite=Kui soovite kontrollida, kas antud märksõna on iga partneri veebisaidil olemas, määrake see märksõna siin.
+PartnershipDraft=Mustand
+PartnershipAccepted=Kinnitatud
+PartnershipRefused=Keeldutud
+PartnershipCanceled=Tühistatud
+PartnershipManagedFor=Partnerid on
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerlus tühistatakse peagi
+SendingEmailOnPartnershipRefused=Partnerlus keeldus
+SendingEmailOnPartnershipAccepted=Partnerlus aktsepteeritud
+SendingEmailOnPartnershipCanceled=Partnerlus tühistati
+YourPartnershipWillSoonBeCanceledTopic=Partnerlus tühistatakse peagi
+YourPartnershipRefusedTopic=Partnerlus keeldus
+YourPartnershipAcceptedTopic=Partnerlus aktsepteeritud
+YourPartnershipCanceledTopic=Partnerlus tühistati
+YourPartnershipWillSoonBeCanceledContent=Soovime teile teatada, et meie partnerlus lõpetatakse peagi (me ei saanud pikendust või meie partnerluse eeltingimused ei ole täidetud). Palun võtke meiega ühendust, kui saite selle vea tõttu.
+YourPartnershipRefusedContent=Soovime teile teatada, et teie partnerlustaotlus on tagasi lükatud. Eeltingimused pole täidetud. Lisateabe saamiseks võtke meiega ühendust.
+YourPartnershipAcceptedContent=Soovime teile teatada, et teie partnerlustaotlus on vastu võetud.
+YourPartnershipCanceledContent=Soovime teile teatada, et meie partnerlus on tühistatud. Lisateabe saamiseks võtke meiega ühendust.
+CountLastUrlCheckError=Viimase URL-i kontrolli vigade arv
+LastCheckBacklink=Viimase URL-i kontrolli kuupäev
+NewPartnershipRequest=Uus partnerlustaotlus
+NewPartnershipRequestDesc=See vorm võimaldab teil taotleda osalemist ühes meie partnerlusprogrammides. Kui vajate vormi täitmisel abi, võtke meiega ühendust e-posti teel <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=See leht peab sisaldama vähemalt ühte linki ühele järgmistest domeenidest: %s
+IPOfApplicant=Taotleja intellektuaalomand
+PartnershipToReopen=Taasavamiseks
+PartnershipConfirmReOpenAsk=Kas olete kindel, et soovite selle partnerluse <b> %s</b> taasavada?

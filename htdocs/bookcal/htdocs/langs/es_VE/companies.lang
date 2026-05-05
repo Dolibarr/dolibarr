@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - companies
+MenuNewCustomer=Nuevo Cliente
+MenuNewProspect=Nuevo Cliente Potencial
+OverAllSupplierProposals=Solicitudes de precios
+LocalTax1IsUsed=Sujeto
+LocalTax2IsUsed=Sujeto
+ProfId1AT=Id prof. 1 (USt.-IdNr)
+ProfId2AT=Id prof. 2 (USt.-Nr)
+ProfId3AT=Id prof. 3 (Handelsregister-Nr.)
+ProfId1ES=CI/ RIF
+ProfId2ES=-
+ProfId3ES=-
+ProfId4ES=-
+ProfId1FR=-
+ProfId2FR=-
+ProfId3FR=-
+ProfId4FR=-
+ProfId3GB=-
+ProfId1HN=-
+ProfId2MX=Registro Patronal IVSS
+FromContactName=Nombre Apellidos
+ContactOthers=Otra
+InActivity=Abierta

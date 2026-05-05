@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Nowy majątek
+AccountancyCodeAsset=Kod księgowości (majątek)
+AccountancyCodeDepreciationAsset=Kod księgowości (rachunek aktywów amortyzacyjnych)
+AccountancyCodeDepreciationExpense=Kod księgowości (rachunek kosztów amortyzacji)
+AssetsLines=Majątek
+ConfirmValidateAsset=Czy na pewno chcesz sprawdzić poprawność tego zasobu za pomocą odniesienia <b>%s</b>?
+DeleteType=Usuń
+DeleteAnAssetType=Usuń model aktywów
+ConfirmDeleteAssetType=Czy na pewno chcesz usunąć ten model aktywów?
+ShowTypeCard=Pokaż model '%s'
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Majątek
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Opis majątku
+# Admin page
+AssetSetup=Ustawienia kapitału
+AssetSetupPage=Strona konfiguracji kapitału
+ExtraFieldsAssetModel=Atrybuty uzupełniające (model składnika aktywów)
+AssetsType=Model kapitału
+AssetsTypeId=Identyfikator modelu aktywów
+AssetsTypeLabel=Etykieta modelu aktywów
+AssetsTypes=Modele aktywów
+ASSET_ACCOUNTANCY_CATEGORY=Grupa księgowa środków trwałych
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Okres proporcjonalny w dniach do naliczania amortyzacji w ciągu roku
+# Menu
+MenuAssets=Majątek
+MenuNewAsset=Nowy majątek
+MenuAssetModels=Aktywa modelowe
+MenuListAssets=Lista
+MenuNewAssetModel=Model nowego aktywa
+MenuListAssetModels=Lista
+# Module
+ConfirmDeleteAsset=Czy na pewno chcesz usunąć ten aktyw?
+# Tab
+AssetDepreciationOptions=Opcje amortyzacji
+AssetAccountancyCodes=Konta księgowe
+AssetDepreciation=Amortyzacja
+# Asset
+Asset=Kapitał
+Assets=Majątek
+AssetReversalAmountHT=Kwota odwrócenia (bez podatków)
+AssetAcquisitionValueHT=Kwota nabycia (bez podatków)
+AssetRecoveredVAT=Odzyskany podatek VAT
+AssetReversalDate=Data odwrócenia
+AssetDateAcquisition=Data nabycia
+AssetDateStart=Data uruchomienia
+AssetAcquisitionType=Rodzaj nabycia
+AssetAcquisitionTypeNew=Nowy
+AssetAcquisitionTypeOccasion=Używany
+AssetType=Rodzaj aktywów
+AssetTypeIntangible=Nieuchwytny
+AssetTypeTangible=Zauważalny
+AssetTypeInProgress=W trakcie
+AssetTypeFinancial=Budżetowy
+AssetNotDepreciated=Nie amortyzowany
+AssetDisposal=Sprzedaż
+AssetConfirmDisposalAsk=Czy na pewno chcesz pozbyć się zasobu <b> %s</b>?
+AssetConfirmReOpenAsk=Czy na pewno chcesz ponownie otworzyć zasób <b> %s</b>?
+# Asset status
+AssetInDraft=Szkic
+AssetInProgress=W trakcie
+AssetDisposed=Usunięte
+AssetRecorded=Rozliczone
+# Asset disposal
+AssetDisposalDate=Data zbycia
+AssetDisposalAmount=Wartość utylizacyjna
+AssetDisposalType=Rodzaj utylizacji
+AssetDisposalDepreciated=Amortyzacja roku przeniesienia
+AssetDisposalSubjectToVat=Utylizacja podlega opodatkowaniu podatkiem VAT
+# Asset model
+AssetModel=Model majątku
+AssetModels=Modele aktywów
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Amortyzacja ekonomiczna
+AssetDepreciationOptionAcceleratedDepreciation=Przyspieszona amortyzacja (podatek)
+AssetDepreciationOptionDepreciationType=Rodzaj amortyzacji
+AssetDepreciationOptionDepreciationTypeLinear=Liniowy
+AssetDepreciationOptionDepreciationTypeDegressive=Degresywne
+AssetDepreciationOptionDepreciationTypeExceptional=Wyjątkowy
+AssetDepreciationOptionDegressiveRate=Stopa degresywna
+AssetDepreciationOptionDuration=Czas trwania
+AssetDepreciationOptionDurationType=Wpisz czas trwania
+AssetDepreciationOptionDurationTypeAnnual=Rocznie
+AssetDepreciationOptionDurationTypeMonthly=Miesięcznie
+AssetDepreciationOptionDurationTypeDaily=Codziennie
+AssetDepreciationOptionRate=Stawka (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Podstawa amortyzacji (bez VAT)
+AssetDepreciationOptionAmountBaseDeductibleHT=Podstawa odliczenia (bez VAT)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Łączna kwota ostatniej amortyzacji (bez VAT)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Amortyzacja ekonomiczna
+AssetAccountancyCodeAsset=Kapitał
+AssetAccountancyCodeDepreciationAsset=Amortyzacja
+AssetAccountancyCodeDepreciationExpense=Koszt amortyzacji
+AssetAccountancyCodeValueAssetSold=Wartość zbytego składnika aktywów
+AssetAccountancyCodeReceivableOnAssignment=Należne przy zbyciu
+AssetAccountancyCodeProceedsFromSales=Wpływy ze zbycia
+AssetAccountancyCodeVatCollected=Pobrany podatek VAT
+AssetAccountancyCodeVatDeductible=Odzyskany podatek VAT od majątku
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Przyspieszona amortyzacja (podatek)
+AssetAccountancyCodeAcceleratedDepreciation=Konto
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Koszt amortyzacji
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Przejęcie/Udostępnienie
+# Asset depreciation
+AssetBaseDepreciationHT=Podstawa amortyzacji (bez VAT)
+AssetDepreciationBeginDate=Rozpoczęcie amortyzacji w dniu
+AssetDepreciationDuration=Czas trwania
+AssetDepreciationRate=Stawka (%%)
+AssetDepreciationDate=Data amortyzacji
+AssetDepreciationHT=Amortyzacja (bez VAT)
+AssetCumulativeDepreciationHT=Skumulowana amortyzacja (bez VAT)
+AssetResidualHT=Wartość rezydualna (bez VAT)
+AssetDispatchedInBookkeeping=Amortyzacja zarejestrowana
+AssetFutureDepreciationLine=Przyszła amortyzacja
+AssetDepreciationReversal=Odwrócenie
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Nie podano identyfikatora zasobu lub znalezionego modelu
+AssetErrorFetchAccountancyCodesForMode=Błąd podczas pobierania kont księgowych dla trybu amortyzacji „%s”
+AssetErrorDeleteAccountancyCodesForMode=Błąd podczas usuwania kont księgowych z trybu amortyzacji „%s”
+AssetErrorInsertAccountancyCodesForMode=Błąd podczas wstawiania kont księgowych trybu amortyzacji „%s”
+AssetErrorFetchDepreciationOptionsForMode=Błąd podczas pobierania opcji dla trybu amortyzacji „%s”
+AssetErrorDeleteDepreciationOptionsForMode=Błąd podczas usuwania opcji trybu amortyzacji „%s”
+AssetErrorInsertDepreciationOptionsForMode=Błąd podczas wstawiania opcji trybu amortyzacji „%s”
+AssetErrorFetchDepreciationLines=Błąd podczas pobierania zarejestrowanych wierszy amortyzacji
+AssetErrorClearDepreciationLines=Błąd podczas czyszczenia zarejestrowanych wierszy amortyzacji (odwrócenia i przyszłości)
+AssetErrorAddDepreciationLine=Błąd podczas dodawania wiersza amortyzacji
+AssetErrorCalculationDepreciationLines=Błąd przy obliczaniu linii amortyzacji (odzysk i przyszłość)
+AssetErrorReversalDateNotProvidedForMode=Data odwrócenia nie jest podana dla metody amortyzacji „%s”
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Dla metody amortyzacji „%s” data odwrócenia musi być większa lub równa początku bieżącego roku obrotowego
+AssetErrorReversalAmountNotProvidedForMode=Kwota odwrócenia nie jest podana dla trybu amortyzacji „%s”.
+AssetErrorFetchCumulativeDepreciation=Błąd podczas pobierania skumulowanej kwoty amortyzacji z wiersza amortyzacji
+AssetErrorSetLastCumulativeDepreciation=Błąd podczas rejestrowania ostatniej skumulowanej kwoty amortyzacji
