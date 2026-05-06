@@ -140,17 +140,17 @@ class FormOther
 	/**
 	 *    Return HTML select list of export models
 	 *
-	 *    @param    string	$selected          Id of the preselected model
-	 *    @param    string	$htmlname          Name of the selected zone
-	 *    @param    string	$type              Type of the desired models
-	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User we want templates
+	 *    @param    string		$selected          Id of the preselected model
+	 *    @param    string		$htmlname          Name of the selected zone
+	 *    @param    string		$type              Type of the desired models
+	 *    @param    int|string	$useempty          Show an empty value in list
+	 *    @param    int			$fk_user           User we want templates
 	 *    @return	void
 	 */
 	public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs;
 
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."export_model";
@@ -163,7 +163,11 @@ class FormOther
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($useempty) {
-				print '<option value="-1">&nbsp;</option>';
+				if (is_numeric($useempty)) {
+					print '<option value="-1">&nbsp;</option>';
+				} else {
+					print '<option value="-1">'.$langs->trans($useempty).'</option>';
+				}
 			}
 
 			$tmpuser = new User($this->db);
@@ -182,13 +186,16 @@ class FormOther
 				}
 
 				if ($selected == $obj->rowid) {
-					print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
+					print '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($label).'">';
 				} else {
-					print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
+					print '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($label).'">';
 				}
 				print $label;
 				print '</option>';
 				$i++;
+			}
+			if ($num == 0) {
+				print '<option value="-1" disabled data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->transnoentitiesnoconv("NoPredefinedExportProfileYet").'</span>').'">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</option>';
 			}
 			print "</select>";
 			print ajax_combobox($htmlname);
@@ -202,11 +209,11 @@ class FormOther
 	/**
 	 *    Return list of export models
 	 *
-	 *    @param    string	$selected          Id of the preselected model
-	 *    @param    string	$htmlname          Name of the selected zone
-	 *    @param    string	$type              Type of the desired models
-	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User that has created the template
+	 *    @param    string		$selected          Id of the preselected model
+	 *    @param    string		$htmlname          Name of the selected zone
+	 *    @param    string		$type              Type of the desired models
+	 *    @param    int|string	$useempty          Show an empty value in list
+	 *    @param    int			$fk_user           User that has created the template
 	 *    @return	void
 	 */
 	public function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -224,8 +231,10 @@ class FormOther
 		$result = $this->db->query($sql);
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($useempty) {
+			if (is_numeric($useempty)) {
 				print '<option value="-1">&nbsp;</option>';
+			} else {
+				print '<option value="-1">'.$langs->trans($useempty).'</option>';
 			}
 
 			$tmpuser = new User($this->db);
@@ -251,6 +260,9 @@ class FormOther
 				print $label;
 				print '</option>';
 				$i++;
+			}
+			if ($num == 0) {
+				print '<option value="-1" disabled data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</span>').'">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</option>';
 			}
 			print "</select>";
 			print ajax_combobox($htmlname);
@@ -1509,13 +1521,13 @@ class FormOther
 	public function select_dictionary($htmlname, $dictionarytable, $keyfield = 'code', $labelfield = 'label', $selected = '', $useempty = 0, $moreattrib = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 
 		$langs->load("admin");
 
-		$sql = "SELECT rowid, ".$keyfield.", ".$labelfield;
+		$sql = "SELECT rowid, ".$this->db->sanitize($keyfield).", ".$this->db->sanitize($labelfield);
 		$sql .= " FROM ".$this->db->prefix().$dictionarytable;
-		$sql .= " ORDER BY ".$labelfield;
+		$sql .= $this->db->order($labelfield);
 
 		dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1601,7 +1613,7 @@ class FormOther
 	 */
 	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
-		global $langs, $extrafields, $form;
+		global $form;
 
 		$arrayofgroupbylabel = array();
 		foreach ($arrayofgroupby as $key => $val) {

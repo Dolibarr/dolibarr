@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -528,11 +528,9 @@ if ($step == 2 && $datatoimport) {
 
 	$filetoimport = '';
 
+	// Add format information and link to download example
 	print '<table class="noborder centpercent" cellpadding="4">';
 
-	$filetoimport = '';
-
-	// Add format information and link to download example
 	print '<tr class="liste_titre"><td colspan="4">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat").'...';
 	print '</td></tr>';
@@ -558,6 +556,7 @@ if ($step == 2 && $datatoimport) {
 	}
 
 	print '</table>';
+
 
 	print '<br>';
 
@@ -668,7 +667,7 @@ if ($step == 2 && $datatoimport) {
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td style="text-align:right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?step=3'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15"').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?step=3'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("ImportThisFile"), 'next', 'class="fa-15"').'</a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -840,9 +839,9 @@ if ($step == 3 && $datatoimport) {
 		$isrequired = preg_match('/\*$/', $label);
 		if (!empty($isrequired)) {
 			$newlabel = substr($label, 0, -1);
-			$fieldstarget_tmp[$key] = array("label" => $newlabel, "required" => true);
+			$fieldstarget_tmp[$key] = array("label" => (string) $newlabel, "required" => true);
 		} else {
-			$fieldstarget_tmp[$key] = array("label" => $label, "required" => false);
+			$fieldstarget_tmp[$key] = array("label" => (string) $label, "required" => false);
 		}
 		if (!empty($array_match_database_to_file[$key])) {
 			$fieldstarget_tmp[$key]["imported"] = true;
@@ -895,6 +894,8 @@ if ($step == 3 && $datatoimport) {
 
 	$head = import_prepare_head($param, 3);
 
+	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
+
 	print dol_get_fiche_head($head, 'step3', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
@@ -905,15 +906,14 @@ if ($step == 3 && $datatoimport) {
 	// Module
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special case for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 		$titleofmodule = $langs->trans("ProductOrService");
 	}
-	print $titleofmodule;
+	print dolPrintHTML($titleofmodule);
 	print '</td></tr>';
 
-	// Lot de donnees a importer
+	// Dataset to import
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
@@ -925,7 +925,9 @@ if ($step == 3 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
+
 	print '<br>';
+
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
@@ -1005,7 +1007,30 @@ if ($step == 3 && $datatoimport) {
 	print $s;
 	print '</span> ';
 	$htmlother->select_import_model((string) $importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
-	print '<input type="submit" class="button smallpaddingimp reposition" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" class="button smallpaddingimp reposition" id="applyprofile" name="applyprofile" value="'.$langs->trans("Apply").'">';
+	// Add js to show button
+	if (!empty($conf->use_javascript_ajax)) {
+		print '<script>
+			$(document).ready(function() {
+			    // hide button
+			    $("#applyprofile").hide();
+
+			    // follow change on list
+			    $("#importmodelid").change(function() {
+					console.log("We select a new profile");
+			        if ($(this).val() && $(this).val() != "-1") {
+			            $("#applyprofile").show();
+			        } else {
+			            $("#applyprofile").hide();
+			        }
+
+			    });
+
+			});
+			</script>
+		';
+	}
+
 	print '</div>';
 	print '</form>';
 
@@ -1649,10 +1674,10 @@ if ($step == 4 && $datatoimport) {
 	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action == 'launchsimu') {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 		print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
 	} else {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
 		print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print ' - ';
@@ -1664,7 +1689,10 @@ if ($step == 4 && $datatoimport) {
 		print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
 	if ($action == 'launchsimu') {
-		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'" class="editfielda">';
+		//print $langs->trans("Modify");
+		print img_picto($langs->trans("Modify"), 'edit');
+		print '</a>';
 	}
 	if ($excludefirstline == 2) {
 		print $form->textwithpicto("", $langs->trans("WarningFirstImportedLine", $excludefirstline), 1, 'warning', "warningexcludefirstline valignmiddle");
@@ -1690,12 +1718,15 @@ if ($step == 4 && $datatoimport) {
 		if (count($updatekeys)) {
 			print $form->multiselectarray('updatekeysbis', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%', 'disabled');
 		} else {
-			print '<span class="opacitymedium">'.$langs->trans("NoUpdateAttempt").'</span> &nbsp; -';
+			print '<span class="opacitymedium">'.$langs->trans("NoUpdateAttempt").'</span>';
 		}
 		foreach ($updatekeys as $val) {
 			print '<input type="hidden" name="updatekeys[]" value="'.$val.'">';
 		}
-		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'" class="editfielda">';
+		//print $langs->trans("Modify");
+		print img_picto($langs->trans("Modify"), 'edit');
+		print '</a>';
 	} else {
 		if (is_array($objimport->array_import_updatekeys[0]) && count($objimport->array_import_updatekeys[0])) {   //TODO dropdown UL is created inside nested SPANS
 			print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
@@ -1795,9 +1826,12 @@ if ($step == 4 && $datatoimport) {
 	if ($action == 'launchsimu') {
 		print dol_escape_htmltag($triggerModeChoices[$importtriggermode] ?? $importtriggermode);
 		print '<input type="hidden" name="importtriggermode" value="'.dol_escape_htmltag($importtriggermode).'">';
-		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'">'.$langs->trans("Modify").'</a>';
+		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=4'.$param.'" class="editfielda">';
+		//print $langs->trans("Modify");
+		print img_picto($langs->trans("Modify"), 'edit');
+		print '</a>';
 	} else {
-			print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
+		print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
 	}
 	if ($importtriggermode === 'fast_bulk') {
 		print '<br><span class="warning">';
@@ -1814,9 +1848,10 @@ if ($step == 4 && $datatoimport) {
 
 	if ($action != 'launchsimu') {
 		// Show import id
-		print '<br><span class="opacitymedium">';
-		print $langs->trans("NowClickToTestTheImport", $langs->transnoentitiesnoconv("RunSimulateImportFile")).'</span><br>';
 		print '<br>';
+		print '<div class="neutral">';
+		print $langs->trans("NowClickToTestTheImport", $langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
+		print '</div>';
 
 		// Actions
 		print '<div class="center">';
@@ -1827,6 +1862,7 @@ if ($step == 4 && $datatoimport) {
 		}
 		print '</div>';
 	} else {
+		print '<br>';
 		print '<div class="warning">';
 		print '<b>'.$langs->trans("ImportTriggerModeSimulationWarningTitle").'</b><br>';
 		print $langs->trans("ImportTriggerModeSimulationWarning");

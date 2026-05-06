@@ -1615,7 +1615,6 @@ MailToSendIntervention=تدخلات
 MailToSendSupplierRequestForQuotation=طلب عرض سعر
 MailToSendSupplierOrder=طلبات الشراء
 MailToSendReception=الاستقبالات
-MailToExpenseReport=تقارير النفقات
 MailToThirdparty=جهات خارجية
 MailToMember=الأعضاء
 MailToUser=المستخدمون

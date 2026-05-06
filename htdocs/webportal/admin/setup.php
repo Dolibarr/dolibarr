@@ -26,9 +26,6 @@
 
 // Load Dolibarr environment
 require_once "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
@@ -112,6 +111,16 @@ if (isModEnabled('order')) {
 // Enable access for the invoices
 if (isModEnabled('invoice')) {
 	$formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the intervention
+if (isModEnabled('intervention')) {
+	$formSetup->newItem('WEBPORTAL_FICHEINTER_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the tickets
+if (isModEnabled('ticket')) {
+	$formSetup->newItem('WEBPORTAL_TICKET_LIST_ACCESS')->setAsYesNo();
 }
 
 // Enable access for the partnership record

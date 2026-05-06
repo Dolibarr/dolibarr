@@ -141,8 +141,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<div class="clearboth"></div>';
+		print '<table class="noborder tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -228,8 +228,10 @@ if ($id > 0 || !empty($ref)) {
 					$option .= '&search_status='.urlencode($search_status);
 				}
 
+				print '<span id="anchorundermenu" class="anchorundermenu"></span>';
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="">';
 				if (!empty($sortfield)) {
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 				}
@@ -252,8 +254,8 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Status');
 				$formorder->selectOrderStatus($search_status, 1, 'search_status');
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';

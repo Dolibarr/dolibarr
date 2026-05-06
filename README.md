@@ -217,7 +217,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - MariaDB, MySQL or PostgreSQL
 - Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
 
-See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite)
+See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisites)
 
 ### Extending
 

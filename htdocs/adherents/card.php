@@ -36,6 +36,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -85,7 +86,7 @@ if (isModEnabled('mailmanspip')) {
 }
 
 $object = new Adherent($db);
-$extrafields = new ExtraFields($db);
+
 $upload_dir = null;
 
 // fetch optionals attributes and labels
@@ -1418,8 +1419,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys["mor"] = $langs->trans("Moral");
 		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
-		print '<span id="spannature1" class="member-individual-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
-		print '<span id="spannature1" class="member-company-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="member-individual-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="member-company-back spannature paddinglarge marginrightonly"><label for="moralinput" class="">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
 		print "</td></tr>";
 
 		// Company

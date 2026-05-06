@@ -29,7 +29,7 @@
 /**
  *	\file       htdocs/version.inc.php
  * 	\ingroup	core
- *  \brief      File that include the conf.php file and commons lib like functions.lib.php
+ *  \brief      File with the public/commercial version of Dolibarr.
  */
 
 if (!defined('DOL_APPLICATION_TITLE')) {
@@ -39,6 +39,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 // The major version of Dolibarr
 define('DOL_MAJOR_VERSION', '24');
 define('DOL_MINOR_VERSION', '0.0-alpha');
+
 
 define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERSION'));
 // DOL_VERSION is now a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c

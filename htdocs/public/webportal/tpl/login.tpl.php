@@ -29,9 +29,17 @@ if (empty($context) || !is_object($context)) {
 					<input type="text" class="login__input" name="login" placeholder="<?php print dol_escape_htmltag($langs->trans('loginWebportalUserName')); ?>">
 				</div>
 				<div class="login__field">
-					<i class="login__icon fas fa-lock"></i>
+					<i class="login__icon fas fa-key"></i>
 					<input type="password" class="login__input" name="password" placeholder="<?php print dol_escape_htmltag($langs->trans('Password')) ?>">
 				</div>
+				<?php if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) { ?>
+					<div class="login__field">
+						<i class="login__icon fas fa-unlock"></i>
+						<input type="password" class="login__input" style="width: 32%;" name="security_code" placeholder="<?php print dol_escape_htmltag($langs->trans('SecurityCode')) ?>">
+						<img class="inline-block valignmiddle" src="<?php print  dol_buildpath('/public/webportal/antispamimage.php', 1); ?>" border="0" width="80" height="32" id="img_securitycode" />
+						<a class="inline-block valignmiddle" href="<?php print $_SERVER['PHP_SELF']; ?>" tabindex="4" data-role="button"><?php print img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"'); ?></a>
+					</div>
+				<?php } ?>
 				<button class="button login__submit">
 					<span class="button__text"><?php print dol_escape_htmltag($langs->trans('Connection')) ?></span>
 					<i class="button__icon fas fa-chevron-right"></i>

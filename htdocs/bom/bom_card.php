@@ -153,8 +153,8 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$triggersendname = 'BOM_SENTBYMAIL';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_BOM_TO';
+	$triggersendname = $object->TRIGGER_PREFIX.'_SENTBYMAIL';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_'.$object->TRIGGER_PREFIX.'_TO';
 	$trackid = 'bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
@@ -166,6 +166,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$bom_child_id = GETPOSTINT('bom_id');
+		$idprod = 0;
 		if ($bom_child_id > 0) {
 			$bom_child = new BOM($db);
 			$res = $bom_child->fetch($bom_child_id);
@@ -779,7 +780,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom', 'clone', $permissiontoadd);
 			}
 
 			// Close / Cancel

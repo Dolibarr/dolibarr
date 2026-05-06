@@ -1046,9 +1046,9 @@ class Delivery extends CommonObject
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
 		$sqlSourceLine .= ", p.ref, p.label";
-		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
+		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->db->sanitize($this->linkedObjectsIds[0]['type'])."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine .= " WHERE fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
+		$sqlSourceLine .= " WHERE fk_".$this->db->sanitize($this->linked_objects[0]['type'])." = ".((int) $this->linked_objects[0]['linkid']);
 
 		$resultSourceLine = $this->db->query($sqlSourceLine);
 		if ($resultSourceLine) {
@@ -1061,12 +1061,12 @@ class Delivery extends CommonObject
 				// Get lines of sources already delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
-				$sql .= " ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']." as c";
-				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']."det as cd";
+				$sql .= " ".MAIN_DB_PREFIX.$this->db->sanitize($this->linked_objects[0]['type'])." as c";
+				$sql .= ", ".MAIN_DB_PREFIX.$this->db->sanitize($this->linked_objects[0]['type'])."det as cd";
 				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
-				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = c.rowid";
-				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
+				$sql .= " AND cd.fk_".$this->db->sanitize($this->linked_objects[0]['type'])." = c.rowid";
+				$sql .= " AND cd.fk_".$this->db->sanitize($this->linked_objects[0]['type'])." = ".((int) $this->linked_objects[0]['linkid']);
 				$sql .= " AND ld.fk_origin_line = ".((int) $objSourceLine->rowid);
 				$sql .= " GROUP BY ld.fk_origin_line";
 

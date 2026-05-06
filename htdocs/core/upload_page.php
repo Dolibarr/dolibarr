@@ -159,7 +159,7 @@ $form = new Form($db);
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 /*
-if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+if (GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
 	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
@@ -206,7 +206,7 @@ if (isModEnabled('supplier_invoice')) {
 	$prodid = GETPOSTINT('prodid');
 	$prodtext = $langs->trans("RefOrLabel");
 
-	//$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', 0, 0, 1, 2, $prodtext, 0, array(), GETPOSTINT('socid'), '1', 0, 'maxwidth200 disableautoopen', 0, '', null, 1);
+	//$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', 0, 1, 2, $prodtext, 0, array(), GETPOSTINT('socid'), '1', 0, 'maxwidth200 disableautoopen', 0, '', null, 1);
 	$uploadform .= img_picto('', 'product', 'class="pictofixedwidth"');
 	$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
 

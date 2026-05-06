@@ -59,7 +59,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $type = GETPOST('type', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 if (empty($backtopage)) {
-	$backtopage = '/accountancy/bookkeeping/list.php';
+	$backtopage = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php';
 }
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -580,13 +580,29 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n" . '<script type="text/javascript">';
 	print '$(document).ready(function () {
 			function toggleSubledger() {
-				var isCentral = $("#accountingaccount_number option:selected").data("centralized");
-				console.log("the selected general ledger account is centralised?", isCentral);
-				if (isCentral) {
-					$("#subledger_account, #subledger_label").prop("disabled", false);
-				} else {
-					$("#subledger_account, #subledger_label").prop("disabled", true);
-				}
+			    var isCentral = $("#accountingaccount_number option:selected").data("centralized");
+			    console.log("the selected general ledger account is centralised?", isCentral);
+
+			    var isAjaxMode = $("#search_subledger_account").length > 0;
+			    var $visibleSubledger = isAjaxMode
+			        ? $("#search_subledger_account")
+			        : $("#subledger_account");
+
+			    if (isCentral) {
+			        $visibleSubledger.prop("disabled", false);
+			        if (!isAjaxMode) {
+			            $("#subledger_account").prop("disabled", false).trigger("change");
+			        }
+			        $("#subledger_label").prop("disabled", false);
+			    } else {
+			        $visibleSubledger.prop("disabled", true).val("");
+			        if (!isAjaxMode) {
+			            $("#subledger_account").val("").prop("disabled", true).trigger("change");
+			        } else {
+			            $("#subledger_account").val("");
+			        }
+			        $("#subledger_label").val("").prop("disabled", true);
+			    }
 			}
 
 			toggleSubledger();
@@ -1175,15 +1191,7 @@ if ($action == 'create') {
 						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
-						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-						// - It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-						// - Also, it is not possible to use a value that is not in the list.
-						// - Also, the label is not automatically filled when a value is selected.
-						if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
-						}
+						print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						// Add also input for subledger label
 						print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
@@ -1203,15 +1211,7 @@ if ($action == 'create') {
 							print $formaccounting->select_account($action == 'add' ? GETPOST('accountingaccount_number') : '', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 							print '</td>';
 							print '<td>';
-							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-							// Also, it is not possible to use a value that is not in the list.
-							// Also, the label is not automatically filled when a value is selected.
-							if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-							} else {
-								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
-							}
+							print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 							print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';
