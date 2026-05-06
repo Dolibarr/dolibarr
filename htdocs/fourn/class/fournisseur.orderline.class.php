@@ -15,7 +15,8 @@
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		William Mead		    <william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Pierre Ardoin		    <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +195,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->ref_fourn        = $objp->ref_supplier;
 				$this->ref_supplier     = $objp->ref_supplier;
 				$this->subprice         = $objp->subprice;
+				$this->subprice_ttc     = $objp->subprice_ttc;
 				$this->tva_tx           = $objp->tva_tx;
 				$this->localtax1_tx		= $objp->localtax1_tx;
 				$this->localtax2_tx		= $objp->localtax2_tx;
@@ -252,6 +254,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$this->multicurrency_subprice	= $objp->multicurrency_subprice;
+				$this->multicurrency_subprice_ttc	= $objp->multicurrency_subprice_ttc;
 				$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 				$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 				$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
@@ -347,7 +350,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element;
 		$sql .= " (fk_commande, label, description, date_start, date_end,";
 		$sql .= " fk_product, product_type, special_code, rang,";
-		$sql .= " qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
+		$sql .= " qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc, ref,";
 		$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";
 		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,";
 		$sql .= " fk_parent_line)";
@@ -369,7 +372,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".((float) $this->remise_percent).", ".price2num($this->subprice, 'MU').", '".$this->db->escape($this->ref_supplier)."',";
+		$sql .= " ".((float) $this->remise_percent).", ".price2num($this->subprice, 'MU').", ".price2num($this->subprice_ttc, 'MU').", '".$this->db->escape($this->ref_supplier)."',";
 		$sql .= " ".price2num($this->total_ht).",";
 		$sql .= " ".price2num($this->total_tva).",";
 		$sql .= " ".price2num($this->total_localtax1).",";
