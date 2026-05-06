@@ -350,7 +350,7 @@ class BonPrelevement extends CommonObject
 	 * @param	string	$bic			BIC used
 	 * @param	string	$iban			IBAN used
 	 * @param	string	$rum			RUM
-	 * @param	string	$id_prelevement_demande		ID of debit or credit request
+	 * @param	int     $id_prelevement_demande		ID of debit or credit request
 	 * @return	int						>0 if OK, <0 if KO
 	 */
 	public function addWithdrawDetail($invoice_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $type = 'debit-order', $sourcetype = '', $bic = '', $iban = '', $rum = '', $id_prelevement_demande = 0)
