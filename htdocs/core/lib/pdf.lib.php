@@ -339,7 +339,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  * @return 	int							Height
  * @see getStringHeight()
  */
-function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
+function pdfGetHeightForHtmlContent($pdf, $htmlcontent)
 {
 	// store current object
 	$pdf->startTransaction();
@@ -375,8 +375,8 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 			}
 		}
 	}
-	// restore previous object
-	$pdf = $pdf->rollbackTransaction();
+	// restore previous object state
+	$pdf->rollbackTransaction(true);
 
 	return $height;
 }
@@ -807,7 +807,7 @@ function pdfWriteAdditionnalTitle($pdf, $outputlangs, $page_height, $object, &$w
  * 		@param	float		$tab2_hl		Tab2_hl
  *      @return	void
  */
-function pdfWriteVATArray($docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl)
+function pdfWriteVATArray($docgenerator, &$index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl)
 {
 	global $mysoc;
 
@@ -1047,7 +1047,7 @@ function pdfWriteVATArray($docgenerator, &$index, &$pdf, $outputlangs, $outputla
  * 		@param	float		$resteapayer_origin		Remain to pay
  *      @return	void
  */
-function pdfWriteAlreadyPaid($docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer, $resteapayer_origin)
+function pdfWriteAlreadyPaid($docgenerator, &$index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer, $resteapayer_origin)
 {
 	global $mysoc;
 
