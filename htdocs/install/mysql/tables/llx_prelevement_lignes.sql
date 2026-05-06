@@ -30,14 +30,15 @@ create table llx_prelevement_lignes
   client_nom          varchar(255),
   amount              double(24,8) DEFAULT 0,
 
-  code_banque         varchar(128), -- deprecated
-  code_guichet        varchar(6), 	-- deprecated
-  number              varchar(255), -- deprecated
-  cle_rib             varchar(5),	-- deprecated
+  --code_banque         varchar(128), -- deprecated
+  --code_guichet        varchar(6), 	-- deprecated
+  --number              varchar(255), -- deprecated
+  --cle_rib             varchar(5),	-- deprecated
 
-  bic                 varchar(11),   -- 11 according to ISO 9362
-  iban			      varchar(80),   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
-  rum			      varchar(32),   -- RUM used for the direct debit
+  --bic                 varchar(11),   -- 11 according to ISO 9362
+  --iban			      varchar(80),   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
+  --rum			      varchar(32),   -- RUM used for the direct debit
+  fk_prelevement_demande integer DEFAULT 0,
 
   note                text,
   tms             	  timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
