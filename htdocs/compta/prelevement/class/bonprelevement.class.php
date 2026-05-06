@@ -2181,7 +2181,7 @@ class BonPrelevement extends CommonObject
 							$refobj = "SAL" . $obj->idfac;
 						}
 
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $refobj, $obj->idfac, $iban, $bic, $daterum, $drum, $rum, $type, $obj->fac_ref_supplier);
+						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $refobj, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type, $obj->fac_ref_supplier);
 
 						$this->total += $obj->somme;
 						$i++;
