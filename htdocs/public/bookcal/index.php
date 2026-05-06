@@ -6,7 +6,6 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		Daniel Bauer			<d.bauer@elaax.net>
- * Copyright (C) 2026		ELAAX IT-Service		(https://www.elaax.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,10 +158,6 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 /**
  * Send the customer an acknowledgement after a public booking request.
- *
- * Author: Daniel Bauer <d.bauer@elaax.net> @ ELAAX IT-Service (https://www.elaax.de)
- * Purpose: Send an acknowledgement email after an anonymous BookCal booking request.
- *          The email content is taken from Dolibarr E-Mail templates (type_template=bookcal_send).
  *
  * @param	Contact		$contact		Booked contact
  * @param	ActionComm	$actioncomm		Created booking event

@@ -4,7 +4,6 @@
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Daniel Bauer				<d.bauer@elaax.net>
- * Copyright (C) 2026		ELAAX IT-Service			(https://www.elaax.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

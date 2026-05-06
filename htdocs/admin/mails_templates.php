@@ -16,7 +16,6 @@
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2026		Daniel Bauer			<d.bauer@elaax.net>
- * Copyright (C) 2026		ELAAX IT-Service		(https://www.elaax.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
