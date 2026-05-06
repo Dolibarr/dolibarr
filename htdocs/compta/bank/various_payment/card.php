@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+/* Copyright (C) 2017-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
@@ -65,7 +65,7 @@ $amount = GETPOST("amount");
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
-if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
 } else {
 	$subledger_account = GETPOST("subledger_account", "alpha");
@@ -184,7 +184,9 @@ if (empty($reshook)) {
 		}
 
 		$bankaccount = new Account($db);
-		$bankaccount->fetch($object->fk_account);
+		if ($object->fk_account > 0) {
+			$bankaccount->fetch((int) $object->fk_account);
+		}
 
 		// Check currency
 		$currencyofpayment = $conf->currency;	// The currency of various payment is not yet asked, so we suppose it is the main company currency
@@ -484,6 +486,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth50 maxwidth100" value="'.$amount.'">';
+	print ' '.$langs->getCurrencySymbol();
 	print '</td></tr>';
 
 	// Bank
@@ -504,19 +507,19 @@ if ($action == 'create') {
 	// Number
 	if (isModEnabled("bank")) {
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
 		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 
 		// Check transmitter
 		print '<tr><td class="'.(GETPOST('paymenttype') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn"><label for="fieldchqemetteur">'.$langs->trans('CheckTransmitter');
-		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 		print '</label></td>';
 		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
 
 		// Bank name
 		print '<tr><td><label for="chqbank">'.$langs->trans('Bank');
-		print ' <em>('.$langs->trans("ChequeBank").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
 		print '</label></td>';
 		print '<td><input id="chqbank" name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 	}
@@ -542,7 +545,7 @@ if ($action == 'create') {
 	// Category
 	if (is_array($options) && count($options) && isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
-		print img_picto('', 'category').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
+		print img_picto('', 'category', 'class="pictofixedwidth"').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
 		print '</td></tr>';
 	}
 
@@ -567,11 +570,7 @@ if ($action == 'create') {
 		/** @var FormAccounting $formaccounting */
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
 		print '<td>';
-		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-			print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
-		} else {
-			print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
-		}
+		print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
 		print '</td></tr>';
 	} else { // For external software
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
@@ -583,7 +582,16 @@ if ($action == 'create') {
 	print '<tr><td>';
 	$labelsens = $form->textwithpicto($langs->trans('Sens'), $langs->trans("AccountingDirectionHelp"));
 	print $form->editfieldkey($labelsens, 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
-	$sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+	$sensarray = array(
+		'0' => array('label' => $langs->trans("Debit")),
+		'1' => array('label' => $langs->trans("Credit"))
+	);
+	// We can't use this module to enter customer payments
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+	if (isALNERunningVersion()) {
+		$sensarray['1']['disabled'] = 1;
+	}
+
 	print $form->selectarray('sens', $sensarray, $sens, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 	print '</td></tr>';
 
@@ -726,7 +734,7 @@ if ($id) {
 	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (int) (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
 	if ($action == 'editsubledger_account' && (!$alreadyaccounted && $permissiontoadd)) {
-		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		if (getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0) {
 			/** @var FormAccounting $formaccounting */
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->subledger_account, 'subledger_account', 1, 1, '', 1);
 		} else {
@@ -784,7 +792,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
 	}
 
 	// Delete

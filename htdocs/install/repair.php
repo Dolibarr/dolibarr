@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -41,17 +41,20 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_type
+ * @var string $dolibarr_main_db_encrypted_pass
+ * @var string $dolibarr_main_db_encryption
+ * @var string $dolibarr_main_db_cryptkey
  * @var string $conffile
  */
+'
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+@phan-var-force ?string $dolibarr_main_db_type
+';
 
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
-
-'
-@phan-var-force ?string $dolibarr_main_db_encryption
-@phan-var-force ?string $dolibarr_main_db_cryptkey
-';
 
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
@@ -133,7 +136,7 @@ $conf->db->pass = $dolibarr_main_db_pass;
 $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
@@ -1867,9 +1870,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 			$sql_line .= ' AND   line.fk_product  = '.((int) $obj_dispatch->fk_product);
 			$resql_line = $db->query($sql_line);
 
-			// s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
-			// on divise la ligne de dispatch en autant de lignes qu’on en a sur la commande pour le produit
-			// et on met la quantité de la ligne dans la limit du "budget" indiqué par dispatch.qty
+			// In case there are multiple line with the same product for this supplier order,
+			// split the dispatch line in as many lines as there are on the order for the product,
+			// and set the line quantity to a value within the limit the "budget" set in dispatch.qty
 
 			$remaining_qty = $obj_dispatch->qty;
 			$first_iteration = true;

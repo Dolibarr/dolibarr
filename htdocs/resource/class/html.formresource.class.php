@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2015  Jean-François FERRY	    <jfefe@aternatik.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT."/resource/class/dolresource.class.php";
  * Class to manage forms for the module resource
  *
  * \remarks Utilisation: $formresource = new FormResource($db)
- * \remarks $formplace->proprietes=1 ou chaine ou tableau de valeurs
+ * \remarks $formplace->proprietes=1 or string or array of values
  */
 class FormResource
 {
@@ -75,7 +75,7 @@ class FormResource
 	 *
 	 *	@param	int|int[]	$selected		Preselected resource id
 	 *	@param	string		$htmlname		Name of field in form
-	 *  @param	string		$filter			Optional filters criteria (example: 's.rowid <> x')
+	 *  @param	string		$filter			Optional filter criteria (example: 's.rowid <> x')
 	 *	@param	int<0,1>	$showempty		Add an empty field
 	 * 	@param	int<0,1>	$showtype		Show third party type in combo list (customer, prospect or supplier)
 	 * 	@param	int<0,1>		$forcecombo		Force to use combo box
@@ -179,7 +179,7 @@ class FormResource
 	 *  @param  string		$htmlname       Nom de la zone select
 	 *  @param  string		$filtertype     To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
 	 *  @param  int<0,3>	$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *  @param  int<0,1>	$empty			1=peut etre vide, 0 sinon
+	 *  @param  int<0,1>	$empty			1=may be empty, 0 otherwise
 	 *  @param	int<0,1>	$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *  @param  int			$maxlength      Max length of label
 	 *  @param	int<0,1>	$usejscombo		1=Use jscombo, 0=No js combo
@@ -222,7 +222,7 @@ class FormResource
 				} elseif ($format == 3) {
 					print '<option value="'.$id.'"';
 				}
-				// Si selected est text, on compare avec code, sinon avec id
+				// If selected is text, we compare with code, otherwise with id
 				if (!empty($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
 					print ' selected';
 				} elseif ($selected == $id) {

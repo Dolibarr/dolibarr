@@ -87,9 +87,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 /* Buttons for actions                                                            */
 /* ============================================================================== */
 
-/*div.divButAction {
-	margin-bottom: 1.4em;
-}*/
+
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butAction,
@@ -187,7 +185,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	padding-<?php echo $left; ?>: 6px;
 	font-size: 1.5em;
 	border: none;
-	box-shadow: none; webkit-box-shadow: none;
+	box-shadow: none;
+	webkit-box-shadow: none;
 }
 
 .butAction:hover, .dropdown-holder.open > .butAction   {
@@ -295,11 +294,10 @@ TITLE BUTTON
 	min-width: 60px;
 	text-align: center;
 	color: var(--btncolortext);
-	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: var(--btncolorbg); */
-	border: 1px solid var(--btncolorborder);
+	border: 1px solid transparent;
 }
 
 a.btnTitle.btnTitleSelected {
@@ -342,7 +340,7 @@ a.btnTitle.btnTitleSelected {
 }
 .btnTitle.reposition:not(.btnTitleSelected) {
 	background-color: unset;
-	border: unset;
+	border: 1px solid transparent;
 }
 
 .btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label {

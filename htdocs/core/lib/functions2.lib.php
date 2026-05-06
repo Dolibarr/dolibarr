@@ -1179,7 +1179,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$sql .= $where;
 	}
 	if ($sqlwhere) {
-		$sql .= " AND ".$sqlwhere;
+		$sanitizedsqlwhere = $sqlwhere;
+		$sql .= " AND ".$sanitizedsqlwhere;
 	}
 
 	//print $sql.'<br>';
@@ -1291,7 +1292,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 			// Get counter in database
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
-			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
+			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
 			$maskrefclient_sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -2007,7 +2008,11 @@ function dol_buildlogin($lastname, $firstname)
 		$charforseparator = '';
 	}
 
-	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
+	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {			// flastname
+		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
@@ -2031,14 +2036,12 @@ function dol_buildlogin($lastname, $firstname)
  */
 function getSoapParams()
 {
-	global $conf;
-
 	$params = array();
 	$proxyuse = getDolGlobalString('MAIN_PROXY_USE');
-	$proxyhost = (!$proxyuse ? false : $conf->global->MAIN_PROXY_HOST);
-	$proxyport = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (!$proxyuse ? false : $conf->global->MAIN_PROXY_USER);
-	$proxypass = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PASS);
+	$proxyhost = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_HOST'));
+	$proxyport = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PORT'));
+	$proxyuser = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_USER'));
+	$proxypass = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PASS'));
 	$timeout = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 10); // Connection timeout
 	$response_timeout = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30); // Response timeout
 	//print extension_loaded('soap');
@@ -2246,7 +2249,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 	$listofparentid = array();
 
 	// Get list of all id in array listofid and all parents in array listofparentid
-	$sql = "SELECT rowid, ".$fieldfkparent." as parent_id FROM ".MAIN_DB_PREFIX.$tabletocleantree;
+	$sql = "SELECT rowid, ".$db->sanitize($fieldfkparent)." as parent_id FROM ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -2267,7 +2270,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print 'Code requested to clean tree (may be to solve data corruption), so we check/clean orphelins and loops.'."<br>\n";
 
 		// Check loops on each other
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid"; // So we update only records linked to themself
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree)." SET ".$db->sanitize($fieldfkparent)." = 0 WHERE ".$db->sanitize($fieldfkparent)." = rowid"; // So we update only records linked to themself
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($resql);
@@ -3119,7 +3122,7 @@ function csvClean($newvalue, $charset = '', $separator = '')
  * Function to output HTML to make an ajax call to make registration
  *
  * @param	string					$constanttosavelastko		Name of constant to save the last call that failed
- * @param	string					$constanttosavefirstok		Name of cosntant to save the first try that succeed
+ * @param	string					$constanttosavefirstok		Name of constant to save the first try that succeed
  * @param	array<string,string>	$arrayofdata				Array of key-value to add as parameter in the ajax call
  * @param	int						$forceping					Value 1 to force the ping, even if it was already done
  * @return 	void
@@ -3129,13 +3132,18 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 	global $dolibarr_distrib;
 	global $db, $conf;
 
-	$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+	$algo = 'sha256';
+	$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
 	// Disable ping if $constanttosavelastpingko is set and is recent (this month)
 	if (getDolGlobalString($constanttosavelastko) && substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
-		print "\n<!-- NO JS CODE TO ENABLE the call for ".$constanttosavefirstok.". An error already occurred this month (".$constanttosavelastko." is set), we will re-try next month. -->\n";
+		print "\n";
+		print '<!-- printCodeForPing: NO JS CODE TO ENABLE the call for '.$constanttosavefirstok.'. An error already occurred this month ('.$constanttosavelastko.' is set), we will re-try next month. -->'."\n";
 	} else {
-		print "\n".'<!-- Includes JS to make ajax call for '.$constanttosavefirstok.'. forceping='.$forceping.' '.$constanttosavefirstok.'='.getDolGlobalString($constanttosavefirstok).' '.$constanttosavelastko.'='.getDolGlobalString($constanttosavelastko).' -->'."\n";
+		print "\n";
+		print '<!-- printCodeForPing: Includes JS to make ajax call for '.$constanttosavefirstok.'. forceping='.$forceping.' '.$constanttosavefirstok.'='.getDolGlobalString($constanttosavefirstok).' '.$constanttosavelastko.'='.getDolGlobalString($constanttosavelastko).' -->'."\n";
 		print "<!-- JS CODE TO ENABLE the call -->\n";
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 		// Try to guess the distrib used
@@ -3161,10 +3169,12 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 							print $datakey.": '".dol_escape_js($dataval)."',\n";
 						}
 						?>
-						hash_algo: 'dol_hash-sha256',
+						hash_algo: 'dol_hash-<?php echo $algo; ?>',
 						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',
+						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
+						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
 						entity: '<?php echo (int) $conf->entity; ?>',
 						dbtype: '<?php echo dol_escape_js($db->type); ?>',
 						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
@@ -3174,7 +3184,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						token: 'notrequired'
 					},
 					success: function (data, status, xhr) {   // success callback function (data contains body of response)
-							console.log("Ping ok");
+							console.log("Ping ok - we call pingresult to save this");
 							$.ajax({
 								method: 'GET',
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
@@ -3184,7 +3194,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
-							console.log("Ping ko: " + data);
+							console.log("Ping ko - we call pingresult to save this: " + data);
 							$.ajax({
 								method: 'GET',
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',

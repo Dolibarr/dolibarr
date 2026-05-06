@@ -75,11 +75,8 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	if (GETPOST('MEMBER_NEWFORM_AMOUNT') !== '') {
-		$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
-	} else {
-		$amount = '';
-	}
+	$amount = '';
+
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
 	$showtable = GETPOST('MEMBER_SHOW_TABLE');
@@ -89,7 +86,6 @@ if ($action == 'update') {
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", $showtable ? 0 : 1, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
@@ -178,7 +174,7 @@ if ($conf->use_javascript_ajax) {
 }
 
 
-print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").'</span><br><br>';
+print '<div class="info">'.$langs->trans("BlankSubscriptionFormDesc").'</div><br>';
 
 $param = '';
 
@@ -194,10 +190,13 @@ if (!getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
+
+print '<div class="neutral">';
 print $enabledisablehtml;
 print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC" value="'.(!getDolGlobalString('MEMBER_ENABLE_PUBLIC') ? 0 : 1).'">';
+print '</div>';
 
-print '<br><br>';
+print '<br>';
 
 
 if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
@@ -270,14 +269,6 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 
 	$forcenature = getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY'); // 'phy' or 'mor'
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, $langs->trans("No"), 0, 0, '', 0, 0, 0, '', 'width200');
-	print "</td></tr>\n";
-
-	// Amount
-	print '<tr class="oddeven" id="tramount"><td>';
-	print $langs->trans("DefaultAmount");
-	print '</td><td>';
-	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.getDolGlobalString('MEMBER_NEWFORM_AMOUNT').'">';
-	print ' <span class="opacitymedium">'.$langs->getCurrencySymbol($mysoc->currency_code).'</span>';
 	print "</td></tr>\n";
 
 	// Min amount

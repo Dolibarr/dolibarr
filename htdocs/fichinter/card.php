@@ -5,13 +5,13 @@
  * Copyright (C) 2011-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2014-2025	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2014-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
  * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2020-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
@@ -571,7 +571,7 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setref_client' && $permissiontoadd) {
-		// Positionne ref client
+		// Set customer reference
 		$result = $object->setRefClient($user, GETPOST('ref_client', 'alpha'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -724,7 +724,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save', 'alpha')) {
-		// Mise a jour d'une ligne d'intervention
+		// Update an intervention line
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
@@ -778,7 +778,7 @@ if (empty($reshook)) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoadd) {
-		// Supprime une ligne d'intervention AVEC confirmation
+		// Delete an intervention line WITH confirmation
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
@@ -913,10 +913,10 @@ if (empty($reshook)) {
 				}
 			}
 		} elseif ($action == 'swapstatut' && $permissiontoadd) {
-			// bascule du statut d'un contact
+			// Toggle the status of a contact
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} elseif ($action == 'deletecontact' && $permissiontoadd) {
-			// Efface un contact
+			// Delete a contact
 			$result = $object->delete_contact(GETPOSTINT('lineid'));
 
 			if ($result >= 0) {
@@ -1086,22 +1086,28 @@ if ($action == 'create') {
 
 		// Contract
 		if (isModEnabled('contract') && is_object($formcontract)) {
-			$langs->load("contracts");
-			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
-			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
-			if ($numcontrat == 0) {
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
+			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+			// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+			if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+				$langs->load("contracts");
+				print '<tr><td>'.$langs->trans("Contract").'</td><td>';
+				$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
+				if ($numcontrat == 0) {
+					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
+				}
+				print '</td></tr>';
 			}
-			print '</td></tr>';
 		}
 
 		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td>';
 		$liste = ModelePDFFicheinter::liste_modeles($db);
-		print $form->selectarray('model', $liste, $conf->global->FICHEINTER_ADDON_PDF);
-		print "</td></tr>";
+		if (count($liste) > 0) {
+			print '<tr>';
+			print '<td>'.$langs->trans("DefaultModel").'</td>';
+			print '<td>';
+			print $form->selectarray('model', $liste, getDolGlobalString('FICHEINTER_ADDON_PDF'));
+			print "</td></tr>";
+		}
 
 		// Public note
 		print '<tr>';
@@ -1461,35 +1467,39 @@ if ($action == 'create') {
 
 	// Contract
 	if (isModEnabled('contract')) {
-		$langs->load('contracts');
-		print '<tr>';
-		print '<td>';
+		// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+		// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+		if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+			$langs->load('contracts');
+			print '<tr>';
+			print '<td>';
 
-		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('Contract');
-		print '</td>';
-		if ($action != 'editcontract') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
-			print img_edit($langs->trans('SetContract'), 1);
-			print '</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editcontract') {
-			$formcontract = new FormContract($db);
-			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
-		} else {
-			if ($object->fk_contrat) {
-				$contratstatic = new Contrat($db);
-				$contratstatic->fetch($object->fk_contrat);
-				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-				print $contratstatic->getNomUrl(0, 0, 1);
-			} else {
-				print "&nbsp;";
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans('Contract');
+			print '</td>';
+			if ($action != 'editcontract') {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
+				print img_edit($langs->trans('SetContract'), 1);
+				print '</a></td>';
 			}
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editcontract') {
+				$formcontract = new FormContract($db);
+				$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
+			} else {
+				if ($object->fk_contrat) {
+					$contratstatic = new Contrat($db);
+					$contratstatic->fetch($object->fk_contrat);
+					//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+					print $contratstatic->getNomUrl(0, 0, 1);
+				} else {
+					print "&nbsp;";
+				}
+			}
+			print '</td>';
+			print '</tr>';
 		}
-		print '</td>';
-		print '</tr>';
 	}
 
 	// Other attributes
@@ -1580,7 +1590,7 @@ if ($action == 'create') {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				// Ligne en mode visu
+				// Line in view mode
 				if ($action != 'editline' || GETPOSTINT('line_id') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
@@ -1605,7 +1615,7 @@ if ($action == 'create') {
 						print "</td>";
 					} else {
 						print '<td>';
-						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						print '<a name="'.$objp->rowid.'"></a>'; // Anchor to return to the line
 						print dol_htmlentitiesbr($objp->description);
 
 						$objectline = new FichinterLigne($db);
@@ -1671,7 +1681,7 @@ if ($action == 'create') {
 					}
 
 					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$objp->rowid.'"></a>'; // Anchor to return to the line
 
 					// Editeur wysiwyg
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1906,7 +1916,7 @@ if ($action == 'create') {
 				}
 
 				// Create intervention model
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 && $object->status == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer') && (count($object->lines) > 0)) {
+				if ($object->status == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer') && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
@@ -1969,7 +1979,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($user->hasRight('ficheinter', 'creer')) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter">'.$langs->trans("ToClone").'</a></div>';
 				}
 
 				// Delete

@@ -29,7 +29,14 @@
  * \brief 		Ventilation page from suppliers invoices
  */
 require '../../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -40,15 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "productbatch", "products"));
@@ -516,7 +514,8 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("InvoiceLines").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilTodoCustomer").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("InvoiceLines").'<br><span class="opacityhigh small">'.$langs->trans("DescVentilTodoCustomer").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print '<br>';
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();
@@ -850,7 +849,7 @@ if ($result) {
 		}
 		// Ref Invoice
 		if (!empty($arrayfields['f.ref']['checked'])) {
-			print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1);
+			print '<td class="nowraponall cell2linesheight">'.$facturefourn_static->getNomUrl(1);
 			if ($objp->ref_supplier) {
 				print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
 			}
@@ -866,7 +865,7 @@ if ($result) {
 		// Supplier invoice label
 		if (!empty($arrayfields['f.libelle']['checked'])) {
 			print '<td class="tdoverflowmax100 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
-			print dol_escape_htmltag($objp->invoice_label);
+			print dolPrintHTML($objp->invoice_label);
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
@@ -877,7 +876,7 @@ if ($result) {
 		}
 		// Ref Product
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100 cell2linesheight">';
 			if ($product_static->id > 0) {
 				print $product_static->getNomUrl(1);
 			}
@@ -908,7 +907,7 @@ if ($result) {
 			//if ($objp->vat_tx_l != $objp->vat_tx_p && price2num($objp->vat_tx_p) && price2num($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 			//	$code_vat_differ = 'warning bold';
 			//}
-			print '<td class="right'.($code_vat_differ ? ' '.$code_vat_differ : '').'">';
+			print '<td class="right cell2linesheight'.($code_vat_differ ? ' '.$code_vat_differ : '').'">';
 			print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''), false, 0, 0, 1);
 			print '</td>';
 			$totalarray['nbfield']++;
@@ -933,7 +932,7 @@ if ($result) {
 		}
 		// Found accounts
 		if (!empty($arrayfields['aa.data_suggest']['checked'])) {
-			print '<td class="small">';
+			print '<td class="small cell2linesheight">';
 			$s = '1. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
 			$shelp = '';
 			$ttype = 'help';

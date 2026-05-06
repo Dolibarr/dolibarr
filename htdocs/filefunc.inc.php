@@ -158,6 +158,7 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_mailing_limit_sendbyweb
  * @var ?string $dolibarr_mailing_limit_sendbycli
  * @var ?string $dolibarr_mailing_limit_sendbyday
+ * @var ?string $dolibarr_allow_unsecured_select_in_extrafields_filter;
  * @var ?string $dolibarr_nocsrfcheck
  *
  * @var ?string $dolibarr_font_DOL_DEFAULT_TTF
@@ -408,11 +409,14 @@ foreach ($paths as $tmppath) {	// We check to find (B+start of C)=A
 	}
 	//else print "Not found yet for concatpath=".$concatpath."<br>\n";
 }
+
 //print "found=".$found." dolibarr_main_url_root=".$dolibarr_main_url_root."\n";
 if (!$found) {
 	// There is no subdir that compose the main url root or autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
 	$tmp = $dolibarr_main_url_root;
 } else {
+	// Note:when using ip: $_SERVER["SERVER_NAME"] contains 'localhost' when $_SERVER["HTTP_HOST"] contains '192.168.0.1' but $_SERVER["HTTP_HOST"] is forged by client and not reliable.
+	// so we prefer use the $_SERVER["SERVER_NAME"] even if not similar to url of user.
 	$tmp = 'http'.((!isHTTPS() && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
 }
 
@@ -420,6 +424,7 @@ if (!$found) {
 if (!empty($dolibarr_main_force_https)) {
 	$tmp = preg_replace('/^http:/i', 'https:', $tmp);
 }
+
 define('DOL_MAIN_URL_ROOT', $tmp); // URL absolute root (https://sss/dolibarr, ...)
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
 $suburi = strstr($uri, '/'); // $suburi contains url without domain:port

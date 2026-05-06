@@ -487,8 +487,8 @@ if ($action == 'confirm_crop') {		// Test on permission already done
 
 $head = '';
 $title = $langs->trans("ImageEditor");
-$morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
-$morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
+$morejs = array('/public/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
+$morecss = array('/public/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
 
 llxHeader($head, $title, '', '', 0, 0, $morejs, $morecss);
 
