@@ -418,7 +418,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$bic			BIC used
 	 *  @param	string	$iban			IBAN used
 	 *  @param	string	$rum			RUM used
-	 *  @param	string	$id_prelevement_demande		ID of debit or credit request
+	 *  @param	int     $id_prelevement_demande		ID of debit or credit request
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '', $bic = '', $iban = '', $rum = '', $id_prelevement_demande = 0)
@@ -427,7 +427,7 @@ class BonPrelevement extends CommonObject
 		$concat = getDolGlobalInt('MAIN_MODULE_PRELEVEMENT_CONCAT');	// ??? what is this for. Seems not used.
 
 		if ($concat == 1) {
-			/*
+			/**
 			 * @deprecated. This code can't work because code_... fields are empty. Not used. To remove.
 			 * We aggregate the lines.
 			 */
@@ -1994,7 +1994,7 @@ class BonPrelevement extends CommonObject
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$iban = dolDecrypt($obj->iban);
 
-						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
+						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, (string) $obj->drum, $obj->rum, $type);
 
 						$this->total += $obj->somme;
 						$i++;
