@@ -41,7 +41,7 @@ if (!defined('NOCSRFCHECK')) {
 define('NOLOGIN', 1);
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/ai/server/mcp_protocol.php';
+require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp_protocol.class.php';
 
 while (ob_get_level()) {
 	ob_end_clean();
