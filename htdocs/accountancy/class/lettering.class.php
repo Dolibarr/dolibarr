@@ -313,7 +313,11 @@ class Lettering extends BookKeeping
 		// Check partial / normal lettering case
 		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		$sql .= " WHERE ab.rowid IN (" . implode(',', array_map('intval', $ids)) . ")";
+
+		$idlist = implode(',', array_map('intval', $ids));
+		$idlist = $this->db->sanitize($idlist);
+
+		$sql .= " WHERE ab.rowid IN (" . $idlist . ")";
 		$sql .= " GROUP BY ab.lettering_code";
 		$sql .= " ORDER BY ab.lettering_code DESC";
 
@@ -359,7 +363,11 @@ class Lettering extends BookKeeping
 			$sql = "SELECT DISTINCT ab2.lettering_code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
-			$sql .= " WHERE ab.rowid IN (" . implode(',', array_map('intval', $ids)) . ")";
+
+			$idlist = implode(',', array_map('intval', $ids));
+			$idlist = $this->db->sanitize($idlist);
+
+			$sql .= " WHERE ab.rowid IN (" . $idlist . ")";
 			$sql .= " AND ab2.lettering_code != ''";
 			$sql .= " AND ab2.matching_general = 0";
 			$sql .= " ORDER BY ab2.lettering_code DESC";
@@ -385,8 +393,15 @@ class Lettering extends BookKeeping
 
 			// Test amount integrity
 			if (!$error && !$partial) {
-				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
-				$sql .= " rowid IN (" . implode(',', array_map('intval', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
+				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+
+				$idlist = implode(',', array_map('intval', $ids));
+				$idlist = $this->db->sanitize($idlist);
+
+				$sql .= " WHERE rowid IN (" . $idlist . ")";
+				$sql .= " AND lettering_code IS NULL";
+				$sql .= " AND subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -410,7 +425,13 @@ class Lettering extends BookKeeping
 				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
 				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
 				$sql .= ", matching_general = 0";
-				$sql .= "  WHERE rowid IN (" . implode(',', array_map('intval', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
+
+				$idlist = implode(',', array_map('intval', $ids));
+				$idlist = $this->db->sanitize($idlist);
+
+				$sql .= " WHERE rowid IN (" . $idlist . ")";
+				$sql .= " AND lettering_code IS NULL";
+				$sql .= " AND subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Update lettering code", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -450,7 +471,11 @@ class Lettering extends BookKeeping
 		$sql .= " matching_general = 0";
 		$sql .= ", lettering_code = NULL";
 		$sql .= ", date_lettering = NULL";
-		$sql .= " WHERE rowid IN (".implode(',', array_map('intval', $ids)).")";
+
+		$idlist = implode(',', array_map('intval', $ids));
+		$idlist = $this->db->sanitize($idlist);
+
+		$sql .= " WHERE rowid IN (" . $idlist . ")";
 		$sql .= " AND subledger_account != ''";
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -530,7 +555,12 @@ class Lettering extends BookKeeping
 		$sql .= "   INNER JOIN " . $this->db->prefix() . "accounting_system AS asys ON asys.pcg_version = aa.fk_pcg_version";
 		$sql .= "   WHERE asys.rowid = ".(int) $pcgId." AND aa.reconcilable";
 		$sql .= " ) AS reconciliable_accounts ON reconciliable_accounts.account_number = ab.numero_compte";
-		$sql .= " WHERE ab.rowid IN (".implode(',', array_map('intval', $ids)).") AND reconciliable_accounts.rowid IS NULL";
+
+		$idlist = implode(',', array_map('intval', $ids));
+		$idlist = $this->db->sanitize($idlist);
+
+		$sql .= " WHERE ab.rowid IN (" . $idlist . ")";
+		$sql .= " AND reconciliable_accounts.rowid IS NULL";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -555,7 +585,11 @@ class Lettering extends BookKeeping
 		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
 		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
 		$sql .= "   AND fy.entity = " . (int) $conf->entity;
-		$sql .= " WHERE ab.rowid IN (" . implode(',', array_map('intval', $ids)) . ")";
+
+		$idlist = implode(',', array_map('intval', $ids));
+		$idlist = $this->db->sanitize($idlist);
+
+		$sql .= " WHERE ab.rowid IN (" . $idlist . ")";
 		$sql .= " GROUP BY fy.rowid, fy.date_start, fy.date_end";
 
 		dol_syslog(__METHOD__ . " - Get fiscal year", LOG_DEBUG);
@@ -598,7 +632,11 @@ class Lettering extends BookKeeping
 		$sql = "SELECT DISTINCT ab2.lettering_code";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "accounting_bookkeeping AS ab2 ON ab2.numero_compte = ab.numero_compte";
-		$sql .= " WHERE ab.rowid IN (" . implode(',', array_map('intval', $ids)) . ")";
+
+		$idlist = implode(',', array_map('intval', $ids));
+		$idlist = $this->db->sanitize($idlist);
+
+		$sql .= " WHERE ab.rowid IN (" . $idlist . ")";
 		$sql .= " AND ab2.lettering_code != ''";
 		$sql .= " AND ab2.matching_general = 1";
 		$sql .= " AND ab2.doc_date BETWEEN '"  . $this->db->idate($fiscalYearStart) . "' AND '" . $this->db->idate($fiscalYearEnd) . "'";
@@ -624,7 +662,12 @@ class Lettering extends BookKeeping
 		if (!$error) {
 			$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred";
 			$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping";
-			$sql .=	" WHERE rowid IN (" . implode(',', array_map('intval', $ids)) .") AND lettering_code IS NULL";
+
+			$idlist = implode(',', array_map('intval', $ids));
+			$idlist = $this->db->sanitize($idlist);
+
+			$sql .= " WHERE rowid IN (" . $idlist . ")";
+			$sql .=	" AND lettering_code IS NULL";
 
 			dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -648,7 +691,12 @@ class Lettering extends BookKeeping
 			$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
 			$sql .= ", date_lettering = '" . $this->db->idate($now) . "'";
 			$sql .= ", matching_general = 1";
-			$sql .= "  WHERE rowid IN (" . implode(',', array_map('intval', $ids)) . ") AND lettering_code IS NULL";
+
+			$idlist = implode(',', array_map('intval', $ids));
+			$idlist = $this->db->sanitize($idlist);
+
+			$sql .= " WHERE rowid IN (" . $idlist . ")";
+			$sql .= " AND lettering_code IS NULL";
 
 			dol_syslog(__METHOD__ . " - Update gl lettering code", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -693,7 +741,11 @@ class Lettering extends BookKeeping
 		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
 		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
 		$sql .= "   AND fy.entity = " . (int) $conf->entity;
-		$sql .= " WHERE ab.rowid IN (" . implode(',', array_map('intval', $ids)) . ")";
+
+		$idlist = implode(',', array_map('intval', $ids));
+		$idlist = $this->db->sanitize($idlist);
+
+		$sql .= " WHERE ab.rowid IN (" . $idlist . ")";
 		$sql .= " AND ab.matching_general = 1";
 		$sql .= " AND ab.lettering_code IS NOT NULL AND ab.lettering_code != ''";
 
