@@ -263,9 +263,8 @@ if (empty($reshook)) {
 				$objecttmp = $TFactThird[$rcp->socid];
 
 				// Add all links of this new reception to the existing invoice
-				// Pass loadalsoobjects=0 to avoid setting the linkedObjectsFullLoaded cache flag,
-				// otherwise BILL_SUPPLIER_VALIDATE trigger sees stale linkedObjects (missing receptions added later via add_object_linked)
-				$objecttmp->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+				$objecttmp->fetchObjectLinked();
+				$objecttmp->clearObjectLinkedCache(); // force refetch after upcoming add_object_linked() calls so BILL_SUPPLIER_VALIDATE trigger sees all linked receptions
 				$rcp->fetchObjectLinked();
 				if (!empty($rcp->linkedObjectsIds['order_supplier']) && is_array($rcp->linkedObjectsIds['order_supplier'])) {
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
