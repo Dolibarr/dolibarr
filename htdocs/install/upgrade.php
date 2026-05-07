@@ -120,6 +120,7 @@ if (!$versionfrom && !$versionto) {
 pHeader('', "upgrade2", GETPOST('action', 'aZ09'), 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 $actiondone = 0;
+$db = null;
 
 // Action to launch the migrate script
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
@@ -453,7 +454,7 @@ if ($dirmodule) {
 }
 pFooter($nonext, $setuplang);
 
-if ($db->connected) {
+if ($db !== null && $db->connected) {
 	$db->close();
 }
 

@@ -60,6 +60,7 @@ PredefinedInvoices=Predefined Invoices
 Invoice=Invoice
 PdfInvoiceTitle=Invoice
 PdfInvoiceSituationTitle=Invoice situation
+PdfInvoiceDepositTitle=Deposit
 Invoices=Invoices
 InvoiceLine=Invoice line
 InvoiceCustomer=Customer invoice
