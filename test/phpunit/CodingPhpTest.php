@@ -795,9 +795,10 @@ class CodingPhpTest extends CommonClassTest
 					&& !preg_match('/not required/i', $val[0])) {
 					$ok = false;
 
-					var_dump($file['fullname'].' '.$val[0].' '.$filecontentaction);exit;
+					// Uncomment this for a scan on one given file
+					//var_dump($file['fullname'].' '.$val[0].' '.$filecontentaction);exit;
 
-					print "File ".$file['relativename']." - Line: ".$val[0]."\n";
+					print "\nError on file ".$file['relativename']." - Line: ".$val[0]."\n";
 					break;
 				}
 			}

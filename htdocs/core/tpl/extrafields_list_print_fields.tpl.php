@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,12 @@
  *
  * @var string $extrafieldsobjectkey
  * @var string $extrafieldsobjectprefix
+ * @var int $i
  */
 '
 @phan-var-force CommonObject $object
 @phan-var-force stdClass $obj
+@phan-var-force int $i
 ';
 
 // Protection to avoid direct call of template
@@ -40,6 +42,8 @@ if (empty($conf) || !is_object($conf)) {
 if (empty($extrafieldsobjectkey) && is_object($object)) {
 	$extrafieldsobjectkey = $object->table_element;
 }
+
+$totalarray = array();
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
 if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafieldsobjectkey])) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
@@ -87,7 +91,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
-				print ($title && !in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print($title && !in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
 				print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
 				print $valuetoshow;
