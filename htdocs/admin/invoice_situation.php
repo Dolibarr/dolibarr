@@ -31,13 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Libraries
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
  * @var Translate $langs
  * @var User $user
  */
+// Libraries
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
@@ -119,7 +117,7 @@ $form->load_cache_conditions_paiements();
 if (getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID') && isset($form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'])) {
 	$item->fieldOutputOverride = $form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'];
 }
-$item->fieldInputOverride = $form->getSelectConditionsPaiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);
+$item->fieldInputOverride = $form->getSelectConditionsPaiements(getDolGlobalInt("INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID"), 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);
 
 
 /*
@@ -143,7 +141,8 @@ $help_url = 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:Configu
 llxHeader("", $langs->trans("BillsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-invoice_situation');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();

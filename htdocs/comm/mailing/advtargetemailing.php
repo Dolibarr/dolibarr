@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('mails', 'admin', 'companies', 'categories'));
 
 $action = GETPOST('action', 'aZ09');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -455,7 +455,7 @@ $totalarray = [
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'advtargets', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'advtargets', $langs->trans("Mailing"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -845,7 +845,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>'."\n";
-		print $formadvtargetemaling->advMultiselectarray('cust_typeent', $formcompany->typent_array(0, " AND id <> 0"), $array_query['cust_typeent']);
+		print $formadvtargetemaling->advMultiselectarray('cust_typeent', $formcompany->typent_array(0, "(id:<>:0)"), $array_query['cust_typeent']);
 		print '</td><td>'."\n";
 		print '</td></tr>'."\n";
 
@@ -855,7 +855,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray("cust_effectif_id", $formcompany->effectif_array(0, " AND id <> 0"), $array_query['cust_effectif_id']);
+		print $formadvtargetemaling->advMultiselectarray("cust_effectif_id", $formcompany->effectif_array(0, "(id:<>:0)"), $array_query['cust_effectif_id']);
 		print '</td><td>'."\n";
 		print '</td></tr>'."\n";
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,12 +31,6 @@
 
 // Load Dolibarr environment
 require "../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,10 +38,16 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
+$action = GETPOST('action', 'aZ');
 $id = GETPOSTINT('id');
 
 $object = new Contact($db);
@@ -139,7 +139,7 @@ print dol_get_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
-$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
 $morehtmlref .= '<div class="refidno">';
@@ -348,12 +348,13 @@ if (!empty($sql_select)) {
 	if ($type_element != 'fichinter') {
 		$sql .= ", p.ref as prod_ref, p.label as product_label";
 	}
-	$sql .= " FROM "/*.MAIN_DB_PREFIX."societe as s, "*/.$tables_from;
-	// if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
-	$sql .= $where;
+	$sanitizedtablefrom = $tables_from;
+	$sql .= " FROM ".$sanitizedtablefrom;
+	$sanitizedwhere = $where;
+	$sql .= $sanitizedwhere;
 	$sql .= dolSqlDateFilter($dateprint, 0, $month, $year);
 	if ($sref && !empty($doc_number)) {
-		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
+		$sql .= " AND ".$db->sanitize($doc_number)." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
 		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
@@ -365,9 +366,16 @@ if (!empty($sql_select)) {
 		}
 		$sql .= ")";
 	}
+	$parameters = array('type_element' => $type_element);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= $db->order($sortfield, $sortorder);
+
 	$resql = $db->query($sql);
-	$totalnboflines = $db->num_rows($resql);
+	if (!$resql) {
+		dol_print_error($db);
+	}
+	$totalnboflines = $db->num_rows($resql);		// TODO Make a SQL count to have a better performance
 
 	$sql .= $db->plimit($limit + 1, $offset);
 }
@@ -426,7 +434,7 @@ if ($sql_select && $documentstatic !== null) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', 'nogreyscale', $limit);
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="liste centpercent">'."\n";
@@ -673,7 +681,7 @@ if ($sql_select && $documentstatic !== null) {
 	}
 	$db->free($resql);
 } elseif (empty($type_element) || $type_element == -1) {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '', 0, '', 'nogreyscale', $limit);
 
 	print '<table class="liste centpercent">'."\n";
 	// Titles with sort buttons
@@ -689,7 +697,7 @@ if ($sql_select && $documentstatic !== null) {
 
 	print "</table>";
 } else {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '', 0, '', 'nogreyscale', $limit);
 
 	print '<table class="liste centpercent">'."\n";
 

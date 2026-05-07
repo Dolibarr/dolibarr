@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2018   Charlene Benke  <charlie@patas-monkey.com>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class WorkboardResponse
 
 	/**
 	 * Delay time to mark an item as late. In number of days.
-	 * @var double
+	 * @var float
 	 */
 	public $warning_delay;
 
@@ -85,7 +86,7 @@ class WorkboardResponse
 
 	/**
 	 * total price of items
-	 * @var int
+	 * @var float
 	 */
 	public $total = 0;
 }

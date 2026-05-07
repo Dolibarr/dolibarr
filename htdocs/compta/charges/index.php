@@ -8,7 +8,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,15 +33,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -50,8 +41,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
-
-$hookmanager = new HookManager($db);
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
@@ -123,7 +119,7 @@ if ($sortorder) {
 $totalnboflines = '';
 $num = 0;
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -217,6 +213,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			// Label
 			print '<td>';
 			$socialcontrib->id = $obj->rowid;
+			$socialcontrib->ref = $obj->label;
 			$socialcontrib->label = $obj->label;
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
@@ -275,7 +272,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		print '<td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
 
-		//Total here makes no sense because we can have the same line several times.
+		// Total here makes no sense because we can have the same line several times.
 		//print '<td class="liste_total right">'.price($total).'</td>';
 		print '<td class="liste_total right"></td>';
 

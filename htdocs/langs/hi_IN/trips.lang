@@ -121,7 +121,6 @@ ValideTrip=व्यय रिपोर्ट स्वीकृत करें
 ExpenseReportPayments=व्यय रिपोर्ट भुगतान
 TaxUndefinedForThisCategory = इस श्रेणी के लिए कर अनिर्धारित है
 errorComputeTtcOnMileageExpense=माइलेज व्यय की गणना में त्रुटि
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=सामूहिक कार्रवाई में केवल ड्राफ्ट स्थिति वाले तत्वों को ही हटाया जा सकता है
 
 ## Dictionary
 EX_BRE=नाश्ता
@@ -159,3 +158,4 @@ TF_TRAIN=रेलगाड़ी
 TF_TRIP=परिवहन
 FailedToSetPaid=भुगतान के रूप में सेट करने में विफल
 FailedToSetToCancel=रद्द करने में विफल
+NobodyHasPermissionToValidateExpenseReport=किसी को भी व्यय रिपोर्ट को सत्यापित करने की अनुमति नहीं है

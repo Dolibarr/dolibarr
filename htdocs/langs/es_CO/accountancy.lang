@@ -123,7 +123,6 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta (del plan de cuentas) que se utilizará como 
 DONATION_ACCOUNTINGACCOUNT=Cuenta (del plan de cuentas) que se utilizará para registrar donaciones (módulo de donaciones)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta (del plan de cuentas) que se utilizará para registrar las suscripciones de membresía (módulo de membresía, si la membresía se registró sin factura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta (del plan de cuentas) que se utilizará como cuenta predeterminada para registrar el depósito del cliente
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cuenta (del plan de cuentas) que se utilizará como predeterminada
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Cuenta contable por defecto para registrar la garantía retenida del cliente
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta (del plan de cuentas) que se usará como cuenta predeterminada para los productos comprados dentro del mismo país (se usa si no está definida en la hoja del producto)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta (del plan de cuentas) que se usará como cuenta predeterminada para los productos comprados de EEC a otro país de EEC (se usa si no está definido en la hoja de producto)
@@ -280,7 +279,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Generar entradas de “Ganan
 AccountancyClosureSeparateAuxiliaryAccounts=Al generar los asientos de “Ganancias retenidas”, detalle las cuentas del sublibro mayor
 AccountancyClosureInsertAccountingReversalSuccessfully=Se han insertado correctamente las entradas contables para "Ganancias retenidas"
 ConfirmMassUnletteringQuestion=¿Está seguro de que desea anular la conciliación de los registros seleccionados %s?
-ConfirmMassDeleteBookkeepingWriting=Confirmación de eliminación masiva
 ConfirmMassDeleteBookkeepingWritingQuestion=Esto eliminará la transacción de la contabilidad (se eliminarán todas las entradas de línea relacionadas con la misma transacción). ¿Está seguro de que desea eliminar las entradas seleccionadas de %s?
 AccountancyClosureConfirmClose=¿Está seguro de que desea cerrar el período fiscal actual? <span class="warning">Usted comprende que cerrar el período fiscal es una acción irreversible y bloqueará permanentemente cualquier modificación o eliminación de entradas durante este período</span>.
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos obligatorios de configuración no se realizaron, por favor complete

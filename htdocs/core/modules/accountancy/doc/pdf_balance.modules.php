@@ -163,7 +163,7 @@ class pdf_balance extends ModelePdfAccountancy
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "deliveries", "sendings", "productbatch", "compta"));
+			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "other", "propal", "sendings", "productbatch", "compta"));
 		}
 
 		$nblines = count($object->lines);
@@ -240,7 +240,7 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->SetSubject($outputlangs->transnoentities("AccountancyBalance"));
 		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBalance"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
@@ -347,9 +347,9 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->startTransaction();
 
 			if ($this->balanceType == "sub") {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $object->lines[$i]->subledger_label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 			} else {
-				$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+				$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 			}
 
 			$pageposafter = $pdf->getPage();
@@ -360,9 +360,9 @@ class pdf_balance extends ModelePdfAccountancy
 				$pdf->setPage($pageposafter);
 				$curY = $tab_top_newpage + $this->tabTitleHeight;
 				if ($this->balanceType == "sub") {
-					$this->printStdColumnContent($pdf, $curY, 'account_label',  $object->lines[$i]->subledger_label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $object->lines[$i]->subledger_label);
 				} else {
-					$this->printStdColumnContent($pdf, $curY, 'account_label', $accountingAccount->label);
+					$this->printStdColumnContent($pdf, $curY, 'account_label', (string) $accountingAccount->label);
 				}
 
 				$pageposafter = $pdf->getPage();
@@ -433,7 +433,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 			if ($this->getColumnStatus('balance')) {
 				$solde = $object->lines[$i]->credit - $object->lines[$i]->debit;
-				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);
 			}
@@ -498,6 +498,14 @@ class pdf_balance extends ModelePdfAccountancy
 			if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
 				$this->addDashLine($pdf, $pdf->getPage(), $nexY);
 			}
+			// check if translation for AccountancyGroupXXX exists
+			$translationKey = 'AccountancyGroup' . $accountingAccount->pcg_type;
+			$translation = $langs->transnoentitiesnoconv($translationKey);
+			if ($translation !== $translationKey) {
+				$output = $langs->transnoentitiesnoconv('Total') . ' ' . $translation;
+			} else {
+				$output = $langs->transnoentitiesnoconv('Total') . ' ' . $langs->transnoentitiesnoconv('AccountancyGroup') . ' ' . $accountingAccount->pcg_type;
+			}
 			$this->addTotalLine(
 				$pdf,
 				$curY,
@@ -526,7 +534,6 @@ class pdf_balance extends ModelePdfAccountancy
 		);
 
 
-
 		// Show square
 		if ($pagenb == 1) {
 			$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
@@ -551,9 +558,12 @@ class pdf_balance extends ModelePdfAccountancy
 		$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		$this->warnings = $hookmanager->warnings;
 		if ($reshook < 0) {
 			$this->error = $hookmanager->error;
 			$this->errors = $hookmanager->errors;
+			dolChmod($file);
+			return -1;
 		}
 
 		dolChmod($file);
@@ -657,7 +667,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
+		$text = (string) $this->emetteur->name;
 		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 
@@ -715,11 +725,11 @@ class pdf_balance extends ModelePdfAccountancy
 	/**
 	 * Define Array Column Field
 	 *
-	 * @param	BookKeeping	   $object    	    common object
-	 * @param	Translate	   $outputlangs     langs
-	 * @param	int			   $hidedetails		Do not show line details
-	 * @param	int			   $hidedesc		Do not show desc
-	 * @param	int			   $hideref			Do not show ref
+	 * @param	CommonObject	$object    	    common object
+	 * @param	Translate		$outputlangs    langs
+	 * @param	int<0,1>		$hidedetails	Do not show line details
+	 * @param	int<0,1>		$hidedesc		Do not show desc
+	 * @param	int<0,1>		$hideref		Do not show ref
 	 * @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -892,6 +902,8 @@ class pdf_balance extends ModelePdfAccountancy
 	 */
 	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
+		global $langs;
+
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();
 		$pdf->SetFont('', 'B', $default_font_size - 1);
@@ -926,7 +938,7 @@ class pdf_balance extends ModelePdfAccountancy
 
 		if ($this->getColumnStatus('balance')) {
 			$solde = $credit - $debit;
-			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
+			$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 			$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 			$nexY = max($pdf->GetY(), $nexY);
 		}

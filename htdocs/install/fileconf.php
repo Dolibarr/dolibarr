@@ -32,6 +32,9 @@
 
 include_once 'inc.php';
 /**
+ * @var string $conffile
+ * @var string $conffiletoshow
+ *
  * @var Translate $langs
  *
  * @var string $dolibarr_main_db_host
@@ -40,8 +43,6 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
- * @var string $conffile
- * @var string $conffiletoshow
  */
 '
 @phan-var-force string $dolibarr_main_db_host
@@ -88,6 +89,9 @@ dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
+if (!isset($force_install_distrib)) {
+	$force_install_distrib = 'undefined';
+}
 if (!isset($force_install_noedit)) {
 	$force_install_noedit = ''; // 1=To block vars specific to distrib, 2 to block all technical parameters, 3 to block all technical parameters excepted main_url
 }
@@ -151,6 +155,10 @@ if (!is_writable($conffile)) {
 	exit;
 }
 
+if (!empty($force_install_distrib)) {
+	print '<!-- $force_install_distrib = '.dol_escape_htmltag($force_install_distrib).' -->';
+}
+
 if (!empty($force_install_message)) {
 	print '<div><br>'.$langs->trans($force_install_message).'</div>';
 
@@ -178,7 +186,7 @@ if (!empty($force_install_message)) {
 
 	<tr>
 		<td colspan="3" class="label">
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
@@ -250,6 +258,7 @@ if (!empty($force_install_noedit)) {
 	<?php
 	if (empty($dolibarr_main_url_root)) {
 		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = trim($dolibarr_main_url_root);
 	}
 	?>
 	<tr>
@@ -260,7 +269,7 @@ if (!empty($force_install_noedit)) {
 				   class="minwidth300"
 				   id="main_url"
 				   name="main_url"
-				   value="<?php print $dolibarr_main_url_root; ?> "
+				   value="<?php print $dolibarr_main_url_root; ?>"
 <?php if (!empty($force_install_noedit) && $force_install_noedit != 3) {
 	print ' disabled';
 }
@@ -305,7 +314,7 @@ if (!empty($force_install_noedit)) {
 
 	<tr>
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
@@ -469,10 +478,10 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_port"><?php echo $langs->trans("Port"); ?></label></td>
 		<td class="label">
-			<input type="text"
+			<input type="text" class="width75"
 				   name="db_port"
 				   id="db_port"
-				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
+				   value="<?php print (!empty($force_install_port)) ? (int) $force_install_port : (empty($dolibarr_main_db_port) ? "" : $dolibarr_main_db_port); ?>"
 				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_port !== null) {
 					print ' disabled';
 				} ?>
@@ -590,7 +599,7 @@ if (!empty($force_install_noedit)) {
 	?>
 	<tr class="hidesqlite hideroot">
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 

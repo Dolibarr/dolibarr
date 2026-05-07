@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010	    Pierre Morin            <pierre.morin@auguria.net>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
@@ -51,10 +51,15 @@ if (!defined('NOREQUIREAJAX')) {
  * @var User $user
  *
  * @var string $module
- * @var string $mode
+ * @var ?string $mode
  * @var string $websitekey
+ * @var string $dolibarr_main_data_root
  * @var int $pageid
  */
+
+'
+@phan-var-force ?string $mode
+';
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
@@ -104,11 +109,20 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	// When no an ajax call (include from other file)
 	/**
 	 * @var string $module
+	 * @var int $section
+	 * @var string $action
+	 * @var string $dolibarr_main_data
+	 * @var string $showonrightsize
+	 * @var string $sortfield
+	 * @var string $sortorder
 	 */
 	'
 	@phan-var-force int $section
+	@phan-var-force string $action
 	@phan-var-force string $module
 	@phan-var-force string $showonrightsize
+	@phan-var-force string $sortfield
+	@phan-var-force string $sortorder
 	';
 
 	$rootdirfordoc = $conf->ecm->dir_output;
@@ -410,7 +424,7 @@ if ($type == 'directory') {
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
-			$perm = ($user->hasRight("website", "write") || $user->hasRight("emailing", "creer"));
+			$perm = $user->hasRight("website", "write");
 			$title = 'none';
 		} elseif ($module == 'ecm') { // DMS/ECM -> manual structure
 			if ($user->hasRight("ecm", "read")) {
@@ -501,15 +515,20 @@ if ($useajax) {
 	print '<script nonce="'.getNonce().'" type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
-	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
-	// Wrapper to manage document_preview
+	// Because the content is reloaded by ajax call, we must also redefine/reenable some jquery hooks.
+
+	// Handler to manage document_preview on click on a .documentpreview css class.
 	if ($conf->browser->layout != 'phone') {
 		print "\n/* JS CODE TO ENABLE document_preview */\n";
 		print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+						var titledocpreview = $(this).attr(\'data-title\');
+						if (titledocpreview == undefined || titledocpreview == "") {
+							titledocpreview = \''.dol_escape_js($langs->transnoentities("Preview")).'\'
+						}
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), titledocpreview);
                 		return false;
         			});
         		});

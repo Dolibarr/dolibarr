@@ -152,9 +152,15 @@ class ObjectLinks extends DolibarrApi
 		if ($this->objectlink->sourcetype == 'subscription') {
 			$srctype = 'adherent';
 		}
+		if ($this->objectlink->sourcetype == 'conferenceorboothattendee') {
+			$srctype = 'projet';
+		}
 		$tgttype = $this->objectlink->targettype;
 		if ($this->objectlink->targettype == 'subscription') {
 			$tgttype = 'adherent';
+		}
+		if ($this->objectlink->targettype == 'conferenceorboothattendee') {
+			$tgttype = 'projet';
 		}
 		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $srctype, 'write')) {
 			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$this->objectlink->sourcetype);
@@ -204,9 +210,15 @@ class ObjectLinks extends DolibarrApi
 			if ($this->objectlink->sourcetype == 'subscription') {
 				$srctype = 'adherent';
 			}
+			if ($this->objectlink->sourcetype == 'conferenceorboothattendee') {
+				$srctype = 'projet';
+			}
 			$tgttype = $this->objectlink->targettype;
 			if ($this->objectlink->targettype == 'subscription') {
 				$tgttype = 'adherent';
+			}
+			if ($this->objectlink->targettype == 'conferenceorboothattendee') {
+				$tgttype = 'projet';
 			}
 			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $srctype), 'read')) {
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
@@ -270,9 +282,15 @@ class ObjectLinks extends DolibarrApi
 		if ($this->objectlink->sourcetype == 'subscription') {
 			$srctype = 'adherent';
 		}
+		if ($this->objectlink->sourcetype == 'conferenceorboothattendee') {
+			$srctype = 'projet';
+		}
 		$tgttype = $this->objectlink->targettype;
 		if ($this->objectlink->targettype == 'subscription') {
 			$tgttype = 'adherent';
+		}
+		if ($this->objectlink->targettype == 'conferenceorboothattendee') {
+			$tgttype = 'projet';
 		}
 		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $srctype, 'write')) {
 			throw new RestException(403, 'denied access to get the objectlinks sourcetype='.$this->objectlink->sourcetype);
@@ -334,9 +352,15 @@ class ObjectLinks extends DolibarrApi
 		if ($this->objectlink->sourcetype == 'subscription') {
 			$srctype = 'adherent';
 		}
+		if ($this->objectlink->sourcetype == 'conferenceorboothattendee') {
+			$srctype = 'projet';
+		}
 		$tgttype = $this->objectlink->targettype;
 		if ($this->objectlink->targettype == 'subscription') {
 			$tgttype = 'adherent';
+		}
+		if ($this->objectlink->targettype == 'conferenceorboothattendee') {
+			$tgttype = 'projet';
 		}
 		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $srctype, 'write')) {
 			throw new RestException(403, 'denied access to delete the objectlinks sourcetype='.$this->objectlink->sourcetype);
@@ -388,9 +412,15 @@ class ObjectLinks extends DolibarrApi
 			if ($this->objectlink->sourcetype == 'subscription') {
 				$srctype = 'adherent';
 			}
+			if ($this->objectlink->sourcetype == 'conferenceorboothattendee') {
+				$srctype = 'projet';
+			}
 			$tgttype = $this->objectlink->targettype;
 			if ($this->objectlink->targettype == 'subscription') {
 				$tgttype = 'adherent';
+			}
+			if ($this->objectlink->targettype == 'conferenceorboothattendee') {
+				$tgttype = 'projet';
 			}
 			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $srctype), 'read')) {
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
@@ -408,14 +438,15 @@ class ObjectLinks extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     	Object to clean
 	 * @phan-param		ObjectLink	$object
-	 * @phpstan-param	ObjectLink	$object
+	 * @phpstan-param	T	$object
 	 *
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		ObjectLink
-	 * @phpstan-return	ObjectLink
+	 * @phpstan-return	T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -478,18 +509,18 @@ class ObjectLinks extends DolibarrApi
 		unset($object->date_modification);
 		unset($object->tms);
 		unset($object->date_cloture);
-		unset($object->user_author);
-		unset($object->user_creation);
 		unset($object->user_creation_id);
-		unset($object->user_valid);
-		unset($object->user_validation);
 		unset($object->user_validation_id);
 		unset($object->user_closing_id);
-		unset($object->user_modification);
 		unset($object->user_modification_id);
 		unset($object->fk_user_creat);
 		unset($object->fk_user_modif);
 		unset($object->totalpaid);
+		unset($object->totalcreditnotes);
+		unset($object->totaldeposits);
+		unset($object->totalpaid_multicurrency);
+		unset($object->totalcreditnotes_multicurrency);
+		unset($object->totaldeposits_multicurrency);
 		unset($object->product);
 		unset($object->cond_reglement_supplier_id);
 		unset($object->deposit_percent);

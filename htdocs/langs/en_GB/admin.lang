@@ -3,7 +3,6 @@ Foundation=Company
 VersionProgram=Program Version
 VersionLastInstall=Version Initially Installed
 PurgeSessions=Purge sessions
-WarningOnlyPermissionOfActivatedModules=Only permissions related to activated modules are shown here. You can activate other modules on the Home->Setup->Modules page.
 ErrorModuleRequirePHPVersion=Error: This module requires PHP version %s or higher
 ErrorModuleRequireDolibarrVersion=Error: This module requires Dolibarr version %s or higher
 ErrorDecimalLargerThanAreForbidden=Error: A precision higher than <b>%s</b> is not supported.

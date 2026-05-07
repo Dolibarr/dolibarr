@@ -662,6 +662,8 @@ if ($nboftargetok) {
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3");
 
+		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php");
+
 		run("rm -fr $BUILDROOT/$PROJECT/node_modules");
 
 		run("rm -fr $BUILDROOT/$PROJECT/dev/ansible");

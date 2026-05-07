@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Apskaita
 Accounting=Apskaita
+AccountingAccount=Apskaitos sąskaita
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Stulpelių atskyriklis eksportuojamam failui
 ACCOUNTING_EXPORT_DATE=Datos formatas exportuojam failui
 ACCOUNTING_EXPORT_PIECE=Exportuoti vienetų skaičių
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Sąskaita (iš sąskaitų plano), naudojama aukoms re
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Sąskaita (iš sąskaitų plano), naudojama narystės prenumeratoms registruoti (Narystės modulis – jei narystė užregistruota be sąskaitos faktūros)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Sąskaita (iš sąskaitų plano), kuri bus naudojama kaip numatytoji sąskaita klientų indėliams registruoti
 UseAuxiliaryAccountOnCustomerDeposit=Išsaugoti kliento sąskaitą kaip individualią sąskaitą dukterinėje knygoje pradinio mokėjimo eilutėms (jei išjungta, individuali sąskaita pradinio mokėjimo eilutėms liks tuščia)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Sąskaita (iš sąskaitų plano), kuri bus naudojama kaip numatytoji
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Tiekėjo sąskaitą laikyti kaip individualią sąskaitą dukterinėje knygoje pradinio mokėjimo eilutėms (jei išjungta, individuali sąskaita pradinio mokėjimo eilutėms liks tuščia)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Apskaitos paskyra pagal numatytuosius nustatymus, skirta registruoti kliento išlaikytą garantiją
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Sąskaita (iš sąskaitų plano), kuri bus naudojama kaip numatytoji sąskaita toje pačioje šalyje įsigytiems produktams (naudojama, jei nenurodyta produkto lape)
@@ -278,6 +280,7 @@ PcgtypeDesc=Sąskaitų grupės kai kurioms apskaitos ataskaitoms naudojamos kaip
 AccountingCategoriesDesc=Pasirinktinė sąskaitų grupė gali būti naudojama apskaitos sąskaitoms grupuoti vienu pavadinimu, kad būtų lengviau naudoti filtrus arba kurti pasirinktines ataskaitas.
 Reconcilable=Suderinamas
 Centralized=Centralizuota sąskaita
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Iš viso pardavimų marža
 DescVentilCustomer=Čia rasite klientų sąskaitų faktūrų eilučių, susietų (arba nesusietų) su produkto sąskaita iš sąskaitų plano, sąrašą.
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktyvuoti atvirkštinio PVM apmokesti
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kai ši parinktis įjungta, galite apibrėžti, kad tiekėjo arba nurodytos pardavėjo sąskaitos faktūros į apskaitą turi būti perkeltos skirtingai: papildomas debeto ir kredito linijos bus sugeneruotos į apskaitą 2 nurodytose sąskaitose iš sąskaitų plano, apibrėžto sąrankos puslapyje „%s“.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Norėdami peržiūrėti pagalbinę sąskaitų knygą, aktyvuokite skirtuką trečiųjų šalių kortelėse.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Kai ši parinktis įjungta, trečiųjų šalių kortelėse rodomas naujas skirtukas, kuriame galima peržiūrėti ir tvarkyti trečiosios šalies apskaitą, pavyzdžiui, suderinimą, spausdinimą ir kt.
+
 ## Export
 NotExportLettering=Neeksportuoti raidžių generuojant failą
 NotifiedExportDate=Pažymėkite dar neeksportuotas eilutes kaip eksportuotas <span class="warning">(norėdami pakeisti eilutę, pažymėtą kaip eksportuotą, turėsite ištrinti visą operaciją ir iš naujo perkelti ją į apskaitą)</span>

@@ -4,9 +4,9 @@
  * Copyright (C) 2021       Greg Rastklan       <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021       Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			$ret = -1;
 			foreach ($TSkillsToAdd as $k => $v) {
 				$skillAdded = new SkillRank($db);
-				$skillAdded->fk_skill = $v;
+				$skillAdded->fk_skill = (int) $v;
 				$skillAdded->fk_object = $id;
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
@@ -172,12 +172,12 @@ if (empty($reshook)) {
 					$sql_eval .= " AND e.fk_job = ".(int) $object->id;
 					$result = $db->query($sql_eval);
 					$numEvals = $db->num_rows($result);
-					$i=0;
+					$i = 0;
 					while ($i < $numEvals) {
 						$objEval = $db->fetch_object($result);
 						$line = new EvaluationLine($db);
 						$line->fk_evaluation = $objEval->rowid;
-						$line->fk_skill = $v;
+						$line->fk_skill = (int) $v;
 						$line->required_rank = 0;
 						$line->fk_rank = 0;
 
@@ -223,7 +223,7 @@ if (empty($reshook)) {
 							$sql_eval .= " AND e.fk_job = ".(int) $object->id;
 							$result = $db->query($sql_eval);
 							$numEvals = $db->num_rows($result);
-							$i=0;
+							$i = 0;
 							while ($i < $numEvals) {
 								$objEval = $db->fetch_object($result);
 								$line = new EvaluationLine($db);
@@ -278,7 +278,7 @@ if (empty($reshook)) {
 			$sql_eval .= " AND e.fk_job = ".(int) $object->id;
 			$result = $db->query($sql_eval);
 			$numEvals = $db->num_rows($result);
-			$i=0;
+			$i = 0;
 			while ($i < $numEvals) {
 				$objEval = $db->fetch_object($result);
 				$line = new EvaluationLine($db);
@@ -397,7 +397,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
 		$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
@@ -457,7 +457,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 	} else {
 		// Login
-		print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
 		if (!empty($object->ldap_sid) && $object->statut == 0) {
 			print '<td class="error">';
 			print $langs->trans("LoginAccountDisableInDolibarr");
@@ -467,9 +467,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$addadmin = '';
 			if (property_exists($object, 'admin')) {
 				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
 				} elseif (!empty($object->admin)) {
-					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 				}
 			}
 			print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;
@@ -644,7 +644,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			$i = 0;
 			$sameRef = array();
-			/** @var array<Object|array> $objects */
+			/** @var array<Object> $objects */
 			$objects = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +129,7 @@ class modECM extends DolibarrModules
 			'url' => '/ecm/index.php',
 			'langs' => 'ecm',
 			'position' => 82,
-			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
+			'perms' => '$user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload") || $user->hasRight("ecm", "setup")',
 			'enabled' => 'isModEnabled("ecm")',
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
@@ -146,8 +147,8 @@ class modECM extends DolibarrModules
 			'url' => '/ecm/index.php?mainmenu=ecm&leftmenu=ecm',
 			'langs' => 'ecm',
 			'position' => 101,
-			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'perms' => '$user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")',
+			'enabled' => '$user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")',
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -162,8 +163,8 @@ class modECM extends DolibarrModules
 			'url' => '/ecm/index.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
 			'langs' => 'ecm',
 			'position' => 102,
-			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'perms' => '$user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")',
+			'enabled' => '$user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")',
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -177,8 +178,8 @@ class modECM extends DolibarrModules
 			'url' => '/ecm/index_auto.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
 			'langs' => 'ecm',
 			'position' => 103,
-			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled' => '($user->rights->ecm->read || $user->rights->ecm->upload) && !getDolGlobalInt("ECM_AUTO_TREE_HIDEN")',
+			'perms' => '$user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")',
+			'enabled' => '($user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")) && !getDolGlobalInt("ECM_AUTO_TREE_HIDEN")',
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -192,8 +193,8 @@ class modECM extends DolibarrModules
 			'url' => '/ecm/index_medias.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
 			'langs' => 'ecm',
 			'position' => 104,
-			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled' => '($user->rights->ecm->read || $user->rights->ecm->upload) && getDolGlobalInt("MAIN_FEATURES_LEVEL") == 2',
+			'perms' => '$user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")',
+			'enabled' => '($user->hasRight("ecm", "read") || $user->hasRight("ecm", "upload")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") == 2',
 			'target' => '',
 			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);

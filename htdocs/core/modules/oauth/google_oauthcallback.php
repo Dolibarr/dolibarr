@@ -133,9 +133,16 @@ $storage = new DoliStorage($db, $conf, $keyforprovider);
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
-$apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
-'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
-
+$apiService = null;
+$nameofservice = 'Google';
+try {
+	//$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
+	'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
+} catch (Exception $e) {
+	print 'Error, failed to create service for provider '.$nameofservice.($keyforprovider ? '-'.$keyforprovider : '').'. Message was: '.$e->getMessage();
+	exit;
+}
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
@@ -249,16 +256,27 @@ if (!GETPOST('code')) {
 
 			$db->begin();
 
-			// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
-			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
-			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			$token = null;
+			try {
+				// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
+				// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
+				$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			} catch (Exception $e) {
+				dol_syslog("Failed to get token with requestAccessToken: ".$e->getMessage(), LOG_ERR);
+				setEventMessages("Failed to get token with requestAccessToken: ".$e->getMessage(), null, 'errors');
+				$errorincheck++;
+			}
 
 			// The refresh token is inside the object token if the prompt was forced only.
 			//$refreshtoken = $token->getRefreshToken();
 			//var_dump($refreshtoken);
+			dol_syslog("requestAccessToken complete");
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
-			$extraparams = $token->getExtraParams();
+			$extraparams = array();
+			if ($token) {
+				$extraparams = $token->getExtraParams();
+			}
 			$jwt = explode('.', $extraparams['id_token']);
 
 			$username = '';
@@ -268,7 +286,7 @@ if (!GETPOST('code')) {
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-				dol_syslog("userinfo=".var_export($userinfo, true));
+				dol_syslog("userinfo=".formatLogObject($userinfo));
 
 				$useremail = $userinfo['email'];
 
@@ -347,6 +365,8 @@ if (!GETPOST('code')) {
 
 						dol_syslog($errormessage);
 					}
+				} else {
+					setEventMessages("TokenSaved", null);
 				}
 			} else {
 				// If call back to url for a OAUTH2 login

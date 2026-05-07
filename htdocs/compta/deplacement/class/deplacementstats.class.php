@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,14 +92,14 @@ class DeplacementStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par annee
+	 *	Return the number of invoices per year
 	 *
-	 * @return	array<array{0:int,1:int}>				Array of nb each year
+	 *	@return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
 		$sql = "SELECT YEAR(dated) as dm, count(*)";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " GROUP BY dm DESC";
 		$sql .= " WHERE ".$this->where;
 
@@ -108,7 +108,7 @@ class DeplacementStats extends Stats
 
 
 	/**
-	 * 	Renvoie le nombre de facture par mois pour une annee donnee
+	 *	Return the number of invoices for the given year
 	 *
 	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
@@ -117,7 +117,7 @@ class DeplacementStats extends Stats
 	public function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT MONTH(dated) as dm, count(*)";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE YEAR(dated) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -138,8 +138,8 @@ class DeplacementStats extends Stats
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		$sql = "SELECT date_format(dated,'%m') as dm, sum(".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(dated,'%m') as dm, sum(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -158,8 +158,8 @@ class DeplacementStats extends Stats
 	 */
 	public function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(dated,'%m') as dm, avg(".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(dated,'%m') as dm, avg(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -171,12 +171,12 @@ class DeplacementStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(dated,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(dated,'%Y') as year, count(*) as nb, sum(".$this->db->sanitize($this->field).") as total, avg(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ class DiscountAbsolute extends CommonObject
 	public $vat_src_code;
 
 	/**
-	 * @var int User ID Id utilisateur qui accorde la remise
+	 * @var int User ID of the user authorising the discount
 	 */
 	public $fk_user;
 
@@ -378,8 +378,6 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function delete($user)
 	{
-		global $conf, $langs;
-
 		// Check if we can remove the discount
 		if ($this->fk_facture_source) {
 			$sql = "SELECT COUNT(rowid) as nb";
@@ -545,6 +543,42 @@ class DiscountAbsolute extends CommonObject
 				$this->fk_facture_line = $rowidline;
 				$this->fk_facture = $rowidinvoice;
 			}
+
+			// If a discount comes from a source invoice (deposit/credit note/excess) and is applied to another invoice,
+			// also create a link between the source invoice and the target invoice.
+			if ($rowidinvoice) {
+				$sourcetype = '';
+				$targettype = '';
+				$sourceinvoiceid = 0;
+
+				if (!empty($this->discount_type)) {
+					$sourcetype = 'invoice_supplier';
+					$targettype = 'invoice_supplier';
+					$sourceinvoiceid = (int) $this->fk_invoice_supplier_source;
+				} else {
+					$sourcetype = 'facture';
+					$targettype = 'facture';
+					$sourceinvoiceid = (int) $this->fk_facture_source;
+				}
+
+				if ($sourceinvoiceid > 0 && $sourceinvoiceid !== (int) $rowidinvoice) {
+					$sqlcheck = "SELECT 1";
+					$sqlcheck .= " FROM ".$this->db->prefix()."element_element";
+					$sqlcheck .= " WHERE fk_source = ".((int) $sourceinvoiceid);
+					$sqlcheck .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
+					$sqlcheck .= " AND fk_target = ".((int) $rowidinvoice);
+					$sqlcheck .= " AND targettype = '".$this->db->escape($targettype)."'";
+					$sqlcheck .= $this->db->plimit(1);
+
+					$rescheck = $this->db->query($sqlcheck);
+					if ($rescheck && $this->db->num_rows($rescheck) === 0) {
+						$sqladd = "INSERT INTO ".$this->db->prefix()."element_element (fk_source, sourcetype, fk_target, targettype)";
+						$sqladd .= " VALUES (".((int) $sourceinvoiceid).", '".$this->db->escape($sourcetype)."', ".((int) $rowidinvoice).", '".$this->db->escape($targettype)."')";
+						$this->db->query($sqladd); // Best-effort: do not fail discount link if object link can't be created.
+					}
+				}
+			}
+
 			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
@@ -605,7 +639,7 @@ class DiscountAbsolute extends CommonObject
 	 *  Return amount (with tax) of discounts currently available for a company, user or other criteria
 	 *
 	 *	@param		?Societe	$company		Object third party for filter
-	 *	@param		?User		$user			Filtre sur un user auteur des remises
+	 *	@param		?User		$user			Filtre on an author of the discount
 	 * 	@param		string		$filter			Filter other. Warning: Do not use a user input value here.
 	 * 	@param		int|float	$maxvalue		Filter on max value for discount
 	 *  @param      int<0,1>	$discount_type  0 => customer discount, 1 => supplier discount
@@ -614,30 +648,44 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function getAvailableDiscounts($company = null, $user = null, $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
 
-		$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
-		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
-		$sql .= " WHERE rc.entity = ".$conf->entity;
-		$sql .= " AND rc.discount_type=".((int) $discount_type);
-		if (!empty($discount_type)) {
-			$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
+		$parameters = array(
+			'company' => $company,
+			'user' => $user,
+			'filter' => $filter,
+			'maxvalue' => $maxvalue,
+			'discount_type' => $discount_type,
+			'multicurrency' => $multicurrency
+		);
+
+		$reshook = $hookmanager->executeHooks('getAvailableDiscounts', $parameters);
+		if (empty($reshook)) {
+			$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+			$sql .= " WHERE rc.entity = ".$conf->entity;
+			$sql .= " AND rc.discount_type=".((int) $discount_type);
+			if (!empty($discount_type)) {
+				$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
+			} else {
+				$sql .= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)"; // Available to customer
+			}
+			if (is_object($company)) {
+				$sql .= " AND rc.fk_soc = ".((int) $company->id);
+			}
+			if (is_object($user)) {
+				$sql .= " AND rc.fk_user = ".((int) $user->id);
+			}
+			if ($filter) {
+				$sql .= " AND (".$filter.")";
+			}
+			if ($maxvalue) {
+				$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
+			}
 		} else {
-			$sql .= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)"; // Available to customer
-		}
-		if (is_object($company)) {
-			$sql .= " AND rc.fk_soc = ".((int) $company->id);
-		}
-		if (is_object($user)) {
-			$sql .= " AND rc.fk_user = ".((int) $user->id);
-		}
-		if ($filter) {
-			$sql .= " AND (".$filter.")";
-		}
-		if ($maxvalue) {
-			$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
+			$sql = $hookmanager->resArray['sql'];
 		}
 
 		$resql = $this->db->query($sql);
@@ -656,7 +704,6 @@ class DiscountAbsolute extends CommonObject
 		}
 		return -1;
 	}
-
 
 	/**
 	 *  Return amount (with tax) of all deposits invoices used by invoice as a payment.

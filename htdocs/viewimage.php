@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
-define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+define('MAIN_SECURITY_FORCECSP', "default-src 'none'; form-action 'none'; frame-ancestors 'self'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -61,32 +61,33 @@ $needlogin = 1;
 if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
-	// For logo of company
-	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
+	// For logo of company (by definition, the company logo is public)
+	if ($_GET["modulepart"] == 'mycompany' && isset($_GET['file']) && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
 	}
-	// For barcode live generation
+	// For barcode live generation (barcode are just a graph of a value, so can be public)
 	if ($_GET["modulepart"] == 'barcode') {
 		$needlogin = 0;
 	}
-	// Medias files
+	// Medias files (by definition medias files are for website so are public)
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
-	// Common files (files into /public/theme/common)
+	// Common files (public files embedded into /public/theme/common)
 	if ($_GET["modulepart"] == 'common') {
 		$needlogin = 0;
 	}
-	// User photo when user has made its profile public (for virtual credi card)
+	// User photo when user has made its profile public (for virtual credit card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
-	// Used by TakePOS Auto Order
-	if ($_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
+	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
+	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
 }
-// For direct external download link, we don't need to load/check we are into a login session
+// For direct external download link (when files was shared for download using a hash link), we don't need to load/check we are into a login session
 if (isset($_GET["hashp"])) {
 	$needlogin = 0;
 }
@@ -199,16 +200,10 @@ if ($cachestring) {
 	// We are here when param cache=xxx to force a cache policy:
 	//  xxx=1 means cache of 3600s
 	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
-	if (empty($dolibarr_nocache)) {
-		$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
-		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
-		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
-	} else {
-		// If any cache on files were disable by config file (for test purpose)
-		header('Cache-Control: no-cache');
-	}
-	//print $dolibarr_nocache; exit;
+	$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
+	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
+	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 }
 
 // If we have a hash public (hashp), we guess the original_file.
@@ -342,7 +337,6 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 }
 
 
-
 if ($modulepart == 'barcode') {
 	$generator = GETPOST("generator", "aZ09");
 	$encoding = GETPOST("encoding", "aZ09");
@@ -418,6 +412,9 @@ if ($modulepart == 'barcode') {
 	'@phan-var-force ModeleBarCode $module';
 	/** @var ModeleBarCode $module */
 	if ($module->encodingIsSupported($encoding)) {
+		top_httphead('none');	// This add header like the Content-Security-Policy. We set content-type to 'none' so the content-type will be added by the $module->buildBarCode.
+		// Note that link to image can be shown as a direct link due to the MAIN_SECURITY_FORCECSP directive. Link must be into an img of a page in same domain.
+
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}
 } else {

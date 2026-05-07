@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2024  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,13 @@
  *  				This file is included in top of all container pages (in edit mode, in dolibarr web server mode and in external web server mode).
  *  				It is run only when a web page is called.
  *  			    The global variable $websitekey must be defined.
+ */
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ *
+ * @var string $websitekey
  */
 
 // Load website class
@@ -93,7 +101,7 @@ if (!empty($pageid) && $pageid > 0) {
 		}
 	}
 	if (empty($srclang)) {
-		$srclang= 'auto';
+		$srclang = 'auto';
 	}
 	$weblangs->setDefaultLang($srclang);
 
@@ -153,7 +161,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'reportonly');
+		$parameters = array('contentsecuritypolicy' => $contentsecuritypolicy, 'mode' => 'reportonly');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
@@ -186,7 +194,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$parameters = array('contentsecuritypolicy'=>$contentsecuritypolicy, 'mode'=>'active');
+		$parameters = array('contentsecuritypolicy' => $contentsecuritypolicy, 'mode' => 'active');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$contentsecuritypolicy = $hookmanager->resPrint; // Replace CSP
@@ -296,10 +304,50 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 //$savsessionid = $_COOKIE[$sessionname];
 
+
+// Add a protection if custom PHP is not allowed or allowed with conditions
+global $dolibarr_website_allow_custom_php;
+$notdisabledsystemfunction = '';
+$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+foreach ($systemfunctions as $systemfunction) {
+	// @phpstan-ignore-next-line
+	if (function_exists($systemfunction)) {
+		$notdisabledsystemfunction .= ($notdisabledsystemfunction ? ', ' : '').$systemfunction;
+	}
+}
+
+if (empty($dolibarr_website_allow_custom_php) || ($dolibarr_website_allow_custom_php == 1 && $notdisabledsystemfunction)) {
+	print '<center><br><br>';
+	print 'Website features are DISABLED if the PHP system functions ('.implode(',', $systemfunctions).') are NOT disabled for the website context.<br>';
+	print 'The value "'.$notdisabledsystemfunction.'" has NOT been found into the php parameter <b>current disable_functions</b> ';
+	//print '<textarea cols="100" rows="5">';
+	$form = new Form($db);
+	print $form->textwithpicto('', 'Current value for disable_functions = '.ini_get('disable_functions'));
+	print '<br>';
+	//print ini_get('disable_functions');		// Warning, the real value may not be this one.Only the master initial value from php.ini is effective, not the local value set at virtualhost.
+	//print (implode(', ', explode(',', (string) ini_get('disable_functions'))));
+	//print '</textarea>';
+
+	print '<br><br>';
+	print 'You can fix this by changing setup of your PHP ini (changing this in a virtual host with php_admin_value is not effective):<br>';
+	print 'disable_functions="exec,passthru,shell_exec,system,popen,proc_open,..."<br>';
+	print 'but WARNING, this will break this 3 features for:<br>';
+	print '- 1) Cron tasks calling command line tools.<br>';
+	print '- 2) Internal backup feature running the database dump tool.<br>';
+	print '- 3) Command line antivirus check ran when uploading a file.<br>';
+	print '<br>';
+	print 'If you don\'t use this 3 feature, you can change your php.ini to exclude the exec functions.<br>If you need at least one, you can bypass this protection by setting $dolibarr_website_allow_custom_php to 2 in your dolibarr config file (Add RCE protection like AppArmor or SELinux in this case).';
+	print '</center>';
+	exit;		// Stop here to PHP later won't be executed
+}
+
+
 $_COOKIE[$sessionname] = 'obfuscatedcookie';
 unset($conf->file->instance_unique_id);
 
 unset($dolibarr_main_instance_unique_id);
+unset($dolibarr_main_dolcrypt_key);
+
 unset($dolibarr_main_db_host);
 unset($dolibarr_main_db_port);
 unset($dolibarr_main_db_name);
