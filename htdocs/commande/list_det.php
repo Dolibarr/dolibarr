@@ -409,7 +409,7 @@ $sqlSelect .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as pr
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$objectline->table_element]['label'])) {
 	foreach ($extrafields->attributes[$objectline->table_element]['label'] as $key => $val) {
-		$sqlSelect .= ($extrafields->attributes[$objectline->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sqlSelect .= ($extrafields->attributes[$objectline->table_element]['type'][$key] != 'separate' ? ", ef2.".$key." as options_".$key : '');
 	}
 }
 
@@ -427,7 +427,8 @@ $sql .= ', '.MAIN_DB_PREFIX.'commandedet as cdet';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande = c.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid = cdet.fk_product';
 if (!empty($extrafields->attributes[$objectline->table_element]['label']) && is_array($extrafields->attributes[$objectline->table_element]['label']) && count($extrafields->attributes[$objectline->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet_extrafields as ef on (cdet.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet_extrafields as ef2 on (cdet.rowid = ef2.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
