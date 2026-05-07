@@ -185,27 +185,27 @@ abstract class ActionsContactCardCommon
 			// Civility
 			$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
-				// Keep legacy thirdparty defaults for non-postal contact fields only.
-				if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
-					if (dol_strlen(trim($this->object->phone_pro)) == 0) {
-						$this->object->phone_pro = (string) $objsoc->phone;
-					}
-					if (dol_strlen(trim($this->object->fax)) == 0) {
-						$this->object->fax = (string) $objsoc->fax;
-					}
-					if (dol_strlen(trim((string) $this->object->email)) == 0) {
-						$this->object->email = (string) $objsoc->email;
-					}
-					$this->tpl['phone_pro'] = $this->object->phone_pro;
-					$this->tpl['fax'] = $this->object->fax;
-				$this->tpl['email'] = $this->object->email;
+			// Keep legacy thirdparty defaults for non-postal contact fields only.
+			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
+				if (dol_strlen(trim($this->object->phone_pro)) == 0) {
+					$this->object->phone_pro = (string) $objsoc->phone;
 				}
+				if (dol_strlen(trim($this->object->fax)) == 0) {
+					$this->object->fax = (string) $objsoc->fax;
+				}
+				if (dol_strlen(trim((string) $this->object->email)) == 0) {
+					$this->object->email = (string) $objsoc->email;
+				}
+				$this->tpl['phone_pro'] = $this->object->phone_pro;
+				$this->tpl['fax'] = $this->object->fax;
+				$this->tpl['email'] = $this->object->email;
+			}
 
-				// Zip
-				$this->tpl['select_zip'] = $formcompany->select_ziptown((string) $this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			// Zip
+			$this->tpl['select_zip'] = $formcompany->select_ziptown((string) $this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 
-				// Town
-				$this->tpl['select_town'] = $formcompany->select_ziptown((string) $this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			// Town
+			$this->tpl['select_town'] = $formcompany->select_ziptown((string) $this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
 			if (dol_strlen(trim((string) $this->object->country_id)) == 0) {
 				$this->object->country_id = $objsoc->country_id;
