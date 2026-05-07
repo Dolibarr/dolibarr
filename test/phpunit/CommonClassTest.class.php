@@ -162,6 +162,7 @@ abstract class CommonClassTest extends TestCase
 		$nbLinesToShow = $this->nbLinesToShow;
 		// @phan-suppress-next-line PhanUndeclaredClass
 		/** @phpstan-ignore comparison.alwaysFalse */
+		/** @phpstan-ignore-next-line */
 		if (get_class($t) === 'PHPUnit\Framework\Error\Notice') {
 			$nbLinesToShow = 3;
 		}
@@ -241,6 +242,7 @@ abstract class CommonClassTest extends TestCase
 		}
 
 		/** @phpstan-ignore method.notFound */
+		/** @phpstan-ignore-next-line */
 		parent::onNotSuccessfulTest($t);
 	}
 

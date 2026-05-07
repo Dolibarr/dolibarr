@@ -8,19 +8,18 @@
 
 global $conf, $db, $langs, $user;
 
-require_once dirname(__FILE__).'/../../../master.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 
 /**
  * Test PDF address selection for contacts.
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @phan-file-suppress PhanUndeclaredMethod
  */
-class PdfBuildAddressContactSelectionTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
+class PdfBuildAddressContactSelectionTest extends CommonClassTest
 {
 	/**
 	 * @var Conf
@@ -44,7 +43,7 @@ class PdfBuildAddressContactSelectionTest extends PHPUnit\Framework\TestCase  //
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
+		parent::__construct($name);
 
 		global $conf, $db, $langs;
 		$this->savconf = $conf;

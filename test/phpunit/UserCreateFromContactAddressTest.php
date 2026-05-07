@@ -8,40 +8,39 @@
 
 global $conf, $db, $langs, $user;
 
-require_once dirname(__FILE__).'/../../../master.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 
 /**
  * Test user creation bootstrap from contact effective address.
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @phan-file-suppress PhanUndeclaredMethod
  * @phan-file-suppress PhanTypeMismatchProperty
  */
-class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
+class UserCreateFromContactAddressTest extends CommonClassTest
 {
 	/**
 	 * @var Conf
 	 */
-	private $savconf;
+	protected $savconf;
 
 	/**
 	 * @var DoliDB
 	 */
-	private $savdb;
+	protected $savdb;
 
 	/**
 	 * @var Translate
 	 */
-	private $savlangs;
+	protected $savlangs;
 
 	/**
 	 * @var User
 	 */
-	private $savuser;
+	protected $savuser;
 
 	/**
 	 * Save globals.
@@ -50,7 +49,7 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase  // @p
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
+		parent::__construct($name);
 
 		global $conf, $db, $langs, $user;
 		$this->savconf = $conf;
@@ -143,63 +142,12 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase  // @p
 			 * @param User   $user Current user
 			 * @return int
 			 */
-			public function call_trigger($triggerName, ?User $user = null)
+			public function call_trigger($triggerName, $user = null)
 			{
 				return 1;
 			}
 			// phpcs:enable
 		};
-
-		$dbstub = new class {
-			/**
-			 * @return void
-			 */
-			public function begin()
-			{
-			}
-
-			/**
-			 * @return string
-			 */
-			public function prefix()
-			{
-				return 'llx_';
-			}
-
-			/**
-			 * @param string $value SQL value to escape
-			 * @return string
-			 */
-			public function escape($value)
-			{
-				return addslashes((string) $value);
-			}
-
-			/**
-			 * @param string $sql SQL query
-			 * @return bool
-			 */
-			public function query($sql)
-			{
-				return true;
-			}
-
-			/**
-			 * @return void
-			 */
-			public function commit()
-			{
-			}
-
-			/**
-			 * @return void
-			 */
-			public function rollback()
-			{
-			}
-		};
-
-		$userfixture->db = $dbstub;
 
 		$result = $userfixture->create_from_contact($contact, 'jdoe');
 

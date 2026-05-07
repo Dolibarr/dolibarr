@@ -6,12 +6,13 @@
  * (at your option) any later version.
  */
 
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
 /**
  * Test schema and migration contract for contact address mode.
  *
- * @phan-file-suppress PhanUndeclaredMethod
  */
-class ContactAddressMigrationContractTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
+class ContactAddressMigrationContractTest extends CommonClassTest
 {
 	/**
 	 * Fresh install schema must expose the persisted flag.

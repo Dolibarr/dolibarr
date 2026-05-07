@@ -8,20 +8,19 @@
 
 global $conf, $db, $langs, $user;
 
-require_once dirname(__FILE__).'/../../../master.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/commondocgenerator.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 
 /**
  * Test doc substitutions for effective contact address.
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @phan-file-suppress PhanUndeclaredMethod
  * @phan-file-suppress PhanTypeMismatchPropertyProbablyReal
  */
-class ContactDocSubstitutionTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
+class ContactDocSubstitutionTest extends CommonClassTest
 {
 	/**
 	 * @var Conf
@@ -45,7 +44,7 @@ class ContactDocSubstitutionTest extends PHPUnit\Framework\TestCase  // @phan-su
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
+		parent::__construct($name);
 
 		global $conf, $db, $langs;
 		$this->savconf = $conf;
@@ -140,7 +139,9 @@ class ContactDocSubstitutionTest extends PHPUnit\Framework\TestCase  // @phan-su
 
 		$effective = new Societe($this->savdb);
 		$effective->address = 'Thirdparty avenue';
+		/** @phpstan-ignore-next-line */
 		$effective->state_id = null;
+		/** @phpstan-ignore-next-line */
 		$effective->country_id = null;
 
 		$contact = new class($this->savdb, $effective) extends Contact {

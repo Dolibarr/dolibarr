@@ -8,37 +8,36 @@
 
 global $conf, $db, $langs, $user, $mysoc;
 
-require_once dirname(__FILE__).'/../../../master.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modSociete.class.php';
 
 /**
  * Test import/export contract for contact use_thirdparty_address.
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @phan-file-suppress PhanUndeclaredMethod
  */
-class SocieteImportExportAddressModeContractTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
+class SocieteImportExportAddressModeContractTest extends CommonClassTest
 {
 	/**
 	 * @var Conf
 	 */
-	private $savconf;
+	protected $savconf;
 
 	/**
 	 * @var DoliDB
 	 */
-	private $savdb;
+	protected $savdb;
 
 	/**
 	 * @var Translate
 	 */
-	private $savlangs;
+	protected $savlangs;
 
 	/**
 	 * @var User
 	 */
-	private $savuser;
+	protected $savuser;
 
 	/**
 	 * @var Societe
@@ -52,7 +51,7 @@ class SocieteImportExportAddressModeContractTest extends PHPUnit\Framework\TestC
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
+		parent::__construct($name);
 
 		global $conf, $db, $langs, $user, $mysoc;
 		$this->savconf = $conf;

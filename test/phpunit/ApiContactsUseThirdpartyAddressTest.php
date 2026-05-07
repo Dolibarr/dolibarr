@@ -8,12 +8,12 @@
 
 global $conf, $db, $langs, $user;
 
-require_once dirname(__FILE__).'/../../../master.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/api_contacts.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Scope.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/api/class/api.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/api_contacts.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/restler/framework/Luracast/Restler/Scope.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/restler/framework/Luracast/Restler/RestException.php';
 
 use Luracast\Restler\RestException;
 use Luracast\Restler\Scope;
@@ -23,14 +23,13 @@ use Luracast\Restler\Scope;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @phan-file-suppress PhanUndeclaredMethod
  */
-class ApiContactsUseThirdpartyAddressTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
+class ApiContactsUseThirdpartyAddressTest extends CommonClassTest
 {
 	/**
 	 * @var Conf
 	 */
-	private $savconf;
+	protected $savconf;
 
 	/**
 	 * @var Contacts
@@ -40,7 +39,7 @@ class ApiContactsUseThirdpartyAddressTest extends PHPUnit\Framework\TestCase  //
 	/**
 	 * @var DoliDB
 	 */
-	private $savdb;
+	protected $savdb;
 
 	/**
 	 * Build API fixture.
@@ -49,7 +48,7 @@ class ApiContactsUseThirdpartyAddressTest extends PHPUnit\Framework\TestCase  //
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
+		parent::__construct($name);
 
 		global $conf, $db;
 		$this->savconf = $conf;
