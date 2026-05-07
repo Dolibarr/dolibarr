@@ -241,7 +241,7 @@ class pdf_standard_actions
 			$pdf->SetTitle($outputlangs->convToOutputCharset($this->title));
 			$pdf->SetSubject($outputlangs->convToOutputCharset($this->subject));
 			$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 			$pdf->SetKeywords($outputlangs->convToOutputCharset($this->title." ".$this->subject));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
