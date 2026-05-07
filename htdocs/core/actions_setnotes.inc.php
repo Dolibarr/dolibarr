@@ -24,7 +24,6 @@
 
 
 // $action must be defined
-// $permissionnote must be defined to permission to edit object
 // $object must be defined (object is loaded in this file with fetch)
 // $id must be defined (object is loaded in this file with fetch)
 /**
@@ -86,7 +85,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 			}
 		}
 	}
-} elseif ($action == 'setnote_private' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {	// Set public note
+} elseif ($action == 'setnote_private' && !GETPOST('cancel', 'alpha')) {	// Set public note
 	if (empty($user->socid)) {
 		// Private notes (always hidden to external users)
 		if (!is_object($object) || empty($id)) {

@@ -1119,7 +1119,7 @@ if ($action == 'create') {
 		/*
 		 * Invoice lines
 		 */
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		// Show object lines
 		if (!empty($object->lines)) {
@@ -1518,7 +1518,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		$object->fetch_lines();
 		// Show object lines

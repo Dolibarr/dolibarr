@@ -15294,3 +15294,22 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 	}
 	exit(0);
 }
+
+/**
+ * Helper function to check if the price with tax should be shown on the input form.
+ *
+ * @param CommonObject $object
+ * @param int $inputalsopricewithtax
+ * @return bool
+ */
+function showInputTtc(CommonObject $object, int $inputalsopricewithtax): bool {
+	if ($object instanceof \CommandeFournisseur && getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX_SUPPLIER_ORDER')) {
+		return false;
+	}
+
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		return true;
+	}
+
+	return false;
+}

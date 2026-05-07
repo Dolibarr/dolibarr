@@ -135,7 +135,7 @@ if ($nolinesbefore) {
 		<?php if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) { ?>
 			<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 		<?php } ?>
-		<?php if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
+		<?php if (showInputTtc($object, $inputalsopricewithtax)) { ?>
 			<td class="linecoluttc right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 		<?php } ?>
 		<td class="linecolqty right"><?php echo $langs->trans('Qty'); ?></td>
@@ -482,7 +482,7 @@ if ($nolinesbefore) {
 		</td>
 		<?php
 	}
-	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	if (showInputTtc($object, $inputalsopricewithtax)) {
 		$coldisplay++; ?>
 		<td class="nobottom linecoluttc right">
 			<input type="text" name="price_ttc" id="price_ttc" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
@@ -1348,6 +1348,11 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			jQuery("#np_markRate, .np_markRate").hide();
 		<?php } ?>
 		jQuery("#units, #title_units").hide();
+		<?php if (getDolGlobalString('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT')) { ?>
+				jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate").hide();
+		<?php } else { ?>
+				jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();				  
+		<?php } ?>
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}

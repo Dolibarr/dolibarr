@@ -256,6 +256,7 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
+$arrayfields['p.description'] = array('label'=>"Description", 'checked'=>0, 'position'=>19);
 $arrayfields['s.nom'] = array('label' => "ThirdParty", 'checked' => 1, 'position' => 21, 'enabled' => (!isModEnabled('societe') ? 0 : 1));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => 0, 'position' => 22);
 $arrayfields['co.country_code'] = array('label' => "Country", 'checked' => -1, 'position' => 23);
@@ -552,8 +553,10 @@ if (count($listofprojectcontacttypeexternal) == 0) {
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-$sql = "SELECT p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
+$distinct = 'DISTINCT'; // We add distinct until filter on contact of project or task is implemented with AND EXISTS
+$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.description, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount * p.opp_percent / 100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
+
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
@@ -1281,6 +1284,13 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print '<input type="text" class="flat" name="search_label" size="8" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 }
+// Project description
+if (!empty($arrayfields['p.description']['checked'])) {
+	print '<td class="liste_titre">';
+	//search_description to be coded
+	//print '<input type="text" class="flat" name="search_description" size="8" value="'.dol_escape_htmltag($search_description).'">';
+	print '</td>';
+}
 // Third party
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1490,6 +1500,10 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 if (!empty($arrayfields['p.title']['checked'])) {
 	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.description']['checked'])) {
+        print_liste_field_titre($arrayfields['p.description']['label'], $_SERVER["PHP_SELF"], "p.description", "", $param, "", $sortfield, $sortorder);
+        $totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
@@ -1845,6 +1859,15 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+        // Description
+        if (!empty($arrayfields['p.description']['checked'])) {
+                print '<td title="'.dolPrintHTML($obj->description).'">';
+                print dolPrintHTML($obj->description);
+                print '</td>';
+                if (!$i) {
+                        $totalarray['nbfield']++;
+                }
+        }
 		// Company
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax125">';
