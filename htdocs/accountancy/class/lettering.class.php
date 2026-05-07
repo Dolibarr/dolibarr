@@ -313,7 +313,7 @@ class Lettering extends BookKeeping
 		// Check partial / normal lettering case
 		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids), true) . ")";
 		$sql .= " GROUP BY ab.lettering_code";
 		$sql .= " ORDER BY ab.lettering_code DESC";
 
@@ -359,7 +359,7 @@ class Lettering extends BookKeeping
 			$sql = "SELECT DISTINCT ab2.lettering_code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
-			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids), true) . ")";
 			$sql .= " AND ab2.lettering_code != ''";
 			$sql .= " AND ab2.matching_general = 0";
 			$sql .= " ORDER BY ab2.lettering_code DESC";
@@ -530,7 +530,7 @@ class Lettering extends BookKeeping
 		$sql .= "   INNER JOIN " . $this->db->prefix() . "accounting_system AS asys ON asys.pcg_version = aa.fk_pcg_version";
 		$sql .= "   WHERE asys.rowid = ".(int) $pcgId." AND aa.reconcilable";
 		$sql .= " ) AS reconciliable_accounts ON reconciliable_accounts.account_number = ab.numero_compte";
-		$sql .= " WHERE ab.rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND reconciliable_accounts.rowid IS NULL";
+		$sql .= " WHERE ab.rowid IN (".$this->db->sanitize(implode(',', $ids), true).") AND reconciliable_accounts.rowid IS NULL";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -555,7 +555,7 @@ class Lettering extends BookKeeping
 		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
 		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
 		$sql .= "   AND fy.entity = " . (int) $conf->entity;
-		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids), true) . ")";
 		$sql .= " GROUP BY fy.rowid, fy.date_start, fy.date_end";
 
 		dol_syslog(__METHOD__ . " - Get fiscal year", LOG_DEBUG);
@@ -598,7 +598,7 @@ class Lettering extends BookKeeping
 		$sql = "SELECT DISTINCT ab2.lettering_code";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "accounting_bookkeeping AS ab2 ON ab2.numero_compte = ab.numero_compte";
-		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids), true) . ")";
 		$sql .= " AND ab2.lettering_code != ''";
 		$sql .= " AND ab2.matching_general = 1";
 		$sql .= " AND ab2.doc_date BETWEEN '"  . $this->db->idate($fiscalYearStart) . "' AND '" . $this->db->idate($fiscalYearEnd) . "'";
@@ -693,7 +693,7 @@ class Lettering extends BookKeeping
 		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
 		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
 		$sql .= "   AND fy.entity = " . (int) $conf->entity;
-		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids), true) . ")";
 		$sql .= " AND ab.matching_general = 1";
 		$sql .= " AND ab.lettering_code IS NOT NULL AND ab.lettering_code != ''";
 
