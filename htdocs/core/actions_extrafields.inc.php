@@ -246,6 +246,7 @@ if ($action == 'add') {
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
 					GETPOST("ai_prompt"),
+					(GETPOST('personal_data', 'alpha') ? 1 : 0),
 					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
 					(GETPOST('showintooltip', 'int') ? 1 : 0)
 				);
@@ -433,6 +434,7 @@ if ($action == 'update') {
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
 					GETPOST("ai_prompt"),
+					(GETPOST('personal_data', 'alpha') ? 1 : 0),
 					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
 					(GETPOST('showintooltip', 'int') ? 1 : 0)
 				);
