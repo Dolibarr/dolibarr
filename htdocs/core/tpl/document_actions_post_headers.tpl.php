@@ -29,20 +29,22 @@
 
 /**
  * @var Conf $conf
- * @var CommonObject $object
  * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  *
+ * @var CommonObject $object
  * @var FormFile	$formfile
  * @var	string 		$action
  * @var string  	$modulepart
  * @var string		$upload_dir
  * @var	string 		$param
- * @var string		$moreparam = param to add to download link for the form_attach_new_file function
+ * @var string		$moreparam 					Param to add to download link for the form_attach_new_file function
+ * @var string		$sortfield
+ * @var string		$sortorder
  * @var string 		$relativepathwithnofile
- * @var	int			$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
+ * @var	int			$permissiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
  * @var string  	$savingdocmask				For example dol_sanitizeFileName($object->ref).'-__file__';
  * @var int			$withproject
  */
@@ -53,13 +55,16 @@ if (empty($langs) || !is_object($langs)) {
 	exit(1);
 }
 '
+@phan-var-force CommonObject $object
+@phan-var-force string $action
+@phan-var-force string $modulepart
+@phan-var-force string $upload_dir
 @phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
 @phan-var-force ?int<0,1> $permtoedit
 @phan-var-force ?int<0,1> $permission
 @phan-var-force int<0,1> $permissiontoadd
 @phan-var-force ?string $savingdocmask
 @phan-var-force ?string $param
-@phan-var-force CommonObject $object
 ';
 
 
