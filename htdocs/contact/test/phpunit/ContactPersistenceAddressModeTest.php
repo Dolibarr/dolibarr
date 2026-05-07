@@ -11,6 +11,8 @@ global $conf, $db, $langs, $user;
 require_once dirname(__FILE__).'/../../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
+// phpcs:disable Squiz.Commenting.FunctionComment,PEAR.Commenting.FunctionComment,PEAR.NamingConventions.ValidFunctionName
+
 /**
  * Test persistence contract for use_thirdparty_address.
  *
@@ -26,6 +28,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testCreateDefaultsToThirdpartyAddressWhenSocidExists(): void
 	{
+		// phpcs:disable Squiz.Commenting.FunctionComment,PEAR.Commenting.FunctionComment,PEAR.NamingConventions.ValidFunctionName
 		$dbstub = new class {
 			public $queries = array();
 
@@ -84,6 +87,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 				return 1;
 			}
 		};
+		// phpcs:enable
 
 		$contact->lastname = 'Doe';
 		$contact->firstname = 'Jane';
@@ -105,6 +109,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testCreateDefaultsToContactAddressWithoutSocid(): void
 	{
+		// phpcs:disable Squiz.Commenting.FunctionComment,PEAR.Commenting.FunctionComment,PEAR.NamingConventions.ValidFunctionName
 		$dbstub = new class {
 			public $queries = array();
 
@@ -163,6 +168,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 				return 1;
 			}
 		};
+		// phpcs:enable
 
 		$contact->lastname = 'Doe';
 		$contact->firstname = 'Jane';
@@ -183,6 +189,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testCreateKeepsContactAddressWhenOwnPostalFieldsAreProvided(): void
 	{
+		// phpcs:disable Squiz.Commenting.FunctionComment,PEAR.Commenting.FunctionComment,PEAR.NamingConventions.ValidFunctionName
 		$dbstub = new class {
 			public $queries = array();
 
@@ -241,6 +248,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 				return 1;
 			}
 		};
+		// phpcs:enable
 
 		$contact->lastname = 'Doe';
 		$contact->firstname = 'Jane';
@@ -264,6 +272,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testUpdateNormalizesLegacyNullToThirdpartyMode(): void
 	{
+		// phpcs:disable Squiz.Commenting.FunctionComment,PEAR.Commenting.FunctionComment,PEAR.NamingConventions.ValidFunctionName
 		$dbstub = new class {
 			public $queries = array();
 
@@ -317,6 +326,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 				return 1;
 			}
 		};
+		// phpcs:enable
 
 		$contact->id = 50;
 		$contact->socid = 10;
@@ -350,6 +360,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testUpdateForcesContactModeWithoutSocid(): void
 	{
+		// phpcs:disable Squiz.Commenting.FunctionComment,PEAR.Commenting.FunctionComment,PEAR.NamingConventions.ValidFunctionName
 		$dbstub = new class {
 			public $queries = array();
 
@@ -403,6 +414,7 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 				return 1;
 			}
 		};
+		// phpcs:enable
 
 		$contact->id = 51;
 		$contact->socid = 0;
@@ -429,3 +441,4 @@ class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
 		$this->assertStringContainsString('use_thirdparty_address=0', preg_replace('/\s+/', ' ', $dbstub->queries[0]));
 	}
 }
+// phpcs:enable

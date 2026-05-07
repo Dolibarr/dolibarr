@@ -175,7 +175,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/contact/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+					$backtopage = DOL_URL_ROOT.'/contact/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
 			}
 		}
 	}
@@ -702,7 +702,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 									|| $.trim($("#town").val()).length > 0
 									|| parseInt($("#state_id").val(), 10) > 0
 									|| parseInt($("#selectcountry_id").val(), 10) > 0;
-							}
+						}
 
 							function updateContactAddressMode(fromSocChange) {
 								var currentSocId = parseInt($("#socid").val(), 10) || 0;
@@ -716,14 +716,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								var useThirdpartyAddress = (currentSocId > 0 && !useDifferent);
 								$("#use_thirdparty_address").val(useThirdpartyAddress ? "1" : "0");
 								$(".contact-address-fields").toggle(!useThirdpartyAddress);
-							}
+						}
 
 							$("#use_different_address_than_thirdparty").change(function() { updateContactAddressMode(false); });
 							$("#socid").change(function() { updateContactAddressMode(true); });
 							updateContactAddressMode(false);
 						})'."\n";
-					print '</script>'."\n";
-				}
+						print '</script>'."\n";
+			}
 
 			print '<form method="post" name="formsoc" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -885,7 +885,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								}
 							});
 						})'."\n";
-					print '</script>'."\n";
+						print '</script>'."\n";
 				}
 				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
 					$result = $object->getNoEmail();
@@ -1019,7 +1019,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 									|| $.trim($("#town").val()).length > 0
 									|| parseInt($("#state_id").val(), 10) > 0
 									|| parseInt($("#selectcountry_id").val(), 10) > 0;
-							}
+			}
 
 							function updateContactAddressMode(fromSocChange) {
 								var currentSocId = parseInt($("#socid").val(), 10) || 0;
@@ -1033,14 +1033,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								var useThirdpartyAddress = (currentSocId > 0 && !useDifferent);
 								$("#use_thirdparty_address").val(useThirdpartyAddress ? "1" : "0");
 								$(".contact-address-fields").toggle(!useThirdpartyAddress);
-							}
+				}
 
 							$("#use_different_address_than_thirdparty").change(function() { updateContactAddressMode(false); });
 							$("#socid").change(function() { updateContactAddressMode(true); });
 							updateContactAddressMode(false);
 						})'."\n";
 					print '</script>'."\n";
-				}
+			}
 
 			print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1192,14 +1192,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								$(".noemail").addClass("fieldrequired");
 							} else {
 								$(".noemail").removeClass("fieldrequired");
-							}
-						}
+			}
+		}
 						$("#email").keyup(function() {
 							init_check_no_email($(this));
 						});
 						init_check_no_email($("#email"));
 					})'."\n";
-					print '</script>'."\n";
+						print '</script>'."\n";
 				}
 				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
 					$result = $object->getNoEmail();
@@ -1647,9 +1647,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</div>";
 
 		//Select mail models is same action as presend
-			if (GETPOST('modelselected', 'alpha')) {
-				$action = 'presend';
-			}
+		if (GETPOST('modelselected', 'alpha')) {
+			$action = 'presend';
+		}
 
 		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';

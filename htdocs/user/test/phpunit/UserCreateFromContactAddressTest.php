@@ -44,7 +44,7 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Save globals.
 	 *
-	 * @param string $name
+	 * @param string $name Test name
 	 */
 	public function __construct($name = '')
 	{
@@ -96,8 +96,8 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 			private $effective;
 
 			/**
-			 * @param DoliDB  $db
-			 * @param Societe $effective
+			 * @param DoliDB  $db Database handler
+			 * @param Societe $effective Effective address object
 			 */
 			public function __construct($db, Societe $effective)
 			{
@@ -106,7 +106,7 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 			}
 
 			/**
-			 * @param   Societe|null $thirdparty
+			 * @param   Societe|null $thirdparty Unused preloaded thirdparty
 			 * @return  CommonObject
 			 */
 			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
@@ -125,8 +125,8 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 
 		$userfixture = new class($this->savdb) extends User {
 			/**
-			 * @param User   $user
-			 * @param int    $notrigger
+			 * @param User   $user Current user
+			 * @param int    $notrigger Disable triggers flag
 			 * @return int
 			 */
 			public function create($user, $notrigger = 0)
@@ -135,15 +135,17 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 				return 1;
 			}
 
+			// phpcs:disable PEAR.NamingConventions.ValidFunctionName
 			/**
-			 * @param string $triggerName
-			 * @param User   $user
+			 * @param string $triggerName Trigger code
+			 * @param User   $user Current user
 			 * @return int
 			 */
 			public function call_trigger($triggerName, $user)
 			{
 				return 1;
 			}
+			// phpcs:enable
 		};
 
 		$dbstub = new class {
@@ -163,7 +165,7 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 			}
 
 			/**
-			 * @param string $value
+			 * @param string $value SQL value to escape
 			 * @return string
 			 */
 			public function escape($value)
@@ -172,7 +174,7 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 			}
 
 			/**
-			 * @param string $sql
+			 * @param string $sql SQL query
 			 * @return bool
 			 */
 			public function query($sql)

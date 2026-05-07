@@ -39,7 +39,7 @@ class PdfBuildAddressContactSelectionTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Save globals.
 	 *
-	 * @param string $name
+	 * @param string $name Test name
 	 */
 	public function __construct($name = '')
 	{
@@ -98,8 +98,8 @@ class PdfBuildAddressContactSelectionTest extends PHPUnit\Framework\TestCase
 			private $effective;
 
 			/**
-			 * @param DoliDB  $db
-			 * @param Societe $effective
+			 * @param DoliDB  $db Database handler
+			 * @param Societe $effective Effective address object
 			 */
 			public function __construct($db, Societe $effective)
 			{
@@ -108,7 +108,7 @@ class PdfBuildAddressContactSelectionTest extends PHPUnit\Framework\TestCase
 			}
 
 			/**
-			 * @param   Societe|null $thirdparty
+			 * @param   Societe|null $thirdparty Unused preloaded thirdparty
 			 * @return  CommonObject
 			 */
 			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject

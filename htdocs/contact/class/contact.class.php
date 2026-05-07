@@ -388,12 +388,12 @@ class Contact extends CommonObject
 	/**
 	 * @var CommonObject|null Cached effective address object for current lifecycle
 	 */
-	protected $_cached_effective_address_object;
+	protected $cached_effective_address_object;
 
 	/**
 	 * @var string Cache key matching the current effective address object
 	 */
-	protected $_cached_effective_address_cache_key = '';
+	protected $cached_effective_address_cache_key = '';
 
 
 	/**
@@ -882,28 +882,28 @@ class Contact extends CommonObject
 	public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
 	{
 		$cachekey = $this->buildEffectiveAddressCacheKey($thirdparty);
-		if ($this->_cached_effective_address_object instanceof CommonObject && $this->_cached_effective_address_cache_key === $cachekey) {
-			return $this->_cached_effective_address_object;
+		if ($this->cached_effective_address_object instanceof CommonObject && $this->cached_effective_address_cache_key === $cachekey) {
+			return $this->cached_effective_address_object;
 		}
 
 		if (!$this->mustUseThirdpartyAddress()) {
-			$this->_cached_effective_address_object = $this;
-			$this->_cached_effective_address_cache_key = $cachekey;
-			return $this->_cached_effective_address_object;
+			$this->cached_effective_address_object = $this;
+			$this->cached_effective_address_cache_key = $cachekey;
+			return $this->cached_effective_address_object;
 		}
 
 		if ($thirdparty instanceof Societe && (int) $thirdparty->id > 0 && (int) $thirdparty->id === (int) $this->socid) {
-			$this->_cached_effective_address_object = $thirdparty;
-			$this->_cached_effective_address_cache_key = $cachekey;
-			return $this->_cached_effective_address_object;
+			$this->cached_effective_address_object = $thirdparty;
+			$this->cached_effective_address_cache_key = $cachekey;
+			return $this->cached_effective_address_object;
 		}
 
 		$thirdpartytoload = new Societe($this->db);
 		$result = $thirdpartytoload->fetch((int) $this->socid);
 		if ($result > 0) {
-			$this->_cached_effective_address_object = $thirdpartytoload;
-			$this->_cached_effective_address_cache_key = $cachekey;
-			return $this->_cached_effective_address_object;
+			$this->cached_effective_address_object = $thirdpartytoload;
+			$this->cached_effective_address_cache_key = $cachekey;
+			return $this->cached_effective_address_object;
 		}
 
 		dol_syslog(
@@ -913,18 +913,18 @@ class Contact extends CommonObject
 			LOG_WARNING
 		);
 
-		$this->_cached_effective_address_object = $this;
-		$this->_cached_effective_address_cache_key = $cachekey;
-		return $this->_cached_effective_address_object;
+		$this->cached_effective_address_object = $this;
+		$this->cached_effective_address_cache_key = $cachekey;
+		return $this->cached_effective_address_object;
 	}
 
 	/**
 	 * Return the effective full address string.
 	 *
-	 * @param   int<0,1> $withcountry
-	 * @param   string   $sep
-	 * @param   int<0,1> $withregion
-	 * @param   string   $extralangcode
+	 * @param   int<0,1> $withcountry Add country into address string
+	 * @param   string   $sep Separator used between address parts
+	 * @param   int<0,1> $withregion Add state/region into address string
+	 * @param   string   $extralangcode Extra language code for translated fields
 	 * @return  string
 	 */
 	public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0, $extralangcode = '')
@@ -2025,8 +2025,8 @@ class Contact extends CommonObject
 	 */
 	protected function resetEffectiveAddressCache(): void
 	{
-		$this->_cached_effective_address_object = null;
-		$this->_cached_effective_address_cache_key = '';
+		$this->cached_effective_address_object = null;
+		$this->cached_effective_address_cache_key = '';
 	}
 
 	/**

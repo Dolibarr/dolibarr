@@ -47,7 +47,7 @@ class SocieteImportExportAddressModeContractTest extends PHPUnit\Framework\TestC
 	/**
 	 * Save globals.
 	 *
-	 * @param string $name
+	 * @param string $name Test name
 	 */
 	public function __construct($name = '')
 	{

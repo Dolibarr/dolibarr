@@ -44,7 +44,7 @@ class ApiContactsUseThirdpartyAddressTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Build API fixture.
 	 *
-	 * @param string $name
+	 * @param string $name Test name
 	 */
 	public function __construct($name = '')
 	{
