@@ -345,7 +345,7 @@ class pdf_standard_actions
 				if ($obj->fk_project > 0) {
 					$projectstatic->fetch($obj->fk_project);
 					if ($projectstatic->ref) {
-						$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->ref);
+						$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode((string) $projectstatic->ref);
 					}
 				}
 

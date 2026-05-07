@@ -13,7 +13,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
@@ -3562,8 +3562,8 @@ class Propal extends CommonObject
 			$response->warning_delay = $delay_warning / 60 / 60 / 24;
 			$response->label = $label;
 			$response->labelShort = $labelShort;
-			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?search_status='.$status.'&mainmenu=commercial&leftmenu=propals';
-			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?search_option=late&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
+			$response->url = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/list.php', ['search_status' => $status, 'mainmenu' => 'commercial', 'leftmenu' => 'propals']);
+			$response->url_late = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/list.php', ['search_option' => 'late', 'mainmenu' => 'commercial', 'leftmenu' => 'propals', 'sortfield' => 'p.datep', 'sortorder' => 'asc']);
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
@@ -3979,7 +3979,7 @@ class Propal extends CommonObject
 
 			if ($txttoshow) {
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -4025,12 +4025,10 @@ class Propal extends CommonObject
 		$outputlangs->loadLangs(array("propale", "products"));
 
 		if (!dol_strlen($modele)) {
-			$modele = 'azur';
+			$modele = getDolGlobalString('PROPALE_ADDON_PDF', 'cyan');
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('PROPALE_ADDON_PDF')) {
-				$modele = getDolGlobalString('PROPALE_ADDON_PDF');
 			}
 		}
 

@@ -5,7 +5,7 @@
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 	2024-2025 Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 	2025	  MDW				  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 	2025-2026	MDW				  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 	2025	  Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,8 +54,17 @@ if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+/**
+ * @var array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
+ * @var ?int<0,1> $permtoedit
+ * @var ?int<0,1> $permission
+ * @var int<0,1> $permissiontoadd
+ * @var ?string $savingdocmask
+ * @var CommonObject $object
+ * @var string $sortfield
+ * @var string $sortorder
+ */
 '
-@phan-var-force CommonObject $object
 @phan-var-force string $action
 @phan-var-force string $modulepart
 @phan-var-force string $upload_dir
@@ -65,6 +74,9 @@ if (empty($langs) || !is_object($langs)) {
 @phan-var-force int<0,1> $permissiontoadd
 @phan-var-force ?string $savingdocmask
 @phan-var-force ?string $param
+@phan-var-force CommonObject $object
+@phan-var-force string $sortfield
+@phan-var-force string $sortorder
 ';
 
 

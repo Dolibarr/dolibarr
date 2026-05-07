@@ -47,6 +47,7 @@ require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 global $langs;
 
 $ok = 0;
+$db = null;
 
 
 // This page can be long. We increase the time allowed. / Cette page peut etre longue. On augmente le delai autorise.
@@ -104,7 +105,8 @@ if (@file_exists($forcedfile)) {
 
 dolibarr_install_syslog("--- step2: entering step2.php page");
 
-'@phan-var-force string $dolibarr_main_db_prefix';  // From configuraiotn file or install/inc.php
+/** @var string $dolibarr_main_db_prefix */
+'@phan-var-force string $dolibarr_main_db_prefix';  // From configuration file or install/inc.php
 
 
 /*
@@ -287,7 +289,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 	 * To do after the files *.sql
 	 *
 	 ***************************************************************************************/
-	if ($ok && $createkeys) {
+	if ($ok && $createkeys && $db !== null) {
 		// We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
 		$dir = "mysql/tables/";
 
