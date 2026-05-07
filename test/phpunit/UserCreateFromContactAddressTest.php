@@ -139,7 +139,7 @@ class UserCreateFromContactAddressTest extends CommonClassTest
 			// phpcs:disable PEAR.NamingConventions.ValidFunctionName
 			/**
 			 * @param string $triggerName Trigger code
-			 * @param User   $user Current user
+			 * @param User|null $user Current user
 			 * @return int
 			 */
 			public function call_trigger($triggerName, $user = null)

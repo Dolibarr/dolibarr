@@ -59,8 +59,12 @@ use PHPUnit\Framework\TestCase;
  * @phan-file-suppress PhanUndeclaredClass
  * @phan-file-suppress PhanUndeclaredExtendedClass
  * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanParamSignatureRealMismatchParamTypeInternal
+ * @phan-file-suppress PhanAccessSignatureMismatchInternal
+ * @phan-file-suppress PhanParamSignatureMismatchInternal
+ * @phan-file-suppress PhanTypeMismatchArgumentInternal
  */
-/** @phpstan-ignore class.notFound */
+/** @phpstan-ignore-next-line */
 abstract class CommonClassTest extends TestCase
 {
 	/** @var \Conf */
@@ -103,6 +107,7 @@ abstract class CommonClassTest extends TestCase
 	 */
 	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
+		/** @phpstan-ignore-next-line */
 		parent::__construct($name, $data, $dataName);
 
 		//$this->sharedFixture
@@ -136,10 +141,10 @@ abstract class CommonClassTest extends TestCase
 	/**
 	 *	This method is called when a test fails
 	 *
-	 *  @param	Throwable	$t		Throwable object
+	 *  @param	\PHPUnit\Framework\Throwable	$t		Throwable object
 	 *  @return void
 	 */
-	protected function onNotSuccessfulTest(Throwable $t): void
+	public function onNotSuccessfulTest($t): void // @phpstan-ignore missingType.parameter
 	{
 
 		// Get the lines that were added since the start of the test
@@ -244,6 +249,133 @@ abstract class CommonClassTest extends TestCase
 		/** @phpstan-ignore method.notFound */
 		/** @phpstan-ignore-next-line */
 		parent::onNotSuccessfulTest($t);
+	}
+
+	/**
+	 * Proxy assertions explicitly for static analyzers that do not resolve inherited PHPUnit methods.
+	 *
+	 * @param mixed $expected Expected value
+	 * @param mixed $actual Actual value
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertSame($expected, $actual, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertSame($expected, $actual, $message);
+	}
+
+	/**
+	 * @param mixed $actual Actual value
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertNull($actual, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertNull($actual, $message);
+	}
+
+	/**
+	 * @param bool $condition Asserted condition
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertTrue(bool $condition, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertTrue($condition, $message);
+	}
+
+	/**
+	 * @param bool $condition Asserted condition
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertFalse(bool $condition, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertFalse($condition, $message);
+	}
+
+	/**
+	 * @param string $needle Expected substring
+	 * @param string $haystack Inspected string
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertStringContainsString($needle, $haystack, $message);
+	}
+
+	/**
+	 * @param string $needle Unexpected substring
+	 * @param string $haystack Inspected string
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertStringNotContainsString(string $needle, string $haystack, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertStringNotContainsString($needle, $haystack, $message);
+	}
+
+	/**
+	 * @param mixed $expected Expected value
+	 * @param mixed $actual Actual value
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertNotSame($expected, $actual, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertNotSame($expected, $actual, $message);
+	}
+
+	/**
+	 * @param int|float $expected Expected lower bound
+	 * @param mixed $actual Actual value
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertGreaterThan($expected, $actual, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertGreaterThan($expected, $actual, $message);
+	}
+
+	/**
+	 * @param class-string<\Throwable> $exception Expected exception class
+	 * @return void
+	 */
+	public function expectException(string $exception): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::expectException($exception);
+	}
+
+	/**
+	 * @param string $filename File path
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertFileNotExists(string $filename, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertFileNotExists($filename, $message);
+	}
+
+	/**
+	 * @param string $filename File path
+	 * @param string $message Failure message
+	 * @return void
+	 */
+	public function assertFileDoesNotExist(string $filename, string $message = ''): void
+	{
+		/** @phpstan-ignore-next-line */
+		parent::assertFileDoesNotExist($filename, $message);
 	}
 
 	/**

@@ -15,8 +15,6 @@ parameters:
 	level: 10
 	fileExtensions:
 		- php
-	stubFiles:
-		- test/phpunit/PhpUnitCompatStub.php
 	paths:
 		- htdocs
 		- scripts
