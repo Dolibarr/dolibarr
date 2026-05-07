@@ -131,7 +131,7 @@ if (preg_match('/api\/index\.php$/', $url)) {
 	if (preg_match('#^/api/index\.php(.*)$#', $uri, $matches)) {
 		$path_info = $matches[1];
 	} else {
-		$path_info = $_SERVER['PATH_INFO'] ?? $_SERVER['ORIG_PATH_INFO'] ?? '';
+		$path_info = $_SERVER['PATH_INFO'] ?? ($_SERVER['ORIG_PATH_INFO'] ?? '');
 	}
 	$url = $_SERVER['PHP_SELF'] . $path_info;
 }
