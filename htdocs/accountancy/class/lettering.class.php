@@ -579,11 +579,10 @@ class Lettering extends BookKeeping
 
 		// Cross-fiscal-year matching is forbidden
 		if (count($fiscalYearRows) > 1) {
-			$db = $this->db;
 			$periods = array_map(
 				/** @param object $row */
-				function ($row) use ($db) {
-					return dol_print_date($db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($db->jdate($row->date_end), 'day');
+				function ($row) {
+					return dol_print_date($this->db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($this->db->jdate($row->date_end), 'day');
 				},
 				$fiscalYearRows
 			);
