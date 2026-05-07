@@ -78,6 +78,7 @@ $result = restrictedArea($user, 'commande', $order_id);
 $object = new Commande($db);
 $shipment = new Expedition($db);
 $extrafields = new ExtraFields($db);
+$product = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -797,7 +798,7 @@ if ($order_id > 0 || !empty($ref)) {
 						$product->load_stock('warehouseopen');
 					}
 
-					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock') && $product !== null) {
 						print '<td class="center">';
 						if ($objp->stockable_product == Product::ENABLED_STOCK) {
 							print $product->stock_reel;
@@ -820,7 +821,7 @@ if ($order_id > 0 || !empty($ref)) {
 					print "</tr>\n";
 
 					// Show subproducts lines
-					if ($objp->fk_product > 0 && getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
+					if ($objp->fk_product > 0 && getDolGlobalString('PRODUIT_SOUSPRODUITS') && $product !== null) {
 						// Set tree of subproducts in product->sousprods
 						$product->get_sousproduits_arbo();
 						//var_dump($product->sousprods);exit;

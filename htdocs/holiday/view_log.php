@@ -4,7 +4,7 @@
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,10 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+
+/**
+ * @var User $user
+ */
 
 // Security check (access forbidden for external user too)
 if (!$user->hasRight('holiday', 'define_holiday') || $user->socid > 0) {
@@ -259,7 +263,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if (!empty($search_id)) {
-	$param .= '&search_status='.urlencode($search_status);
+	$param .= '&search_id='.urlencode($search_id);
 }
 if (!empty($search_month) && $search_month > 0) {
 	$param .= '&search_month='.urlencode((string) ($search_month));
