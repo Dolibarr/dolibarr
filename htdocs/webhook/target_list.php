@@ -25,20 +25,21 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // load webhook libraries
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'admin'));
@@ -75,7 +76,6 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new Target($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('targetlist')); // Note that conf->hooks_modules contains array
 
@@ -358,21 +358,6 @@ if ($mode == 'modulesetup') {
 	$head = webhookAdminPrepareHead();
 	print dol_get_fiche_head($head, 'targets', $langs->trans($page_name), -1, "webhook");
 }
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -788,7 +773,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$formfile = new FormFile($db);
 
 	// Show list of available documents
-	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource = dolBuildUrl($_SERVER['PHP_SELF'], ['sortfield' => $sortfield, 'sortorder' => $sortorder]);
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;

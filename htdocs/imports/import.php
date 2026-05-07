@@ -528,11 +528,9 @@ if ($step == 2 && $datatoimport) {
 
 	$filetoimport = '';
 
+	// Add format information and link to download example
 	print '<table class="noborder centpercent" cellpadding="4">';
 
-	$filetoimport = '';
-
-	// Add format information and link to download example
 	print '<tr class="liste_titre"><td colspan="4">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat").'...';
 	print '</td></tr>';
@@ -558,6 +556,7 @@ if ($step == 2 && $datatoimport) {
 	}
 
 	print '</table>';
+
 
 	print '<br>';
 
@@ -1675,10 +1674,10 @@ if ($step == 4 && $datatoimport) {
 	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action == 'launchsimu') {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 		print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
 	} else {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
 		print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print ' - ';

@@ -7074,7 +7074,7 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 .tox:not(.tox-tinymce-inline) .tox-editor-header {
 	/*border-bottom: 1px solid #ddd !important;
 	box-shadow: unset !important; */
-	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 8px 8px -4px rgba(34,47,62,.07) !important;
+	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 5px 5px -4px rgba(34,47,62,.09) !important;
 }
 .mce-content-body p {
 	margin: unset;

@@ -29,12 +29,12 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -61,7 +61,6 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Initialize a technical objects
 $object = new TriggerHistory($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($object->element.'card', 'globalcard')); // Note that conf->hooks_modules contains array
 $soc = null;

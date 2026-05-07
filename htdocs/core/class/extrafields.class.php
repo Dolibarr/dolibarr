@@ -2832,6 +2832,9 @@ class ExtraFields
 
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan) ? 'colspan="' . $colspan . '"' : '').'>';
+		if ($mode == 'create' || $mode == 'edit') {
+			$out .= '<br>';
+		}
 		// Some js code will be injected here to manage the collapsing of extrafields
 		// Output the picto
 		$out .= '<span class="'.($extrafield_collapse_display_value ? 'cursorpointer ' : '').($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
