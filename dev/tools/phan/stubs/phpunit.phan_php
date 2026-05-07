@@ -24,3 +24,13 @@ class TestCase {
 	{
 	}
 }
+
+class TestSuite {
+	public function __construct($name = '')
+	{
+	}
+
+	public function addTestSuite($testSuite): void
+	{
+	}
+}
