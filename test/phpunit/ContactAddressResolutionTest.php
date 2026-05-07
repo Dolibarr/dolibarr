@@ -227,11 +227,15 @@ class ContactAddressResolutionTest extends CommonClassTest
 		$secondthirdparty->id = 2;
 		$secondthirdparty->address = 'Second thirdparty street';
 
-		$this->assertSame($secondthirdparty, $contact->getEffectiveAddressObject($secondthirdparty));
+		$expected = $secondthirdparty;
+		$actual = $contact->getEffectiveAddressObject($secondthirdparty);
+		$this->assertSame($expected, $actual);
 
 		$contact->use_thirdparty_address = Contact::USE_THIRDPARTY_ADDRESS_NO;
 
-		$this->assertSame($contact, $contact->getEffectiveAddressObject($secondthirdparty));
+		$expected = $contact;
+		$actual = $contact->getEffectiveAddressObject($secondthirdparty);
+		$this->assertSame($expected, $actual);
 	}
 
 	/**

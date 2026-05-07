@@ -141,7 +141,7 @@ abstract class CommonClassTest extends TestCase
 	/**
 	 *	This method is called when a test fails
 	 *
-	 *  @param	\PHPUnit\Framework\Throwable	$t		Throwable object
+	 *  @param	\Throwable	$t		Throwable object
 	 *  @return void
 	 */
 	public function onNotSuccessfulTest($t): void // @phpstan-ignore missingType.parameter
@@ -259,7 +259,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertSame($expected, $actual, string $message = ''): void
+	public static function assertSame($expected, $actual, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertSame($expected, $actual, $message);
@@ -270,7 +270,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertNull($actual, string $message = ''): void
+	public static function assertNull($actual, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertNull($actual, $message);
@@ -281,7 +281,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertTrue(bool $condition, string $message = ''): void
+	public static function assertTrue(bool $condition, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertTrue($condition, $message);
@@ -292,7 +292,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertFalse(bool $condition, string $message = ''): void
+	public static function assertFalse(bool $condition, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertFalse($condition, $message);
@@ -304,7 +304,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
+	public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertStringContainsString($needle, $haystack, $message);
@@ -316,7 +316,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertStringNotContainsString(string $needle, string $haystack, string $message = ''): void
+	public static function assertStringNotContainsString(string $needle, string $haystack, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertStringNotContainsString($needle, $haystack, $message);
@@ -328,7 +328,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertNotSame($expected, $actual, string $message = ''): void
+	public static function assertNotSame($expected, $actual, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertNotSame($expected, $actual, $message);
@@ -340,7 +340,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertGreaterThan($expected, $actual, string $message = ''): void
+	public static function assertGreaterThan($expected, $actual, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertGreaterThan($expected, $actual, $message);
@@ -350,7 +350,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param class-string<\Throwable> $exception Expected exception class
 	 * @return void
 	 */
-	public function expectException(string $exception): void
+	public static function expectException(string $exception): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::expectException($exception);
@@ -361,7 +361,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertFileNotExists(string $filename, string $message = ''): void
+	public static function assertFileNotExists(string $filename, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertFileNotExists($filename, $message);
@@ -372,7 +372,7 @@ abstract class CommonClassTest extends TestCase
 	 * @param string $message Failure message
 	 * @return void
 	 */
-	public function assertFileDoesNotExist(string $filename, string $message = ''): void
+	public static function assertFileDoesNotExist(string $filename, string $message = ''): void
 	{
 		/** @phpstan-ignore-next-line */
 		parent::assertFileDoesNotExist($filename, $message);
