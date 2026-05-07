@@ -363,7 +363,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
 
 // For POS context, we force some fields
 if ($contextpage == 'poslist') {
@@ -679,7 +678,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 			$nbwithdrawrequestok = 0;
 			foreach ($listofbills as $aBill) {
 				// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
-				// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+				// The table prelevement and prelevement_lignes must be removed in future and merged into prelevement_demande
 				// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
 				// Step 2: Move field fk_... + status into prelevement_demande.
 				$pending = 0;
