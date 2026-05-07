@@ -31,10 +31,13 @@
 include_once 'inc.php';
 
 /**
+ * @var DoliDB $b
  * @var Conf $conf
  * @var Translate $langs
  *
+ * @var string $dolibarr_main_data_root
  * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_db_character_set
  * @var string $dolibarr_main_db_host
  * @var string $dolibarr_main_db_port
  * @var string $dolibarr_main_db_name
@@ -98,8 +101,6 @@ if (!is_object($conf)) {
  * View
  */
 
-$form = new Form($db);
-
 pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 
 // Action to launch the repair script
@@ -137,6 +138,8 @@ $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
 $db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
+
+$form = new Form($db);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
@@ -2055,7 +2058,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 					// Calcul de la somme des paiements reçus
 					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
 					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
-					$totHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
+					$totHt = ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
 					$totTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
 					$totLocal1 = ($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0);
 					$totLocal2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
@@ -2068,8 +2071,8 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 							localtax1 = $totLocal1,
 							localtax2 = $totLocal2,
 							total_ttc = $totTtc,
-							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 ).",
-							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0 )."
+							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1).",
+							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0)."
 						WHERE
 							rowid = $obj->rowid";
 					$db->query($sql_maj);
@@ -2134,7 +2137,7 @@ if ($ok && GETPOST('repair_mailing_path')) {
 							while (($thumb = readdir($thumbs)) !== false) {
 								$res = dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
 								$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-								print ($msg);
+								print($msg);
 							}
 							// dol_delete_dir($origin.'/'.$file);
 						}
@@ -2142,7 +2145,7 @@ if ($ok && GETPOST('repair_mailing_path')) {
 						if (dol_is_file($origin.'/'.$file)) {
 							$res = dol_move($origin.'/'.$file, $destin.'/'.$file);
 							$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-							print ($msg);
+							print($msg);
 						}
 					}
 				}
