@@ -152,7 +152,7 @@ if ($resql) {
 	print_barre_liste($langs->trans("TripsAndExpenses"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
 
 	$i = 0;
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<table class="noborder centpercent">';
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", "&socid=$socid", '', $sortfield, $sortorder);
