@@ -185,27 +185,27 @@ abstract class ActionsContactCardCommon
 			// Civility
 			$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
-			// Keep legacy thirdparty defaults for non-postal contact fields only.
-			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
-				if (dol_strlen(trim($this->object->phone_pro)) == 0) {
-					$this->object->phone_pro = $objsoc->phone;
-				}
-				if (dol_strlen(trim($this->object->fax)) == 0) {
-					$this->object->fax = $objsoc->fax;
-				}
-				if (dol_strlen(trim($this->object->email)) == 0) {
-					$this->object->email = $objsoc->email;
-				}
-				$this->tpl['phone_pro'] = $this->object->phone_pro;
-				$this->tpl['fax'] = $this->object->fax;
+				// Keep legacy thirdparty defaults for non-postal contact fields only.
+				if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
+					if (dol_strlen(trim($this->object->phone_pro)) == 0) {
+						$this->object->phone_pro = (string) $objsoc->phone;
+					}
+					if (dol_strlen(trim($this->object->fax)) == 0) {
+						$this->object->fax = (string) $objsoc->fax;
+					}
+					if (dol_strlen(trim((string) $this->object->email)) == 0) {
+						$this->object->email = (string) $objsoc->email;
+					}
+					$this->tpl['phone_pro'] = $this->object->phone_pro;
+					$this->tpl['fax'] = $this->object->fax;
 				$this->tpl['email'] = $this->object->email;
-			}
+				}
 
-			// Zip
-			$this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+				// Zip
+				$this->tpl['select_zip'] = $formcompany->select_ziptown((string) $this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 
-			// Town
-			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+				// Town
+				$this->tpl['select_town'] = $formcompany->select_ziptown((string) $this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
 			if (dol_strlen(trim((string) $this->object->country_id)) == 0) {
 				$this->object->country_id = $objsoc->country_id;
@@ -288,22 +288,22 @@ abstract class ActionsContactCardCommon
 			}
 
 			$this->tpl['civility'] = $this->object->getCivilityLabel();
-			$effectiveaddressobject = $this->object->getEffectiveAddressObject();
+			$effectiveaddressfields = $this->object->getEffectiveAddressFields();
 
-			$this->tpl['address'] = dol_nl2br(dol_escape_htmltag((string) $effectiveaddressobject->address, 0, 1));
+			$this->tpl['address'] = dol_nl2br(dol_escape_htmltag($effectiveaddressfields['address'], 0, 1));
 
-			$this->tpl['zip'] = (!empty($effectiveaddressobject->zip) ? dol_escape_htmltag($effectiveaddressobject->zip).'&nbsp;' : '');
-			$this->tpl['town'] = dol_escape_htmltag((string) $effectiveaddressobject->town);
-			$this->tpl['departement'] = dol_escape_htmltag((string) $effectiveaddressobject->state);
+			$this->tpl['zip'] = (!empty($effectiveaddressfields['zip']) ? dol_escape_htmltag($effectiveaddressfields['zip']).'&nbsp;' : '');
+			$this->tpl['town'] = dol_escape_htmltag($effectiveaddressfields['town']);
+			$this->tpl['departement'] = dol_escape_htmltag($effectiveaddressfields['state']);
 
-			$img = picto_from_langcode((string) $effectiveaddressobject->country_code);
-			$this->tpl['country'] = ($img ? $img.' ' : '').dol_escape_htmltag((string) $effectiveaddressobject->country);
+			$img = picto_from_langcode($effectiveaddressfields['country_code']);
+			$this->tpl['country'] = ($img ? $img.' ' : '').dol_escape_htmltag($effectiveaddressfields['country']);
 
 			$this->tpl['phone_pro'] = dol_print_phone($this->object->phone_pro, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_perso'] = dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_mobile'] = dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['fax'] = dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] = dol_print_email($this->object->email, 0, $this->object->id, 1);
+			$this->tpl['email'] = dol_print_email((string) $this->object->email, 0, $this->object->id, 1);
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 

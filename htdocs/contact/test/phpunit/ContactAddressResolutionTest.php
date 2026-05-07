@@ -17,8 +17,9 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
+ * @phan-file-suppress PhanUndeclaredMethod
  */
-class ContactAddressResolutionTest extends PHPUnit\Framework\TestCase
+class ContactAddressResolutionTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
 	/**
 	 * @var Conf
@@ -47,7 +48,7 @@ class ContactAddressResolutionTest extends PHPUnit\Framework\TestCase
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);
+		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
 
 		global $conf, $db, $langs, $user;
 		$this->savconf = $conf;

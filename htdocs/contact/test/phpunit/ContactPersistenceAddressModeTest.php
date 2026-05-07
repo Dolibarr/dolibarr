@@ -18,8 +18,15 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanPluginUnknownMethodReturnType
+ * @phan-file-suppress PhanPluginUnknownMethodParamType
+ * @phan-file-suppress PhanTypeMismatchArgument
+ * @phan-file-suppress PhanTypeMismatchArgumentProbablyReal
  */
-class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase
+class ContactPersistenceAddressModeTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
 	/**
 	 * Create() must default to thirdparty address when a linked thirdparty exists.

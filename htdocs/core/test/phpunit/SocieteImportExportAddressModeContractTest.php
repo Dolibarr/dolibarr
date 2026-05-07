@@ -16,8 +16,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
+ * @phan-file-suppress PhanUndeclaredMethod
  */
-class SocieteImportExportAddressModeContractTest extends PHPUnit\Framework\TestCase
+class SocieteImportExportAddressModeContractTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
 	/**
 	 * @var Conf
@@ -51,7 +52,7 @@ class SocieteImportExportAddressModeContractTest extends PHPUnit\Framework\TestC
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);
+		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
 
 		global $conf, $db, $langs, $user, $mysoc;
 		$this->savconf = $conf;

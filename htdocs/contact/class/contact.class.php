@@ -752,7 +752,7 @@ class Contact extends CommonObject
 
 			if (!$error && $this->user_id > 0) {
 				// If contact is linked to a user
-				$effectiveaddressobject = $this->getEffectiveAddressObject();
+				$effectiveaddressfields = $this->getEffectiveAddressFields();
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
 				$usermustbemodified = 0;
@@ -764,24 +764,24 @@ class Contact extends CommonObject
 					$tmpobj->office_fax = $this->fax;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->address != (string) $effectiveaddressobject->address) {
-					$tmpobj->address = (string) $effectiveaddressobject->address;
+				if ($tmpobj->address != $effectiveaddressfields['address']) {
+					$tmpobj->address = $effectiveaddressfields['address'];
 					$usermustbemodified++;
 				}
-				if ($tmpobj->town != (string) $effectiveaddressobject->town) {
-					$tmpobj->town = (string) $effectiveaddressobject->town;
+				if ($tmpobj->town != $effectiveaddressfields['town']) {
+					$tmpobj->town = $effectiveaddressfields['town'];
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != (string) $effectiveaddressobject->zip) {
-					$tmpobj->zip = (string) $effectiveaddressobject->zip;
+				if ($tmpobj->zip != $effectiveaddressfields['zip']) {
+					$tmpobj->zip = $effectiveaddressfields['zip'];
 					$usermustbemodified++;
 				}
-				if ((int) $tmpobj->state_id != (int) $effectiveaddressobject->state_id) {
-					$tmpobj->state_id = (int) $effectiveaddressobject->state_id;
+				if ((int) $tmpobj->state_id != $effectiveaddressfields['state_id']) {
+					$tmpobj->state_id = $effectiveaddressfields['state_id'];
 					$usermustbemodified++;
 				}
-				if ((int) $tmpobj->country_id != (int) $effectiveaddressobject->country_id) {
-					$tmpobj->country_id = (int) $effectiveaddressobject->country_id;
+				if ((int) $tmpobj->country_id != $effectiveaddressfields['country_id']) {
+					$tmpobj->country_id = $effectiveaddressfields['country_id'];
 					$usermustbemodified++;
 				}
 				if ($tmpobj->email != $this->email) {
@@ -919,6 +919,29 @@ class Contact extends CommonObject
 	}
 
 	/**
+	 * Return normalized scalar fields for the effective postal address source.
+	 *
+	 * @param   Societe|null $thirdparty Preloaded thirdparty when already available
+	 * @return  array{address:string,zip:string,town:string,state_id:int,state_code:string,state:string,country_id:int,country_code:string,country:string}
+	 */
+	public function getEffectiveAddressFields(?Societe $thirdparty = null): array
+	{
+		$effectiveaddressobject = $this->getEffectiveAddressObject($thirdparty);
+
+		return array(
+			'address' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'address'),
+			'zip' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'zip'),
+			'town' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'town'),
+			'state_id' => $this->getCommonObjectIntProperty($effectiveaddressobject, 'state_id'),
+			'state_code' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'state_code'),
+			'state' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'state'),
+			'country_id' => $this->getCommonObjectIntProperty($effectiveaddressobject, 'country_id'),
+			'country_code' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'country_code'),
+			'country' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'country'),
+		);
+	}
+
+	/**
 	 * Return the effective full address string.
 	 *
 	 * @param   int<0,1> $withcountry Add country into address string
@@ -935,6 +958,38 @@ class Contact extends CommonObject
 		}
 
 		return $effectiveaddressobject->getFullAddress($withcountry, $sep, $withregion, $extralangcode);
+	}
+
+	/**
+	 * Read a string property from a common object with a stable fallback for static analysis.
+	 *
+	 * @param   CommonObject $object Source object
+	 * @param   string       $property Property name
+	 * @return  string
+	 */
+	private function getCommonObjectStringProperty(CommonObject $object, string $property): string
+	{
+		if (!property_exists($object, $property) || !isset($object->{$property})) {
+			return '';
+		}
+
+		return (string) $object->{$property};
+	}
+
+	/**
+	 * Read an integer property from a common object with a stable fallback for static analysis.
+	 *
+	 * @param   CommonObject $object Source object
+	 * @param   string       $property Property name
+	 * @return  int
+	 */
+	private function getCommonObjectIntProperty(CommonObject $object, string $property): int
+	{
+		if (!property_exists($object, $property) || !isset($object->{$property})) {
+			return 0;
+		}
+
+		return (int) $object->{$property};
 	}
 
 
@@ -1014,17 +1069,18 @@ class Contact extends CommonObject
 				$info["businessCategory"] = "Suppliers";
 			}
 		}
-		if (!empty($effectiveaddressobject->address) && getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')] = $effectiveaddressobject->address;
+		$effectiveaddressfields = $this->getEffectiveAddressFields();
+		if (!empty($effectiveaddressfields['address']) && getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')] = $effectiveaddressfields['address'];
 		}
-		if (!empty($effectiveaddressobject->zip) && getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')] = $effectiveaddressobject->zip;
+		if (!empty($effectiveaddressfields['zip']) && getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')] = $effectiveaddressfields['zip'];
 		}
-		if (!empty($effectiveaddressobject->town) && getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')] = $effectiveaddressobject->town;
+		if (!empty($effectiveaddressfields['town']) && getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')] = $effectiveaddressfields['town'];
 		}
-		if (!empty($effectiveaddressobject->country_code) && getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')] = $effectiveaddressobject->country_code;
+		if (!empty($effectiveaddressfields['country_code']) && getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')] = $effectiveaddressfields['country_code'];
 		}
 		if ($this->phone_pro && getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')] = $this->phone_pro;
@@ -1652,7 +1708,7 @@ class Contact extends CommonObject
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowContact")];
 		}
-		$effectiveaddressobject = $this->getEffectiveAddressObject();
+		$effectiveaddressfields = $this->getEffectiveAddressFields();
 
 		if (!empty($this->photo) && class_exists('Form')) {
 			$photo = '<div class="photointooltip floatright">';
@@ -1680,7 +1736,7 @@ class Contact extends CommonObject
 			$phonelist[] = dol_print_phone($this->phone_perso, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
 		}
 		$datas['phonelist'] = '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
-		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_escape_htmltag(dol_format_address($effectiveaddressobject, 1, ' ', $langs), 0, 1);
+		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_escape_htmltag(dol_format_address((object) $effectiveaddressfields, 1, ' ', $langs), 0, 1);
 
 		return $datas;
 	}

@@ -18,8 +18,10 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanTypeMismatchProperty
  */
-class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
+class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
 	/**
 	 * @var Conf
@@ -48,7 +50,7 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 	 */
 	public function __construct($name = '')
 	{
-		parent::__construct($name);
+		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
 
 		global $conf, $db, $langs, $user;
 		$this->savconf = $conf;
@@ -141,7 +143,7 @@ class UserCreateFromContactAddressTest extends PHPUnit\Framework\TestCase
 			 * @param User   $user Current user
 			 * @return int
 			 */
-			public function call_trigger($triggerName, $user)
+			public function call_trigger($triggerName, ?User $user = null)
 			{
 				return 1;
 			}

@@ -1665,7 +1665,7 @@ while ($i < $imaxinloop) {
 			$thirdpartyaddressobject->country = $obj->soc_country;
 			$thirdpartyaddressobject->country_code = $obj->soc_country_code;
 		}
-		$effectiveaddressobject = $contactstatic->getEffectiveAddressObject($thirdpartyaddressobject);
+		$effectiveaddressfields = $contactstatic->getEffectiveAddressFields($thirdpartyaddressobject);
 
 		// Show here line of result
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select"';
@@ -1744,7 +1744,7 @@ while ($i < $imaxinloop) {
 
 		// Address
 		if (!empty($arrayfields['p.address']['checked'])) {
-			print '<td>'.dolPrintHTML((string) $effectiveaddressobject->address).'</td>';
+			print '<td>'.dolPrintHTML($effectiveaddressfields['address']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1752,7 +1752,7 @@ while ($i < $imaxinloop) {
 
 		// Zip
 		if (!empty($arrayfields['p.zip']['checked'])) {
-			print '<td>'.dolPrintHTML((string) $effectiveaddressobject->zip).'</td>';
+			print '<td>'.dolPrintHTML($effectiveaddressfields['zip']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1760,14 +1760,14 @@ while ($i < $imaxinloop) {
 
 		// Town
 		if (!empty($arrayfields['p.town']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute((string) $effectiveaddressobject->town).'">'.dolPrintHTML((string) $effectiveaddressobject->town).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($effectiveaddressfields['town']).'">'.dolPrintHTML($effectiveaddressfields['town']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".dolPrintHTML((string) $effectiveaddressobject->state)."</td>\n";
+			print "<td>".dolPrintHTML($effectiveaddressfields['state'])."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1782,7 +1782,7 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
-			print dolPrintHTML((string) $effectiveaddressobject->country);
+			print dolPrintHTML($effectiveaddressfields['country']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

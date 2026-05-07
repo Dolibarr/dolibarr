@@ -60,7 +60,7 @@ $company = new Societe($db);
 if ($contact->socid) {
 	$result = $company->fetch($contact->socid);
 }
-$effectiveaddressobject = $contact->getEffectiveAddressObject(($company->id > 0 ? $company : null));
+$effectiveaddressfields = $contact->getEffectiveAddressFields(($company->id > 0 ? $company : null));
 
 // We create VCard
 $v = new vCard();
@@ -75,11 +75,11 @@ $v->setPhoneNumber($contact->phone_pro, "TYPE=WORK;VOICE");
 $v->setPhoneNumber($contact->phone_mobile, "TYPE=CELL;VOICE");
 $v->setPhoneNumber($contact->fax, "TYPE=WORK;FAX");
 
-$country = !empty($effectiveaddressobject->country_code) ? $effectiveaddressobject->country : '';
+$country = !empty($effectiveaddressfields['country_code']) ? $effectiveaddressfields['country'] : '';
 
-$v->setAddress("", "", $effectiveaddressobject->address, $effectiveaddressobject->town, $effectiveaddressobject->state, $effectiveaddressobject->zip, $country, "TYPE=WORK;POSTAL");
+$v->setAddress("", "", $effectiveaddressfields['address'], $effectiveaddressfields['town'], $effectiveaddressfields['state'], $effectiveaddressfields['zip'], $country, "TYPE=WORK;POSTAL");
 // @phan-suppress-next-line PhanDeprecatedFunction setLabel applies the old method, setAddress is the new method.
-$v->setLabel("", "", $effectiveaddressobject->address, $effectiveaddressobject->town, $effectiveaddressobject->state, $effectiveaddressobject->zip, $country, "TYPE=WORK");
+$v->setLabel("", "", $effectiveaddressfields['address'], $effectiveaddressfields['town'], $effectiveaddressfields['state'], $effectiveaddressfields['zip'], $country, "TYPE=WORK");
 
 $v->setEmail($contact->email);
 $v->setNote($contact->note);
