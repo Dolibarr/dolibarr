@@ -147,7 +147,7 @@ trait CommonPeople
 			$table_element = 'facture';
 		} elseif ($commerceType == 'supplier_proposal') {
 			$table_element = 'supplier_proposal';
-		} elseif ($commerceType == 'supplier_proposal') {
+		} elseif ($commerceType == 'order_supplier') {
 			$table_element = 'commande_fournisseur';
 		} elseif ($commerceType == 'invoice_supplier') {
 			$table_element = 'facture_fourn';
