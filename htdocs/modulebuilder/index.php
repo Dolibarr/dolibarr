@@ -277,7 +277,7 @@ function getLicenceHeader($user, $langs, $now)
  * Actions
  */
 
-if ($dirins && $action == 'initmodule' && $modulename) {		// permissions already checked
+if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
 	$modulename = dol_string_nounprintableascii(dol_string_unaccent(ucwords($modulename))); 		// Force first letter in uppercase
 	$destdir = '/not_set/';
 
@@ -1078,7 +1078,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 }
 
 // Init an object
-if ($dirins && $action == 'initobject' && $module && $objectname) {		// Permissions already checked
+if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on permission already done
 	$warning = 0;
 
 	$objectname = dol_string_nounprintableascii(dol_string_unaccent(ucwords($objectname))); 		// Force first letter in uppercase

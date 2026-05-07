@@ -66,7 +66,7 @@ Reports are processed around once a month.
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
 * The version to analyze must be the last version available in the "develop" branch. Also, reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.
-* Installation must be done properly for a production usage. This oncludes:
+* Installation must be done properly for a production usage. This includes:
 ** creation of the install.lock in the last step of installation process.
 ** $dolibarr_main_prod must be set to 1 in conf.php
 ** $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
