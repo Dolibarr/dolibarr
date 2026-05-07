@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,8 +246,8 @@ class CdavLib
 	 * getFullCalendarObjects
 	 *
 	 * @param int	 	$calendarId			Calendar id
-	 * @param int		$bCalendarData		Add calendar data
-	 * @return array|string[][]
+	 * @param int<0,1>	$bCalendarData		Add calendar data if not 0
+	 * @return array<array<string,int|string|false>>
 	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{

@@ -259,6 +259,9 @@ if ($action == 'delete') {
 $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
+if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+	$sql .= " (SELECT COUNT(*) FROM ".MAIN_DB_PREFIX."accounting_category_account aca WHERE aca.fk_accounting_account = aa.rowid) as nb_categories,";
+}
 $sql .= " aa.reconcilable, aa.centralized, aa.active, aa.import_key,";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 
@@ -448,6 +451,8 @@ if ($resql) {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+	print '<div class="neutral">';
+
 	// Box to select active chart of account
 	print $langs->trans("Selectchartofaccounts")." : ";
 	print '<select class="flat minwidth200" name="chartofaccounts" id="chartofaccounts">';
@@ -482,7 +487,7 @@ if ($resql) {
 	print ajax_combobox("chartofaccounts");
 	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button button-edit small" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
-	print '<br>';
+	print '</div>';
 
 	$parameters = array('chartofaccounts' => $chartofaccounts, 'permissiontoadd' => $permissiontoadd, 'permissiontodelete' => $permissiontodelete);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $accounting, $action); // Note that $action and $object may have been modified by hook
@@ -495,7 +500,7 @@ if ($resql) {
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -520,7 +525,7 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -581,7 +586,7 @@ if ($resql) {
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -596,7 +601,7 @@ if ($resql) {
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 		$totalarray['nbfield']++;
 	}
@@ -649,7 +654,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
@@ -668,7 +673,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center nowraponall">';
 			// if ($permissiontoadd) { // test is always true
 			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
@@ -761,9 +766,31 @@ if ($resql) {
 		}
 		// Custom accounts
 		if (!empty($arrayfields['categories']['checked'])) {
-			print '<td class="right">';
-			// TODO Get all custom groups labels the account is in
-			print dol_escape_htmltag($obj->fk_accounting_category);
+			print '<td>';
+
+			if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+				// Multi report system
+				if (!empty($obj->nb_categories)) {
+					$accountingcategory_temp = new AccountancyCategory($db);
+					$categories = $accountingcategory_temp->getCategoriesForAccount($obj->rowid);
+
+					$categoriesLabels = array();
+					foreach ($categories as $cat) {
+						$categoriesLabels[] = '<span class="badge badge-status4" title="'.dol_escape_htmltag($cat['label']).'">'.dol_escape_htmltag($cat['code']).'</span>';
+					}
+					print implode(' ', $categoriesLabels);
+				} else {
+					print '<span class="opacitymedium">-</span>';
+				}
+			} else {
+				// OLD SYSTEM: One-to-many
+				if (!empty($obj->fk_accounting_category)) {
+					print dol_escape_htmltag($obj->fk_accounting_category);
+				} else {
+					print '<span class="opacitymedium">-</span>';
+				}
+			}
+
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -840,7 +867,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center nowraponall">';
 			// if ($permissiontoadd) { // test is always true
 			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param.'&page='.$page).'">';

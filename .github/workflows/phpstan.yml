@@ -45,7 +45,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none # disable xdebug, pcov
-          tools: phpstan:2.1.12, cs2pr
+          tools: phpstan:2.1.12, cs2pr:1.8.6
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
             mysql, pgsql, sqlite3, ldap, xml, mcrypt
 
@@ -89,16 +89,28 @@ jobs:
       # Run PHPStan
       - name: Run PHPStan
         id: phpstan
-        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
+        # Proceed when:
+        #   - the action is not cancelled
+        #  AND
+        #   - the branch is an integration branch (no merge), or,
+        #   - the merge from branch contains 'phpstan_full', or,
+        #   - there are changes in PHP files.
+        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phpstan_full') || steps.changed-php.outputs.any_changed == 'true') }}
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         # shellcheck disable=2086
         run: |
           # shellcheck disable=2086
           > /tmp/phpstan-files.txt
-          echo "$ALL_CHANGED_FILES" >> /tmp/phpstan-files.txt
-          cat /tmp/phpstan-files.txt
-          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
+          if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" == *.0 ]]|| [[ "${{ github.head_ref }}" == *"phpstan_full"* ]] ; then
+            # Run on all files in integration branch
+            phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
+
+          else
+            echo "$ALL_CHANGED_FILES" >> /tmp/phpstan-files.txt
+            cat /tmp/phpstan-files.txt
+            phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
+          fi
         # continue-on-error: true
 
       # Save cache
@@ -110,7 +122,7 @@ jobs:
           key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
             github.run_id }}
       - name: Provide phpstan log as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: phpstan-srcrt

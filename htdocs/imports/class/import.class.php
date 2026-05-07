@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2011		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2020		Ahmad Jamaly Rabib		<rabib@metroworks.co.jp>
- * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+/* Copyright (C) 2011       Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
+ * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Alexandre Spangaro	<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,7 +285,7 @@ class Import
 						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
-						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
+						// Table of conversion rules for a value from another source (key=field, value=array of rules)
 						$this->array_import_convertvalue[$i] = (isset($module->import_convertvalue_array[$r]) ? $module->import_convertvalue_array[$r] : '');
 						// Sql request to run after import
 						$this->array_import_run_sql_after[$i] = (isset($module->import_run_sql_after_array[$r]) ? $module->import_run_sql_after_array[$r] : '');
@@ -335,16 +335,16 @@ class Import
 		$outputlangs = $langs; // Lang for output
 		$s = '';
 
-		// Genere en-tete
+		// Generate header
 		$s .= $objmodel->write_header_example($outputlangs);
 
-		// Genere ligne de titre
+		// Generate title line
 		$s .= $objmodel->write_title_example($outputlangs, $headerlinefields);
 
-		// Genere ligne de titre
+		// Generate record line
 		$s .= $objmodel->write_record_example($outputlangs, $contentlinevalues);
 
-		// Genere pied de page
+		// Generate footer
 		$s .= $objmodel->write_footer_example($outputlangs);
 
 		return $s;

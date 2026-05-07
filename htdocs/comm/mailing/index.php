@@ -170,9 +170,10 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
 $limit = 10;
 $sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat, m.messtype";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql .= " WHERE m.entity = ".$conf->entity;
+$sql .= " WHERE m.entity = ".((int) $conf->entity);
 $sql .= " ORDER BY m.date_creat DESC";
-$sql .= " LIMIT ".$limit;
+$sql .= $db->plimit($limit);
+
 $result = $db->query($sql);
 if ($result) {
 	print '<div class="div-table-responsive-no-min">';

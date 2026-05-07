@@ -2,8 +2,9 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Charlene Benke          <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -366,11 +367,14 @@ class FormListWebPortal
 	}
 
 	/**
-	 * set SQL request
+	 * Set SQL request
 	 *
+	 * @param	string	$sqlSelect		[=''] Add more fields in SQL select
+	 * @param	string	$sqlBody		[=''] Add more fields in SQL where
+	 * @param 	string	$sqlOrder		[=''] Add more fields in SQL order by
 	 * @return	void
 	 */
-	public function setSqlRequest()
+	public function setSqlRequest($sqlSelect = '', $sqlBody = '', $sqlOrder = '')
 	{
 		global $hookmanager;
 
@@ -384,8 +388,11 @@ class FormListWebPortal
 			if ($this->object->ismultientitymanaged == 1) {
 				$this->sql_select .= ", t.entity as element_entity, t.entity";
 			}
+			$this->sql_select .= $sqlSelect;
 			// Add fields from hooks
-			$parameters = array();
+			$parameters = array(
+				'sql_select' => &$this->sql_select,
+			);
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $context);
 			$this->sql_select .= $hookmanager->resPrint;
 			$this->sql_select = preg_replace('/,\s*$/', '', $this->sql_select);
@@ -455,8 +462,11 @@ class FormListWebPortal
 			if (!empty($this->search_all) && !empty($this->fields_to_search_all)) {
 				$this->sql_body .= natural_search(array_keys($this->fields_to_search_all), $this->search_all);
 			}
+			$this->sql_body .= $sqlBody;
 			// Add where from hooks
-			$parameters = array();
+			$parameters = array(
+				'sql_body' => &$this->sql_body,
+			);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $context);
 			$this->sql_body .= $hookmanager->resPrint;
 
@@ -466,6 +476,13 @@ class FormListWebPortal
 			$this->offset = $this->limit * ($this->page - 1);
 
 			$this->sql_order = $this->db->order($this->sortfield, $this->sortorder);
+			$this->sql_order .= $sqlOrder;
+			// Add order by from hooks
+			$parameters = array(
+				'sql_order' => &$this->sql_order,
+			);
+			$reshook = $hookmanager->executeHooks('printFieldListOrderBy', $parameters, $context);
+
 			if ($this->limit) {
 				$this->sql_order .= $this->db->plimit($this->limit, $this->offset);
 			}
@@ -563,8 +580,16 @@ class FormListWebPortal
 		if (!empty($field_spec['arrayofkeyval']) && is_array($field_spec['arrayofkeyval'])) {
 			$out = $this->form->selectarray('search_' . $field_key, $field_spec['arrayofkeyval'], (isset($this->search[$field_key]) ? $this->search[$field_key] : ''), $field_spec['notnull'], 0, 0, '', 1, 0, 0, '', '');
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $field_spec['type'])) {
-			$postDateStart = dol_mktime(0, 0, 0, (int) $this->search[$field_key . '_dtstartmonth'], (int) $this->search[$field_key . '_dtstartday'], (int) $this->search[$field_key . '_dtstartyear']);
-			$postDateEnd = dol_mktime(0, 0, 0, (int) $this->search[$field_key . '_dtendmonth'], (int) $this->search[$field_key . '_dtendday'], (int) $this->search[$field_key . '_dtendyear']);
+			$postDateStart = dol_mktime(0, 0, 0,
+					(int) isset($this->search[$field_key . '_dtstartmonth']) ? $this->search[$field_key . '_dtstartmonth'] : 0,
+					(int) isset($this->search[$field_key . '_dtstartday']) ? $this->search[$field_key . '_dtstartday'] : 0,
+					(int) isset($this->search[$field_key . '_dtstartyear']) ? $this->search[$field_key . '_dtstartyear'] : 0
+				);
+			$postDateEnd = dol_mktime(0, 0, 0,
+					(int) isset($this->search[$field_key . '_dtendmonth']) ? $this->search[$field_key . '_dtendmonth'] : 0,
+					(int) isset($this->search[$field_key . '_dtendday']) ? $this->search[$field_key . '_dtendday'] : 0,
+					(int) isset($this->search[$field_key . '_dtendyear']) ? $this->search[$field_key . '_dtendyear'] : 0
+				);
 
 			$out = '<div class="grid width150">';
 			$out .= $this->form->inputDate('search_' . $field_key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2025		Alice Adminson				<myemail@mycompany.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -558,8 +558,9 @@ class TriggerHistory extends CommonObject
 		$label .= ' '.$this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$url = dol_buildpath('/webhook/triggerhistory_card.php', 1).'?id='.$this->id;
 
+		$baseurl = DOL_DOCUMENT_ROOT.'/webhook/triggerhistory_card.php';
+		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -567,9 +568,10 @@ class TriggerHistory extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query += ['save_lastsearch_values' => 1];
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {

@@ -986,7 +986,6 @@ MailToSendProposal=Propositions clients
 MailToSendOrder=Commandes
 MailToSendSupplierOrder=Acheter en ligne
 MailToSendSupplierInvoice=Factures fournisseurs
-MailToExpenseReport=Note de frais
 MailToMember=Membres
 MailToTicket=Des billets
 ByDefaultInList=Afficher par défaut sur la liste vue

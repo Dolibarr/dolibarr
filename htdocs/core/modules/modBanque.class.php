@@ -60,7 +60,7 @@ class modBanque extends DolibarrModules
 		$this->picto = 'account';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/banque/temp");
+		$this->dirs = array("/bank/temp");
 
 		// Config pages
 		//-------------

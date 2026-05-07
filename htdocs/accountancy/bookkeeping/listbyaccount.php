@@ -494,6 +494,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 
 	global $error;
+	/** @var int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
@@ -504,7 +505,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 			}
 		}
 
@@ -518,16 +519,16 @@ if (empty($reshook)) {
 						$nbok++;
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
-						$error++;
+						$error += 1;
 						break;
 					}
 				} elseif ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
+					$error += 1;
 					break;
 				} elseif (isset($object->date_validation) && $object->date_validation != '') {
 					setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
-					$error++;
+					$error += 1;
 					break;
 				}
 			}
@@ -556,7 +557,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newCloneMass($toselect, $journal_code, $massdate);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if ($error) {
 			$db->commit();
@@ -571,7 +572,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->assignAccountMass($toselect, (int) $account);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if (!$error) {
 			$db->commit();
@@ -586,7 +587,7 @@ if (empty($reshook)) {
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newReturnAccount($toselect, $journal_code, $massdate);
 		if ($result == -1) {
-			$error++;
+			$error += 1;
 		}
 		if (!$error) {
 			$db->commit();
@@ -604,7 +605,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 				$nb_lettering = max(0, abs($nb_lettering) - 2);
 			} elseif ($nb_lettering == 0) {
 				$nb_lettering = 0;
@@ -645,7 +646,7 @@ if (empty($reshook)) {
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
-				$error++;
+				$error += 1;
 				$nb_lettering = max(0, abs($nb_lettering) - 2);
 			} elseif ($nb_lettering == 0) {
 				$nb_lettering = 0;
@@ -817,7 +818,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 	if ($nbtotalofrecords < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		$error++;
+		$error += 1;
 	}
 }
 
@@ -970,7 +971,7 @@ if ($massaction == 'preunletteringauto') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -995,21 +996,13 @@ $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
 if ($type == 'sub') {
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
-	} else {
-		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_start" value="'.dol_escape_htmltag($search_accountancy_code_start).'" placeholder="'.$langs->trans('From').'">';
-	}
+	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
 }
 $moreforfilter .= ' ';
 if ($type == 'sub') {
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
-	} else {
-		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_end" value="'.dol_escape_htmltag($search_accountancy_code_end).'" placeholder="'.$langs->trans('to').'">';
-	}
+	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }
@@ -1072,7 +1065,7 @@ print '<table class="tagtable liste centpercent listwithfilterbefore">';
 // Filters lines
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1171,7 +1164,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1180,7 +1173,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['t.piece_num']['checked'])) {
@@ -1227,7 +1220,7 @@ if (!empty($arrayfields['t.import_key']['checked'])) {
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print "</tr>\n";
@@ -1266,7 +1259,7 @@ if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
 if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
 if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
 if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	$colspan++;
 	$colspanend--;
 }
@@ -1283,7 +1276,7 @@ while ($i < min($num, $limit)) {
 
 	$colspan = 0;			// colspan before field 'label of operation'
 	$colspanend = 0;		// colspan after debit/credit
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		$colspan++;
 	}
 	if (!empty($arrayfields['t.piece_num']['checked'])) {
@@ -1324,7 +1317,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['t.import_key']['checked'])) {
 		$colspanend++;
 	}
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		$colspan++;
 		$colspanend--;
 	}
@@ -1404,7 +1397,7 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowraponall center">';
 		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -1620,7 +1613,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowraponall center">';
 		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;

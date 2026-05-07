@@ -12,6 +12,7 @@
 -- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
 -- Copyright (C) 2020-2025 Udo Tamm       	    <dev@dolibit.de>
 -- Copyright (C) 2022      Miro Sertić       	<miro.sertic0606@gmail.com>
+-- Copyright (C) 2026      Laurent Dinclaux     <laurent@gecka.nc>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -445,3 +446,53 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12331',
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12332', '公益財団法人');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12333', '合同会社');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12399', '個人又はその他の法人');
+
+
+-- New Caledonia (id pays=165)
+-- Based on French legal forms + GDPL (Groupement de Droit Particulier Local)
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16501', 'GDPL - Groupement de Droit Particulier Local');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16502', 'GDPL foncier');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16503', 'GDPL économique');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16504', 'GDPL social');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16505', 'GDPL culturel');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16509', 'Organisme de placement collectif en valeurs mobilières sans personnalité morale');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16510', 'Entrepreneur individuel');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16521', 'Indivision');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16522', 'Société créée de fait');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16523', 'Société en participation');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16524', 'Fiducie');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16529', 'Autre groupement de droit privé non doté de la personnalité morale');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16531', 'Personne morale de droit étranger, immatriculée au RCS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16532', 'Personne morale de droit étranger, non immatriculée au RCS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16541', 'Etablissement public ou régie à caractère industriel ou commercial');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16551', 'Société coopérative commerciale particulière');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16552', 'Société en nom collectif');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16553', 'Société en commandite');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16554', 'Société à responsabilité limitée (SARL)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16555', 'Société anonyme à conseil d''administration');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16556', 'Société anonyme à directoire');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16557', 'Société par actions simplifiée (SAS)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16558', 'SCIC - Société coopérative d''intérêt collectif');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16559', 'SARL unipersonnelle (SARLU)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16560', 'SAS unipersonnelle (SASU)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16562', 'Groupement d''intérêt économique (GIE)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16563', 'Société coopérative agricole');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16564', 'Société d''assurance mutuelle');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16565', 'Société civile');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16566', 'Société publiques locales');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16567', 'SELARL - Société d''exercice libéral à responsabilité limitée');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16568', 'SELAS - Société d''exercice libéral par actions simplifiée');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16569', 'Autre personne morale de droit privé inscrite au RCS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16571', 'Administration de l''état');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16572', 'Collectivité territoriale');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16573', 'Etablissement public administratif');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16574', 'Personne morale de droit public administratif');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16581', 'Organisme gérant régime de protection social à adhésion obligatoire');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16582', 'Organisme mutualiste');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16583', 'Comité d''entreprise');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16584', 'Organisme professionnel');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16585', 'Organisme de retraite à adhésion non obligatoire');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16591', 'Syndicat de propriétaires');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16592', 'Association loi 1901 ou assimilé');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16593', 'Fondation');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (165, '16599', 'Autre personne morale de droit privé');

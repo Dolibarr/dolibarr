@@ -72,8 +72,11 @@ $withproject = GETPOSTINT('withproject');
 $fk_project = GETPOSTINT('fk_project') ? GETPOSTINT('fk_project') : GETPOSTINT('projectid');
 $projectid = $fk_project;
 $projectref = GETPOST('projectref');
+$withthirdparty = GETPOSTINT('withthirdparty');
+$thirdpartyid  = GETPOSTINT('thirdpartyid');
 
 $withProjectUrl = '';
+$withThirdpartyUrl = '';
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -94,7 +97,11 @@ $project = new Project($db);
 $projectstatic = new Project($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('conferenceorboothattendeelist')); // Note that conf->hooks_modules contains array
+if ($thirdpartyid > 0) {
+	$hookmanager->initHooks(array('thirdpartyattendee', 'globalcard'));
+} else {
+	$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
+}
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -306,6 +313,9 @@ if ($object->ismultientitymanaged == 1) {
 if (!empty($projectstatic->id)) {
 	$sql .= " AND t.fk_project = ".((int) $projectstatic->id);
 }
+if (!empty($thirdpartyid)) {
+	$sql .= " AND t.fk_soc = ".((int) $thirdpartyid);
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -400,7 +410,74 @@ if ($confOrBooth->id > 0) {
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
+// Copied almost verbertum from htdocs/ticket/list.php and modified based on the project one below
+if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
+	$withThirdpartyUrl = '';
 
+	if (!empty($withthirdparty)) {
+		// Tabs for thirdparty
+		$tab = 'eventorganisation';	// yes, it is called eventorganisation with s here and eventorganization with z elsewhere :-(
+		$withThirdpartyUrl = "&withthirdparty=1";
+
+		$socstat = new Societe($db);
+		$res = $socstat->fetch($thirdpartyid);
+		if ($res > 0) {
+			$tmpobject = $object;
+			$object = $socstat; // $object must be of type Societe when calling societe_prepare_head
+			$head = societe_prepare_head($socstat, 'attendees');
+			$object = $tmpobject;
+
+			print dol_get_fiche_head($head, 'eventorganization', $langs->trans("ThirdParty"), -1, 'company');
+
+			dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+
+			print '<div class="fichecenter">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border centpercent tableforfield">';
+
+			// Type Prospect/Customer/Supplier
+			print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print $socstat->getTypeUrl(1);
+			print '</td></tr>';
+
+			// Customer code
+			if ($socstat->client && !empty($socstat->code_client)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('CustomerCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
+				$tmpcheck = $socstat->check_codeclient();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
+			}
+			// Supplier code
+			if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('SupplierCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
+				$tmpcheck = $socstat->check_codefournisseur();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
+			}
+
+			print '</table>';
+			print '</div>';
+			print dol_get_fiche_end();
+
+			if (empty($confOrBooth->id)) {
+				$head = conferenceorboothThirdpartyPrepareHead($socstat);
+				$tab = 'attendees';
+				print dol_get_fiche_head($head, $tab, $langs->trans("ThirdParty"), -1, 'company', 0, '', 'reposition');
+			}
+		}
+	}
+}
 
 if ($projectstatic->id > 0 || $confOrBooth > 0) {
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
@@ -826,7 +903,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -839,7 +916,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -888,7 +965,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -903,7 +980,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -931,7 +1008,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -988,7 +1065,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1063,7 +1140,7 @@ while ($i < $imaxinloop) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
