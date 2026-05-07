@@ -2883,3 +2883,5 @@ WebHooksSupportExternalUrlOnly=Webhooks support external URL only. Set $dolibarr
 DetailOfLines=Detail of lines
 AllFeatures=All features
 DataWillBeRefreshedEvery=Data will be refreshed only once every %s, instead of being recalculated at each access.
+DebugOnInFile=Dedicated debug file is on (%s)
+DebugOff=Dedicated debug file off
