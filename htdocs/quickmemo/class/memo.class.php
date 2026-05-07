@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1237,7 +1238,7 @@ class Memo extends CommonObject
 	 * @param mixed $color the color to check
 	 * @return bool
 	 */
-	static public function checkColor($color)
+	public static function checkColor($color)
 	{
 		if (!is_string($color)) {
 			return false;
@@ -1255,7 +1256,7 @@ class Memo extends CommonObject
 	 *
 	 * @return string[]
 	 */
-	static public function getColorPreset()
+	public static function getColorPreset()
 	{
 
 		$colorsConf = getDolGlobalString('QUICKMEMO_COLORS_PRESET');
@@ -1311,7 +1312,7 @@ class Memo extends CommonObject
 
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'memoContext' =>& $memoContext
+			'memoContext' => & $memoContext
 		);
 
 		$reshook = $hookmanager->executeHooks('getMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -1329,7 +1330,7 @@ class Memo extends CommonObject
 	 *
 	 * @return void
 	 */
-	static public function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
+	public static function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
 	{
 		$dolibarrContext = trim($dolibarrContext) ?: $tabContext;
 
@@ -1401,7 +1402,9 @@ class Memo extends CommonObject
 		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats']; // for common object
 		$modules = ['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract', 'product', 'shipping'];
 		foreach ($modules as $module) {
-			if (!isModEnabled($module) && $onlyActiveModules) { continue; }
+			if (!isModEnabled($module) && $onlyActiveModules) {
+				continue;
+			}
 
 			$moduleClean = str_replace('_', '', $module);
 
@@ -1423,7 +1426,7 @@ class Memo extends CommonObject
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'contextTabMapping' =>& $contextTabMapping,
+			'contextTabMapping' => & $contextTabMapping,
 			'onlyActiveModules' => $onlyActiveModules
 		);
 
@@ -1451,9 +1454,9 @@ class Memo extends CommonObject
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'list' =>& $list
+			'list' => & $list
 		);
-		$object = null;
+		$object = null;  // @phan-suppress-next-line PhanPluginConstantVariableNull
 		$reshook = $hookmanager->executeHooks('getAvailableMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$list = $hookmanager->resArray;
@@ -1462,9 +1465,15 @@ class Memo extends CommonObject
 		// Security check
 		$result = [];
 		foreach ($list as $k => $v) {
-			if (!is_string($v)) { continue; }
-			if (strlen($v) > 64) { continue; }
-			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) { continue; }
+			if (!is_string($v)) {
+				continue;
+			}
+			if (strlen($v) > 64) {
+				continue;
+			}
+			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) {
+				continue;
+			}
 			$result[] = $v;
 		}
 
@@ -1495,8 +1504,8 @@ class Memo extends CommonObject
 			  AND (m.private = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
 		$obj = $this->db->getRow($sql);
@@ -1534,11 +1543,11 @@ class Memo extends CommonObject
           AND (COALESCE(m.private, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
-		$sql.= ' ORDER BY COALESCE(mu.pos_z, m.pos_z) ASC';
+		$sql .= ' ORDER BY COALESCE(mu.pos_z, m.pos_z) ASC';
 		return $sql;
 	}
 
@@ -1572,11 +1581,11 @@ class Memo extends CommonObject
 			//$sql.= ' AND (m.context_tab = \''.$this->db->escape($context_tab).'\' OR m.element_type = \'\' ) ';
 		}
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
-		$sql.= " ORDER BY m.rank_tpl DESC, m.rowid ASC  "; // Due to multiple type of sort panel  rank_tpl is reversed higher is first and  rowid ASC to keep last add is last
+		$sql .= " ORDER BY m.rank_tpl DESC, m.rowid ASC  "; // Due to multiple type of sort panel  rank_tpl is reversed higher is first and  rowid ASC to keep last add is last
 
 		return $sql;
 	}
@@ -1629,7 +1638,7 @@ class Memo extends CommonObject
 			return false;
 		}
 
-		if (defined('NOREQUIRETRAN') || empty($user) || empty($user->id) || (int) $user->socid> 0 ) {
+		if (defined('NOREQUIRETRAN') || empty($user) || empty($user->id) || (int) $user->socid > 0) {
 			return false;
 		}
 
@@ -1727,7 +1736,7 @@ class Memo extends CommonObject
 	 *
 	 * @return stdClass
 	 */
-	static public function getJsMemoDefault()
+	public static function getJsMemoDefault()
 	{
 		$memo = new stdClass();
 		$memo->id = null;
