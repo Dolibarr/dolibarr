@@ -236,7 +236,7 @@ abstract class CommonClassTest extends TestCase
 					echo $line . "\n";
 				}
 			} else {
-				echo "Error: File $logFile does not exist or is not readable.\n";
+				echo "File $logFile does not exist or is not readable.\n";
 			}
 		}
 

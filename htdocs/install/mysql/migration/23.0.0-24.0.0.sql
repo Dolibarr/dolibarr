@@ -513,5 +513,7 @@ UPDATE llx_socpeople SET fax = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(fax, ' ',
 
 --ALTER TABLE llx_facture ADD COLUMN retained_warranty_amount double(24,8) DEFAULT NULL AFTER retained_warranty;
 
+-- Add personal_data flag on extrafields for GDPR/nLPD/LGPD compliance
+ALTER TABLE llx_extrafields ADD COLUMN personal_data tinyint DEFAULT 0 AFTER csslist;
 
 -- end of migration
