@@ -528,7 +528,7 @@ class Lettering extends BookKeeping
 		$sql .= "   SELECT aa.rowid, aa.account_number";
 		$sql .= "   FROM " . $this->db->prefix() . "accounting_account AS aa";
 		$sql .= "   INNER JOIN " . $this->db->prefix() . "accounting_system AS asys ON asys.pcg_version = aa.fk_pcg_version";
-		$sql .= "   WHERE asys.rowid = ".$pcgId." AND aa.reconcilable";
+		$sql .= "   WHERE asys.rowid = ".(int) $pcgId." AND aa.reconcilable";
 		$sql .= " ) AS reconciliable_accounts ON reconciliable_accounts.account_number = ab.numero_compte";
 		$sql .= " WHERE ab.rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND reconciliable_accounts.rowid IS NULL";
 
