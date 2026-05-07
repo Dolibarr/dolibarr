@@ -58,10 +58,10 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase. If there is carriage return or line feed in original message, keep them.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one, just fix spelling and grammar errors. Answer with the corrected text and only the corrected text with no comment and explanation.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
 	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are the proofreader, please write your response in the same language as the original text in order to correct spelling and grammar errors.';
 
 
 	/**
@@ -138,7 +138,7 @@ class Ai
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
-			} else {	// if $function == 'docparsing', ...
+			} else {	// if $function == 'docparsing', 'text...', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
 			}
@@ -165,7 +165,7 @@ class Ai
 			} elseif ($function == 'docparsing') {
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]['default']);
 			} else {
-				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
+				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize', 'textrephraser', 'textspellchecker', ...
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
 			}
 		}
@@ -231,6 +231,9 @@ class Ai
 			}
 			if (empty($prePrompt) && $function == 'textrephraser') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER;
+			}
+			if (empty($prePrompt) && $function == 'textspellchecker') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER;
 			}
 			if (empty($prePrompt) && $function == 'docparsing') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_DOC_PARSING;
