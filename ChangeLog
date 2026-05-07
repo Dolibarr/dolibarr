@@ -25,7 +25,7 @@ The following changes may create regressions for some external modules, but were
 * Login API are off by default (API must be used with the bearer token). Must set API_ENABLE_LOGIN_API to have them enabled.
 * Renamed hidden var DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID into DEPOSIT_CAN_BE_CONVERTED_AS_AVAILABLE_CREDIT_EVEN_IF_NOT_YET_PAID
 * The substitution variable __MYCOUNTRY_ID__ has been removed (duplicate of standard __MYCOMPANY_COUNTRY_ID__).
-
+* Renamed hook "info_admin" into "messageOfTheDay".
 
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
