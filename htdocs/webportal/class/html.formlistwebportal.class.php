@@ -696,8 +696,11 @@ class FormListWebPortal
 					$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
 					$out = $this->form->getDocumentsLink($element, $filename, $filedir);
 				} elseif ($field_key == 'signature_link') {
-					if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
-						$out = $this->form->getSignatureLink('proposal', $this->object);
+					$webobject = $this->object;	// Intermediate var to help with typing.
+					/** @var WebPortalPropal|WebPortalOrder|WebPortalInvoice $webobject */
+					'@phan-var-force WebPortalPropal|WebPortalOrder|WebPortalInvoice $webobject';
+					if ($webobject->fk_statut == Propal::STATUS_VALIDATED) {
+						$out = $this->form->getSignatureLink('proposal', $webobject);
 					}
 				} else {
 					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');
