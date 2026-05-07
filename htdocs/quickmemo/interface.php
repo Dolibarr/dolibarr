@@ -876,7 +876,7 @@ function quickMemoIntefaceActionListModels($jsonResponse)
 		$default->shared_on_element = 0;
 		$default->private = 0;
 		$default->user_name =  $user->getFullName($langs);
-		$default->date_creation =  dol_print_date(dol_now());
+		$default->date_creation =  dol_print_date(dol_now(), '', 'tzuserrel');
 		$default->date_change =  '';
 		$default->user_change_name = '';
 
@@ -988,10 +988,10 @@ function quickMemoInterfacePopulateMemoFromQueryObj($obj)
 
 	$memo->shared_on_element = $obj->shared_on_element;
 	$memo->private = (int) $obj->private;
-	$memo->date_creation = dol_print_date($obj->date_creation, '%d/%m/%Y %H:%M');
+	$memo->date_creation = dol_print_date($obj->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel');
 	$memo->date_change =  '';
 	if (!empty($obj->tms) && ((int) $obj->date_creation !== (int) $obj->tms || (int) $obj->fk_user_modif > 0)) {
-		$memo->date_change = dol_print_date($obj->tms, '%d/%m/%Y %H:%M');
+		$memo->date_change = dol_print_date($obj->tms, '%d/%m/%Y %H:%M', 'tzuserrel');
 	}
 
 	$memo->fk_user_creat = $obj->fk_user_creat;
@@ -1041,10 +1041,9 @@ function quickMemoInterfacePopulateMemoTplFromQueryObj($obj)
 
 	$memo->shared_on_element = $obj->shared_on_element;
 	$memo->private = (int) $obj->private;
-	$memo->date_creation = dol_print_date($obj->date_creation, '%d/%m/%Y %H:%M');
+	$memo->date_creation = dol_print_date($obj->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel');
 	$memo->fk_user_creat = $user->id;
 	$memo->user_name =  $user->getFullName($langs);
-	$memo->date_creation =  dol_print_date(dol_now());
 	$memo->date_change =  '';
 	$memo->user_change_name = '';
 
