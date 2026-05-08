@@ -1785,7 +1785,15 @@ class ExtraFields
 					// print $sql;
 
 					$sql .= $sqlwhere;
-					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+//Pour correspondre à ce qui est prévu
+// 7 : sort by (to be close to common object)
+					if (empty($InfoFieldList[7])) {
+                        $sql .= ' ORDER BY '.implode(', ', $fields_label);
+                        }
+                    else
+                        {
+                        $sql .= ' ORDER BY '.$InfoFieldList[7];
+                        }
 
 					dol_syslog(get_class($this).'::showInputField type=chkbxlst', LOG_DEBUG);
 					$resql = $this->db->query($sql);
