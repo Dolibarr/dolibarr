@@ -712,7 +712,7 @@ class Lettering extends BookKeeping
 		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
 		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
 		$sql .= "   AND fy.entity = " . (int) $conf->entity;
-		$sql .= " WHERE ab.rowid IN (" . $idlist . ")";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
 		$sql .= " AND ab.matching_general = 1";
 		$sql .= " AND ab.lettering_code IS NOT NULL AND ab.lettering_code != ''";
 
