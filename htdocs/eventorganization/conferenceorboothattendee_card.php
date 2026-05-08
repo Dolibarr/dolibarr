@@ -645,6 +645,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
+    $chain = $object->getReplacementChain();
+	print '<!-- getReplacementChain -->';
+    if (!empty($chain)) {
+        print '<tr><td class="titlefield">Replaces Chain:</td><td>';
+        // Re-use your showOutputField logic or print directly
+        $html = '';
+        foreach ($chain as $index => $person) {
+            if ($index > 0) $html .= ' &rarr; ';
+            $html .= $person->getNomUrl(1, '', 0, '', -1, array('firstname', ' ', 'lastname'));
+        }
+        print $html;
+        print '</td></tr>';
+    }
+
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
