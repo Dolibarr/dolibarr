@@ -8,7 +8,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020-2021  Udo Tamm					<dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,6 +376,7 @@ $listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $lang
 
 $title = $langs->trans('Leave');
 $help_url = 'EN:Module_Holiday';
+$errors = array();
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_group');
 

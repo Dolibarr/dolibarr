@@ -976,6 +976,7 @@ class BookKeeping extends CommonObject
 			$sql .= " t.sens,";
 			$sql .= " t.multicurrency_amount,";
 			$sql .= " t.multicurrency_code,";
+			$sql .= " t.matching_general,";
 			$sql .= " t.lettering_code,";
 			$sql .= " t.date_lettering,";
 			$sql .= " t.fk_user_author,";
@@ -1104,6 +1105,7 @@ class BookKeeping extends CommonObject
 					$line->sens = $obj->sens;
 					$line->multicurrency_amount = $obj->multicurrency_amount;
 					$line->multicurrency_code = $obj->multicurrency_code;
+					$line->matching_general = (bool) $obj->matching_general;
 					$line->lettering_code = $obj->lettering_code;
 					$line->date_lettering = $this->db->jdate($obj->date_lettering);
 					$line->fk_user_author = $obj->fk_user_author;
@@ -3945,6 +3947,11 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var string Sens
 	 */
 	public $sens;
+
+	/**
+	 * @var bool
+	 */
+	public $matching_general;
 
 	/**
 	 * @var ?string

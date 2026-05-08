@@ -2104,10 +2104,11 @@ if ($action == 'create') {
 			print "</table>";
 			print '</div>';
 
+			print '<div class="clearboth"></div>';
 			print '</div>';
 
 
-			print '<div class="clearboth"></div><br><br>';
+			print '<br><br>';
 
 			print '<div style="clear: both;"></div>';
 

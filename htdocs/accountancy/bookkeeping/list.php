@@ -245,7 +245,14 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'preunletteringauto' && $massaction != 'preunletteringmanual' && $massaction != 'predeletebookkeepingwriting' && $massaction != 'preclonebookkeepingwriting' && $massaction != 'preassignaccountbookkeepingwriting' && $massaction != 'prereturnaccountbookkeepingwriting') {
+if (!GETPOST('confirmmassaction', 'alpha') &&
+	!in_array($massaction, [
+		'pregeneralunmatchingmanual',
+		'predeletebookkeepingwriting',
+		'preclonebookkeepingwriting',
+		'preassignaccountbookkeepingwriting',
+		'prereturnaccountbookkeepingwriting'
+	])) {
 	$massaction = '';
 }
 
@@ -592,69 +599,27 @@ if (empty($reshook)) {
 		}
 	}
 
-	// mass actions on lettering
+	// mass actions on matching
 	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
-		if ($massaction == 'letteringauto' && $permissiontoadd) {
+		if ($massaction == 'generalmatchingmanual' && $permissiontoadd) {
 			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
-			if ($nb_lettering < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-				$error += 1;
-				$nb_lettering = max(0, abs($nb_lettering) - 2);
-			} elseif ($nb_lettering == 0) {
-				$nb_lettering = 0;
-				setEventMessages($langs->trans('AccountancyNoLetteringModified'), array(), 'mesgs');
-			}
-			if ($nb_lettering == 1) {
-				setEventMessages($langs->trans('AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
-			} elseif ($nb_lettering > 1) {
-				setEventMessages($langs->trans('AccountancyLetteringModifiedSuccessfully', $nb_lettering), array(), 'mesgs');
-			}
-
-			if (!$error) {
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
-		} elseif ($massaction == 'letteringmanual' && $permissiontoadd) {
-			$lettering = new Lettering($db);
-			$result = $lettering->updateLettering($toselect);
+			$result = $lettering->updateGeneralMatching($toselect);
 			if ($result < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoMachingModified' : 'AccountancyOneMatchingModifiedSuccessfully'), array(), 'mesgs');
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($action == 'unletteringauto' && $confirm == "yes" && $permissiontoadd) {
+		} elseif ($action == 'generalunmatchingmanual' && $confirm == 'yes' && $permissiontodelete) {
 			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
-			if ($nb_lettering < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-				$error += 1;
-				$nb_lettering = max(0, abs($nb_lettering) - 2);
-			} elseif ($nb_lettering == 0) {
-				$nb_lettering = 0;
-				setEventMessages($langs->trans('AccountancyNoUnletteringModified'), array(), 'mesgs');
-			}
-			if ($nb_lettering == 1) {
-				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
-			} elseif ($nb_lettering > 1) {
-				setEventMessages($langs->trans('AccountancyUnletteringModifiedSuccessfully', $nb_lettering), array(), 'mesgs');
-			}
-
-			if (!$error) {
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
-		} elseif ($action == 'unletteringmanual' && $confirm == "yes" && $permissiontoadd) {
-			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->deleteLettering($toselect);
-			if ($nb_lettering < 0) {
+			$result = $lettering->deleteGeneralMatching($toselect);
+			if ($result < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoUnmatchingModified' : 'AccountancyOneUnmatchingModifiedSuccessfully'), [], 'mesgs');
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
+				exit;
 			}
 		}
 	}
@@ -680,6 +645,7 @@ $sql .= " t.label_operation,";
 $sql .= " t.debit,";
 $sql .= " t.credit,";
 $sql .= " t.lettering_code,";
+$sql .= " t.matching_general,";
 $sql .= " t.montant as amount,";
 $sql .= " t.sens,";
 $sql .= " t.fk_user_author,";
@@ -834,10 +800,8 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 // List of mass actions available
 $arrayofmassactions = array();
 if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
-	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
-	$arrayofmassactions['preunletteringauto'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringAuto');
-	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
-	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
+	$arrayofmassactions['generalmatchingmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('GeneralMatchingManual');
+	$arrayofmassactions['pregeneralunmatchingmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('GeneralUnmatchingManual');
 }
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
 	$arrayofmassactions['preclonebookkeepingwriting'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
@@ -852,7 +816,16 @@ if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting', 'preclonebookkeepingwriting', 'preassignaccountbookkeepingwriting', 'prereturnaccountbookkeepingwriting'))) {
+if (GETPOSTINT('nomassaction')
+	|| in_array($massaction,
+		array(
+			'pregeneralunmatchingmanual',
+			'predeletebookkeepingwriting',
+			'preclonebookkeepingwriting',
+			'preassignaccountbookkeepingwriting',
+			'prereturnaccountbookkeepingwriting'
+		)
+	)) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
@@ -898,10 +871,8 @@ if (empty($reshook)) {
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-if ($massaction == 'preunletteringauto') {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringAuto"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringauto", null, '', 0, 200, 500, 1);
-} elseif ($massaction == 'preunletteringmanual') {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringManual"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringmanual", null, '', 0, 200, 500, 1);
+if ($massaction == 'pregeneralunmatchingmanual') {
+	print $form->formconfirm($_SERVER['PHP_SELF'], $langs->trans('ConfirmMassGeneralUnmatchingManual'), $langs->trans("ConfirmMassGeneralUnmatchingQuestion", count($toselect)), "generalunmatchingmanual", null, '', 0, 200, 500, 1);
 } elseif ($massaction == 'predeletebookkeepingwriting') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeleteBookkeepingWriting"), $langs->trans("ConfirmMassDeleteBookkeepingWritingQuestion", count($toselect)), "deletebookkeepingwriting", null, '', 0, 200, 500, 1);
 } elseif ($massaction == 'preassignaccountbookkeepingwriting') {
@@ -1232,6 +1203,7 @@ while ($i < min($num, $limit)) {
 	$line->amount = $obj->amount;
 	$line->sens = $obj->sens;
 	$line->lettering_code = $obj->lettering_code;
+	$line->matching_general = $obj->matching_general;
 	$line->fk_user_author = $obj->fk_user_author;
 	$line->import_key = $obj->import_key;
 	$line->code_journal = $obj->code_journal;
@@ -1444,7 +1416,19 @@ while ($i < min($num, $limit)) {
 
 	// Matching code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center">'.$line->lettering_code.'</td>';
+		$tooltipText = "";
+		$icon = "";
+		$badge = "";
+		if (!empty($line->matching_general)) {
+			$tooltipText .= $langs->trans('GeneralMatching');
+			$icon .= "fa-book";
+			$badge .= "badge-status4";
+		} elseif (empty($line->matching_general) && !empty($line->lettering_code)) {
+			$tooltipText .= $langs->trans('AuxiliaryMatching');
+			$icon .= "fa-user";
+			$badge .= "badge-status1";
+		}
+		print '<td class="center classfortooltip" title="'.$tooltipText.'"><span class="badge '.$badge.'"><i class="fas '.$icon.' fa-xs"></i> '.$line->lettering_code.'</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
