@@ -5872,6 +5872,7 @@ if ($action == 'create') {
 			$sql .= " WHERE fk_facture = ".((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
+                require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$num = $db->num_rows($resql);
 				$i = 0;
 				while ($i < $num) {
@@ -6374,7 +6375,7 @@ if ($action == 'create') {
 
 			// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
 			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (!getDolGlobalString('INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') || $resteapayer != $object->total_ttc) && $usercanissuepayment) {
-				if ($totalpaid > 0 || $totalcreditnotes > 0 || $compensated_amount > 0) {
+				    if ($totalpaid > 0 || $totalcreditnotes > 0 || $compensated_amount > 0 || (getDolGlobalString('INVOICE_CAN_ALWAYS_SET_PAID'))) {
 					// If one payment or one credit note was linked to this invoice
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans('ClassifyPaidPartially').'</a>';
 				} else {
