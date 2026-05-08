@@ -1078,10 +1078,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatus[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_REPLACED] = $langs->trans('Replaced');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_REPLACED] = $langs->trans('Replaced');
 		}
 
 		$labelStatus = $this->labelStatus[$status];
@@ -1092,7 +1094,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$statusType = 'status2';
 		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
+			$statusType = 'status8';
+		}
+		if ($status == self::STATUS_REPLACED) {
+			$statusType = 'status1';
 		}
 
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
