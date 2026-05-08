@@ -2322,7 +2322,7 @@ class Facture extends CommonInvoice
 				$this->retained_warranty	= $obj->retained_warranty;
 				$this->retained_warranty_date_limit		 = $this->db->jdate($obj->retained_warranty_date_limit);
 				$this->retained_warranty_fk_cond_reglement  = $obj->retained_warranty_fk_cond_reglement;
-				$this->prorata_discount		= $obj->prorata_discount;
+				$this->prorata_discount		= (float) $obj->prorata_discount;
 				$this->prorata_rate			= $obj->total_ht != 0 ? $obj->prorata_discount / $obj->total_ht * 100 : 0;
 
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
