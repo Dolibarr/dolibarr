@@ -15,7 +15,7 @@
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -339,7 +339,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  * @return 	int							Height
  * @see getStringHeight()
  */
-function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
+function pdfGetHeightForHtmlContent($pdf, $htmlcontent)
 {
 	// store current object
 	$pdf->startTransaction();
@@ -375,8 +375,8 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 			}
 		}
 	}
-	// restore previous object
-	$pdf = $pdf->rollbackTransaction();
+	// restore previous object state
+	$pdf->rollbackTransaction(true);
 
 	return $height;
 }
@@ -744,7 +744,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
  * 		@param	float		$page_height	Height of page
  *      @return	void
  */
-function pdf_pagehead(&$pdf, $outputlangs, $page_height)
+function pdf_pagehead($pdf, $outputlangs, $page_height)
 {
 	global $conf;
 
@@ -782,7 +782,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
  * 		@param	float		$posy			Pos y
  *      @return	void
  */
-function pdfWriteAdditionnalTitle(&$pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
+function pdfWriteAdditionnalTitle($pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
 {
 	// Transaction/Signature ID + Duplicate or Temporary info
 	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
@@ -807,7 +807,7 @@ function pdfWriteAdditionnalTitle(&$pdf, $outputlangs, $page_height, $object, &$
  * 		@param	float		$tab2_hl		Tab2_hl
  *      @return	void
  */
-function pdfWriteVATArray(&$docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl)
+function pdfWriteVATArray($docgenerator, &$index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl)
 {
 	global $mysoc;
 
@@ -1047,7 +1047,7 @@ function pdfWriteVATArray(&$docgenerator, &$index, &$pdf, $outputlangs, $outputl
  * 		@param	float		$resteapayer_origin		Remain to pay
  *      @return	void
  */
-function pdfWriteAlreadyPaid(&$docgenerator, &$index, &$pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer, $resteapayer_origin)
+function pdfWriteAlreadyPaid($docgenerator, &$index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer, $resteapayer_origin)
 {
 	global $mysoc;
 
@@ -1152,7 +1152,7 @@ function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null,
  *      @param  string		$text           Text to show
  *      @return	void
  */
-function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
+function pdf_watermark($pdf, $outputlangs, $h, $w, $unit, $text)
 {
 	// Print Draft Watermark
 	if ($unit == 'pt') {
@@ -1216,7 +1216,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *      @param  CommonDocGenerator	$pdftemplate    	PDF template
  *      @return	int                                 	0 if nothing done, 1 if a mention was printed
  */
-function pdfCertifMention(&$pdf, $outputlangs, $seller, $default_font_size, &$posy, $pdftemplate)
+function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$posy, $pdftemplate)
 {
 	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
@@ -1236,7 +1236,7 @@ function pdfCertifMention(&$pdf, $outputlangs, $seller, $default_font_size, &$po
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
-function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
+function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 
@@ -1418,7 +1418,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  *  @param	string		$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text
  */
-function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
+function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
 {
 	global $conf, $hookmanager;
 
@@ -1805,7 +1805,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  *	@param	float		$default_font_size	Font size
  *	@return	float                           The Y PDF position
  */
-function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
+function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
 	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
 
@@ -1843,7 +1843,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param	'L'|'C'|'R'|'J'	$align				text alignment ('L', 'C', 'R', 'J' (default))
  * 	@return	string
  */
-function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
+function pdf_writelinedesc($pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
 {
 	global $hookmanager;
 
@@ -2981,7 +2981,7 @@ function canDisplayLinkedObjectInPDF($object, $elementobject)
  * 	@param	Translate		$outputlangs	Object lang for output
  * 	@return	array<string,array<string,null|int|float|string>>	Linked objects
  */
-function pdf_getLinkedObjects(&$object, $outputlangs)
+function pdf_getLinkedObjects($object, $outputlangs)
 {
 	global $db, $hookmanager;
 

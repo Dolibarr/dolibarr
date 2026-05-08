@@ -1660,6 +1660,10 @@ class Memo extends CommonObject
 		];
 		$jsConfVars = array_merge($defaultJsConfVars, $jsConfVars);
 
+		if (!empty($jsConfVars['elementType'])) {
+			$jsConfVars['shareBtnStatus'] = 1;
+		}
+
 		// LOAD Memo class
 		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('quickmemo/css/memo.css', 1) . '">'."\n";
 		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('quickmemo/css/memo-dialog.css', 1) . '">'."\n";
