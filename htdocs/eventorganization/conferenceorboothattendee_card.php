@@ -609,6 +609,101 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
+	// Replace confirmation
+	if ($action == 'replace') {
+		$langs->loadLangs(array("productbatch", "eventorganization", "admin", "bills", "main"));
+		$attendeestatic = new ConferenceOrBoothAttendee($db);
+		$fetchme = $attendeestatic->fetch($id);
+		if ($fetchme) {
+			// Create an array for form
+			$formquestion = array();
+
+			$filter = '((t.fk_project:=:' . ((int) $attendeestatic->fk_project) . ') AND (t.status:IN:[' . $attendeestatic::STATUS_VALIDATED . ',' . $attendeestatic::STATUS_DRAFT . ']) AND (t.rowid:!=:' . ((int) $id) . '))';
+			$attendee_list = $attendeestatic->fetchAll('', '', 0, 0, $filter);
+			$reformat_list = array();
+			foreach ($attendee_list as $attendee) {
+				$reformat_list[$attendee->id] = $attendee->getFullName($langs, 0, -1, 0);
+			}
+
+			// 655360? well, 640k is enough for everybody :-D and if I used -1 then it would show very fain where as with 655360 the text is clearly seen, and I can not use 0, because that is draft :-(
+			$source_status_list = array();
+			$source_status_list[655360] = $langs->trans("IsBefore");
+			foreach ($attendeestatic->list_possible_status as $statusid) {
+				$source_status_list[(int) $statusid] = $attendeestatic->LibStatut($statusid, 1);
+			}
+			$replace_status_list = array();
+			$replace_status_list[655360] = $langs->trans("Copy");
+			foreach ($attendeestatic->list_possible_status as $statusid) {
+				$replace_status_list[(int) $statusid] = $attendeestatic->LibStatut($statusid, 1);
+			}
+			$select_replace_attendee = $langs->trans("Select").' '.$langs->trans("InvoiceReplacementShort").' '.$langs->trans("ConferenceOrBoothAttendee");
+			/**
+			 * @var array<array{
+			 *   name: string,
+			 *   label: string,
+			 *   type: 'select'|'checkbox',
+			 *   values?: array<int|string, string>,
+			 *   default?: string|int,
+			 *   value?: int,
+			 *   inputko?: int
+			 * }>
+			 */
+			$formquestion = [
+				// 1. Single-select: Replacement Attendee
+				[
+					'name'     => 'select_replace_attendee',
+					'label'    => $select_replace_attendee,
+					'type'     => 'select',
+					'values'   => (array) $reformat_list,
+				],
+
+				// 2. Single-select: Source Status after replacement
+				[
+					'name'     => 'oldobject_status',
+					'label'    => $langs->trans("Source").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $source_status_list,
+					'default'  => 13,
+				],
+
+				// 3. Single-select: Replacement Status after replacing
+				[
+					'name'     => 'newobject_status',
+					'label'    => $langs->trans("ToReplace").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $replace_status_list,
+					'default'  => 1,
+				],
+
+				// 4. Checkbox: Auto trigger replace of Source
+				[
+					'name'    => 'autotrigger_source',
+					'label'   => $langs->trans("Source").' &ndash; '.$langs->trans("AutomaticTrigger"),
+					'type'    => 'checkbox',
+					'value'   => 1,
+					'default' => 1,
+					'inputko' => 1,
+				],
+
+				// 5. Checkbox: Auto trigger replace of replace
+				[
+					'name'    => 'autotrigger_replace',
+					'label'   => $langs->trans("ToReplace").' &ndash; '.$langs->trans("AutomaticTrigger"),
+					'type'    => 'checkbox',
+					'value'   => 1,
+					'default' => 1,
+					'inputko' => 1,
+				]
+			];
+
+			// Reason: The function expects 'string[]' (indexed 0,1,2), but Dolibarr requires associative arrays (Key=>Label) for selects.
+			// Our keys (-1, 1, 5) are valid for the runtime logic but violate the strict 'string[]' type hint.
+			/** @phan-suppress-next-line PhanTypeMismatchArgument */
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToReplace'), $langs->trans('ConfirmCloneAsk', $attendeestatic->getFullName($langs, 0, -1, 0)), 'confirm_replace_attendee', $formquestion, 'yes', 1);
+		} else {
+		// we should show a popup
+		}
+	}
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
