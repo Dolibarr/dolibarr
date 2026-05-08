@@ -112,7 +112,7 @@ $ref_client = GETPOST('ref_client', 'alpha');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
 $selectedLines = GETPOST('toselect', 'array');
-$same_project_filter = GETPOST('sameproject', 'string') == "on";
+$same_project_filter = isset($_POST['sameproject']) && $_POST['sameproject'] === "on";
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));

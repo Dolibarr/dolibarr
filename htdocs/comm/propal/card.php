@@ -98,7 +98,7 @@ $lineid = GETPOSTINT('lineid');
 $contactid = GETPOSTINT('contactid');
 $projectid = GETPOSTINT('projectid');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
-$same_project_filter = GETPOST('sameproject', 'string') == "on";
+$same_project_filter = isset($_POST['sameproject']) && $_POST['sameproject'] === "on";
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
