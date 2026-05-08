@@ -850,9 +850,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  array   $labelparts                 Array of parts to build the visible label.
+	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
+	 *                                              If empty/null, defaults to $this->ref.
 	 *  @return	string                              String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $labelparts = null)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -956,7 +959,30 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			// Build the visible label from $labelparts array
+			$display_text = '';
+			if (!empty($labelparts) && is_array($labelparts)) {
+				foreach ($labelparts as $part) {
+					if (property_exists($this, $part)) {
+						$val = $this->$part;
+						// Format specific types
+						if ($part == 'date_subscription' && !empty($val)) {
+							$val = dol_print_date($val, 'dayhour');
+						} elseif ($part == 'amount' && !empty($val)) {
+							$val = price($val);
+						}
+						$display_text .= $val;
+					} else {
+						// Static string (separator, space, etc.)
+						$display_text .= $part;
+					}
+				}
+			}
+			// Fallback to ref if no parts provided or result is empty
+			if (empty($display_text)) {
+				$display_text = $this->ref;
+			}
+			$result .= dol_escape_htmltag($display_text);
 		}
 
 		$result .= $linkend;
@@ -964,7 +990,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('conferenceorboothattendeedao'));
-		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result, 'labelparts' => $labelparts);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -973,6 +999,41 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *  Return a string to display a field value (overridden to show Name for 'fk_replacement')
+	 *
+	 *  @param  array   $val      Array of properties of field to show
+	 *  @param  string  $key      Key of attribute
+	 *  @param  mixed   $value    Preselected value to show
+	 *  @param  string  $moreparam    To add more parameters on html tag
+	 *  @param  string  $keysuffix    Prefix string to add into name and id of field
+	 *  @param  string  $keyprefix    Suffix string to add into name and id of field
+	 *  @param  mixed   $morecss      Value for CSS to use
+	 *  @return string
+	 */
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	{
+		global $langs;
+
+		if ($key == 'fk_replacement' && !empty($value)) {
+			$replacement = new ConferenceOrBoothAttendee($this->db);
+			$result = $replacement->fetch((int) $value);
+
+			if ($result > 0) {
+				// Define the label structure: "Firstname Lastname"
+				// You can easily change this to ["ref", " - ", "firstname", " ", "lastname"]
+				$label_config = array('firstname', ' ', 'lastname');
+
+				return $replacement->getNomUrl(1, '', 0, '', -1, $label_config);
+			}
+
+			$langs->loadLangs(array("eventorganization", "errors"));
+			return '<span class="opacitymedium">'.$langs->trans("ErrorRefNotFound", $langs->trans("ConferenceOrBoothAttendee")).'</span>';
+		}
+
+		return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
 	}
 
 	/**
