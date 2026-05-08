@@ -349,6 +349,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->user_creation_id);
 		unset($object->import_key);
+		unset($object->fk_replacement);
 
 		// Clear fields
 		$object->ref = "(PROV)";
