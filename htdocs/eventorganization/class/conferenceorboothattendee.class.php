@@ -1003,7 +1003,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
-	 *  Return a string to display a field value (overridden to show Name for 'fk_replacement')
+	 *  Return a string to display a field value (overridden to show Name and Chain for 'fk_replacement')
 	 *
 	 *  @param  array   $val      Array of properties of field to show
 	 *  @param  string  $key      Key of attribute
@@ -1018,47 +1018,61 @@ class ConferenceOrBoothAttendee extends CommonObject
 	{
 		global $langs;
 
-if ($key == 'fk_replacement' && !empty($value)) {
-	$replacement = new ConferenceOrBoothAttendee($this->db);
-	$result = $replacement->fetch((int) $value);
+		if ($key == 'fk_replacement') {
+			$html = '';
+			$label_config = array('firstname', ' ', 'lastname');
 
-	// Handle the 'fk_replacement' field: Show "Me" -> Replacement -> Next...
-	if ($key == 'fk_replacement' && !empty($value)) {
-		$html = '';
-		$label_config = array('firstname', ' ', 'lastname');
+			// 1. Get the reverse chain (people I replaced / who came before me)
+			$replacedByChain = $this->getReplacedByChain();
 
-		// 1. Add "Me" as a link to the current object
-		$html .= $this->getNomUrl(1, '', 0, '', -1, array($langs->transnoentitiesnoconv("Me")));
-
-		// 2. Load the immediate replacement
-		$replacement = new ConferenceOrBoothAttendee($this->db);
-		$result = $replacement->fetch((int) $value);
-
-		if ($result > 0) {
-			// Add arrow and the replacement
-			$html .= ' &rarr; ' . $replacement->getNomUrl(1, '', 0, '', -1, $label_config);
-
-			// 3. Get the rest of the chain (forward traversal from the replacement)
-			$chain = $replacement->getReplacementChain();
-
-			// 4. Append subsequent replacements
-			if (!empty($chain)) {
-				foreach ($chain as $person) {
-					$html .= ' &rarr; ' . $person->getNomUrl(1, '', 0, '', -1, $label_config);
+			// 2. Get the forward chain (people who replaced me / who came after me)
+			$forwardChain = array();
+			if (!empty($value)) {
+				$replacement = new ConferenceOrBoothAttendee($this->db);
+				if ($replacement->fetch((int) $value) > 0) {
+					$forwardChain[] = $replacement;
+					$forwardChain = array_merge($forwardChain, $replacement->getReplacementChain());
+				} else {
+					$langs->loadLangs(array("eventorganization", "errors"));
+					$forwardChain[] = null; // Marker for broken link
 				}
 			}
-		} else {
-			// Error: The referenced replacement record was not found
-			$langs->loadLangs(array("eventorganization", "errors"));
-			$html .= ' &rarr; <span class="opacitymedium">' . $langs->trans("ErrorRefNotFound", $langs->trans("ConferenceOrBoothAttendee")) . '</span>';
+
+			// 3. If neither chain exists, show nothing
+			if (empty($replacedByChain) && empty($forwardChain)) {
+				return '';
+			}
+
+			// 4. Build the display: [Reversed Past] → Me → [Future]
+			// Reverse the backward chain so oldest is first
+			if (!empty($replacedByChain)) {
+				$reversedChain = array_reverse($replacedByChain);
+				foreach ($reversedChain as $person) {
+					if (!empty($html)) $html .= ' &rarr; ';
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $label_config);
+				}
+			}
+
+			// Add "Me"
+			if (!empty($html)) $html .= ' &rarr; ';
+
+			$meLabel = '&nbsp;'.$langs->transnoentitiesnoconv("Me").'&nbsp;';
+			// Generate link: No picto, Rich Tooltip, Text = "Me"
+			$html .= $this->getNomUrl(0, '', 0, 'badge badge-primary', -1, array($meLabel));
+
+
+			// Add forward chain
+			foreach ($forwardChain as $person) {
+				$html .= ' &rarr; ';
+				if ($person !== null) {
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $label_config);
+				} else {
+					$html .= '<span class="opacitymedium">' . $langs->trans("ErrorRefNotFound", $langs->trans("ConferenceOrBoothAttendee")) . '</span>';
+				}
+			}
+
+			return $html;
 		}
-
-		return $html;
-	}
-
-    $langs->loadLangs(array("eventorganization", "errors"));
-    return '<span class="opacitymedium">'.$langs->trans("ErrorRefNotFound", $langs->trans("ConferenceOrBoothAttendee")).'</span>';
-}
 
 		return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
 	}
@@ -1100,49 +1114,46 @@ if ($key == 'fk_replacement' && !empty($value)) {
 	}
 
 	/**
-	 *  Get the full replacement chain leading to this attendee.
-	 *  Traverses backwards: Finds who I replaced, then who they replaced, etc.
-	 *  Includes protection against circular loops.
+	 *  Get the chain of people I replaced (Backward traversal).
+	 *  Example: If Sarah replaced Camilla, who replaced Alice.
+	 *  Calling $sarah->getReplacedChain() returns [Camilla, Alice].
 	 *
-	 *  @param  array   $visitedIds   Internal parameter to track visited IDs (do not pass from outside)
 	 *  @return array   Array of ConferenceOrBoothAttendee objects
 	 */
-	public function getReplacedByChain($visitedIds = array())
+	public function getReplacedByChain()
 	{
-		// Initialize visited list if this is the first call
-		if (empty($visitedIds)) {
-			$visitedIds = array();
-		}
-
-		// 1. Check for Circular Loop
-		if (in_array($this->id, $visitedIds)) {
-			// Circular loop detected!
-			dol_syslog("Circular replacement loop detected for attendee ID " . $this->id, LOG_WARNING);
-			return array(); // Return empty chain to break the loop
-		}
-
-		$visitedIds[] = $this->id;
 		$chain = array();
+		$currentObj = $this;
+		$visitedIds = array($this->id);
 
-		$sql = "SELECT rowid FROM " . $this->db->prefix() . "eventorganization_conferenceorboothattendee";
-		$sql .= " WHERE fk_replacement = " . ((int) $this->id);
+		// Traverse backward: Find who has fk_replacement = MY_ID
+		while (true) {
+			// Find the record where fk_replacement = currentObj->id
+			$sql = "SELECT rowid FROM " . $this->db->prefix() . "eventorganization_conferenceorboothattendee";
+			$sql .= " WHERE fk_replacement = " . ((int) $currentObj->id);
 
-		$resql = $this->db->query($sql);
-		if (!$resql) return array();
+			$resql = $this->db->query($sql);
+			if (!$resql) break;
 
-		$obj = $this->db->fetch_object($resql);
-		if (!$obj) return array(); // I am not a replacement for anyone
+			$obj = $this->db->fetch_object($resql);
+			if (!$obj) break; // No one replaced this person
 
-		$replacedObj = new ConferenceOrBoothAttendee($this->db);
-		if ($replacedObj->fetch($obj->rowid) <= 0) return array();
+			// Loop protection
+			if (in_array($obj->rowid, $visitedIds)) {
+				dol_syslog("Circular loop detected in replaced chain at ID " . $obj->rowid, LOG_WARNING);
+				break;
+			}
+			$visitedIds[] = $obj->rowid;
 
-		$chain[] = $replacedObj;
-
-		// Recursively find who THEY replaced, passing the updated visited list
-		$subChain = $replacedObj->getReplacedByChain($visitedIds);
-
-		// Merge the rest of the chain
-		$chain = array_merge($chain, $subChain);
+			// Fetch the person who replaced the current one
+			$replacer = new ConferenceOrBoothAttendee($this->db);
+			if ($replacer->fetch($obj->rowid) > 0) {
+				$chain[] = $replacer;
+				$currentObj = $replacer; // Move backward
+			} else {
+				break;
+			}
+		}
 
 		return $chain;
 	}
