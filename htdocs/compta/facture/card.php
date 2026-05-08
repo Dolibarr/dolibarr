@@ -5872,6 +5872,7 @@ if ($action == 'create') {
 			$sql .= " WHERE fk_facture = ".((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
+                require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$num = $db->num_rows($resql);
 				$i = 0;
 				while ($i < $num) {
