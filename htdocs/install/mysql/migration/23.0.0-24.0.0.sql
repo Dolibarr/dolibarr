@@ -530,6 +530,5 @@ ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_pro
 ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
 
-ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_replacement integer DEFAULT NULL;
-
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_replacement integer DEFAULT NULL, ADD UNIQUE INDEX uk_fk_replacement (fk_replacement);
 -- end of migration
