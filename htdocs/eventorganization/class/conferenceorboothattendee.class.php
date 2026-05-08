@@ -57,6 +57,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_USED = 5;					// was present, presence confirmed, no more entrances can be done using this ticket
 	const STATUS_CANCELED = 9;
+	const STATUS_REPLACED = 13;				// This event attendee has been replaced with a different event Attendee which should be recorded in field fk_replacement
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -111,7 +112,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled', '13' => 'Replaced'),),
+		'fk_replace' => array('type' => 'integer:ConferenceOrBoothAttendee:eventorganization/class/conferenceorboothattendee.class.php', 'label' => 'ReplacementAttendee', 'enabled' => 1, 'position' => 66, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "ReplaceThisAttendeeWithAnother", 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 	);
 	/**
 	 * @var int
@@ -187,6 +189,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var ?int
 	 */
 	public $status;
+
+	/**
+	 * @var int
+	 */
+	public $fk_replacement;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -767,6 +774,72 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REOPEN');
+	}
+
+	/**
+	 *	replace "me" with another ConferenceOrBoothAttendee
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@param	ConferenceOrBoothAttendee	$fk_replacement			The event attendee that replaces "me"
+	 *	@param	int		$status_fk_replacement		The new status of fk_replacement, default is STATUS_VALIDATED
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function replaceWith($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $notrigger = 0)
+	{
+		// Protection
+		$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
+		if (!in_array($this->status, $allowed_statuses)) {
+			$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->status . ' is not allowed (must be STATUS_VALIDATED or STATUS_DRAFT)';
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -1;
+		}
+		if ($fk_replacement->id == $this->id) {
+			$error_text = 'Can not replace an attendee with itself';
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -2;
+		}
+
+
+		$this->db->begin();
+		try {
+			// Original
+			$this->fk_replacement = $fk_replacement->id;
+			$this->status = self::STATUS_REPLACED;
+			$originalReplace = $this->update($user, 1); // we do our own trigger
+			if ($originalReplace < 0) {
+				throw new Exception("Update original failed: " . $this->error);
+			}
+
+			// call triggers
+			if (!$notrigger) {
+				$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED', $user);
+				if ($result < 0) {
+					throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED failed: " . $this->error);
+				}
+			}
+
+
+			// Replacement
+			$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACING');
+			if ($replacementStatus < 0) {
+				throw new Exception("Update replacement status failed: " . $fk_replacement->error);
+			}
+
+			$this->db->commit();
+			return 1;
+
+		} catch (Exception $e) {
+			// 5. Rollback
+			// If we are here, the transaction is likely already rolled back
+			// if update() threw an exception that caused a DB error.
+			// But to be safe, we call rollback.
+			$this->db->rollback();
+			$this->error = $e->getMessage();
+			return -1;
+		}
 	}
 
 	/**
