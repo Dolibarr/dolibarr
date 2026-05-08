@@ -113,7 +113,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled', '13' => 'Replaced'),),
-		'fk_replace' => array('type' => 'integer:ConferenceOrBoothAttendee:eventorganization/class/conferenceorboothattendee.class.php', 'label' => 'ReplacementAttendee', 'enabled' => 1, 'position' => 66, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "ReplaceThisAttendeeWithAnother", 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_replacement' => array('type' => 'integer:ConferenceOrBoothAttendee:eventorganization/class/conferenceorboothattendee.class.php', 'label' => 'ReplacementAttendee', 'enabled' => 1, 'position' => 66, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "ReplaceThisAttendeeWithAnother", 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 	);
 	/**
 	 * @var int
