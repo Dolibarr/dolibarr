@@ -516,4 +516,12 @@ UPDATE llx_socpeople SET fax = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(fax, ' ',
 -- Add personal_data flag on extrafields for GDPR/nLPD/LGPD compliance
 ALTER TABLE llx_extrafields ADD COLUMN personal_data tinyint DEFAULT 0 AFTER csslist;
 
+
+-- Add missing index in llx_product_warehouse_properties table
+ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_properties_fk_product (fk_product);
+ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_properties_fk_entrepot (fk_entrepot);
+
+ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
 -- end of migration
