@@ -786,7 +786,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function replaceWith($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $notrigger = 0)
+	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $notrigger = 0)
 	{
 		// Protection
 		$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
