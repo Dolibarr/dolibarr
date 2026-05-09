@@ -4542,11 +4542,9 @@ if ($action == 'create') {
 			$retained_warranty_fk_cond_reglement = GETPOSTINT('retained_warranty_fk_cond_reglement');
 			if (empty($retained_warranty_fk_cond_reglement)) {
 				$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
-				if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
+				if ($objectsrc instanceOf Facture && !empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
 					// Facture->retained_warranty_fk_cond_reglement (does not exist on Expedition)
 					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement; // @phan-suppress-current-line PhanUndeclaredProperty
-				} else {
-					$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				}
 			}
 			print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
