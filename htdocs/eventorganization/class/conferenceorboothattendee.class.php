@@ -1109,7 +1109,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 *  @return string
 	 */
-	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $labelparts = array('firstname', ' ', 'lastname', ' (#', 'id', ')'))
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $labelparts = array('firstname', ' ', 'lastname', ' #', 'id'))
 	{
 		global $langs;
 
