@@ -783,16 +783,18 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
-	 *	replace "me" with another ConferenceOrBoothAttendee
+	 *	replace "me" with another ConferenceOrBoothAttendee + reset any existing replacement
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *	@param	ConferenceOrBoothAttendee	$fk_replacement			The event attendee that replaces "me"
+	 *	@param	User	$user						User that modify
+	 *	@param	ConferenceOrBoothAttendee|null	$fk_replacement		The event attendee that replaces "me". If NULL, this function will UNDO the current replacement (clear link, reset to STATUS_VALIDATED original and STATUS_DRAFT on any currently $this->fk_replacement attendee)
 	 *	@param	int		$status_fk_replacement		The new status of fk_replacement, default is STATUS_VALIDATED
 	 *	@param	int		$status_source				The new status of "me", default is STATUS_REPLACED
-	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$notrigger					1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$force_fk_replacement		0 (default) do not overwrite fk_replacement if it has a sane value, 1  overwrite fk_replacement regardless of the existing value of fk_replacement
+	 *
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0)
+	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0, $force_fk_replacement = 0)
 	{
 		// Protection
 		$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
@@ -802,7 +804,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->error = $error_text;
 			return -1;
 		}
-		if ($fk_replacement->id == $this->id) {
+		if (!is_null($fk_replacement) && $fk_replacement->id == $this->id) {
 			$error_text = 'Can not replace an attendee with itself';
 			dol_syslog($error_text, LOG_ERR);
 			$this->error = $error_text;
@@ -820,31 +822,75 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->error = $error_text;
 			return -4;
 		}
-
+	    if (!$force_fk_replacement && !empty($this->fk_replacement) && !is_null($fk_replacement) && $this->fk_replacement != $fk_replacement->id) {
+			$error_text = 'Attendee ' . $this->id . ' already has a replacement (ID: ' . $this->fk_replacement . '). Use force_fk_replacement=1 to override.';
+			dol_syslog($error_text, LOG_WARNING);
+			$this->error = $error_text;
+			return -5;
+		}
+		if (is_null($fk_replacement) && empty($this->fk_replacement)) {
+            $this->error = "No replacement to undo.";
+            return -6;
+        }
 
 		$this->db->begin();
 		try {
 			// Original
-			$this->fk_replacement = $fk_replacement->id;
-			$this->status = $status_source;
+			if (is_null($fk_replacement)) {
+				$oldReplacementAttendee = null;
+				$any_old_fk_replacement = $this->fk_replacement;
+				if ($any_old_fk_replacement > 0) {
+					$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
+					$oldFetch = $oldReplacementAttendee->fetch($any_old_fk_replacement);
+					if ($oldFetch > 0) {
+						$oldReplacementAttendee->status = self::STATUS_DRAFT;
+						$oldStatusDraft = $oldReplacementAttendee->update($user, 1); // we do our own trigger
+						if ($oldStatusDraft < 0) {
+							throw new Exception("Update oldReplacementAttendee=".$any_old_fk_replacement."failed: " . $oldReplacementAttendee->error);
+						}
+					} else {
+						throw new Exception("Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error);
+					}
+				}
+				$this->fk_replacement = null;
+				$this->status = self::STATUS_VALIDATED;
+			} else {
+				$this->fk_replacement = $fk_replacement->id;
+				$this->status = $status_source;
+			}
 			$originalReplace = $this->update($user, 1); // we do our own trigger
 			if ($originalReplace < 0) {
-				throw new Exception("Update original failed: " . $this->error);
+				throw new Exception("Update original attendee=".$this->id." failed: " . $this->error);
 			}
 
 			// call triggers
 			if (!$notrigger) {
-				$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED', $user);
-				if ($result < 0) {
-					throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED failed: " . $this->error);
+				if (is_null($fk_replacement)) {
+					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', $user);
+					if ($result < 0) {
+						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET failed: " . $this->error);
+					}
+
+					if ($oldReplacementAttendee !== null) {
+						$oldUpdateResult = $oldReplacementAttendee->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', $user);
+						if ($oldUpdateResult < 0) {
+							throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET failed: " . $oldReplacementAttendee->error);
+						}
+					}
+				} else {
+					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED', $user);
+					if ($result < 0) {
+						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED failed: " . $this->error);
+					}
 				}
 			}
 
-
 			// Replacement
-			$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACING');
-			if ($replacementStatus < 0) {
-				throw new Exception("Update replacement status failed: " . $fk_replacement->error);
+			if (!is_null($fk_replacement)) {
+				$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACING');
+				if ($replacementStatus < 0) {
+					throw new Exception("Update replacement status failed: " . $fk_replacement->error);
+				}
 			}
 
 			$this->db->commit();
