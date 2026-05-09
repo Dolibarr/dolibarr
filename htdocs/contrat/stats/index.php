@@ -8,6 +8,7 @@
  * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,7 +39,6 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -136,6 +135,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
+$fileurlnb = '';
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/contractsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=contractstats&file=contractsnbinyear-'.$user->id.'-'.$year.'.png';
@@ -197,11 +197,11 @@ if (!$mesg) {
 	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("NumberOfServices"));
+	$px2->SetYLabel($langs->trans("AmountOfServices"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
 	$px2->mode = 'depth';
-	$px2->SetTitle($langs->trans("NumberOfServicesByMonthHT"));
+	$px2->SetTitle($langs->trans("AmountOfServicesByMonthHT"));
 
 	$px2->draw($filenameamount, $fileurlamount);
 }
@@ -241,11 +241,11 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-print '<table class="nobcontrat centpercent">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
@@ -307,6 +307,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" class="button small" name="submit" value="'.$langs->trans("Refresh").'"></td></tr>';
