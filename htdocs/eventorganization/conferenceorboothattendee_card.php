@@ -624,6 +624,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			foreach ($attendee_list as $attendee) {
 				$reformat_list[$attendee->id] = $attendee->getFullName($langs, 0, -1, 0);
 			}
+			$reformat_list['none'] = '--- '.$langs->trans("None").' ---';
 
 			// 655360? well, 640k is enough for everybody :-D and if I used -1 then it would show very fain where as with 655360 the text is clearly seen, and I can not use 0, because that is draft :-(
 			$source_status_list = array();
@@ -655,6 +656,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					'label'    => $select_replace_attendee,
 					'type'     => 'select',
 					'values'   => (array) $reformat_list,
+					'default'  => 'none'
 				],
 
 				// 2. Single-select: Source Status after replacement
@@ -696,7 +698,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Action clone object
-	$select_replace_attendee = GETPOSTINT('select_replace_attendee');
+	$val = GETPOST('select_replace_attendee');
+	$select_replace_attendee = ($val === 'none') ? -1 : (int) $val;
 	if ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_replace_attendee < 1) {
 		$langs->loadLangs(array("eventorganization", "errors"));
 		setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", $langs->trans("Attendee")), null, 'errors');
@@ -832,8 +835,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Replace
 			$langs->loadLangs(array("productbatch"));
-			print dolGetButtonAction('', $langs->trans('ToReplace'), 'replace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=replace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
-
+			if (empty($object->fk_replacement)) {
+				print dolGetButtonAction('', $langs->trans('ToReplace'), 'replace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=replace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+			} else {
+				print dolGetButtonAction('', $langs->trans("Undo").' '.$langs->trans('ToReplace'), 'undoreplace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=undoreplace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
 		}
