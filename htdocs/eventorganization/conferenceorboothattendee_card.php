@@ -794,7 +794,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($replaceResult > 0) {
 				dol_syslog('Replacing attendee='.$id.' with attendee='.$select_replace_attendee, LOG_INFO);
 				if ($select_replace_attendee == -2) {
-					$info_message = $langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).' '.$langs->trans("Reset").' '.$langs->trans("ReplacedBy");
+					$info_message = $langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).': '.$langs->trans("Reset").' '.$langs->trans("ReplacedBy");
 				} else {
 					$info_message = $langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).' '.$langs->trans("ReplacedBy").' '.$attendeereplace->getNomUrl(1, '', 0, '', -1, $label_config);
 				}

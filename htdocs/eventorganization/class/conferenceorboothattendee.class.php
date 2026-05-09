@@ -837,6 +837,24 @@ class ConferenceOrBoothAttendee extends CommonObject
             $this->error = "No replacement to undo.";
             return -6;
         }
+		if (is_null($fk_replacement) && $this->fk_replacement > 0) {
+			$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
+			$oldFetch = $oldReplacementAttendee->fetch($this->fk_replacement);
+			if ($oldFetch > 0) {
+				if (!empty($oldReplacementAttendee->fk_replacement)) {
+					$error_text = 'Cannot undo replacement for attendee ' . $this->id . '. ' .
+								'The current replacement (ID: ' . $oldReplacementAttendee->id . ') is itself replaced by attendee (ID: ' .
+								$oldReplacementAttendee->fk_replacement . '). ' .
+								'Please undo the replacement for attendee ' . $oldReplacementAttendee->id . ' first.';
+					dol_syslog($error_text, LOG_WARNING);
+					$this->error = $error_text;
+					return -7;
+				}
+			} elseif ($oldFetch < 0) {
+				$this->error = "Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error;
+				return -8;
+			}
+		}
 
 		$this->db->begin();
 		try {
@@ -848,10 +866,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 					$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
 					$oldFetch = $oldReplacementAttendee->fetch($any_old_fk_replacement);
 					if ($oldFetch > 0) {
+						if (!empty($oldReplacementAttendee->fk_replacement)) {
+							throw new Exception("Race condition: The replacement (ID: " . $oldReplacementAttendee->id . ") has been replaced by another attendee since the check.");
+						}
+
 						$oldReplacementAttendee->status = self::STATUS_DRAFT;
-						$oldStatusDraft = $oldReplacementAttendee->update($user, 1); // we do our own trigger
+						$oldStatusDraft = $oldReplacementAttendee->update($user, 1);
 						if ($oldStatusDraft < 0) {
-							throw new Exception("Update oldReplacementAttendee=".$any_old_fk_replacement."failed: " . $oldReplacementAttendee->error);
+							throw new Exception("Update oldReplacementAttendee=" . $any_old_fk_replacement . " failed: " . $oldReplacementAttendee->error);
 						}
 					} else {
 						throw new Exception("Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error);
