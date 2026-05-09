@@ -610,8 +610,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-	// Replace confirmation
-	if ($action == 'replace') {
+	// Replace or undo replace confirmation popup
+	if ($action == 'replace' || $action == 'undoreplace') {
 		$langs->loadLangs(array("productbatch", "eventorganization", "admin", "bills", "main"));
 		$fetchme = $attendeestatic->fetch($id);
 		if ($fetchme) {
@@ -624,7 +624,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			foreach ($attendee_list as $attendee) {
 				$reformat_list[$attendee->id] = $attendee->getFullName($langs, 0, -1, 0);
 			}
-			$reformat_list['none'] = '--- '.$langs->trans("None").' ---';
 
 			// 655360? well, 640k is enough for everybody :-D and if I used -1 then it would show very fain where as with 655360 the text is clearly seen, and I can not use 0, because that is draft :-(
 			$source_status_list = array();
@@ -649,35 +648,54 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			 *   inputko?: int
 			 * }>
 			 */
-			$formquestion = [
-				// 1. Single-select: Replacement Attendee
-				[
+			if ($action == 'replace') {
+				$attendee_selection_list = [
 					'name'     => 'select_replace_attendee',
 					'label'    => $select_replace_attendee,
 					'type'     => 'select',
 					'values'   => (array) $reformat_list,
-					'default'  => 'none'
-				],
-
-				// 2. Single-select: Source Status after replacement
-				[
+					'default'  => '-1'
+				];
+				$oldstatus_selection_list = [
 					'name'     => 'oldobject_status',
 					'label'    => $langs->trans("Source").' &ndash; '.$langs->trans("SetToStatus"),
 					'type'     => 'select',
 					'values'   => (array) $source_status_list,
 					'default'  => 13,
-				],
-
-				// 3. Single-select: Replacement Status after replacing
-				[
+				];
+				$newstatus_selection_list = [
 					'name'     => 'newobject_status',
 					'label'    => $langs->trans("ToReplace").' &ndash; '.$langs->trans("SetToStatus"),
 					'type'     => 'select',
 					'values'   => (array) $replace_status_list,
 					'default'  => 1,
-				],
+				];
+			} else {
+				$reformat_list[-2] = '--- '.$langs->trans("None").' ---';
+				$attendee_selection_list = [
+					'name'     => 'select_replace_attendee',
+					'label'    => $select_replace_attendee,
+					'type'     => 'select',
+					'values'   => (array) $reformat_list,
+					'default'  => -2,
+				];
+				$oldstatus_selection_list = [
+					'name'     => 'oldobject_status',
+					'label'    => $langs->trans("Source").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $source_status_list,
+					'default'  => 1,
+				];
+				$newstatus_selection_list = [
+					'name'     => 'newobject_status',
+					'label'    => $langs->trans("ToReplace").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $replace_status_list,
+					'default'  => 0,
+				];
+			}
 
-				// 4. Checkbox: Auto trigger replace of Source
+			$formquestion = [$attendee_selection_list, $oldstatus_selection_list, $newstatus_selection_list,
 				[
 					'name'    => 'autotrigger',
 					'label'   => $langs->trans("AutomaticTrigger"),
@@ -697,18 +715,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	}
 
-	// Action clone object
-	$val = GETPOST('select_replace_attendee');
-	$select_replace_attendee = ($val === 'none') ? -1 : (int) $val;
-	if ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_replace_attendee < 1) {
+	// Action replace object
+	$select_replace_attendee = GETPOSTINT('select_replace_attendee');
+	if ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_replace_attendee == -1) {
 		$langs->loadLangs(array("eventorganization", "errors"));
 		setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", $langs->trans("Attendee")), null, 'errors');
-	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && $select_replace_attendee > 0 && $id == $select_replace_attendee) {
+	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && $id > 0 && $id == $select_replace_attendee) {
 		$langs->loadLangs(array("eventorganization", "admin"));
 		dol_syslog('Aborted - Attempt to replace attendee='.(int) $id.' with itself!', LOG_WARNING);
 		setEventMessages($langs->trans("Attendee").' '.$langs->trans("ReplacedBy").' '.$langs->trans("Attendee"), $langs->trans("IgnoreDuplicateRecords"), 'errors');
-	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_replace_attendee > 0) {
-		$langs->loadLangs(array("eventorganization", "errors", "blockedlog", "bills"));
+	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && ($select_replace_attendee > 0 || $select_replace_attendee == -2)) {
+		$langs->loadLangs(array("eventorganization", "errors", "blockedlog", "bills", "main"));
 		// can not reuse attendeestatic because I modify it
 		$attendeesource = new ConferenceOrBoothAttendee($db);
 		if ($id > 0) {
@@ -735,6 +752,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			dol_syslog('User='.$user->id.' has no write access to project='.$attendeesource->fk_project, LOG_WARNING);
 			setEventMessages($langs->trans("Project").': '.$langs->trans("ErrorForbidden2"), null, 'errors');
 		} else {
+			$label_config = array('firstname', ' ', 'lastname');
 			$oldobject_status_id = GETPOSTINT('oldobject_status');
 			$newobject_status_id = GETPOSTINT('newobject_status');
 			$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) 13; // default is set the old objects status to 13 (replaced)
@@ -743,26 +761,52 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$autotrigger = GETPOST('autotrigger', 'alpha') ? GETPOST('autotrigger', 'alpha') : null;
 			$notrigger = ($autotrigger == 'on') ? 0 : 1;
 
-			$attendeereplace = new ConferenceOrBoothAttendee($db);
-			$fetchReplace = $attendeereplace->fetch($select_replace_attendee);
-			if ($fetchReplace) {
-				$replaceResult = $attendeesource->replaceMeWithAttendee($user, $attendeereplace, $newobject_status_id, $oldobject_status_id, $notrigger);
-				if ($replaceResult > 0) {
-					dol_syslog('Replacing attendee='.$id.' with attendee='.$select_replace_attendee, LOG_INFO);
-					$label_config = array('firstname', ' ', 'lastname');
-					$info_message = $langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).' '.$langs->trans("ReplacedBy").' '.$attendeereplace->getNomUrl(1, '', 0, '', -1, $label_config);
-					setEventMessages($info_message, null, 'mesgs');
-					$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $id;
-					echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
-					echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
-					exit;
-					// header() method does not work, it gives this error
-					// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
-				}  else {
-					setEventMessages($attendeesource->error, null, 'errors');
+			if ($select_replace_attendee > 0) {
+				$attendeereplace = new ConferenceOrBoothAttendee($db);
+				$fetchReplace = $attendeereplace->fetch($select_replace_attendee);
+			} else {
+				$fetchReplace = null;
+			}
+
+			$replaceResult = null;
+			if (is_null($fetchReplace)) {
+				$replaceResult = $attendeesource->replaceMeWithAttendee($user, null, 0, 0, 0, 0);
+			} elseif ($fetchReplace > 0) {
+				$any_existing_fk_replacement = $attendeesource->fk_replacement;
+				$check_any_existing_fk_replacement = 0;
+				if ($any_existing_fk_replacement > 0) {
+					$tempObj = new ConferenceOrBoothAttendee($db);
+					$check_any_existing_fk_replacement = $tempObj->fetch($any_existing_fk_replacement);
 				}
+				if ($check_any_existing_fk_replacement > 0) {
+					$force_fk_replacement = 1;
+					dol_syslog('Source attendee='.$id.' already had fk_replacement='.$any_existing_fk_replacement.' now replaced with new value='.$select_replace_attendee, LOG_WARNING);
+					$warn_message = $langs->trans("Warning").': '.$langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).' '.$langs->trans("OldValue", $tempObj->getNomUrl(1, '', 0, '', -1, $label_config)).' '.$langs->trans("ReplacedBy").' '.$attendeereplace->getNomUrl(1, '', 0, '', -1, $label_config);
+					setEventMessages($warn_message, null, 'warnings');
+				} else {
+					$force_fk_replacement = 0;
+				}
+				$replaceResult = $attendeesource->replaceMeWithAttendee($user, $attendeereplace, $newobject_status_id, $oldobject_status_id, $notrigger, $force_fk_replacement);
 			} else {
 				setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("InvoiceReplacementShort").' '.$langs->trans("Attendee")), null, 'errors');
+			}
+
+			if ($replaceResult > 0) {
+				dol_syslog('Replacing attendee='.$id.' with attendee='.$select_replace_attendee, LOG_INFO);
+				if ($select_replace_attendee == -2) {
+					$info_message = $langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).' '.$langs->trans("Reset").' '.$langs->trans("ReplacedBy");
+				} else {
+					$info_message = $langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).' '.$langs->trans("ReplacedBy").' '.$attendeereplace->getNomUrl(1, '', 0, '', -1, $label_config);
+				}
+				setEventMessages($info_message, null, 'mesgs');
+				$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $id;
+				echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+				echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
+				exit;
+				// header() method does not work, it gives this error
+				// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
+			}  else {
+				setEventMessages($attendeesource->error, null, 'errors');
 			}
 		}
 	}
