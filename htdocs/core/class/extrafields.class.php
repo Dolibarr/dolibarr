@@ -165,7 +165,7 @@ class ExtraFields
 	 *  @param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
 	 *  @param	int<0,1>		$showintooltip		Is attribute to be show on tooltip
 	 *  @param	int<0,1>		$personal_data		Is attribute a personal data (RGPD,nLPD/LGPD)
-	 * 
+	 *
 	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
 	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0, $personal_data = 0)
