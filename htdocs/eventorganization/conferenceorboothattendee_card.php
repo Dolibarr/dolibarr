@@ -70,6 +70,7 @@ $withproject = 1;
 
 // Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
+$attendeestatic = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
@@ -612,7 +613,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Replace confirmation
 	if ($action == 'replace') {
 		$langs->loadLangs(array("productbatch", "eventorganization", "admin", "bills", "main"));
-		$attendeestatic = new ConferenceOrBoothAttendee($db);
 		$fetchme = $attendeestatic->fetch($id);
 		if ($fetchme) {
 			// Create an array for form
@@ -677,18 +677,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				// 4. Checkbox: Auto trigger replace of Source
 				[
-					'name'    => 'autotrigger_source',
-					'label'   => $langs->trans("Source").' &ndash; '.$langs->trans("AutomaticTrigger"),
-					'type'    => 'checkbox',
-					'value'   => 1,
-					'default' => 1,
-					'inputko' => 1,
-				],
-
-				// 5. Checkbox: Auto trigger replace of replace
-				[
-					'name'    => 'autotrigger_replace',
-					'label'   => $langs->trans("ToReplace").' &ndash; '.$langs->trans("AutomaticTrigger"),
+					'name'    => 'autotrigger',
+					'label'   => $langs->trans("AutomaticTrigger"),
 					'type'    => 'checkbox',
 					'value'   => 1,
 					'default' => 1,
@@ -702,6 +692,75 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToReplace'), $langs->trans('ConfirmCloneAsk', $attendeestatic->getFullName($langs, 0, -1, 0)), 'confirm_replace_attendee', $formquestion, 'yes', 1);
 		} else {
 		// we should show a popup
+		}
+	}
+
+	// Action clone object
+	$select_replace_attendee = GETPOSTINT('select_replace_attendee');
+	if ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_replace_attendee < 1) {
+		$langs->loadLangs(array("eventorganization", "errors"));
+		setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", $langs->trans("Attendee")), null, 'errors');
+	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && $select_replace_attendee > 0 && $id == $select_replace_attendee) {
+		$langs->loadLangs(array("eventorganization", "admin"));
+		dol_syslog('Aborted - Attempt to replace attendee='.(int) $id.' with itself!', LOG_WARNING);
+		setEventMessages($langs->trans("Attendee").' '.$langs->trans("ReplacedBy").' '.$langs->trans("Attendee"), $langs->trans("IgnoreDuplicateRecords"), 'errors');
+	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_replace_attendee > 0) {
+		$langs->loadLangs(array("eventorganization", "errors", "blockedlog", "bills"));
+		// can not reuse attendeestatic because I modify it
+		$attendeesource = new ConferenceOrBoothAttendee($db);
+		if ($id > 0) {
+			$fetchme = $attendeesource->fetch($id);
+		} else {
+			dol_syslog('Attendee='.(int) $id.' not found', LOG_WARNING);
+			setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("Attendee")), null, 'errors');
+			$fetchme = 0;
+		}
+		if ($fetchme > 0 && $attendeesource->fk_project > 0) {
+			$fetchproject = $projectstatic->fetch($attendeesource->fk_project);
+		} else {
+			dol_syslog('fk_project='.(string) $attendeesource->fk_project.' on attendee='.(int) $id.' not found', LOG_WARNING);
+			setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectRef")), null, 'errors');
+			$fetchproject = 0;
+		}
+		if ($fetchproject > 0) {
+			$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
+		} else {
+			$userHasProjectRights = null;
+		}
+
+		if ($userHasProjectRights < 1) {
+			dol_syslog('User='.$user->id.' has no write access to project='.$attendeesource->fk_project, LOG_WARNING);
+			setEventMessages($langs->trans("Project").': '.$langs->trans("ErrorForbidden2"), null, 'errors');
+		} else {
+			$oldobject_status_id = GETPOSTINT('oldobject_status');
+			$newobject_status_id = GETPOSTINT('newobject_status');
+			$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) 13; // default is set the old objects status to 13 (replaced)
+			$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? (int) $newobject_status_id : (int) 1;  // default for new replaced attendee to 1 (registered)
+
+			$autotrigger = GETPOST('autotrigger', 'alpha') ? GETPOST('autotrigger', 'alpha') : null;
+			$notrigger = ($autotrigger == 'on') ? 0 : 1;
+
+			$attendeereplace = new ConferenceOrBoothAttendee($db);
+			$fetchReplace = $attendeereplace->fetch($select_replace_attendee);
+			if ($fetchReplace) {
+				$replaceResult = $attendeesource->replaceMeWithAttendee($user, $attendeereplace, $newobject_status_id, $oldobject_status_id, $notrigger);
+				if ($replaceResult > 0) {
+					dol_syslog('Replacing attendee='.$id.' with attendee='.$select_replace_attendee, LOG_INFO);
+					$label_config = array('firstname', ' ', 'lastname');
+					$info_message = $langs->trans("Attendee").' '.$attendeesource->getNomUrl(1, '', 0, '', -1, $label_config).' '.$langs->trans("ReplacedBy").' '.$attendeereplace->getNomUrl(1, '', 0, '', -1, $label_config);
+					setEventMessages($info_message, null, 'mesgs');
+					$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $id;
+					echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+					echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
+					exit;
+					// header() method does not work, it gives this error
+					// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
+				}  else {
+					setEventMessages($attendeesource->error, null, 'errors');
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("InvoiceReplacementShort").' '.$langs->trans("Attendee")), null, 'errors');
+			}
 		}
 	}
 
