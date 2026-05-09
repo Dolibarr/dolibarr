@@ -788,15 +788,16 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	@param	User	$user			Object user that modify
 	 *	@param	ConferenceOrBoothAttendee	$fk_replacement			The event attendee that replaces "me"
 	 *	@param	int		$status_fk_replacement		The new status of fk_replacement, default is STATUS_VALIDATED
+	 *	@param	int		$status_source				The new status of "me", default is STATUS_REPLACED
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $notrigger = 0)
+	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0)
 	{
 		// Protection
 		$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
 		if (!in_array($this->status, $allowed_statuses)) {
-			$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->status . ' is not allowed (must be STATUS_VALIDATED or STATUS_DRAFT)';
+			$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->LibStatut($this->status) . ' is not allowed (must be '.$this->LibStatut(self::STATUS_VALIDATED).' or '.$this->LibStatut(self::STATUS_DRAFT);
 			dol_syslog($error_text, LOG_ERR);
 			$this->error = $error_text;
 			return -1;
@@ -807,13 +808,25 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->error = $error_text;
 			return -2;
 		}
+		if (!in_array($status_fk_replacement, $this->list_possible_status)) {
+			$error_text = 'Invalid status_fk_replacement='.$status_fk_replacement;
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -3;
+		}
+		if (!in_array($status_source, $this->list_possible_status)) {
+			$error_text = 'Invalid status_source='.$status_source;
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -4;
+		}
 
 
 		$this->db->begin();
 		try {
 			// Original
 			$this->fk_replacement = $fk_replacement->id;
-			$this->status = self::STATUS_REPLACED;
+			$this->status = $status_source;
 			$originalReplace = $this->update($user, 1); // we do our own trigger
 			if ($originalReplace < 0) {
 				throw new Exception("Update original failed: " . $this->error);
