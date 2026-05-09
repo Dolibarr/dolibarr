@@ -3777,7 +3777,7 @@ if ($action == 'create') {
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
-			'@phan-var-force Commande|Propal|Contrat|Expedition $objectsrc';
+			'@phan-var-force Commande|Propal|Contrat|Expedition|Facture $objectsrc';
 			/** @var Commande|Propal|Contrat|Expedition $objectsrc */
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
