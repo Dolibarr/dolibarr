@@ -1103,15 +1103,18 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  string  $keysuffix    Prefix string to add into name and id of field
 	 *  @param  string  $keyprefix    Suffix string to add into name and id of field
 	 *  @param  mixed   $morecss      Value for CSS to use
+	 *  @param  array   $labelparts                 Array of parts to build the visible label.
+	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
+	 *                                              If empty/null, defaults to $this->ref.
+	 *
 	 *  @return string
 	 */
-	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $labelparts = array('firstname', ' ', 'lastname', ' (#', 'id', ')'))
 	{
 		global $langs;
 
 		if ($key == 'fk_replacement') {
 			$html = '';
-			$label_config = array('firstname', ' ', 'lastname');
 
 			// 1. Get the reverse chain (people I replaced / who came before me)
 			$replacedByChain = $this->getReplacedByChain();
@@ -1140,14 +1143,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 				$reversedChain = array_reverse($replacedByChain);
 				foreach ($reversedChain as $person) {
 					if (!empty($html)) $html .= ' &rarr; ';
-					$html .= $person->getNomUrl(1, '', 0, '', -1, $label_config);
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $labelparts);
 				}
 			}
 
 			// Add "Me"
 			if (!empty($html)) $html .= ' &rarr; ';
 
-			$meLabel = '&nbsp;'.$langs->transnoentitiesnoconv("Me").'&nbsp;';
+			$meLabel = $langs->transnoentitiesnoconv("This");
 			// Generate link: No picto, Rich Tooltip, Text = "Me"
 			$html .= $this->getNomUrl(0, '', 0, 'badge badge-primary', -1, array($meLabel));
 
@@ -1156,7 +1159,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			foreach ($forwardChain as $person) {
 				$html .= ' &rarr; ';
 				if ($person !== null) {
-					$html .= $person->getNomUrl(1, '', 0, '', -1, $label_config);
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $labelparts);
 				} else {
 					$html .= '<span class="opacitymedium">' . $langs->trans("ErrorRefNotFound", $langs->trans("ConferenceOrBoothAttendee")) . '</span>';
 				}

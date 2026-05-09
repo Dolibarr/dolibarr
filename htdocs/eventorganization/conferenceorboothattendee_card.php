@@ -752,7 +752,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			dol_syslog('User='.$user->id.' has no write access to project='.$attendeesource->fk_project, LOG_WARNING);
 			setEventMessages($langs->trans("Project").': '.$langs->trans("ErrorForbidden2"), null, 'errors');
 		} else {
-			$label_config = array('firstname', ' ', 'lastname');
+			$label_config = array('firstname', ' ', 'lastname', ' (#', 'id', ')');
 			$oldobject_status_id = GETPOSTINT('oldobject_status');
 			$newobject_status_id = GETPOSTINT('newobject_status');
 			$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) 13; // default is set the old objects status to 13 (replaced)
