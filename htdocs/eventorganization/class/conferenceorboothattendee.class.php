@@ -797,12 +797,17 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0, $force_fk_replacement = 0)
 	{
 		// Protection
-		$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
-		if (!in_array($this->status, $allowed_statuses)) {
-			$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->LibStatut($this->status) . ' is not allowed (must be '.$this->LibStatut(self::STATUS_VALIDATED).' or '.$this->LibStatut(self::STATUS_DRAFT);
-			dol_syslog($error_text, LOG_ERR);
-			$this->error = $error_text;
-			return -1;
+		if (!is_null($fk_replacement)) {
+			$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
+			if (!in_array($this->status, $allowed_statuses)) {
+				$allowed_labels = array_map(function($s) {
+					return $this->LibStatut($s);
+				}, $allowed_statuses);
+				$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->LibStatut($this->status) . ' is not allowed (must be ' . implode(' or ', $allowed_labels) . ')';
+				dol_syslog($error_text, LOG_ERR);
+				$this->error = $error_text;
+				return -1;
+			}
 		}
 		if (!is_null($fk_replacement) && $fk_replacement->id == $this->id) {
 			$error_text = 'Can not replace an attendee with itself';
