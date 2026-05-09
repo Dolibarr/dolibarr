@@ -149,7 +149,7 @@ class ContratStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_contrat,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -174,7 +174,7 @@ class ContratStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_contrat,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -198,7 +198,7 @@ class ContratStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_contrat,'%m') as dm, count(cd.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " INNER JOIN ".$this->from_line. " ON c.rowid = cd.fk_contrat";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -224,7 +224,7 @@ class ContratStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_contrat,'%m') as dm, AVG(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -247,7 +247,7 @@ class ContratStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_contrat,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -271,7 +271,7 @@ class ContratStats extends Stats
 		global $user;
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " INNER JOIN ".$this->from_line." ON c.rowid = tl.fk_commande";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
