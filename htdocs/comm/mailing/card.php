@@ -614,6 +614,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'classin' && $permissiontocreate) {
+		$mesg = '';
 		$mesgs = array();
 		$setResult = $object->setProject(GETPOSTINT('projectid'));
 		dol_syslog('Mailing card, action classin, setProject', LOG_DEBUG);
