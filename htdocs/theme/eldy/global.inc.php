@@ -5757,7 +5757,7 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	border-radius: 5px;
 }
 
-div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral, div.fiche div.green {
 	box-shadow: 1px 1px 6px #d4d4d4;
 	margin: 1em 0em 1.2em 0em;
 }
