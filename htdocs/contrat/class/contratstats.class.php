@@ -200,7 +200,7 @@ class ContratStats extends Stats
 
 		$sql = "SELECT date_format(c.date_contrat,'%m') as dm, count(cd.".$this->db->sanitize($this->field).")";
 		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
-		$sql .= " INNER JOIN ".$this->from_line. " ON c.rowid = cd.fk_contrat";
+		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 1, 1). " ON c.rowid = cd.fk_contrat";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
