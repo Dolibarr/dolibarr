@@ -59,8 +59,8 @@ $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '252,252,252'; // line pair
-$colorbacklinepair2 = '252,252,252'; // line pair
+$colorbacklinepair1 = '255,255,255'; // line pair
+$colorbacklinepair2 = '255,255,255'; // line pair
 $colorbacklinepairhover = '240,242,249'; // line hover
 $colorbacklinepairchecked = '240,242,249'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
@@ -75,7 +75,7 @@ $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
-$butactionbg = '136, 96, 170';
+$butactionbg = '116, 96, 170';
 $textbutaction = '255, 255, 255';
 
 // text color

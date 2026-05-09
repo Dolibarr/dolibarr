@@ -421,7 +421,7 @@ if (empty($dolibarr_main_restrict_eval_methods)) {
 } else {
 	print $dolibarr_main_restrict_eval_methods;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
 print '<br>';
 
 
@@ -629,7 +629,7 @@ print '<br>';
 // File extension locked in upload by default
 
 print '<strong>'.$langs->trans("UploadExtensionRestriction").'</strong>: ';
-print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION')));
+print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent()))));
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.implode(', ', getExecutableContent()).')</span>';
 print '<br>';
 print '<br>';
@@ -741,6 +741,7 @@ if (!$test) {
 print '<br>';
 
 // Modules for Payments
+/*
 $test = isModEnabled('stripe');
 if ($test) {
 	print '<br>';
@@ -766,6 +767,7 @@ if ($test) {
 		print '<br>';
 	}
 }
+*/
 
 print '</div>';
 
@@ -790,7 +792,7 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 
 		print '<br>';
 
-		print '<strong>API_DISABLE_LOGIN_API</strong> = '.getDolGlobalString('API_DISABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
+		print '<strong>API_ENABLE_LOGIN_API</strong> = '.getDolGlobalString('API_ENABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
 	}
 }
 
@@ -860,14 +862,14 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id)<br>';
+print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_instance_unique_id or $dolibarr_main_dolcrypt_key)<br>';
 print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print $langs->trans("ToolToDecryptAString").': ';
-print '<input type="text" class="minwidth500" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
-print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
+print '<input type="text" class="minwidth500 valignmiddle" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'" spellcheck="false">';
+print '<input type="submit" class="reposition button small smallpaddingimp valignmiddle" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
 	$decryptedstring = dolDecrypt($exampletodecrypt);
@@ -1029,14 +1031,12 @@ print '<br>';
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
 print '<br>';
 
+print '<strong>MAIN_ALLOW_LINK_STARTING_WITH_FILE</strong> = '.getDolGlobalString('MAIN_ALLOW_LINK_STARTING_WITH_FILE', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
 print '<strong>MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL</strong> = '.getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": ".$langs->trans("Undefined").' '.$langs->trans("or")." 0 - The value 1 allows the use of concatenation functions like . or dol_concat into extra fields conditions or formula but is not secured)</span><br>";
 print '<br>';
-
-print '<strong>MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER</strong> = '.getDolGlobalString('MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - The value 0 allows the use of subrequests into extrafields conditions. It remains not possible in API filters to avoid bind SQL injections whatever is this value)</span><br>";
-print '<br>';
-
 
 // MAIN_ALLOW_LOCAL_LINKS_AS_EXTERNAL_LINKS
 

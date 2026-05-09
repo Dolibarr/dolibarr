@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent de Grandporé        <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -365,7 +365,13 @@ if ($result) {
 			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
 			$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
 			if ($tva_npr) { // If NPR, we add an entry for counterpartWe into tabother
-				$tabother[$obj->rowid][$compta_counterpart_tva_npr] += $obj->total_tva;
+				if (!array_key_exists($obj->rowid, $tabother)) {
+					$tabother[$obj->rowid] = array();
+				}
+				if (!array_key_exists($compta_counterpart_tva_npr, $tabother[$obj->rowid])) {
+					$tabother[$obj->rowid][$compta_counterpart_tva_npr] = 0;
+				}
+				$tabother[$obj->rowid][$compta_counterpart_tva_npr] += (float) $obj->total_tva;
 			}
 			$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
 			$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
@@ -468,7 +474,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
-		$invoicestatic->id = $key;
+		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["refsologest"];
 		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
@@ -509,7 +515,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$bookkeeping->doc_ref = $val["refsologest"];
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'supplier_invoice';
-				$bookkeeping->fk_doc = $key;
+				$bookkeeping->fk_doc = (int) $key;
 				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 				$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
@@ -577,7 +583,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->doc_ref = $val["refsologest"];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
-					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_doc = (int) $key;
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
@@ -682,7 +688,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_ref = $val["refsologest"];
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'supplier_invoice';
-						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_doc = (int) $key;
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
@@ -739,7 +745,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->doc_ref = $val["refsologest"];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
-					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_doc = (int) $key;
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
@@ -852,7 +858,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
-		$invoicestatic->id = $key;
+		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = $val["refsologest"];
 		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
@@ -1107,7 +1113,7 @@ if (empty($action) || $action == 'view') {
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
-		$invoicestatic->id = $key;
+		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = $val["refsologest"];
 		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];

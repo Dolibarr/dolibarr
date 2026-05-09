@@ -1712,12 +1712,12 @@ if ($action == 'create') {
 							$description = $objp->description;
 
 							if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+								print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : '') . $text;
 								if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
 									print $form->textwithpicto('', $description);
 								}
 							} else {
-								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+								print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow.png') : ''));
 							}
 
 							// Add description in form
@@ -2015,7 +2015,7 @@ if ($action == 'create') {
 							$tmpactiontext = $langs->trans("Activate");
 							if ($objp->statut == 4) {
 								$tmpaction = 'unactivateline';
-								$tmpactionpicto = 'playstop';
+								$tmpactionpicto = 'playstop.png';
 								$tmpactiontext = $langs->trans("Disable");
 							}
 							if (($tmpaction == 'activateline' && $user->hasRight('contrat', 'activer')) || ($tmpaction == 'unactivateline' && $user->hasRight('contrat', 'desactiver'))) {
@@ -2284,7 +2284,6 @@ if ($action == 'create') {
 				$arrayofcreatebutton = array();
 				if (isModEnabled('propal') && $object->status > 0 && $soc->client > 0) {
 					$arrayofcreatebutton[] = array(
-						'attr' => array('style' => 'text-align: left;'),
 						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
 						'label' => $langs->trans('AddProp'),
 						'lang' => 'propal',
@@ -2367,7 +2366,7 @@ if ($action == 'create') {
 				// Clone
 				if ($user->hasRight('contrat', 'creer')) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
 				}
 
 				// Delete

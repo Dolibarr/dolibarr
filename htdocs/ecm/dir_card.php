@@ -109,9 +109,9 @@ if ($module == 'ecm') {
 	$permissiontoupload = $user->hasRight("ecm", "upload");
 }
 if ($module == 'medias') {
-	$permissiontoread = ($user->hasRight("mailing", "lire") || $user->hasRight("website", "read"));
-	$permissiontoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
-	$permissiontoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permissiontoread = $user->hasRight("website", "read");
+	$permissiontoadd = $user->hasRight("website", "write");
+	$permissiontoupload = $user->hasRight("website", "write");
 }
 
 if (!$permissiontoread) {

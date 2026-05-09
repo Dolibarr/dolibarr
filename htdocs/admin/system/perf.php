@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -35,9 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin", "products", "mrp"));
+$langs->loadLangs(array("install", "other", "admin", "products", "mrp", "accountancy"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -593,7 +593,7 @@ if ($resql) {
 	print '<br>';
 	$db->free($resql);
 }
-// Contact combo list
+// Project combo list
 $sql = "SELECT COUNT(*) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as s";
 $resql = $db->query($sql);
@@ -636,6 +636,35 @@ if ($resql) {
 	$db->free($resql);
 }
 print '</div>';
+// Auxiliary account combo list (accounting)
+// Check performance for auxiliary accounts (third parties with accounting code + users with accountancy_code)
+$sql = "SELECT";
+$sql .= " (SELECT COUNT(*) FROM " . MAIN_DB_PREFIX . "societe";
+$sql .= "  WHERE entity IN (" . getEntity('societe') . ")";
+$sql .= "  AND (client IN (1,3) OR fournisseur = 1)";
+$sql .= "  AND (code_compta != '' OR code_compta_fournisseur != '')) as nb_soc,";
+$sql .= " (SELECT COUNT(*) FROM " . MAIN_DB_PREFIX . "user";
+$sql .= "  WHERE entity IN (" . getEntity('user') . ")";
+$sql .= "  AND accountancy_code != '') as nb_user";
+
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 2000;
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb_soc + (int) $obj->nb_user;
+
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"), 'ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"') . ' ' . $langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("SubledgerAccount"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
 
 
 print '<br>';
@@ -714,20 +743,13 @@ if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'
 print '<br>';
 print '</div>';
 
+
 // Options
+
 print '<br>';
 print img_picto('', 'folder', 'class="pictofixedwidth"');
 print '<strong>'.$langs->trans("Options").'</strong><br>';
 print '<div class="divsection">';
-if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
-	print img_picto('', 'tick', 'class="pictofixedwidth"');
-} else {
-	print img_picto('', 'minus', 'class="pictofixedwidth"');
-}
-print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
-print ': ';
-print yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
-print '<br>';
 
 if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
@@ -739,7 +761,6 @@ print ': ';
 print yn(getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP'));
 print '<br>';
 
-
 if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
 } else {
@@ -749,6 +770,16 @@ print $form->textwithpicto($langs->trans('MAIN_CACHE_COUNT'), $langs->trans("Opt
 print ': ';
 print yn(getDolGlobalInt('MAIN_CACHE_COUNT'));
 //.' '.img_picto('', 'warning');
+print '<br>';
+
+if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'minus', 'class="pictofixedwidth"');
+}
+print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Menu").' '.$langs->trans("Home").' - '.$langs->trans("Setup").' - '.$langs->trans("Widgets").'<br>'. $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
+print ': ';
+print yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
 print '<br>';
 
 print '</div>';

@@ -124,13 +124,15 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				}
 
 				// warning; the test page use its own call
-				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
+				global $dolibarr_allow_localurl_for_webhooks;
+				$localurl = empty($dolibarr_allow_localurl_for_webhooks) ? 0 : 2;
+				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), $localurl, -1);
 
 				$errormsg = "";
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
-					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$errormsg = "The WebHook for triggercode ".$action." failed to do the GET URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 					$errorforhistory ++;
 
 					if ($tmpobject->type == Target::TYPE_BLOCKING) {

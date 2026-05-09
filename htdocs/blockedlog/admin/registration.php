@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024      Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +64,11 @@ if (!$user->admin) {
  * Actions
  */
 
+if (getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR')) {	// If we are in mode for tax auditor
+	header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/blockedlog_archives.php');
+	exit;
+}
+
 if ($cancel && $origin == 'initmodule') {
 	header("Location: ".DOL_URL_ROOT."/admin/modules.php");
 	exit(0);
@@ -115,69 +121,69 @@ if ($action == 'update') {
 		//Company
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_NAME", $company_name, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_EMAIL", $company_email, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_COUNTRY_CODE", $company_country_code, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_IDPROF1", $company_idprof1, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_ADDRESS", $company_address, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_STATE", $company_state, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_ZIP", $company_zip, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_TOWN", $company_town, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 
 		//IT Provider
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NAME", $provider_name, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_MAIL", $provider_email, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_COUNTRY", $provider_country_id, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF1", $provider_idprof1, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ADDRESS", $provider_address, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_STATE", $provider_state, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ZIP", $provider_zip, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_TOWN", $provider_town, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
-			$error ++;
+			$error++;
 		}
 	}
 	if (!$error) {
@@ -185,7 +191,7 @@ if ($action == 'update') {
 
 		//setEventMessages("SetupSaved", null, 'mesgs');
 		$urltouse = $_SERVER["PHP_SELF"]."?mode=forceregistration";
-		$urltouse .= (($withtab && GETPOST('origin')) ? '&withtab='.$withtab: '');
+		$urltouse .= (($withtab && GETPOST('origin')) ? '&withtab='.$withtab : '');
 		$urltouse .= (GETPOST('origin') ? '&origin='.GETPOST('origin') : '');
 
 		header("Location: ".$urltouse);
@@ -206,34 +212,37 @@ $formcompany = new FormCompany($db);
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
 
-$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+$help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 } else {
-	$linkback='';
+	$linkback = '';
 }
 
 $morehtmlcenter = '';
+$texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
-if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
-	$texttop = '';
+if (!userIsTaxAuditor()) {
+	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+	if ((!isRegistrationDataSavedAndPushed() || !isModEnabled('blockedlog')) && $mode != "forceregistration") {
+		$texttop = '';
+	}
 }
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
-	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+	$head = blockedlogadmin_prepare_head($withtab);
 	print dol_get_fiche_head($head, 'registration', '', -1);
 } else {
 	print '<br>';
@@ -251,7 +260,7 @@ $infotoshow = '';
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		if (preg_match('/\-/', DOL_VERSION)) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
 			// This is an alpha or beta version
 			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
 		} else {
@@ -260,6 +269,8 @@ if ($mysoc->country_code == 'FR') {
 	} else {
 		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
 	}
+
+	$infotoshow .= ' - <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
 }
 
 // Show generic message (for countries that need registration) to explain we need registration to collect data and why
@@ -290,7 +301,8 @@ if (in_array($mysoc->country_code, array('FR'))) {
 		print info_admin($htmltext, 0, 0, $color);
 
 		$htmltext = '';
-		if ($mysoc->country_code == 'FR') {
+		// @phpstan-ignore-next-line  Country code is already FR because of in_array('FR') test above
+		if ($mysoc->country_code === 'FR') {
 			$htmltext .= $langs->trans("UnalterableLogTool1FR").'<br>';
 		}
 
@@ -302,7 +314,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 	} else {
 		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
 		$htmltext .= $langs->trans("ApplicationHasBeenRegistered");
-		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary">'.dol_trunc($registrationnumber, 10).'</span>';
+		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary" title="Flag stored into MAIN_FIRST_REGISTRATION_OK_DATE. Registered data saved into BLOCKEDLOG_REGISTRATION_...">'.dol_trunc($registrationnumber, 10).'</span>';
 		$htmltext .= '<br>';
 		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
 		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');

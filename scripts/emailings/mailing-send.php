@@ -72,6 +72,8 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_db_readonly
  */
 // Global variables
 $version = DOL_VERSION;
@@ -223,7 +225,7 @@ if ($resql) {
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
 						$object = null; // Not defined with mass emailing
-						$parameters = array('mode' => 'emailing');
+						//$parameters = array('mode' => 'emailing');
 						$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $object); // Note: On mass emailing, this is null because we don't know object
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
@@ -413,7 +415,7 @@ if ($resql) {
 							dol_syslog("error for emailing id ".$id." #".$i.($mail->error ? ' - '.$mail->error : ''), LOG_DEBUG);
 
 							$sqlerror = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sqlerror .= " SET statut=-1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
+							$sqlerror .= " SET statut=-1, date_envoi='".$db->idate($now)."' WHERE rowid = ".((int) $obj->rowid);
 							$resqlerror = $db->query($sqlerror);
 							if (!$resqlerror) {
 								dol_print_error($db);
@@ -424,12 +426,12 @@ if ($resql) {
 						$i++;
 					}
 				} else {
-					//$mesg = "Emailing id ".$id." has no recipient to target";
+					$mesg = "Emailing id ".$id." has no or no more recipient to target";
 					print $mesg."\n";
 					dol_syslog($mesg, LOG_ERR);
 
 					// Loop finished, set global statut of mail
-					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=3 WHERE rowid=".$obj->rowid;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 3 WHERE rowid = ".((int) $obj->rowid);
 					$result_sql = $db->query($sql);
 
 					dol_syslog("update global status", LOG_DEBUG);

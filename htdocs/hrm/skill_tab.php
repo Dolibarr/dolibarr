@@ -6,7 +6,7 @@
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ if (empty($reshook)) {
 					$sql_eval .= " AND e.fk_job = ".(int) $object->id;
 					$result = $db->query($sql_eval);
 					$numEvals = $db->num_rows($result);
-					$i=0;
+					$i = 0;
 					while ($i < $numEvals) {
 						$objEval = $db->fetch_object($result);
 						$line = new EvaluationLine($db);
@@ -223,7 +223,7 @@ if (empty($reshook)) {
 							$sql_eval .= " AND e.fk_job = ".(int) $object->id;
 							$result = $db->query($sql_eval);
 							$numEvals = $db->num_rows($result);
-							$i=0;
+							$i = 0;
 							while ($i < $numEvals) {
 								$objEval = $db->fetch_object($result);
 								$line = new EvaluationLine($db);
@@ -278,7 +278,7 @@ if (empty($reshook)) {
 			$sql_eval .= " AND e.fk_job = ".(int) $object->id;
 			$result = $db->query($sql_eval);
 			$numEvals = $db->num_rows($result);
-			$i=0;
+			$i = 0;
 			while ($i < $numEvals) {
 				$objEval = $db->fetch_object($result);
 				$line = new EvaluationLine($db);
@@ -644,7 +644,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			$i = 0;
 			$sameRef = array();
-			/** @var array<Object|array> $objects */
+			/** @var array<Object> $objects */
 			$objects = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);

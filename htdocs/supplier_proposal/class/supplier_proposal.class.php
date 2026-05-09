@@ -313,7 +313,7 @@ class SupplierProposal extends CommonObject
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!$qty) {
 			$qty = 1;
@@ -955,7 +955,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $langs, $conf, $mysoc, $hookmanager;
+		global $conf, $mysoc, $hookmanager;
 		$error = 0;
 
 		$now = dol_now();
@@ -1184,7 +1184,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 		$now = dol_now();
@@ -1482,7 +1482,7 @@ class SupplierProposal extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 		$now = dol_now();
@@ -1642,75 +1642,6 @@ class SupplierProposal extends CommonObject
 		return 0;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Set an overall discount on the proposal
-	 *
-	 *	@param      User	$user       Object user that modify
-	 *	@param      float	$remise      Amount discount
-	 *	@return     int         		Return integer <0 if ko, >0 if ok
-	 */
-	/*
-	public function set_remise_percent($user, $remise)
-	{
-		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
-
-		if ($user->hasRight('supplier_proposal', 'creer')) {
-			$remise = price2num($remise, 2);
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".((float) $remise);
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = 0";
-
-			if ($this->db->query($sql)) {
-				$this->remise_percent = ((float) $remise);
-				$this->update_price(1);
-				return 1;
-			} else {
-				$this->error = $this->db->error();
-				return -1;
-			}
-		}
-		return 0;
-	}
-	*/
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Set an absolute overall discount on the proposal
-	 *
-	 *	@param      User	$user        Object user that modify
-	 *	@param      float	$remise      Amount discount
-	 *	@return     int         		Return integer <0 if ko, >0 if ok
-	 */
-	/*
-	public function set_remise_absolue($user, $remise)
-	{
-		// phpcs:enable
-		if (empty($remise)) {
-			$remise = 0;
-		}
-
-		$remise = price2num($remise);
-
-		if ($user->hasRight('supplier_proposal', 'creer')) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
-			$sql .= " SET remise_absolue = ".((float) $remise);
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = 0";
-
-			if ($this->db->query($sql)) {
-				$this->remise_absolue = $remise;
-				$this->update_price(1);
-				return 1;
-			} else {
-				$this->error = $this->db->error();
-				return -1;
-			}
-		}
-		return 0;
-	}
-	*/
-
 
 	/**
 	 *	Reopen the commercial proposal
@@ -1723,8 +1654,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function reopen($user, $status, $note = '', $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
@@ -1860,9 +1789,8 @@ class SupplierProposal extends CommonObject
 	 */
 	public function updateOrCreatePriceFournisseur($user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
+
 		foreach ($this->lines as $product) {
 			if ($product->subprice <= 0) {
 				continue;
@@ -1924,8 +1852,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function createPriceFournisseur($product, $user)
 	{
-		global $conf;
-
 		$price = price2num($product->subprice * $product->qty, 'MU');
 		$qty = price2num($product->qty);
 		$unitPrice = price2num($product->subprice, 'MU');
@@ -1988,8 +1914,6 @@ class SupplierProposal extends CommonObject
 	public function setDraft($user)
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
 		$error = 0;
 
 		if ($this->status == self::STATUS_DRAFT) {
@@ -2119,7 +2043,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;

@@ -1403,7 +1403,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); } void(0);';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1468,7 +1468,8 @@ class FormFile
 			}
 			// Shared or not - Hash of file
 			if (empty($moreoptions['hideshared'])) {
-				print_liste_field_titre('Shared');
+				//print_liste_field_titre('Shared');
+				print_liste_field_titre('');
 			}
 			// Custom action buttons
 			if (!empty($moreoptions['buttons'])) {
@@ -1565,7 +1566,7 @@ class FormFile
 						}
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
-						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'">';
+						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'" spellcheck="false">';
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
@@ -1662,8 +1663,10 @@ class FormFile
 									$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 									print '<!-- shared link -->';
-									print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-									print '<input type="text" class="centpercentminusx minwidth50imp nopadding small downloadexternallink" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+									print '<a href="'.$fulllink.'" target="_blank" rel="noopener" data-showidonhover="downloadlink'.$filearray[$key]['rowid'].'">';
+									print img_picto($langs->trans("FileSharedViaALink"), 'collab');
+									print '</a> ';
+									print '<input type="text" class="centpercentminusx minwidth50imp nopadding small downloadexternallink showonhover" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 								} else {
 									//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 								}

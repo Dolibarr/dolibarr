@@ -97,6 +97,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			return 0;
 		}
 
+		if (preg_match('/_MODIFY/', $action) && property_exists($object, 'fields')) {	// If there is a fields array
+			if ((!empty($object->fields['fk_statut']) || !empty($object->fields['status'])) && empty($object->status)) {		// If status is draft
+				return 0;
+			}
+		}
+
+
 		$langs->load("agenda");
 
 		if (empty($object->actiontypecode)) {

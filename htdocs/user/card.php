@@ -11,7 +11,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2017	Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
- * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2015-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
@@ -1029,9 +1029,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<table class="border centpercent">';
 
 	// Civility
-	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
-	print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_USER')) {
+		print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
+		print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+		print '</td></tr>';
+	}
 
 	// Lastname
 	print '<tr>';
@@ -1073,7 +1075,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (!empty($conf->use_javascript_ajax)) {
 		// Add code to generate the login when creating a new user.
 		// Best rule to generate would be to use the same rule than dol_buildlogin() but currently it is a PHP function not available in js.
-		// TODO Implement a dol_buildlogin in javascript.
+		// TODO Implement a function dol_buildlogin in javascript like the version in PHP.
 		$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
 		if ($charforseparator == 'none') {
 			$charforseparator = '';
@@ -1085,7 +1087,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 					lastname = $("#lastname").val().toLowerCase();
 			';
-		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
+		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
+			$charforseparator = '';
+		} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
 		} else {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim();';
@@ -1220,13 +1225,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Force update on next login -- only on dolibarr auth context
 	if ($_SESSION["dol_authmode"] == 'dolibarr') {
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
+		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("PasswordToChange"), $langs->trans("ForcePasswordChange")).'</td>';
 		print '<td>';
-		if ($object->hasRight('user', 'self', 'password')) {
-			print '<input type="checkbox" name="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+		//$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+		$permissiontoselfeditpassword = 1;	// In creation, we suppose it to true
+		if ($permissiontoselfeditpassword) { // @phpstan-ignore-line because value is forced
+			print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+			print '<label class="opacitymedium" for="forcepasswordchange">'.$langs->trans("AtNextLogin").'</label>';
 		} else {
-			print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
-			print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
+			print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey valignmiddle" disabled>';
+			print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("NotPossible").'</span>', $langs->trans("UserDoesNotHaveRightsToChangeHisPassword"));
 		}
 		print '</td>';
 		print "</tr>\n";
@@ -2028,17 +2036,21 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Force update on next login only on dolibarr auth mode
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ForcePasswordChange").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("PasswordToChange"), $langs->trans("ForcePasswordChange")).'</td>';
 				print '<td>';
-				if ($object->hasRight('user', 'self', 'password')) {
+				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+				if ($permissiontoselfeditpassword) {
 					if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-						print '<input type="checkbox" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						print '<input type="checkbox" class="colorgrey" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						//print $langs->trans("AtNextLogin");
+						print '<span class="opacitymedium">'.yn($object->force_pass_change).'</span>';
 					} else {
 						print yn($object->force_pass_change);
+						print '<span class="opacitymedium">'.yn($object->force_pass_change).'</span>';
 					}
 				} else {
-					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
-					print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
+					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled class="valignmiddle">';
+					print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("No").'</span>', $langs->trans("UserDoesNotHaveRightsToChangeHisPassword"));
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2723,17 +2735,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Force update on next login only on dolibarr auth mode
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
 				print '<tr>';
-				print '<td>'.$form->editfieldkey('ForcePasswordChange', 'forcepasswordchange', '', $object, 0).'</td><td>';
-
-				if ($object->hasRight('user', 'self', 'password')) {
+				print '<td>'.$form->editfieldkey($form->textwithpicto($langs->trans("PasswordToChange"), $langs->trans("ForcePasswordChange")), 'forcepasswordchange', '', $object, 0).'</td><td>';
+				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+				if ($permissiontoselfeditpassword) {
 					if ($permissiontoedit) {
-						print '<input type="checkbox" name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						print '<label class="opacitylow" for="forcepasswordchange">'.$langs->trans("AtNextLogin").'</label>';
 					} else {
-						print '<input type="checkbox" name="forcepasswordchange" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						print '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						print $langs->trans("AtNextLogin");
 					}
 				} else {
-					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled>';
-					print $langs->trans("UserDoesNotHaveRightsToChangeHisPassword");
+					print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
+					print '<span class="opacitymedium">'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'</span>';
 				}
 
 				print '</td></tr>';
@@ -3223,14 +3237,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', !is_object($societe) || empty($societe->default_lang) ? '' : $societe->default_lang);
 			$somethingshown = $formfile->numoffiles;
-
-			// Show links to link elements
-			$tmparray = $form->showLinkToObjectBlock($object, array(), array(), 1);
-			$linktoelem = $tmparray['linktoelem'];
-			$htmltoenteralink = $tmparray['htmltoenteralink'];
-			print $htmltoenteralink;
-
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			$MAXEVENT = 10;
 

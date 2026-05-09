@@ -216,7 +216,7 @@ class Ctypent extends CommonDict
 		$sql .= " libelle=".(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null").",";
 		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
-		$sql .= " WHERE id=".$this->id;
+		$sql .= " WHERE id = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -251,11 +251,10 @@ class Ctypent extends CommonDict
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_typent";
-		$sql .= " WHERE id = ".$this->id;
+		$sql .= " WHERE id = ".((int) $this->id);
 
 		$this->db->begin();
 

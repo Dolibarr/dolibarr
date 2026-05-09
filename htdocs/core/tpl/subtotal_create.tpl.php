@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,9 @@
 
 '
 @phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this
+@phan-var-force ?array<int,string> $depth_array
+@phan-var-force ?array<string,string> $titles
+@phan-var-force string $type
 ';
 
 $depth_array = $depth_array ?? array();
@@ -65,7 +68,7 @@ $page = $_SERVER["PHP_SELF"];
 
 if ($object->element == 'facture') {
 	$page .= '?facid=' . $object->id;
-} elseif (in_array($object->element, $object::$ALLOWED_TYPES)) {
+} elseif (in_array($object->element, $object::$ALLOWED_TYPES)) {  // @phan-suppress-current-line PhanUndeclaredStaticProperty
 	$page .= '?id=' . $object->id;
 }
 

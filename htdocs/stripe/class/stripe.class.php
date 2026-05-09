@@ -163,7 +163,7 @@ class Stripe extends CommonObject
 	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
-	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
+	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for Adherent and Societe.
 	 * @param	string		$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int<0,1>	$status							Status (0=test, 1=live)
 	 * @param	int<0,1>	$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
@@ -1164,13 +1164,21 @@ class Stripe extends CommonObject
 
 							$cs = $s->setupIntents->create($dataforintent);
 							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
-							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
-							// note: $cs->mandate contains ID of mandate on Stripe side
 
 							if (!$cs) {
-								$this->error = 'Link SEPA <-> Customer failed';
+								$this->error = 'Link SEPA <-> setupIntent->create failed';
 								dol_syslog($this->error, LOG_ERR);
+								$cs2 = null;
 							} else {
+								// note: $cs->mandate contains ID of mandate on Stripe side
+								$cs2 = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
+								if (!$cs2) {
+									$this->error = 'Link SEPA <-> setupIntent->confirm failed';
+									dol_syslog($this->error, LOG_ERR);
+								}
+							}
+
+							if ($cs && $cs2) {
 								dol_syslog("Update the payment mode of the customer");
 
 								// print json_encode($sepa);
