@@ -94,7 +94,6 @@ class ObjectLinks extends DolibarrApi
 	 */
 	private function _setObjectLinkField($field, $value)
 	{
-
 		$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
 
 		/**
@@ -106,9 +105,9 @@ class ObjectLinks extends DolibarrApi
 		);
 
 		if (in_array($field, $intFields)) {
-			$this->objectlink->$field = (int) $clean_field;
+			$this->objectlink->$field = (int) $clean_field;			// Clean by _checkValForAPI previously
 		} else {
-			$this->objectlink->$field = (string) $clean_field;
+			$this->objectlink->$field = (string) $clean_field;		// Clean by _checkValForAPI previously
 		}
 	}
 

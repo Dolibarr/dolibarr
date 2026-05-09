@@ -166,7 +166,7 @@ class MembersTypes extends DolibarrApi
 				continue;
 			}
 
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 		if ($membertype->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating member type', array_merge(array($membertype->error), $membertype->errors));
@@ -210,7 +210,7 @@ class MembersTypes extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$membertype->array_options[$index] = $this->_checkValForAPI($field, $val, $membertype);
+					$membertype->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $membertype);
 				}
 				continue;
 			}
