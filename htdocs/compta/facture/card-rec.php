@@ -760,7 +760,6 @@ if (empty($reshook)) {
 				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, 0, $date_start_fill, $date_end_fill, (int) $fournprice, $buyingprice, $fk_parent_line);
 
 				if ($result > 0) {
-
 					// TODO add "insert" function into FactureLigneRec or add "invoicerecline.class.php" (same of "factureligne.class.php")
 					$objectline = new FactureLigneRec($db);
 					if ($objectline->fetch($result)) {
