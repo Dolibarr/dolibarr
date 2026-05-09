@@ -491,6 +491,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setretainedwarrantyconditions' && $usercancreate) {
+		/** @var Facture $object */
 		$object->fetch($id);
 		$object->retained_warranty_fk_cond_reglement = 0; // To clean property
 		$result = $object->setRetainedWarrantyPaymentTerms(GETPOSTINT('retained_warranty_fk_cond_reglement'));
@@ -4542,7 +4543,8 @@ if ($action == 'create') {
 			if (empty($retained_warranty_fk_cond_reglement)) {
 				$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
-					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
+					// Facture->retained_warranty_fk_cond_reglement (does not exist on Expedition)
+					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement; // @phan-suppress-current-line PhanUndeclaredProperty
 				} else {
 					$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				}
