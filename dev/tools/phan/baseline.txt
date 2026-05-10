@@ -9,8 +9,8 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 390+ occurrences
-    // PhanUndeclaredGlobalVariable : 50+ occurrences
+    // PhanUndeclaredProperty : 380+ occurrences
+    // PhanUndeclaredGlobalVariable : 45+ occurrences
     // PhanTypeMismatchArgument : 35+ occurrences
     // PhanTypeMismatchProperty : 20+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
@@ -38,7 +38,6 @@ return [
         'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/compta/bank/class/account.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/bank/line.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/compta/bank/various_payment/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/bank/various_payment/document.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanUndeclaredProperty'],
@@ -220,7 +219,6 @@ return [
         'htdocs/variants/tpl/productattributevalueline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/webhook/class/target.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/webhook/target_card.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/webportal/class/html.formlistwebportal.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.

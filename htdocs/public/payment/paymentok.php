@@ -1210,7 +1210,7 @@ if ($ispaymentok) {
 							// TODO Send a warning email.
 						}
 
-						$object->classifyBilled($user);		// The invoice has been create from the order so total is the same, so we can classify order to billed (even if payment may be partial).
+						$object->classifyBilled($user);		// The invoice has been created from the order so total is the same, so we can classify order to billed (even if payment may be partial).
 
 						$invoice->validate($user);			// This may re-classify all linked orders to billed (done previously) if amount of invoice is ok by triggers, depending on the workflow module setup.
 

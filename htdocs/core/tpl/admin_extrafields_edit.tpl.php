@@ -54,6 +54,7 @@ if (empty($conf) || !is_object($conf)) {
 
 
 $langs->load("modulebuilder");
+$langs->load("admin");
 
 $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:contact/class/contact.class.php<br>Product:product/class/product.class.php<br>Project:projet/class/project.class.php<br>...';
 
@@ -203,6 +204,7 @@ $enabled = $extrafields->attributes[$elementtype]['enabled'][$attrname];
 $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
 $csslist = $extrafields->attributes[$elementtype]['csslist'][$attrname];
+$personal_data = $extrafields->attributes[$elementtype]['personal_data'][$attrname];
 
 $param_chain = '';
 if (is_array($param)) {
@@ -345,6 +347,9 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo($alwayseditable ? ' checked' : ''); ?>></td></tr>
 
+<!-- Personal Data (RGPD/nLPD/LGPD) -->
+<tr class="extra_personal_data"><td><?php echo $form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")); ?></td><td class="valeur"><input id="personal_data" type="checkbox" name="personal_data" value="1"<?php echo($personal_data ? ' checked' : ''); ?>></td></tr>
+
 <!-- Empty on clone -->
 <tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo($emptyonclone ? ' checked' : ''); ?>></td></tr>
 
@@ -358,7 +363,6 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dol_escape_htmltag((string) $printable); ?>"></td></tr>
-
 
 <!-- Visibility for getNomUrl -->
 <tr><td class="extra_showintooltip"><?php echo $form->textwithpicto($langs->trans("DisplayExtraOnTooltip"), $langs->trans("DisplayExtraOnTooltipDesc")); ?>

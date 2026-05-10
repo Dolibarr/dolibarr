@@ -71,13 +71,25 @@ if (!empty($conf->dol_use_jmobile)) {
 	$arrayjs = array();
 }
 
-$title = $langs->trans("MembershipStatistics");
+$title = $langs->trans("Members");
 
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayjs, '', '', 'mod-member page-stats_geo');
 
-print load_fiche_titre($title, '', $memberstatic->picto);
+$param = '';
+
+$newcardbutton = '';
+$queryforbutton = array();
+$queryforbutton['mode'] = 'common';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', $queryforbutton), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$queryforbutton['mode'] = 'kanban';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', $queryforbutton), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/index.php', 1).'?objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/card.php', ['action' => 'create']), '', $user->hasRight('adherent', 'creer'));
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $langs->trans("Statistics"), $memberstatic->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
 
 //dol_mkdir($dir);
 $data = array();
@@ -155,6 +167,7 @@ if ($mode) {
 	$langsen->setDefaultLang('en_US');
 	$langsen->load("dict");
 	//print $langsen->trans("Country"."FI");exit;
+
 
 	// Define $data array
 	dol_syslog("Count member", LOG_DEBUG);
