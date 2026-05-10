@@ -220,8 +220,8 @@ class DataPolicyCron
 			)
 		);
 		if (isModEnabled('member')) {
-			// --- Members ---
-			$sqltemplate = "SELECT a.rowid FROM ".$prefix."adherent as a WHERE a.entity = __ENTITY__ AND a.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)";
+			// --- Members ---  Reference date: datefin (end of membership validity).  tms (last modification) is intentionally NOT used here.
+			$sqltemplate = "SELECT a.rowid FROM ".$prefix."adherent as a WHERE a.entity = __ENTITY__ AND a.datefin < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)";
 			$sqltemplate .= " AND NOT EXISTS (SELECT ac.id FROM ".$prefix."actioncomm as ac WHERE ac.fk_element = a.rowid AND ac.elementtype = 'member' AND ac.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH))";
 			$sqltemplate .= " AND NOT EXISTS (SELECT s.rowid FROM ".$prefix."subscription as s WHERE s.fk_adherent = a.rowid AND s.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH))";
 
@@ -234,7 +234,7 @@ class DataPolicyCron
 				'sql_template' => $sqltemplate,
 				'class' => 'Adherent',
 				'file' => DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php',
-				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => '1900-01-01', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0'),
+				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => '1900-01-01', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0', 'statut' => 0), // Force status to "canceled / résilié"
 				'call_params' => array(
 					'delete' => array('user'),   // $object->delete($user)
 					'update' => array('user')    // $object->update($user)
@@ -406,10 +406,10 @@ class DataPolicyCron
 	/**
 	 * Handles the specific logic for anonymizing an object.
 	 *
-	 * @param 	CommonObject 	$object 		The object to anonymize.
-	 * @param 	User 			$user 			The user performing the action.
-	 * @param 	array<string, mixed> $policy 	The policy configuration.
-	 * @return 	int   							The result of the update operation, or 0 if skipped.
+	 * @param 	CommonObject 			$object 	The object to delete.
+	 * @param 	User 					$user 		The user performing the action.
+	 * @param 	array<string, mixed> 	$policy 	The policy configuration.
+	 * @return 	int   								The result of the update operation.
 	 */
 	private function _handleAnonymize($object, $user, $policy): int
 	{
