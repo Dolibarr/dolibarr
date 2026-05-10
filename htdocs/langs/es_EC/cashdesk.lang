@@ -48,6 +48,5 @@ StartAParallelSale=Comience una nueva venta paralela
 CashReport=Informe de caja
 MainPrinterToUse=Impresora principal para usar
 OrderPrinterToUse=Solicitar impresora para usar
-MainTemplateToUse=Plantilla principal para usar
 OrderTemplateToUse=Plantilla de pedido para usar
 BarRestaurant=Restaurante Bar

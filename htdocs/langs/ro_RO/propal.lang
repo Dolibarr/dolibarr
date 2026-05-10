@@ -14,6 +14,7 @@ DeleteProp=Ştergere ofertă comercială
 ValidateProp=Validare ofertă comercială
 CancelPropal=Anulare
 AddProp=Creare ofertă
+AddRenewalProp=Creare ofertă de reînnoire
 ConfirmDeleteProp=Sigur doriți să ștergeți această ofertă comercială?
 ConfirmValidateProp=Sigur doriți să validați această ofertă comercială sub numele <b>%s</b>?
 ConfirmCancelPropal=Ești sigur că vrei să anulezi oferta comercială <b>%s</b>?

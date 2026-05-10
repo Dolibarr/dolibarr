@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 *	Return number of records for email selector
 	 *
-	 *  @return     integer      Example
+	 *  @return     int      Example
 	 */
 	public function getNbOfRecords()
 	{
@@ -127,10 +128,10 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Retourne nombre de destinataires
+	 * Return the number of recipients
 	 *
-	 * @param      string		$sql        Sql request to count
-	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 * @param      string		$sql    Sql request to count
+	 * @return     int<-1,max> 			Nb of recipients, or <0 if error
 	 */
 	public function getNbOfRecipients($sql)
 	{
@@ -138,7 +139,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		if ($result) {
 			$total = 0;
 			while ($obj = $this->db->fetch_object($result)) {
-				$total += $obj->nb;
+				$total += (int) $obj->nb;
 			}
 			return $total;
 		} else {
@@ -160,21 +161,21 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Met a jour nombre de destinataires
+	 * Update the number of recipients
 	 *
-	 * @param	int		$mailing_id          Id of emailing
-	 * @return  int			                 Return integer < 0 si erreur, nb destinataires si ok
+	 * @param	int		$mailing_id			Id of emailing
+	 * @return  int							Return integer < 0 if error, otherwise number of recipients
 	 */
 	public function update_nb($mailing_id)
 	{
 		// phpcs:enable
-		// Mise a jour nombre de destinataire dans table des mailings
+		// Update the number of recipients in the mailing table
 		$sql = "SELECT COUNT(*) nb FROM ".$this->db->prefix()."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$sql = "UPDATE ".$this->db->prefix()."mailing";
 			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
@@ -413,7 +414,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$widget[$j]['relpath'] = $relpath[$key];
 				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
 				$widget[$j]['version'] = empty($objMod->version) ? '' : $objMod->version;
-				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
+				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick', 'class="pictofixedwidth"');
 				if ($disabledbyname > 0 || $disabledbymodule > 1) {
 					$widget[$j]['status'] = '';
 				}

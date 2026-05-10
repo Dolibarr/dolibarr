@@ -108,7 +108,8 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 }
-$sql .= " WHERE s.entity IN (".getEntity('societe').")";
+// Filter on active third parties only (status = 1) Closed third parties must not be selectable
+$sql .= " WHERE s.entity IN (".getEntity('societe').")  AND s.status = 1";
 if ($socid) {
 	$sql .= " AND (";
 	// Add criteria on name/code
@@ -137,6 +138,10 @@ if ($user->socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $user->socid);
 }
 //if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
+
+$limit = getDolGlobalInt('SEARCH_LIMIT_AJAX') ?: 1000;		// SEARCH_LIMIT_AJAX is a hidden option that has priority on option THIRDPARTY_LIMIT_SIZE if set.
+$sql .= $db->plimit($limit, 0);
+
 $sql .= " ORDER BY s.nom ASC";
 
 //dol_syslog("ajaxcompanies", LOG_DEBUG);
@@ -154,6 +159,9 @@ if ($resql) {
 		}
 
 		$label .= $row['nom'];
+		if (!empty($row['name_alias'])) {
+			$label .= ' (' . $row['name_alias'] . ')';
+		}
 
 		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 			$label .= ($row['address'] ? ' - '.$row['address'] : '').($row['zip'] ? ' - '.$row['zip'] : '').($row['town'] ? ' '.$row['town'] : '');

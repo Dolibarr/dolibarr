@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=Opzione dal flusso di lavoro modulo, per impo
 NoWarehouseInBase=Nessun magazzino nella base
 ShipmentUpdated=Spedizione aggiornata con successo
 ShipmentIncrementStockOnDelete = Aumentare lo stock in caso di eliminazione
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Consegna
+DeliveryRef=Ref Delivery
+DeliveryCard=Ordine di consegna
+DeliveryOrder=Ordine di consegna
+DeliveryDate=Data di spedizione
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Stato di consegna salvato
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Imposta la data di spedizione
+ValidateDeliveryReceipt=Convalida la ricevuta di consegna
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Eliminare ricevuta di consegna
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Metodo di consegna
+TrackingNumber=Numero di tracking
+DeliveryNotValidated=Consegna non convalidata
+StatusDeliveryCanceled=Annullata
+StatusDeliveryDraft=Bozza
+StatusDeliveryValidated=Ricevuto
+NameAndSignature=Name and Signature:
+ToAndDate=A___________________________________ il ____/_____/__________
+GoodStatusDeclaration=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
+Deliverer=Chi consegna:
+Sender=Mittente
+Recipient=Destinatario
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Mostra lo stato di spedizione
+ShowReceiving=Mostra ricevuta di consegna
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantità di stock già allocate su righe precedenti
 
 # Sending methods
 # ModelDocument

@@ -28,6 +28,9 @@
  * @var string $projectsListId
  * @var int $socid
  * @var string[] $listofoppstatus
+ * @var string[] $listofopplabel
+ * @var string[] $colorseries
+ * @var int $mine
  */
 '
 @phan-var-force string $projectsListId
@@ -126,7 +129,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			}
 		}
 		if ($conf->use_javascript_ajax) {
-			print '<tr><td class="center nopaddingleftimp nopaddingrightimp" colspan="2">';
+			print '<tr><td class="center nopaddingleftimp nopaddingrightimp pair nohover" colspan="2">';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
@@ -144,10 +147,11 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		}
 		//if ($totalinprocess != $total)
 		//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
-		print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td class="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+		print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">';
+		print $form->textwithpicto($langs->trans("OpportunityTotalAmount"), $langs->trans("WonLostExcluded")).'</td><td class="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 		print '<tr class="liste_total"><td class="minwidth200 tdoverflow">';
 		//print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
-		print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
+		print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount"), $langs->trans("OpportunityPonderatedAmountDesc").' ('.$langs->trans("WonLostExcluded").')', 1);
 		print '</td><td class="right">'.price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 		print "</table>";
 		print "</div>";

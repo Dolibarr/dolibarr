@@ -23,9 +23,6 @@
  */
 
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
-require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -33,9 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
+require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
 // Load translation files required by the page
-$langs->load("exports");
+$langs->loadLangs(array("exports", "other"));
 
 if (!$user->socid == 0) {
 	accessforbidden();
@@ -86,7 +85,7 @@ if (isModEnabled('import')) {
 	$out .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$out .= '</tr>';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.class.php';
 	$model = new ModeleImports();
 	$list = $model->listOfAvailableImportFormat($db);
 

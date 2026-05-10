@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2022  Laurent Destaileur		<ely@users.sourceforge.net>
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +137,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	}
 
 	// Check a batch number is provided if product need it
+	$producttmp = null;
 	if (!$error) {
 		$producttmp = new Product($db);
 		$producttmp->fetch($id_product);
@@ -151,7 +152,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 
 	// TODO Check qty is ok for stock move. Note qty may not be enough yet, but we make a check now to report a warning.
 	// What is more important is to have qty when doing action 'createmovements'
-	if (!$error) {
+	if (!$error && $producttmp !== null) {
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch()) {
 		} else {
@@ -224,7 +225,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
-				if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {	// If product does not need lot/serial
+				if (!isModEnabled('productbatch') || !$product->hasbatch()) {	// If product does not need lot/serial
 					// Remove stock if source warehouse defined
 					if ($id_sw > 0) {
 						$result1 = $product->correct_stock(
@@ -482,6 +483,10 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 				if (!$tmp_qty) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
+				}
+				if (!is_numeric($tmp_qty)) {
+					$error++;
+					setEventMessages('Qty need to be numeric value only', null, 'errors');
 				}
 
 				// Check a batch number is provided if product need it

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2007  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Juanjo Menent		    <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-
-$action = GETPOST('action', 'aZ09');
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +36,10 @@ $action = GETPOST('action', 'aZ09');
  *
  * @var string $dolibarr_main_db_pass
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
@@ -251,7 +250,7 @@ foreach ($arrayhandler as $key => $module) {
 	if ($module->isEnabled()) {
 		print '<tr class="oddeven"><td>';
 		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
-		print ucfirst($key);
+		print '<div class="refid inline-block">'.ucfirst($key).'</span>';
 		print "</td><td>\n";
 		print $module->getDescription().'<br>';
 		print $langs->trans("MinLength").': <span class="opacitymedium">'.$module->length.'</span>';
@@ -271,7 +270,7 @@ foreach ($arrayhandler as $key => $module) {
 		print '</td>'."\n";
 
 		print '<td class="center">';
-		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
+		if (getDolGlobalString('USER_PASSWORD_GENERATED') == $key) {
 			//print img_picto('', 'tick');
 			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {
@@ -401,7 +400,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 // Crypt passwords in database
 
 print '<br>';
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="encrypt">';
 

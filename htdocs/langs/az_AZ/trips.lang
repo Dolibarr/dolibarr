@@ -121,7 +121,6 @@ ValideTrip=Xərc hesabatını təsdiqləyin
 ExpenseReportPayments=Xərc hesabatı ödənişləri
 TaxUndefinedForThisCategory = Bu kateqoriya üçün vergi müəyyən edilməyib
 errorComputeTtcOnMileageExpense=Yürüş xərclərinin hesablanması zamanı xəta
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Kütləvi fəaliyyətdə yalnız qaralama statusunda olan elementlər silinə bilər
 
 ## Dictionary
 EX_BRE=Səhər yeməyi
@@ -159,3 +158,4 @@ TF_TRAIN=Qatar
 TF_TRIP=Nəqliyyat
 FailedToSetPaid=Ödənişli olaraq təyin etmək alınmadı
 FailedToSetToCancel=Ləğv etmək alınmadı
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

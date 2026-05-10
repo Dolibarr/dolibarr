@@ -27,7 +27,17 @@
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var EcmDirectory $ecmdir
  * @var Website $website
+ *
+ * @var string $action
+ * @var ?string $module
+ * @var int $section
+ * @var string $filepathnoext
+ * @var string $pageid
+ * @var int $formalreadyopen
+ * @var string $websitekey
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -40,6 +50,7 @@ if (empty($conf) || !is_object($conf)) {
 @phan-var-force string $filepathnoext
 @phan-var-force string $pageid
 @phan-var-force EcmDirectory $ecmdir
+@phan-var-force ?string $module
 @phan-var-force int $section
 ';
 
@@ -54,7 +65,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 $langs->load("ecm");
 
-if (empty($module)) {
+if (!isset($module)) {
 	$module = 'ecm';
 }
 
@@ -69,8 +80,8 @@ if ($module == 'ecm') {
 	$showroot = 0;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
-	$permtoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permtoadd = $user->hasRight("website", "write");
+	$permtoupload = $user->hasRight("website", "write");
 	$showroot = 1;
 }
 
