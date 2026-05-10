@@ -2765,11 +2765,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$arrayoflines = preg_split("/[\n,]/", $result['content']);
 				foreach ($arrayoflines as $line) {
 					$tmpfieldsofline = explode(';', $line);
-					$modulekey = strtolower($tmpfieldsofline[0]);
-					$conf->cache['noncompliantmodules'][$modulekey]['name'] = $tmpfieldsofline[0];
-					$conf->cache['noncompliantmodules'][$modulekey]['id'] = (isset($tmpfieldsofline[1]) ? $tmpfieldsofline[1] : '');
-					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = (isset($tmpfieldsofline[2]) ? $tmpfieldsofline[2] : '');
-					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[3]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[3]);
+					$modulekey = strtolower(trim($tmpfieldsofline[0]));
+					if (empty($modulekey)) {
+						continue;
+					}
+					$conf->cache['noncompliantmodules'][$modulekey]['name'] = trim($tmpfieldsofline[0]);
+					$conf->cache['noncompliantmodules'][$modulekey]['id'] = (isset($tmpfieldsofline[1]) ? trim($tmpfieldsofline[1]) : '');
+					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = (isset($tmpfieldsofline[2]) ? trim($tmpfieldsofline[2]) : '');
+					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty(isset($tmpfieldsofline[3]) ? trim($tmpfieldsofline[3]) : '') ? 'WarningModuleAffiliatedToAReportedCompany' : trim($tmpfieldsofline[3]));
 					if (!empty($tmpfieldsofline[4])) {
 						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');
 						$listofillegalurl = '';

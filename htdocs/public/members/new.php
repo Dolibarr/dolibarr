@@ -1012,7 +1012,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
 		// Do not set a default amount MEMBER_NEWFORM_AMOUNT if you use MEMBER_NEWFORM_DOLIBARRTURNOVER
 		$s = $langs->trans("AreYouAPreferredPartner", '<a href="https://partners.dolibarr.org" target="_blank">{s1}</a>');
-		$s = str_replace('{s1}', 'Peferred Partner', $s);
+		$s = str_replace('{s1}', 'Preferred Partner', $s);
 		print '<tr id="trbudget" class="trcompany"><td class="paddingrightonly"><label for="pp" class="small">'.$s.'</label></td><td>';
 		print '<input type="checkbox" name="pp" id="pp" value="1"'.(GETPOST('pp') ? ' checked="checked"' : '').' class="reposition">';
 		print '</td></tr>';

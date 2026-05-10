@@ -1359,6 +1359,9 @@ class Facture extends CommonInvoice
 			}
 
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+
+			// Do not clone accountancy ventilation: a cloned invoice must reappear in "to dispatch" list
+			$object->lines[$i]->fk_code_ventilation = 0;
 		}
 
 		// Create clone

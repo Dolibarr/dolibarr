@@ -522,7 +522,7 @@ if ($line->special_code == 3) {
 	print $tooltiponpriceend;
 	print '</td>';
 	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecolutotalht_currency nowrap right">';
+		print '<td class="linecoltotalht_currency nowrap right">';
 		print $tooltiponpricemultiprice;
 		print price($sign * $line->multicurrency_total_ht);
 		print $tooltiponpriceendmultiprice;

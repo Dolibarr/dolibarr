@@ -162,7 +162,7 @@ if ($line->qty > 0) { ?>
 	?>
 	<td class="linecolht"></td>
 	<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
-		<td class="linecolutotalht_currency"></td>
+		<td class="linecoltotalht_currency"></td>
 	<?php } ?>
 <?php } elseif ($line->qty < 0) {
 	// Base colspan if there is no module activated to display line correctly
