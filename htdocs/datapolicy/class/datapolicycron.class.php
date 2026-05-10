@@ -406,10 +406,10 @@ class DataPolicyCron
 	/**
 	 * Handles the specific logic for anonymizing an object.
 	 *
-	 * @param 	CommonObject 			$object 	The object to delete.
-	 * @param 	User 					$user 		The user performing the action.
-	 * @param 	array<string, mixed> 	$policy 	The policy configuration.
-	 * @return 	int   								The result of the update operation.
+	 * @param 	CommonObject 	$object 		The object to anonymize.
+	 * @param 	User 			$user 			The user performing the action.
+	 * @param 	array<string, mixed> $policy 	The policy configuration.
+	 * @return 	int   							The result of the update operation, or 0 if skipped.
 	 */
 	private function _handleAnonymize($object, $user, $policy): int
 	{
