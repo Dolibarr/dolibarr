@@ -106,8 +106,8 @@ $socid = GETPOSTINT('socid');
 $searchCategoryFichinterOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryFichinterOperator = GETPOSTINT('search_category_fichinter_operator');
-} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
-	$searchCategoryFichinterOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryFichinterOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryFichinterList = GETPOST('search_category_fichinter_list', 'array');
 $catid = GETPOST('catid', 'int');
