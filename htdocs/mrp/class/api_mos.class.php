@@ -429,6 +429,18 @@ class Mos extends DolibarrApi
 
 							$stockmove->setOrigin($this->mo->element, $this->mo->id);
 
+							// Compute unit cost: cost_price has priority, then pmp, then min supplier price
+							$unitcost = price2num(!empty($tmpproduct->cost_price) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+							if (empty($unitcost)) {
+								require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+								$productFournisseur = new ProductFournisseur($this->db);
+								if ($productFournisseur->find_min_price_product_fournisseur($value["objectid"], $qtytoprocess) > 0) {
+									$unitcost = $productFournisseur->fourn_unitprice;
+								} else {
+									$unitcost = 0;
+								}
+							}
+
 							if ($arrayname == 'arraytoconsume') {
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;
@@ -449,6 +461,8 @@ class Mos extends DolibarrApi
 								}
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
+								// For produced lines, compute total manufacturing cost from consumed lines
+								$mfgcost = (float) price2num($unitcost);
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;
 								$moline->position = $pos;
@@ -466,7 +480,7 @@ class Mos extends DolibarrApi
 									$error++;
 									throw new RestException(500, $moline->error);
 								}
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, $mfgcost, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -530,10 +544,20 @@ class Mos extends DolibarrApi
 						}
 						$idstockmove = 0;
 						if (!$error && $line->fk_warehouse > 0) {
-							// Record stock movement
+							// Record stock movement — use cost_price, fallback pmp, fallback min supplier price
 							$id_product_batch = 0;
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
+							$unitcost = price2num(!empty($tmpproduct->cost_price) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+							if (empty($unitcost)) {
+								require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+								$productFournisseur = new ProductFournisseur($this->db);
+								if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product, $qtytoprocess) > 0) {
+									$unitcost = $productFournisseur->fourn_unitprice;
+								} else {
+									$unitcost = 0;
+								}
+							}
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
@@ -590,12 +614,30 @@ class Mos extends DolibarrApi
 						}
 						$idstockmove = 0;
 						if (!$error && $line->fk_warehouse > 0) {
-							// Record stock movement
+							// Record stock movement — manufacturing cost = sum of consumed MPs (cost_price/pmp)
 							$id_product_batch = 0;
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
+							// Compute manufacturing cost = sum(qty * cost_price/pmp) of toconsume lines
+							$bomcostupdated = 0;
+							foreach ($this->mo->lines as $consumedline) {
+								if ($consumedline->role == 'toconsume') {
+									$cp = new Product($this->db);
+									$cp->fetch($consumedline->fk_product);
+									$cc = price2num(!empty($cp->cost_price) ? $cp->cost_price : $cp->pmp);
+									if (empty($cc)) {
+										require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+										$pf = new ProductFournisseur($this->db);
+										if ($pf->find_min_price_product_fournisseur($consumedline->fk_product, $consumedline->qty) > 0) {
+											$cc = $pf->fourn_unitprice;
+										}
+									}
+									$bomcostupdated += price2num(($consumedline->qty * $cc) / ($this->mo->qty > 0 ? $this->mo->qty : 1), 'MU');
+								}
+							}
+							$mfgcost = (float) price2num($bomcostupdated, 'MU');
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, $mfgcost, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							} else {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							}
@@ -819,11 +861,22 @@ class Mos extends DolibarrApi
 					$id_product_batch = 0;
 					$stockmove->origin_type = 'mo';
 					$stockmove->origin_id = $this->mo->id;
+					// Compute unit cost for consumption: cost_price fallback pmp fallback min supplier
+					$unitcost = price2num(!empty($tmpproduct->cost_price) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+					if (empty($unitcost)) {
+						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+						$productFournisseur = new ProductFournisseur($this->db);
+						if ($productFournisseur->find_min_price_product_fournisseur($molinetoprocess->fk_product, $qtytoprocess) > 0) {
+							$unitcost = $productFournisseur->fourn_unitprice;
+						} else {
+							$unitcost = 0;
+						}
+					}
 					if ($arrayname == "arraytoconsume") {
 						if ($qtytoprocess >= 0) {
 							$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 						} else {
-							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, $unitcost, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 						}
 					} else {
 						if ($qtytoprocess >= 0) {
