@@ -3217,11 +3217,12 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
  * @param   ZipArchive  $zip                The object ZipArchive
  * @param   string      $originalfilename   The name of file submitted
  * @param   string      $zipfile            The name of file in disk (into temp directory)
+ * @param   Translate   $langs              Output language
  * @return  array{error:int,errormsg:?string,upload:int} Array with result
  */
-function validateZipFile($zip, $originalfilename, $zipfile)
+function validateZipFile($zip, $originalfilename, $zipfile, $langs)
 {
-	global $count, $results, $langs;
+	global $count, $results;
 
 	$error = 0;
 	$return = array(
