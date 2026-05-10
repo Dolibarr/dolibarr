@@ -1310,6 +1310,12 @@ class Cronjob extends CommonObject
 			}
 		}
 
+		$user->getrights();
+
+		// Method-based cron jobs rely on the global user context for permission checks.
+		// Ensure the fetched cron user is also the execution user for called code.
+		$GLOBALS['user'] = $user;
+
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
 		// Increase limit of time. Works only if we are not in safe mode
