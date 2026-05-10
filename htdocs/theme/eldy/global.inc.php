@@ -4862,6 +4862,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.tagtd { padding-top: 5px; padding-bottom: 5px; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }

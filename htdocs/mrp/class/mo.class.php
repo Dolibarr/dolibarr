@@ -742,9 +742,10 @@ class Mo extends CommonObject
 		$moline = new MoLine($this->db);
 
 		// Line to produce
-		$moline->fk_mo = $this->id;
+		$moline->fk_mo = (int) $this->id;
 		$moline->qty = (float) $this->qty;
 		$moline->fk_product = (int) $this->fk_product;
+		$moline->fk_warehouse = (int) $this->fk_warehouse;
 		$moline->position = 1;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -834,6 +835,7 @@ class Mo extends CommonObject
 					$this->errors[] = $this->error;
 				} else {
 					$moline->fk_product = $line->fk_product;
+					$moline->fk_warehouse = !empty($line->fk_warehouse) ? $line->fk_warehouse : (!empty($bom->fk_warehouse) ? $bom->fk_warehouse : $this->fk_warehouse);
 					$moline->role = $role;
 					$moline->position = $line->position;
 					$moline->qty_frozen = $line->qty_frozen;

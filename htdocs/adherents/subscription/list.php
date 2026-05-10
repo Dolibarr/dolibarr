@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "banks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
@@ -185,7 +186,8 @@ $accountstatic = new Account($db);
 
 $now = dol_now();
 
-// List of subscriptions
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut as status,";
 $sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
@@ -195,7 +197,7 @@ $sql .= " b.fk_account";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : "");
 	}
 }
 // Add fields from hooks
@@ -382,6 +384,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/index.php', 1).'?objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/list.php?status=-1,1');
