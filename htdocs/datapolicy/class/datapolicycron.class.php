@@ -234,7 +234,7 @@ class DataPolicyCron
 				'sql_template' => $sqltemplate,
 				'class' => 'Adherent',
 				'file' => DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php',
-				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => '1900-01-01', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0', 'statut' => 0), // Force status to "canceled / résilié"
+				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => '1900-01-01', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0', 'note_private' => '---', 'note_public' => '---', 'statut' => 0), // Force status to "canceled / résilié"
 				'call_params' => array(
 					'delete' => array('user'),   // $object->delete($user)
 					'update' => array('user')    // $object->update($user)
