@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -3217,23 +3217,23 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
  * @param   ZipArchive  $zip                The object ZipArchive
  * @param   string      $originalfilename   The name of file submitted
  * @param   string      $zipfile            The name of file in disk (into temp directory)
- * @return  array                           Array with result
+ * @return  array{error:int,errormsg:?string,upload:int} Array with result
  */
-function validateZipFile(&$zip, $originalfilename, $zipfile)
+function validateZipFile($zip, $originalfilename, $zipfile)
 {
 	global $count, $results, $weblangs;
 
-	$error=0;
+	$error = 0;
 	$return = array(
 		'error' => 0,
-		'errormsg'=> null,
+		'errormsg' => '',  // Concatenating to this, so must be string
 		'upload' => 0
 	);
 
 	dol_syslog("Validate zip file " . $originalfilename);
-	$subdir=basename($zipfile);
+	$subdir = basename($zipfile);
 	//$dir='/home/dolibarr/dolistore.com/tmp/'.$subdir;
-	$dir=sys_get_temp_dir().'/unzip-dir-'.$subdir;
+	$dir = sys_get_temp_dir().'/unzip-dir-'.$subdir;
 	mkdir($dir, 0777, true);
 	$zip->extractTo($dir.'/');
 	$zip->close();
@@ -3242,13 +3242,15 @@ function validateZipFile(&$zip, $originalfilename, $zipfile)
 
 	// But we first we check if we need to change dir (for zip that are ./module/htdocs/module instead of ./htdocs/module)
 	if (! $error && $dh = opendir($dir)) {
-		$nbofsubdirs=0;
+		$nbofsubdirs = 0;
 		while (($file = readdir($dh)) !== false) {
-			if ($file == '.' || $file == '..') continue;
+			if (in_array($file, array('.', '..'))) {
+				continue;
+			}
 			dol_syslog("We check if dir ".$dir.'/'.$file.'/htdocs exists');
 			if (is_dir($dir.'/'.$file.'/htdocs')) {
 				dol_syslog('Dir '.$dir.'/'.$file.'/htdocs exists. So we use dir='.$dir.'/'.$file.' as root for package to analyse.');
-				$dir=$dir.'/'.$file;
+				$dir = $dir.'/'.$file;
 				break;
 			}
 		}
@@ -3257,22 +3259,26 @@ function validateZipFile(&$zip, $originalfilename, $zipfile)
 
 	// Now $dir contains root of zip, so mymodule or htdocs/mymodule
 	// Analyze files
-	$ismodule=$istheme=0;
+	$ismodule = $istheme = 0;
 
 	$reg = array();
 	if (preg_match('/^module([a-zA-Z0-9]*)_([-a-zA-Z0-9]+)\-([0-9][0-9\.]*)\.zip$/i', $originalfilename, $reg)) {
-		$ismodule=$reg[2];
-		$extmoduleornot=$reg[1];
-		if ($extmoduleornot) $ismodule=0;
+		$ismodule = $reg[2];
+		$extmoduleornot = $reg[1];
+		if ($extmoduleornot) {
+			$ismodule = 0;
+		}
 	}
 	if (preg_match('/^theme_([-a-zA-Z0-9]+)\-([0-9][0-9\.]*)\.zip$/i', $originalfilename, $reg)) {
-		$istheme=$reg[1];
+		$istheme = $reg[1];
 	}
 
 	dol_syslog("Now dir is the directory with root of the zip = ".$dir, LOG_DEBUG);
 
-	$dirmoduletheme = $dir.'/'.($ismodule?$ismodule:($istheme?$istheme:''));
-	if (is_dir($dir.'/htdocs')) $dirmoduletheme = $dir.'/htdocs/'.($ismodule?$ismodule:($istheme?$istheme:''));
+	$dirmoduletheme = $dir.'/'.($ismodule ? $ismodule : ($istheme ? $istheme : ''));
+	if (is_dir($dir.'/htdocs')) {
+		$dirmoduletheme = $dir.'/htdocs/'.($ismodule ? $ismodule : ($istheme ? $istheme : ''));
+	}
 	$dirmodulethemeroot = dirname($dirmoduletheme);
 	dol_syslog("Now dirmodulethemeroot = dir where is the module dir = ".$dirmodulethemeroot." and dirmoduletheme = dir with name of the module = ".$dirmoduletheme, LOG_DEBUG);
 
@@ -3280,42 +3286,48 @@ function validateZipFile(&$zip, $originalfilename, $zipfile)
 		dol_syslog("file ismodule=".$ismodule." istheme=".$istheme);
 		// It's a module or theme file
 		if (! $error && (! empty($ismodule) || ! empty($istheme)) && $dh = opendir($dir)) {
-			$nbofsubdirs=0; $direrror='';
+			$nbofsubdirs = 0;
+			$direrror = '';
 			while (($file = readdir($dh)) !== false) {
-				if ($file == '.' || $file == '..' || $file == 'README' || $file == 'README.txt' || $file == 'README.md') continue;
+				if (in_array($file, array('.', '..', 'README', 'README.txt', 'README.md'))) {
+					continue;
+				}
 				dol_syslog("subdirs found for package:".$file);
 				$nbofsubdirs++;
-				$alloweddirs=array('htdocs', 'docs', 'scripts', 'test', 'build', ($ismodule?$ismodule:($istheme?$istheme:'')));
+				$alloweddirs = array('htdocs', 'docs', 'scripts', 'test', 'build', ($ismodule ? $ismodule : ($istheme ? $istheme : '')));
 				if (! in_array($file, $alloweddirs)) {
 					$error++;
-					$direrror=$file;
+					$direrror = $file;
 					break;
 				}
 			}
 			if ($error) {
-				$return['errormsg'].= $weblangs->trans("validationFail") . '<br>';
-				$return['errormsg'].= $weblangs->trans("moduleContents") . '<br>';
-				$return['errormsg'].= $weblangs->trans("moduleDirectoryRule1") . '<br>';
-				$return['errormsg'].= $weblangs->trans("moduleDirectoryRule2") . '<br>';
-				$return['errormsg'].= $weblangs->trans("directoryFound").' '.$direrror.'<br><br>'."\n";
+				$return['errormsg'] .= $weblangs->trans("validationFail") . '<br>';
+				$return['errormsg'] .= $weblangs->trans("moduleContents") . '<br>';
+				$return['errormsg'] .= $weblangs->trans("moduleDirectoryRule1") . '<br>';
+				$return['errormsg'] .= $weblangs->trans("moduleDirectoryRule2") . '<br>';
+				$return['errormsg'] .= $weblangs->trans("directoryFound").' '.$direrror.'<br><br>'."\n";
 			}
 			closedir($dh);
 		}
 
 		// It's a module or theme file (check htdocs directory)
 		if (! $error && ! empty($ismodule) && is_dir($dirmodulethemeroot) && $dh = opendir($dirmodulethemeroot)) {
-			dol_syslog("we scan module dir ".$dirmodulethemeroot." to be sure there is only one directory (with name of your module) into root");
-			$nbofsubdir=0; $lastdirfound='';
-			dol_syslog("check there is only one dir into root");
+			dol_syslog("Scanning module dir ".$dirmodulethemeroot." to ensure there is only one directory (with name of the module) in the root path");
+			$nbofsubdir = 0;
+			$lastdirfound = '';
+
 			while (($file = readdir($dh)) !== false) {
-				if ($file == '.' || $file == '..' || $file == 'README' || $file == 'README.txt' || $file == 'README.md') continue;
+				if (in_array($file, array('.', '..', 'README', 'README.txt', 'README.md'))) {
+					continue;
+				}
 				$lastdirfound = $file;
-				dol_syslog("we found file or dir ".$file);
+				dol_syslog("Found file or dir ".$file);
 				$nbofsubdir++;
 			}
 			closedir($dh);
 			if ($nbofsubdir >= 2 && ! is_file($dirmoduletheme.'/metapackage.conf')) {
-				$return['errormsg'].= $weblangs->trans("rootDirWarning", $nbofsubdir, basename($dirmoduletheme)) . '<br><br>';
+				$return['errormsg'] .= $weblangs->trans("rootDirWarning", $nbofsubdir, basename($dirmoduletheme)) . '<br><br>';
 				$error++;
 			}
 
@@ -3323,7 +3335,7 @@ function validateZipFile(&$zip, $originalfilename, $zipfile)
 				if (is_file($dirmoduletheme.'/metapackage.conf')) {
 					// Check each dir found is inside list of modules
 				} else {
-					$return['errormsg'].= $weblangs->trans("moduleNameMismatch", $lastdirfound, $ismodule) .'<br><br>';
+					$return['errormsg'] .= $weblangs->trans("moduleNameMismatch", $lastdirfound, $ismodule) .'<br><br>';
 					$error++;
 				}
 			}
@@ -3336,19 +3348,19 @@ function validateZipFile(&$zip, $originalfilename, $zipfile)
 
 			$search = array(
 				0 => array(
-					'name'          => 'main',
-					'types'         => array('php'),
-					'pattern'       => '(require|include).*(main|master)\.inc\.php',
-					'multiple'      => true     // Means we must find 0 or several times the pattern. Error if found 1 occurrence.
+					'name'       => 'main',
+					'types'      => array('php'),
+					'pattern'    => '(require|include).*(main|master)\.inc\.php',
+					'multiple'   => true     // Means we must find 0 or several times the pattern. Error if found 1 occurrence.
 				),
 				1 => array(
-					'name'                  => 'dol_document_root',
-					'types'                 => array('php', 'class.php', 'lib.php', 'modules.php'),
-					'pattern'               => '(require|include)(_once)?\(?(.*)[\"\']+\)?;',
-					'id'                    => 3,           // eg. Use $regs[3] for test instead $regs[1]
-					'contain'               => array('DOL_DOCUMENT_ROOT'),
-					'notcontain'            => array($ismodule),
-					'strict'                => true         // if true ('contain' && 'notcontain'), if false or not use ('contain' || 'notcontain')
+					'name'       => 'dol_document_root',
+					'types'      => array('php', 'class.php', 'lib.php', 'modules.php'),
+					'pattern'    => '(require|include)(_once)?\(?(.*)[\"\']+\)?;',
+					'id'         => 3,           // eg. Use $regs[3] for test instead $regs[1]
+					'contain'    => array('DOL_DOCUMENT_ROOT'),
+					'notcontain' => array($ismodule),
+					'strict'     => true         // if true ('contain' && 'notcontain'), if false or not use ('contain' || 'notcontain')
 				)
 			);
 
@@ -3359,13 +3371,13 @@ function validateZipFile(&$zip, $originalfilename, $zipfile)
 			if (!empty($count)) { // count of errors is not null
 				foreach ($results as $result) {
 					if ($result['testname'] == 'main') {
-						$return['errormsg'].= $weblangs->trans("mainIncludeError", $result['filename'], $ismodule) .'<br><br>';
+						$return['errormsg'] .= $weblangs->trans("mainIncludeError", $result['filename'], $ismodule) .'<br><br>';
 					} elseif ($result['testname'] == 'dol_include_once') {
-						$return['errormsg'].= $weblangs->trans("dolIncludeError", $result['filename'], $ismodule) .'<br>';
-						$return['errormsg'].= $result['line'].'<br><br>';
+						$return['errormsg'] .= $weblangs->trans("dolIncludeError", $result['filename'], $ismodule) .'<br>';
+						$return['errormsg'] .= $result['line'].'<br><br>';
 					} elseif ($result['testname'] == 'dol_document_root') {
-						$return['errormsg'].= $weblangs->trans("docRootError", $result['filename'], $ismodule) .'<br>';
-						$return['errormsg'].= $result['line'].'<br><br>';
+						$return['errormsg'] .= $weblangs->trans("docRootError", $result['filename'], $ismodule) .'<br>';
+						$return['errormsg'] .= $result['line'].'<br><br>';
 					}
 				}
 
@@ -3382,14 +3394,18 @@ function validateZipFile(&$zip, $originalfilename, $zipfile)
 		dol_syslog("validateZipFile Error");
 
 		$link = '<a target="_blank" class="linktowiki" href="https://wiki.dolibarr.org/index.php/Modules - Packaging rules and Dolistore validation rules">Dolibarr wiki developer documentation</a>';
-		$return['errormsg'].= $weblangs->trans("invalidZipFile") .'<br>';
-		$return['errormsg'].= $weblangs->trans("seeDocumentation", $link).'<br>';
-		$return['errormsg'].= "<br>\n";
-		$return['errormsg'].= $weblangs->trans("contactDolistore");
+		$return['errormsg'] .= $weblangs->trans("invalidZipFile") .'<br>';
+		$return['errormsg'] .= $weblangs->trans("seeDocumentation", $link).'<br>';
+		$return['errormsg'] .= "<br>\n";
+		$return['errormsg'] .= $weblangs->trans("contactDolistore");
 		$return['upload'] = -1;
 		$error++;
 	} else {
 		dol_syslog("validateZipFile OK");
+	}
+
+	if ($return['errormsg'] === '') {
+		$return['errormsg'] = null;
 	}
 
 	$return['error'] = $error;
