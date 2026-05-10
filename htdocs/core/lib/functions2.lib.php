@@ -3285,7 +3285,7 @@ function validateZipFile($zip, $originalfilename, $zipfile)
 	if (! empty($ismodule) || ! empty($istheme)) {
 		dol_syslog("file ismodule=".$ismodule." istheme=".$istheme);
 		// It's a module or theme file
-		if (! $error && (! empty($ismodule) || ! empty($istheme)) && $dh = opendir($dir)) {
+		if ((! empty($ismodule) || ! empty($istheme)) && $dh = opendir($dir)) {
 			$nbofsubdirs = 0;
 			$direrror = '';
 			while (($file = readdir($dh)) !== false) {
