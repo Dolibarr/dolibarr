@@ -268,6 +268,7 @@ if (empty($reshook)) {
 
 				// Add all links of this new reception to the existing invoice
 				$objecttmp->fetchObjectLinked();
+				$objecttmp->clearObjectLinkedCache(); // force refetch after upcoming add_object_linked() calls so BILL_SUPPLIER_VALIDATE trigger sees all linked receptions
 				$rcp->fetchObjectLinked();
 				if (!empty($rcp->linkedObjectsIds['order_supplier']) && is_array($rcp->linkedObjectsIds['order_supplier'])) {
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
@@ -1001,7 +1002,7 @@ $moreforfilter = '';
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';

@@ -7361,7 +7361,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
-	$return .= '<span class="inline-block valignmiddle">' . $title . '</span>';	// $title is already HTML sanitized content
+	$return .= '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
 	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {

@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019-2021	Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
@@ -504,6 +504,11 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);    // $value is ID of 1 line in timespent table
+					if (!array_key_exists($object->timespent_fk_user, $arrayoftasks)) {
+						$arrayoftasks[$object->timespent_fk_user] = [
+						 (int) $object->timespent_fk_product => ['timespent' => 0, 'totalvaluetodivideby3600' => 0]
+						];
+					}
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
@@ -2463,7 +2468,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="nowraponall">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
-					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500',  ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
+					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
 					$product = new Product($db);
 					$resultFetch = $product->fetch($task_time->fk_product);
