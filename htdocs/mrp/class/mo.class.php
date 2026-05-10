@@ -742,10 +742,10 @@ class Mo extends CommonObject
 		$moline = new MoLine($this->db);
 
 		// Line to produce
-		$moline->fk_mo = $this->id;
+		$moline->fk_mo = (int) $this->id;
 		$moline->qty = (float) $this->qty;
 		$moline->fk_product = (int) $this->fk_product;
-		$moline->fk_warehouse = $this->fk_warehouse;
+		$moline->fk_warehouse = (int) $this->fk_warehouse;
 		$moline->position = 1;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
