@@ -3420,9 +3420,9 @@ function validateZipFile($zip, $originalfilename, $zipfile, $langs)
  * Called by validateZipFile()
  *
  * @param string 				$dir		Root dir to scan
- * @param array<mixed,mixed> 	$search		Array with strings to search
- * @param array<mixed,mixed> 	$results	Array with results
- * @param int 					$count		Count of errors
+ * @param array<array{name:string,types:string[],pattern:string,multiple?:bool,id?:int,contain?:string[],notcontain?:string[],strict?:bool}>	$search		Array with strings to search
+ * @param array<array{testname:string,filename:string,line:string}>	$results	Array with results
+ * @param int<0,max>			$count		Count of errors
  * @return void
  */
 function analyzeDirContents($dir, $search = array(), &$results = array(), &$count = 0)
@@ -3450,9 +3450,15 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 					}
 
 					if (in_array($ext, $pattern['types'])) {
-						if (strpos($content, '<?php') !== 0) continue;  // We discard files that are not php pages (we discard scripts)
-						if (strpos($path, 'htdocs_') > 0) continue;  // We discard files that are files into htdocs_... because it is files for core, so no need to be compatible with custom
-						if (strpos($path, 'phpunit') > 0) continue;  // We discard files that are files into phpunit because it is files for core, so no need to be compatible with custom
+						if (strpos($content, '<?php') !== 0) {
+							continue;
+						}  // We discard files that are not php pages (we discard scripts)
+						if (strpos($path, 'htdocs_') > 0) {
+							continue;
+						}  // We discard files that are files into htdocs_... because it is files for core, so no need to be compatible with custom
+						if (strpos($path, 'phpunit') > 0) {
+							continue;
+						}  // We discard files that are files into phpunit because it is files for core, so no need to be compatible with custom
 
 						$regs = array();
 						if (!empty($pattern['multiple'])) {
