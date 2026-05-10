@@ -834,6 +834,7 @@ class Mo extends CommonObject
 					$this->errors[] = $this->error;
 				} else {
 					$moline->fk_product = $line->fk_product;
+					$moline->fk_warehouse = $line->fk_warehouse
 					$moline->role = $role;
 					$moline->position = $line->position;
 					$moline->qty_frozen = $line->qty_frozen;
