@@ -68,13 +68,15 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
 
-	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
 		$search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
+	} else {
+		$search_xaxis = array();
 	}
-	//$search_groupby = GETPOST('search_groupby', 'array');
 	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') {
 		$search_groupby = array(GETPOST('search_groupby', 'alpha'));
+	} else {
+		$search_groupby = array();
 	}
 	'@phan-var-force string[] $search_groupby';
 
@@ -482,7 +484,7 @@ if (count($search_groupby)) {
 			$fieldtocount = $gvalsanitized;
 		}
 
-		$sql = "SELECT DISTINCT ".$fieldtocount." as val";	// $fieldtocount has been sanitized by previous lines as we can't use db->sanitie()
+		$sql = "SELECT DISTINCT ".$fieldtocount." as val";	// $fieldtocount has been sanitized by previous lines as we can't use db->sanitize()
 
 		if (strpos($fieldtocount, 'te') === 0) {
 			$tabletouse = $object->table_element;

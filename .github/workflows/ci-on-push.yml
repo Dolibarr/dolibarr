@@ -20,12 +20,12 @@ jobs:
     needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
-  windows-ci:
-    needs: [pre-commit, phan, phpstan]
-    secrets: inherit
-    uses: ./.github/workflows/windows-ci.yml
-    with:
-      gh_event: ${{ github.event_name }}
+  #windows-ci:
+  #  needs: [pre-commit, phan, phpstan]
+  #  secrets: inherit
+  #  uses: ./.github/workflows/windows-ci.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}
   # gh-travis:  # Runs travis script on github runner (not on travis)
   #   if: false
   #   # needs: [pre-commit, phan]

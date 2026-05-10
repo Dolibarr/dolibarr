@@ -242,7 +242,8 @@ class FormSetup
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		} else {
-			$out = '<table class="noborder centpercent">';
+			$out = '<div class="div-table-responsive-no-min">';
+			$out .= '<table class="noborder centpercent">';
 			if (empty($hideTitle)) {
 				if (empty($title)) {
 					$title = $this->langs->transnoentitiesnoconv("Parameter");
@@ -265,6 +266,7 @@ class FormSetup
 			$out .= '</tbody>';
 
 			$out .= '</table>';
+			$out .= '</div>';
 			return $out;
 		}
 	}

@@ -109,12 +109,17 @@ if ($user->socid > 0) {
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
+// If user is not user that read and no permission to read other users, we stop
+if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
+	accessforbidden();
+}
+
 
 /*
  *	Actions
  */
 
-$parameters = array('id' => $socid);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

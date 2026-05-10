@@ -88,7 +88,7 @@ function pdf_getFormat($outputlangs = null, $mode = 'setup')
 {
 	global $conf, $db, $langs;
 
-	dol_syslog("pdf_getFormat Get paper format with mode=".$mode." MAIN_PDF_FORMAT=".(!getDolGlobalString('MAIN_PDF_FORMAT') ? 'null' : $conf->global->MAIN_PDF_FORMAT)." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null')." and langs->defaultlang=".(is_object($langs) ? $langs->defaultlang : 'null'));
+	dol_syslog("pdf_getFormat Get paper format with mode=".$mode." MAIN_PDF_FORMAT=".getDolGlobalString('MAIN_PDF_FORMAT')." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null')." and langs->defaultlang=".(is_object($langs) ? $langs->defaultlang : 'null'));
 
 	// Default value if setup was not done and/or entry into c_paper_format not defined
 	$width = 210;
@@ -242,7 +242,9 @@ function pdf_getEncryption($pathoffile)
 
 	//ob_start();
 	@($parser = new TCPDF_PARSER(ltrim($content)));
-	[$xref, $data] = $parser->getParsedData();
+	$tmp = $parser->getParsedData();
+	$xref = $tmp[0];
+	$data = $tmp[1] ?? null;
 	unset($parser);
 	//ob_end_clean();
 
@@ -265,10 +267,8 @@ function pdf_getEncryption($pathoffile)
  */
 function pdf_getPDFFont($outputlangs)
 {
-	global $conf;
-
 	if (getDolGlobalString('MAIN_PDF_FORCE_FONT')) {
-		return $conf->global->MAIN_PDF_FORCE_FONT;
+		return getDolGlobalString('MAIN_PDF_FORCE_FONT');
 	}
 
 	$font = 'Helvetica'; // By default, for FPDI, or ISO language on TCPDF
@@ -311,8 +311,7 @@ function pdf_getPDFFontSize($outputlangs)
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
-	global $conf;
-	$height = (!getDolGlobalString('MAIN_DOCUMENTS_LOGO_HEIGHT') ? 20 : $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
+	$height = getDolGlobalInt('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
 	$maxwidth = 130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($logo, $url);
@@ -1296,7 +1295,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$pdf->SetDrawColor(224, 224, 224);
 	// Option for footer text color
 	if (getDolGlobalString('PDF_FOOTER_TEXT_COLOR')) {
-		[$r, $g, $b] = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
+		$tmparray = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
+		$r = $tmparray[0];
+		$g = $tmparray[1];
+		$b = $tmparray[2];
 		$pdf->SetTextColor($r, $g, $b);
 	}
 
@@ -1334,7 +1336,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				[$r, $g, $b] = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				$tmparray = sscanf(getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR'), '%d, %d, %d');
+				$r = $tmparray[0];
+				$g = $tmparray[1];
+				$b = $tmparray[2];
 				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
@@ -1386,7 +1391,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
-				[$r, $g, $b] = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				$tmparray = sscanf(getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR'), '%d, %d, %d');
+				$r = $tmparray[0];
+				$g = $tmparray[1];
+				$b = $tmparray[2];
 				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
 				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
@@ -1844,7 +1852,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 					}
 
 					if (isset($productCustomerPrice) && !empty($productCustomerPrice->ref_customer)) {
-						switch ($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {
+						$idcustprice = getDolGlobalInt('PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE');
+						switch ($idcustprice) {
 							case 1:
 								$ref_prodserv = $productCustomerPrice->ref_customer;
 								break;

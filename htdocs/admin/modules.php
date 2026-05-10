@@ -307,7 +307,7 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 				*/
 
-				// Check if module is in the remote malware list
+				// Check if module is in the remote malware blacklist (at URL DolibarrModules::URL_FOR_BLACKLISTED_MODULES)
 				if (!$error) {
 					if (GETPOST('checkforcompliance') == 'on') {
 						try {

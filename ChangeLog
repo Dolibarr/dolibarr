@@ -2,6 +2,12 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 23.0.3 compared to 23.0.2 *****
+FIX: IDOR on messaging.php - credit Aksoum Abderrahmane
+FIX: Some remaining cross-customer object creation on API (proposal, orders) - credit Mitch311
+SEC: Better sanitization param for GETPOST of htmlheader of website page - See commit bbbbb56c6455514dcd0acca53afc17a92ed21bb9
+
+
 
 ***** ChangeLog for 23.0.2 compared to 23.0.1 *****
 

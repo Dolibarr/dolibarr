@@ -629,7 +629,7 @@ print '<br>';
 // File extension locked in upload by default
 
 print '<strong>'.$langs->trans("UploadExtensionRestriction").'</strong>: ';
-print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION')));
+print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent()))));
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.implode(', ', getExecutableContent()).')</span>';
 print '<br>';
 print '<br>';

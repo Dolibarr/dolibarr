@@ -748,7 +748,7 @@ class Asset extends CommonObject
 		}
 
 		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht,";
-		$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
+		$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM ' . MAIN_DB_PREFIX . 'accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";

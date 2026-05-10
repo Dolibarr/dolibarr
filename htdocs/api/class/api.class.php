@@ -126,6 +126,12 @@ class DolibarrApi
 				// Others will use 'alphanohtml'
 			}
 
+			// In case of a field with unknown type (legacy code), we use its name to have a chance to sanitize it
+			if (preg_match('/^fk_/i', $field)) {
+				// We accept only integer
+				return sanitizeVal($value, 'int');
+			}
+
 			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 				return sanitizeVal($value, 'restricthtml');
 			} else {

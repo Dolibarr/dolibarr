@@ -722,6 +722,8 @@ if ($nboftargetok) {
 		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3`;
 
+		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php`;
+
 		$ret = `rm -fr $BUILDROOT/$PROJECT/node_modules`;
 
 		$ret = `rm -fr $BUILDROOT/$PROJECT/dev/ansible`;

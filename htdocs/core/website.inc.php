@@ -314,7 +314,7 @@ if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom
 
 		if (function_exists($systemfunction)) {
 			print '<center><br><br>';
-			print 'Website features are protected to be disabled if the PHP system functions ('.implode(',', $systemfunctions).') are not disabled for the website context.<br>';
+			print 'Website features are DISABLED if the PHP system functions ('.implode(',', $systemfunctions).') are NOT disabled for the website context.<br>';
 			print 'The value "'.$systemfunction.'" has NOT been found into the <b>current disable_functions</b>=<br>';
 			print '<textarea cols="100" rows="5">';
 			print ini_get('disable_functions');		// Warning, the real value may not be this one.Only the master initial value from php.ini is effective, not the local value set at virtualhost.

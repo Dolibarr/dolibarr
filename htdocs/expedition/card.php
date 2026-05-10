@@ -1596,7 +1596,7 @@ if ($action == 'create' && $usercancreate) {
 		// Document model
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$list = ModelePdfExpedition::liste_modeles($db);
-		if (is_countable($list) && count($list) > 1) {
+		if (is_array($list) && count($list) > 1) {
 			print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 			print '<td colspan="3">';
 			print img_picto('', 'pdf', 'class="pictofixedwidth"');
@@ -1807,7 +1807,7 @@ if ($action == 'create' && $usercancreate) {
 			// Document model
 			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 			$list = ModelePdfExpedition::liste_modeles($db);
-			if (is_countable($list) && count($list) > 1) {
+			if (is_array($list) && count($list) > 1) {
 				print "<tr><td>" . $langs->trans("DefaultModel") . "</td>";
 				print '<td colspan="3">';
 				print img_picto('', 'pdf', 'class="pictofixedwidth"');

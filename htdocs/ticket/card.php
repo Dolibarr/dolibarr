@@ -740,6 +740,11 @@ if ($action == 'create' || $action == 'presend') {
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
 	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
+
+	if (GETPOST("mode", "aZ09") == 'init' && empty($_POST)) {
+		$formticket->clear_attached_files();
+	}
+
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
@@ -957,7 +962,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<input type="hidden" name="id" value="'.$object->id.'">';
 			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button valignmiddle" name="modify" value="'.$langs->trans("Modify").'">';
-			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel vlignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel valignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$morehtmlref .= '</form>';
 		}
 

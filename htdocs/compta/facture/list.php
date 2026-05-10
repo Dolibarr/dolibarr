@@ -76,7 +76,7 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
+$langs->loadLangs(array('bills', 'companies', 'products', 'categories', 'cashdesk'));
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
@@ -220,6 +220,7 @@ $diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user-
 
 $now = dol_now();
 $error = 0;
+$sql = '';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Facture($db);
@@ -346,6 +347,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // For POS context, we force some fields
 if ($contextpage == 'poslist') {

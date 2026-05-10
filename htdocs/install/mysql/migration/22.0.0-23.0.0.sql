@@ -54,10 +54,14 @@ create table llx_categorie_project_task (
 ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_project_task);
 --noqa:enable=PRS
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
-ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
 
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+-- VMYSQL4.1 DROP INDEX idx_categorie_project_fk_task ON llx_categorie_project_task;
+-- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
+ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+
 
 UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
 
@@ -422,8 +426,8 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT n
 
 ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
 
-UPDATE llx_cronjob set test = 'getDolDBType() == ''mysqli''' WHERE label = 'MakeLocalDatabaseDumpShort';
-UPDATE llx_cronjob set test = 'getDolGlobalString(''MAIN_ALLOW_BACKUP_BY_EMAIL'') && getDolDBType() == ''mysqli''' WHERE label = 'MakeSendLocalDatabaseDumpShort';
+-- VMYSQL4.3 UPDATE llx_cronjob set test = 'getDolDBType() == ''mysqli''' WHERE label = 'MakeLocalDatabaseDumpShort';
+-- VMYSQL4.3 UPDATE llx_cronjob set test = 'getDolGlobalString(''MAIN_ALLOW_BACKUP_BY_EMAIL'') && getDolDBType() == ''mysqli''' WHERE label = 'MakeSendLocalDatabaseDumpShort';
 
 UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
 

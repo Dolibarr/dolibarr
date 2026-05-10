@@ -226,9 +226,13 @@ if ($reshook < 0) {
 }
 
 // Verify if we can find member
+
 if (empty($reshook) && getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE") && $action == 'add' && !GETPOSTISSET("nofetchmember")) {	// Test on permission not required here
 	$memberfound = false;
+
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') && GETPOSTISSET('login')) {
+		// Note that this allow to guess anonymous ID already used. But this is not a problem as it is an anonymous pseudonym.
+		// If we try to new account and option MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE was off, we also get the same error.
 		$sql = "SELECT rowid as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE a.login = '".$db->escape(GETPOST('login'))."'";
@@ -806,6 +810,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$morInput.prop({disabled: true, checked: false}); */
 								$span1.addClass("member-individual-back").removeClass("nonature-back");
 								$span2.removeClass("member-company-back").addClass("nonature-back");
+								$("#phisicalinput").prop("checked", true);
 								$tdLast.addClass("fieldrequired");
 								$tdFirst.addClass("fieldrequired");
 								$tdCompany.removeClass("fieldrequired");
@@ -816,6 +821,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 								$morInput.prop({disabled: false, checked: true}); */
 								$span2.addClass("member-company-back").removeClass("nonature-back");
 								$span1.removeClass("member-individual-back").addClass("nonature-back");
+								$("#moralinput").prop("checked", true);
 								$tdCompany.addClass("fieldrequired");
 								$tdLast.removeClass("fieldrequired");
 								$tdFirst.removeClass("fieldrequired");
@@ -855,14 +861,14 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Firstname
-	print '<tr><td id="tdfirstname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+	print '<tr><td id="tdfirstname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'" spellcheck="false"></td></tr>'."\n";
 
 	// Lastname
-	print '<tr><td id="tdlastname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+	print '<tr><td id="tdlastname" class="classfortooltip'.($checkednature == "phy" ? ' fieldrequired"' : '').'">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'" spellcheck="false"></td></tr>'."\n";
 
 	// EMail
 	print '<tr><td>'.(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '</span>' : '').'</td>';
-	print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth150 maxwidth300 widthcentpercentminusx" maxlength="255" value="'.dol_escape_htmltag(GETPOST('member_email', "aZ09arobase")).'"></td></tr>'."\n";
+	print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth150 maxwidth300 widthcentpercentminusx" maxlength="255" value="'.dol_escape_htmltag(GETPOST('member_email', "aZ09arobase")).'" spellcheck="false"></td></tr>'."\n";
 
 	// Login
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
@@ -1006,7 +1012,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	if (getDolGlobalString('MEMBER_NEWFORM_DOLIBARRTURNOVER')) {
 		// Do not set a default amount MEMBER_NEWFORM_AMOUNT if you use MEMBER_NEWFORM_DOLIBARRTURNOVER
 		$s = $langs->trans("AreYouAPreferredPartner", '<a href="https://partners.dolibarr.org" target="_blank">{s1}</a>');
-		$s = str_replace('{s1}', 'Peferred Partner', $s);
+		$s = str_replace('{s1}', 'Preferred Partner', $s);
 		print '<tr id="trbudget" class="trcompany"><td class="paddingrightonly"><label for="pp" class="small">'.$s.'</label></td><td>';
 		print '<input type="checkbox" name="pp" id="pp" value="1"'.(GETPOST('pp') ? ' checked="checked"' : '').' class="reposition">';
 		print '</td></tr>';

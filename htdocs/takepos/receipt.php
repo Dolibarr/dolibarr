@@ -92,7 +92,7 @@ if (!$user->hasRight('takepos', 'run')) {
 
 top_htmlhead('', '', 2);
 
-if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
+if (!$facid && (string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
 	$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 	$sql .= " AND entity IN (".getEntity('invoice').")";

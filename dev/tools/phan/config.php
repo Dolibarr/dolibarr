@@ -506,6 +506,7 @@ return [
 		'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
 		'pdo_pgsql'  => PHAN_DIR . '/stubs/pdo_pgsql.phan_php',
 		'pdo_sqlite'  => PHAN_DIR . '/stubs/pdo_sqlite.phan_php',
+		'phpunit'  => PHAN_DIR . '/stubs/phpunit.phan_php',
 		'pgsql'  => PHAN_DIR . '/stubs/pgsql.phan_php',
 		'session'  => PHAN_DIR . '/stubs/session.phan_php',
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',

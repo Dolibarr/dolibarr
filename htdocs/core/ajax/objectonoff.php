@@ -42,8 +42,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -51,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage');
@@ -131,12 +130,19 @@ if (($action == 'set') && !empty($id)) {	// Test on permission already done in h
 		foreach ($object->errors as $msg) {
 			print $msg."\n";;
 		}
+
+		$db->close();
+
 		http_response_code(500);
 		exit;
 	}
 
 	if ($backtopage) {
+		$db->close();
+
 		header('Location: '.$backtopage);
 		exit;
 	}
 }
+
+$db->close();

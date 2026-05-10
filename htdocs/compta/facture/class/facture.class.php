@@ -1359,6 +1359,9 @@ class Facture extends CommonInvoice
 			}
 
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+
+			// Do not clone accountancy ventilation: a cloned invoice must reappear in "to dispatch" list
+			$object->lines[$i]->fk_code_ventilation = 0;
 		}
 
 		// Create clone
@@ -1422,6 +1425,9 @@ class Facture extends CommonInvoice
 		// Closed order
 		$this->date = dol_now();
 		$this->source = 0;
+
+		// Avoid updating the row ranks
+		$this->context['createfromclone'] = 1;
 
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
