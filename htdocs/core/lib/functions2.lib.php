@@ -3241,7 +3241,7 @@ function validateZipFile($zip, $originalfilename, $zipfile)
 	// Zip content of a module should be ./mymodule or ./htdocs/mymodule
 
 	// But we first we check if we need to change dir (for zip that are ./module/htdocs/module instead of ./htdocs/module)
-	if (! $error && $dh = opendir($dir)) {
+	if ($dh = opendir($dir)) {
 		$nbofsubdirs = 0;
 		while (($file = readdir($dh)) !== false) {
 			if (in_array($file, array('.', '..'))) {
