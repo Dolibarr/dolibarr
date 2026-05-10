@@ -485,8 +485,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'setproratarate' && $usercancreate) {
 		// With prorata, if a discount if given, it prevails on amount.
 		$object->fetch($id);
-		$new_rate = GETPOST('prorata_rate', 'float') ? GETPOST('prorata_rate', 'float') : 0;
-		$new_discount = GETPOST('prorata_discount', 'float') ? GETPOST('prorata_discount', 'float') : 0;
+		$new_rate = GETPOSTFLOAT('prorata_rate') ? GETPOSTFLOAT('prorata_rate') : 0;
+		$new_discount = GETPOSTFLOAT('prorata_discount') ? GETPOSTFLOAT('prorata_discount') : 0;
 		// If rate has changed, overwrite - rounding is used to deal with very subtle variations
 		if (round($object->prorata_rate, 5) <> round($new_rate, 5)) {
 			$result = $object->setProrataFromRate($new_rate);
