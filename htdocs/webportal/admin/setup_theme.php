@@ -76,6 +76,23 @@ $item = $formSetup->newItem('WEBPORTAL_PRIMARY_COLOR');
 $item->setAsColor();
 $item->defaultFieldValue = $webPortalTheme->primaryColorHex;
 
+// Login theme
+$options = [
+	'default' => [
+		'id' => 'default-login-theme',
+		'label' => '<img src="'. DOL_URL_ROOT . '/public/webportal/img/login-tpl/default.svg" alt="'.dolPrintHTMLForAttribute($langs->trans('UseDefaultLoginForm')).'" />',
+		'labelIsHtml' => true
+	],
+	'right' => [
+		'id' => 'right-login-theme',
+		'label' => '<img src="'. DOL_URL_ROOT . '/public/webportal/img/login-tpl/right.svg" alt="'.dolPrintHTMLForAttribute($langs->trans('UseRightLoginForm')).'" />',
+		'labelIsHtml' => true
+	],
+];
+$item = $formSetup->newItem('WEBPORTAL_LOGIN_FORM_THEME')->setAsRadio($options);
+$item->cssClass = 'integrated-radio';
+$item->defaultFieldValue = 'default';
+
 
 // Logo URL
 $item = $formSetup->newItem('WEBPORTAL_LOGIN_LOGO_URL');

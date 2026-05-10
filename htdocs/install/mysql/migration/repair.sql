@@ -310,22 +310,33 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
--- Sequence to removed duplicated values of llx_accounting_account. Run several times if you still have duplicate.
-drop table tmp_accounting_account_double;
---select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
-create table tmp_accounting_account_double as (select account_number, fk_pcg_version, entity, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version, entity having count(rowid) >= 2);
---select * from tmp_accounting_account_double;
-delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
-drop table tmp_accounting_account_double;
+-- Sequence to removed duplicated values of llx_accounting_account
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT aa.rowid, aad.min FROM llx_accounting_account AS aa INNER JOIN (SELECT account_number, entity, fk_pcg_version, MIN(rowid) AS min FROM llx_accounting_account GROUP BY account_number, entity, fk_pcg_version HAVING COUNT(*) >= 2) AS aad ON aa.account_number = aad.account_number AND aa.entity = aad.entity AND aa.fk_pcg_version = aad.fk_pcg_version AND aa.rowid != aad.min;
+-- Fix fk_code_ventilation in lines
+UPDATE llx_facturedet SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facturedet.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facture_fourn_det.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_expensereport_det.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
+DELETE FROM llx_accounting_account WHERE rowid IN (SELECT rowid FROM tmp_llx_accouting_account);
+DROP TABLE IF EXISTS tmp_llx_accouting_account;
 
 
 -- Sequence to removed duplicated values of llx_commande_extrafields. Run several times if you still have duplicate.
 drop table tmp_commande_extrafields_double;
 --select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
 create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
---select * from tmp_links_double;
+--select * from tmp_commande_extrafields_double;
 delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
 drop table tmp_commande_extrafields_double;
+
+
+-- Sequence to removed duplicated values of llx_c_transport_mode. Run several times if you still have duplicate.
+drop table tmp_c_transport_mode;
+--select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2
+create table tmp_c_transport_mode as (select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2);
+--select * from tmp_c_transport_mode;
+delete from llx_c_transport_mode where (rowid) in (select max_rowid from tmp_c_transport_mode);
+drop table tmp_c_transport_mode;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
@@ -426,21 +437,12 @@ create table tmp_bank_url_expense_user as (select e.fk_user_author, bu2.fk_bank 
 update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
-
--- Delete duplicate accounting account, but only if not used
-DROP TABLE tmp_llx_accounting_account;
-CREATE TABLE tmp_llx_accounting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
---SELECT * from tmp_llx_accounting_account;
-DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accounting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
-
+-- Fix accounting account unique index and orphans
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
-
-
 UPDATE llx_facturedet SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
-
 
 -- VMYSQL4.1 update llx_element_time set element_datehour = element_date where element_datehour < element_date or element_datehour > DATE_ADD(element_date, interval 1 day);
 
@@ -585,6 +587,11 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 
+-- Clean templates that does not exists
+DELETE FROM llx_document_model WHERE TYPE = 'bom' AND nom = 'alpha';
+DELETE FROM llx_const WHERE name = 'BOM_ADDON_PDF' AND value = 'alpha';
+DELETE FROM llx_const WHERE name = 'MRP_MO_ADDON_PDF' AND value = 'alpha';
+
 
 -- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
 -- Note: amount is amount in the currency of the bank account
@@ -618,6 +625,10 @@ DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country)
 
 UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
 
+
+-- Fix status of thirdparty when there is at least one win opportunity
+UPDATE llx_societe as s SET s.client = 1 WHERE s.client = 0 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+UPDATE llx_societe as s SET s.client = 3 WHERE s.client = 2 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
 
 -- Drop duplicate indexes not named correctly and create the only one we should have
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
@@ -687,3 +698,18 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_pr
 
 -- delete a constant that should not be set
 DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -1;
+
+
+DELETE FROM llx_hrm_skilldet WHERE rankorder = 0;
+
+UPDATE llx_c_tva SET type_vat = 0 WHERE type_vat < 0;
+
+-- We can't have this on by default because we may have old payment mode using something else than stripe and account matching the pk_xxx rule.
+--update llx_societe_rib set ext_payment_site = 'StripeLive' where stripe_account like '%pk_live%' AND ext_payment_site IS NULL;
+--update llx_societe_rib set ext_payment_site = 'StripeTest' where stripe_account like '%pk_test%' AND ext_payment_site IS NULL;
+
+-- Delete entry in llx_const for 'OAUTH_XXXX-abc def' when there is a space between avc and def.
+DELETE FROM llx_const WHERE name like 'OAUTH_%-% %_ID';
+
+
+--SELECT fr.rowid, fr.titre as fr.title, fr.nb_gen_done, fr.nb_gen_max, (SELECT COUNT(f.rowid) FROM llx_facture as f WHERE f.fk_fac_rec_source = fr.rowid) as nb_invoices FROM llx_facture_rec as fr WHERE fr.nb_gen_max > 0 AND fr.nb_gen_done >= fr.nb_gen_max AND fr.nb_gen_done > 0 AND fr.nb_gen_done <> (SELECT COUNT(f.rowid) FROM llx_facture as f WHERE f.fk_fac_rec_source = fr.rowid);

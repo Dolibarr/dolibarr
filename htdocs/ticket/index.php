@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -72,12 +72,14 @@ $endyear = $year;
 $object = new Ticket($db);
 
 // Security check
-//$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
+//restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
 if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	accessforbidden('Not enough permissions');
 }
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
 
 
 /*
@@ -112,6 +114,7 @@ $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 $showtot = 0;
+$shownb = 0;
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
@@ -181,7 +184,7 @@ if ($user->socid > 0) {
 	$sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
 	// For internals users,
-	if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->hasRight('ticket', 'manage')) {
+	if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$permissiontomanage) {
 		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
@@ -218,6 +221,16 @@ if ($result) {
 		}
 	}
 
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus3
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus5
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus8
+	 * @var string $badgeStatus9
+	 */
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
 	$colorseries = array();
@@ -252,7 +265,7 @@ $stringtoshow = '<script type="text/javascript">
     });
     </script>';
 $stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_by_status">'; // hideobject is to start hidden
-$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 $stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 $stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
@@ -339,9 +352,9 @@ if ($user->hasRight('ticket', 'read')) {
 	$sql .= " category.code as category_code, category.label as category_label,";
 	$sql .= " severity.code as severity_code, severity.label as severity_label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code = t.type_code AND type.entity = t.entity";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code = t.category_code AND category.entity = t.entity";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code = t.severity_code AND severity.entity = t.entity";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
@@ -356,7 +369,7 @@ if ($user->hasRight('ticket', 'read')) {
 		$sql .= " AND t.fk_soc= ".((int) $user->socid);
 	} else {
 		// Restricted to assigned user only
-		if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->hasRight('ticket', 'manage')) {
+		if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$permissiontomanage) {
 			$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 		}
 	}

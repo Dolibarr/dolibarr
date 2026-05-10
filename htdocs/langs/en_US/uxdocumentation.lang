@@ -14,6 +14,7 @@ DocExampleForPHPCode=Example of code to use in PHP
 # Components
 DocComponentsTitle=Components
 DocComponentsMainDescription=Components section description is under development
+FreezeTooltip = Tooltip freeze
 
 # Badges
 DocBadgeTitle=Badges
@@ -97,6 +98,7 @@ DocSetEventMessageWarning = Warning Message
 DocSetEventMessageError = Error Message
 DocSetEventMessageUnique = Unique Message
 DocSetEventMessage = Message #%s
+DocSetEventMessageJsContext = Java Script usage with Dolibarr context
 
 DocButtonIconsLowEmphasis = Low emphasis icon buttons
 DocButtonIconsDescriptionLowEmphasis = An icon button with low emphasis is typically a button that includes only an icon (no accompanying text) and has minimal styling to make it unobtrusive. Icon buttons with low emphasis are ideal for secondary or tertiary actions, like clear field, fill field, bookmarking, or sharing, especially in interfaces that have more prominent primary actions (like "Submit" or "Continue").
@@ -146,6 +148,8 @@ DocMySectionText=A line of text to describe my component
 DocMySectionText2=You can add more lines of text
 DocMySectionExample=Here you can put an example of your component
 
+TableRowIntuitiveSelect = Intuitive table lines selection
+
 #ExperimentalUx
 ExperimentalUx = Experimental UX
 ExperimentalUxTitle = UX Experiments in Dolibarr
@@ -161,10 +165,16 @@ ExperimentalUxContributionTxt02 = The different variants of this experiment will
 ExperimentalUxContributionTxt03 = In some cases, variants may be incompatible with each other. It is often challenging to make different behaviors coexist when they are based on the same interaction. For this reason, it may be necessary to separate the demos in such situations.
 ExperimentalUxContributionEnd = This structure ensures a clear and modular organization of UX experiments, making testing and future integration more efficient.
 
+UxDolibarrContext = JS Dolibarr context
+UxDolibarrContextHowItWork = How it's work
+UxDolibarrContextLangsTool = Langs tool
+UxDolibarrContextKnowsHooks = Common JS Hooks list
+
+UxMenuTooltipTheme = Tooltips & themes
+TooltipThemesAndOrientation = Tooltip Themes and orientation
+
 # Start experiements menu title
-ExperimentalUxFreezeTooltip = Tooltip freeze
 ExperimentalUxInputAjaxFeedback = Input feedback
-ExperimentalUxIntuitiveSelect = Intuitive table lines selection
 # End experiements manu tyile
 
 # Title section
@@ -177,3 +187,18 @@ DocTitleIconUsageMethod3=Use your image. You must set the 4th parameter to 1.
 DocTitleMoreContentDescription=You can further customize the headings by adding an ID or CSS class(es), or adding content. See the examples below.
 DocTitleWithFilters=Display title with filters, buttons or navigation
 DocTitleWithFiltersDescription=If you want to display a title with many navigation options like on list pages, you can use the print_barre_liste() function which is a bit more complex. See code below or core/lib/functions.lib.php file to see how it works.
+JSDolibarrhooksReadyVsInit = Difference between Dolibarr:Init and Dolibarr:Ready
+SetAndUseContextVars = Set and use context vars
+
+
+ConsoleHelp = Console help
+JSDolibarrhooks = JS Dolibarr hooks
+JSDolibarrAwaitHooks = JS Dolibarr Async Hooks (Await Hooks) - sequential execution
+ExampleOfCreatingNewContextTool = Dolibarr Tool : Example of creating a new context tool
+SetEventMessageTool = Dolibarr Tool : Set event message
+
+ContextLangToolTest = This text is in english
+LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.
+CacheCleared = Cache cleared
+
+JSDolibarrhooksAjaxSpecial = Dom reloaded Hook

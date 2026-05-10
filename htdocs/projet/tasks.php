@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,13 +57,13 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 //$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projecttasklist';
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 //$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $optioncss  = GETPOST('optioncss', 'aZ');
 $backtopage = GETPOST('backtopage', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -117,8 +117,6 @@ $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
 $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields = new ExtraFields($db);
@@ -135,6 +133,9 @@ if ($id > 0 || !empty($ref)) {
 $extrafields->fetch_name_optionals_label($taskstatic->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
 
+// Default to no permission
+$permissiontoread = 0;
+$permissiontodelete = 0;
 
 // Default sort order (if not yet defined by previous GETPOST)
 /* if (!$sortfield) {
@@ -178,7 +179,7 @@ $arrayfields = array(
 	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 5),
 	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => '1', 'position' => 6),
 	't.duration_effective' => array('label' => "TimeSpent", 'checked' => '1', 'position' => 7),
-	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => '1', 'position' => 8),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => '-1', 'position' => 8),
 	't.progress' => array('label' => "ProgressDeclared", 'checked' => '1', 'position' => 9),
 	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => '1', 'position' => 10),
 	't.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 11),
@@ -393,7 +394,21 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$taskid = $task->create($user);
 
 			if ($taskid > 0) {
-				$result = $task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+				$userid = GETPOSTINT("userid");
+				if ($userid == -4) {
+					if (empty($object->id)) {
+						$object->fetch($projectid);
+					}
+					$contactlist = array();
+					foreach (array('internal', 'external') as $source) {
+						$contactlist = array_merge($contactlist, $object->liste_contact(-1, $source));
+					}
+					foreach ($contactlist as $key => $contact) {
+						$result = $task->add_contact(((int) $contact["id"]), ($contact["code"] == "PROJECTLEADER" ? 'TASKEXECUTIVE' : "TASKCONTRIBUTOR"), $contact["source"]);
+					}
+				} else {
+					$result = $task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+				}
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");
@@ -455,6 +470,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_ta
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
 $userWrite = 0;
+$massactionbutton = '';
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -602,7 +618,7 @@ if ($id > 0 || !empty($ref)) {
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
-	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions) ?? '';
 
 	// Project card
 
@@ -821,12 +837,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
-		print $form->select_dolusers($user->id, 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+		print $form->select_dolusers('-4', 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 	} else {
 		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
-			print $form->select_dolusers($user->id, 'userid', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+			print $form->select_dolusers('-4', 'userid', 0, null, 0, '', '', '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
 	print '</td></tr>';
@@ -898,7 +914,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	print '</form>';
 } elseif ($id > 0 || !empty($ref)) {
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 	// Projet card in view mode
 
@@ -970,7 +986,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	}
 
 	// Show the massaction checkboxes only when this page is not opened from the Extended POS
-	if ($massactionbutton && $contextpage != 'poslist') {
+	if (!empty($massactionbutton) && $contextpage != 'poslist') {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
@@ -981,7 +997,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1112,7 +1128,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1123,7 +1139,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	print '<tr class="liste_titre nodrag nodrop">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	// print '<td>'.$langs->trans("Project").'</td>';
@@ -1191,7 +1207,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print $hookmanager->resPrint;
 	print '<td></td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	print "</tr>\n";

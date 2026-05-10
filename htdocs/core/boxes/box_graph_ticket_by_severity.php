@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_graph_ticket_by_severity extends ModeleBoxes
 {
-	public $boxcode = "box_ticket_by_severity";
+	public $boxcode = "box_graph_ticket_by_severity";
 	public $boximg = "ticket";
 	/**
 	 * @var string
@@ -46,7 +46,7 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $langs;
 		$langs->load("boxes");
@@ -96,7 +96,8 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT cts.rowid, cts.label, cts.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
-			$sql .= " WHERE cts.active = 1";
+			$sql .= " WHERE cts.entity IN (".getEntity('c_ticket_severity').")";
+			$sql .= " AND cts.active = 1";
 			$sql .= $this->db->order('cts.rowid', 'ASC');
 			$resql = $this->db->query($sql);
 
@@ -133,7 +134,8 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 			$data = array();
 			$sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-			$sql .= " WHERE t.fk_statut <> 8";
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
+			$sql .= " AND t.fk_statut <> 8";
 			$sql .= " GROUP BY t.severity_code";
 			$resql = $this->db->query($sql);
 			if ($resql) {

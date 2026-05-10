@@ -26,9 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
@@ -166,28 +165,17 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("NewRelativeDiscount"), '', '');
 
-print '<div class="underbanner clearboth"></div>';
 
-/*if (! ($isCustomer && $isSupplier))
-{
-	if ($isCustomer && ! $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="0" />';
-	}
-	if (! $isCustomer && $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="1" />';
-	}
-}*/
-
-print '<table class="border centpercent marginbottomonly">';
+print '<table class="noborder centpercent marginbottomonly">';
 
 if ($isCustomer || $isSupplier) {
 	// Discount type
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
+	print '<tr class="trfirstline"><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
 	if ($isCustomer) {
 		print '<input type="radio" name="discount_type" id="discount_type_0" '.(GETPOSTISSET('discount_type') ? (GETPOSTINT('discount_type') == 0 ? ' checked' : '') : ' checked').' value="0"> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 	}
 	if ($isCustomer && $isSupplier) {
-		print ' &nbsp; ';
+		print ' &nbsp; &nbsp; ';
 	}
 	if ($isSupplier) {
 		print ' <input type="radio" name="discount_type" id="discount_type_1"'.(GETPOSTISSET('discount_type') ? (GETPOSTINT('discount_type') ? ' checked' : '') : ($isCustomer ? '' : ' checked')).' value="1"> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
@@ -197,10 +185,10 @@ if ($isCustomer || $isSupplier) {
 
 // New value
 print '<tr><td class="titlefield fieldrequired">';
-print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.dol_escape_htmltag(GETPOST("remise")).'">%</td></tr>';
+print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.dol_escape_htmltag(GETPOST("remise")).'"> <span class="opacitymedium">%</span></td></tr>';
 
 // Motif/Note
-print '<tr><td class="fieldrequired">';
+print '<tr class="lastline"><td class="fieldrequired">';
 print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.dol_escape_htmltag(GETPOST("note", "alphanohtml")).'"></td></tr>';
 
 print "</table>";

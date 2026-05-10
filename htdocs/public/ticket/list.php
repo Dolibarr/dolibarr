@@ -48,6 +48,13 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -56,20 +63,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 
 $track_id = GETPOST('track_id', 'alpha');
 $email = strtolower(GETPOST('email', 'alpha'));
@@ -476,7 +475,7 @@ if ($action == "view_ticketlist") {
 
 				if (!empty($arrayfields['type.code']['checked'])) {
 					print '<td class="liste_titre">';
-					$formTicket->selectTypesTickets($search_type, 'search_type', '', 2, 1, 1, 0, 'maxwidth150');
+					$formTicket->selectTypesTickets($search_type, 'search_type', '', 2, 1, 1, 0, 'maxwidth150', 0, 1);
 					print '</td>';
 				}
 
@@ -584,6 +583,7 @@ if ($action == "view_ticketlist") {
 				print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'center maxwidthsearch ');
 				print '</tr>';
 
+				$i = 0;
 				while ($obj = $db->fetch_object($resql)) {
 					print '<tr class="oddeven">';
 
@@ -721,6 +721,12 @@ if ($action == "view_ticketlist") {
 					print '</tr>';
 				}
 
+				if ($i == 0) {
+					print '<tr><td colspan="9">';
+					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+					print '</td></tr>';
+				}
+
 				print '</table>';
 				print '</div>';
 
@@ -748,7 +754,7 @@ if ($action == "view_ticketlist") {
 			dol_print_error($db);
 		}
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans("GoBack").'</a></div>';
 	}
 
 	print '</div>';

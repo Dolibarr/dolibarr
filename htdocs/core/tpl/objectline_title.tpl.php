@@ -7,7 +7,9 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +23,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Need to have the following variables defined:
- * $object (invoice, order, ...)
- * $conf
- * $langs
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $outputalsopricetotalwithtax
- * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
- *
- * $type, $text, $description, $line
  */
 
 /**
- * @var CommonObject $this
+ * @var CommonObject|Facture $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
  * @var Form $form
@@ -44,16 +34,29 @@
  * @var Translate $langs
  * @var Conf $conf
  * @var User $user
+ *
+ * @var int<0,1> $disableedit
+ * @var int<0,1> $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * @var int<0,1> $outputalsopricetotalwithtax
+ * @var int<0,1> $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
+ * @var string   $action
  */
 
- // Protection to avoid direct call of template
+// Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObject|Facture $this
+@phan-var-force CommonObject $object
+@phan-var-force int<0,1> $disableedit
+@phan-var-force int<0,1> $inputalsopricewithtax
+@phan-var-force int<0,1> $outputalsopricetotalwithtax
+@phan-var-force int<0,1> $usemargins
+@phan-var-force string   $action
+';
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
@@ -76,7 +79,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'order_sup
 	}
 	if (GETPOST('mode', 'aZ09') == 'servicedateforalllines') {
 		print '&nbsp;&nbsp;<div class="classvatforalllines inline-block nowraponall">';
-		$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+		$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 		print $form->selectDate('', 'alldate_start', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
 		print ' '.$langs->trans('to').' ';
@@ -110,27 +113,43 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 	//print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
 	if (GETPOST('mode', 'aZ09') == 'vatforalllines') {
 		print '<div class="classvatforalllines inline-block nowraponall">';
-		print $form->load_tva('vatforalllines', '', $mysoc, $object->thirdparty, 0, 0, '', false, 1);
-		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		$societe_vendeuse = strpos($object->element, 'supplier') === false ? $mysoc : $object->thirdparty;
+		$societe_acheteuse = strpos($object->element, 'supplier') === false ? $object->thirdparty : $mysoc;
+		$vat_mode = strpos($object->element, 'supplier') === false ? 1 : 2;
+		print $form->load_tva('vatforalllines', '', $societe_vendeuse, $societe_acheteuse, 0, 0, '', false, 1, $vat_mode);
+		print '<input class="inline-block button smallpaddingimp valignmiddle" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
 		print '</div>';
 	}
 }
 print '</th>';
 
-// Price HT
+// Price HT / excl tax
 print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
-// Multicurrency
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUTTC').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
+// Multicurrency HT / excl tax
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
+	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHT');
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span></th>';
 }
 
+// Price TTC / incl tax
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
-	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+}
+
+// Multicurrency TTC / incl tax
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	print '<th class="linecoluttc_currency right " style="width: 80px">'.$langs->trans('PriceUTTC');
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
 }
 
 // Qty
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
+
+//ShippableStatus
+if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+	print '<th class="linecolstock center" style="width: 30px;">'.$langs->trans("ShippableStatus").'</th>';
+}
 
 // Unit
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
@@ -142,7 +161,7 @@ print '<th class="linecoldiscount right nowraponall">';
 print $langs->trans('ReductionShort');
 
 // @phan-suppress-next-line PhanUndeclaredConstantOfClass
-if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
+if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
 	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'remiseforalllines') {
@@ -159,7 +178,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture')) && $objec
 print '</th>';
 
 // Fields for situation invoice
-if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<th class="linecolcycleref right">'.$langs->trans('CumulativeProgression').'</th>';
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
@@ -210,8 +229,9 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
+	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort');
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span></th>';
 }
 
 if ($outputalsopricetotalwithtax) {

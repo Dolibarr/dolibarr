@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Счетоводство
 Accounting=Счетоводство
+AccountingAccount=Счетоводна сметка
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Разделител на колони в експортен файл
 ACCOUNTING_EXPORT_DATE=Формат на дата в експортен файл
 ACCOUNTING_EXPORT_PIECE=Експортиране на пореден номер
@@ -72,7 +74,7 @@ AccountancyAreaDescActionOnce=Следните действия се изпъл�
 AccountancyAreaDescActionOnceBis=Трябва да направите следващите стъпки, за да ви спести време в бъдеще, като ви предложи автоматично правилния акаунт по подразбиране Счетоводство при прехвърляне на данни в Счетоводство
 AccountancyAreaDescActionFreq=Следните действия се изпълняват обикновено всеки месец, седмица или ден при много големи компании...
 AccountancyAreaDescJournalSetup=СТЪПКА %s: Проверете съдържанието на вашия списък с дневници от менюто %s
-AccountancyAreaDescChartModel=СТЪПКА %s: Проверете дали съществува шаблон за сметкоплан или създайте такъв от меню %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=СТЪПКА %s: Изберете и / или попълнете вашият сметкоплан от меню %s
 AccountancyAreaDescFiscalPeriod=СТЪПКА %s: Определете фискалния период, който определя диапазона от дати, приети за създаване на записи Счетоводство. За тази цел използвайте елемента от менюто %s.
 AccountancyAreaDescVat=СТЪПКА %s: Определете счетоводните сметки за всяка ставка на ДДС. За това използвайте менюто %s.
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Акаунт (от сметкоплана), койт�
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Акаунт (от сметкоплана), който да се използва за регистриране на абонаменти за членство (Модул за членство - ако членството е записано без фактура)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за регистриране на Клиент депозит
 UseAuxiliaryAccountOnCustomerDeposit=Съхраняване на Клиент сметка като индивидуална сметка в дъщерна книга за редове с авансови плащания (ако е деактивирано, индивидуалната сметка за надолу плащане редове ще остане празен)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Сметка (от сметкоплана), която да се използва по подразбиране
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Съхранявайте акаунта на доставчика като индивидуален акаунт в дъщерна книга за редове с първоначални плащания (ако е деактивиран, индивидуалният акаунт за редовете плащане ще остане празен)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Счетоводство акаунт по подразбиране за регистриране на Клиент запазена гаранция
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Акаунт (от сметкоплана), който да се използва като акаунт по подразбиране за продуктите, закупени в същата държава (използва се, ако не е дефиниран в продуктовия лист)
@@ -275,9 +277,10 @@ HideOpeningBalance=Скриване на баланс при откриване
 ShowSubtotalByGroup=Показване на междинна сума по ниво
 Pcgtype=Група от сметки
 PcgtypeDesc=Групата от сметки се използва като предварително зададен критерий за филтриране и групиране за някои счетоводни отчети. Например 'Приход' или 'Разход' се използват като групи за счетоводни сметки на продукти за съставяне на отчет за разходи / приходи.
-AccountingCategoriesDesc=Персонализирана група от акаунти може да се използва за групиране на Счетоводство акаунти в едно име, за да се улесни използването на филтри или изграждането на персонализирани отчети.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Съвместим
 Centralized=Централизирана сметка
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Общ оборот преди ДДС
 TotalMarge=Общ марж на продажби
 DescVentilCustomer=Вижте тук списъка с Фактура редове, обвързани (или не) към продуктова сметка от сметкоплана
@@ -319,7 +322,7 @@ NotReconciled=Не е съгласувано
 WarningRecordWithoutSubledgerAreExcluded=Предупреждение, всички редове без дефинирана сметка на вторична книга се филтрират и изключват от този изглед
 AccountRemovedFromCurrentChartOfAccount=Счетоводство сметка, която не съществува в текущия сметкоплан
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Внимание, тази страница съдържа само записи, прехвърлени към системата Счетоводство.
-BookkeepingNumRefModelDesc = Връща референтния номер във формат yyyyjjnnnn, където yyyy е годината, а jj е кодът на дневника, nnnn е последователно автоматично увеличаващо се число в зависимост от годината и кода на дневника.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Модели за номериране в счетоводството
 ## Admin
 BindingOptions=Опции за прехвърляне в счетоводството
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Активирайте управле
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Когато тази опция е активирана, можете да дефинирате, че дадена фактура на доставчик или даден доставчик трябва да бъде прехвърлена в счетоводството по различен начин: Допълнителна дебитна и кредитна линия ще бъдат генерирани в Счетоводство на 2 дадени сметки от сметкоплана, дефинирани в страницата за настройка на „%s“.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Активирайте раздел на картите контрагент, за да видите дъщерната книга
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Когато тази опция е активирана, в картите контрагент се показва нов раздел за преглед и управление на Счетоводство за контрагент, както и за съгласуване, печат и други.
+
 ## Export
 NotExportLettering=Не експортирайте буквите, когато генерирате файла
 NotifiedExportDate=Маркирайте все още неекспортираните редове като експортирани <span class="warning">(за промени ред, маркиран като експортиран, ще трябва да изтриете цялата транзакция и прехвърлете го отново в Счетоводство)</span>
@@ -389,6 +393,7 @@ Modelcsv_Gestinumv5=Експортиране за Gestinum (v5)
 Modelcsv_charlemagne=Износ за Aplim Charlemagne
 ChartofaccountsId=Идентификатор на сметкоплан
 ExportToPdf = Експортиране в PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Сметки в главната книга
 PdfBalanceTitle = Баланс по главната книга
 PdfBookkeepingTitle = Журнали
@@ -440,7 +445,7 @@ AccountRemovedFromGroup=Сметката е премахната от група
 SaleLocal=Локална продажба
 SaleExport=Експортна продажба
 SaleEEC=Вътреобщностна продажба
-SaleEECWithVAT=Продажбата е в ЕИО с ДДС, различен от нула, така че предполагаме, че това НЕ е вътрешнообщностна продажба и предложената сметка е стандартната продуктова сметка.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Продажбата е в ЕИО без ДДС, но идентификационният номер по ДДС на третата страна не е дефиниран. За стандартни продажби използваме акаунта. Можете да коригирате идентификационния номер по ДДС на третата страна или да промените предложения за обвързване продуктов акаунт, ако е необходимо.
 AnySale=Всяка продажба
 ForbiddenTransactionAlreadyExported=Забранено: Транзакцията е валидирана и/или експортирана.
@@ -485,7 +490,7 @@ AccountancyClosureConfirmClose=Сигурни ли сте, че искате д�
 AccountancyClosureConfirmAccountingReversal=Сигурни ли сте, че искате за записване на записи за „Неразпределени печалби“?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Транзакцията за (doc_type=%s, doc_id=%s, doc_det=%s) бяха вече записани
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Някои задължителни стъпки за настройка не са направени, моля изпълнете ги.
@@ -508,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=Не е намерен активен фиска�
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Счетоводният документ Дата не е в активния фискален период
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Счетоводният документ Дата е в затворен фискален период
 Error_BOOKKEEPING_ADDON_NotDefined=Грешка, правилото за номериране на счетоводните референции не е дефинирано в общата настройка на модула „Счетоводство“.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Опитайте се да вмъкнете небалансирана транзакция в книгата за %s (плащане ID: %s). Анулирано. Сигурно е грешка.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Употреба на продукт или услуга
 ## Import
 ImportAccountingEntries=Счетоводни записи
@@ -537,15 +542,15 @@ ExpenseReportJournal=Журнал за разходни отчети
 DocsAlreadyExportedAreIncluded=Включени са вече експортирани документи
 ClickToShowAlreadyExportedLines=Кликнете, за да покажете вече експортираните линии
 NAccounts=%s акаунти
-ACCOUNTING_USE_TREASURY_Desc=Това е режимът за счетоводство на хазната. Използваме само плащанията и техния Дата за водене на счетоводството.
-ACCOUNTING_USE_NON_TREASURY_Desc=Това е начинът за истинско счетоводство. Използваме както фактури, така и плащания за водене на счетоводството.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Референцията на изходния документ, който генерира тази банкова транзакция (Референция на фактура, Референция на отчет за разходи, ...)
 BankTransactionRef=Референция за банковата транзакция (по избор, вече е генериран автоматичен идентификатор)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Това ще клонира счетоводния запис (всички редове, свързани с този счетоводен запис, ще бъдат клонирани). Сигурни ли сте, че искате да клонирате избраните записи %s?
 ConfirmMassCloneBookkeepingWriting=Потвърдете масовото клониране
-ConfirmMassReturnAccountBookkeepingWriting=Потвърдете масовото измиране
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Това ще премахне записа в счетоводството (всички редове, свързани с този запис в счетоводството, ще бъдат премахнати). Сигурни ли сте, че искате да се заобиколи %s избраните записи?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Това ще промени сметката на всички избрани редове.
 confirmMassAssignAccountBookkeepingWritingConfirm=Потвърждаване на масова промяна в акаунта
 CloningSuccess=Успешно клониране на транзакцията: %s

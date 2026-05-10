@@ -112,7 +112,7 @@ trait CommonPeople
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
 			// societe is deprecated - @suppress-next-line PhanUndeclaredProperty
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : ''))))); // @phpstan-ignore-line
 		}
 
 		$ret = '';
@@ -129,6 +129,22 @@ trait CommonPeople
 		return dol_string_nohtmltag(dol_trunc($ret, $maxlen));
 	}
 
+	/**
+	 *	Return full name (civility+' '+name+' '+lastname) or anonymous string
+	 *
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
+	 *	@param	int<0,1>	$option			0=No option, 1=Add civility
+	 * 	@param	int<-1,5>	$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 * 	@param	int			$maxlen			Maximum length
+	 * 	@return	string						String with full name
+	 */
+	public function getAnonymisableFullName($langs, $option = 0, $nameorder = -1, $maxlen = 0)
+	{
+		if (getDolGlobalInt('MAIN_ANONYMIZE_USER_FULLNAME') == 1) {
+			return '***';
+		}
+		return $this->getFullName($langs, $option, $nameorder, $maxlen);
+	}
 
 	/**
 	 *    Return civility label of object
@@ -316,7 +332,7 @@ trait CommonPeople
 		}
 		$outdone = 0;
 		if (!empty($this->email)) {
-			$out .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 0, 1);
+			$out .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 1, 1);
 			$outdone++;
 		}
 		if (!empty($this->url)) {

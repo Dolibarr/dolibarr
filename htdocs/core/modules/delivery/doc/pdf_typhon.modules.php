@@ -5,7 +5,7 @@
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -158,7 +158,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *  @param      int<0,1>	$hidedetails		Do not show line details
 	 *  @param      int<0,1>	$hidedesc			Do not show desc
 	 *  @param      int<0,1>	$hideref			Do not show ref
-	 *  @return     int<0,1>             			1=OK, 0=KO
+	 *  @return     int<-1,1>             			1=OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -174,7 +174,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();
@@ -250,7 +250,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -321,7 +321,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 
@@ -421,19 +421,19 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
 					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxremainingqty, 3, (string) $qtyRemaining, 0, 'R');
 					/*
-					 // Remise sur ligne
+					 // Discount for line
 					 $pdf->SetXY($this->posxdiscount, $curY);
 					 if ($object->lines[$i]->remise_percent)
 					 {
 					 $pdf->MultiCell(14, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
 					 }
 
-					 // Total HT ligne
+					 // Total Excl. VAT for line
 					 $pdf->SetXY($this->postotalht, $curY);
 					 $total = price($object->lines[$i]->price * $object->lines[$i]->qty);
 					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
 
-					 // Collecte des totaux par valeur de tva
+					 // Collect of total by vat rate
 					 // dans le tableau tva["taux"]=total_tva
 					 $tvaligne=$object->lines[$i]->price * $object->lines[$i]->qty;
 					 if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
@@ -582,9 +582,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -767,7 +770,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		$pdf->SetTextColor(0, 0, 60);

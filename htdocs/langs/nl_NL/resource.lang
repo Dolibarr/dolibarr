@@ -34,5 +34,6 @@ ResourceTypeCode=Code type resource
 ImportDataset_resource_1=Resources
 ErrorResourcesAlreadyInUse=Sommige bronnen zijn in gebruik
 ErrorResourceUseInEvent=%s gebruikt in %s-gebeurtenis
-MaxUsers=Maximaal aantal gebruikers (plaatsen, zitplaatsen, etc.)
+MaxUsers=Maximaal aantal gebruikers
+MaxUsersResourceDesc=Als de resource door meerdere personen tegelijk gebruikt kan worden (auto, kamer, ...), kunt u hier het maximale aantal gebruikers invoeren dat de resource tegelijkertijd mag gebruiken (aantal stoelen, plaatsen, ...).
 MaxUsersLabel=Maximaal aantal gebruikers

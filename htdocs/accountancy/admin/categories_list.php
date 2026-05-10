@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 /**
  * @var Conf $conf
@@ -42,6 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "accountancy", "hrm"));
@@ -70,7 +72,7 @@ $listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
 $sortfield = (string) GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+if (empty($page) || $page < 0 || GETPOST('button_refresh', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
@@ -79,6 +81,22 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id', 'int');
+
+// Report filter (Multi report)
+$search_report = GETPOSTINT('search_report');
+if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+	if (empty($search_report)) {
+		// Try to get from session
+		if (!empty($_SESSION['accounting_category_report_filter'])) {
+			$search_report = $_SESSION['accounting_category_report_filter'];
+		} else {
+			$search_report = 1; // Default report
+		}
+	} else {
+		// Save in session
+		$_SESSION['accounting_category_report_filter'] = $search_report;
+	}
+}
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
@@ -99,7 +117,7 @@ $tablib[32] = "DictionaryAccountancyCategory";
 
 // Requests to extract data
 $tabsql = array();
-$tabsql[32] = "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid AND c.active=1 AND a.entity IN (".getEntity('c_accounting_category').")";
+$tabsql[32] = "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.category_type, a.formula, a.position as position, a.fk_report, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid AND c.active=1 AND a.entity IN (".getEntity('c_accounting_category').")";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -147,6 +165,12 @@ $accountingcategory = new AccountancyCategory($db);
 
 if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
 	$search_country_id = '';
+
+	// Reset report filter
+	if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+		$search_report = 1;
+		$_SESSION['accounting_category_report_filter'] = 1;
+	}
 }
 
 // Actions add or modify an entry into a dictionary
@@ -209,7 +233,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
 	}
 
-	// Si verif ok et action add, on ajoute la ligne
+	// In case of 'actionadd' and with valid parameters, add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;
 
@@ -280,7 +304,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
-		// Modifie valeur des champs
+		// Modify field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape($rowid)."', ";
@@ -303,7 +327,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -426,6 +450,71 @@ print load_fiche_titre($titre, $linkback, $titlepicto);
 
 print '<span class="opacitymedium">'.$langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'</span><br><br>';
 
+// Report selector (New System)
+if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+	print '<div class="fichecenter">';
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" id="form_report_selector">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Report").'</td>';
+	print '</tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>';
+
+	// Get list of reports
+	$reports_list = array();
+
+	$sql_reports = "SELECT r.rowid, r.code, r.label";
+	$sql_reports .= " FROM ".MAIN_DB_PREFIX."c_accounting_report as r";
+	$sql_reports .= " WHERE r.active = 1";
+	$sql_reports .= " ORDER BY r.code ASC";
+
+	$resql_reports = $db->query($sql_reports);
+	if ($resql_reports) {
+		$num_reports = $db->num_rows($resql_reports);
+		$i_report = 0;
+		while ($i_report < $num_reports) {
+			$obj_report = $db->fetch_object($resql_reports);
+			$reports_list[$obj_report->rowid] = $obj_report->label.' ('.$obj_report->code.')';
+			$i_report++;
+		}
+		$db->free($resql_reports);
+	}
+
+	if (empty($reports_list)) {
+		$reports_list[1] = $langs->trans("ReportPersonalized");
+	}
+
+	// Display select with auto-submit
+	print '<select name="search_report" id="search_report" class="flat minwidth200">';
+	foreach ($reports_list as $report_id => $report_label) {
+		$selected = ($report_id == $search_report) ? ' selected' : '';
+		print '<option value="'.$report_id.'"'.$selected.'>'.dol_escape_htmltag($report_label).'</option>';
+	}
+	print '</select>';
+
+	print ' ';
+	print '<input type="submit" class="button button-add" name="button_refresh" value="'.$langs->trans("Refresh").'">';
+
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+
+	print '</div>';
+
+	print '</form>';
+
+	print '</div>';
+	print '<div class="clearboth"></div>';
+}
+
 // Confirmation of the deletion of the line
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.($search_country_id > 0 ? '&search_country_id='.$search_country_id : ''), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
@@ -441,6 +530,15 @@ if ($search_country_id > 0) {
 		$sql .= " WHERE ";
 	}
 	$sql .= " (a.fk_country = ".((int) $search_country_id)." OR a.fk_country = 0)";
+}
+
+if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT') && $search_report > 0) {
+	if (preg_match('/ WHERE /', $sql)) {
+		$sql .= " AND ";
+	} else {
+		$sql .= " WHERE ";
+	}
+	$sql .= " a.fk_report = ".((int) $search_report);
 }
 
 // If sort order is "country", we use country_code instead
@@ -461,13 +559,14 @@ $param = '&id='.$id;
 if ($search_country_id > 0) {
 	$param .= '&search_country_id='.urlencode((string) ($search_country_id));
 }
+if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT') && $search_report > 0) {
+	$param .= '&search_report='.urlencode((string) ($search_report));
+}
 $paramwithsearch = $param;
 if ($sortorder) {
 	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
 }
-if ($sortfield) {
-	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
-}
+$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 if (GETPOST('from', 'alpha')) {
 	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
 }
@@ -491,12 +590,12 @@ if ($tabname[$id]) {
 	// Line for title
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$class = "left";
@@ -558,7 +657,7 @@ if ($tabname[$id]) {
 	print '</td>';
 	print '<td></td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 	print '</tr>';
@@ -567,7 +666,7 @@ if ($tabname[$id]) {
 	print '<tr class="oddeven nodrag nodrop nohover">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 
@@ -596,7 +695,7 @@ if ($tabname[$id]) {
 	print '</td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 
@@ -646,7 +745,7 @@ if ($resql) {
 	print '<tr class="liste_titre liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		if ($filterfound) {
 			$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -677,7 +776,7 @@ if ($resql) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		if ($filterfound) {
 			$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -690,7 +789,7 @@ if ($resql) {
 	// Title of lines
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print getTitleFieldOfList('');
 	}
 	foreach ($fieldlist as $field => $value) {
@@ -769,7 +868,7 @@ if ($resql) {
 	print getTitleFieldOfList($langs->trans("ListOfAccounts"), 0, $_SERVER["PHP_SELF"], "", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, '');
 	print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList('');
 	}
 	print '</tr>';
@@ -792,7 +891,7 @@ if ($resql) {
 				$errors = $hookmanager->errors;
 
 				// Actions
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 
@@ -810,7 +909,7 @@ if ($resql) {
 				print '<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				// Actions
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 			} else {
@@ -825,9 +924,7 @@ if ($resql) {
 					}
 				}
 				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
-				if ($param) {
-					$url .= '&'.$param;
-				}
+				$url .= '&'.$param;
 				$url .= '&';
 
 				$canbemodified = $iserasable;
@@ -840,7 +937,7 @@ if ($resql) {
 				$errors = $hookmanager->errors;
 
 				// Actions
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda marginleftonly marginrightonly" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a>';
@@ -893,11 +990,18 @@ if ($resql) {
 				print '<td>';
 				if (empty($obj->formula)) {
 					// Count number of accounts into group
-					$nbofaccountintogroup = 0;
-					$listofaccountintogroup = $accountingcategory->getCptsCat($obj->rowid);
-					$nbofaccountintogroup = count($listofaccountintogroup);
+					if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
+						// NEW SYSTEM: Multi report
+						$accountingcategory_temp = new AccountancyCategory($db);
+						$accountingcategory_temp->id = $obj->rowid;
+						$nbofaccountintogroup = $accountingcategory_temp->countAccountsInCategory();
+					} else {
+						// OLD SYSTEM: Only one report
+						$listofaccountintogroup = $accountingcategory->getCptsCat($obj->rowid);
+						$nbofaccountintogroup = count($listofaccountintogroup);
+					}
 
-					print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&save_lastsearch_values=1&account_category='.$obj->rowid.'">';
+					print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?id='.$obj->rowid.'">';
 					print $langs->trans("NAccounts", $nbofaccountintogroup);
 					print '</a>';
 				} else {
@@ -906,7 +1010,7 @@ if ($resql) {
 				print '</td>';
 
 				// Active
-				print '<td class="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				if ($canbedisabled) {
 					print '<a class="reposition" href="'.$url.'action='.urlencode($acts[$obj->active]).'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
@@ -915,7 +1019,7 @@ if ($resql) {
 				print "</td>";
 
 				// Actions
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda paddingleft marginleftonly marginrightonly paddingright" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a>';

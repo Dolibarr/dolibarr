@@ -556,4 +556,40 @@ class FilesLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
 	}
+
+	/**
+	 * testDolConvertFile
+	 *
+	 * @return void
+	 */
+	public function testDolConvertFile()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// If imagick not installed, you can install it with
+		// apt install imagemagick php7.4-imagick
+		if (class_exists('Imagick')) {
+			$filepdf = dirname(__FILE__).'/imgsvgwithjs.svg';
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(-4, $result, 'Convert of PDF file '.$filepdf.' into image should have return an error because it is not a real PDF, but this did not happen.');
+
+			$filepdf = dirname(__FILE__).'/file_pdf_with_js.pdf.jpg';
+			$result = dol_copy($filepdf, $conf->admin->dir_temp.'/testdolconvert.pdf');
+
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(1, $result, 'Failed to convert PDF file into '.$fileimage.', error '.$result);
+		} else {
+			print __METHOD__." skipped because Imagick is not installed.\n";
+		}
+	}
 }

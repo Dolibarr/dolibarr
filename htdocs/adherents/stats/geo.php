@@ -26,11 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,23 +33,29 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $graphwidth = DolGraph::getDefaultGraphSizeForStats('width', '700');
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
-$mode = GETPOST('mode') ? GETPOST('mode') : '';
-
+$mode = GETPOST('mode');
+if (empty($mode)) {
+	$mode = 'memberbycountry';
+}
 
 // Security check
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
+$startyear = $year - (getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))) : 2);
 $endyear = $year;
 
 // Load translation files required by the page
@@ -72,25 +73,25 @@ if (!empty($conf->dol_use_jmobile)) {
 	$arrayjs = array();
 }
 
-$title = $langs->trans("Statistics");
-if ($mode == 'memberbycountry') {
-	$title = $langs->trans("MembersStatisticsByCountries");
-}
-if ($mode == 'memberbystate') {
-	$title = $langs->trans("MembersStatisticsByState");
-}
-if ($mode == 'memberbytown') {
-	$title = $langs->trans("MembersStatisticsByTown");
-}
-if ($mode == 'memberbyregion') {
-	$title = $langs->trans("MembersStatisticsByRegion");
-}
+$title = $langs->trans("Members");
 
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayjs, '', '', 'mod-member page-stats_geo');
 
-print load_fiche_titre($title, '', $memberstatic->picto);
+$param = '';
+
+$newcardbutton = '';
+$queryforbutton = array();
+$queryforbutton['mode'] = 'common';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', $queryforbutton), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$queryforbutton['mode'] = 'kanban';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', $queryforbutton), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/index.php', 1).'?objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/card.php', ['action' => 'create']), '', $user->hasRight('adherent', 'creer'));
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $langs->trans("Statistics"), $memberstatic->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
 
 //dol_mkdir($dir);
 $data = array();
@@ -169,6 +170,7 @@ if ($mode) {
 	$langsen->load("dict");
 	//print $langsen->trans("Country"."FI");exit;
 
+
 	// Define $data array
 	dol_syslog("Count member", LOG_DEBUG);
 	if ($sql != null) {
@@ -184,7 +186,7 @@ if ($mode) {
 			$obj = $db->fetch_object($resql);
 			if ($mode == 'memberbycountry') {
 				$data[] = array(
-					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'code' => (string) $obj->code,
 					'nb' => (int) $obj->nb,
@@ -194,7 +196,7 @@ if ($mode) {
 			}
 			if ($mode == 'memberbyregion') { //+
 				$data[] = array(
-					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label2' => ($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
 					'nb' => (int) $obj->nb,
@@ -204,7 +206,7 @@ if ($mode) {
 			}
 			if ($mode == 'memberbystate') {
 				$data[] = array(
-					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label2' => ($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
 					'nb' => (int) $obj->nb,
@@ -214,7 +216,7 @@ if ($mode) {
 			}
 			if ($mode == 'memberbytown') {
 				$data[] = array(
-					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label' => (string) (($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? picto_from_langcode($obj->code, 'class="saturatemedium paddingrightonly"', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label_en' => (string) (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label2' => (string) ($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
 					'nb' => (int) $obj->nb,
@@ -239,10 +241,10 @@ print dol_get_fiche_head($head, (string) $tab, '', -1, '');
 
 // Print title
 if ($mode && !count($data)) {
-	print $langs->trans("NoValidatedMemberYet").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
 	print '<br>';
 } else {
-	if ($mode == 'memberbycountry') {
+	if (empty($mode) || $mode == 'memberbycountry') {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc");
 		if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH")) {
 			print $langs->trans("MembersByCountryDesc2");
@@ -254,17 +256,8 @@ if ($mode && !count($data)) {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
 	} elseif ($mode == 'memberbyregion') {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
-	} else {
-		print '<span class="opacitymedium">'.$langs->trans("MembersStatisticsDesc").'</span><br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbystate">'.$langs->trans("MembersStatisticsByState").'</a><br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbytown">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
-		print '<br>'; //+
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbyregion">'.$langs->trans("MembersStatisticsByRegion").'</a><br>'; //+
 	}
+	print '<span class="opacitymedium">'.$langs->trans("DraftMembersAreExcluded").'</span><br>';
 	print '<br>';
 }
 
@@ -344,8 +337,8 @@ if ($mode) {
 			print '<td class="center">'.$val['label2'].'</td>';
 		}
 		print '<td class="right">'.$val['nb'].'</td>';
-		print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
-		print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour', 'auto', null, false, 1).'</td>';
+		print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour', 'auto', null, false, 1).'</td>';
 		print '</tr>';
 	}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    		<125155@supinfo.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@ if (isModEnabled('ldap')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_authentication
  */
 
 // Load translation files required by page
@@ -145,6 +147,15 @@ if (empty($reshook)) {
 				$result = $edituser->fetch(0, '', '', 1, $conf->entity, $username);
 			}
 
+			// If the user does not have the right to change his own password
+			if ($result > 0) {
+				$edituser->loadRights('user');
+				if (!$edituser->hasRight('user', 'self', 'password')) {
+					$result = 0;
+					$edituser->error = 'USERNOTALLOWEDTOCHANGEPASS';
+				}
+			}
+
 			// Set the message to show (must be the same if login/email exists or not to avoid to guess them.
 			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
@@ -154,7 +165,7 @@ if (empty($reshook)) {
 			}
 			$messagewarning .= '</div>';
 
-			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
+			if ($result <= 0 && ($edituser->error == 'USERNOTFOUND' || $edituser->error == 'USERNOTALLOWEDTOCHANGEPASS')) {
 				usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 				$message .= $messagewarning;
 				$username = '';

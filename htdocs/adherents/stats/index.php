@@ -2,8 +2,8 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -57,7 +56,7 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $startyear = $year - (!getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
@@ -75,16 +74,29 @@ $langs->loadLangs(array("companies", "members"));
  */
 
 $memberstatic = new Adherent($db);
+$membershipstatic = new Subscription($db);
 $form = new Form($db);
 
-$title = $langs->trans("SubscriptionsStatistics");
+$title = $langs->trans("Subscriptions");
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-stats');
 
-print load_fiche_titre($title, '', $memberstatic->picto);
+$param = '';
 
-$dir = $conf->adherent->dir_temp;
+$newcardbutton = '';
+$queryforbutton = array();
+$queryforbutton['mode'] = 'common';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/subscription/list.php', $queryforbutton), '', 1, array('morecss' => 'reposition'));
+$queryforbutton['mode'] = 'kanban';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/subscription/list.php', $queryforbutton), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/index.php', 1).'?objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['statut' => '-1,1']), '', $user->hasRight('adherent', 'creer'));
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $langs->trans("Statistics"), $membershipstatic->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
+
+$dir = $conf->member->dir_temp;
 
 dol_mkdir($dir);
 
@@ -157,7 +169,7 @@ if (!$mesg) {
 }
 
 
-$head = member_stats_prepare_head($memberstatic);
+$head = membership_stats_prepare_head($memberstatic);
 
 print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 
@@ -165,7 +177,7 @@ print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
-/*print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+/*print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="border centpercent">';

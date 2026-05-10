@@ -3,7 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ class DonationStats extends Stats
 	public function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -144,7 +144,7 @@ class DonationStats extends Stats
 	public function getNbByYear()
 	{
 		$sql = "SELECT date_format(d.datedon,'%Y') as dm, COUNT(*) as nb, SUM(d.".$this->db->sanitize($this->field).")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -163,7 +163,7 @@ class DonationStats extends Stats
 	public function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, sum(d.".$this->db->sanitize($this->field).")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
@@ -182,7 +182,7 @@ class DonationStats extends Stats
 	public function getAverageByMonth($year)
 	{
 		$sql = "SELECT date_format(d.datedon,'%m') as dm, avg(d.".$this->db->sanitize($this->field).")";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".dolSqlDateFilter('d.datedon', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
@@ -195,12 +195,12 @@ class DonationStats extends Stats
 	/**
 	 *  Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->db->sanitize($this->field).") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->db->sanitize($this->field).") as total, AVG(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";

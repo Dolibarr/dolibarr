@@ -5,7 +5,7 @@
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *  Class to manage VAT - Value-added tax
- *  (also known in French as TVA - Taxe sur la valeur ajoutée)
+ *  (also known in French as TVA)
  */
 class Tva extends CommonObject
 {
@@ -743,12 +743,12 @@ class Tva extends CommonObject
 	/**
 	 *	Send name clickable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			link option
-	 *  @param	int  	$notooltip		1=Disable tooltip
-	 *  @param	string	$morecss		More CSS
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option						Link option
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param	string	$morecss					More CSS
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine with URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -817,12 +817,9 @@ class Tva extends CommonObject
 	 */
 	public function getSommePaiement()
 	{
-		$table = 'payment_vat';
-		$field = 'fk_tva';
-
 		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= ' FROM '.MAIN_DB_PREFIX."payment_vat";
+		$sql .= " WHERE fk_tva = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -960,13 +957,13 @@ class Tva extends CommonObject
 			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}
 		if (property_exists($this, 'type_payment')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
 		}
 		if (property_exists($this, 'datev')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

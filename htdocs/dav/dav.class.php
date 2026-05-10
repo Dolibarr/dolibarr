@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ class CdavLib
 					s.phone soc_phone,
 					ac.sourceuid,
 					(SELECT GROUP_CONCAT(u.login) FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar
-						LEFT OUTER JOIN '.MAIN_DB_PREFIX.'user AS u ON (u.rowid=fk_element)
+						LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON (u.rowid=fk_element)
 						WHERE ar.element_type=\'user\' AND fk_actioncomm=a.id) AS other_users
 				FROM '.MAIN_DB_PREFIX.'actioncomm AS a';
 		$sql .= " LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON co.rowid = sp.fk_pays
@@ -246,8 +246,8 @@ class CdavLib
 	 * getFullCalendarObjects
 	 *
 	 * @param int	 	$calendarId			Calendar id
-	 * @param int		$bCalendarData		Add calendar data
-	 * @return array|string[][]
+	 * @param int<0,1>	$bCalendarData		Add calendar data if not 0
+	 * @return array<array<string,int|string|false>>
 	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{

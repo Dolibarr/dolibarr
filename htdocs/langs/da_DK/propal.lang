@@ -125,3 +125,5 @@ Signed=underskrevet
 SignedOnly=Kun underskrevet
 ExpeditionSigned=Forsendelse underskrevet
 SignExpedition=Skilt forsendelse
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Vis leveringsadresse
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Obligatorisk angivelse i nogle lande (Frankrig, ...)

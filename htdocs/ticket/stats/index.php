@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,12 +78,27 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'tickets'));
 $form = new Form($db);
 $object = new Ticket($db);
 
-$title = $langs->trans("Statistics");
 $dir = $conf->ticket->dir_temp;
+
+$title = $langs->trans("Statistics");
 $help_url = '';
+
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-stats');
 
-print load_fiche_titre($title, '', 'ticket');
+$param = '';
+$mode = 'statistics';
+$url = DOL_URL_ROOT.'/ticket/card.php?action=create&mode=init'.($socid ? '&socid='.$socid : '');
+if (!empty($socid)) {
+	$url .= '&socid='.$socid;
+}
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/ticket/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/ticket/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/ticket/stats/index.php?mode=statistics&objecttype=ticket@ticket'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
+
+print_barre_liste($langs->trans('Tickets'), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $langs->trans("Statistics"), $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1);   // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
 
 dol_mkdir($dir);
 
@@ -168,7 +183,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -185,6 +200,7 @@ print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus = $object->fields['fk_statut']['arrayofkeyval'];
+print img_picto('', 'status', 'class="pictofixedwidth"');
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
@@ -196,6 +212,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';

@@ -2,6 +2,8 @@
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke  		<charlene@patas-monkey.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +50,7 @@ class Shipments extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->shipment = new Expedition($this->db);
 	}
@@ -109,6 +111,8 @@ class Shipments extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		global $hookmanager;
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -138,6 +142,15 @@ class Shipments extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
+			$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'shipments', 'apimethod' => 'index');
+			$object = new stdClass();
+			$action = 'list';
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$sql = $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$sql .= $hookmanager->resPrint;
+			}
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
@@ -208,7 +221,7 @@ class Shipments extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -503,7 +516,7 @@ class Shipments extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->shipment->array_options[$index] = $this->_checkValForAPI($field, $val, $this->shipment);
+					$this->shipment->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->shipment);
 				}
 				continue;
 			}
@@ -727,9 +740,12 @@ class Shipments extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

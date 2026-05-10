@@ -31,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders'));
@@ -51,7 +50,9 @@ $langs->loadLangs(array('companies', 'orders'));
 $id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 $massaction = GETPOST('massaction', 'alpha');
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -63,7 +64,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "s.nom";
 }
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;
@@ -71,12 +73,13 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Security check
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartycontact', 'thirdpartycontactcard', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $id, '');
 
@@ -88,43 +91,50 @@ $object = new Societe($db);
  * Actions
  */
 
-if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
-	$result = $object->fetch($id);
+$parameters = array('id' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
+		$result = $object->fetch($id);
 
-	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
-		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
-		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+		if ($result > 0 && $id > 0) {
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
-	}
-} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
-	// bascule du statut d'un contact
-	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-	} else {
-		dol_print_error($db);
-	}
-} elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
-	// Efface un contact
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOSTINT("lineid"));
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		dol_print_error($db);
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			} else {
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
+		// bascule du statut d'un contact
+		if ($object->fetch($id)) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		} else {
+			dol_print_error($db);
+		}
+	} elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
+		// Efface un contact
+		$object->fetch($id);
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			dol_print_error($db);
+		}
 	}
 }
 
@@ -133,15 +143,18 @@ if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
  * View
  */
 
-$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $langs->trans("ThirdParty"), $help_url);
-
-
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
+
+$title = $langs->trans("ContactAddress", $object->name);
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
+	$title = $object->name." - ".$title;
+}
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('', $title, $help_url);
 
 
 // View and edit
@@ -173,10 +186,6 @@ if ($id > 0 || !empty($ref)) {
 		print yn($object->fournisseur);
 		print '</td></tr>';*/
 
-		if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-		}
-
 		if ($object->client) {
 			print '<tr><td class="titlefield">';
 			print $langs->trans('CustomerCode').'</td><td colspan="3">';
@@ -203,7 +212,8 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		print '</form>';
-		print '<br>';
+
+		print '<br><br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
@@ -229,7 +239,8 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " t.libelle as type_label, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql .= " WHERE d.fk_soc = ".((int) $id);
+			$sql .= " WHERE d.entity IN (".getEntity('member').")";
+			$sql .= " AND d.fk_soc = ".((int) $id);
 			$sql .= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);
@@ -247,14 +258,14 @@ if ($id > 0 || !empty($ref)) {
 
 					print "<table class=\"noborder\" width=\"100%\">";
 					print '<tr class="liste_titre">';
-					print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "t.libelle", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", '', $sortfield, $sortorder, 'center ');
+					print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "t.libelle", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "d.morphy", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", "", $param, "", $sortfield, $sortorder);
+					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", "", $param, '', $sortfield, $sortorder, 'center ');
 					print "</tr>\n";
 
 					$i = 0;

@@ -62,7 +62,7 @@ class SocieteTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
+		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') != 'mod_codeclient_monkey') {
 			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '" . getDolGlobalString('SOCIETE_CODECLIENT_ADDON')."'.\n";
 			die(1);
 		}

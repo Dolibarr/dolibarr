@@ -2,13 +2,13 @@
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2012       Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014       Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014       Marcos García 		 <marcosgdf@gmail.com>
- * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2012       Cédric Salvador       	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Raphaël Doursenaud    	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Marcos García 		 	<marcosgdf@gmail.com>
+ * Copyright (C) 2015       Juanjo Menent		 	<jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet		 	<fmarcet@2byte.es>
  * Copyright (C) 2018       Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra Gaya 	<jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
@@ -198,7 +198,7 @@ class Paiement extends CommonObject
 	public $bank_account;
 
 	/**
-	 * @var int bank account id of payment
+	 * @var ?int bank account id of payment
 	 */
 	public $fk_account;
 
@@ -281,6 +281,7 @@ class Paiement extends CommonObject
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 
+				$this->fetch_optionals();
 				$this->db->free($resql);
 				return 1;
 			} else {
@@ -302,7 +303,7 @@ class Paiement extends CommonObject
 	 *
 	 *  @param	User	  $user                	Object user
 	 *  @param  int		  $closepaidinvoices   	1=Also close paid invoices to paid, 0=Do nothing more
-	 *  @param  Societe   $thirdparty           Thirdparty
+	 *  @param  Societe|null   $thirdparty           Thirdparty
 	 *  @return int                 			id of created payment, < 0 if error
 	 */
 	public function create($user, $closepaidinvoices = 0, $thirdparty = null)
@@ -403,11 +404,11 @@ class Paiement extends CommonObject
 			$currencyofpayment = $conf->currency;
 		}
 
-		if (!empty($currencyofpayment)) {
+		if (!empty($currencyofpayment && !empty($this->fk_account))) {
 			// We must check that the currency of invoices is the same than the currency of the bank
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$bankaccount = new Account($this->db);
-			$bankaccount->fetch($this->fk_account);
+			$bankaccount->fetch((int) $this->fk_account);
 			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
 
 			if ($bankcurrencycode != $conf->currency) {
@@ -517,6 +518,8 @@ class Paiement extends CommonObject
 								}
 								// } else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
 							} else {
+								// Here $remaintopay is 0.
+
 								// If invoice is a down payment, we also convert down payment to discount
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$amount_ht = $amount_tva = $amount_ttc = array();
@@ -630,6 +633,8 @@ class Paiement extends CommonObject
 
 							dol_syslog(get_class($this).'::create Regenerate end result='.$result, LOG_DEBUG);
 
+							$this->warnings = $invoice->warnings;
+
 							if ($result < 0) {
 								$this->error = $invoice->error;
 								$this->errors = $invoice->errors;
@@ -691,9 +696,9 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		// Verifier si paiement porte pas sur une facture classee
-		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('f.fk_statut > 1');
+		// Check if payment is completely paid, if payments are shared, we refuse deletion.
+		// TODO Check also if partially paid
+		$billsarray = $this->getBillsArray('f.fk_statut:>:1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
@@ -707,6 +712,7 @@ class Paiement extends CommonObject
 
 		// Delete bank urls. If payment is on a conciliated line, return error.
 		if ($bank_line_id > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accline = new AccountLine($this->db);
 
 			$result = $accline->fetch($bank_line_id);
@@ -741,6 +747,7 @@ class Paiement extends CommonObject
 			// End call triggers
 		}
 
+		$this->deleteExtraFields();
 		// Delete payment (into paiement_facture and paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
 		$sql .= ' WHERE fk_paiement = '.((int) $this->id);
@@ -1180,7 +1187,7 @@ class Paiement extends CommonObject
 	/**
 	 *  Return list of invoices the payment is related to.
 	 *
-	 *  @param	string		$filter         Filter
+	 *  @param	string		$filter         Filter. Use USF syntax.
 	 *  @return int|int[]					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
@@ -1190,7 +1197,7 @@ class Paiement extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f'; // We keep link on invoice to allow use of some filters on invoice
 		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.((int) $this->id);
 		if ($filter) {
-			$sql .= ' AND '.$filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1381,7 +1388,7 @@ class Paiement extends CommonObject
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
 	 *  @param	string	$morecss		Add more CSS
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
@@ -1555,6 +1562,7 @@ class Paiement extends CommonObject
 	 */
 	public function isReconciled()
 	{
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
 		return $accountline->rappro ? true : false;

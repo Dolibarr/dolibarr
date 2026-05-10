@@ -27,10 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +34,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'boxes', 'accountancy'));
@@ -238,7 +237,7 @@ $sql .= " bd.rowid as boxid";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
 $sql .= " WHERE b.box_id = bd.rowid";
 $sql .= " AND b.entity IN (0,".$conf->entity.")";
-$sql .= " AND b.fk_user=0";
+$sql .= " AND b.fk_user = 0";
 $sql .= " ORDER by b.position, b.box_order";
 //print $sql;
 
@@ -328,7 +327,7 @@ print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td></td>';
 print '<td class="center" width="160">'.$langs->trans("ActivatableOn").'</td>';
 print '<td class="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
-print '<td class="center" width="80">'.$langs->trans("Disable").'</td>';
+print '<td class="center" width="80"></td>';
 print '</tr>'."\n";
 
 print "\n\n".'<!-- Boxes Available -->'."\n";
@@ -459,7 +458,9 @@ print '<td class="liste_titre"></td>';
 print '</tr>';
 
 // Activate FileCache (so content of file boxes are stored into a cache file int boxes/temp for 3600 seconds)
-print '<tr class="oddeven"><td>'.$langs->trans("EnableFileCache").'</td><td>';
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("EnableFileCache").' <span class="opacitymedium">('.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE_DELAY', 900)." ".$langs->trans("seconds").")</span>", $langs->trans("DataWillBeRefreshedEvery", getDolGlobalInt('MAIN_ACTIVATE_FILECACHE_DELAY', 900)." ".$langs->trans("seconds")));
+print '</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_ACTIVATE_FILECACHE', array(), null, 0, 0, 0, 2, 0, 1);
 } else {

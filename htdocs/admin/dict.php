@@ -11,9 +11,9 @@
  * Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2025  Frédéric France         	<frederic.france@free.fr>
- * Copyright (C) 2020-2022  Open-Dsi                	<support@open-dsi.fr>
- * Copyright (C) 2024       Charlene Benke      	    <charlene@patas-monkey.com>
+ * Copyright (C) 2019-2026  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Open-Dsi                	<support@open-dsi.fr>
+ * Copyright (C) 2024-2025  Charlene Benke      	    <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -269,7 +270,7 @@ $tabsql = array();
 $tabsql[DICT_FORME_JURIDIQUE] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
 $tabsql[DICT_DEPARTEMENTS] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[DICT_REGIONS] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec, c.sepa FROM ".MAIN_DB_PREFIX."c_country AS c";
+$tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.phone_code, c.trunk_prefix, c.active, c.favorite, c.eec, c.sepa FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[DICT_CIVILITY] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
@@ -363,7 +364,7 @@ $tabfield = array();
 $tabfield[DICT_FORME_JURIDIQUE] = "code,libelle,country";
 $tabfield[DICT_DEPARTEMENTS] = "code,libelle,region_id,region,country"; // "code,libelle,region,country_code-country"
 $tabfield[DICT_REGIONS] = "code,libelle,country_id,country";
-$tabfield[DICT_COUNTRY] = "code,label";
+$tabfield[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfield[DICT_CIVILITY] = "code,label";
 $tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
@@ -410,7 +411,7 @@ $tabfieldvalue = array();
 $tabfieldvalue[DICT_FORME_JURIDIQUE] = "code,libelle,country";
 $tabfieldvalue[DICT_DEPARTEMENTS] = "code,libelle,region"; // "code,libelle,region"
 $tabfieldvalue[DICT_REGIONS] = "code,libelle,country";
-$tabfieldvalue[DICT_COUNTRY] = "code,label";
+$tabfieldvalue[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldvalue[DICT_CIVILITY] = "code,label";
 $tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
@@ -457,7 +458,7 @@ $tabfieldinsert = array();
 $tabfieldinsert[DICT_FORME_JURIDIQUE] = "code,libelle,fk_pays";
 $tabfieldinsert[DICT_DEPARTEMENTS] = "code_departement,nom,fk_region";
 $tabfieldinsert[DICT_REGIONS] = "code_region,nom,fk_pays";
-$tabfieldinsert[DICT_COUNTRY] = "code,label";
+$tabfieldinsert[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldinsert[DICT_CIVILITY] = "code,label";
 $tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
@@ -612,7 +613,7 @@ $tabcomplete = array(
 		'picto' => 'region',
 		'help' => array('code' => $langs->trans("EnterAnyCode"))
 	),
-	'c_country' => array('picto' => 'country', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
+	'c_country' => array('picto' => 'country', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'phone_code' => 'e.g. 33', 'trunk_prefix' => 'e.g. 0')),
 	'c_civility' => array('picto' => 'contact', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
 	'c_actioncomm' => array('picto' => 'action', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'color' => $langs->trans("ColorFormat"), 'position' => $langs->trans("PositionIntoComboList"))),
 	'c_chargesociales' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
@@ -707,6 +708,7 @@ if ($id == DICT_TYPE_CONTACT) {
 		'agenda' => img_picto('', 'action', 'class="pictofixedwidth"').$langs->trans('Agenda'),
 		'dolresource' => img_picto('', 'resource', 'class="pictofixedwidth"').$langs->trans('Resource'),
 		'societe' => img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans('ThirdParty'),
+		'product' => img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans('Product'),
 		// 'proposal' => $langs->trans('Proposal'),
 		// 'order' => $langs->trans('Order'),
 		// 'invoice' => $langs->trans('Bill'),
@@ -927,6 +929,10 @@ if (empty($reshook)) {
 			$ok = 0;
 			setEventMessages($langs->transnoentities("ErrorCountryCodeMustBe2Char", $langs->transnoentities("Code")), null, 'errors');
 		}
+		if ($id == DICT_PAIEMENT && strlen(GETPOST("code")) >= 6) {  // 6 char max on code for payment mode codes
+			$ok = 0;
+			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '6'), null, 'errors');
+		}
 
 		// Clean some parameters
 		if ((GETPOST("localtax1_type") || (GETPOST('localtax1_type') == '0')) && !GETPOST("localtax1")) {
@@ -959,7 +965,7 @@ if (empty($reshook)) {
 			$newid = 0;
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
 				// Get free id for insert
-				$sql = "SELECT MAX(".$tabrowid[$id].") as newid FROM ".MAIN_DB_PREFIX.$tablename;
+				$sql = "SELECT MAX(".$tabrowid[$id].") as newid FROM ".MAIN_DB_PREFIX.$db->sanitize($tablename);
 				$result = $db->query($sql);
 				if ($result) {
 					$obj = $db->fetch_object($result);
@@ -970,7 +976,7 @@ if (empty($reshook)) {
 			}
 
 			// Add new entry
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$tablename." (";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$db->sanitize($tablename)." (";
 			// List of fields
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
 				$sql .= $tabrowid[$id].",";
@@ -995,7 +1001,7 @@ if (empty($reshook)) {
 				} elseif ($value == 'taux' || $value == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($value == 'entity') {
-					$_POST[$keycode] = getEntity($tablename);
+					$_POST[$keycode] = (int) getEntity($tablename, 0);
 				}
 
 				if ($i) {
@@ -1046,8 +1052,8 @@ if (empty($reshook)) {
 			}
 
 			// Modify entry
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET ";
-			// Modifie valeur des champs
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET ";
+			// Update fields value
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 				$sql .= $tabrowid[$id]."=";
 				$sql .= "'".$db->escape($rowid)."', ";
@@ -1064,7 +1070,7 @@ if (empty($reshook)) {
 				} elseif ($field == 'taux' || $field == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($field == 'entity') {
-					$_POST[$keycode] = getEntity($tablename);
+					$_POST[$keycode] = (int) getEntity($tablename, 0);
 				}
 
 				if ($i) {
@@ -1120,7 +1126,7 @@ if (empty($reshook)) {
 		$tablename = $tabname[$id];
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$db->sanitize($tablename)." WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -1145,9 +1151,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$db->escape($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE ".$db->escape($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1174,9 +1180,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 0 WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1203,9 +1209,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET favorite = 1 WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1232,9 +1238,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET favorite = 0 WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1261,9 +1267,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET eec = 1 WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1290,9 +1296,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET eec = 0 WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1319,9 +1325,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET sepa = 1 WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET sepa = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1348,9 +1354,9 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET sepa = 0 WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET sepa = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
 			$sql = null;
 		}
@@ -1372,6 +1378,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 $title = $langs->trans("DictionarySetup");
 
@@ -1472,7 +1479,11 @@ if ($id > 0) {
 		$sql .= " WHERE 1 = 1";
 	}
 	if ($search_country_id > 0) {
-		$sql .= " AND c.rowid = ".((int) $search_country_id);
+		if ($id == DICT_HRM_PUBLIC_HOLIDAY || $id == DICT_HOLIDAY_TYPES) {
+			$sql .= " AND (c.rowid IS NULL OR c.rowid = 0 OR c.rowid = ".((int) $search_country_id).")";
+		} else {
+			$sql .= " AND c.rowid = ".((int) $search_country_id);
+		}
 	}
 	if ($search_code != '') {
 		$sql .= natural_search($tablecode, $search_code);
@@ -1581,7 +1592,7 @@ if ($id > 0) {
 				$tdsoffields = '<tr class="liste_titre">';
 				foreach ($fieldlist as $field => $value) {
 					if ($value == 'entity') {
-						$withentity = getEntity($tabname[$id]);
+						$withentity = (int) getEntity($tabname[$id], 0);
 						continue;
 					}
 
@@ -1935,7 +1946,7 @@ if ($id > 0) {
 		print '<tr class="liste_titre_filter">';
 
 		// Action button
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="liste_titre center">';
 			if ($filterfound) {
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -1994,7 +2005,7 @@ if ($id > 0) {
 		$colspan++;
 
 		// Action button
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="liste_titre center">';
 			if ($filterfound) {
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -2012,7 +2023,7 @@ if ($id > 0) {
 		print '<tr class="liste_titre">';
 
 		// Action button
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print getTitleFieldOfList('');
 		}
 
@@ -2105,6 +2116,12 @@ if ($id > 0) {
 			}
 			if ($value == 'country') {
 				$valuetoshow = $langs->trans("Country");
+			}
+			if ($value == 'phone_code') {
+				$valuetoshow = $langs->trans("PhoneCode");
+			}
+			if ($value == 'trunk_prefix') {
+				$valuetoshow = $langs->trans("TrunkPrefix");
 			}
 			if ($value == 'department_buyer') {
 				$valuetoshow = $langs->trans('DepartmentBuyer');
@@ -2279,7 +2296,7 @@ if ($id > 0) {
 		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 
 		// Action button
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print getTitleFieldOfList('');
 		}
 		print '</tr>';
@@ -2305,7 +2322,7 @@ if ($id > 0) {
 				$iserasable = 1;
 				$canbedisabled = 1;
 				$canbemodified = 1;
-				if (isset($obj->code) && $id != DICT_TVA && $id != DICT_PRODUCT_NATURE) {
+				if (isset($obj->code) && !in_array($id, array(DICT_TVA, DICT_PRODUCT_NATURE))) {
 					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 						$iserasable = 0;
 						$canbedisabled = 0;
@@ -2368,7 +2385,7 @@ if ($id > 0) {
 				print '<tr class="oddeven" id="rowid-'.(empty($obj->rowid) ? '' : $obj->rowid).'">';
 
 				// Action button
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center maxwidthsearch nowraponall">';
 					// Modify link
 					if ($canbemodified) {
@@ -2417,12 +2434,13 @@ if ($id > 0) {
 
 					if (empty($reshook)) {
 						$withentity = null;
+						$TDurationTypes = $form->getDurationTypes($langs);
 
 						foreach ($fieldlist as $field => $value) {
 							//var_dump($fieldlist);
 							$class = '';
 							$showfield = 1;
-							$valuetoshow = empty($obj->$value) ? '' : $obj->$value;
+							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
 							$titletoshow = '';
 
 							if ($value == 'entity') {
@@ -2607,12 +2625,19 @@ if ($id > 0) {
 							} elseif ($value == 'icon') {
 								$valuetoshow = $obj->{$value}." ".img_picto("", preg_replace('/^fa-/', '', $obj->{$value}));
 							} elseif ($value == 'type_duration') {
-								$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
 								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $TDurationTypes)) {
 									$valuetoshow = $TDurationTypes[$obj->{$value}];
 								}
+							} elseif (in_array($value, array('leftmargin', 'topmargin', 'spacex', 'spacey', 'width', 'height', 'custom_x', 'custom_y'))) {
+								$valuetoshow = price2num($valuetoshow);
+							} elseif ($value == 'type' && $id == DICT_ACTIONCOMM && !empty($obj->module)) {
+								$titletoshow = $langs->trans("Module").' '.$obj->module;
+							} elseif ($value == 'color') {
+								$valuetoshow = $formother->showColor($obj->{$value}, '');
 							}
 
+
+							// Now we define the CSS
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'name') {
 								$class .= ' tdoverflowmax200';
@@ -2629,10 +2654,7 @@ if ($id > 0) {
 							if (in_array($value, array('icon', 'type_vat', 'localtax1_type', 'localtax2_type'))) {
 								$class .= ' nowraponall';
 							}
-							if (in_array($value, array('use_default', 'fk_parent', 'sortorder'))) {
-								$class .= ' center';
-							}
-							if ($value == 'public') {
+							if (in_array($value, array('use_default', 'fk_parent', 'sortorder', 'public'))) {
 								$class .= ' center';
 							}
 							if (in_array($value, array('localtax1_type', 'localtax2_type', 'note', 'note_public', 'note_private'))) {
@@ -2692,7 +2714,7 @@ if ($id > 0) {
 					print "</td>";
 
 					// Action button
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print '<td class="center maxwidthsearch nowraponall">';
 						// Modify link
 						if ($canbemodified) {
@@ -2816,7 +2838,7 @@ $db->close();
 function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $langs, $db, $mysoc;
-	global $form;
+	global $form, $formother;
 	global $region_id;
 	global $elementList, $sourceList, $localtax_typeList, $type_vatList;
 
@@ -3025,7 +3047,11 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'type_duration') {
 			print '<td>';
-			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), array('i','h'));
+			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), ['s', 'i', 'h']);
+			print '</td>';
+		} elseif ($value == 'color') {
+			print '<td>';
+			print $formother->selectColor((empty($obj->{$value}) ? '' : $obj->{$value}), 'color');
 			print '</td>';
 		} else {
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value} : '';

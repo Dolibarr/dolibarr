@@ -2,7 +2,7 @@
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@
  * @var User $user
  *
  * @var string $action
+ * @var string $backtopage
  * @var string $upload_dir
  * @var string $upload_dirold
  * @var string $confirm
@@ -37,6 +38,8 @@
  */
 '
 @phan-var-force string $upload_dir
+@phan-var-force string $upload_dirold
+@phan-var-force string $confirm
 @phan-var-force string $forceFullTextIndexation
 ';
 
@@ -54,8 +57,8 @@ if ((GETPOST('sendit', 'alpha')
 	|| ($action == 'confirm_deletefile' && $confirm == 'yes')
 	|| ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
 	|| ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))) && empty($permissiontoadd)) {
-	dol_syslog('The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.');
-	print 'The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.';
+	dol_syslog('The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before or is set to false.');
+	print 'The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before or is set to false.';
 	die;
 }
 
@@ -66,22 +69,32 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 	if (!empty($_FILES) && is_array($_FILES['userfile'])) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		if (is_array($_FILES['userfile']['tmp_name'])) {
+		if (is_array($_FILES['userfile']['tmp_name'])) {	// When form has a input type="file" field with name="userfile[]"
 			$userfiles = $_FILES['userfile']['tmp_name'];
+			$filearrayis = 'array';
 		} else {
-			$userfiles = array($_FILES['userfile']['tmp_name']);
+			$userfiles = array(0 => $_FILES['userfile']['tmp_name']);
+			$filearrayis = 'string';
 		}
 
 		foreach ($userfiles as $key => $userfile) {
-			if (empty($_FILES['userfile']['tmp_name'][$key])) {
+			if ($filearrayis == 'array') {
+				$fileerror = $_FILES['userfile']['error'][$key];
+				$fileoriginname = $_FILES['userfile']['name'][$key];
+			} else {
+				$fileerror = $_FILES['userfile']['error'];
+				$fileoriginname = $_FILES['userfile']['name'];
+			}
+
+			if (empty($userfile)) {
 				$error++;
-				if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
+				if ($fileerror == 1 || $fileerror == 2) {
 					setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
 				} else {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 				}
 			}
-			if (preg_match('/__.*__/', $_FILES['userfile']['name'][$key])) {
+			if (preg_match('/__.*__/', $fileoriginname)) {
 				$error++;
 				setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
 			}
@@ -94,6 +107,7 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 				$generatethumbs = 0;
 			}
 			$allowoverwrite = (GETPOSTINT('overwritefile') ? 1 : 0);
+			$forceFullTextIndexation = (!empty($forceFullTextIndexation) ? $forceFullTextIndexation : '');
 
 			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, empty($forceFullTextIndexation) ? 0 : $forceFullTextIndexation);
@@ -105,7 +119,10 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 } elseif (GETPOST('linkit', 'restricthtml') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($permissiontoadd)) {
 	$link = GETPOST('link', 'alpha');
 	if ($link) {
-		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
+		if (substr($link, 0, 7) != 'http://'
+			&& substr($link, 0, 8) != 'https://'
+			&& substr($link, 0, 7) != 'davs://'
+			&& (substr($link, 0, 7) != 'file://' || !getDolGlobalString('MAIN_ALLOW_LINK_STARTING_WITH_FILE'))) {
 			$link = 'http://'.$link;
 		}
 
@@ -146,11 +163,10 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		}
 	}
 	$linkid = GETPOSTINT('linkid');
-
 	if ($urlfile) {
 		// delete of a file
-		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
-		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
+		$dir = dirname($file).'/'; // Path to the folder containing the original image
+		$dirthumb = $dir.'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 
 		$ret = dol_delete_file($file, 0, 0, 0, (is_object($object) ? $object : null));
 		if (!empty($fileold)) {
@@ -160,7 +176,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		if ($ret) {
 			// If it exists, remove thumb.
 			$regs = array();
-			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff|\.webp|\.xpm|\.xbm|\.avif)$/i', $file, $regs)) {
 				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
 				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
 					dol_delete_file($dirthumb.$photo_vignette);
@@ -210,7 +226,10 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	$f = $link->fetch(GETPOSTINT('linkid'));
 	if ($f) {
 		$link->url = GETPOST('link', 'alpha');
-		if (substr($link->url, 0, 7) != 'http://' && substr($link->url, 0, 8) != 'https://' && substr($link->url, 0, 7) != 'file://') {
+		if (substr($link->url, 0, 7) != 'http://'
+			&& substr($link->url, 0, 8) != 'https://'
+			&& substr($link->url, 0, 7) != 'davs://'
+			&& (substr($link->url, 0, 7) != 'file://' || !getDolGlobalString('MAIN_ALLOW_LINK_STARTING_WITH_FILE'))) {
 			$link->url = 'http://'.$link->url;
 		}
 		$link->label = GETPOST('label', 'alphanohtml');
@@ -294,7 +313,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 						$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 						setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
 					} elseif (!file_exists($destpath)) {
-						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1);
+						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1, [], $object->entity ?? $conf->entity);
 						if ($result) {
 							// Define if we have to generate thumbs or not
 							$generatethumbs = 1;

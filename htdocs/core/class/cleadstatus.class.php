@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Florian HENRY <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Florian HENRY           <florian.henry@scopen.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,13 @@ class CLeadStatus extends CommonDict
 	 */
 	public $percent;
 
+	/**
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>
+	 */
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Label of status"),
+	);
 
 	/**
 	 *  Constructor
@@ -78,6 +86,9 @@ class CLeadStatus extends CommonDict
 	 */
 	public function create($user, $notrigger = 0)
 	{
+		if (empty($this->id)) {
+			return -1;
+		}
 		// Insert request
 		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element."(";
 		$sql .= "rowid,";
@@ -87,8 +98,8 @@ class CLeadStatus extends CommonDict
 		$sql .= "percent,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)).",";
-		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
+		$sql .= (int) $this->id . ",";
+		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape(trim($this->code))."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
 		$sql .= " ".(!isset($this->position) ? 'NULL' : (int) $this->position).",";
 		$sql .= " ".(!isset($this->percent) ? 'NULL' : (float) $this->percent).",";
@@ -134,8 +145,8 @@ class CLeadStatus extends CommonDict
 		if ($id) {
 			$sql_where[] = " t.rowid = ".((int) $id);
 		}
-		if ($code >= 0) {
-			$sql_where[] = " t.code = ".((int) $code);
+		if ($code) {
+			$sql_where[] = " t.code = '".$this->db->escape($code)."'";
 		}
 		if (count($sql_where) > 0) {
 			$sql .= ' WHERE '.implode(' AND ', $sql_where);
@@ -146,12 +157,12 @@ class CLeadStatus extends CommonDict
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+				$this->id = (int) $obj->rowid;
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->position = $obj->position;
 				$this->percent = $obj->percent;
-				$this->active = $obj->active;
+				$this->active = (int) $obj->active;
 			}
 			$this->db->free($resql);
 
@@ -172,7 +183,7 @@ class CLeadStatus extends CommonDict
 	 * @param  int         $offset       Offset
 	 * @param  string      $filter       Filter USF
 	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @return self[]|int                int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
