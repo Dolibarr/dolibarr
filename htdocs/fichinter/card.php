@@ -44,7 +44,6 @@ require '../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
@@ -946,10 +945,13 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $object->ref . " - " . $langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewIntervention");
+}
+$help_url = 'EN:Module_Interventions|FR:Module_Fiches_d\'interventions';
 
-$help_url = 'EN:Module_Interventions';
-
-llxHeader('', $langs->trans("Intervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
 
 if ($action == 'create') {
 	// Create new intervention
