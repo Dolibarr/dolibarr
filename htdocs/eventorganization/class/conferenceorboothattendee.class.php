@@ -905,16 +905,16 @@ class ConferenceOrBoothAttendee extends CommonObject
 						}
 					}
 				} else {
-					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED', $user);
+					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', $user);
 					if ($result < 0) {
-						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED failed: " . $this->error);
+						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_SRC failed: " . $this->error);
 					}
 				}
 			}
 
 			// Replacement
 			if (!is_null($fk_replacement)) {
-				$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACING');
+				$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACED_TGT');
 				if ($replacementStatus < 0) {
 					throw new Exception("Update replacement status failed: " . $fk_replacement->error);
 				}
