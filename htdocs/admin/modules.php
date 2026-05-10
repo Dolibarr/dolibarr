@@ -329,6 +329,7 @@ if ($action == 'install' && $allowonlineinstall) {
 
 				if (!$error) {
 					// TODO Make more test ???
+					// Call validateZipFile() in functions2.lib.php ?
 				}
 
 				// We check if this is a metapackage (and wecomplete with child packages)

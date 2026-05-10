@@ -163,11 +163,11 @@ print dol_get_fiche_head($head, 'statsbyproperties', '', -1, '');
 // Print title
 if (!count($data)) {
 	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
-	print '<br>';
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("MembersByNature").'</span><br>';
-	print '<br>';
 }
+print '<span class="opacitymedium">'.$langs->trans("DraftMembersAreExcluded").'</span><br>';
+print '<br>';
 
 // Print array
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
