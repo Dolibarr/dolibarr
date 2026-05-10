@@ -946,10 +946,12 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-
-$help_url = 'EN:Module_Interventions';
-
-llxHeader('', $langs->trans("Intervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
+$title = $object->ref . " - " . $langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewIntervention");
+}
+$help_url = 'EN:Module_Interventions|FR:Module_Fiches_d\'interventions';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
 
 if ($action == 'create') {
 	// Create new intervention
