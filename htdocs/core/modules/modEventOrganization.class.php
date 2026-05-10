@@ -536,6 +536,21 @@ class modEventOrganization extends DolibarrModules
 			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT', $template->id, 'chaine', 0, '', $conf->entity);
 		}
 
+		$sql_triggers = array(
+			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', 'Attendee Replaced (Source)', 'Triggered when an attendee is replaced by another.', 'conferenceorboothattendee', 2461)",
+			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT', 'Attendee Replaced (Target)', 'Triggered when an attendee becomes a replacement.', 'conferenceorboothattendee', 2462)",
+			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', 'Attendee Replacement Reset (Source)', 'Triggered when a replacement is undone for the source.', 'conferenceorboothattendee', 2463)",
+			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', 'Attendee Replacement Reset (Target)', 'Triggered when a replacement is undone for the target.', 'conferenceorboothattendee', 2464)",
+		);
+
+		foreach ($sql_triggers as $sql) {
+			$resql = $this->_db->query($sql);
+			if (!$resql) {
+				// Log error but don't necessarily fail the whole activation if it's just a duplicate
+				dol_syslog("Error inserting trigger: " . $this->_db->lasterror(), LOG_ERR);
+			}
+		}
+
 		return $init;
 	}
 
