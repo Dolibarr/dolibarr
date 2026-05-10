@@ -518,7 +518,7 @@ if ($socid) {
 	$param .= "&socid=".urlencode((string) ($socid));
 }
 if ($searchCategoryFichinterOperator == 1) {
-	$param .= "&search_category_fichinter_operator=".urlencode($searchCategoryFichinterOperator);
+	$param .= "&search_category_fichinter_operator=".urlencode((string) $searchCategoryFichinterOperator);
 }
 foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
 	$param .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
