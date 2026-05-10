@@ -899,24 +899,23 @@ class ConferenceOrBoothAttendee extends CommonObject
 					}
 
 					if ($oldReplacementAttendee !== null) {
+						$oldReplacementAttendee->context['source_name'] = $this->getFullName($langs);
 						$oldUpdateResult = $oldReplacementAttendee->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', $user);
 						if ($oldUpdateResult < 0) {
 							throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET failed: " . $oldReplacementAttendee->error);
 						}
 					}
 				} else {
+					$this->context['replacement_name'] = $fk_replacement->getFullName($langs);
 					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', $user);
 					if ($result < 0) {
 						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_SRC failed: " . $this->error);
 					}
-				}
-			}
-
-			// Replacement
-			if (!is_null($fk_replacement)) {
-				$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACED_TGT');
-				if ($replacementStatus < 0) {
-					throw new Exception("Update replacement status failed: " . $fk_replacement->error);
+					$fk_replacement->context['source_name'] = $this->getFullName($langs);
+					$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACED_TGT');
+					if ($replacementStatus < 0) {
+						throw new Exception("Update replacement status failed: " . $fk_replacement->error);
+					}
 				}
 			}
 

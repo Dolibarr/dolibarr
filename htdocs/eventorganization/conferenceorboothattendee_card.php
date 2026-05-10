@@ -885,7 +885,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if (empty($object->fk_replacement)) {
 				print dolGetButtonAction('', $langs->trans('ToReplace'), 'replace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=replace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
 			} else {
-				print dolGetButtonAction('', $langs->trans("Undo").' '.$langs->trans('ToReplace'), 'undoreplace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=undoreplace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans("EditReplacement").' '.$langs->trans('ToReplace'), 'undoreplace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=undoreplace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
 			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));

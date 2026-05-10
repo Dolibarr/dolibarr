@@ -91,9 +91,15 @@ EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
 EvntOrgCancelled = Canceled
+# Agenda
+AttendeeReplacedBy=Attendee %s replaced by %s
+AttendeeBecameReplacementFor=Attendee %s became replacement for %s
+AttendeeReplacementSourceReset=Replacement attendee for %s reset
+AttendeeReplacementTargetReset=%s is no longer a replacement attendee
 # Other
 SuggestForm = Suggestion page
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
+EditReplacement=Edit Replacement
 EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
 EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
