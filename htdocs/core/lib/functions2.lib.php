@@ -3221,7 +3221,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
  */
 function validateZipFile($zip, $originalfilename, $zipfile)
 {
-	global $count, $results, $weblangs;
+	global $count, $results, $langs;
 
 	$error = 0;
 	$return = array(
@@ -3302,11 +3302,11 @@ function validateZipFile($zip, $originalfilename, $zipfile)
 				}
 			}
 			if ($error) {
-				$return['errormsg'].= $weblangs->trans("UnvalidZipFile") . '<br>';
-				$return['errormsg'].= $weblangs->trans("moduleContents") . '<br>';
-				$return['errormsg'].= $weblangs->trans("moduleDirectoryRule1") . '<br>';
-				$return['errormsg'].= $weblangs->trans("moduleDirectoryRule2") . '<br>';
-				$return['errormsg'].= $weblangs->trans("directoryFound").' '.$direrror.'<br><br>'."\n";
+				$return['errormsg'] .= $langs->trans("UnvalidZipFile") . '<br>';
+				$return['errormsg'] .= $langs->trans("moduleContents") . '<br>';
+				$return['errormsg'] .= $langs->trans("moduleDirectoryRule1") . '<br>';
+				$return['errormsg'] .= $langs->trans("moduleDirectoryRule2") . '<br>';
+				$return['errormsg'] .= $langs->trans("directoryFound").' '.$direrror.'<br><br>'."\n";
 			}
 			closedir($dh);
 		}
@@ -3327,7 +3327,7 @@ function validateZipFile($zip, $originalfilename, $zipfile)
 			}
 			closedir($dh);
 			if ($nbofsubdir >= 2 && ! is_file($dirmoduletheme.'/metapackage.conf')) {
-				$return['errormsg'] .= $weblangs->trans("rootDirWarning", $nbofsubdir, basename($dirmoduletheme)) . '<br><br>';
+				$return['errormsg'] .= $langs->trans("rootDirWarning", $nbofsubdir, basename($dirmoduletheme)) . '<br><br>';
 				$error++;
 			}
 
@@ -3335,7 +3335,7 @@ function validateZipFile($zip, $originalfilename, $zipfile)
 				if (is_file($dirmoduletheme.'/metapackage.conf')) {
 					// Check each dir found is inside list of modules
 				} else {
-					$return['errormsg'] .= $weblangs->trans("moduleNameMismatch", $lastdirfound, $ismodule) .'<br><br>';
+					$return['errormsg'] .= $langs->trans("moduleNameMismatch", $lastdirfound, $ismodule) .'<br><br>';
 					$error++;
 				}
 			}
@@ -3371,12 +3371,12 @@ function validateZipFile($zip, $originalfilename, $zipfile)
 			if (!empty($count)) { // count of errors is not null
 				foreach ($results as $result) {
 					if ($result['testname'] == 'main') {
-						$return['errormsg'] .= $weblangs->trans("mainIncludeError", $result['filename'], $ismodule) .'<br><br>';
+						$return['errormsg'] .= $langs->trans("mainIncludeError", $result['filename'], $ismodule) .'<br><br>';
 					} elseif ($result['testname'] == 'dol_include_once') {
-						$return['errormsg'] .= $weblangs->trans("dolIncludeError", $result['filename'], $ismodule) .'<br>';
+						$return['errormsg'] .= $langs->trans("dolIncludeError", $result['filename'], $ismodule) .'<br>';
 						$return['errormsg'] .= $result['line'].'<br><br>';
 					} elseif ($result['testname'] == 'dol_document_root') {
-						$return['errormsg'] .= $weblangs->trans("docRootError", $result['filename'], $ismodule) .'<br>';
+						$return['errormsg'] .= $langs->trans("docRootError", $result['filename'], $ismodule) .'<br>';
 						$return['errormsg'] .= $result['line'].'<br><br>';
 					}
 				}
@@ -3394,10 +3394,10 @@ function validateZipFile($zip, $originalfilename, $zipfile)
 		dol_syslog("validateZipFile Error");
 
 		$link = '<a target="_blank" class="linktowiki" href="https://wiki.dolibarr.org/index.php/Modules - Packaging rules and Dolistore validation rules">Dolibarr wiki developer documentation</a>';
-		$return['errormsg'].= $weblangs->trans("UnvalidZipFile") .'<br>';
-		$return['errormsg'].= $weblangs->trans("SeeDocumentation", $link).'<br>';
-		$return['errormsg'].= "<br>\n";
-		$return['errormsg'].= $weblangs->trans("Contact");
+		$return['errormsg'] .= $langs->trans("UnvalidZipFile") .'<br>';
+		$return['errormsg'] .= $langs->trans("SeeDocumentation", $link).'<br>';
+		$return['errormsg'] .= "<br>\n";
+		$return['errormsg'] .= $langs->trans("Contact");
 		$return['upload'] = -1;
 		$error++;
 	} else {
