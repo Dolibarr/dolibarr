@@ -718,8 +718,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Our keys (-1, 1, 5) are valid for the runtime logic but violate the strict 'string[]' type hint.
 			/** @phan-suppress-next-line PhanTypeMismatchArgument */
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToReplace'), $langs->trans('ConfirmReplaceAsk', $attendeestatic->getFullName($langs, 0, -1, 0)), 'confirm_replace_attendee', $formquestion, 'yes', 1);
-		} else {
-		// we should show a popup
 		}
 	}
 
