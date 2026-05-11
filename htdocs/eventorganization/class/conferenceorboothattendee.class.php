@@ -847,7 +847,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$oldFetch = $oldReplacementAttendee->fetch($this->fk_replacement);
 			if ($oldFetch > 0) {
 				if (!empty($oldReplacementAttendee->fk_replacement)) {
-					$error_text = 'Cannot undo replacement for attendee ' . $this->id . '. ' .'The current replacement (ID: ' . $oldReplacementAttendee->id . ') is itself replaced by attendee (ID: ' .$oldReplacementAttendee->fk_replacement . '). ' .'Please undo the replacement for attendee ' . $oldReplacementAttendee->id . ' first.';
+					$error_text = 'Cannot undo replacement for attendee ' . $this->id . '. The current replacement (ID: ' . $oldReplacementAttendee->id . ') is itself replaced by attendee (ID: ' . $oldReplacementAttendee->fk_replacement . '). Please undo the replacement for attendee ' . $oldReplacementAttendee->id . ' first.';
 					dol_syslog($error_text, LOG_WARNING);
 					$this->error = $error_text;
 					return -7;
