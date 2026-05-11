@@ -185,6 +185,31 @@ if ($result) {
 		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc, $obj->thirdparty);
 		$compta_localtax2 = (!empty($account_localtax2[2]) ? $account_localtax2[2] : $langs->trans("CodeNotDef"));
 
+		// Avoid warnings
+		if (!array_key_exists($obj->rowid, $tabfac)) {
+			$tabfac[$obj->rowid] = array();
+			$tabttc[$obj->rowid] = array();
+			$tabht[$obj->rowid] = array();
+			$tabtva[$obj->rowid] = array();
+			$tablocaltax1[$obj->rowid] = array();
+			$tablocaltax2[$obj->rowid] = array();
+		}
+		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
+			$tabttc[$obj->rowid][$compta_soc] = 0;
+		}
+		if (!isset($tabht[$obj->rowid][$compta_prod])) {
+			$tabht[$obj->rowid][$compta_prod] = 0;
+		}
+		if (!isset($tabtva[$obj->rowid][$compta_tva])) {
+			$tabtva[$obj->rowid][$compta_tva] = 0;
+		}
+		if (!isset($tablocaltax1[$obj->rowid][$compta_localtax1])) {
+			$tablocaltax1[$obj->rowid][$compta_localtax1] = 0;
+		}
+		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) {
+			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
+		}
+
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
 		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
