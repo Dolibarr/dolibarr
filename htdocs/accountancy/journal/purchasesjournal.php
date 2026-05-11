@@ -491,7 +491,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		$invoicestatic->ref = (string) $val["refsologest"];
 		$invoicestatic->ref_supplier = (string) $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
-		$invoicestatic->description = html_entity_decode(dol_trunc($val["description"], 32));
+		$invoicestatic->description = html_entity_decode(dol_trunc((string) $val["description"], 32));
 		$invoicestatic->close_code = (string) $val["close_code"];
 
 		$date = dol_print_date($val["date"], 'day');
@@ -921,7 +921,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.$val["refsologest"].'"'.$sep;
+			print '"'.((string) $val["refsologest"]).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -973,7 +973,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				if ($mt) {
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
-					print '"'.$val["refsologest"].'"'.$sep;
+					print '"'.((string) $val["refsologest"]).'"'.$sep;
 					print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -993,7 +993,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					if ($mt) {
 						print '"'.$key.'"'.$sep;
 						print '"'.$date.'"'.$sep;
-						print '"'.$val["refsologest"].'"'.$sep;
+						print '"'.((string) $val["refsologest"]).'"'.$sep;
 						print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1127,11 +1127,11 @@ if (empty($action) || $action == 'view') {
 		$companystatic->fournisseur = 1;
 
 		$invoicestatic->id = (int) $key;
-		$invoicestatic->ref = $val["refsologest"];
-		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
+		$invoicestatic->ref = (string) $val["refsologest"];
+		$invoicestatic->ref_supplier = (string) $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
-		$invoicestatic->description = dol_trunc(html_entity_decode($val["description"]), 32);
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->description = dol_trunc(html_entity_decode((string) $val["description"]), 32);
+		$invoicestatic->close_code = (string) $val["close_code"];
 
 		$date = dol_print_date($val["date"], 'day');
 

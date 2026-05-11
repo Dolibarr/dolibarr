@@ -250,7 +250,7 @@ $companystatic = new Fournisseur($db);
 if (count($tabfac) && count($tabht) && count($tabtva) && count($tablocaltax1) && count($tablocaltax2) && count($tabttc)) {  // Check for static analysis
 	foreach ($tabfac as $key => $val) {
 		$invoicestatic->id = (int) $key;
-		$invoicestatic->ref = $val["ref"];
+		$invoicestatic->ref = (string) $val["ref"];
 		$invoicestatic->type = $val["type"];
 
 		$companystatic->id = $tabcompany[$key]['id'];
