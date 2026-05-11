@@ -9965,8 +9965,21 @@ abstract class CommonObject
 	public function isFieldEditAllowed($field)
 	{
 		// Basic rights validation (invalid or missing rights object = deny access)
-		$right = $this->getRights();
-		if (is_object($right) || is_null($right)) {
+		$right = $this->getRights();// TODO remove chaos from getRights results
+		// Normalize global rights
+		if (is_null($right)) {
+			return false;
+		}
+
+		if (is_int($right)) {
+			if ((int) $right !== 1) {
+				return false;
+			}
+		} elseif (is_object($right)) {
+			if (empty($right->write)) {
+				return false;
+			}
+		} else {
 			return false;
 		}
 
