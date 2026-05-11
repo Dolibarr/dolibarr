@@ -797,9 +797,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0, $force_fk_replacement = 0)
 	{
 		// Protection
+		if (!is_null($fk_replacement) && isset($this->fk_replacement) && $this->fk_replacement == $fk_replacement->id) {
+			// User selected the SAME replacement that is already set
+			$this->error = "No change made: The replacement is already set to this attendee.";
+			return 0; // Return 0 (Nothing done) instead of error
+		}
 		if (!is_null($fk_replacement)) {
 			$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
-			if (!in_array($this->status, $allowed_statuses)) {
+			if (!$force_fk_replacement && !in_array($this->status, $allowed_statuses)) {
 				$allowed_labels = array_map(function($s) {
 					return $this->LibStatut($s);
 				}, $allowed_statuses);

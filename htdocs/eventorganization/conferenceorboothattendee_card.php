@@ -621,11 +621,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Create an array for form
 			$formquestion = array();
 
+			$current_fk_replacement = $attendeestatic->fk_replacement ?? 0;
 			$filter = '((t.fk_project:=:' . ((int) $attendeestatic->fk_project) . ') AND (t.status:IN:[' . $attendeestatic::STATUS_VALIDATED . ',' . $attendeestatic::STATUS_DRAFT . ']) AND (t.rowid:!=:' . ((int) $id) . '))';
 			$attendee_list = $attendeestatic->fetchAll('', '', 0, 0, $filter);
 			$reformat_list = array();
 			foreach ($attendee_list as $attendee) {
-				$reformat_list[$attendee->id] = $attendee->getFullName($langs, 0, -1, 0);
+				if ($current_fk_replacement == $attendee->id) {
+					$reformat_list[$attendee->id] = '✓ '.$attendee->getFullName($langs, 0, -1, 0);
+				} else {
+					$reformat_list[$attendee->id] = $attendee->getFullName($langs, 0, -1, 0);
+				}
 			}
 
 			// 655360? well, 640k is enough for everybody :-D and if I used -1 then it would show very fain where as with 655360 the text is clearly seen, and I can not use 0, because that is draft :-(
@@ -680,7 +685,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					'label'    => $select_replace_attendee,
 					'type'     => 'select',
 					'values'   => (array) $reformat_list,
-					'default'  => -2,
+					'default'  => $current_fk_replacement,
 				];
 				$oldstatus_selection_list = [
 					'name'     => 'oldobject_status',
@@ -764,7 +769,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$autotrigger = GETPOST('autotrigger', 'alpha') ? GETPOST('autotrigger', 'alpha') : null;
 			$notrigger = ($autotrigger == 'on') ? 0 : 1;
 
-			if ($select_replace_attendee > 0) {
+			if (isset($attendeesource->fk_replacement) && $attendeesource->fk_replacement == $select_replace_attendee) {
+				$fetchReplace = 0;
+			} elseif ($select_replace_attendee > 0) {
 				$attendeereplace = new ConferenceOrBoothAttendee($db);
 				$fetchReplace = $attendeereplace->fetch($select_replace_attendee);
 			} else {
@@ -790,7 +797,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$force_fk_replacement = 0;
 				}
 				$replaceResult = $attendeesource->replaceMeWithAttendee($user, $attendeereplace, $newobject_status_id, $oldobject_status_id, $notrigger, $force_fk_replacement);
-			} else {
+			} elseif ($fetchReplace < 0) {
 				setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ReplacementAttendee")), null, 'errors');
 			}
 
@@ -808,6 +815,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				exit;
 				// header() method does not work, it gives this error
 				// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
+			} elseif ($replaceResult == 0) {
+				// No Change: Show Info message
+				$langs->loadLangs(array("eventorganization"));
+				setEventMessages($langs->trans("NoChangeMade"), null, 'mesgs'); // Add this key
+				// Redirect back
+				$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $id;
+				echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+				exit;
 			} else {
 				// Map error codes to numbered translation keys
 				$transKeys = array(
