@@ -192,7 +192,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 			$actioncomm->datef       = dol_now();
 			$actioncomm->durationp   = 0;
 			$actioncomm->percentage  = -1;
-			$actioncomm->socid       = (property_exists($object, 'fk_soc') ? $object->fk_soc : 0);
+			$actioncomm->socid       = (property_exists($object, 'fk_soc') ? $object->fk_soc : 0); // @phan-suppress-current-line PhanUndeclaredProperty
 			$actioncomm->contact_id  = 0;
 			$actioncomm->authorid    = $user->id;
 			$actioncomm->userownerid = $user->id;
