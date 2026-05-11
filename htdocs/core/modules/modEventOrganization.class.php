@@ -537,10 +537,10 @@ class modEventOrganization extends DolibarrModules
 		}
 
 		$sql_triggers = array(
-			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', 'Attendee Replaced (Source)', 'Triggered when an attendee is replaced by another.', 'conferenceorboothattendee', 2461)",
-			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT', 'Attendee Replaced (Target)', 'Triggered when an attendee becomes a replacement.', 'conferenceorboothattendee', 2462)",
-			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', 'Attendee Replacement Reset (Source)', 'Triggered when a replacement is undone for the source.', 'conferenceorboothattendee', 2463)",
-			"INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', 'Attendee Replacement Reset (Target)', 'Triggered when a replacement is undone for the target.', 'conferenceorboothattendee', 2464)",
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', 'Attendee Replaced (Source)', 'Triggered when an attendee is replaced by another.', 'conferenceorboothattendee', 2461)",
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT', 'Attendee Replaced (Target)', 'Triggered when an attendee becomes a replacement.', 'conferenceorboothattendee', 2462)",
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', 'Attendee Replacement Reset (Source)', 'Triggered when a replacement is undone for the source.', 'conferenceorboothattendee', 2463)",
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', 'Attendee Replacement Reset (Target)', 'Triggered when a replacement is undone for the target.', 'conferenceorboothattendee', 2464)",
 		);
 
 		foreach ($sql_triggers as $sql) {

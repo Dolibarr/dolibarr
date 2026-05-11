@@ -532,9 +532,9 @@ ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_replacement integer DEFAULT NULL, ADD UNIQUE INDEX uk_fk_replacement (fk_replacement);
 -- Event Organization: Replacement Triggers
-INSERT IGNORE INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', 'Attendee Replaced (Source)', 'Triggered when an attendee is replaced by another.', 'conferenceorboothattendee', 2461);
-INSERT IGNORE INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT', 'Attendee Replaced (Target)', 'Triggered when an attendee becomes a replacement.', 'conferenceorboothattendee', 2462);
-INSERT IGNORE INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', 'Attendee Replacement Reset (Source)', 'Triggered when a replacement is undone for the source.', 'conferenceorboothattendee', 2463);
-INSERT IGNORE INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', 'Attendee Replacement Reset (Target)', 'Triggered when a replacement is undone for the target.', 'conferenceorboothattendee', 2464);
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', 'Attendee Replaced (Source)', 'Triggered when an attendee is replaced by another.', 'conferenceorboothattendee', 2461);
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT', 'Attendee Replaced (Target)', 'Triggered when an attendee becomes a replacement.', 'conferenceorboothattendee', 2462);
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', 'Attendee Replacement Reset (Source)', 'Triggered when a replacement is undone for the source.', 'conferenceorboothattendee', 2463);
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', 'Attendee Replacement Reset (Target)', 'Triggered when a replacement is undone for the target.', 'conferenceorboothattendee', 2464);
 
 -- end of migration
