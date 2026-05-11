@@ -943,7 +943,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param  array<string>   $labelparts                 Array of parts to build the visible label.
+	 *  @param  array<string>   $labelparts         Array of parts to build the visible label.
 	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
 	 *                                              If empty/null, defaults to $this->ref.
 	 *  @return	string                              String with URL
@@ -1104,9 +1104,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  string  $keysuffix    Prefix string to add into name and id of field
 	 *  @param  string  $keyprefix    Suffix string to add into name and id of field
 	 *  @param  mixed   $morecss      Value for CSS to use
-	 *  @param  array<string>   $labelparts                 Array of parts to build the visible label.
-	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
-	 *                                              If empty/null, defaults to $this->ref.
+	 *  @param  array<string>   $labelparts		Array of parts to build the visible label.
+	 *                                    		Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
+	 *                                          If empty/null, defaults to $this->ref.
 	 *
 	 *  @return string
 	 */
