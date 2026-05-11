@@ -63,7 +63,7 @@ $url_page_current = DOL_URL_ROOT.'/reception/contact.php';
 $object = new Reception($db);
 $typeobject = '';
 $origin = '';
-$objectsrc = null;
+$objectsrc = new CommandeFournisseur($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -77,7 +77,6 @@ if ($id > 0 || !empty($ref)) {
 
 	// Linked documents
 	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
-		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
 }
@@ -132,7 +131,7 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	} elseif ($objectsrc !== null) {
 		$mesgs = array();
 	} else {
-		if (!is_null($objectsrc) && $objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			if (isset($contactid)) {
 				$contactstatic = new Contact($db);
