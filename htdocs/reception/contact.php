@@ -132,7 +132,7 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	} elseif ($objectsrc !== null) {
 		$mesgs = array();
 	} else {
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+		if (!is_null($objectsrc) && $objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			if (isset($contactid)) {
 				$contactstatic = new Contact($db);
