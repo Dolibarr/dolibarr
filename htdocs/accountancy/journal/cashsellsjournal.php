@@ -918,7 +918,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		$param .= '&date_endmonth='.$date_endmonth;
 		$param .= '&date_endyear='.$date_endyear;
 		$param .= '&in_bookkeeping='.$in_bookkeeping;
-		header("Location: ".$_SERVER['PHP_SELF'].($param ? '?'.$param : ''));
+		header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
 		exit;
 	}
 }
