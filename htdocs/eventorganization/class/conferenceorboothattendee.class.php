@@ -796,6 +796,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0, $force_fk_replacement = 0)
 	{
+		global $langs;
 		// Protection
 		if (!is_null($fk_replacement) && isset($this->fk_replacement) && $this->fk_replacement == $fk_replacement->id) {
 			// User selected the SAME replacement that is already set
@@ -881,7 +882,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 						throw new Exception("Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error);
 					}
 				}
-				$this->fk_replacement = null;
+				$this->fk_replacement = 0;
 				$this->status = self::STATUS_VALIDATED;
 			} else {
 				$this->fk_replacement = $fk_replacement->id;
@@ -942,7 +943,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param  array   $labelparts                 Array of parts to build the visible label.
+	 *  @param  array<string>   $labelparts                 Array of parts to build the visible label.
 	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
 	 *                                              If empty/null, defaults to $this->ref.
 	 *  @return	string                              String with URL
@@ -1103,7 +1104,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  string  $keysuffix    Prefix string to add into name and id of field
 	 *  @param  string  $keyprefix    Suffix string to add into name and id of field
 	 *  @param  mixed   $morecss      Value for CSS to use
-	 *  @param  array   $labelparts                 Array of parts to build the visible label.
+	 *  @param  array<string>   $labelparts                 Array of parts to build the visible label.
 	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
 	 *                                              If empty/null, defaults to $this->ref.
 	 *
@@ -1177,7 +1178,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  Example: If Alice (1) was replaced by Camilla (5), who was replaced by Sarah (2).
 	 *  Calling $alice->getReplacementChain() returns [Camilla, Sarah].
 	 *
-	 *  @return array   Array of ConferenceOrBoothAttendee objects
+	 *  @return array<ConferenceOrBoothAttendee>   Array of ConferenceOrBoothAttendee objects
 	 */
 	public function getReplacementChain()
 	{
@@ -1212,7 +1213,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  Example: If Sarah replaced Camilla, who replaced Alice.
 	 *  Calling $sarah->getReplacedChain() returns [Camilla, Alice].
 	 *
-	 *  @return array   Array of ConferenceOrBoothAttendee objects
+	 *  @return array<ConferenceOrBoothAttendee>   Array of ConferenceOrBoothAttendee objects
 	 */
 	public function getReplacedByChain()
 	{

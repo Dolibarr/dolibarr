@@ -496,7 +496,7 @@ if (!empty($withproject)) {
 
 // Part to create an attendee
 if ($action == 'create' && $confOrBooth === null) {
-	$object->fk_replacement = null;
+	$object->fk_replacement = 0;
 	unset($object->fields['fk_replacement']);
 	// because else some preset data showed up in create form? and we don't want it here anyway
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBoothAttendee")), '', 'object_'.$object->picto);
