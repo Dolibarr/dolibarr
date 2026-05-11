@@ -10,7 +10,7 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 380+ occurrences
-    // PhanUndeclaredGlobalVariable : 45+ occurrences
+    // PhanUndeclaredGlobalVariable : 40+ occurrences
     // PhanTypeMismatchArgument : 35+ occurrences
     // PhanTypeMismatchProperty : 20+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
@@ -94,7 +94,6 @@ return [
         'htdocs/core/modules/member/modules_cards.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanUndeclaredProperty'],
@@ -109,7 +108,6 @@ return [
         'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanPluginDuplicateArrayKey'],
         'htdocs/core/modules/workstation/mod_workstation_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/multicompany_page.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/tpl/extrafields_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/tpl/massactions_pre.tpl.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],
