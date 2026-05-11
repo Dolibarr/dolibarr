@@ -862,9 +862,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$this->db->begin();
 		try {
+			$oldReplacementAttendee = null;
 			// Original
 			if (is_null($fk_replacement)) {
-				$oldReplacementAttendee = null;
 				$any_old_fk_replacement = $this->fk_replacement;
 				if ($any_old_fk_replacement > 0) {
 					$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
