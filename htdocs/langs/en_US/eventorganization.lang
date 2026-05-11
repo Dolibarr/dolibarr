@@ -91,11 +91,32 @@ EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
 EvntOrgCancelled = Canceled
+# Replacement
+ConfirmReplaceAsk=Are you sure you want to replace the attendee <b>%s</b>?
+SelectOneReplacementAttendee=Select 1 replacement attendee
+OriginalAttendee=Original attendee
+ReplacementAttendee=Replacement attendee
+NoReplacementAttendeeSelected=No replacement attendee selected
+SelfReplacement=You can not replace an attendee with itself, make different selection
+CopyOriginal=Copy original
+Unchanged=Unchanged
+Replaced=Replaced
+This=This
+# Replacement Errors
+ErrorStatusNotAllowed1=Cannot replace attendee, current attendee status prevents replacement.
+ErrorCannotReplaceSelf2=Cannot replace an attendee with itself.
+ErrorInvalidStatusReplacement3=Invalid status for the replacement attendee.
+ErrorInvalidStatusSource4=Unknown new status for the source attendee, aborting.
+ErrorAlreadyHasReplacement5=Attendee already has a replacement.
+ErrorNothingToUndo6=No replacement to undo.
+ErrorChainNotEmpty7=Cannot undo replacement. The current replacement is itself replaced. Please undo the downstream replacement first.
+ErrorFetchFailed8=Failed to fetch replacement attendee data.
 # Agenda
 AttendeeReplacedBy=Attendee %s replaced by %s
 AttendeeBecameReplacementFor=Attendee %s became replacement for %s
-AttendeeReplacementSourceReset=Replacement attendee for %s reset
+AttendeeReplacementSourceReset=Undid replacement for %s
 AttendeeReplacementTargetReset=%s is no longer a replacement attendee
+ExistingAttendeeReplacementTarget=Warning: %s original replacement %s was changed to %s
 # Other
 SuggestForm = Suggestion page
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
@@ -170,3 +191,4 @@ Confirmed=Confirmed
 NotSelected=Not selected
 TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
 ShowedUp=Showed up
+NoProjectWritePermission=User has no write permission to this project
