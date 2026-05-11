@@ -1840,6 +1840,9 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								if ($objp->nature == 2 && isModEnabled('invoice') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
 									$nature = "sells";
 								}
+								if ($objp->nature == 6 && isModEnabled('takepos') && (!getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_SALES') || getDolGlobalString('ACCOUNTING_DISSOCIATE_CASH_SALES'))) {
+									$nature = "cashsells";
+								}
 								if ($objp->nature == 3
 									&& isModEnabled('supplier_invoice')
 									&& !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_PURCHASES')) {
