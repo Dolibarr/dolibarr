@@ -29,7 +29,6 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -61,9 +60,9 @@ $action = GETPOST('action', 'aZ09');
 $url_page_current = DOL_URL_ROOT.'/reception/contact.php';
 
 $object = new Reception($db);
+$objectsrc = null;
 $typeobject = '';
 $origin = '';
-$objectsrc = new CommandeFournisseur($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -77,6 +76,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Linked documents
 	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
+		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
 }
@@ -86,7 +86,6 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$result = -1;
 // TODO Test on reception module on only
 $result = -1;
 if ($origin == 'reception') {
@@ -119,18 +118,25 @@ if (isModEnabled("reception")) {
  */
 
 if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
-	if ($result > 0 && $id > 0) {
+	if ($result > 0 && $id > 0 && $objectsrc !== null) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+	} elseif ($result < 0) {
+		$mesg = $langs->trans("ErrorForbidden");
+		setEventMessages($mesg, null, 'errors');
+	} elseif ($objectsrc === null) {
+		$mesg = $langs->trans("ErrorRefNotFound", $langs->trans("Supplier"));
+		setEventMessages($mesg, null, 'errors');
+		$result = -1;
 	}
 
-	if ($result > 0) {
+
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} elseif ($objectsrc !== null) {
 		$mesgs = array();
-	} else {
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			if (isset($contactid)) {
@@ -146,11 +152,17 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 			} else {
 				$objname = '';
 			}
-			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
+			$mesg = $langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname);
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			$mesg = $objectsrc->error;
+			$mesgs = $objectsrc->errors;
 		}
-	}
+		setEventMessages($mesg, $mesgs, 'errors');
+    } else {
+        if (!isset($mesg)) { // Only set if not already set
+             setEventMessages($langs->trans("ErrorCannotPerformActionOnThisDocumentType"), null, 'errors');
+        }
+    }
 } elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer') && $objectsrc !== null) {
 	// bascule du statut d'un contact
 	$result = $objectsrc->swapContactStatus(GETPOSTINT('ligne'));
@@ -171,8 +183,14 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 		$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		if (!empty($newmember)) {
-			$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-			$result = $objectsrc->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+            if ($objectsrc === null) {
+				$mesg = $langs->trans("ErrorRefNotFound", $langs->trans("Supplier"));
+				setEventMessages($mesg, null, 'errors');
+                $result = -1; // Mark as failed
+            } else {
+                $codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+                $result = $objectsrc->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+            }
 		} else {
 			setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
 		}
@@ -182,7 +200,7 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 		header("Location: ".$url_page_current."?id=".$object->id);
 		exit;
 	} else {
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+		if ($objectsrc !== null && $objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			if (isset($newmember)) {
 				$memberstatic = new Adherent($db);
@@ -268,21 +286,21 @@ if ($id > 0 || !empty($ref)) {
 	// Linked documents
 	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
 		print '<tr><td class="titlefield">';
-		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->origin_object->id);
+		$staticsupplier = new CommandeFournisseur($db);
+		$staticsupplier->fetch($object->origin_object->id);
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
-		print $objectsrc->getNomUrl(1, 'commande');
+		print $staticsupplier->getNomUrl(1, 'commande');
 		print "</td>\n";
 		print '</tr>';
 	}
 	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td class="titlefield">';
-		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->origin_object->id);
+		$staticproposal = new Propal($db);
+		$staticproposal->fetch($object->origin_object->id);
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
-		print $objectsrc->getNomUrl(1, 'reception');
+		print $staticproposal->getNomUrl(1, 'reception');
 		print "</td>\n";
 		print '</tr>';
 	}
