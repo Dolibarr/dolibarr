@@ -2041,90 +2041,6 @@ parameters:
 			path: ../../../htdocs/compta/index.php
 
 		-
-			message: '#^Variable \$total_ht might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/index.php
-
-		-
-			message: '#^Variable \$total_ttc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/index.php
-
-		-
-			message: '#^Variable \$tabcompany might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: '#^Variable \$tabht might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: '#^Variable \$tablocaltax1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: '#^Variable \$tablocaltax2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: '#^Variable \$tabttc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: '#^Variable \$tabtva might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/purchasesjournal.php
-
-		-
-			message: '#^Variable \$tabcompany might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: '#^Variable \$tabht might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: '#^Variable \$tablocaltax1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: '#^Variable \$tablocaltax2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: '#^Variable \$tabttc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: '#^Variable \$tabtva might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/journal/sellsjournal.php
-
-		-
 			message: '#^Variable \$morehtmlref might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2195,12 +2111,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 2
 			path: ../../../htdocs/compta/paiement.php
-
-		-
-			message: '#^Variable \$marginInfo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/paiement/card.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -2347,50 +2257,14 @@ parameters:
 			path: ../../../htdocs/compta/resultat/clientfourn.php
 
 		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/resultat/clientfourn.php
-
-		-
 			message: '#^Variable \$annee might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/resultat/index.php
 
 		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/resultat/index.php
-
-		-
-			message: '#^Call to function is_array\(\) with non\-empty\-array\<array\{NP\: mixed, N\?\: \(float\|int\), M\?\: non\-empty\-array\<0\|1\|2\|3\|4\|5\|6\|7\|8\|9\|10\|11, mixed\>\}\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/resultat/result.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/resultat/result.php
-
-		-
-			message: '#^Variable \$code might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/resultat/result.php
-
-		-
-			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/resultat/result.php
 
@@ -2467,32 +2341,14 @@ parameters:
 			path: ../../../htdocs/compta/stats/cabyuser.php
 
 		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/stats/cabyuser.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/compta/stats/casoc.php
 
 		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/compta/stats/casoc.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/stats/index.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/stats/index.php
 
@@ -2515,12 +2371,6 @@ parameters:
 			path: ../../../htdocs/compta/stats/supplier_turnover.php
 
 		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/stats/supplier_turnover.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -2530,12 +2380,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
-			path: ../../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
 			path: ../../../htdocs/compta/stats/supplier_turnover_by_thirdparty.php
 
 		-
@@ -2605,27 +2449,9 @@ parameters:
 			path: ../../../htdocs/compta/tva/index.php
 
 		-
-			message: '#^Variable \$date_end might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/compta/tva/index.php
-
-		-
-			message: '#^Variable \$date_start might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/compta/tva/index.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
-			path: ../../../htdocs/compta/tva/payments.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/compta/tva/payments.php
 
 		-
@@ -2637,12 +2463,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/contact/ajax/contact.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/contact/ajax/contact.php
 
@@ -2767,36 +2587,6 @@ parameters:
 			path: ../../../htdocs/core/actions_builddoc.inc.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: '#^Variable \$idcomment might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: '#^Variable \$withproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/actions_comments.inc.php
-
-		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_dellink.inc.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -2843,12 +2633,6 @@ parameters:
 			identifier: argument.unresolvableType
 			count: 1
 			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: '#^Variable \$classfile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_printing.inc.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<mixed\> will always evaluate to true\.$#'
@@ -3319,12 +3103,6 @@ parameters:
 			path: ../../../htdocs/core/class/fileupload.class.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/class/fileupload.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3391,12 +3169,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Variable \$select_encoder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/class/html.formbarcode.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3411,12 +3183,6 @@ parameters:
 		-
 			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, array\<array\<string, int\>\|int\> given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
-			message: '#^Variable \$idprof might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
@@ -3485,12 +3251,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/class/html.formother.class.php
-
-		-
-			message: '#^Variable \$labeltoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/class/html.formprojet.class.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -3805,12 +3565,6 @@ parameters:
 			path: ../../../htdocs/core/class/utils.class.php
 
 		-
-			message: '#^Variable \$moduleobj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/class/utils.class.php
-
-		-
 			message: '#^Parameter \#1 \$table of static method Diff\:\:generatePartialDiff\(\) expects array\<array\{string, int\<0, 2\>\}\>, array\<array\<int\>\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3838,24 +3592,6 @@ parameters:
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 2
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Variable \$page might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Variable \$sortfield might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/core/customreports.php
 
 		-
@@ -3952,12 +3688,6 @@ parameters:
 			message: '#^Loose comparison using \!\= between ''llx_'' and ''llx_'' will always evaluate to false\.$#'
 			identifier: notEqual.alwaysFalse
 			count: 1
-			path: ../../../htdocs/core/lib/admin.lib.php
-
-		-
-			message: '#^Variable \$resarray might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/core/lib/admin.lib.php
 
 		-
@@ -5329,12 +5059,6 @@ parameters:
 			path: ../../../htdocs/expedition/shipment.php
 
 		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/stats/month.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -5495,12 +5219,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 10
 			path: ../../../htdocs/fourn/card.php
-
-		-
-			message: '#^Variable \$contact might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(CommandeFournisseur\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -6061,12 +5779,6 @@ parameters:
 			path: ../../../htdocs/hrm/lib/hrm_evaluation.lib.php
 
 		-
-			message: '#^Variable \$job might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/position.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -6091,21 +5803,9 @@ parameters:
 			path: ../../../htdocs/hrm/skill_card.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/skill_card.php
-
-		-
 			message: '#^Call to function is_array\(\) with list will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: ../../../htdocs/hrm/skill_tab.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/hrm/skill_tab.php
 
 		-
@@ -6325,12 +6025,6 @@ parameters:
 			path: ../../../htdocs/index.php
 
 		-
-			message: '#^Variable \$boxwork might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/index.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -6487,12 +6181,6 @@ parameters:
 			path: ../../../htdocs/loan/payment/payment.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/loan/schedule.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -6604,30 +6292,6 @@ parameters:
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 3
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
-			message: '#^Variable \$class might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
-			message: '#^Variable \$moduleobj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
-			message: '#^Variable \$outputfilezip might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
@@ -7267,12 +6931,6 @@ parameters:
 			path: ../../../htdocs/printing/admin/printing.php
 
 		-
-			message: '#^Variable \$classfile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/printing/admin/printing.php
-
-		-
 			message: '#^Result of \|\| is always true\.$#'
 			identifier: booleanOr.alwaysTrue
 			count: 1
@@ -7639,12 +7297,6 @@ parameters:
 			path: ../../../htdocs/product/stock/massstockmove.php
 
 		-
-			message: '#^Variable \$producttmp might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 2 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -7701,12 +7353,6 @@ parameters:
 		-
 			message: '#^Variable \$draftchecked in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/product/stock/replenish.php
-
-		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/replenish.php
 
@@ -7805,12 +7451,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 4
 			path: ../../../htdocs/projet/activity/perweek.php
-
-		-
-			message: '#^Variable \$res might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/admin/project.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
@@ -7963,44 +7603,8 @@ parameters:
 			path: ../../../htdocs/projet/element.php
 
 		-
-			message: '#^Variable \$dateformat might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: '#^Variable \$dateformatinput might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: '#^Variable \$datehourformat might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: '#^Variable \$task_dependencies might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/projet/ganttchart.inc.php
-
-		-
-			message: '#^Variable \$tasks might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/projet/ganttchart.inc.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/ganttview.php
-
-		-
-			message: '#^Variable \$param might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/ganttview.php
 
@@ -8059,18 +7663,6 @@ parameters:
 			path: ../../../htdocs/projet/list.php
 
 		-
-			message: '#^Variable \$permissiontoadd might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/list.php
-
-		-
-			message: '#^Variable \$permissiontoread might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/list.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -8097,18 +7689,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/projet/tasks.php
-
-		-
-			message: '#^Variable \$massactionbutton might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/projet/tasks.php
-
-		-
-			message: '#^Variable \$permissiontodelete might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/tasks.php
 
@@ -8989,30 +8569,6 @@ parameters:
 			path: ../../../htdocs/reception/class/reception.class.php
 
 		-
-			message: '#^Variable \$mesgs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/contact.php
-
-		-
-			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/reception/contact.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/reception/contact.php
-
-		-
-			message: '#^Variable \$origin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/document.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Reception and ''fetch_lines'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9031,12 +8587,6 @@ parameters:
 			path: ../../../htdocs/recruitment/admin/setup.php
 
 		-
-			message: '#^Variable \$res might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/admin/setup.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -9045,12 +8595,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/recruitment/admin/setup_candidatures.php
-
-		-
-			message: '#^Variable \$res might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/admin/setup_candidatures.php
 
@@ -9175,22 +8719,10 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
 
 		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
-
-		-
-			message: '#^Variable \$lineid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/recruitment/recruitmentjobposition_applications.php
 
 		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
@@ -9292,12 +8824,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
-			path: ../../../htdocs/salaries/payments.php
-
-		-
-			message: '#^Variable \$resql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/salaries/payments.php
 
 		-
@@ -9433,18 +8959,6 @@ parameters:
 			path: ../../../htdocs/societe/consumption.php
 
 		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/consumption.php
-
-		-
-			message: '#^Variable \$where might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/consumption.php
-
-		-
 			message: '#^Call to function is_object\(\) with Societe will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9481,12 +8995,6 @@ parameters:
 			path: ../../../htdocs/societe/paymentmodes.php
 
 		-
-			message: '#^Variable \$service might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/paymentmodes.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''add_customer_price'' and ''add_customer_price'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -9505,12 +9013,6 @@ parameters:
 			path: ../../../htdocs/societe/price.php
 
 		-
-			message: '#^Variable \$massaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/societe/website.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -9525,12 +9027,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/stripe/charge.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/stripe/charge.php
 
@@ -9571,25 +9067,7 @@ parameters:
 			path: ../../../htdocs/supplier_proposal/card.php
 
 		-
-			message: '#^Variable \$buyingprice might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/card.php
-
-		-
-			message: '#^Variable \$classname might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/card.php
-
-		-
 			message: '#^Variable \$fk_account might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/card.php
-
-		-
-			message: '#^Variable \$fournprice might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/supplier_proposal/card.php
@@ -9643,12 +9121,6 @@ parameters:
 			path: ../../../htdocs/supplier_proposal/list.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/takepos/admin/bar.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -9671,18 +9143,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 3
 			path: ../../../htdocs/takepos/freezone.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/takepos/genimg/index.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/genimg/qr.php
 
 		-
 			message: '#^Property CommonObjectLine\:\:\$product \(Product\) in empty\(\) is not falsy\.$#'
@@ -9733,12 +9193,6 @@ parameters:
 			path: ../../../htdocs/takepos/pay.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/printbox.php
-
-		-
 			message: '#^Loose comparison using \!\= between non\-empty\-string and '''' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -9778,12 +9232,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/theme/md/style.css.php
-
-		-
-			message: '#^Variable \$menumanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/theme/md/style.css.php
 
 		-
@@ -10013,12 +9461,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/user/notify/card.php
-
-		-
-			message: '#^Variable \$dolibarr_main_authentication might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/user/passwordforgotten.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
@@ -10389,12 +9831,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$atleastonepage might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/website/index.php
 
