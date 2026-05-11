@@ -805,7 +805,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (!is_null($fk_replacement)) {
 			$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
 			if (!$force_fk_replacement && !in_array($this->status, $allowed_statuses)) {
-				$allowed_labels = array_map(function($s) {
+				$allowed_labels = array_map(function ($s) {
 					return $this->LibStatut($s);
 				}, $allowed_statuses);
 				$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->LibStatut($this->status) . ' is not allowed (must be ' . implode(' or ', $allowed_labels) . ')';
@@ -832,16 +832,16 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->error = $error_text;
 			return -4;
 		}
-	    if (!$force_fk_replacement && !empty($this->fk_replacement) && !is_null($fk_replacement) && $this->fk_replacement != $fk_replacement->id) {
+		if (!$force_fk_replacement && !empty($this->fk_replacement) && !is_null($fk_replacement) && $this->fk_replacement != $fk_replacement->id) {
 			$error_text = 'Attendee ' . $this->id . ' already has a replacement (ID: ' . $this->fk_replacement . '). Use force_fk_replacement=1 to override.';
 			dol_syslog($error_text, LOG_WARNING);
 			$this->error = $error_text;
 			return -5;
 		}
 		if (is_null($fk_replacement) && empty($this->fk_replacement)) {
-            $this->error = "No replacement to undo.";
-            return -6;
-        }
+			$this->error = "No replacement to undo.";
+			return -6;
+		}
 		if (is_null($fk_replacement) && $this->fk_replacement > 0) {
 			$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
 			$oldFetch = $oldReplacementAttendee->fetch($this->fk_replacement);
@@ -926,7 +926,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 			$this->db->commit();
 			return 1;
-
 		} catch (Exception $e) {
 			// 5. Rollback
 			// If we are here, the transaction is likely already rolled back
