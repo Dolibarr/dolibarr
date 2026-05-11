@@ -38,7 +38,7 @@ class JsonResponse
 	public $data;
 
 	/**
-	 * debug data
+	 * debug data you can set all data you want
 	 *
 	 * @var mixed
 	 */

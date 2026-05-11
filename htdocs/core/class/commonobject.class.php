@@ -9948,6 +9948,124 @@ abstract class CommonObject
 		return $user->rights->$element;
 	}
 
+
+	/**
+	 * Check whether a given field is allowed to be edited on the current object.
+	 * This method combines:
+	 * - user rights check
+	 * - field configuration constraints
+	 * - object state constraints (status/statut)
+	 *
+	 * Note: This method is defined in CommonObject, so it must remain generic.
+	 * Some child classes use `status`, others use `statut`, hence both are checked.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is editable, false otherwise
+	 */
+	public function isFieldEditAllowed($field)
+	{
+		// Basic rights validation (invalid or missing rights object = deny access)
+		$right = $this->getRights();
+		if (is_object($right) || is_null($right)) {
+			return false;
+		}
+
+		// Ensure field exists in object definition
+		if (!$this->isFieldDefined($field)) {
+			return false;
+		}
+
+		// Field explicitly disabled
+		if ($this->isFieldDisabled($field)) {
+			return false;
+		}
+
+		// Field must be enabled (default = enabled if not defined)
+		if (!$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		// Field explicitly marked as not editable
+		if ($this->isFieldMarkedNotEditable($field)) {
+			return false;
+		}
+
+		// Object state restriction
+		if ($this->isFieldBlockedByObjectState($field)) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Check if the field is defined in the object's field metadata.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field exists in the object definition, false otherwise
+	 */
+	private function isFieldDefined($field)
+	{
+		return !empty($this->fields)
+			&& is_array($this->fields)
+			&& isset($this->fields[$field]);
+	}
+
+	/**
+	 * Check if the field is explicitly marked as disabled.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is disabled, false otherwise
+	 */
+	private function isFieldDisabled($field)
+	{
+		return !empty($this->fields[$field]['disabled']);
+	}
+
+	/**
+	 * Check if the field is enabled.
+	 * A field is considered enabled by default if the "enabled" flag is not set.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is enabled, false otherwise
+	 */
+	private function isFieldEnabled($field)
+	{
+		return !isset($this->fields[$field]['enabled'])
+			|| (int) $this->fields[$field]['enabled'] === 1;
+	}
+
+	/**
+	 * Check if the field is explicitly marked as not editable.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is not editable, false otherwise
+	 */
+	private function isFieldMarkedNotEditable($field)
+	{
+		return !empty($this->fields[$field]['noteditable']);
+	}
+
+	/**
+	 * Check if the field is blocked by the current object state.
+	 * In non-draft states, fields are locked unless "alwayseditable" is set.
+	 *
+	 * Note:
+	 * This method is kept generic for CommonObject compatibility.
+	 * Both `status` and `statut` are checked because child classes may use either.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is blocked by object state, false otherwise
+	 */
+	private function isFieldBlockedByObjectState($field)
+	{
+		return (
+			($this->status != 0 && $this->statut != 0)
+			&& (empty($this->fields[$field]['alwayseditable']))
+		);
+	}
+
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 * This function is meant to be called from replaceThirdparty with the appropriate tables
