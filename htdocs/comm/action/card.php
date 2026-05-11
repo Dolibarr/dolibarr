@@ -419,11 +419,15 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		if (GETPOST("elementtype", 'alpha')) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
+			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
 			if ($modulecodetouseforpermissioncheck == 'productbatch') {
 				$modulecodetouseforpermissioncheck = 'produit';
+			} elseif ($modulecodetouseforpermissioncheck == 'eventorganization') {
+				// Special handling for eventorganization which relies on Project permissions
+				$modulecodetouseforpermissioncheck = 'projet';
+				$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodule for read
 			}
-			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -435,7 +439,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementid = GETPOSTINT("fk_element");
-				$object->elementtype = GETPOST("elementtype", 'alpha');
+				$object->elementtype = GETPOST("elementtype", 'alpha') . '@' . $elProp['module'];
 			}
 		}
 
@@ -1003,6 +1007,10 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
 			if ($modulecodetouseforpermissioncheck == 'productbatch') {
 				$modulecodetouseforpermissioncheck = 'produit';
+			} elseif ($modulecodetouseforpermissioncheck == 'eventorganization') {
+				// Special handling for eventorganization which relies on Project permissions
+				$modulecodetouseforpermissioncheck = 'projet';
+				$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodule for read
 			}
 
 			$hasPermissionOnLinkedObject = 0;
@@ -1012,7 +1020,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementid = GETPOSTINT("fk_element");
-				$object->elementtype = GETPOST("elementtype", 'alpha');
+				$object->elementtype = GETPOST("elementtype", 'alpha') . '@' . $elProp['module'];
 			}
 		}
 
@@ -1871,7 +1879,12 @@ if ($action == 'create') {
 		// Keep permission check aligned with rights class aliases (see restrictedArea()).
 		if ($modulecodetouseforpermissioncheck == 'productbatch') {
 			$modulecodetouseforpermissioncheck = 'produit';
+		} elseif ($modulecodetouseforpermissioncheck == 'eventorganization') {
+			// Special handling for eventorganization which relies on Project permissions
+			$modulecodetouseforpermissioncheck = 'projet';
+			$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodule for read
 		}
+
 		if ($user->hasRight($modulecodetouseforpermissioncheck, 'read') || $user->hasRight($modulecodetouseforpermissioncheck, $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}

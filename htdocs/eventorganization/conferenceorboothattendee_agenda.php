@@ -217,20 +217,31 @@ print dol_get_fiche_end();
 
 
 // Actions buttons
-$out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
-if ((!empty($attendeestatic->id) || !empty($objcon->id)) && $permok) {
+if ((!empty($attendeestatic->id)) && $permok) {
 	if (is_object($attendeestatic) && get_class($attendeestatic) == 'ConferenceOrBoothAttendee') {
-		$out .= '&originid='.$attendeestatic->id.($attendeestatic->id > 0 ? '&attendeeid='.$attendeestatic->id : '').'&backtopage='.urlencode($_SERVER['PHP_SELF'].($attendeestatic->id > 0 ? '?attendeeid='.$attendeestatic->id : ''));
+		// Build the clean URL for adding an action
+		$addActionUrl = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+		$addActionUrl .= '&origin=conferenceorboothattendee';
+		$addActionUrl .= '&originid='.$attendeestatic->id; // This is the attendee ID
+		// Add project if available
+		if (!empty($attendeestatic->fk_project)) {
+			$addActionUrl .= '&projectid='.$attendeestatic->fk_project;
+		}
+		// Add thirdparty if available
+		if (!empty($attendeestatic->fk_soc)) {
+			$addActionUrl .= '&socid='.$attendeestatic->fk_soc;
+		}
+		$addActionUrl .= '&backtopage='.urlencode($_SERVER['PHP_SELF'].'?attendeeid='.$attendeestatic->id);
 	}
-	$out .= '&datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$addActionUrl .= '&datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
 }
 
 $morehtmlright = '';
 
 if (isModEnabled('agenda')) {
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $addActionUrl);
 	}
 }
 
