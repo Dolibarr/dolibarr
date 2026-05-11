@@ -1097,7 +1097,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 *  Return a string to display a field value (overridden to show Name and Chain for 'fk_replacement')
 	 *
-	 *  @param  array   $val      Array of properties of field to show
+	 *  @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>,noteditable?:int,default?:int|string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,cssview?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int,required?:int,picto?:string}	$val	Array of properties of field to show
 	 *  @param  string  $key      Key of attribute
 	 *  @param  mixed   $value    Preselected value to show
 	 *  @param  string  $moreparam    To add more parameters on html tag
