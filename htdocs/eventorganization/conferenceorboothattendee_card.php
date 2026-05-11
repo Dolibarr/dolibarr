@@ -646,15 +646,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			$select_replace_attendee = $langs->trans("SelectOneReplacementAttendee");
 			/**
-			 * @var array<array{
-			 *   name: string,
-			 *   label: string,
-			 *   type: 'select'|'checkbox',
-			 *   values?: array<int|string, string>,
-			 *   default?: string|int,
-			 *   value?: int,
-			 *   inputko?: int
-			 * }>
+			 * @var array<array{name: string, label: string, type: 'select'|'checkbox', values?: array<int|string, string>, default?: string|int, value?: int, inputko?: int}> $formquestion
 			 */
 			if ($action == 'replace') {
 				$attendee_selection_list = [
@@ -767,10 +759,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$autotrigger = GETPOST('autotrigger', 'alpha') ? GETPOST('autotrigger', 'alpha') : null;
 			$notrigger = ($autotrigger == 'on') ? 0 : 1;
 
+			$attendeereplace = new ConferenceOrBoothAttendee($db);
+			$tempObj = new ConferenceOrBoothAttendee($db);
 			if (isset($attendeesource->fk_replacement) && $attendeesource->fk_replacement == $select_replace_attendee) {
 				$fetchReplace = 0;
 			} elseif ($select_replace_attendee > 0) {
-				$attendeereplace = new ConferenceOrBoothAttendee($db);
 				$fetchReplace = $attendeereplace->fetch($select_replace_attendee);
 			} else {
 				$fetchReplace = null;
@@ -783,7 +776,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$any_existing_fk_replacement = $attendeesource->fk_replacement;
 				$check_any_existing_fk_replacement = 0;
 				if ($any_existing_fk_replacement > 0) {
-					$tempObj = new ConferenceOrBoothAttendee($db);
 					$check_any_existing_fk_replacement = $tempObj->fetch($any_existing_fk_replacement);
 				}
 				if ($check_any_existing_fk_replacement > 0) {

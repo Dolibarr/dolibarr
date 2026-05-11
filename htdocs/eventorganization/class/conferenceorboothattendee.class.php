@@ -196,9 +196,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $status;
 
 	/**
-	 * @var int
+	 * @var int|null
 	 */
-	public $fk_replacement;
+	public $fk_replacement = null;
 	// END MODULEBUILDER PROPERTIES
 
 
