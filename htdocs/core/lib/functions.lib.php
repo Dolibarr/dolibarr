@@ -3627,6 +3627,16 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		/** @var Task $object */
 		$tmptxt = $object->getLibStatut(4);
 		$morehtmlstatus .= $tmptxt;
+	} elseif ($object->element == 'conferenceorboothattendee') {
+		/** @var ConferenceOrBoothAttendee $object */
+		'@phan-var-force ConferenceOrBoothAttendee $object';
+		// Display status with picto and short label (Mode 6)
+		$tmptxt = $object->getLibStatut(6);
+		// Fallback to mode 5 if mode 6 returns empty or identical to mode 3 (standard Dolibarr pattern)
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5);
+		}
+		$morehtmlstatus .= $tmptxt;
 	} elseif (method_exists($object, 'getLibStatut')) { // Generic case for status
 		$tmptxt = $object->getLibStatut(6);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
