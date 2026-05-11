@@ -197,7 +197,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 			$actioncomm->authorid    = $user->id;
 			$actioncomm->userownerid = $user->id;
 			$actioncomm->fk_element  = $object->id;
-			$actioncomm->elementtype = 'conferenceorboothattendee';
+			$actioncomm->elementtype = $object->element . '@' . $object->module;
 
 			$ret = $actioncomm->create($user);
 			if ($ret < 0) {
