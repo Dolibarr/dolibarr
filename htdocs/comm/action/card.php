@@ -439,7 +439,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementid = GETPOSTINT("fk_element");
-				$object->elementtype = GETPOST("elementtype", 'alpha') . '@' . $elProp['module'];
+				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
 
@@ -1020,7 +1020,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			if ($hasPermissionOnLinkedObject) {
 				$object->fk_element = GETPOSTINT("fk_element");
 				$object->elementid = GETPOSTINT("fk_element");
-				$object->elementtype = GETPOST("elementtype", 'alpha') . '@' . $elProp['module'];
+				$object->elementtype = GETPOST("elementtype", 'alpha');
 			}
 		}
 

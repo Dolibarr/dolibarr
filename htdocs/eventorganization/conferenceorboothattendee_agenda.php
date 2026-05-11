@@ -222,7 +222,7 @@ if ((!empty($attendeestatic->id)) && $permok) {
 	if (is_object($attendeestatic) && get_class($attendeestatic) == 'ConferenceOrBoothAttendee') {
 		// Build the clean URL for adding an action
 		$addActionUrl = DOL_URL_ROOT.'/comm/action/card.php?action=create';
-		$addActionUrl .= '&origin=conferenceorboothattendee';
+		$addActionUrl .= '&origin='.$attendeestatic->element.'@'.$attendeestatic->module;
 		$addActionUrl .= '&originid='.$attendeestatic->id; // This is the attendee ID
 		// Add project if available
 		if (!empty($attendeestatic->fk_project)) {
