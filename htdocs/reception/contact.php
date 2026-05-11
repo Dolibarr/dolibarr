@@ -158,11 +158,7 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 			$mesgs = $objectsrc->errors;
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
-    } else {
-        if (!isset($mesg)) { // Only set if not already set
-             setEventMessages($langs->trans("ErrorCannotPerformActionOnThisDocumentType"), null, 'errors');
-        }
-    }
+	}
 } elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer') && $objectsrc !== null) {
 	// bascule du statut d'un contact
 	$result = $objectsrc->swapContactStatus(GETPOSTINT('ligne'));
@@ -183,13 +179,13 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 		$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		if (!empty($newmember)) {
-            if ($objectsrc === null) {
+			if ($objectsrc === null) {
 				$mesg = $langs->trans("ErrorRefNotFound", $langs->trans("Supplier"));
 				setEventMessages($mesg, null, 'errors');
-                $result = -1; // Mark as failed
-            } else {
-                $codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-                $result = $objectsrc->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+				$result = -1; // Mark as failed
+			} else {
+				$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+				$result = $objectsrc->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
             }
 		} else {
 			setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
