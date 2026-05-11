@@ -544,10 +544,10 @@ class modEventOrganization extends DolibarrModules
 		);
 
 		foreach ($sql_triggers as $sql) {
-			$resql = $this->_db->query($sql);
+			$resql = $this->db->query($sql);
 			if (!$resql) {
 				// Log error but don't necessarily fail the whole activation if it's just a duplicate
-				dol_syslog("Error inserting trigger: " . $this->_db->lasterror(), LOG_ERR);
+				dol_syslog("Error inserting trigger: " . $this->db->lasterror(), LOG_ERR);
 			}
 		}
 
