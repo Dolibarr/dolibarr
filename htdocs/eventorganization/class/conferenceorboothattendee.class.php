@@ -807,7 +807,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (!is_null($fk_replacement)) {
 			$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
 			if (!$force_fk_replacement && !in_array($this->status, $allowed_statuses)) {
-				$allowed_labels = array_map(function ($s) {
+				$allowed_labels = array_map(function (int $s) {
 					return $this->LibStatut($s);
 				}, $allowed_statuses);
 				$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->LibStatut($this->status) . ' is not allowed (must be ' . implode(' or ', $allowed_labels) . ')';
