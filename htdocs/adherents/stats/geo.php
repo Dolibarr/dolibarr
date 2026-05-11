@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
@@ -98,7 +98,7 @@ $data = array();
 $tab = null;
 $label = '';
 
-if ($mode) {
+if ($mode) {  // @phpstan-ignore if.alwaysTrue
 	// Define sql
 	$sql = null;
 	if ($mode == 'memberbycountry') {
@@ -240,7 +240,7 @@ print dol_get_fiche_head($head, (string) $tab, '', -1, '');
 
 
 // Print title
-if ($mode && !count($data)) {
+if ($mode && !count($data)) {  // @phpstan-ignore booleanAnd.leftAlwaysTrue
 	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
 	print '<br>';
 } else {
@@ -316,7 +316,7 @@ if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH") && $mode == 'memberbycountry
 	print '<div class="center" id="'.$mode.'"></div>'."\n";
 }
 
-if ($mode) {
+if ($mode) {  // @phpstan-ignore if.alwaysTrue
 	// Print array
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste centpercent noborder">';

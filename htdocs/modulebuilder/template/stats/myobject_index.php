@@ -435,10 +435,10 @@ print '<table class="border centpercent"><tr class="pair nohover"><td align="cen
 if ($mesg) {
 	print $mesg;
 } else {
-	if (isset($px1)) {
-		print $px1->show();
-		print "<br>\n";
-	}
+	//if (isset($px1)) {  // Always set
+	print $px1->show();
+	print "<br>\n";
+	//}
 	/*
 	if (isset($px2)) {
 		print $px2->show();
