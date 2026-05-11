@@ -726,7 +726,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && $id > 0 && $id == $select_replace_attendee) {
 		$langs->loadLangs(array("eventorganization", "admin"));
 		dol_syslog('Aborted - Attempt to replace attendee='.(int) $id.' with itself!', LOG_WARNING);
-		setEventMessages($langs->trans("SelfReplacement"), null, 'errors');
+		setEventMessages($langs->trans("ErrorCannotReplaceSelf2"), null, 'errors');
 	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && ($select_replace_attendee > 0 || $select_replace_attendee == -2)) {
 		$langs->loadLangs(array("eventorganization", "errors", "blockedlog", "bills", "main"));
 		// can not reuse attendeestatic because I modify it

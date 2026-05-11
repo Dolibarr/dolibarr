@@ -97,7 +97,6 @@ SelectOneReplacementAttendee=Select 1 replacement attendee
 OriginalAttendee=Original attendee
 ReplacementAttendee=Replacement attendee
 NoReplacementAttendeeSelected=No replacement attendee selected
-SelfReplacement=You can not replace an attendee with itself, make different selection
 CopyOriginal=Copy original
 Unchanged=Unchanged
 Replaced=Replaced
