@@ -186,7 +186,7 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 			} else {
 				$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
 				$result = $objectsrc->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
-            }
+			}
 		} else {
 			setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
 		}
