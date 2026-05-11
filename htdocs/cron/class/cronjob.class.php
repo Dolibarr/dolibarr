@@ -1269,7 +1269,7 @@ class Cronjob extends CommonObject
 	public function run_jobs(string $userlogin)
 	{
 		// phpcs:enable
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf, $hookmanager, $user;
 
 		$hookmanager->initHooks(array('cron'));
 
@@ -1310,11 +1310,7 @@ class Cronjob extends CommonObject
 			}
 		}
 
-		$user->getrights();
-
-		// Method-based cron jobs rely on the global user context for permission checks.
-		// Ensure the fetched cron user is also the execution user for called code.
-		$GLOBALS['user'] = $user;
+		$user->loadRights();
 
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
