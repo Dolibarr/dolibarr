@@ -343,7 +343,8 @@ if ($search_task_billable && $search_task_billable != '-1') {
 if (!empty($search_assignment)) {
     $subq = "SELECT 1 FROM " . $db->prefix() . "element_contact ec "
           . "INNER JOIN " . $db->prefix() . "c_type_contact tc ON ec.fk_c_type_contact = tc.rowid "
-          . "WHERE ec.element_id = t.rowid AND tc.element = 'project_task' AND tc.active = 1";
+          . "WHERE ec.element_id = t.rowid "
+          . "AND tc.element = 'project_task'";
 
     switch ($search_assignment) {
         case 'assigned':
