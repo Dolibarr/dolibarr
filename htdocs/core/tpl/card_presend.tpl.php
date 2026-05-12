@@ -308,7 +308,7 @@ if ($action == 'presend') {
 	// Make substitution in email content
 	if (!empty($object)) {
 		// First we set ->substit (useless, it will be erased later) and ->substit_lines
-		$formmail->setSubstitFromObject($object, $langs);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 
