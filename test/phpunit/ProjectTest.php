@@ -226,7 +226,7 @@ class ProjectTest extends CommonClassTest
 		}
 
 		print __METHOD__." id=".$localobject->id." tabs=".implode(',', $tabcodes)."\n";
-		$this->assertContains('task_subtasks', $tabcodes, 'task_prepare_head must expose a "task_subtasks" tab so users can see subtasks of a parent task (#38186).');
+		$this->assertTrue(in_array('task_subtasks', $tabcodes, true), 'task_prepare_head must expose a "task_subtasks" tab so users can see subtasks of a parent task (#38186).');
 
 		return $localobject;
 	}
