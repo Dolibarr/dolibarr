@@ -231,7 +231,7 @@ $resqlCount = $db->query($sqlCount);
 $totalRecords = $resqlCount ? $db->fetch_object($resqlCount)->total : 0;
 
 
-$sql = "SELECT l.rowid, u.login
+$sql = "SELECT l.rowid, u.login, l.date_request, l.query_text, l.tool_name, l.provider, l.execution_time, l.status, l.error_msg, l.raw_request_payload, l.raw_response_payload
         FROM " . MAIN_DB_PREFIX . "ai_request_log as l
         LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid";
 $sql .= $whereSQL;

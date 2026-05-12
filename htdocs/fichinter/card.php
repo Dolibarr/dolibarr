@@ -60,6 +60,9 @@ if (isModEnabled('contract')) {
 if (getDolGlobalString('FICHEINTER_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_" . getDolGlobalString('FICHEINTER_ADDON').".php")) {
 	require_once DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_" . getDolGlobalString('FICHEINTER_ADDON').'.php';
 }
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
@@ -85,7 +88,7 @@ $lineid = GETPOSTINT('line_id');
 
 $error = 0;
 
-//PDF
+// PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
 $hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
 $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
@@ -531,8 +534,13 @@ if (empty($reshook)) {
 					$object->array_options = $array_options;
 
 					$result = $object->create($user);
+
 					if ($result > 0) {
-						$id = $result; // Force raffraichissement sur fiche venant d'etre cree
+						$id = $result; // Force refresh on a newly created record
+
+						// Category association
+						$categories = GETPOST('categories', 'array');
+						$object->setCategories($categories);
 					} else {
 						$langs->load("errors");
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -570,6 +578,12 @@ if (empty($reshook)) {
 		$result = $object->set_contrat($user, GETPOSTINT('contratid'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		}
+	} elseif ($action == 'settags' && isModEnabled('category') && $permissiontoadd) {
+		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setref_client' && $permissiontoadd) {
 		// Set customer reference
@@ -1087,6 +1101,14 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Category
+		if (isModEnabled('category')) {
+			// Categories
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->selectCategories(Categorie::TYPE_FICHINTER, 'categories', $object);
+			print "</td></tr>";
+		}
+
 		// Contract
 		if (isModEnabled('contract') && is_object($formcontract)) {
 			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
@@ -1467,6 +1489,33 @@ if ($action == 'create') {
 	print $form->editfieldval("Description", 'description', $object->description, $object, $permissiontoadd, 'textarea:8');
 	print '</td>';
 	print '</tr>';
+
+	// Categories
+	if (isModEnabled('category')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans("Categories");
+		print '<td><td class="right">';
+		if ($permissiontoadd) {
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		if ($action == 'edittags') {
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			print '<input type="hidden" name="action" value="settags">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print $form->selectCategories(Categorie::TYPE_FICHINTER, 'categories', $object);
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			print '</form>';
+		} else {
+			print $form->showCategories($object->id, Categorie::TYPE_FICHINTER, 1);
+		}
+		print "</td></tr>";
+	}
 
 	// Contract
 	if (isModEnabled('contract')) {

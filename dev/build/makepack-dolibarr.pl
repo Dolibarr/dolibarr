@@ -572,7 +572,7 @@ if ($nboftargetok) {
 			exit;
 		}
 
-		print 'Create xml check file with md5 checksum with command php '
+		print 'Create xml check file with hash checksum with command php '
 		  . $SOURCE
 		  . '/dev/build/generate_filelist_xml.php release='
 		  . $MAJOR . '.'

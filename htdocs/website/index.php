@@ -225,6 +225,7 @@ if (($pageid > 0 || $pageref) && $action != 'addcontainer') {
 }
 
 // Define pageid if pageid and pageref not received as parameter or was wrong
+$atleastonepage = false;
 if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createcontainer') {
 	$pageid = $object->fk_default_home;
 	if (empty($pageid)) {
@@ -1954,6 +1955,7 @@ if ($action == 'updatecss' && $usercanedit) {
 	}
 }
 
+$sourcetype = '';
 if ($action == "updatesecurity" && $usercanedit && GETPOST("btn_WEBSITE_SECURITY_FORCECSP")) {
 	$directivecsp = GETPOST("select_identifier_WEBSITE_SECURITY_FORCECSP");
 	$sourcecsp = GETPOST("select_source_WEBSITE_SECURITY_FORCECSP");
@@ -5311,7 +5313,7 @@ if ($action == 'preview') {
 
 if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
-	print '<div class="fiche"><br>';
+	print '<div class="fichenopadding" style="padding-right: 20px"><br>';
 
 	$module = 'medias';
 	$formalreadyopen = 2;	// So the form to submit a new file will not be open another time inside the core/tpl/filemanager.tpl.php

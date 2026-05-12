@@ -43,7 +43,9 @@ $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
 $mode = GETPOST('mode');
-
+if (empty($mode)) {
+	$mode = 'memberbycountry';
+}
 
 // Security check
 if ($user->socid > 0) {
@@ -255,6 +257,7 @@ if ($mode && !count($data)) {
 	} elseif ($mode == 'memberbyregion') {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
 	}
+	print '<span class="opacitymedium">'.$langs->trans("DraftMembersAreExcluded").'</span><br>';
 	print '<br>';
 }
 

@@ -33,6 +33,12 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
+-- Vxx forgotten
+
+ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
+
+
 -- V23 forgotten
 
 ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;

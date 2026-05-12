@@ -980,35 +980,30 @@ class FormCompany extends Form
 		$formlength = 0;
 		if (!getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
 			if ($country_code == 'FR') {
-				if (isset($idprof)) {
-					if ($idprof == 1) {
-						$formlength = 9;
-					} elseif ($idprof == 2) {
-						$formlength = 14;
-					} elseif ($idprof == 3) {
-						$formlength = 5; // 4 digits and 1 letter since january
-					} elseif ($idprof == 4) {
-						$formlength = 32; // No maximum as we need to include a town name in this id
-					}
+				if ($idprof == 1) {
+					$formlength = 9;
+				} elseif ($idprof == 2) {
+					$formlength = 14;
+				} elseif ($idprof == 3) {
+					$formlength = 5; // 4 digits and 1 letter since january
+				} elseif ($idprof == 4) {
+					$formlength = 32; // No maximum as we need to include a town name in this id
 				}
 			} elseif ($country_code == 'ES') {
 				if ($idprof == 1) {
 					$formlength = 9; //CIF/NIF/NIE 9 digits
-				}
-				if ($idprof == 2) {
+				} elseif ($idprof == 2) {
 					$formlength = 12; //NASS 12 digits without /
-				}
-				if ($idprof == 3) {
+				} elseif ($idprof == 3) {
 					$formlength = 5; //CNAE 5 digits
-				}
-				if ($idprof == 4) {
+				} elseif ($idprof == 4) {
 					$formlength = 32; //depend of college
 				}
 			}
 		}
 
 		$selected = $preselected;
-		if (!$selected && isset($idprof)) {
+		if (!$selected) {
 			if ($idprof == 1 && !empty($this->idprof1)) {
 				$selected = $this->idprof1;
 			} elseif ($idprof == 2 && !empty($this->idprof2)) {

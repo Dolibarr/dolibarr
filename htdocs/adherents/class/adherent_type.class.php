@@ -114,7 +114,7 @@ class AdherentType extends CommonObject
 		"caneditamount" => array("type" => "integer", "label" => "Caneditamount", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "1",),
 		"minimumamount" => array("type" => "double(24,8)", "label" => "MinimumAmount", "enabled" => "1", 'position' => 42, 'notnull' => 0, "visible" => "1",),
 		"amount" => array("type" => "double(24,8)", "label" => "Amount", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "1",),
-		"amountformuladescription" => array("type" => "longtext", "label" => "AmountFormulaDescription", "enabled" => "1", 'position' => 46, 'notnull' => 0, "visible" => "1",),
+		"amountformuladescription" => array("type" => "longtext", "label" => "AmountFormulaDescription", "enabled" => "1", 'position' => 46, 'notnull' => 0, "visible" => "-1",),
 		"vote" => array("type" => "varchar(3)", "label" => "Vote", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
 		"mail_valid" => array("type" => "longtext", "label" => "MailValidation", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-3",),
 		"morphy" => array("type" => "varchar(3)", "label" => "MembersNature", "enabled" => "1", 'position' => 65, 'notnull' => 0, "visible" => "1",),

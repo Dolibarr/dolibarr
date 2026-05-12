@@ -797,13 +797,13 @@ class Mo extends CommonObject
 
 
 	/**
-	 * Recurse through BOM only adding products to list to consume/produce
+	 * Recurse through BOM only adding products to the list of lines to consume/produce
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  string $role    MoLine Role that products are added as
-	 * @param  BOM $bom        BOM to parse lines from
-	 * @param  float $quantity Quantity modifier for sub products/BOM
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User 	$user      	User that modifies
+	 * @param  string 	$role    	MoLine Role that products are added as ('toproduce', 'toconsume', 'produced', 'consumed')
+	 * @param  BOM 		$bom        BOM to parse lines from
+	 * @param  float 	$quantity 	Quantity modifier for sub products/BOM
+	 * @return int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function processBOM(User $user, $role, $bom, $quantity)
 	{
@@ -835,7 +835,12 @@ class Mo extends CommonObject
 					$this->errors[] = $this->error;
 				} else {
 					$moline->fk_product = $line->fk_product;
-					$moline->fk_warehouse = !empty($line->fk_warehouse) ? $line->fk_warehouse : (!empty($bom->fk_warehouse) ? $bom->fk_warehouse : $this->fk_warehouse);
+					//$moline->fk_warehouse = !empty($line->fk_warehouse) ? $line->fk_warehouse : (!empty($bom->fk_warehouse) ? $bom->fk_warehouse : $this->fk_warehouse);
+					if (in_array($role, array('toconsume', 'consumed'))) {
+						$moline->fk_warehouse = null;
+					} else {	// to consume / consumed
+						$moline->fk_warehouse = $this->fk_warehouse;		// We fill the production warehouse defined in MO. Do not use the one of the BOM, if a BOM has a production warehouse set, it should have been already copied into the MO.
+					}
 					$moline->role = $role;
 					$moline->position = $line->position;
 					$moline->qty_frozen = $line->qty_frozen;
@@ -843,7 +848,9 @@ class Mo extends CommonObject
 					if (!empty($line->fk_default_workstation)) {
 						$moline->fk_default_workstation = $line->fk_default_workstation;
 					}
+
 					$resultline = $moline->create($user, 0); // Never use triggers here
+					//var_dump($moline);
 					if ($resultline <= 0) {
 						$error++;
 						$this->error = $moline->error;

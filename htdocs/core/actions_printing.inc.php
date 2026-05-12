@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2016  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2014-2025  Frédéric France      	<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,11 +46,16 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 	if (!empty($list)) {
 		$printerfound = 0;
 		foreach ($list as $driver) {
+			$classfile = null;
 			foreach ($dirmodels as $dir) {
-				if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
-					$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+				$tmpclassfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+				if (file_exists($tmpclassfile)) {
+					$classfile = $tmpclassfile;
 					break;
 				}
+			}
+			if ($classfile === null) {
+				continue;
 			}
 			require_once $classfile;
 			$classname = 'printing_'.$driver;

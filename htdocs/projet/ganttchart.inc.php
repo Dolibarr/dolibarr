@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,11 @@
 /**
  * @var DoliDB $db
  * @var Translate $langs
+ * @var string $dateformatinput
+ * @var string $dateformat
+ * @var string $datehourformat
+ * @var array<int,array{task_id:int,task_alternate_id:int,task_project_id:int,task_parent:int,task_is_group:int<0,1>,task_css:string,task_position:int,task_planned_workload:int,task_milestone:int,task_percent_complete:float,task_name:string,task_start_date:int,task_end_date:int,task_color:string,task_resources:string,note:string,task_parent_alternate_id:int}> $tasks
+ * @var array{} $task_dependencies
  */
 '
 @phan-var-force string $dateformatinput

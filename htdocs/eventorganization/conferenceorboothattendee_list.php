@@ -254,9 +254,6 @@ $now = dol_now();
 
 $help_url = "EN:Module_Event_Organization";
 
-$morejs = array();
-$morecss = array();
-
 $confOrBooth = new ConferenceOrBooth($db);
 if ($conf_or_booth_id > 0) {
 	$result = $confOrBooth->fetch($conf_or_booth_id);
@@ -266,13 +263,26 @@ if ($conf_or_booth_id > 0) {
 		$fk_project = $confOrBooth->fk_project;
 	}
 }
+if ($confOrBooth->id > 0) {
+	$title = $langs->trans('AttendeesPerConference');
+} else {
+	$title = $langs->trans('Attendees');
+}
+
+$subtitle = $title;
 
 if ($fk_project > 0) {
 	$result = $projectstatic->fetch($fk_project);
 	if ($result < 0) {
 		setEventMessages(null, $projectstatic->errors, 'errors');
 	}
+
+	$title = $projectstatic->ref . ' ' . $projectstatic->name . ' - ' . $title;
 }
+
+
+$morejs = array();
+$morecss = array();
 
 
 // Build and execute select
@@ -397,12 +407,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.((int) $id));
 	exit;
-}
-
-if ($confOrBooth->id > 0) {
-	$title = $langs->trans('ListOfAttendeesPerConference');
-} else {
-	$title = $langs->trans('ListOfAttendeesOfEvent');
 }
 
 // Output page
@@ -603,7 +607,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Location event
 		print '<tr><td>'.$langs->trans("Location").'</td><td>';
-		print $projectstatic->location;
+		print dolPrintHTML($projectstatic->location);
 		print '</td></tr>';
 
 		// Other attributes
@@ -625,7 +629,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		// Categories
 		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-			print $form->showCategories($projectstatic->id, 'project', 1);
+			print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
 		}
 
@@ -686,7 +690,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $message;
 		print "</td></tr>";
 
-		print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
+		print '<tr><td class="valignmiddle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
@@ -703,13 +707,13 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '<span class="opacitymedium">';
 		print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
 		//print '</span>';
-		print '</td><td>';
+		print '</td><td class="valuefield nowrap">';
 		$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$projectstatic->id;
 		$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 		$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+		print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
 		print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
@@ -744,7 +748,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		if (empty($confOrBooth->id)) {
 			$head = conferenceorboothProjectPrepareHead($projectstatic);
 			$tab = 'attendees';
-			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, (!empty($project->public) ? 'projectpub' : 'project'), 0, '', 'reposition');
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, '', 0, '', 'reposition');
 		}
 	}
 
@@ -793,6 +797,12 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($confOrBooth->id > 0) {
+	$param .= '&conforboothid='.urlencode((string) $confOrBooth->id);
+}
+if ($projectstatic->id > 0) {
+	$param .= '&fk_project='.urlencode((string) ($projectstatic->id));
+}
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -807,12 +817,6 @@ foreach ($search as $key => $val) {
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
-}
-if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode((string) $confOrBooth->id);
-}
-if ($projectstatic->id > 0) {
-	$param .= '&fk_project='.urlencode((string) ($projectstatic->id));
 }
 $param .= $withProjectUrl;
 
@@ -861,7 +865,7 @@ $urlnew = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?ac
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlnew, '', $permissiontoadd, $params);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($subtitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 
 // Add code for pre mass action (confirmation or email presend form)
