@@ -2294,6 +2294,11 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 			// Compute VAT
 			$tvaligne = $sign * $line_amount_vat * $progress * $prorata_effective_rate;
+			if ($object->lines[$i]->situation_percent == 0 && $prev_progress > 0) {
+                 $tmp_totline = ($object->lines[$i]->qty * $object->lines[$i]->subprice) *$object->lines[$i]->tva_tx/100 ;
+                 $tvaligne = -1 * $sign * $tmp_totline * $prev_progress/100 * $prorata_effective_rate;
+            }
+			
 			if (($object->lines[$i]->info_bits & 0x01) == 0x01) 		$vatrate .= '*';
 			if (!isset($taxes['tva'][$vatrate])) 						$taxes['tva'][$vatrate] = 0.0;
 			$taxes['tva'][$vatrate] += $tvaligne;
