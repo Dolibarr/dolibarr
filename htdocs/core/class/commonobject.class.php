@@ -225,6 +225,7 @@ abstract class CommonObject
 	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 * 'legacyProperties' array of deprecated legacy attributes to populate @see $this->setFieldValue()
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -2310,6 +2311,69 @@ abstract class CommonObject
 		return $result;
 	}
 
+
+	/**
+	 * Set a value for a dynamic field on the current object.
+	 *
+	 * This method performs multiple safety checks before assigning the value:
+	 * - verifies that the field is defined
+	 * - checks if the user is allowed to edit the field
+	 * - optionally validates the value if validation is required
+	 *
+	 * If all checks pass, the value is assigned dynamically to the property.
+	 *
+	 * @param User $user	The user attempting to modify the field.
+	 * @param string $fieldKey 	 The name of the field to modify.
+	 * @param mixed $value 	The value to assign to the field.
+	 *
+	 * @return bool Returns true if the value was successfully set, false otherwise.
+	 */
+	public function setFieldValue(User $user, $fieldKey, $value)
+	{
+		global $langs;
+
+		if (!$this->isFieldDefined($fieldKey)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
+			return false;
+		}
+
+		if (!$this->isFieldEditAllowed($user, $fieldKey)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotAllowedForEdit'));
+			return false;
+		}
+
+		if ($this->isFieldValidationRequired($fieldKey) && !$this->validateField($this->fields, $fieldKey, $value)) {
+			return false;
+		}
+
+		if (property_exists($this, 'oldcopy') && empty($this->oldcopy) ) {
+			$this->oldcopy = clone $this;
+		}
+
+		if (property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
+			$this->oldcopy->$fieldKey = $this->$fieldKey;
+		}
+
+		// Set new value
+		$this->$fieldKey = $value;
+
+		if (!empty($this->fields[$fieldKey]['legacyProperties'])) {
+			foreach ($this->fields[$fieldKey]['legacyProperties'] as $legacyProperty) {
+				// Copy/propagate old data
+				if (property_exists($this->oldcopy, $legacyProperty) && property_exists($this->oldcopy, $fieldKey)) {
+					$this->oldcopy->$legacyProperty = $this->oldcopy->$fieldKey ;
+				}
+
+				// set and propagate new data
+				if (property_exists($this, $legacyProperty)) {
+					$this->$legacyProperty = $this->$fieldKey;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
@@ -2346,6 +2410,7 @@ abstract class CommonObject
 		$propfield = $field;
 
 		// Special case
+		// TODO move special case to product class and/or create a propfield/field (table col name ) mapping key in object fields parameters ?
 		if ($table == 'product') {
 			if ($field == 'note_private') {
 				$field = 'note';
@@ -2891,7 +2956,7 @@ abstract class CommonObject
 			if ($this->db->query($sql)) {
 				$this->multicurrency_code = $code;
 
-				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				[$fk_multicurrency, $rate] = MultiCurrency::getIdAndTxFromCode($this->db, $code);
 				if ($rate) {
 					$this->setMulticurrencyRate($rate, 2);
 				}
@@ -8096,7 +8161,7 @@ abstract class CommonObject
 					continue;
 				}
 				if (strpos($valb, "|") !== false) {
-					list($valb, $parent) = explode('|', $valb);
+					[$valb, $parent] = explode('|', $valb);
 				}
 				$nbchoice++;
 				$tmpselect .= '<option value="'.$keyb.'"';
@@ -8183,7 +8248,7 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					[$parentName, $parentField] = explode('|', $InfoFieldList[3]);
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -8429,7 +8494,7 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					[$parentName, $parentField] = explode('|', $InfoFieldList[3]);
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -8623,7 +8688,7 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-					list($class, $classfile) = explode(':', $param_list[0]);
+					[$class, $classfile] = explode(':', $param_list[0]);
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {
@@ -9932,7 +9997,18 @@ abstract class CommonObject
 	public function getRights()
 	{
 		global $user;
+		return $this->getRightsForUser($user);
+	}
 
+	/**
+	 * Returns the rights used for this class for a specific user
+	 *
+	 * @param User $user User to check rights
+	 *
+	 * @return null|int|stdClass        Object of permission for the module
+	 */
+	public function getRightsForUser(User $user)
+	{
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
@@ -9948,24 +10024,17 @@ abstract class CommonObject
 		return $user->rights->$element;
 	}
 
-
 	/**
-	 * Check whether a given field is allowed to be edited on the current object.
-	 * This method combines:
-	 * - user rights check
-	 * - field configuration constraints
-	 * - object state constraints (status/statut)
-	 *
-	 * Note: This method is defined in CommonObject, so it must remain generic.
-	 * Some child classes use `status`, others use `statut`, hence both are checked.
-	 *
+	 * @param User   $user User to check rights
 	 * @param string $field Field name to check
-	 * @return bool True if the field is editable, false otherwise
+	 *
+	 * @return bool True if current user have right to write for this field, false otherwise
 	 */
-	public function isFieldEditAllowed($field)
+	public function hasUserWritePermissionOnField(User $user, $field)
 	{
 		// Basic rights validation (invalid or missing rights object = deny access)
-		$right = $this->getRights();// TODO remove chaos from getRights results
+		// TODO remove chaos from getRights results
+		$right = $this->getRightsForUser($user);
 		// Normalize global rights
 		if (is_null($right)) {
 			return false;
@@ -9980,6 +10049,37 @@ abstract class CommonObject
 				return false;
 			}
 		} else {
+			return false;
+		}
+
+		if (empty($field)) {
+			// Each child class need to be edited
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether a given field is allowed to be edited on the current object.
+	 * This method combines:
+	 * - user rights check
+	 * - field configuration constraints
+	 * - object state constraints (status/statut)
+	 *
+	 * Note: This method is defined in CommonObject, so it must remain generic.
+	 * Some child classes use `status`, others use `statut`, hence both are checked.
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $field Field name to check
+	 * @return bool True if the field is editable, false otherwise
+	 */
+	public function isFieldEditAllowed(User $user, $field)
+	{
+		// TODO : Implement error message ?
+
+		// Ensure field exists in object definition
+		if (!$this->hasUserWritePermissionOnField($user, $field)) {
 			return false;
 		}
 
@@ -10035,6 +10135,19 @@ abstract class CommonObject
 	{
 		return !empty($this->fields[$field]['disabled']);
 	}
+
+	/**
+	 * Check if the field requires validation.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if validation is required, false otherwise
+	 */
+	private function isFieldValidationRequired($field)
+	{
+		return !empty($this->fields[$field]['validate']);
+	}
+
+
 
 	/**
 	 * Check if the field is enabled.

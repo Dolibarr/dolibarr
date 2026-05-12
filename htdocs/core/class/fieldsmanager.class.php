@@ -822,6 +822,44 @@ class FieldsManager
 	}
 
 	/**
+	 * Set all object values of the object from POST
+	 *
+	 * @param	CommonObject			$object			Object handler
+	 * @param	string					$keyPrefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param	string					$keySuffix		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param	string					$mode			Get the fields infos for the provided mode ('create', 'edit', 'view', 'list')
+	 * @param	array<string,mixed>		$params			Other params
+	 * @return  int                                     Result <0 if KO, >0 if OK
+	 */
+	public function setObjectFieldValueFromPost(&$object, $fieldKey, $keyPrefix = '', $keySuffix = '', $mode = 'view', $params = array())
+	{
+		$fields = $this->getAllObjectFieldsInfos($object, $mode, $params);
+
+		if (!$object->isFieldDefined($fieldKey)) {
+		}
+
+		$error = 0;
+		foreach ($fields as $fieldKey => $fieldInfos) {
+			$check = true;
+			$key = $fieldInfos->nameInClass ?? $fieldInfos->key;
+			if ($fieldInfos->visible) {
+				$check = $this->verifyPostFieldValue($fieldInfos, $fieldKey, $keyPrefix, $keySuffix);
+			}
+			if ($check) {
+				$object->$key = $this->getPostFieldValue($fieldInfos, $fieldKey, $object->$key, $keyPrefix, $keySuffix);
+			}
+			if (!$fieldInfos->visible) {
+				$check = $this->verifyFieldValue($fieldInfos, $fieldKey, $object->$key);
+			}
+			if (!$check) {
+				$error++;
+			}
+		}
+
+		return $error ? -1 : 1;
+	}
+
+	/**
 	 * Set all extra field values of the object from POST
 	 *
 	 * @param	CommonObject			$object			Object handler
