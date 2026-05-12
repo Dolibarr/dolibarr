@@ -98,6 +98,7 @@ $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_task_billable = GETPOST('search_task_billable');
 $search_status = GETPOST('search_status');
+$search_assignment = GETPOST('search_assignment', 'alpha');
 
 $search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
 $search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
@@ -251,6 +252,7 @@ if (empty($reshook)) {
 		$search_task_budget_amount = '';
 		$search_task_billable = '';
 		$search_status = -1;
+		$search_assignment = '';
 		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -337,6 +339,26 @@ if ($search_task_budget_amount) {
 }
 if ($search_task_billable && $search_task_billable != '-1') {
 	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
+}
+if (!empty($search_assignment)) {
+    $subq = "SELECT 1 FROM " . $db->prefix() . "element_contact ec "
+          . "INNER JOIN " . $db->prefix() . "c_type_contact tc ON ec.fk_c_type_contact = tc.rowid "
+          . "WHERE ec.element_id = t.rowid AND tc.element = 'project_task' AND tc.active = 1";
+
+    switch ($search_assignment) {
+        case 'assigned':
+            $morewherefilterarray[] = "EXISTS (" . $subq . ")";
+            break;
+        case 'unassigned':
+            $morewherefilterarray[] = "NOT EXISTS (" . $subq . ")";
+            break;
+        case 'assigned_internal':
+            $morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'internal')";
+            break;
+        case 'assigned_external':
+            $morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'external')";
+            break;
+    }
 }
 //var_dump($morewherefilterarray);
 
@@ -595,6 +617,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if ($search_status) {
 		$param .= '&search_status='.urlencode((string) ($search_status));
+	}
+	if ($search_assignment) {
+		$param .= '&search_assignment='.urlencode($search_assignment);
 	}
 	if ($search_task_budget_amount) {
 		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
@@ -949,6 +974,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
 	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask', 0, '', '', $massactionbutton);
+	print '<!-- load_fiche_titre -->';
 
 	$objecttmp = new Task($db);
 	$trackid = 'task'.$taskstatic->id;
@@ -979,6 +1005,19 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
 	$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
 	$moreforfilter .= '</div>';
+
+	// Assignment status filter
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto('', 'company', 'class="pictofixedwidth"');
+	$assignmentOptions = array(
+		'assigned'          => $langs->trans("Assigned"),
+		'unassigned'        => $langs->trans("Unassigned"),
+		'assigned_internal' => $langs->trans("AssignedToInternalUsers"),
+		'assigned_external' => $langs->trans("AssignedToExternalContacts"),
+	);
+	$moreforfilter .= $form->selectarray('search_assignment', $assignmentOptions, $search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
+	$moreforfilter .= '</div>';
+
 	if ($moreforfilter) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
