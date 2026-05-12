@@ -50,6 +50,8 @@ if (GETPOSTISARRAY('actioncode')) {
 	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
@@ -62,7 +64,7 @@ $search_filtert = GETPOSTINT('search_filtert');
 $search_dateevent_start = GETPOSTDATE('dateevent_start');
 $search_dateevent_end = GETPOSTDATE('dateevent_end');
 $withproject = GETPOSTINT('withproject');
-
+$combi = GETPOST('combi');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -237,6 +239,11 @@ if ((!empty($attendeestatic->id)) && $permok) {
 }
 
 $morehtmlright = '';
+
+$messagingUrl = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_am_combi.php?combi=messaging&attendeeid='.$object->id;
+$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
+$messagingUrl = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_am_combi.php?combi=agenda&attendeeid='.$object->id;
+$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 if (isModEnabled('agenda')) {
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
