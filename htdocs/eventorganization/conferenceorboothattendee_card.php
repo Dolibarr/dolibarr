@@ -719,7 +719,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$MAXEVENT = 10;
 
 		$morehtmlcenter = '<div class="nowraponall">';
-		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_agenda.php?attendeeid='.$object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_am_combi.php?combi=messaging&attendeeid='.$object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_am_combi.php?combi=agenda&attendeeid='.$object->id);
 		$morehtmlcenter .= '</div>';
 
 		// List of actions on element
