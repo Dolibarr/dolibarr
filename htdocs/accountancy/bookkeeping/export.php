@@ -679,17 +679,17 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 						// Update the line to set date_export and/or date_validated (if not already set !)
 						$now = dol_now();
 
-						$setfields = '';
+						$sanitizedsetfields = '';
 						if (!empty($notifiedexportdate) && empty($movement->date_export)) {
-							$setfields .= ($setfields ? "," : "")." date_export = '".$db->idate($now)."'";
+							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_export = '".$db->idate($now)."'";
 						}
 						if (!empty($notifiedvalidationdate) && empty($movement->date_validation)) {
-							$setfields .= ($setfields ? "," : "")." date_validated = '".$db->idate($now)."'";
+							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_validated = '".$db->idate($now)."'";
 						}
 
-						if ($setfields) {
+						if ($sanitizedsetfields) {
 							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-							$sql .= " SET ".$setfields;		// $setfields is already a sanitized SQL string
+							$sql .= " SET ".$sanitizedsetfields;		// $setfields is already a sanitized SQL string
 							$sql .= " WHERE rowid = ".((int) $movement->id);
 
 							$result = $db->query($sql);
@@ -812,36 +812,36 @@ if ($action == 'export_file') {
 
 	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
 		// If 1, we check by default.
-		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING') ? 'true' : 'false';
+		$checked_exportreconcile = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING') ? 'true' : 'false';
 		$form_question['notexportlettering'] = array(
 			'name' => 'notexportlettering',
 			'type' => 'checkbox',
 			'label' => $langs->trans('NotExportLettering'),
-			'value' => $checked,
+			'value' => $checked_exportreconcile,
 		);
 
 		$form_question['separator1'] = array('name' => 'separator1', 'type' => 'separator');
 	}
 
 	// If 1 or not set, we check by default.
-	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE'));
+	$checked_exportdate = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE') ? 'true' : 'false';
 	$form_question['notifiedexportdate'] = array(
 		'name' => 'notifiedexportdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportDate'),
-		'value' => (getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE') ? 'false' : 'true'),
+		'value' => $checked_exportdate,
 	);
 
 	$form_question['separator2'] = array('name' => 'separator2', 'type' => 'separator');
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
-		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE');
+		$checked_validationdate = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE') ? 'true' : 'false';
 		$form_question['notifiedvalidationdate'] = array(
 			'name' => 'notifiedvalidationdate',
 			'type' => 'checkbox',
 			'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
-			'value' => $checked,
+			'value' => $checked_validationdate,
 		);
 
 		$form_question['separator3'] = array('name' => 'separator3', 'type' => 'separator');
@@ -865,11 +865,12 @@ if ($action == 'export_file') {
 		$except[] = $langs->trans('SupplierInvoice');
 	}
 
+	$checked_exportfull = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_EXPORTFULL') ? 'true' : 'false';
 	$form_question['notifiedexportfull'] = array(
 		'name' => 'notifiedexportfull',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportFull').(empty($except) ? '' : ' <spanc class="opacitymedium">('.$langs->trans("except").' '.implode(', ', $except).')</span>'),
-		'value' => 'false',
+		'value' => $checked_exportfull,
 	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 500, 700);
@@ -879,12 +880,18 @@ if ($action == 'export_file') {
 		const exportTypesWithDocs = ['.implode(',', $exportTypesWithDocs).'];
 		const $formatExport = jQuery("#formatexport");
 
+		// We retrieve the configured default value (true or false in native JavaScript)
+		const defaultChecked = ' . $checked_exportfull . ';
+
 		function toggleExportFull() {
 			const $checkbox = jQuery("#notifiedexportfull");
 			const show = exportTypesWithDocs.indexOf(parseInt($formatExport.val())) !== -1;
 			$checkbox.closest(".tagtr").toggle(show);
+
 			if (!show) {
 				$checkbox.prop("checked", false); // remove checked if hidden
+			} else {
+				$checkbox.prop("checked", defaultChecked); // Restore the default configuration if displayed
 			}
 		}
 
@@ -964,7 +971,7 @@ if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -1000,7 +1007,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Filters lines
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1134,7 +1141,7 @@ if (!empty($arrayfields['t.import_key']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1143,7 +1150,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 }
 if (!empty($arrayfields['t.piece_num']['checked'])) {
@@ -1195,7 +1202,7 @@ if (!empty($arrayfields['t.date_validated']['checked'])) {
 if (!empty($arrayfields['t.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER["PHP_SELF"], "t.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print "</tr>\n";
@@ -1248,7 +1255,7 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowraponall center">';
 		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -1477,7 +1484,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowraponall center">';
 		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;

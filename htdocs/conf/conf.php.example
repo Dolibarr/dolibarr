@@ -15,16 +15,15 @@
 // ======================
 // This parameter defines the root URL of your Dolibarr index.php page without ending "/".
 // It must link to the directory htdocs
-// In most cases, this is autodetected but it's still required
-// * to show full url bookmarks for some services (ie: agenda rss export url, ...)
-// * or when using Apache dir aliases (autodetect fails)
-// * or when using nginx (autodetect fails)
+// In most cases, root URL is autodetected by application but this parameter remains required to:
+// * show full url bookmarks for some services (ie: agenda rss export url, ...)
+// * when using Apache dir aliases (autodetect fails)
+// * when using nginx (autodetect may fails)
 //
 // Examples:
-// $dolibarr_main_url_root='http://localhost';
-// $dolibarr_main_url_root='http://mydolibarrvirtualhost';
-// $dolibarr_main_url_root='http://myserver/dolibarr/htdocs';
-// $dolibarr_main_url_root='http://myserver/dolibarralias';
+// $dolibarr_main_url_root='https://mydolibarrvirtualhost';
+// $dolibarr_main_url_root='https://myserver/dolibarr/htdocs';
+// $dolibarr_main_url_root='https://myserver/dolibarralias';
 //
 $dolibarr_main_url_root='';
 
@@ -414,7 +413,7 @@ $dolibarr_cron_allow_cli='0';
 // to edit PHP content in website page, you must first allow this globally, by setting this parameter to 1 or 2.
 // 0 will disallow use of dynamic PHP inside the website features. Only HTML and js will be possible.
 // 1 will allow custom PHP inside website features, but only if dangerous PHP system functions are disabled (using the PHP disable_functions parameter)
-// 2 will allow custom PHP inside website features even if your PHP setup does not protect you against dangerous system calls (this may be dangerous if you don't have a RCE protection like SELnux or Apparmor).
+// 2 will allow custom PHP inside website features even if PHP remote execution features like "exec" are enabled (this may be dangerous if you don't have a RCE protection like SELinux or Apparmor).
 // Default value: '0'
 // Examples: '0', '1' or '2'
 //

@@ -3,7 +3,7 @@
  * Copyright (C) 2014 Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024 Charlene Benke      <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,7 @@ $langs = $GLOBALS['langs'];
  * @var CommonObject $object
  */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+// Note - at this time there does not seem to be a list of linked objects
 '@phan-var-force CommonObject[] $linkedObjectBlock';
 /** @var Task[] $linkedObjectBlock */
 
@@ -48,7 +49,6 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("tasks");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
-'@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
 /** @var Task[] $linkedObjectBlock */
 
 $total = 0;

@@ -629,7 +629,7 @@ print '<br>';
 // File extension locked in upload by default
 
 print '<strong>'.$langs->trans("UploadExtensionRestriction").'</strong>: ';
-print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION')));
+print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent()))));
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.implode(', ', getExecutableContent()).')</span>';
 print '<br>';
 print '<br>';
@@ -741,6 +741,7 @@ if (!$test) {
 print '<br>';
 
 // Modules for Payments
+/*
 $test = isModEnabled('stripe');
 if ($test) {
 	print '<br>';
@@ -766,6 +767,7 @@ if ($test) {
 		print '<br>';
 	}
 }
+*/
 
 print '</div>';
 
@@ -790,7 +792,7 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 
 		print '<br>';
 
-		print '<strong>API_DISABLE_LOGIN_API</strong> = '.getDolGlobalString('API_DISABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
+		print '<strong>API_ENABLE_LOGIN_API</strong> = '.getDolGlobalString('API_ENABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
 	}
 }
 
@@ -866,8 +868,8 @@ print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print $langs->trans("ToolToDecryptAString").': ';
-print '<input type="text" class="minwidth500" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
-print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
+print '<input type="text" class="minwidth500 valignmiddle" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'" spellcheck="false">';
+print '<input type="submit" class="reposition button small smallpaddingimp valignmiddle" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
 	$decryptedstring = dolDecrypt($exampletodecrypt);

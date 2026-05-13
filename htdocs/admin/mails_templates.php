@@ -307,6 +307,9 @@ if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 if (isModEnabled('product') && $user->hasRight('produit', 'lire')) {
 	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
 }
+if (isModEnabled('stocktransfer')) {
+	$elementList['stocktransfer_send'] = '<span class="fas fa-box-open em080 valignmiddle pictomodule paddingrightonly" style="color: #a69944;"></span>'.dol_escape_htmltag($langs->trans('MailToSendStockTransfer'));
+}
 
 $parameters = array('elementList' => $elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -419,7 +422,7 @@ if (empty($reshook)) {
 		// If previous test is ok action is add, we add the line
 		if ($ok && GETPOST('actionadd')) {
 			// Add new entry
-			$sql = "INSERT INTO ".$tabname[25]." (";
+			$sql = "INSERT INTO ".$db->sanitize($tabname[25])." (";
 			// List of fields
 			$sql .= $tabfieldinsert[25];
 			$sql .= ", active, enabled)";
@@ -513,7 +516,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Modify entry
-				$sql = "UPDATE ".$tabname[25]." SET ";
+				$sql = "UPDATE ".$db->sanitize($tabname[25])." SET ";
 				// Modify value of fields
 				$i = 0;
 				foreach ($listfieldmodify as $field) {
@@ -601,7 +604,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {       // delete
 		$rowidcol = "rowid";
 
-		$sql = "DELETE from ".$tabname[25]." WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql = "DELETE from ".$db->sanitize($tabname[25])." WHERE rowid = ".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
 			$sql .= " AND fk_user = ".((int) $user->id);
 		}
@@ -620,7 +623,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -632,7 +635,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -1013,7 +1016,7 @@ if ($num > $listlimit) {
 // Title line with search boxes
 print '<tr class="liste_titre" id="Title line with search boxes">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center" width="64">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1057,7 +1060,7 @@ if (!empty($arrayfields['t.datec']['checked'])) {
 	print '<td></td>'; // datec / Date creation
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center" width="64">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1068,7 +1071,7 @@ print '</tr>';
 // Title of lines
 print '<tr class="liste_titre" id="Title of lines">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');
 }
 array_push($fieldlist, "tms", "datec");
@@ -1158,7 +1161,7 @@ foreach ($fieldlist as $field => $value) {
 
 print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');
 }
 print '</tr>';
@@ -1189,7 +1192,7 @@ if ($num) {
 				$colspan = 0;
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					print '</td>';
 					$colspan++;
@@ -1199,7 +1202,7 @@ if ($num) {
 					$colspan += fieldList($fieldlist, $obj, $tabname[25], $action);
 				}
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					print '</td>';
 					$colspan++;
@@ -1207,7 +1210,7 @@ if ($num) {
 				print "</tr>\n";
 
 				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center"></td>';
 				}
 				print '<td colspan="'.($colspan - 1).'" class="" style="padding-left: 20px; padding-right: 20px;">';
@@ -1279,7 +1282,7 @@ if ($num) {
 				print '</center>';
 				print '</td>';
 
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center"></td>';
 				}
 
@@ -1327,7 +1330,7 @@ if ($num) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
 				// Action column - Modify link / Delete link
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall" width="64">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
@@ -1446,7 +1449,7 @@ if ($num) {
 				print "</td>";
 
 				// Action column - Modify link / Delete link
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall" width="64">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';

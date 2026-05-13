@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2024       Jose Martinez           <jose.martinez@pichinov.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,6 +184,26 @@ class Categories extends DolibarrApi
 	}
 
 	/**
+	 * List categories types
+	 *
+	 * Get a list of type of categories according to filters
+	 *
+	 * @return array<string, string> Array of category types
+	 * @url GET /types
+	 *
+	 * @throws RestException
+	 */
+	public function getTypes()
+	{
+
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return Categorie::$MAP_TYPE_TITLE_AREA;
+	}
+
+	/**
 	 * Create category object
 	 *
 	 * @param array $request_data   Request data
@@ -252,7 +273,7 @@ class Categories extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+					$this->category->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->category);
 				}
 				continue;
 			}

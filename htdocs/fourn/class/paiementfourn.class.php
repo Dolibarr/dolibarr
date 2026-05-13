@@ -469,9 +469,9 @@ class PaiementFourn extends Paiement
 
 		$this->db->begin();
 
-		// Verifier si paiement porte pas sur une facture a l'etat payee
-		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('paye=1');
+		// Check if payment is completely paid, if payments are shared, we refuse deletion.
+		// TODO Check also if partially paid
+		$billsarray = $this->getBillsArray('paye:=:1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorCantDeletePaymentSharedWithPayedInvoice";
@@ -575,7 +575,7 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
+	 *	@param      string	$filter         SQL filter. Use USF syntax. Warning: This value must not come from a user input.
 	 *	@return     array<int,int>|int<-1,-1>	Array of supplier invoice id | <0 si ko
 	 */
 	public function getBillsArray($filter = '')
@@ -584,7 +584,7 @@ class PaiementFourn extends Paiement
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.((int) $this->id);
 		if ($filter) {
-			$sql .= " AND ".$filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);

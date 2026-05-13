@@ -36,9 +36,7 @@ class Contracts extends DolibarrApi
 	 */
 	public static $FIELDS = array(
 		'socid',
-		'date_contrat',
-		'commercial_signature_id',
-		'commercial_suivi_id'
+		'date_contrat'
 	);
 
 	/**
@@ -236,6 +234,10 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, "Missing permission: Create/modify contracts/subscriptions");
 		}
 
+		// Check mandatory fields
+		$this->_validate($request_data);
+
+		// Check thirdparty validity
 		$socid = (int) $request_data['socid'];
 		$thirdpartytmp = new Societe($this->db);
 		$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -245,9 +247,6 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
 			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
 		}
-
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -778,7 +777,7 @@ class Contracts extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contract->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contract);
+					$this->contract->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contract);
 				}
 				continue;
 			}

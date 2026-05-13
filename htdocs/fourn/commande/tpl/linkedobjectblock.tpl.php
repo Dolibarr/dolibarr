@@ -60,7 +60,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 
 	$refSupplierWithThirdparty = '<span class="small">'.$refSupplierWithThirdparty;
 	$refSupplierWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
-	$refSupplierWithThirdparty .= '</small>';
+	$refSupplierWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {

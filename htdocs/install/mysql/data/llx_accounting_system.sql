@@ -180,3 +180,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account Japan JPN-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 123, 'JPN-BASE', '日本 勘定科目表 基本版', 1);
+
+-- Description of chart of account NC PCG99-ABREGE-NC
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (165, 'PCG99-ABREGE-NC', 'The simple accountancy plan for New Caledonia (PCG 1999)', 1);
+-- Description of chart of account NC PCG99-BASE-NC
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (165, 'PCG99-BASE-NC', 'The base accountancy plan for New Caledonia (PCG 1999)', 1);

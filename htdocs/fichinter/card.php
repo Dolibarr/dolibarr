@@ -12,7 +12,7 @@
  * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
@@ -53,16 +60,11 @@ if (isModEnabled('contract')) {
 if (getDolGlobalString('FICHEINTER_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_" . getDolGlobalString('FICHEINTER_ADDON').".php")) {
 	require_once DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_" . getDolGlobalString('FICHEINTER_ADDON').'.php';
 }
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
@@ -86,7 +88,7 @@ $lineid = GETPOSTINT('line_id');
 
 $error = 0;
 
-//PDF
+// PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
 $hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
 $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
@@ -127,6 +129,8 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
+
+$classname = '';
 
 /*
  * Actions
@@ -530,8 +534,13 @@ if (empty($reshook)) {
 					$object->array_options = $array_options;
 
 					$result = $object->create($user);
+
 					if ($result > 0) {
-						$id = $result; // Force raffraichissement sur fiche venant d'etre cree
+						$id = $result; // Force refresh on a newly created record
+
+						// Category association
+						$categories = GETPOST('categories', 'array');
+						$object->setCategories($categories);
 					} else {
 						$langs->load("errors");
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -570,13 +579,19 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
+	} elseif ($action == 'settags' && isModEnabled('category') && $permissiontoadd) {
+		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setref_client' && $permissiontoadd) {
 		// Set customer reference
 		$result = $object->setRefClient($user, GETPOST('ref_client', 'alpha'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('ficheinter', 'supprimer')) {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$result = $object->delete($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -865,7 +880,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras' && $permissiontoeditextra) {
@@ -945,10 +959,13 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $object->ref . " - " . $langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewIntervention");
+}
+$help_url = 'EN:Module_Interventions|FR:Module_Fiches_d\'interventions';
 
-$help_url = 'EN:Module_Interventions';
-
-llxHeader('', $langs->trans("Intervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
 
 if ($action == 'create') {
 	// Create new intervention
@@ -1084,24 +1101,38 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Category
+		if (isModEnabled('category')) {
+			// Categories
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->selectCategories(Categorie::TYPE_FICHINTER, 'categories', $object);
+			print "</td></tr>";
+		}
+
 		// Contract
 		if (isModEnabled('contract') && is_object($formcontract)) {
-			$langs->load("contracts");
-			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
-			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
-			if ($numcontrat == 0) {
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
+			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+			// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+			if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+				$langs->load("contracts");
+				print '<tr><td>'.$langs->trans("Contract").'</td><td>';
+				$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
+				if ($numcontrat == 0) {
+					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
+				}
+				print '</td></tr>';
 			}
-			print '</td></tr>';
 		}
 
 		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td>';
 		$liste = ModelePDFFicheinter::liste_modeles($db);
-		print $form->selectarray('model', $liste, $conf->global->FICHEINTER_ADDON_PDF);
-		print "</td></tr>";
+		if (count($liste) > 0) {
+			print '<tr>';
+			print '<td>'.$langs->trans("DefaultModel").'</td>';
+			print '<td>';
+			print $form->selectarray('model', $liste, getDolGlobalString('FICHEINTER_ADDON_PDF'));
+			print "</td></tr>";
+		}
 
 		// Public note
 		print '<tr>';
@@ -1237,7 +1268,7 @@ if ($action == 'create') {
 
 	$head = fichinter_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -1392,8 +1423,8 @@ if ($action == 'create') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $permissiontoadd, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $permissiontoadd, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
@@ -1453,43 +1484,74 @@ if ($action == 'create') {
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td class="titlefield">';
-	print $form->editfieldkey("Description", 'description', $object->description, $object, $user->hasRight('ficheinter', 'creer'), 'textarea');
+	print $form->editfieldkey("Description", 'description', $object->description, $object, $permissiontoadd, 'textarea');
 	print '</td><td>';
-	print $form->editfieldval("Description", 'description', $object->description, $object, $user->hasRight('ficheinter', 'creer'), 'textarea:8');
+	print $form->editfieldval("Description", 'description', $object->description, $object, $permissiontoadd, 'textarea:8');
 	print '</td>';
 	print '</tr>';
 
+	// Categories
+	if (isModEnabled('category')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans("Categories");
+		print '<td><td class="right">';
+		if ($permissiontoadd) {
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		if ($action == 'edittags') {
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			print '<input type="hidden" name="action" value="settags">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print $form->selectCategories(Categorie::TYPE_FICHINTER, 'categories', $object);
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			print '</form>';
+		} else {
+			print $form->showCategories($object->id, Categorie::TYPE_FICHINTER, 1);
+		}
+		print "</td></tr>";
+	}
+
 	// Contract
 	if (isModEnabled('contract')) {
-		$langs->load('contracts');
-		print '<tr>';
-		print '<td>';
+		// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+		// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+		if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+			$langs->load('contracts');
+			print '<tr>';
+			print '<td>';
 
-		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('Contract');
-		print '</td>';
-		if ($action != 'editcontract') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
-			print img_edit($langs->trans('SetContract'), 1);
-			print '</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editcontract') {
-			$formcontract = new FormContract($db);
-			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
-		} else {
-			if ($object->fk_contrat) {
-				$contratstatic = new Contrat($db);
-				$contratstatic->fetch($object->fk_contrat);
-				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-				print $contratstatic->getNomUrl(0, 0, 1);
-			} else {
-				print "&nbsp;";
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans('Contract');
+			print '</td>';
+			if ($action != 'editcontract') {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editcontract&id='.$object->id.'">';
+				print img_edit($langs->trans('SetContract'), 1);
+				print '</a></td>';
 			}
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editcontract') {
+				$formcontract = new FormContract($db);
+				$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
+			} else {
+				if ($object->fk_contrat) {
+					$contratstatic = new Contrat($db);
+					$contratstatic->fetch($object->fk_contrat);
+					//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+					print $contratstatic->getNomUrl(0, 0, 1);
+				} else {
+					print "&nbsp;";
+				}
+			}
+			print '</td>';
+			print '</tr>';
 		}
-		print '</td>';
-		print '</tr>';
 	}
 
 	// Other attributes
@@ -1632,7 +1694,7 @@ if ($action == 'create') {
 						print "</td>\n";
 					}
 					// Icon to edit and delete
-					if ($object->status == 0 && $user->hasRight('ficheinter', 'creer')) {
+					if ($object->status == 0 && $permissiontoadd) {
 						print '<td class="center">';
 						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&line_id='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
@@ -1662,7 +1724,7 @@ if ($action == 'create') {
 				}
 
 				// Line in update mode
-				if ($object->status == 0 && $action == 'editline' && $user->hasRight('ficheinter', 'creer') && GETPOSTINT('line_id') == $objp->rowid) {
+				if ($object->status == 0 && $action == 'editline' && $permissiontoadd && GETPOSTINT('line_id') == $objp->rowid) {
 					print '<tr class="oddeven nohover">';
 
 					// No.
@@ -1725,7 +1787,7 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->status == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2')) {
+			if ($object->status == 0 && $permissiontoadd && $action != 'editline' && (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2')) {
 				if (!$num) {
 					print '<br>';
 					print '<table class="noborder centpercent">';
@@ -1850,7 +1912,7 @@ if ($action == 'create') {
 					$url_button[] = array(
 						'lang' => 'subtotals',
 						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
-						'perm' => (bool) $user->hasRight('intervention', 'creer'),
+						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
 					);
@@ -1858,7 +1920,7 @@ if ($action == 'create') {
 					$url_button[] = array(
 						'lang' => 'subtotals',
 						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
-						'perm' => (bool) $user->hasRight('intervention', 'creer'),
+						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
 					);
@@ -1867,7 +1929,7 @@ if ($action == 'create') {
 
 				// Validate
 				if ($object->status == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '1')) {
-					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
+					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a></div>';
 					} else {
 						print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</span></div>';
@@ -1875,7 +1937,7 @@ if ($action == 'create') {
 				}
 
 				// Modify
-				if ($object->status == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
+				if ($object->status == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify&token='.newToken().'">';
 					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 						print $langs->trans("Modify");
@@ -1887,7 +1949,7 @@ if ($action == 'create') {
 
 				// Reopen
 				if ($object->status >= Fichinter::STATUS_CLOSED) {
-					if ($user->hasRight('ficheinter', 'creer')) {
+					if ($permissiontoadd) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('ReOpen').'</a></div>';
@@ -1906,7 +1968,7 @@ if ($action == 'create') {
 				}
 
 				// Create intervention model
-				if ($object->status == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer') && (count($object->lines) > 0)) {
+				if ($object->status == Fichinter::STATUS_DRAFT && $permissiontoadd && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
@@ -1968,8 +2030,8 @@ if ($action == 'create') {
 				}
 
 				// Clone
-				if ($user->hasRight('ficheinter', 'creer')) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter">'.$langs->trans("ToClone").'</a></div>';
+				if ($permissiontoadd) {
+					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter">'.$langs->trans("ToClone").'</a></div>';
 				}
 
 				// Delete
@@ -1992,7 +2054,7 @@ if ($action == 'create') {
 		$filedir = $conf->ficheinter->dir_output."/".$filename;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->hasRight('ficheinter', 'lire');
-		$delallowed = $user->hasRight('ficheinter', 'creer');
+		$delallowed = $permissiontoadd;
 		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
