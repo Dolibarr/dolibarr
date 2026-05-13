@@ -1816,7 +1816,7 @@ FIX: PHP8 warning if $conf->reception is checked the old fashion way (#29697)
 FIX: PHP 8 warning on output of successful cronjob (#29922)
 FIX: PHP exception on getSpecialCode (#29646)
 FIX: php warning if cookie doesn’t exist (#29723)
-FIX: pos: invoice date incorrectly set because of timezome mismatches (reverts #36e91da) (#30184)
+FIX: pos: invoice date incorrectly set because of timezone mismatches (reverts #36e91da) (#30184)
 FIX: public project form return an error if SOCIETE_EMAIL_UNIQUE (#29942)
 FIX: REPLENISH MANY FOURN WHEN ORDER ALREADY CREATE (#29710)
 FIX: Supplier Order search on date valid (#30448)
@@ -1932,7 +1932,7 @@ FIX: navigation after filter in subaccount
 FIX: notification: error 500 in fixed emails due to a bad copy/paste (#29580)
 FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
 FIX: not redirtect when error occurs on updating card (#29388)
-FIX: Not trancate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Not truncate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
 FIX: Oauth login
 FIX: Option MAIN_DOC_USE_TIMING can be a string with date format
 FIX: Payment on customer invoice - Remove accountid in url if empty for apply default value (#28156)
@@ -2035,7 +2035,7 @@ FIX: Fix create shipping with product who have negative stocks on warehouse but 
 FIX: migration missing 2 columns in llx_resource and 1 in llx_user
 FIX: missing trans
 FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
-FIX: Not trancate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Not truncate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
 FIX: Option MAIN_DOC_USE_TIMING can be a string with date format
 FIX: Payment on customer invoice - Remove accountid in url if empty for apply default value (#28156)
 FIX: Pb in redirect of a website page in USEDOLIBARRSERVER mode
@@ -2595,7 +2595,7 @@ FIX: notification: error 500 in fixed emails due to a bad copy/paste (#29580)
 FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
 FIX: Not qualified lines for reception (#29473)
 FIX: not redirect when error occurs on updating card (#29388)
-FIX: Not trancate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Not truncate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
 FIX: on change ref for bank account attachment are lost (#30529)
 FIX: Option MAIN_DOC_USE_TIMING can be a string with date format
 FIX: orders to bill menu (#30179)
@@ -2607,7 +2607,7 @@ FIX: php8: Fatal when empty $tmpvat is an empty string (no silent conversion to 
 FIX: PHP 8 warning on output of successful cronjob (#29922)
 FIX: PHP exception on getSpecialCode (#29646)
 FIX: php warning global conf (#29478)
-FIX: pos: invoice date incorrectly set because of timezome mismatches (reverts #36e91da) (#30184)
+FIX: pos: invoice date incorrectly set because of timezone mismatches (reverts #36e91da) (#30184)
 FIX: public project form return an error if SOCIETE_EMAIL_UNIQUE (#29942)
 FIX: purge files cron: php warnings when rest module enabled (#30919)
 FIX: PUT /thirdparties/{id} and PUT /contacts/{id} should throw exception if update returns < 0 (#29596)
