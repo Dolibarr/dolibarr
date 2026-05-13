@@ -337,3 +337,6 @@ TaskHourlyRateUpdated=Task's hourly rate updated
 UpdateWithLastHourlyRate=Update all recorded time spent of each user with the last hourly rate of the user
 UpdateUndefinedWithLastHourlyRate=Update the time spent that has no hourly rate defined with the last hourly rate of the user
 EnterUsersHourlyRateFirst=First, enter the hourly rate for the user(s)...
+Unassigned=Unassigned
+AssignedToInternalUsers=Assigned to internal users
+AssignedToExternalContacts=Assigned to external contacts
