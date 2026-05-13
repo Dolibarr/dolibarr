@@ -229,7 +229,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -274,7 +274,7 @@ function quickMemoIntefaceActionCreate($jsonResponse)
 
 	$resCre = $memo->create($user);
 	if ($resCre <= 0 ) {
-		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), jsonResponse::HTTP_INTERNAL_ERROR);
+		$jsonResponse->setError($langs->trans('UpdateError') . ' : ' . $memo->errorsToString(), JsonResponse::HTTP_INTERNAL_ERROR);
 		return false;
 	} else {
 		$jsonResponse->setSuccess();
@@ -296,7 +296,7 @@ function quickMemoIntefaceActionArchiveNote($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -338,7 +338,7 @@ function quickMemoIntefaceActionCreateModel($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -396,7 +396,7 @@ function quickMemoIntefaceActionDeleteModel($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'delete')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -470,7 +470,7 @@ function quickMemoIntefaceActionUpdateModelRank($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -570,7 +570,7 @@ function quickMemoIntefaceActionDeleteNote($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -618,7 +618,7 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -662,7 +662,7 @@ function quickMemoIntefaceActionUpdateColor($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
@@ -715,7 +715,7 @@ function quickMemoIntefaceActionUpdateSharedOnElement($jsonResponse)
 	global $user, $langs, $db;
 
 	if (!$user->hasRight('quickmemo', 'memo', 'write')) {
-		$jsonResponse->setError($langs->trans('NotEnoughRights'), jsonResponse::HTTP_UNAUTHORIZED);
+		$jsonResponse->setError($langs->trans('NotEnoughRights'), JsonResponse::HTTP_UNAUTHORIZED);
 		return false;
 	}
 
