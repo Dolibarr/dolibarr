@@ -185,7 +185,8 @@ abstract class CommonObject
 	 * searchmulti?: int<0, 1>,
 	 * picto?: string,
 	 * required?: int<0, 1>,
-	 * placeholder?: string
+	 * placeholder?: string,
+	 * legacyProperties?: array<int|string, string>
 	 * }>
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
