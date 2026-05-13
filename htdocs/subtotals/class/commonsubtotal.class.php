@@ -19,10 +19,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
-
+if (!defined('SUBTOTALS_SPECIAL_CODE')) {
+	define('SUBTOTALS_SPECIAL_CODE', 9);
+}
 
 /**
- *
  * Trait CommonSubtotal
  *
  * Add subtotals lines
