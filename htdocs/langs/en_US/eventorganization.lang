@@ -140,6 +140,7 @@ SubscriptionOk=Your registration has been recorded
 AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = Attendee
+AttendeesPerConference=Attendees par conference
 PaymentConferenceAttendee = Conference attendee payment
 PaymentBoothLocation = Booth location payment
 DeleteConferenceOrBoothAttendee=Remove attendee
