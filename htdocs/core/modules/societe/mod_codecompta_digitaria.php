@@ -267,7 +267,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 						if ($this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type) == 0) {
 							$disponibility = 0;
 							break;
-					}
+						}
 					} else {
 						// At this depth, the counter has exactly $depth digits.
 						$minCounter = ($depth == 1) ? 0 : (10 ** ($depth - 1));
@@ -286,7 +286,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 							$this->error = $db->lasterror().' sql='.$sql;
 							dol_syslog("mod_codecompta_digitaria::get_code SQL error: ".$this->error, LOG_ERR);
 							return -2;
-					}
+						}
 						// Filter out rows whose suffix is not purely numeric. These
 						// belong to other name roots whose base code happens to land
 						// in the same length bucket (e.g. base '411COMMUNEDEP' matches
@@ -299,7 +299,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 								$val = (int) $suffix;
 								if ($val > $highest) {
 									$highest = $val;
-					}
+								}
 							}
 						}
 						$db->free($resql);
@@ -317,7 +317,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 								dol_syslog("mod_codecompta_digitaria::get_code disambiguation space exhausted for prefix='".$prefix."' name='".$codetouse."' width=".$width, LOG_ERR);
 								$disponibility = -1;
 								break;
-					}
+							}
 							$nameTrunc = substr($nameTrunc, 0, -1);
 							continue;
 						}
