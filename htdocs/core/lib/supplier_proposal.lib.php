@@ -121,7 +121,7 @@ function supplier_proposal_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplier_proposal.php';
+	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;

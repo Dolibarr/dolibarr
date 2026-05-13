@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,7 +311,7 @@ if (count($companystatic->SupplierCategories)) {
 	foreach ($companystatic->SupplierCategories as $rowid => $label) {
 		print '<tr class="oddeven">'."\n";
 		print '<td>';
-		$categstatic->id = $rowid;
+		$categstatic->id = (int) $rowid;
 		$categstatic->ref = $label;
 		$categstatic->label = $label;
 		print $categstatic->getNomUrl(1);

@@ -2,9 +2,9 @@
 /* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
+ * Copyright (C) 2024-2026  Charlene Benke      	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,13 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("products", "categories", "errors", 'accountancy'));
@@ -259,6 +259,7 @@ $calcmode = '';
 $name = '';
 $period = '';
 $periodlink = '';
+$description = '';
 
 
 // Show report header
@@ -320,7 +321,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($typent_id > 0) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
@@ -329,8 +330,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$hookmanager->executeHooks('printFieldListFrom', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " WHERE l.fk_facture = f.rowid";
-	$sql .= " AND f.fk_statut in (1,2)";
+	$sql .= " WHERE f.fk_statut in (1,2)";
 	$sql .= " AND l.product_type in (0,1)";
 	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
@@ -436,6 +436,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$amount_ht = array();
 	$amount = array();
 	$qty = array();
+	$type = [];
 	if ($result) {
 		$num = $db->num_rows($result);
 		$i = 0;
@@ -458,7 +459,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	// Show Array
 	$i = 0;
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	// Extra parameters management
 	foreach ($headerparams as $key => $value) {

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001       Eric Seigne         <erics@rycks.com>
+ * Copyright (C) 2004-2015  Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,6 +355,7 @@ class Translate
 				if (!$found) {
 					if ($fp = @fopen($file_lang, "rt")) {
 						// $tabtranslatedomain = array(); // To save lang content in cache when enabled (commented because initial = argument to function)
+						//print "Process file_lang=$file_lang\n";
 
 						/**
 						 * Read each lines until a '=' (with any combination of spaces around it)
@@ -557,7 +558,7 @@ class Translate
 						//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 						if (empty($this->tab_translate[$key])) {    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 							// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
-							$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
+							$this->tab_translate[$key] = (string) str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 
 							if ($usecachekey) {
 								$tabtranslatedomain[$key] = $value; // To save lang content in cache
@@ -673,7 +674,7 @@ class Translate
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
-					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
+					$str = preg_replace('/' . preg_quote($tmparray2[0], '/') . '/', $tmparray2[1], $str);
 				}
 			}
 
@@ -691,7 +692,6 @@ class Translate
 			}
 
 			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
-
 
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
 			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.
@@ -733,11 +733,11 @@ class Translate
 	 *               Parameters of this method must not contain any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
 	public function transnoentities($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -754,11 +754,11 @@ class Translate
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string
 	 */
 	public function tr($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -774,11 +774,11 @@ class Translate
 	 *               Parameters of this method must not contains any HTML tags.
 	 *
 	 *  @param	string	$key        Key to translate
-	 *  @param  string	$param1     chaine de param1
-	 *  @param  string	$param2     chaine de param2
-	 *  @param  string	$param3     chaine de param3
-	 *  @param  string	$param4     chaine de param4
-	 *  @param  string	$param5     chaine de param5
+	 *  @param  string	$param1     param1 string
+	 *  @param  string	$param2     param2 string
+	 *  @param  string	$param3     param3 string
+	 *  @param  string	$param4     param4 string
+	 *  @param  string	$param5     param5 string
 	 *  @return string      		Translated string
 	 */
 	public function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
@@ -792,7 +792,7 @@ class Translate
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
-					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
+					$str = preg_replace('/' . preg_quote($tmparray2[0], '/') . '/', $tmparray2[1], $str);
 				}
 			}
 
@@ -824,9 +824,9 @@ class Translate
 	/**
 	 *  Return translation of a key depending on country
 	 *
-	 *  @param	string	$str            string root to translate
-	 *  @param  string	$countrycode    country code (FR, ...)
-	 *  @return	string         			translated string
+	 *  @param	string	$str            String root to translate. Example 'TotalHT', 'AmountLT1', 'ProfId1', 'ProfId2', 'LocalTax1IsUsedExample', ...
+	 *  @param  string	$countrycode    Country code (FR, ...)
+	 *  @return	string         			Translated string
 	 *  @see transcountrynoentities(), picto_from_langcode()
 	 */
 	public function transcountry($str, $countrycode)
@@ -862,13 +862,15 @@ class Translate
 	/**
 	 *  Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
 	 *
-	 *  @param	string	$str            String to convert
-	 *  @param	string	$pagecodefrom	Page code of src string
-	 *  @param	string	$pagecodeto		Expected page code of returned string
-	 *  @return string         			Converted string
+	 *  @param	string|null	$str            String to convert
+	 *  @param	string		$pagecodefrom	Page code of src string
+	 *  @param	string		$pagecodeto		Expected page code of returned string
+	 *  @return string      	   			Converted string
 	 */
 	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8', $pagecodeto = '')
 	{
+		$str = (string) $str;
+
 		if (empty($pagecodeto)) {
 			$pagecodeto = $this->charset_output;
 		}
@@ -982,7 +984,7 @@ class Translate
 
 			if ($searchalt) {
 				$filenamealt = null;
-				// Test si fichier dans repertoire de la langue alternative
+				// Test if file is in directory of alternate language
 				if ($this->defaultlang != "en_US") {
 					$filenamealt = $searchdir . "/langs/en_US/" . $filename;
 				}
@@ -1079,9 +1081,9 @@ class Translate
 		}
 
 		// Not found in loaded language file nor in cache. So we will take the label into database.
-		$sql = "SELECT " . $fieldlabel . " as label";
+		$sql = "SELECT " . $db->sanitize($fieldlabel) . " as label";
 		$sql .= " FROM " . $db->prefix() . $tablename;
-		$sql .= " WHERE " . $fieldkey . " = '" . $db->escape($keyforselect ? $keyforselect : $key) . "'";
+		$sql .= " WHERE " . $db->sanitize($fieldkey) . " = '" . $db->escape($keyforselect ? $keyforselect : $key) . "'";
 		if ($filteronentity) {
 			$sql .= " AND entity IN (" . getEntity($tablename) . ')';
 		}
@@ -1137,8 +1139,7 @@ class Translate
 		$currency_sign = ''; // By default return iso code
 
 		if (empty($currency_code)) {
-			global $conf;
-			$currency_code = (string) $conf->currency;
+			$currency_code = getDolCurrency();
 		}
 
 		if (function_exists("mb_convert_encoding")) {
@@ -1171,6 +1172,8 @@ class Translate
 			return 0; // Cache already loaded for the currency
 		}
 
+		dol_syslog(get_class($this) . '::loadCacheCurrencies', LOG_DEBUG);
+
 		$sql = "SELECT code_iso, label, unicode";
 		$sql .= " FROM " . $db->prefix() . "c_currencies";
 		$sql .= " WHERE active = 1";
@@ -1179,7 +1182,6 @@ class Translate
 		}
 		//$sql.= " ORDER BY code_iso ASC"; // Not required, a sort is done later
 
-		dol_syslog(get_class($this) . '::loadCacheCurrencies', LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$this->load("dict");
@@ -1196,7 +1198,13 @@ class Translate
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
-					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency" . $obj->code_iso) != "Currency" . $obj->code_iso ? $this->trans("Currency" . $obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+					if ($obj->code_iso && !empty($this->tab_translate["Currency" . $obj->code_iso])) {	// Test on tab_translate is faster (possible because we knowhere the "dict" language file has been previously loaded).
+						$tmplabel = $this->trans("Currency" . $obj->code_iso);
+					} else {
+						$tmplabel = ($obj->label != '-' ? $obj->label : '');
+					}
+
+					$this->cache_currencies[$obj->code_iso]['label'] = $tmplabel;
 					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);  // @phan-suppress-current-line PhanTypeMismatchProperty
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
@@ -1209,6 +1217,7 @@ class Translate
 
 			// Resort cache
 			array_multisort($label, SORT_ASC, $this->cache_currencies);
+
 			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
 		} else {

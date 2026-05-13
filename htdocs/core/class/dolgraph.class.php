@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -116,6 +116,10 @@ class DolGraph
 	 * @var bool
 	 */
 	public $hideXValues = false;
+	/**
+	 * @var bool
+	 */
+	public $hideYValues = false;
 	/**
 	 * @var bool
 	 */
@@ -306,6 +310,18 @@ class DolGraph
 	public function setHideXValues($bool)
 	{
 		$this->hideXValues = $bool;
+		return true;
+	}
+
+	/**
+	 * Hide Y Values
+	 *
+	 * @param	bool		$bool	YValues or not
+	 * @return	bool				true
+	 */
+	public function setHideYValues($bool)
+	{
+		$this->hideYValues = $bool;
 		return true;
 	}
 
@@ -1319,8 +1335,8 @@ class DolGraph
 
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
-				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
-				$this->stringtoshow .= 'rotation: -Math.PI,' . "\n";
+				$this->stringtoshow .= 'circumference: 180,' . "\n";
+				$this->stringtoshow .= 'rotation: -90,' . "\n";
 			}
 			$this->stringtoshow .= 'elements: { arc: {' . "\n";
 			// Color of each arc
@@ -1470,24 +1486,20 @@ class DolGraph
 			}
 			$this->stringtoshow .= "}, \n";
 
-			/* For Chartjs v2.9 */
-			/*
-			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
-			if ($this->hideXValues) {
-				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
+			// Hide the X or Y values
+			if ($this->hideYValues || $this->hideXValues) {
+				$this->stringtoshow .= 'scales: { ';
+				if ($this->hideXValues) {
+					$this->stringtoshow .= 'x: { display: false }';
+				}
+				if ($this->hideYValues && $this->hideXValues) {
+					$this->stringtoshow .= ', ';
+				}
+				if ($this->hideYValues) {
+					$this->stringtoshow .= 'y: { display: false }';
+				}
+				$this->stringtoshow .= '}, ';
 			}
-			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
-			$this->stringtoshow .= 'distribution: \'linear\'';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }] }';
-			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
@@ -1703,7 +1715,7 @@ class DolGraph
 			if (empty($conf->dol_optimize_smallscreen)) {
 				return ($defaultsize ? $defaultsize : 500);
 			} else {
-				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? 280 : (int) ($_SESSION['dol_screenwidth'] - 40));
 			}
 		} elseif ($direction == 'height') {
 			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);

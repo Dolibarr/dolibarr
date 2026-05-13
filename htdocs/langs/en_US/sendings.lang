@@ -51,9 +51,12 @@ DateReceived=Date delivery received
 ClassifyReception=Classify Received
 SendShippingByEMail=Send shipment by email
 SendShippingRef=Submission of shipment %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Events on shipment
 LinkToTrackYourPackage=Link to track your package
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Shipment line
 ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
@@ -74,6 +77,40 @@ ConfirmUnsignShipping=Confirm Unsign Shipping
 SignShipping=Sign Shipping
 UnsignShipping=Unsign Shipping
 
+# Deliveries
+Delivery=Delivery
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Delivery date
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=More complete document model for delivery receipts (logo...)
@@ -91,6 +128,7 @@ ShipmentDistribution=Shipment distribution
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
 TypeContact_shipping_external_BILLING=Customer invoice contact

@@ -2,7 +2,7 @@
 /* Copyright (C) 2017 	Laurent Destailleur		<eldy@products.sourceforge.net>
  * Copyright (C) 2023 	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,7 +140,7 @@ class pdf_standard extends ModelePDFProduct
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "sendings"));
 
 		if (is_array($object->lines)) {
 			$nblines = count($object->lines);
@@ -158,10 +158,6 @@ class pdf_standard extends ModelePDFProduct
 				$dir = $conf->product->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
-
-			$productFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $productFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
 
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
@@ -211,7 +207,7 @@ class pdf_standard extends ModelePDFProduct
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Product"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Product"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -257,7 +253,7 @@ class pdf_standard extends ModelePDFProduct
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
 						if ($conf->entity != $object->entity) {
-							$dir = $conf->product->multidir_output[$object->entity].'/'.$midir; //Check repertories of current entities
+							$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.$midir; //Check repertories of current entities
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
@@ -462,7 +458,7 @@ class pdf_standard extends ModelePDFProduct
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne=$object->lines[$i]->total_tva;
 
@@ -588,9 +584,12 @@ class pdf_standard extends ModelePDFProduct
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -760,8 +759,8 @@ class pdf_standard extends ModelePDFProduct
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;

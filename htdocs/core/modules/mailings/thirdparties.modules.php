@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -37,7 +37,7 @@ class mailing_thirdparties extends MailingTargets
 	public $desc = "Third parties (by categories)";
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $require_admin = 0;
 

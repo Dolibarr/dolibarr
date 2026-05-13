@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Open-Dsi             <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,19 @@ $month_start = $month_current;
 $refresh = true;
 
 include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * Variables from include:
+ *
+ * @var int $date_start
+ * @var int $date_end
+ * @var string $date_start_month
+ * @var string $date_start_year
+ * @var string $date_start_day
+ * @var string $date_end_month
+ * @var string $date_end_year
+ * @var string $date_end_day
+ */
+
 '
 @phan-var-force int $date_start
 @phan-var-force int $date_end
@@ -410,6 +423,7 @@ if ($refresh === true) {
 
 		$action = "tva";
 		$object = array(&$x_coll, &$x_paye, &$x_both);
+		$parameters = array();
 		$parameters["mode"] = $modetax;
 		$parameters["year"] = $y;
 		$parameters["month"] = $m;
@@ -435,8 +449,7 @@ if ($refresh === true) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -475,8 +488,7 @@ if ($refresh === true) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}

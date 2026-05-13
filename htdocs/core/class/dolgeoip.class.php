@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,6 +58,8 @@ class DolGeoIP
 	 */
 	public function __construct($type, $datfile)
 	{
+		$datfile = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $datfile);
+
 		$geoipversion = '2'; // 'php', or geoip version '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = getDolGlobalString('GEOIP_VERSION');
@@ -132,8 +134,6 @@ class DolGeoIP
 	 */
 	public function getCountryCodeFromIP($ip)
 	{
-		global $conf;
-
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = getDolGlobalString('GEOIP_VERSION');
@@ -190,8 +190,6 @@ class DolGeoIP
 	 */
 	public function getCountryCodeFromName($name)
 	{
-		global $conf;
-
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = getDolGlobalString('GEOIP_VERSION');
@@ -221,8 +219,6 @@ class DolGeoIP
 	 */
 	public function getVersion()
 	{
-		global $conf;
-
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = getDolGlobalString('GEOIP_VERSION');
