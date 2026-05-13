@@ -2006,7 +2006,6 @@ class FormMail extends Form
 
 	/**
 	 * Normalize a text for equality checks.
-	 *
 	 * @param  string $value Raw text to normalize.
 	 * @return string
 	 */
@@ -2019,7 +2018,6 @@ class FormMail extends Form
 
 	/**
 	 * Return language prefix from a language code.
-	 *
 	 * @param  string $langcode Full language code (for example fr_FR).
 	 * @return string
 	 */
@@ -2037,7 +2035,6 @@ class FormMail extends Form
 
 	/**
 	 * Pick best translated label/description from product multilangs.
-	 *
 	 * @param  array<string,array{label?:string,description?:string}> $multilangs Product multilang rows indexed by language code.
 	 * @param  string                                                  $langcode   Preferred language code.
 	 * @return array{label:string,description:string}
@@ -2087,7 +2084,6 @@ class FormMail extends Form
 
 	/**
 	 * Set ->substit (and ->substit_line) array from object. This is call when suggesting the email template into forms before sending email.
-	 *
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
@@ -2172,7 +2168,6 @@ class FormMail extends Form
 	/**
 	 * Get list of substitution keys available for emails. This is used for tooltips help.
 	 * This include the complete_substitutions_array.
-	 *
 	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
 	 * @param	?Object	$object		Object if applicable
 	 * @return	array<string,string>               Array of substitution values for emails.
