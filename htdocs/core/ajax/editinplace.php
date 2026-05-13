@@ -41,7 +41,7 @@ require '../../main.inc.php';
 
 // For developers you can define  DEBUGEDITINPLACE in your conf.php file
 if (!defined('DEBUGEDITINPLACE')) {
-	define('DEBUGEDITINPLACE', '0');
+	define('DEBUGEDITINPLACE', 0);
 }
 
 /**

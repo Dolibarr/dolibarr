@@ -2322,13 +2322,14 @@ abstract class CommonObject
 	 *
 	 * If all checks pass, the value is assigned dynamically to the property.
 	 *
-	 * @param User $user	The user attempting to modify the field.
-	 * @param string $fieldKey 	 The name of the field to modify.
-	 * @param mixed $value 	The value to assign to the field.
+	 * @param User 		$user					The user attempting to modify the field.
+	 * @param string 	$fieldKey 	 			The name of the field to modify.
+	 * @param mixed 	$value 					The value to assign to the field.
+	 * @param bool   	$byPassUserPermission 	set to true to skip user permission check and force value
 	 *
 	 * @return bool Returns true if the value was successfully set, false otherwise.
 	 */
-	public function setFieldValue(User $user, $fieldKey, $value)
+	public function setFieldValue(User $user, $fieldKey, $value, $byPassUserPermission = false)
 	{
 		global $langs;
 
@@ -2337,7 +2338,7 @@ abstract class CommonObject
 			return false;
 		}
 
-		if (!$this->isFieldEditAllowed($user, $fieldKey)) {
+		if (!$this->isFieldEditAllowed($user, $fieldKey, $byPassUserPermission)) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotAllowedForEdit'));
 			return false;
 		}
@@ -2346,9 +2347,7 @@ abstract class CommonObject
 			return false;
 		}
 
-		if (property_exists($this, 'oldcopy') && empty($this->oldcopy) ) {
-			$this->oldcopy = clone $this;
-		}
+		$this->oldcopy = clone $this;
 
 		if (property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
 			$this->oldcopy->$fieldKey = $this->$fieldKey;
@@ -10066,20 +10065,21 @@ abstract class CommonObject
 	 * - user rights check
 	 * - field configuration constraints
 	 * - object state constraints (status/statut)
-	 *
 	 * Note: This method is defined in CommonObject, so it must remain generic.
 	 * Some child classes use `status`, others use `statut`, hence both are checked.
 	 *
-	 * @param User   $user User to check rights
+	 * @param User   $user  User to check rights
 	 * @param string $field Field name to check
+	 * @param bool   $byPassUserPermission set to true to skip user permission check and force value
+	 *
 	 * @return bool True if the field is editable, false otherwise
 	 */
-	public function isFieldEditAllowed(User $user, $field)
+	public function isFieldEditAllowed(User $user, $field, $byPassUserPermission = false)
 	{
 		// TODO : Implement error message ?
 
-		// Ensure field exists in object definition
-		if (!$this->hasUserWritePermissionOnField($user, $field)) {
+		// Ensure user has write permission for field
+		if (!$byPassUserPermission && !$this->hasUserWritePermissionOnField($user, $field)) {
 			return false;
 		}
 
