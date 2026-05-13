@@ -341,25 +341,22 @@ if ($search_task_billable && $search_task_billable != '-1') {
 	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
 }
 if (!empty($search_assignment)) {
-    $subq = "SELECT 1 FROM " . $db->prefix() . "element_contact ec "
-          . "INNER JOIN " . $db->prefix() . "c_type_contact tc ON ec.fk_c_type_contact = tc.rowid "
-          . "WHERE ec.element_id = t.rowid "
-          . "AND tc.element = 'project_task'";
+	$subq = "SELECT 1 FROM " . $db->prefix() . "element_contact ec INNER JOIN " . $db->prefix() . "c_type_contact tc ON ec.fk_c_type_contact = tc.rowid WHERE ec.element_id = t.rowid AND tc.element = 'project_task'";
 
-    switch ($search_assignment) {
-        case 'assigned':
-            $morewherefilterarray[] = "EXISTS (" . $subq . ")";
-            break;
-        case 'unassigned':
-            $morewherefilterarray[] = "NOT EXISTS (" . $subq . ")";
-            break;
-        case 'assigned_internal':
-            $morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'internal')";
-            break;
-        case 'assigned_external':
-            $morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'external')";
-            break;
-    }
+	switch ($search_assignment) {
+		case 'assigned':
+			$morewherefilterarray[] = "EXISTS (" . $subq . ")";
+			break;
+		case 'unassigned':
+			$morewherefilterarray[] = "NOT EXISTS (" . $subq . ")";
+			break;
+		case 'assigned_internal':
+			$morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'internal')";
+			break;
+		case 'assigned_external':
+			$morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'external')";
+			break;
+	}
 }
 //var_dump($morewherefilterarray);
 
