@@ -530,11 +530,15 @@ if (empty($reshook)) {
 				}
 
 				// option to notify the validator if the balance is less than the request
+				// (only for leave types that actually use the balance counter)
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+					$affectingtypes = $object->getTypes(1, 1);
+					if (!empty($affectingtypes[$object->fk_type])) {
+						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
-					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
-						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
+							$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						}
 					}
 				}
 
