@@ -1149,6 +1149,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print '<td class="liste_titre right">';
+		print '<!-- c.assigned -->';
+		print $form->selectarray('search_assignment', $assignmentOptions, $search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
 		print '</td>';
 	}
 
