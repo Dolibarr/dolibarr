@@ -363,7 +363,7 @@ class modHoliday extends DolibarrModules
 		}
 
 		$error = 0;
-		$entity = (int) getEntity('c_holiday_types');
+		$entity = getEntity('c_holiday_types');
 		$data_to_insert = array(
 			array(
 				'code'    => 'LEAVE_MATERNITY',
@@ -395,7 +395,7 @@ class modHoliday extends DolibarrModules
 
 				if ($nb == 0) {
 					$sql_insert = "INSERT INTO ".MAIN_DB_PREFIX."c_holiday_types (entity, code, label, affect, delay, newbymonth, fk_country, sortorder, active) ";
-					$sql_insert .= "VALUES (".$entity.", '".$this->db->escape($row['code'])."', '".$this->db->escape($row['label'])."', ".((int) $row['affect']).", ".((int) $row['delay']).", ".((int) $row['newbymonth']).", NULL, ".((int) $row['sortorder']).", ".((int) $row['active']).")";
+					$sql_insert .= "VALUES (".(int) $entity.", '".$this->db->escape($row['code'])."', '".$this->db->escape($row['label'])."', ".((int) $row['affect']).", ".((int) $row['delay']).", ".((int) $row['newbymonth']).", NULL, ".((int) $row['sortorder']).", ".((int) $row['active']).")";
 
 					$resql_insert = $this->db->query($sql_insert);
 
