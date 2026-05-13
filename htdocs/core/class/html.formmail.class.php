@@ -2035,14 +2035,15 @@ class FormMail extends Form
 
 	/**
 	 * Pick best translated label/description from product multilangs.
-	 * @param  array<string,array{label?:string,description?:string}> $multilangs Product multilang rows indexed by language code.
-	 * @param  string                                                  $langcode   Preferred language code.
+	 *
+	 * @param  array<string,array{label?:string,description?:string,note?:string,other?:string}>|null $multilangs Product multilang rows indexed by language code.
+	 * @param  string                                                                                   $langcode   Preferred language code.
 	 * @return array{label:string,description:string}
 	 */
-	private static function getBestProductTranslation(array $multilangs, $langcode)
+	private static function getBestProductTranslation($multilangs, $langcode)
 	{
 		$langcode = trim((string) $langcode);
-		if ($langcode === '' || empty($multilangs)) {
+		if ($langcode === '' || !is_array($multilangs) || empty($multilangs)) {
 			return array('label' => '', 'description' => '');
 		}
 
