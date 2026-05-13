@@ -1254,7 +1254,21 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	$nboftaskshown = 0;
 	if (count($tasksarray) > 0) {
-		// Show all lines in taskarray (recursive function to go down on tree)
+		if (!empty($search_assignment)) {
+			$existingIds = array();
+			foreach ($tasksarray as $task) {
+				$existingIds[$task->id] = true;
+			}
+
+			foreach ($tasksarray as $task) {
+				if ($task->fk_task_parent > 0) {
+					if (!isset($existingIds[$task->fk_task_parent])) {
+						$task->fk_task_parent = 0;
+					}
+				}
+			}
+		}
+
 		$j = 0;
 		$level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, '', 0, $tasksrole, (string) $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
