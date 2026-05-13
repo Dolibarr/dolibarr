@@ -258,17 +258,26 @@ if ($user->hasRight('categorie', 'creer')) {
 			print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 		}
 
-		$title = $langs->trans("CreateCat");
-
-		if (!empty($type) && !empty(Categorie::$MAP_TYPE_TITLE_AREA[$type])) {
-			$title .= ' - '.$langs->trans(Categorie::$MAP_TYPE_TITLE_AREA[$type]);
-		}
-
-		print load_fiche_titre($title, '', 'category');
+		print load_fiche_titre($langs->trans("CreateCat"), '', 'category');
 
 		print dol_get_fiche_head();
 
 		print '<table class="border centpercent">';
+
+		// Type
+		$typeLabel = '';
+		if (!empty($type) && !empty(Categorie::$MAP_TYPE_TITLE_AREA[$type])) {
+			$typeLabel = $langs->trans(Categorie::$MAP_TYPE_TITLE_AREA[$type]);
+		}
+
+		if (!empty($typeLabel)) {
+			print '<tr>';
+			print '<td class="titlefieldcreate">'.$langs->trans("Type").'</td>';
+			print '<td>'.$typeLabel;
+			print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Ref
 		print '<tr>';
