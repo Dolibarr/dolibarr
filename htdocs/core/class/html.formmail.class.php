@@ -2007,7 +2007,7 @@ class FormMail extends Form
 	/**
 	 * Normalize a text for equality checks.
 	 *
-	 * @param  string $value
+	 * @param  string $value Raw text to normalize.
 	 * @return string
 	 */
 	private static function normalizeTextForComparison($value)
@@ -2020,7 +2020,7 @@ class FormMail extends Form
 	/**
 	 * Return language prefix from a language code.
 	 *
-	 * @param  string $langcode
+	 * @param  string $langcode Full language code (for example fr_FR).
 	 * @return string
 	 */
 	private static function getLangPrefix($langcode)
@@ -2038,8 +2038,8 @@ class FormMail extends Form
 	/**
 	 * Pick best translated label/description from product multilangs.
 	 *
-	 * @param  array<string,array{label?:string,description?:string}> $multilangs
-	 * @param  string $langcode
+	 * @param  array<string,array{label?:string,description?:string}> $multilangs Product multilang rows indexed by language code.
+	 * @param  string                                                  $langcode   Preferred language code.
 	 * @return array{label:string,description:string}
 	 */
 	private static function getBestProductTranslation(array $multilangs, $langcode)
