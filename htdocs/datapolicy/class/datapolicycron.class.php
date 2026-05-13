@@ -234,7 +234,7 @@ class DataPolicyCron
 				'sql_template' => $sqltemplate,
 				'class' => 'Adherent',
 				'file' => DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php',
-				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => '1900-01-01', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0'),
+				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => dol_mktime(0, 0, 0, 1, 1, 1900), 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0'),
 				'call_params' => array(
 					'delete' => array('user'),   // $object->delete($user)
 					'update' => array('user')    // $object->update($user)
@@ -471,7 +471,7 @@ class DataPolicyCron
 	 */
 	private function _recordActionResult($result, $object, $action)
 	{
-		if ($result <= 0) {
+		if ($result < 0) {
 			$this->errorCount++;
 			$this->errorMessages[] = 'Failed to ' . $action . ' record ID ' . $object->id . ' from class ' . get_class($object) . '. Error: ' . $object->errorsToString();
 		} else {
