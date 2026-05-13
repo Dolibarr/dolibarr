@@ -214,7 +214,7 @@ trait CommonPeople
 				}
 				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
 				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
-				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
+				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\', \''.dol_escape_js('<span class="opacitymedium">'.$langs->trans("HelpCopyToClipboard").'</span>').'\', \''.dol_escape_js($langs->trans("Copy").' / '.$langs->trans("Paste")).'\');">';
 				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}

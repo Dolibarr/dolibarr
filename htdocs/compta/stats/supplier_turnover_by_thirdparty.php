@@ -309,6 +309,7 @@ $amount_ht = array();
 $address_zip = array();
 $address_town = array();
 $address_pays = array();
+$sql = '';
 
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";

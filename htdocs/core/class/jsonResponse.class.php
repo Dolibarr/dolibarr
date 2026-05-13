@@ -183,6 +183,7 @@ class JsonResponse
 	 */
 	public function getResponse()
 	{
+		global $dolibarr_main_prod;
 
 		if (!$this->result && !headers_sent()) {
 			http_response_code(400);
@@ -194,7 +195,7 @@ class JsonResponse
 		$jsonResponse->newToken = $this->newToken;
 		$jsonResponse->data = $this->data;
 
-		if (empty($dolibarr_main_prod) && defined('DEBUGJSONRESPONSE') && (int) DEBUGJSONRESPONSE > 0) {
+		if ((empty($dolibarr_main_prod) || (int) $dolibarr_main_prod === 0) && defined('DEBUGJSONRESPONSE') && (int) DEBUGJSONRESPONSE > 0) {
 			$jsonResponse->debug = $this->debug;
 		}
 
