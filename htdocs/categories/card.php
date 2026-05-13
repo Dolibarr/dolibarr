@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2021	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2020-2026  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Matthieu Valleton           <mv@seeschloss.org>
+ * Copyright (C) 2006-2021  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Patrick Raguin              <patrick.raguin@gmail.com>
+ * Copyright (C) 2013       Florian Henry               <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,7 +258,13 @@ if ($user->hasRight('categorie', 'creer')) {
 			print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 		}
 
-		print load_fiche_titre($langs->trans("CreateCat"), '', 'category');
+		$title = $langs->trans("CreateCat");
+
+		if (!empty($type) && !empty(Categorie::$MAP_TYPE_TITLE_AREA[$type])) {
+			$title .= ' - '.$langs->trans(Categorie::$MAP_TYPE_TITLE_AREA[$type]);
+		}
+
+		print load_fiche_titre($title, '', 'category');
 
 		print dol_get_fiche_head();
 
