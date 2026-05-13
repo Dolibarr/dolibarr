@@ -101,6 +101,7 @@ if (!getDolGlobalString('MAIN_USE_EDIT_IN_PLACE')) {
 	exit; // useless but for security in case of someone remove exit en output()
 }
 
+// @phpstan-ignore-next-line
 if ((int) DEBUGEDITINPLACE === 1) {
 	$jsonResponse->debug = [
 		'element' => $object->element,
