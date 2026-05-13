@@ -1013,7 +1013,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		'assigned_internal' => $langs->trans("AssignedToInternalUsers"),
 		'assigned_external' => $langs->trans("AssignedToExternalContacts"),
 	);
-	$moreforfilter .= $form->selectarray('search_assignment', $assignmentOptions, $search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
+	$moreforfilter .= $form->selectarray('search_assignment', (array)$assignmentOptions, (string)$search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
 	$moreforfilter .= '</div>';
 
 	if ($moreforfilter) {
@@ -1147,7 +1147,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '<!-- c.assigned -->';
-		print $form->selectarray('search_assignment', $assignmentOptions, $search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
+		print $form->selectarray('search_assignment', (array)$assignmentOptions, (string)$search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
 		print '</td>';
 	}
 
