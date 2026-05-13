@@ -326,13 +326,12 @@ if (empty($reshook)) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
 					} else {
-						//@TODO changer le nom si validated
 						if ($autoValidation) {
 							$htemp = new Holiday($db);
 							$htemp->fetch($result);
 
 							$htemp->status = Holiday::STATUS_VALIDATED;
-							$resultValidated = $htemp->update($approverid);
+							$resultValidated = $htemp->validate($approverid);
 
 							if ($resultValidated < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
