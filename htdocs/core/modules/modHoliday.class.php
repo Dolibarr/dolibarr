@@ -386,7 +386,7 @@ class modHoliday extends DolibarrModules
 		);
 
 		foreach ($data_to_insert as $row) {
-			$sql_check = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."c_holiday_types WHERE code = '".$this->db->escape($row['code'])."' AND entity = ".$entity;
+			$sql_check = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."c_holiday_types WHERE code = '".$this->db->escape($row['code'])."' AND entity = ".(int) $entity;
 
 			$resql_check = $this->db->query($sql_check);
 			if ($resql_check) {
