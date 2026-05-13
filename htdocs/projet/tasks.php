@@ -1009,7 +1009,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	// Assignment status filter
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto('', 'company', 'class="pictofixedwidth"');
+	$moreforfilter .= img_picto('', 'contact', 'class="pictofixedwidth"');
 	$assignmentOptions = array(
 		'assigned'          => $langs->trans("Assigned"),
 		'unassigned'        => $langs->trans("Unassigned"),
