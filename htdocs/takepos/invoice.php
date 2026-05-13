@@ -168,6 +168,20 @@ if ($invoiceid > 0) {
 	$ret = $invoice->fetch($invoiceid);
 } else {
 	$ret = $invoice->fetch(0, '(PROV-POS'.$takeposterminal.'-'.$place.')');
+	// If draft is from a previous day, update its date to today so the Z-report date is correct
+	if ($ret > 0 && $invoice->status == Facture::STATUS_DRAFT) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$dolnowtzuserrel = dol_now('tzuserrel');
+		$monthuser = dol_print_date($dolnowtzuserrel, '%m', 'gmt');
+		$dayuser   = dol_print_date($dolnowtzuserrel, '%d', 'gmt');
+		$yearuser  = dol_print_date($dolnowtzuserrel, '%Y', 'gmt');
+		$dateinvoice = dol_mktime(0, 0, 0, (int) $monthuser, (int) $dayuser, (int) $yearuser, 'tzserver');
+		if ($invoice->date < $dateinvoice) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET datef = '".$db->idate($dateinvoice)."' WHERE rowid = ".((int) $invoice->id);
+			$db->query($sql);
+			$invoice->date = $dateinvoice;
+		}
+	}
 }
 if ($ret > 0) {
 	$placeid = $invoice->id;
