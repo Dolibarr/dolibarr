@@ -392,17 +392,36 @@ class ExtraFields
 			);
 
 			$result = $this->db->DDLAddField($this->db->prefix().$this->db->sanitize($table), $attrname, $field_desc);
-			if ($result > 0) {
+			if ($result > 0 || $this->db->lasterrno() == 'DB_ERROR_COLUMN_ALREADY_EXISTS') {
 				if ($unique) {
 					$sql = "ALTER TABLE ".$this->db->prefix().$this->db->sanitize($table)." ADD UNIQUE INDEX uk_".$this->db->sanitize($table)."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
-				return 1;
-			} else {
-				$this->error = $this->db->lasterror();
-				$this->errno = $this->db->lasterrno();
-				return -1;
+				// For 'link' type extrafields: add FK with ON DELETE SET NULL on the value column (only if column is nullable)
+				if ($type == 'link' && !$required && is_array($param) && !empty($param['options'])) {
+					$param_list = array_keys($param['options']);
+					$InfoFieldList = explode(':', $param_list[0]);
+					$linkclassname = $InfoFieldList[0];
+					$linkclasspath = !empty($InfoFieldList[1]) ? $InfoFieldList[1] : '';
+					if ($linkclassname && $linkclasspath) {
+						dol_include_once($linkclasspath);
+						if (class_exists($linkclassname)) {
+							$tmpobject = new $linkclassname($this->db);
+							if (!empty($tmpobject->table_element)) {
+								$link_constraint_name = substr('fk_'.$this->db->sanitize($table).'_'.$this->db->sanitize($attrname), 0, 64);
+								$sql = "ALTER TABLE ".$this->db->prefix().$this->db->sanitize($table)." ADD CONSTRAINT ".$link_constraint_name." FOREIGN KEY (".$this->db->sanitize($attrname).") REFERENCES ".$this->db->prefix().$this->db->sanitize($tmpobject->table_element)."(rowid) ON DELETE SET NULL";
+								$this->db->query($sql, 1, 'dml'); // Error ignored: constraint may already exist
+							}
+						}
+					}
+				}
+				if ($result > 0) {
+					return 1;
+				}
 			}
+			$this->error = $this->db->lasterror();
+			$this->errno = $this->db->lasterrno();
+			return -1;
 		} else {
 			return 0;
 		}
