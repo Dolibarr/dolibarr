@@ -8,6 +8,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Irvine FLEITH		    <irvine.fleith@atm-consulting.fr>
  * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2026		Lenin Rivas          	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -634,6 +635,18 @@ class FormTicket
 				$out .= '<input type="submit" class="button smallpaddingimp reposition" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
 			}
 			$out .= "</td></tr>\n";
+
+			// Improves user experience and prevents human error when creating tickets; files do not load.
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">
+    			jQuery(document).ready(function () {
+        			jQuery("#addedfile").on("change", function() {
+					// Dispara el clic automáticamente al seleccionar archivo
+            			jQuery("#addfile").click();
+        			});
+        			// Oculta el botón redundante si JS está activo
+        			jQuery("#addfile").hide();
+    			});
+			</script>';
 
 			print $out;
 		}

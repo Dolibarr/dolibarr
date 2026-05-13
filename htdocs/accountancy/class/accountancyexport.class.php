@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Pierre-Henry Favre			<phf@atm-consulting.fr>
- * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017		Elarifr. Ari Elbaz			<github@accedinfo.com>
@@ -950,7 +950,15 @@ class AccountancyExport
 				}
 
 				$tab['filler2'] = str_repeat(' ', 110);
-				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+
+				// Field "Maj" (static position 1 char):
+				// blank = no update if account already exists
+				// 2 = partial update (alpha key, label, address, collectif, RIB)
+				if (getDolGlobalString('ACCOUNTING_EXPORT_QUADRATUS_DISABLE_THIRDPARTY_UPDATE')) {
+					$tab['Maj'] = ' ';
+				} else {
+					$tab['Maj'] = 2;
+				}
 
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['type_compte'] = 'C';
