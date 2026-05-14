@@ -2,6 +2,7 @@
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -534,6 +535,21 @@ class modEventOrganization extends DolibarrModules
 		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailRegistrationPayment)');
 		if ($template->id > 0) {
 			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+
+		$sql_triggers = array(
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', 'Attendee Replaced (Source)', 'Triggered when an attendee is replaced by another.', 'conferenceorboothattendee', 2461)",
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT', 'Attendee Replaced (Target)', 'Triggered when an attendee becomes a replacement.', 'conferenceorboothattendee', 2462)",
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', 'Attendee Replacement Reset (Source)', 'Triggered when a replacement is undone for the source.', 'conferenceorboothattendee', 2463)",
+			"INSERT INTO ".MAIN_DB_PREFIX."c_action_trigger (code, label, description, elementtype, rang) VALUES ('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', 'Attendee Replacement Reset (Target)', 'Triggered when a replacement is undone for the target.', 'conferenceorboothattendee', 2464)",
+		);
+
+		foreach ($sql_triggers as $sql) {
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				// Log error but don't necessarily fail the whole activation if it's just a duplicate
+				dol_syslog("Error inserting trigger: " . $this->db->lasterror(), LOG_ERR);
+			}
 		}
 
 		return $init;
