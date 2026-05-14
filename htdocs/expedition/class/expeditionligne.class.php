@@ -335,7 +335,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.description, ed.fk_unit, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.description, ed.fk_unit, ed.fk_elementdet, ed.fk_product, ed.fk_parent, ed.element_type, ed.qty, ed.rang, ed.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
 		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
@@ -343,10 +343,13 @@ class ExpeditionLigne extends CommonObjectLine
 			$objp = $this->db->fetch_object($result);
 			$this->id = $objp->rowid;
 			$this->fk_expedition = $objp->fk_expedition;
+			$this->fk_entrepot = $objp->fk_entrepot;
 			$this->entrepot_id = $objp->fk_entrepot;
 			$this->description = $objp->description;
 			$this->fk_unit = $objp->fk_unit;
 			$this->fk_elementdet = $objp->fk_elementdet;
+			$this->fk_product = $objp->fk_product;
+			$this->fk_parent = $objp->fk_parent;
 			$this->element_type = $objp->element_type;
 			$this->qty = $objp->qty;
 			$this->rang = $objp->rang;

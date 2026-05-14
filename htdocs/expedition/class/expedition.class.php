@@ -1167,6 +1167,117 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 * Check stock constraints for a shipment line.
+	 *
+	 * @param	int			$fk_product				Id of product
+	 * @param	int|string	$fk_entrepot			Id of warehouse
+	 * @param	float		$qty					Quantity
+	 * @param	int|null	$product_type			Product type, null to fetch it from product
+	 * @param	bool		$forbid_batch_product	True to reject products managed by lot/serial
+	 * @return	int									Return integer <0 if KO, >0 if OK
+	 */
+	private function checkLineStockRequirements($fk_product, $fk_entrepot, $qty, $product_type = null, $forbid_batch_product = false)
+	{
+		global $langs;
+
+		if (!($fk_product > 0)) {
+			return 1;
+		}
+
+		$warehouseId = (int) $fk_entrepot;
+
+		if (!$forbid_batch_product && !isModEnabled('stock')) {
+			return 1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		$product = new Product($this->db);
+		$result = $product->fetch($fk_product);
+		if ($result <= 0) {
+			$this->setErrorsFromObject($product);
+			return -1;
+		}
+
+		if ($product_type === null) {
+			$product_type = $product->type;
+		}
+
+		if ($forbid_batch_product && isModEnabled('productbatch') && $product->hasbatch()) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorTryToMakeMoveOnProductRequiringBatchData', $product->ref);
+			$this->errorhidden = 'ErrorTryToMakeMoveOnProductRequiringBatchData';
+			return -4;
+		}
+
+		if (!isModEnabled('stock')) {
+			return 1;
+		}
+
+		if (!($warehouseId > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
+			return -1;
+		}
+
+		if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT')) {
+			$productChildrenNb = 0;
+			if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+				$productChildrenNb = $product->hasFatherOrChild(1);
+			}
+			if ($productChildrenNb > 0) {
+				$product_stock = null;
+				$product->loadStockForVirtualProduct('warehouseopen', $qty);
+				if ($warehouseId > 0) {
+					if (isset($product->stock_warehouse[$warehouseId])) {
+						$product_stock = $product->stock_warehouse[$warehouseId]->real;
+					}
+				} else {
+					foreach ($product->stock_warehouse as $componentStockWarehouse) {
+						if ($product_stock === null) {
+							$product_stock = $componentStockWarehouse->real;
+						} else {
+							$product_stock = min($product_stock, $componentStockWarehouse->real);
+						}
+					}
+				}
+				if ($product_stock === null) {
+					$product_stock = 0;
+				}
+			} else {
+				// Check must be done for stock of product into warehouse if $fk_entrepot defined
+				if ($warehouseId > 0) {
+					$product->load_stock('warehouseopen');
+					$product_stock = empty($product->stock_warehouse[$warehouseId]) ? 0 : $product->stock_warehouse[$warehouseId]->real;
+				} else {
+					$product_stock = $product->stock_reel;
+				}
+			}
+
+			if ($product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+				$isavirtualproduct = ($productChildrenNb > 0);
+				// The product is qualified for a check of quantity (must be enough in stock to be added into shipment).
+				if (
+					!$isavirtualproduct
+					|| !getDolGlobalInt('PRODUIT_SOUSPRODUITS')
+					|| ($isavirtualproduct && !getDolGlobalInt('STOCK_EXCLUDE_VIRTUAL_PRODUCTS'))
+				) {
+					// If STOCK_EXCLUDE_VIRTUAL_PRODUCTS is set, we do not manage stock for kits/virtual products.
+					if ($product->stockable_product == Product::ENABLED_STOCK && $product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
+						$this->errorhidden = 'ErrorStockIsNotEnoughToAddProductOnShipment';
+
+						return -3;
+					}
+				}
+			}
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Add an expedition line.
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS is set, you can add a shipment line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT is not set, you can add a shipment line, even if not enough into stock
@@ -1205,69 +1316,10 @@ class Expedition extends CommonObject
 			$line->fk_product = $orderline->fk_product;
 		}
 
-		if (isModEnabled('stock') && !empty($orderline->fk_product)) {
-			$product = new Product($this->db);
-			$product->fetch($orderline->fk_product);
-
-			if (!($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $line->product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK) {
-				$langs->load("errors");
-				$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
-				return -1;
-			}
-
-			if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT')) {
-				$productChildrenNb = 0;
-				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
-					$productChildrenNb = $product->hasFatherOrChild(1);
-				}
-				if ($productChildrenNb > 0) {
-					$product_stock = null;
-					$product->loadStockForVirtualProduct('warehouseopen', $line->qty);
-					if ($entrepot_id > 0) {
-						if (isset($product->stock_warehouse[$entrepot_id])) {
-							$product_stock = $product->stock_warehouse[$entrepot_id]->real;
-						}
-					} else {
-						foreach ($product->stock_warehouse as $componentStockWarehouse) {
-							if ($product_stock === null) {
-								$product_stock = $componentStockWarehouse->real;
-							} else {
-								$product_stock = min($product_stock, $componentStockWarehouse->real);
-							}
-						}
-					}
-					if ($product_stock === null) {
-						$product_stock = 0;
-					}
-				} else {
-					// Check must be done for stock of product into warehouse if $entrepot_id defined
-					if ($entrepot_id > 0) {
-						$product->load_stock('warehouseopen');
-						$product_stock = $product->stock_warehouse[$entrepot_id]->real;
-					} else {
-						$product_stock = $product->stock_reel;
-					}
-				}
-
-				$product_type = $product->type;
-				if ($product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-					$isavirtualproduct = ($productChildrenNb > 0);
-					// The product is qualified for a check of quantity (must be enough in stock to be added into shipment).
-					if (
-						!$isavirtualproduct
-						|| !getDolGlobalInt('PRODUIT_SOUSPRODUITS')
-						|| ($isavirtualproduct && !getDolGlobalInt('STOCK_EXCLUDE_VIRTUAL_PRODUCTS'))
-					) {
-						// If STOCK_EXCLUDE_VIRTUAL_PRODUCTS is set, we do not manage stock for kits/virtual products.
-						if ($product->stockable_product == Product::ENABLED_STOCK && $product_stock < $qty) {
-							$langs->load("errors");
-							$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
-							$this->errorhidden = 'ErrorStockIsNotEnoughToAddProductOnShipment';
-
-							return -3;
-						}
-					}
-				}
+		if (!empty($orderline->fk_product)) {
+			$result = $this->checkLineStockRequirements((int) $orderline->fk_product, $entrepot_id, (float) $line->qty, (int) $line->product_type);
+			if ($result < 0) {
+				return $result;
 			}
 		}
 
@@ -1299,9 +1351,10 @@ class Expedition extends CommonObject
 	 * @param 	string		$description					Description of line product
 	 * @param 	int			$fk_parent					    ID of parent line. For a hierarchy of lines.
 	 * @param	array<string,mixed>		$array_options		extrafields array
+	 * @param 	int|string	$fk_entrepot				Id of warehouse
 	 * @return	int											Return integer <0 if KO, >0 if OK
 	 */
-	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $array_options = [])
+	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $array_options = [], $fk_entrepot = 0)
 	{
 		global $mysoc, $langs, $user;
 
@@ -1311,6 +1364,11 @@ class Expedition extends CommonObject
 			}
 
 			$qty = (float) price2num($qty);
+
+			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true);
+			if ($result < 0) {
+				return $result;
+			}
 
 			$this->db->begin();
 
@@ -1326,6 +1384,7 @@ class Expedition extends CommonObject
 			$this->line->fk_expedition = $this->id;
 			$this->line->element_type = $element_type;
 			$this->line->fk_product = $fk_product;
+			$this->line->entrepot_id = (int) $fk_entrepot;
 			$this->line->description = $description;
 			$this->line->desc = $description;
 			$this->line->fk_parent = $fk_parent;
@@ -1378,9 +1437,10 @@ class Expedition extends CommonObject
 	 * @param 	int		$fk_parent					    ID of parent line. For a hierarchy of lines.
 	 * @param 	int		$notrigger					    disable line update trigger
 	 * @param	array<string,mixed>	$array_options		extrafields array
+	 * @param	int|string	$fk_entrepot		Id of warehouse, -1 to keep current value
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
-	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $notrigger, $array_options = array())
+	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $notrigger, $array_options = array(), $fk_entrepot = -1)
 	{
 		global $mysoc, $langs, $user;
 
@@ -1403,10 +1463,17 @@ class Expedition extends CommonObject
 			$line->fetch($rowid);
 			$line->fetch_optionals();
 
-			if (!empty($line->fk_product)) {
-				$product = new Product($this->db);
-				$result = $product->fetch($line->fk_product);
-				$product_type = $product->type;
+			if (!($fk_product > 0) && !empty($line->fk_product)) {
+				$fk_product = $line->fk_product;
+			}
+			if ($fk_entrepot < 0) {
+				$fk_entrepot = (int) $line->entrepot_id;
+			}
+
+			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true);
+			if ($result < 0) {
+				$this->db->rollback();
+				return $result;
 			}
 
 			$staticline = clone $line;
@@ -1418,6 +1485,7 @@ class Expedition extends CommonObject
 			$this->line->fk_expedition = $this->id;
 			$this->line->element_type = $element_type;
 			$this->line->fk_product = $fk_product;
+			$this->line->entrepot_id = (int) $fk_entrepot;
 			$this->line->qty = $qty;
 			$this->line->fk_unit = $fk_unit;
 			$this->line->fk_parent = $fk_parent;
@@ -2373,12 +2441,13 @@ class Expedition extends CommonObject
 				$line->description      = $objp->description;
 				$line->qty              = $objp->qty;
 				$line->fk_entrepot      = $objp->fk_entrepot;
+				$line->entrepot_id      = $objp->fk_entrepot;
 				$line->fk_product       = $objp->fk_product;
 				$line->rang             = $objp->rang;
 				$line->fk_element 		= $objp->fk_element;
 				$line->fk_unit          = $objp->fk_unit;
 				$line->fk_elementdet 	= $objp->fk_elementdet;
-				$line->fk_element_type 	= $objp->element_type;
+				$line->element_type 	= $objp->element_type;
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;

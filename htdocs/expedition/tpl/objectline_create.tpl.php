@@ -94,6 +94,10 @@ if ($nolinesbefore) {
 		print '</span></td>';
 	}
 
+	if (isModEnabled('stock')) {
+		print '<td class="linecolwarehousesource left">'.$langs->trans('WarehouseSource').'</td>';
+	}
+
 	print '</tr>';
 }
 
@@ -111,9 +115,15 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription line minwidth500imp">';
 
 // Predefined product/service
-if (isModEnabled("product")) {
-	if ($filtertype == 1) {
+if (isModEnabled("product") || isModEnabled("service")) {
+	$filtertypeforselect = $filtertype;
+	if ($filtertypeforselect != 1 && isModEnabled('service') && (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
+		$filtertypeforselect = isModEnabled('product') ? '' : 1;
+	}
+	if ($filtertypeforselect == 1) {
 		print $langs->trans("Service");
+	} elseif ($filtertypeforselect === '') {
+		print $langs->trans("ProductOrService");
 	} else {
 		print $langs->trans("Product");
 	}
@@ -121,6 +131,21 @@ if (isModEnabled("product")) {
 	echo '<span class="prod_entry_mode_predef nowraponall">';
 
 	$statustoshow = -1;
+	$statuswarehouse = '';
+	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
+		$statuswarehouse = 'warehouseopen,warehouseinternal';
+		if (getDolGlobalString('ENTREPOT_WAREHOUSEINTERNAL_NOT_SELL')) {
+			$statuswarehouse = 'warehouseopen';
+		}
+	}
+	print $form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertypeforselect, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array:alphanohtml'));
+	if ($filtertypeforselect == 1 && isModEnabled('service')) {
+		$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create&leftmenu=service&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+		print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddService").'"></span></a>';
+	} else {
+		$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create&leftmenu=product&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+		print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
+	}
 
 	echo '</span>';
 }
@@ -146,6 +171,18 @@ print '</td>';
 if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
 	print '<td class="nobottom linecoluseunit">';
+	print '</td>';
+}
+
+// Warehouse source
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolwarehousesource left">';
+	$stockMin = false;
+	if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+		$stockMin = 0;
+	}
+	print $formproduct->selectWarehouses(GETPOSTINT('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone', 'entrepot_id', '', 1, 0, GETPOSTINT('idprod'), '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
 	print '</td>';
 }
 

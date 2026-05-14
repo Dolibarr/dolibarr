@@ -154,6 +154,19 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '</td>';
 }
 
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="nobottom linecolwarehousesource left">';
+	if (!empty($line->fk_product)) {
+		$stockMin = false;
+		if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+			$stockMin = 0;
+		}
+		print $formproduct->selectWarehouses(!empty($line->entrepot_id) ? $line->entrepot_id : 'ifone', 'entrepot_id', '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+	}
+	print '</td>';
+}
+
 $coldisplay += $colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
 $coldisplay += $colspan;

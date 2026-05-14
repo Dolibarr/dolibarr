@@ -75,7 +75,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch', 'products'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -862,7 +862,6 @@ if (empty($reshook)) {
 			$description = '';
 			$fk_parent = 0;
 			$element_type = 'shipping';
-			$fk_unit = '';
 			$fk_product = 0;
 			$rang = 0;
 
@@ -879,10 +878,19 @@ if (empty($reshook)) {
 
 			$shipline = new ExpeditionLigne($db);
 			$shipline->fetch(GETPOSTINT('lineid'));
+			$fk_product = (int) $shipline->fk_product;
+			$fk_unit = GETPOSTISSET('units') ? GETPOSTINT('units') : $shipline->fk_unit;
+			$fk_entrepot = -1;
+			if (isModEnabled('stock') && GETPOSTISSET('entrepot_id')) {
+				$fk_entrepot = GETPOSTINT('entrepot_id');
+				if ($fk_entrepot < 0) {
+					$fk_entrepot = 0;
+				}
+			}
 
 
 			if (!$error) {
-				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, $fk_parent, 0, $array_options);
+				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, 0, $array_options, $fk_entrepot);
 
 				if ($result >= 0) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1162,17 +1170,20 @@ if (empty($reshook)) {
 		$fk_unit = '';
 		$idprod = 0;
 		$fk_product = 0;
-		$fk_entrepot = '';
-		$rang = '';
-		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
-		if ($prod_entry_mode == 'free') {
-			$idprod = 0;
-		} else {
-			$idprod = GETPOSTINT('idprod');
-			if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
-				$error++;
+		$fk_entrepot = 0;
+		if (isModEnabled('stock') && GETPOSTISSET('entrepot_id')) {
+			$fk_entrepot = GETPOSTINT('entrepot_id');
+			if ($fk_entrepot < 0) {
+				$fk_entrepot = 0;
 			}
+		}
+		$rang = '';
+		$prod_entry_mode = 'predef';
+		$idprod = GETPOSTINT('idprod');
+		if ($idprod <= 0) {
+			$labelproductfield = (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) ? 'ProductOrService' : 'Product';
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($labelproductfield)), null, 'errors');
+			$error++;
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
@@ -1306,7 +1317,7 @@ if (empty($reshook)) {
 			$desc = dol_htmlcleanlastbr($desc);
 
 			// Insert line
-			$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options);
+			$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options, $fk_entrepot);
 
 			if ($result > 0) {
 				$ret = $object->fetch($object->id); // Reload to get new records
@@ -1325,6 +1336,7 @@ if (empty($reshook)) {
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
 				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 				exit();
 			}

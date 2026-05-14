@@ -36,6 +36,8 @@
  * $type, $text, $description, $line
  */
 
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
 /**
  * @var Conf $conf
  * @var CommonObject $this
@@ -125,6 +127,18 @@ if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only 
 	$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
 	if ($label !== '') {
 		print $langs->trans($label);
+	}
+	print '</td>';
+}
+
+if (isModEnabled('stock')) {
+	print '<td class="linecolwarehousesource nowrap">';
+	$coldisplay++;
+	if (!empty($line->entrepot_id)) {
+		$tmpwarehouse = new Entrepot($object->db);
+		if ($tmpwarehouse->fetch($line->entrepot_id) > 0) {
+			print $tmpwarehouse->getNomUrl(1);
+		}
 	}
 	print '</td>';
 }
