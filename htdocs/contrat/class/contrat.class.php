@@ -2966,7 +2966,7 @@ class Contrat extends CommonObject
 		$sql .= " SUM(cd.total_localtax1) as total_localtax1, SUM(cd.total_localtax2) as total_localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 		$sql .= " WHERE cd.fk_contrat =".$this->id;
-		if($statut >= 0) {
+		if ($statut >= 0) {
 			$sql .= " AND cd.statut = ".((int) $statut);
 			if ($expired > 0) {
 				$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
