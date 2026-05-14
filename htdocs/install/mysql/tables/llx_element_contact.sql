@@ -27,5 +27,6 @@ create table llx_element_contact
   element_id		  int NOT NULL, 		    -- ID of element.
   mandatory_signature tinyint,                  -- 1=Indicate that signature is mandatory for this contact on the objet
   fk_c_type_contact	  int NOT NULL,	            -- nature of contact.
-  fk_socpeople        integer NOT NULL          -- ID of contact
+  fk_socpeople        integer NOT NULL,         -- ID of contact
+  fk_attendee         integer NULL.             -- ID of attendee
 )ENGINE=innodb;
