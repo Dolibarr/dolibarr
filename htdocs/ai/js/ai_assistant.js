@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 class SpeechPipeline {
                     static task = 'automatic-speech-recognition';
-                    static model = 'Xenova/whisper-small.en'; 
+                    static model = 'Xenova/whisper-small.en';
                     static instance = null;
 
                     static async getInstance(progress_callback = null) {
