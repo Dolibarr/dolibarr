@@ -16471,9 +16471,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contact' && $filterobj->id) {
 				$sql .= " AND a.fk_contact = sp.rowid";
-				if ($filterobj->id) {
-					$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
-				}
+				$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
@@ -17045,13 +17043,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						$contact = $conf->cache['contact'][$cid];
 					}
 
-					if ($contact) {
-						$contactList .= !empty($contactList) ? ', ' : '';
-						$contactList .= $contact->getNomUrl(1);
-						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
-							if (!empty($contact->phone_pro)) {
-								$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
-							}
+					$contactList .= !empty($contactList) ? ', ' : '';
+					$contactList .= $contact->getNomUrl(1);
+					if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+						if (!empty($contact->phone_pro)) {
+							$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
 						}
 					}
 				}
