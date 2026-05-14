@@ -835,7 +835,7 @@ if ($id > 0) {
 
 			// Clone
 			if ($user->hasRight('tax', 'charges', 'creer')) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 			}
 
 			// Delete

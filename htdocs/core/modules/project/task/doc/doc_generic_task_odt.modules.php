@@ -6,7 +6,7 @@
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -646,15 +646,15 @@ class doc_generic_task_odt extends ModelePDFTask
 						}
 					}
 					// Check for segment
-					$foundtagforlines = 1;
+					$listlinestaskres = null;
 					try {
 						$listlinestaskres = $odfHandler->setSegment('tasksressources');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlinestaskres = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+					if ($listlinestaskres && (is_array($contact_array) && count($contact_array) > 0)) {
 						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
@@ -688,12 +688,12 @@ class doc_generic_task_odt extends ModelePDFTask
 					}
 
 					// Check for segment
-					$foundtagforlines = 1;
+					$listlinestasktime = null;
 					try {
 						$listlinestasktime = $odfHandler->setSegment('taskstimes');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlinestasktime = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 
@@ -708,7 +708,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$sql .= " ORDER BY t.element_date DESC";
 
 					$resql = $this->db->query($sql);
-					if ($foundtagforlines && $resql) {
+					if ($listlinestasktime !== null && $resql) {
 						$num = $this->db->num_rows($resql);
 						$i = 0;
 						$tasks = array();
@@ -744,15 +744,15 @@ class doc_generic_task_odt extends ModelePDFTask
 
 					// Replace tags of project files
 					// Check for segment
-					$foundtagforlines = 1;
+					$listtasksfiles = null;
 					try {
 						$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listtasksfiles = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines) {
+					if ($listtasksfiles !== null) {
 						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
 						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
@@ -781,15 +781,15 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Replace tags of project files
 				// Check for segment
-				$foundtagforlines = 1;
+				$listlines = null;
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 				} catch (OdfExceptionSegmentNotFound $e) {
 					// We may arrive here if tags for lines not present into template
-					$foundtagforlines = 0;
+					$listlines = null;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines) {
+				if ($listlines !== null) {
 					try {
 						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
@@ -825,15 +825,15 @@ class doc_generic_task_odt extends ModelePDFTask
 					}
 				}
 				// Check for segment
-				$foundtagforlines = 1;
+				$listlines = null;
 				try {
 					$listlines = $odfHandler->setSegment('projectcontacts');
 				} catch (OdfExceptionSegmentNotFound $e) {
 					// We may arrive here if tags for lines not present into template
-					$foundtagforlines = 0;
+					$listlines = null;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+				if ($listlines !== null && (is_array($contact_array) && count($contact_array) > 0)) {
 					try {
 						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {

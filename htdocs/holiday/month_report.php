@@ -4,7 +4,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,9 +272,9 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 }
 
 // Filter: Type
+$arraytypeleaves = array();
 if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	$typeleaves = $holidaystatic->getTypes(1, -1);
-	$arraytypeleaves = array();
 	foreach ($typeleaves as $key => $val) {
 		$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
 		$arraytypeleaves[$val['rowid']] = $labeltoshow;
@@ -458,7 +458,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id).'</td>';
+			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 
 		if (!empty($arrayfields['date_start_month']['checked'])) {
@@ -474,7 +474,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days_month']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id).'</td>';
+			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
 			print '<td class="maxwidth300 small">';

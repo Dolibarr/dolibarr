@@ -239,8 +239,10 @@ class MyModuleApi extends DolibarrApi
 			}
 
 			if ($field == 'array_options' && is_array($value)) {
+				$this->myobject->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
+					$this->myobject->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->myobject);
 				}
 				continue;
 			}
@@ -300,19 +302,12 @@ class MyModuleApi extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
+					$this->myobject->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->myobject);
 				}
 				continue;
 			}
 
-			if ($field == 'array_options' && is_array($value)) {
-				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI($field, $val, $this->myobject);
-				}
-				continue;
-			}
-
-			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI((string) $field, $value, $this->myobject);
 		}
 
 		// Clean data

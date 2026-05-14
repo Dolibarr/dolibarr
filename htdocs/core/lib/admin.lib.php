@@ -4,7 +4,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
@@ -1276,6 +1276,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 					foreach ($modulestringorarray as $modulestring) {
 						$activate = false;
 						$activateerr = '';
+						$resarray = array();
 						foreach ($modulesdir as $dir) {
 							if (file_exists($dir.$modulestring.".class.php")) {
 								$resarray = activateModule($modulestring, 1, 0, $options);
@@ -2245,6 +2246,7 @@ function GetContentPolicySources()
 		// Fetch directives
 		"fetch" => array(
 			"*" => array("label" => "*", "data-sourcetype" => "select"),
+			"blob" => array("label" => "blob:", "data-sourcetype" => "blob"),
 			"data" => array("label" => "data:", "data-sourcetype" => "data"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),

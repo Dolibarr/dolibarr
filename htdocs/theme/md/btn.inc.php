@@ -133,15 +133,6 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	cursor: pointer;
 	color: #444;
-	border: 1px solid transparent;	/* So for buttonRefused with a border, it will not have any flash effect */
-
-	/* border: 1px solid #aaa; */
-	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
-
-	/*border-top-right-radius: 0 !important;
-	border-bottom-right-radius: 0 !important;
-	border-top-left-radius: 0 !important;
-	border-bottom-left-radius: 0 !important;*/
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;

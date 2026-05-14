@@ -40,6 +40,12 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -54,12 +60,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- */
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
@@ -80,7 +80,7 @@ if (!isset($argv[3]) || !$argv[3]) {
 	exit(1);
 }
 $bankref = $argv[1];
-$bankreceiptnum = $argv[2] ?? 'all';
+$bankreceiptnum = $argv[2] ?: 'all';
 $model = $argv[3];
 $newlangid = 'en_EN'; // To force a new lang id
 
@@ -433,7 +433,7 @@ if ($resql) {
 	}
 
 	if ($numrows > 0) {
-		print "Found ".$numrows." records for receipt ".$num."\n";
+		print "Found ".$numrows." records for receipt ".$bankreceiptnum."\n";
 
 		// Genere en-tete
 		$objmodel->write_footer($outputlangs);
@@ -445,7 +445,7 @@ if ($resql) {
 
 		$ret = 0;
 	} else {
-		print "No records found for receipt ".$num."\n";
+		print "No records found for receipt ".$bankreceiptnum."\n";
 
 		$ret = 0;
 	}

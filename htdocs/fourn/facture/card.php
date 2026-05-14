@@ -153,6 +153,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 }
 
 $error = 0;
+$classname = null;
 
 
 /*
@@ -2924,7 +2925,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 
-		if (!empty($objectsrc)) {
+		if (!empty($objectsrc) && $classname !== null) {
 			print "\n<!-- ".$classname." info -->";
 			print "\n";
 			print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
@@ -4356,7 +4357,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($action != 'edit' && $usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken().'">'.$langs->trans('ToClone').'</a>';
+					print '<a class="butAction butActionClone" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken().'">'.$langs->trans('ToClone').'</a>';
 				}
 
 				// Clone as predefined / Create template

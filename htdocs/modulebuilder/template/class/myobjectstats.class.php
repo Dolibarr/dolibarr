@@ -105,29 +105,33 @@ class MyObjectStats extends Stats
 		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
-		$object = null;
 
 		$object = new MyObject($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
+		if ($object->ismultientitymanaged && (string) $object->ismultientitymanaged != '1') {
+			// $object->ismultientitymanaged is 'field@table'
+			$tmparray = explode('@', (string) $object->ismultientitymanaged);
+			$field = $tmparray[0];
+			$table = $tmparray[1];
+			$this->from = " INNER JOIN ".MAIN_DB_PREFIX.$table." as e ON c.".$this->db->sanitize($field)." = e.rowid AND e.entity IN (".getEntity($table.'@mymodule').")";
+		}
 		$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 		$this->field = 'total_ht';
 		$this->field_line = 'total_ht';
 		//$this->where .= " c.status > 0"; // Not draft and not cancelled
 		$this->categ_link = MAIN_DB_PREFIX.'categorie_societe';
-		//$this->where.= " AND c.socid = s.rowid AND c.entity = ".$conf->entity;
-		if ($object->ismultientitymanaged) {
-			$this->where .= ($this->where ? ' AND ' : '').'c.entity IN ('.getEntity('myobject@mymodule').')';
+		if ((string) $object->ismultientitymanaged == '1') {
+			$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('myobject@mymodule').")";
 		}
-
 		if ($this->socid) {
-			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
+			$this->where .= ($this->where ? ' AND ' : '')."c.fk_soc = ".((int) $this->socid);
 		}
 		if ($this->userid > 0) {
-			$this->where .= ' AND c.fk_user_author = '.((int) $this->userid);
+			$this->where .= ($this->where ? ' AND ' : '')."c.fk_user_creat = ".((int) $this->userid);
 		}
 
 		if ($categid) {
-			$this->where .= ' AND EXISTS (SELECT rowid FROM '.$this->categ_link.' as cats WHERE cats.fk_soc = c.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
+			$this->where .= ($this->where ? ' AND ' : '').'EXISTS (SELECT rowid FROM '.$this->db->sanitize($this->categ_link).' as cats WHERE cats.fk_soc = c.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
 		// Add where from hooks
 		$parameters = array('socid' => $socid);

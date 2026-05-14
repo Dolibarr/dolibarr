@@ -106,7 +106,7 @@ create table llx_facture
   situation_final     smallint,  -- 0 by default, 1 it if is the final invoice.
 
   retained_warranty							real DEFAULT NULL,  		-- % of the retained warranty (to calculate the amount - on the inc tax basis - to pay later by getRetainedWarrantyAmount)
-  retained_warranty_amount 					double(24,8) DEFAULT NULL,	-- to store the amount of the retained warranty once calculated and rounded from the %
+  retained_warranty_amount 					double(24,8) DEFAULT NULL,	-- to store the amount of the retained warranty once calculated and rounded from the % - duplicate, not reliable, just for info
   retained_warranty_date_limit				date DEFAULT NULL,			-- when we can request the retained warranty (used to update the flag payment late or not)
   retained_warranty_fk_cond_reglement		integer  DEFAULT NULL,		-- payment condition of retained warranty
 

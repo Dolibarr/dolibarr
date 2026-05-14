@@ -267,6 +267,8 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo((GETPOST('alwayseditable', 'alpha') || !GETPOST('button', 'alpha')) ? ' checked' : ''); ?>></td></tr>
 <!-- Empty on clone -->
 <tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo((GETPOST('emptyonclone', 'alpha')) ? ' checked' : ''); ?>></td></tr>
+<!-- Personal Data (RGPD) -->
+<tr class="extra_personal_data"><td><?php echo $form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")); ?></td><td class="valeur"><input id="personal_data" type="checkbox" name="personal_data" value="1"<?php echo (GETPOST('personal_data', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
 </td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo GETPOSTISSET('list') ? GETPOST('list') : '1'; ?>"></td></tr>

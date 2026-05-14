@@ -1107,6 +1107,9 @@ textarea.centpercent {
 .lineheightsmall {
 	line-height: 1.2em;
 }
+.lineheightmedium {
+	line-height: 1.5em;
+}
 .line-height-large {
 	line-height: 1.8em;
 }
@@ -1635,11 +1638,16 @@ div.divsearchfield {
 	position: absolute;
 }
 
+.a-filter, .a-mesure {
+	padding: 8px 10px 8px 6px;
+}
+.a-selection {
+	padding: 8px 10px 8px 10px;
+}
 .a-filter, .a-mesure, .a-selection {
 	border-radius: 50px;
 	background: var(--colortexttitlenotab);
 	color: #fff !important;
-	padding: 8px 10px 8px 6px;
 }
 .a-filter:before {
 	content: "\f0b0";
@@ -4854,6 +4862,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.tagtd { padding-top: 5px; padding-bottom: 5px; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
@@ -5749,7 +5758,7 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	border-radius: 5px;
 }
 
-div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral, div.fiche div.green {
 	box-shadow: 1px 1px 6px #d4d4d4;
 	margin: 1em 0em 1.2em 0em;
 }
@@ -6715,7 +6724,7 @@ td.peruser_holiday_imp {
 
 
 /* ============================================================================== */
-/*  jQuery - jeditable for inline edit                                            */
+/*  Edit in place                                                                 */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
@@ -7066,7 +7075,7 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 .tox:not(.tox-tinymce-inline) .tox-editor-header {
 	/*border-bottom: 1px solid #ddd !important;
 	box-shadow: unset !important; */
-	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 8px 8px -4px rgba(34,47,62,.07) !important;
+	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 5px 5px -4px rgba(34,47,62,.09) !important;
 }
 .mce-content-body p {
 	margin: unset;
@@ -7981,12 +7990,12 @@ select.multiselectononeline {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
-		min-width: 260px !important;
+		min-width: 300px !important;
 		padding: 8px;
 	}
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 260px !important;
+		min-width: 300px !important;
 		padding: 8px;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,

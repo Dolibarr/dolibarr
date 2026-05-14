@@ -307,6 +307,9 @@ if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 if (isModEnabled('product') && $user->hasRight('produit', 'lire')) {
 	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
 }
+if (isModEnabled('stocktransfer')) {
+	$elementList['stocktransfer_send'] = '<span class="fas fa-box-open em080 valignmiddle pictomodule paddingrightonly" style="color: #a69944;"></span>'.dol_escape_htmltag($langs->trans('MailToSendStockTransfer'));
+}
 
 $parameters = array('elementList' => $elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks

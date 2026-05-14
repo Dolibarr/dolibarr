@@ -9,7 +9,7 @@
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2025 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,6 +281,8 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 		// We must not rename the directory of the bank receipt when we change 1 line of bank receipt. Other lines may share the same old ref.
 		// Renaming can be done when we rename globally a bank receipt but not when changing 1 line from one receipt into another one.
+		$filepath = '';
+		$oldfilepath = '';
 		/*
 		if ($result) {
 			if ($oldNum_rel) {

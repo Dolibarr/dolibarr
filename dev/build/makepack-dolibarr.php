@@ -122,8 +122,8 @@ $scriptPath = realpath($argv[0]) ?: $argv[0];
 $DIR = dirname($scriptPath);
 $PROG = pathinfo($scriptPath, PATHINFO_FILENAME);
 $Extension = pathinfo($scriptPath, PATHINFO_EXTENSION);
-$SOURCE = dirname($DIR);
-$DESTI = $SOURCE . '/build';
+$SOURCE = preg_replace('/\/dev/', '', preg_replace('/\/build/', '', $DIR));
+$DESTI = $SOURCE . '/dev/build';
 
 if ($SOURCE[0] !== '/' && !preg_match('/^[a-z]:/i', $SOURCE)) {
 	echo "Error: Launch the script $PROG.$Extension with its full path from /.\n";
@@ -214,7 +214,11 @@ $BUILDROOT = $TEMP . '/buildroot';
 
 
 // Get version $MAJOR, $MINOR and $BUILD
-$filefuncPath = $SOURCE . '/htdocs/filefunc.inc.php';
+if (file_exists($SOURCE . '/htdocs/filefunc.inc.php')) {
+	$filefuncPath = $SOURCE . '/htdocs/version.inc.php';
+} else {
+	$filefuncPath = $SOURCE . '/htdocs/filefunc.inc.php';
+}
 $filefuncContent = file_get_contents($filefuncPath);
 if ($filefuncContent === false) {
 	echo "Error: Can't open descriptor file $filefuncPath\n";
@@ -222,8 +226,18 @@ if ($filefuncContent === false) {
 }
 
 $PROJVERSION = '';
+$matches = array();
 if (preg_match("/define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
 	$PROJVERSION = $matches[1];
+}
+if (empty($PROJVERSION)) {
+	if (preg_match("/define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
+		$DOL_MAJOR_VERSION = $matches[1];
+	}
+	if (preg_match("/define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
+		$DOL_MINOR_VERSION = $matches[1];
+	}
+	$PROJVERSION = $DOL_MAJOR_VERSION.'.'.$DOL_MINOR_VERSION;
 }
 
 $versionParts = explode('.', $PROJVERSION, 3);
@@ -497,6 +511,7 @@ if ($nboftargetok) {
 	if ($nbofpublishneedchangelog) {
 		$TMPBUILDTOCHECKCHANGELOG = preg_replace('/\-rc\d*/', '', $BUILD);
 		$TMPBUILDTOCHECKCHANGELOG = preg_replace('/\-beta\d*/', '', $TMPBUILDTOCHECKCHANGELOG);
+		$TMPBUILDTOCHECKCHANGELOG = preg_replace('/\-alpha\d*/', '', $TMPBUILDTOCHECKCHANGELOG);
 
 		echo "\nCheck if ChangeLog is ok for version $MAJOR.$MINOR.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret = run("grep \"ChangeLog for $MAJOR.$MINOR.$TMPBUILDTOCHECKCHANGELOG\" \"$SOURCE/ChangeLog\" 2>&1");
@@ -507,12 +522,14 @@ if ($nboftargetok) {
 			echo "ChangeLog for $MAJOR.$MINOR.$BUILD was found into '$SOURCE/ChangeLog'. But you can regenerate it with command:\n";
 		}
 
-		if (!$BUILD || $BUILD === '0-rc') {
+		if (!$BUILD || $BUILD === '0-alpha' || $BUILD === '0-beta' || $BUILD === '0-rc') {
 			// For a major version
-			echo 'cd ~/git/dolibarr_' . $MAJOR . '.' . $MINOR . '; git log `git rev-list --boundary ' . $MAJOR . '.' . $MINOR . '..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print "Building changeLog file for a major version:\n";
+			//print 'cd ~/git/dolibarr_dev; git log `git rev-list --boundary ' . $MAJOR . '.' . $MINOR . '..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/changelogtocopy';
+			print 'cd ~/git/dolibarr_dev; git log `diff -u <(git rev-list --first-parent '. ( $MAJOR - 1 ). '.0)  <(git rev-list --first-parent develop) | sed -ne \'s/^ //p\' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/changelogtocopy';
 		} else {
 			// For a maintenance release
-			echo 'cd ~/git/dolibarr_' . $MAJOR . '.' . $MINOR . '; git log ' . $MAJOR . '.' . $MINOR . '.' . ($BUILD - 1) . '.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			echo 'cd ~/git/dolibarr_' . $MAJOR . '.' . $MINOR . '; git log ' . $MAJOR . '.' . $MINOR . '.' . (((float) $BUILD) - 1) . '.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/changelogtocopy';
 		}
 		echo "\n";
 
@@ -522,6 +539,8 @@ if ($nboftargetok) {
 				echo "Canceled.\n";
 				exit(0);
 			}
+		} else {
+			$WAITKEY = prompt("\nPress a key to continue (or CTRL+C to stop)... ");
 		}
 	}
 
@@ -542,18 +561,19 @@ if ($nboftargetok) {
 		if (trim($ret)) {
 			echo "Some files exists in source directory and are not indexed neither excluded in .gitignore.\n";
 			echo $ret;
-			echo "Canceled.\n";
+			echo "\nCanceled.\n";
 			exit(0);
 		}
 
-		echo "Create xml check file with md5 checksum with command php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD\n";
+		echo "Create xml check file with hash checksum with command php ".$SOURCE."/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD\n";
 		$outputLines = [];
-		exec("php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD", $outputLines, $retcode);
+		$retcode = 0;
+		exec("php $SOURCE/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD", $outputLines, $retcode);
 		$ret = implode("\n", $outputLines);
 		if ($retcode !== 0) {
 			echo "Error running generate_filelist_xml.php please check\n";
 			echo $ret;
-			echo "Canceled.\n";
+			echo "\nCanceled.\n";
 			exit(0);
 		}
 		echo $ret . "\n";

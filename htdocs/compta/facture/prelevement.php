@@ -722,7 +722,7 @@ if ($object->id > 0) {
 
 	// For which amount ?
 	// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
-	// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+	// The table prelevement and prelevement_lignes must be removed in future and merged into prelevement_demande
 	// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
 	// Step 2: Move field fk_... + status into prelevement_demande.
 	$pending = 0;

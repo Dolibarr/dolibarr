@@ -33,6 +33,12 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
+-- Vxx forgotten
+
+ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
+
+
 -- V23 forgotten
 
 ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
@@ -198,11 +204,19 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN localtax2_type varchar(10)  NUL
 
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'holiday', 'holiday', '', 0, null, null, '(HolidayHrInformationsPreviousMonth)', 100,'isModEnabled("holiday")', 1, '__(HolidayHrInformationsPreviousMonthTopic)__', '__(Hello)__<br><br>__(HolidayHrInformationsPreviousMonthContent)__:<br>__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__<br><br>__SENDEREMAIL_SIGNATURE__', null, 0);
 
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CREATE','Stock transfer created','Executed when a stock transfer is created','stocktransfer',670);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_MODIFY','Stock transfer modified','Executed when a stock transfer is modified','stocktransfer',671);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_VALIDATE','Stock transfer validated','Executed when a stock transfer is validated','stocktransfer',672);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_UNVALIDATE','Stock transfer back to draft','Executed when a stock transfer is set back to draft','stocktransfer',673);
+INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CLOSE','Stock transfer closed','Executed when a stock transfer is closed after destination stock increment','stocktransfer',676);
+
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
+
+ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_prelevement_demande integer DEFAULT 0;
 
 
 UPDATE llx_cronjob set test = 'isModEnabled("agenda")' WHERE test = '$conf->agenda->enabled';
@@ -505,5 +519,15 @@ UPDATE llx_socpeople SET fax = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(fax, ' ',
 
 --ALTER TABLE llx_facture ADD COLUMN retained_warranty_amount double(24,8) DEFAULT NULL AFTER retained_warranty;
 
+-- Add personal_data flag on extrafields for GDPR/nLPD/LGPD compliance
+ALTER TABLE llx_extrafields ADD COLUMN personal_data tinyint DEFAULT 0 AFTER csslist;
+
+
+-- Add missing index in llx_product_warehouse_properties table
+ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_properties_fk_product (fk_product);
+ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_properties_fk_entrepot (fk_entrepot);
+
+ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
 
 -- end of migration

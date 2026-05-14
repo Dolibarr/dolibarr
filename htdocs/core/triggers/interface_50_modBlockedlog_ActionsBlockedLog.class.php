@@ -77,6 +77,17 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
 			return 1;
 		}
+
+		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
+		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
+		global $dolibarr_main_force_https;
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		$isqualified = isALNERunningVersion(1);
+		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && empty($dolibarr_main_force_https)) {
+			$this->errors[] = 'Error: You are using Dolibarr with the module to be compliant with the French Law Finance certification. In this version, the HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to be allowed the use this module in France.';
+			return -1;
+		}
+
 		/** @var Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object */
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 

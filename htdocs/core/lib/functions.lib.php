@@ -1073,6 +1073,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		// Enable this line to know who call the GETPOST with '' $check parameter.
 		//var_dump(getCallerInfoString());
 	}
+	if (in_array($paramname, array('sortfield', 'sortorder'))) {	// Force the $check to a more appropriated value
+		$check = 'aZ09comma';
+	}
 
 	if (empty($method)) {
 		$out = isset($_GET[$paramname]) ? $_GET[$paramname] : (isset($_POST[$paramname]) ? $_POST[$paramname] : '');
@@ -1264,71 +1267,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 			$out = make_substitutions($out, $substitutionarray, $langs);
 		}
-
-		/* old code
-		$reg = array();
-		$regreplace  = array();
-		$maxloop = 20;
-		$loopnb = 0; // Protection against infinite loop
-
-		while (preg_match('/__([A-Z0-9]+(?:_[A-Z0-9]+){0,3})__/i', $out, $reg) && ($loopnb < $maxloop)) {    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
-			$loopnb++;
-			$newout = '';
-
-			if ($reg[1] == 'DAY') {
-				$tmp = dol_getdate(dol_now(), true);
-				$newout = $tmp['mday'];
-			} elseif ($reg[1] == 'MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
-				$newout = $tmp['mon'];
-			} elseif ($reg[1] == 'YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
-				$newout = $tmp['year'];
-			} elseif ($reg[1] == 'PREVIOUS_DAY') {
-				$tmp = dol_getdate(dol_now(), true);
-				$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-				$newout = $tmp2['day'];
-			} elseif ($reg[1] == 'PREVIOUS_MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
-				$tmp2 = dol_get_prev_month($tmp['mon'], $tmp['year']);
-				$newout = $tmp2['month'];
-			} elseif ($reg[1] == 'PREVIOUS_YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
-				$newout = ($tmp['year'] - 1);
-			} elseif ($reg[1] == 'NEXT_DAY') {
-				$tmp = dol_getdate(dol_now(), true);
-				$tmp2 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-				$newout = $tmp2['day'];
-			} elseif ($reg[1] == 'NEXT_MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
-				$tmp2 = dol_get_next_month($tmp['mon'], $tmp['year']);
-				$newout = $tmp2['month'];
-			} elseif ($reg[1] == 'NEXT_YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
-				$newout = ($tmp['year'] + 1);
-			} elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID') {
-				$newout = $mysoc->country_id;
-			} elseif ($reg[1] == 'USER_ID' || $reg[1] == 'USERID') {
-				$newout = $user->id;
-			} elseif ($reg[1] == 'USER_SUPERVISOR_ID' || $reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID') {
-				$newout = $user->fk_user;
-			} elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID') {
-				$newout = $conf->entity;
-			} elseif ($reg[1] == 'ID') {
-				$newout = '__ID__';     // We keep __ID__ we find into backtopage url
-			} else {
-				$newout = 'REGREPLACE_' . $loopnb; // Key not found, we replace with temporary string to reload later
-				$regreplace[$loopnb] = $reg[0];
-			}
-			//var_dump('__'.$reg[1].'__ -> '.$newout);
-			$out = preg_replace('/__' . preg_quote($reg[1], '/') . '__/', $newout, $out);
-		}
-		if (!empty($regreplace)) {
-			foreach ($regreplace as $key => $value) {
-				$out = preg_replace('/REGREPLACE_' . $key . '/', $value, $out);
-			}
-		}
-		*/
 	}
 
 	// Check type of variable and make sanitization according to this
@@ -2306,8 +2244,8 @@ function dolSlugify($stringtoslugify)
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param	int|string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \ .
+ *  @param	int<0,1>	$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
@@ -6909,15 +6847,16 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	Show information in HTML for admin users or standard users
  *
  *	@param	string		$text				Text info
- *	@param  integer		$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param  integer		$infoonimgalt		Info is shown only on alt of star picto, otherwise it is shown on output after the star picto
  *	@param	int			$nodiv				No div
  *  @param  string|int  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'info', 'error', 'warning', 'xxx'=Other
  *  @param	string		$morecss			More CSS ('', 'warning', 'error')
  *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string		$picto				'' or 'warning'
+ *  @param  string		$textonpictotooltip	Text to show in tooltip on picto
  *	@return	string							String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
+function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '', $textonpictotooltip = '')
 {
 	global $conf, $langs;
 
@@ -6934,7 +6873,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 			$fa = 'exclamation-triangle';
 		}
 		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">');
-		$result .= img_picto((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note'), $fa);
+		$result .= img_picto(((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).($textonpictotooltip ? ' : '.$textonpictotooltip : ''), $fa);
 		$result .= ' ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
@@ -7360,7 +7299,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
-	$return .= '<span class="inline-block valignmiddle">' . $title . '</span>';	// $title is already HTML sanitized content
+	$return .= '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
 	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
@@ -7450,8 +7389,12 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block nowrap">';
 	print '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title may contains HTML like a combo list from page consumption.php, so we do not use dolPrintLabel here()
-	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '' && $totalnboflines > 0) {
-		print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="' . $langs->trans("NbRecordQualified") . '">(' . $totalnboflines . ')</span>';
+	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
+		if (is_numeric($totalnboflines) && (int) $totalnboflines > 0) {
+			print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle" title="' . $langs->trans("NbRecordQualified") . '">(' . $totalnboflines . ')</span>';
+		} else {
+			print '<span class="opacitymedium colorblack marginleftonly totalnboflines valignmiddle">(' . $totalnboflines . ')</span>';
+		}
 	}
 	print '</div>';
 	if (!empty($subtitle)) {
@@ -10260,9 +10203,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
 			'__MYCOMPANY_URL__'     => $mysoc->url,
-			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone, '', 0, 0, '', " ", '', '', -1),
-			'__MYCOMPANY_PHONEMOBILE__' => dol_print_phone($mysoc->phone_mobile, '', 0, 0, '', " ", '', '', -1),
-			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_PHONE__'   => dol_print_phone((string) $mysoc->phone, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_PHONEMOBILE__' => dol_print_phone((string) $mysoc->phone_mobile, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_FAX__'     => dol_print_phone((string) $mysoc->fax, '', 0, 0, '', " ", '', '', -1),
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -10733,7 +10676,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				// Show structured communication
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
-					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication($object->ref, $object->type);
+					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication((string) $object->ref, $object->type);
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
@@ -10782,7 +10725,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					/** @var Propal $object */
 					$substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT . "/comm/propal/card.php?id=" . $object->id;
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref, 1, $object);
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', (string) $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'commande') {
 					'@phan-var-force Commande $object';
@@ -10799,14 +10742,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					/** @var Contrat $object */
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT . "/contrat/card.php?id=" . $object->id;
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', $object->ref, 1, $object);
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', (string) $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'fichinter') {
 					'@phan-var-force Fichinter $object';
 					/** @var Fichinter $object */
 					$substitutionarray['__URL_FICHINTER__'] = DOL_MAIN_URL_ROOT . "/fichinter/card.php?id=" . $object->id;
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref, 1, $object);
+					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', (string) $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					'@phan-var-force SupplierProposal $object';
@@ -15568,8 +15511,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
-		if (
-			$useCache === 1
+		if ($useCache === 1 && $element_id > 0
 			&& !empty($conf->cache['fetchObjectByElement'][$element_type])
 			&& !empty($conf->cache['fetchObjectByElement'][$element_type][$element_id])
 			&& is_object($conf->cache['fetchObjectByElement'][$element_type][$element_id])

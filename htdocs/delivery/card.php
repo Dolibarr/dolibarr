@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -299,6 +299,7 @@ llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$objectsrc = null;
 
 if ($action == 'create') {
 	// Create. Seems to no be used
@@ -371,7 +372,7 @@ if ($action == 'create') {
 			// Thirdparty
 			$morehtmlref .= '<br>'.$expedition->thirdparty->getNomUrl(1);
 			// Project
-			if (isModEnabled('project')) {
+			if (isModEnabled('project') && $objectsrc !== null) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>';
 				if (0) {	// @phpstan-ignore-line  Do not change on shipment
@@ -722,14 +723,14 @@ if ($action == 'create') {
 				  * Linked object block (of linked shipment)
 				  */
 
-					// Show links to link elements
-					print '</div><div class="fichehalfright">';
+				// Show links to link elements
+				print '</div><div class="fichehalfright">';
 
-					// List of actions on element
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+				// List of actions on element
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
-					//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
-					$somethingshown = $form->showLinkedObjectBlock($object, '');
+				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
+				$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 

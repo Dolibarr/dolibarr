@@ -351,9 +351,11 @@ print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widt
 print '</td></tr>';
 */
 // User
-print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
-print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+if (array_key_exists('fk_user_creat', $object->fields)) {
+	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"');
+	print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+}
 // Status
 if (array_key_exists('status', $object->fields)) {
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';

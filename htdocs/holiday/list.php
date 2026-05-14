@@ -6,7 +6,7 @@
  * Copyright (C) 2019-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -613,8 +613,8 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 	print '</td>';
 }
 
+$morefilter = '';
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	$morefilter = '';
 	if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 		$morefilter = 'AND employee = 1';
 	}
@@ -877,7 +877,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday, $userstatic->country_id);	// user jdate(..., 1) because num_open_day need UTC dates
+		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday, $userstatic->country_id, $obj->fk_user);	// user jdate(..., 1) because num_open_day need UTC dates
 		$totalduration += $nbopenedday;
 
 		if ($mode == 'kanban') {
@@ -911,7 +911,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		} else {
 			// Show here line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
+			print '<tr data-rowid="'.$holidaystatic->id.'" class="oddeven row-with-select">';
 			// Action column
 			if ($conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';

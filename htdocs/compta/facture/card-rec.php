@@ -37,6 +37,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -114,7 +115,6 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicereccard', 'globalcard'));
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -762,6 +762,16 @@ if (empty($reshook)) {
 				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, 0, $date_start_fill, $date_end_fill, (int) $fournprice, (float) $buyingprice, $fk_parent_line);
 
 				if ($result > 0) {
+					// TODO add "insert" function into FactureLigneRec or add "invoicerecline.class.php" (same of "factureligne.class.php")
+					$objectline = new FactureLigneRec($db);
+					if ($objectline->fetch($result)) {
+						$objectline->array_options = $array_options;
+						$result = $objectline->insertExtraFields();
+						if ($result < 0) {
+							setEventMessages($langs->trans('Error').$result, null, 'errors');
+						}
+					}
+
 					// Define output language and generate document
 					/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 					{

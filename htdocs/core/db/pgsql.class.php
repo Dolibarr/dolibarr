@@ -682,10 +682,10 @@ class DoliDBPgsql extends DoliDB
 
 
 	/**
-	 * Libere le dernier resultset utilise sur cette connection
+	 *	Free the last pointer resultset used by this connection
 	 *
-	 * @param	resource	$resultset  Result set of request
-	 * @return	void
+	 * 	@param	resource|null	$resultset  	Result set of request
+	 * 	@return	void
 	 */
 	public function free($resultset = null)
 	{

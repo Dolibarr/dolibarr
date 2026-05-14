@@ -28,7 +28,7 @@
  *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
-define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
+define('MAIN_SECURITY_FORCECSP', "default-src 'none'; form-action 'none'; frame-ancestors 'self'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -337,7 +337,6 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 }
 
 
-
 if ($modulepart == 'barcode') {
 	$generator = GETPOST("generator", "aZ09");
 	$encoding = GETPOST("encoding", "aZ09");
@@ -413,6 +412,9 @@ if ($modulepart == 'barcode') {
 	'@phan-var-force ModeleBarCode $module';
 	/** @var ModeleBarCode $module */
 	if ($module->encodingIsSupported($encoding)) {
+		top_httphead('none');	// This add header like the Content-Security-Policy. We set content-type to 'none' so the content-type will be added by the $module->buildBarCode.
+		// Note that link to image can be shown as a direct link due to the MAIN_SECURITY_FORCECSP directive. Link must be into an img of a page in same domain.
+
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}
 } else {

@@ -409,9 +409,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
 			$formticket->withtitletopic = 1;
-			//$formticket->topic_title = $langs->trans('Summary').' '.$langs->trans('CreatedByPublicPortal');
 
-			$formticket->showMessageForm('100%');
+			$formticket->showMessageForm('100%', 1);
 		}
 
 		if ($action != 'presend') {

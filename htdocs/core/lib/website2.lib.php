@@ -965,7 +965,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 
 
 /**
- * Check a new string containing only php code (including <php tag)
+ * Check that the new string $phpfullcodestring contains only php code (including <php tag)
  * - Block if user has no permission to change PHP code.
  * - Block also if bad code found in the new string.
  *

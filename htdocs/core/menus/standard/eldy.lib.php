@@ -1509,6 +1509,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4%26filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat', 'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=5", $langs->trans("MenuClosedServices"), 2, $user->hasRight('contrat', 'lire'));
 			}
+			$newmenu->add("/contrat/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('contrat', 'lire'));
 		}
 
 		// Interventions
@@ -2646,7 +2647,7 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 1, 'filter' => 'outofdate']), $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 0]), $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => -2]), $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			$newmenu->add(dolBuildUrl('/adherents/stats/geo.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 
 			$newmenu->add(dolBuildUrl('/adherents/cartes/carte.php', ['leftmenu' => 'export']), $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
 

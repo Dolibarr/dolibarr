@@ -94,6 +94,7 @@ if (!empty($objectfield)) {
 }
 
 $objecttmp = null;
+$filter = '';
 if ($objectdesc) {
 	// Example of value for $objectdesc:
 	// Bom:bom/class/bom.class.php:0:t.status=1

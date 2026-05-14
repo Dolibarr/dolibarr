@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -201,6 +201,11 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int Situation cycle reference number
 	 */
 	public $situation_cycle_ref;
+
+	/**
+	 * @var int 		Populated by setRetainedWarrantyPaymentTerms()
+	 */
+	public $retained_warranty_fk_cond_reglement;
 
 	/**
 	 * ! Closing after partial payment: CLOSECODE_DISCOUNTVAT, CLOSECODE_BADDEBT, CLOSECODE_BANKCHARGE, CLOSECODE_OTHER
@@ -575,6 +580,37 @@ abstract class CommonInvoice extends CommonObject
 		$this->nbofopendirectdebitorcredittransfer = $num;
 
 		return $listofopendirectdebitorcredittransfer;
+	}
+
+	/**
+	 *  Change the retained warranty payments terms
+	 *
+	 *  @param		int		$id		Id of new payment terms
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setRetainedWarrantyPaymentTerms($id)
+	{
+		dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
+		if ($this->status >= 0 || $this->element == 'societe') {
+			$fieldname = 'retained_warranty_fk_cond_reglement';
+
+			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((int) $id);
+			$sql .= ' WHERE rowid='.((int) $this->id);
+
+			if ($this->db->query($sql)) {
+				$this->retained_warranty_fk_cond_reglement = $id;
+				return 1;
+			} else {
+				dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Error '.$sql.' - '.$this->db->error());
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
+			$this->error = 'Status of the object is incompatible '.$this->status;
+			return -2;
+		}
 	}
 
 	/**
@@ -2660,4 +2696,21 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
 	public $situation_percent = 100;
+
+	/**
+	 * Check if a line is a deposit line
+	 *
+	 * @return bool                 True if line is a deposit, false otherwise
+	 */
+	public function isDepositLine()
+	{
+		// Do not take into account lines of the type "deposit."
+		$reg = array();
+		if (preg_match('/^\((.*)\)$/', $this->desc, $reg)) {
+			if ($reg[1] == 'DEPOSIT') {
+				return true;
+			}
+		}
+		return false;
+	}
 }
