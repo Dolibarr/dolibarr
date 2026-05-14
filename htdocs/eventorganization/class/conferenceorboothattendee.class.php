@@ -2,6 +2,7 @@
 /* Copyright (C) 2017	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Jon Bendtsen	    <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_USED = 5;					// was present, presence confirmed, no more entrances can be done using this ticket
 	const STATUS_CANCELED = 9;
+	const STATUS_REPLACED = 13;				// This event attendee has been replaced with a different event Attendee which should be recorded in field fk_replacement
+
+	/**
+	 * @var array<int, int> list of possible statuses for this object
+	 */
+	public $list_possible_status = [self::STATUS_DRAFT, self::STATUS_VALIDATED, self::STATUS_USED, self::STATUS_CANCELED, self::STATUS_REPLACED];
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -111,7 +118,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled', '13' => 'Replaced'),),
+		'fk_replacement' => array('type' => 'integer:ConferenceOrBoothAttendee:eventorganization/class/conferenceorboothattendee.class.php', 'label' => 'ReplacementAttendee', 'enabled' => 1, 'position' => 66, 'notnull' => -1, 'visible' => 1, 'noteditable' => 1, 'index' => 1, 'help' => "ReplaceThisAttendeeWithAnother", 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 	);
 	/**
 	 * @var int
@@ -187,6 +195,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var ?int
 	 */
 	public $status;
+
+	/**
+	 * @var int|null
+	 */
+	public $fk_replacement = null;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -342,6 +355,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->user_creation_id);
 		unset($object->import_key);
+		unset($object->fk_replacement);
 
 		// Clear fields
 		$object->ref = "(PROV)";
@@ -770,6 +784,159 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
+	 *	replace "me" with another ConferenceOrBoothAttendee + reset any existing replacement
+	 *
+	 *	@param	User	$user						User that modify
+	 *	@param	ConferenceOrBoothAttendee|null	$fk_replacement		The event attendee that replaces "me". If NULL, this function will UNDO the current replacement (clear link, reset to STATUS_VALIDATED original and STATUS_DRAFT on any currently $this->fk_replacement attendee)
+	 *	@param	int		$status_fk_replacement		The new status of fk_replacement, default is STATUS_VALIDATED
+	 *	@param	int		$status_source				The new status of "me", default is STATUS_REPLACED
+	 *	@param	int		$notrigger					1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$force_fk_replacement		0 (default) do not overwrite fk_replacement if it has a sane value, 1  overwrite fk_replacement regardless of the existing value of fk_replacement
+	 *
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0, $force_fk_replacement = 0)
+	{
+		global $langs;
+		// Protection
+		if (!is_null($fk_replacement) && isset($this->fk_replacement) && $this->fk_replacement == $fk_replacement->id) {
+			// User selected the SAME replacement that is already set
+			$this->error = "No change made: The replacement is already set to this attendee.";
+			return 0; // Return 0 (Nothing done) instead of error
+		}
+		if (!is_null($fk_replacement)) {
+			$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
+			if (!$force_fk_replacement && !in_array($this->status, $allowed_statuses)) {
+				$allowed_labels = array_map(function (int $s) {
+					return $this->LibStatut($s);
+				}, $allowed_statuses);
+				$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->LibStatut($this->status) . ' is not allowed (must be ' . implode(' or ', $allowed_labels) . ')';
+				dol_syslog($error_text, LOG_ERR);
+				$this->error = $error_text;
+				return -1;
+			}
+		}
+		if (!is_null($fk_replacement) && $fk_replacement->id == $this->id) {
+			$error_text = 'Can not replace an attendee with itself';
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -2;
+		}
+		if (!in_array($status_fk_replacement, $this->list_possible_status)) {
+			$error_text = 'Invalid status_fk_replacement='.$status_fk_replacement;
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -3;
+		}
+		if (!in_array($status_source, $this->list_possible_status)) {
+			$error_text = 'Invalid status_source='.$status_source;
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -4;
+		}
+		if (!$force_fk_replacement && !empty($this->fk_replacement) && !is_null($fk_replacement) && $this->fk_replacement != $fk_replacement->id) {
+			$error_text = 'Attendee ' . $this->id . ' already has a replacement (ID: ' . $this->fk_replacement . '). Use force_fk_replacement=1 to override.';
+			dol_syslog($error_text, LOG_WARNING);
+			$this->error = $error_text;
+			return -5;
+		}
+		if (is_null($fk_replacement) && empty($this->fk_replacement)) {
+			$this->error = "No replacement to undo.";
+			return -6;
+		}
+		if (is_null($fk_replacement) && $this->fk_replacement > 0) {
+			$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
+			$oldFetch = $oldReplacementAttendee->fetch($this->fk_replacement);
+			if ($oldFetch > 0) {
+				if (!empty($oldReplacementAttendee->fk_replacement)) {
+					$error_text = 'Cannot undo replacement for attendee ' . $this->id . '. The current replacement (ID: ' . $oldReplacementAttendee->id . ') is itself replaced by attendee (ID: ' . $oldReplacementAttendee->fk_replacement . '). Please undo the replacement for attendee ' . $oldReplacementAttendee->id . ' first.';
+					dol_syslog($error_text, LOG_WARNING);
+					$this->error = $error_text;
+					return -7;
+				}
+			} elseif ($oldFetch < 0) {
+				$this->error = "Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error;
+				return -8;
+			}
+		}
+
+		$this->db->begin();
+		try {
+			$oldReplacementAttendee = null;
+			// Original
+			if (is_null($fk_replacement)) {
+				$any_old_fk_replacement = $this->fk_replacement;
+				if ($any_old_fk_replacement > 0) {
+					$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
+					$oldFetch = $oldReplacementAttendee->fetch($any_old_fk_replacement);
+					if ($oldFetch > 0) {
+						if (!empty($oldReplacementAttendee->fk_replacement)) {
+							throw new Exception("Race condition: The replacement (ID: " . $oldReplacementAttendee->id . ") has been replaced by another attendee since the check.");
+						}
+
+						$oldReplacementAttendee->status = self::STATUS_DRAFT;
+						$oldStatusDraft = $oldReplacementAttendee->update($user, 1);
+						if ($oldStatusDraft < 0) {
+							throw new Exception("Update oldReplacementAttendee=" . $any_old_fk_replacement . " failed: " . $oldReplacementAttendee->error);
+						}
+					} else {
+						throw new Exception("Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error);
+					}
+				}
+				$this->fk_replacement = 0;
+				$this->status = self::STATUS_VALIDATED;
+			} else {
+				$this->fk_replacement = $fk_replacement->id;
+				$this->status = $status_source;
+			}
+			$originalReplace = $this->update($user, 1); // we do our own trigger
+			if ($originalReplace < 0) {
+				throw new Exception("Update original attendee=".$this->id." failed: " . $this->error);
+			}
+
+			// call triggers
+			if (!$notrigger) {
+				if (is_null($fk_replacement)) {
+					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', $user);
+					if ($result < 0) {
+						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET failed: " . $this->error);
+					}
+
+					if ($oldReplacementAttendee !== null) {
+						$oldReplacementAttendee->context['source_name'] = $this->getFullName($langs);
+						$oldUpdateResult = $oldReplacementAttendee->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', $user);
+						if ($oldUpdateResult < 0) {
+							throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET failed: " . $oldReplacementAttendee->error);
+						}
+					}
+				} else {
+					$this->context['replacement_name'] = $fk_replacement->getFullName($langs);
+					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', $user);
+					if ($result < 0) {
+						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_SRC failed: " . $this->error);
+					}
+					$fk_replacement->context['source_name'] = $this->getFullName($langs);
+					$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACED_TGT');
+					if ($replacementStatus < 0) {
+						throw new Exception("Update replacement status failed: " . $fk_replacement->error);
+					}
+				}
+			}
+
+			$this->db->commit();
+			return 1;
+		} catch (Exception $e) {
+			// 5. Rollback
+			// If we are here, the transaction is likely already rolled back
+			// if update() threw an exception that caused a DB error.
+			// But to be safe, we call rollback.
+			$this->db->rollback();
+			$this->error = $e->getMessage();
+			return -1;
+		}
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -777,9 +944,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  array<string>   $labelparts         Array of parts to build the visible label.
+	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
+	 *                                              If empty/null, defaults to $this->ref.
 	 *  @return	string                              String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $labelparts = null)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -883,7 +1053,30 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			// Build the visible label from $labelparts array
+			$display_text = '';
+			if (!empty($labelparts) && is_array($labelparts)) {
+				foreach ($labelparts as $part) {
+					if (property_exists($this, $part)) {
+						$val = $this->$part;
+						// Format specific types
+						if ($part == 'date_subscription' && !empty($val)) {
+							$val = dol_print_date($val, 'dayhour');
+						} elseif ($part == 'amount' && !empty($val)) {
+							$val = price($val);
+						}
+						$display_text .= $val;
+					} else {
+						// Static string (separator, space, etc.)
+						$display_text .= $part;
+					}
+				}
+			}
+			// Fallback to ref if no parts provided or result is empty
+			if (empty($display_text)) {
+				$display_text = $this->ref;
+			}
+			$result .= dol_escape_htmltag($display_text);
 		}
 
 		$result .= $linkend;
@@ -891,7 +1084,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('conferenceorboothattendeedao'));
-		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result, 'labelparts' => $labelparts);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -900,6 +1093,165 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *  Return a string to display a field value (overridden to show Name and Chain for 'fk_replacement')
+	 *
+	 *  @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>,noteditable?:int,default?:int|string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,cssview?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int,required?:int,picto?:string}	$val	Array of properties of field to show
+	 *  @param  string  $key      Key of attribute
+	 *  @param  mixed   $value    Preselected value to show
+	 *  @param  string  $moreparam    To add more parameters on html tag
+	 *  @param  string  $keysuffix    Prefix string to add into name and id of field
+	 *  @param  string  $keyprefix    Suffix string to add into name and id of field
+	 *  @param  mixed   $morecss      Value for CSS to use
+	 *  @param  array<string>   $labelparts		Array of parts to build the visible label.
+	 *                                    		Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
+	 *                                          If empty/null, defaults to $this->ref.
+	 *
+	 *  @return string
+	 */
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $labelparts = array('firstname', ' ', 'lastname', ' #', 'id'))
+	{
+		global $langs;
+
+		if ($key == 'fk_replacement') {
+			$html = '';
+
+			// 1. Get the reverse chain (people I replaced / who came before me)
+			$replacedByChain = $this->getReplacedByChain();
+
+			// 2. Get the forward chain (people who replaced me / who came after me)
+			$forwardChain = array();
+			if (!empty($value)) {
+				$replacement = new ConferenceOrBoothAttendee($this->db);
+				if ($replacement->fetch((int) $value) > 0) {
+					$forwardChain[] = $replacement;
+					$forwardChain = array_merge($forwardChain, $replacement->getReplacementChain());
+				} else {
+					$langs->loadLangs(array("eventorganization", "errors"));
+					$forwardChain[] = null; // Marker for broken link
+				}
+			}
+
+			// 3. If neither chain exists, show nothing
+			if (empty($replacedByChain) && empty($forwardChain)) {
+				return '';
+			}
+
+			// 4. Build the display: [Reversed Past] → Me → [Future]
+			// Reverse the backward chain so oldest is first
+			if (!empty($replacedByChain)) {
+				$reversedChain = array_reverse($replacedByChain);
+				foreach ($reversedChain as $person) {
+					if (!empty($html)) $html .= ' &rarr; ';
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $labelparts);
+				}
+			}
+
+			// Add "Me"
+			if (!empty($html)) $html .= ' &rarr; ';
+
+			$meLabel = $langs->transnoentitiesnoconv("This");
+			// Generate link: No picto, Rich Tooltip, Text = "Me"
+			$html .= $this->getNomUrl(0, '', 0, 'badge badge-primary', -1, array($meLabel));
+
+
+			// Add forward chain
+			foreach ($forwardChain as $person) {
+				$html .= ' &rarr; ';
+				if ($person !== null) {
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $labelparts);
+				} else {
+					$html .= '<span class="opacitymedium">' . $langs->trans("ErrorRefNotFound", $langs->trans("ConferenceOrBoothAttendee")) . '</span>';
+				}
+			}
+
+			return $html;
+		}
+
+		return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+	}
+
+	/**
+	 *  Get the full replacement chain starting from this attendee.
+	 *  Traverses FORWARD: Finds who replaced this attendee, then who replaced them, etc.
+	 *  Example: If Alice (1) was replaced by Camilla (5), who was replaced by Sarah (2).
+	 *  Calling $alice->getReplacementChain() returns [Camilla, Sarah].
+	 *
+	 *  @return array<ConferenceOrBoothAttendee>   Array of ConferenceOrBoothAttendee objects
+	 */
+	public function getReplacementChain()
+	{
+		$chain = array();
+		$currentObj = $this;
+		$visitedIds = array($this->id);
+
+		// Traverse forward: Follow fk_replacement links
+		while (!empty($currentObj->fk_replacement)) {
+			// Loop protection
+			if (in_array($currentObj->fk_replacement, $visitedIds)) {
+				dol_syslog("Circular replacement loop detected at ID " . $currentObj->fk_replacement, LOG_WARNING);
+				break;
+			}
+			$visitedIds[] = $currentObj->fk_replacement;
+
+			// Fetch the next person
+			$nextObj = new ConferenceOrBoothAttendee($this->db);
+			if ($nextObj->fetch((int) $currentObj->fk_replacement) > 0) {
+				$chain[] = $nextObj;
+				$currentObj = $nextObj;
+			} else {
+				break;
+			}
+		}
+
+		return $chain;
+	}
+
+	/**
+	 *  Get the chain of people I replaced (Backward traversal).
+	 *  Example: If Sarah replaced Camilla, who replaced Alice.
+	 *  Calling $sarah->getReplacedChain() returns [Camilla, Alice].
+	 *
+	 *  @return array<ConferenceOrBoothAttendee>   Array of ConferenceOrBoothAttendee objects
+	 */
+	public function getReplacedByChain()
+	{
+		$chain = array();
+		$currentObj = $this;
+		$visitedIds = array($this->id);
+
+		// Traverse backward: Find who has fk_replacement = MY_ID
+		while (true) {
+			// Find the record where fk_replacement = currentObj->id
+			$sql = "SELECT rowid FROM " . $this->db->prefix() . "eventorganization_conferenceorboothattendee";
+			$sql .= " WHERE fk_replacement = " . ((int) $currentObj->id);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) break;
+
+			$obj = $this->db->fetch_object($resql);
+			if (!$obj) break; // No one replaced this person
+
+			// Loop protection
+			if (in_array($obj->rowid, $visitedIds)) {
+				dol_syslog("Circular loop detected in replaced chain at ID " . $obj->rowid, LOG_WARNING);
+				break;
+			}
+			$visitedIds[] = $obj->rowid;
+
+			// Fetch the person who replaced the current one
+			$replacer = new ConferenceOrBoothAttendee($this->db);
+			if ($replacer->fetch($obj->rowid) > 0) {
+				$chain[] = $replacer;
+				$currentObj = $replacer; // Move backward
+			} else {
+				break;
+			}
+		}
+
+		return $chain;
 	}
 
 	/**
@@ -943,10 +1295,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatus[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_REPLACED] = $langs->trans('Replaced');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_REPLACED] = $langs->trans('Replaced');
 		}
 
 		$labelStatus = $this->labelStatus[$status];
@@ -957,7 +1311,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$statusType = 'status2';
 		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
+			$statusType = 'status8';
+		}
+		if ($status == self::STATUS_REPLACED) {
+			$statusType = 'status1';
 		}
 
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
