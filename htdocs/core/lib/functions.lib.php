@@ -16484,6 +16484,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice_supplier'";
 				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'ConferenceOrBoothAttendee') {
+				if (!empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
+					$sql .= " AND a.fk_element = o.rowid";
+					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "@" . $db->escape($filterobj->module) . "'";
+					if ($filterobj->id) {
+						$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+					}
+				}
 			} else {
 				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
 					$sql .= " AND a.fk_element = o.rowid";

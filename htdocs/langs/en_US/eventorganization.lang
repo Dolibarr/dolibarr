@@ -91,6 +91,8 @@ EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
 EvntOrgCancelled = Canceled
+# Agenda
+ActionsOnAttendee=Events for this Conference Or Booth Attendee
 # Other
 SuggestForm = Suggestion page
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote

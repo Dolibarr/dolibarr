@@ -2172,6 +2172,13 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'mrp/class';
 		$module = 'mrp';
 		$myobject = 'mo';
+	} elseif ($objecttype == 'conferenceorboothattendee' || $objecttype == 'conferenceorboothattendee@eventorganization') {
+		$langs->load('eventorganization');
+		$classpath = 'eventorganization/class';
+		$module = 'eventorganization';
+		$myobject = 'conferenceorboothattendee';
+		$classfile = 'conferenceorboothattendee';
+		$classname = 'ConferenceOrBoothAttendee';
 	} elseif ($objecttype == 'productlot') {
 		$classpath = 'product/stock/class';
 		$module = 'stock';
