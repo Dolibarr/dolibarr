@@ -267,9 +267,9 @@ class DoliDBMysqli extends DoliDB
 				return false;
 			}
 			if (strpos($host, 'ssl://') === 0) {
-				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
+				$tmp = @new mysqliDoli($host, $login, $passwd, $name, $port);
 			} else {
-				$tmp = new mysqli($host, $login, $passwd, $name, $port);
+				$tmp = @new mysqli($host, $login, $passwd, $name, $port);
 			}
 		} catch (Exception $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
