@@ -5511,7 +5511,7 @@ abstract class CommonObject
 
 			$i = 0;
 
-			print "<!-- begin printObjectLines() -->\n";
+			print "<!-- ".__METHOD__."::begin printObjectLines() -->\n";
 			foreach ($this->lines as $line) {
 				// Line extrafield. TODO Remove this. extrafields should be already loaded.
 				//$line->fetch_optionals();
@@ -5531,7 +5531,7 @@ abstract class CommonObject
 
 				$i++;
 			}
-			print "<!-- end printObjectLines() -->\n";
+			print "<!-- ".__METHOD__."::end printObjectLines() -->\n";
 		}
 	}
 
@@ -5608,7 +5608,7 @@ abstract class CommonObject
 			}
 
 			// Recalculate unit price with tax if not defined
-			if (empty($line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
+			if ((float) $line->subprice_ttc == 0 && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
 				// So we calculate an estimated value just to show something on screen
 				$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty, 'MU');
 				//other method is less accurate
