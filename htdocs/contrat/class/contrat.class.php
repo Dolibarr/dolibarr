@@ -2958,7 +2958,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	int		$statut			Status of lines
 	 *  @param	int		$expired		1=expired, 0=not expired
-	 *  @return	array<int,mixed>		Array of totalized lines
+	 *  @return array<string,mixed>|int		Array of totalized lines or int if error
 	 */
 	public function getTotalizedLines($statut, int $expired)
 	{
