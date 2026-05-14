@@ -420,10 +420,21 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
-			}
 			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
+			}
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -1001,8 +1012,20 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
+			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
 			}
 
 			$hasPermissionOnLinkedObject = 0;
@@ -1869,9 +1892,22 @@ if ($action == 'create') {
 		$elProp = getElementProperties($origin);
 		$modulecodetouseforpermissioncheck = $elProp['module'];
 		// Keep permission check aligned with rights class aliases (see restrictedArea()).
-		if ($modulecodetouseforpermissioncheck == 'productbatch') {
-			$modulecodetouseforpermissioncheck = 'produit';
+		$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+		switch ($modulecodetouseforpermissioncheck) {
+			case 'productbatch':
+				$modulecodetouseforpermissioncheck = 'produit';
+				break;
+			case 'eventorganization':
+				// Event organization relies on Project permissions
+				$modulecodetouseforpermissioncheck = 'projet';
+				$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+				break;
+			default:
+				// No mapping needed, keep original values
+				break;
 		}
+
 		if ($user->hasRight($modulecodetouseforpermissioncheck, 'read') || $user->hasRight($modulecodetouseforpermissioncheck, $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
