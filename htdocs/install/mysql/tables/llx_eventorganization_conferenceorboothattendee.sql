@@ -19,6 +19,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	ref varchar(128) NOT NULL,
 	fk_soc integer,
+	fk_contact		integer NOT NULL,		-- Link to the contact (llx_socpeople) representing the attendee
 	fk_actioncomm integer,
 	fk_project integer NOT NULL,
 	fk_invoice integer NULL,
