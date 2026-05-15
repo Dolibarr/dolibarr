@@ -7747,7 +7747,7 @@ class Form
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (idate('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (idate('Y') + 100));
 
-						$retstring .= '<!-- datepicker usecalendar=eldy --><script nonce="' . getNonce() . '" type="text/javascript">';
+						$retstring .= '<!-- datepicker usecalendar='.$usecalendar.' --><script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
 							dateFormat: '" . $langs->trans("FormatDateShortJQueryInput") . "',
 							autoclose: true,
@@ -7781,7 +7781,7 @@ class Form
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($usecalendar == 'html' ? 'yyyy-mm-dd' : $langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($usecalendar == 'html' ? 'yyyy-MM-dd' : $langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar
