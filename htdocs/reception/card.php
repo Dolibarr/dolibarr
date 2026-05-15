@@ -1612,7 +1612,27 @@ if ($action == 'create' && $permissiontoadd) {
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			} elseif (empty($reshook)) {
-				$dispatchLines = array_merge($dispatchLines, $hookmanager->resArray);
+				// Only merge if resArray is a valid, non-empty array
+				if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
+					// Check if the merge would overwrite valid data with NULL
+					$tempMerged = array_merge($dispatchLines, $hookmanager->resArray);
+
+					// Sanity check: ensure our existing keys are still valid arrays
+					$corrupted = false;
+					foreach ($dispatchLines as $idx => $val) {
+						if (!is_array($tempMerged[$idx]) || !isset($tempMerged[$idx]['fk_commandefourndet'])) {
+							$corrupted = true;
+							break;
+						}
+					}
+
+					if (!$corrupted) {
+						$dispatchLines = $tempMerged;
+					} else {
+						// If merge corrupted data, ignore the hook result and keep original
+						error_log("WARNING: Hook dataProcessing returned invalid data, ignoring merge.");
+					}
+				}
 			} elseif ($reshook > 0) {
 				// $resArray starts from [0], we need $dispatchLines to start from [1], so we shift it
 				$dispatchLines = $hookmanager->resArray;
@@ -1622,7 +1642,7 @@ if ($action == 'create' && $permissiontoadd) {
 			}
 
 			print '<script type="text/javascript">
-            jQuery(document).ready(function() {
+			jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function(event) {
 					event.preventDefault();';
 			$i = 1;
@@ -1639,8 +1659,8 @@ if ($action == 'create' && $permissiontoadd) {
 				$i++;
 			}
 			print '});
-        	});
-            </script>';
+			});
+			</script>';
 
 			print '<br>';
 
@@ -2527,7 +2547,7 @@ if ($action == 'create' && $permissiontoadd) {
 		$alreadysent = array();
 
 		if (empty($origin)) {
-			$origin = 'supplier_order';
+			$origin = 'order_supplier';
 		}
 
 		if ($origin_id > 0) {
@@ -2538,7 +2558,7 @@ if ($action == 'create' && $permissiontoadd) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
-			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'supplier_order') ? 'commande_fournisseur' : $origin)."det as obj";
+			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'order_supplier') ? 'commande_fournisseur' : $origin)."det as obj";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
