@@ -36,7 +36,6 @@ require '../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'admin', 'propal'));
@@ -60,7 +59,6 @@ if (!$user->admin) {
  */
 
 require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
-
 
 
 /*
