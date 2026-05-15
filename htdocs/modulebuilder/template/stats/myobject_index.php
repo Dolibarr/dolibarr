@@ -227,7 +227,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 $px2 = new DolGraph();
-$displayp2 = false;
+$displaypx2 = false;
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$displaypx2 = true;
