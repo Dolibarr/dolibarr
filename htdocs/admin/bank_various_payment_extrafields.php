@@ -28,7 +28,7 @@
  */
 
 // Load Dolibarr environment
-require '../../../main.inc.php';
+require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
