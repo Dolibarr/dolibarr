@@ -36,6 +36,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -131,7 +132,6 @@ $donotclearsession = GETPOST('donotclearsession') ? GETPOST('donotclearsession')
 $object = new ActionComm($db);
 $cactioncomm = new CActionComm($db);
 $contact = new Contact($db);
-$extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 $form = new Form($db);
