@@ -1474,7 +1474,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
-				print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+				print '<td class="titlefieldcreate">'.$langs->trans("NatureOfThirdParty").''.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 			}
 			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
@@ -2317,7 +2317,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
 				print '<tr class="marginbottomlarge height50">';
 				if ($conf->browser->layout != 'phone') {
-					print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+					print '<td class="titlefieldcreate">'.$langs->trans("NatureOfThirdParty").''.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 				}
 				print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
