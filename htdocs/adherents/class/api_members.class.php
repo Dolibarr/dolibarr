@@ -680,7 +680,7 @@ class Members extends DolibarrApi
 		if ($result < 1) {
 			throw new RestException(500, $member->error);
 		} else {
-			return $this->getSubscriptions($result);
+			return $result;
 		}
 	}
 
