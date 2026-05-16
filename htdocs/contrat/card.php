@@ -1138,7 +1138,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$staticcontratligne = new ContratLigne($db);
+$staticcontractline = new ContratLigne($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -1571,10 +1571,10 @@ if ($action == 'create') {
 		// Qty by service status
 		print '<tr><td class="titlefield">'."".'</td>';
 		print '<td class=right>'.$langs->trans('Total').'</td>';
-		print '<td class=right>'.$staticcontratligne->LibStatut(0, 5, 0).'</td>';
-		print '<td class=right>'.$staticcontratligne->LibStatut(4, 5, 0).'</td>';
-		print '<td class=right>'.$staticcontratligne->LibStatut(4, 5, 1).'</td>';
-		print '<td class=right>'.$staticcontratligne->LibStatut(5, 5, 0).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(0, 5, 0).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 0).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 1).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(5, 5, 0).'</td>';
 		print '</tr>';
 
 		$all= $object->getTotalizedLines(-1, 0);
