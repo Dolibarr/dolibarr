@@ -85,8 +85,6 @@ $help_url = '';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-stats');
 
-$param = '';
-$mode = 'statistics';
 $params = [
 	'action' => 'create',
 	'mode' => 'init',
@@ -96,9 +94,9 @@ if (!empty($socid)) {
 }
 $url = dolBuildUrl(DOL_URL_ROOT.'/ticket/card.php', $params);
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/ticket/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/ticket/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/ticket/stats/index.php?mode=statistics&objecttype=ticket@ticket'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/ticket/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/ticket/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/ticket/stats/index.php?mode=statistics&objecttype=ticket@ticket', '', 2, array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
 
