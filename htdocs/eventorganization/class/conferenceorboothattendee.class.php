@@ -299,7 +299,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		$result = $this->createCommon($user, $notrigger);
-		if ($result > 0) {
+		if ($result > 0 && empty($this->ref)) {
 			$result = $this->fetch($result);
 			if ($result > 0) {
 				$this->ref = (string) $this->id;
