@@ -388,7 +388,6 @@ if (empty($reshook)) {
 			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"));
 		}
 		$error_array = array();
-		$created_array = array();
 		$db->begin();
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
@@ -411,7 +410,6 @@ if (empty($reshook)) {
 					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
 				} else {
 					$nbcreated++;
-					$created_array[$id] = $tmpmember->getNomUrl(1);
 				}
 			} else {
 				$error++;
