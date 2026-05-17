@@ -539,8 +539,17 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		if ($productIdentifier !== '') {
 			$findResult = $this->findProduct($productIdentifier);
 			if (is_array($findResult) && isset($findResult['error'])) {
-				// Ensure the return array matches the expected shape by adding 'success' => false
-				return array_merge(['success' => false], $findResult);
+				// Only abort if the caller EXPLICITLY asked for a product (via the 'product'
+				// argument). If they only provided a free-text 'description', we silently
+				// fall through with $prod = null so Dolibarr creates a free-text line item,
+				// which is a perfectly valid Dolibarr feature.
+				// Previous behaviour aborted ALL line creations whose description didn't
+				// match an existing product reference, which broke AI-driven creation of
+				// invoices/orders/proposals from one-off line descriptions.
+				if (isset($args['product'])) {
+					return array_merge(['success' => false], $findResult);
+				}
+				// fall through: $prod stays null
 			}
 			if (is_object($findResult)) {
 				$prod = $findResult;
