@@ -76,12 +76,20 @@ $headers = array_change_key_case($headers, CASE_LOWER);
 
 $authHeader   = $headers['authorization'] ?? '';
 $apiKeyHeader = $headers['x-api-key'] ?? '';
+// Fallback: also accept the key in a query string parameter (?api_key=XXX or ?key=XXX).
+// Required for MCP clients that don't support custom auth headers in their connector UI
+// (e.g. Claude Desktop "Custom Connectors" in beta only exposes OAuth fields).
+// SECURITY NOTE: query-string keys appear in webserver access logs and possibly in Referer
+// headers. Header-based auth (X-API-Key / Authorization) remains preferred and is tried first.
+// Administrators relying on the fallback should restrict access at the webserver level
+// and/or rotate AI_MCP_API_KEY regularly.
+$apiKeyQuery  = $_GET['api_key'] ?? $_GET['key'] ?? '';
 $storedKey    = getDolGlobalString('AI_MCP_API_KEY');
 
 $valid = false;
 
 if (!empty($storedKey)) {
-	// X-API-Key
+	// X-API-Key header (preferred)
 	if (!empty($apiKeyHeader)) {
 		$valid = hash_equals($storedKey, $apiKeyHeader);
 	}
@@ -93,6 +101,11 @@ if (!empty($storedKey)) {
 			$token = trim($matches[1]);
 			$valid = hash_equals($storedKey, $token);
 		}
+	}
+
+	// Query-string fallback (last resort for header-less clients)
+	if (!$valid && !empty($apiKeyQuery)) {
+		$valid = hash_equals($storedKey, $apiKeyQuery);
 	}
 }
 
