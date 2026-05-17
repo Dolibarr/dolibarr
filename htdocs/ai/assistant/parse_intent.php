@@ -270,7 +270,16 @@ try {
 		}
 
 		// If we are sending a lot of tools (Non-Latin or Fallback), we strip descriptions.
-		$isLargeSchema = count($toolsSchema) > 20;
+		// The 20-tool threshold was likely chosen for GPT-3.5 (4K context window). Modern
+		// LLMs handle the full schema trivially: Gemini 2.5 Flash has a 1M token context,
+		// GPT-4o has 128K, Claude Sonnet has 1M. Compression hurts more than it helps
+		// today because it also truncates tool *descriptions* (down to 3 words), which
+		// breaks tool selection (e.g. "create_other_document" becomes "Create documents
+		// other" -- the LLM then thinks supplier_invoice creation is not available).
+		// We raise the threshold to 100 to effectively disable compression for the
+		// default install (~30 tools), while still leaving a safety net for very large
+		// custom installs that register dozens of additional addMcpTools hooks.
+		$isLargeSchema = count($toolsSchema) > 100;
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
 		// Build System Prompt
@@ -727,12 +736,15 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 	$cleaned = [];
 
 	foreach ($tools as $tool) {
-		// Tool Description: Max 3 words
+		// Tool descriptions are how the LLM selects the right tool -- never truncate
+		// them, even when the schema is large. Truncating to 3 words ("Create documents
+		// other", "Add a single") breaks tool selection. If the schema really is too
+		// big for the chosen model, the right answer is to filter the toolset before
+		// it reaches the LLM (which is what filterToolsProfessional() already does
+		// upstream of this function), not to mutilate each tool's description.
+		// Parameter-level compression (stripping defaults, descriptions of optional
+		// fields, etc.) remains gated on $isLargeSchema below.
 		$desc = $tool['description'];
-		if ($isLargeSchema) {
-			$words = explode(' ', $desc);
-			$desc = implode(' ', array_slice($words, 0, 3));
-		}
 
 		// Get parameters
 		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
