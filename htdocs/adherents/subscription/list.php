@@ -480,7 +480,7 @@ if (!empty($arrayfields['d.login']['checked'])) {
 
 if (!empty($arrayfields['c.note']['checked'])) {
 	print '<td class="liste_titre">';
-	print '';
+	print '<input class="flat maxwidth100" type="text" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 	print '</td>';
 }
 
