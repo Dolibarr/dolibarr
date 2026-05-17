@@ -202,18 +202,35 @@ class UniversalLLMAdapter
 		global $dolibarr_ai_allow_local_endpoints;
 		$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
 
-		$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl);
+		// Pass $this->timeout as the response timeout so the LLM-specific value configured
+		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;
+		// preceding args $ssl_verifypeer=-1 and $timeoutconnect=0 keep their defaults).
+		$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, $this->timeout);
 
-		$this->lastResponse = (string) $result['content'];
+		$body         = (string) ($result['content'] ?? '');
+		$httpCode     = (int) ($result['http_code'] ?? 0);
+		$effectiveUrl = (string) ($result['url'] ?? $url);
+		// Store an enriched payload so the admin Log Viewer ("VIEW LOGS" in the AI Server
+		// MCP setup page) shows something actionable when something goes wrong, not just
+		// a bare "Invalid JSON response from API." with an empty body.
+		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl
+			. "\n--- body (" . strlen($body) . " bytes) ---\n"
+			. $body;
 
 		if (!empty($result['curl_error_no'])) {
-			return "Error: " . $result['curl_error_msg'];
+			return "Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")";
 		}
 
-		$json = json_decode((string) (string) $result['content'], true);
+		$json = json_decode($body, true);
 
 		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
-			return "Error: Invalid JSON response from API.";
+			// Common real-world causes: HTTP 4xx/5xx with empty body, HTML error page
+			// from a proxy, gateway timeout, etc. Surface the HTTP code and a short
+			// body snippet so the admin can diagnose without re-running with curl.
+			$snippet = substr($body, 0, 500);
+			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", "
+				. strlen($body) . " bytes). Body snippet: "
+				. ($snippet !== '' ? $snippet : '<empty>');
 		}
 
 		if (isset($json['error'])) {
