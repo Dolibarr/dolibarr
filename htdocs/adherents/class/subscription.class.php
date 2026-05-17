@@ -446,6 +446,7 @@ class Subscription extends CommonObject
 			$label .= ' '.$this->getLibStatut(5);
 		}*/
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('label').':</b> '.$this->note_public;
 		if (!empty($this->dateh)) {
 			$label .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->dateh, 'day');
 		}

@@ -763,6 +763,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 
 			$subscriptionstatic->ref = $objp->crowid;
 			$subscriptionstatic->id = $objp->crowid;
+			$subscriptionstatic->note_public = $objp->clabel;
 
 			$typeid = $objp->cfk_type;
 			if ($typeid > 0) {
