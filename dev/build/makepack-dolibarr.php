@@ -214,7 +214,7 @@ $BUILDROOT = $TEMP . '/buildroot';
 
 
 // Get version $MAJOR, $MINOR and $BUILD
-if (file_exists($SOURCE . '/htdocs/filefunc.inc.php')) {
+if (file_exists($SOURCE . '/htdocs/version.inc.php')) {
 	$filefuncPath = $SOURCE . '/htdocs/version.inc.php';
 } else {
 	$filefuncPath = $SOURCE . '/htdocs/filefunc.inc.php';
