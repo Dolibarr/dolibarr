@@ -140,7 +140,14 @@ class Ai
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
 			} else {	// if $function == 'docparsing', 'text...', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
+				if ($this->apiService == 'google') {
+					// Google Gemini native API: the /models/<model>:generateContent suffix is
+					// appended later (once $model has been resolved). The OpenAI-style
+					// /chat/completions does not exist on the native Gemini endpoint.
+					$this->apiEndpoint = rtrim($this->apiEndpoint, '/');
+				} else {
+					$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
+				}
 			}
 		}
 		if ($moreendpoint) {
@@ -168,6 +175,12 @@ class Ai
 				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize', 'textrephraser', 'textspellchecker', ...
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
 			}
+		}
+
+		// Google Gemini: append /models/<model>:generateContent now that $model is resolved.
+		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread'))
+			&& strpos($this->apiEndpoint, ':generateContent') === false) {
+			$this->apiEndpoint .= '/models/'.rawurlencode($model).':generateContent';
 		}
 
 		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format);
@@ -269,18 +282,33 @@ class Ai
 					"top_p": 0.95
 				}*/
 
-				$arrayforpayload = array(
-					'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
-					'model' => $model,
-				);
-
 				// Add a system message
 				$addDateTimeContext = false;
 				if ($addDateTimeContext) {		// @phpstan-ignore-line
 					$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
 				}
-				if ($prePrompt) {
-					$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+
+				if ($this->apiService == 'google') {
+					// Google Gemini native payload format (different from OpenAI's "messages").
+					$arrayforpayload = array(
+						'contents' => array(
+							array('role' => 'user', 'parts' => array(array('text' => $fullInstructions)))
+						)
+					);
+					if ($prePrompt) {
+						$arrayforpayload['system_instruction'] = array(
+							'parts' => array(array('text' => $prePrompt))
+						);
+					}
+				} else {
+					// OpenAI-compatible payload format (chatgpt, mistral, groq, anthropic-compat, custom, ...)
+					$arrayforpayload = array(
+						'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
+						'model' => $model,
+					);
+					if ($prePrompt) {
+						$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+					}
 				}
 			}
 
@@ -296,9 +324,16 @@ class Ai
 				$payload = json_encode($arrayforpayload);
 			}
 
-			$headers = array(
-				'Authorization: Bearer ' . $this->apiKey,
-			);
+			if ($this->apiService == 'google') {
+				// Google Gemini uses the x-goog-api-key header (Bearer is not accepted by the native API).
+				$headers = array(
+					'x-goog-api-key: ' . $this->apiKey,
+				);
+			} else {
+				$headers = array(
+					'Authorization: Bearer ' . $this->apiKey,
+				);
+			}
 			if ($function != 'file') {
 				$headers[] = 'Content-Type: application/json';
 			}
@@ -387,6 +422,18 @@ class Ai
 					$generatedContent = $decodedResponse['error'];
 				} else {
 					$generatedContent = var_export($decodedResponse['error'], true);
+				}
+			} elseif ($this->apiService == 'google') {
+				// Google Gemini response shape: candidates[0].content.parts[*].text
+				// (parts is an array because Gemini can return mixed-modality output;
+				// we concatenate the textual parts.)
+				$generatedContent = '';
+				if (!empty($decodedResponse['candidates'][0]['content']['parts'])) {
+					foreach ($decodedResponse['candidates'][0]['content']['parts'] as $part) {
+						if (isset($part['text'])) {
+							$generatedContent .= $part['text'];
+						}
+					}
 				}
 			} else {
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
