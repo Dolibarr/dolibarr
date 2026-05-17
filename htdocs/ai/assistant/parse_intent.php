@@ -293,8 +293,34 @@ try {
 
 		$defUrl = $servicesList[$serviceKey]['url'] ?? '';
 		$url = getDolGlobalString('AI_API_' . strtoupper($serviceKey) . '_URL') ?: $defUrl;
-		$defModel = $servicesList[$serviceKey]['textgeneration'] ?? 'gpt-4o-mini';
-		$model = getDolGlobalString('AI_API_' . strtoupper($serviceKey) . '_MODEL') ?: $defModel;
+		// The model defaults declared in getListOfAIServices() are nested:
+		//   $servicesList[$key]['textgeneration'] = ['default' => 'model-name']
+		// Reading 'textgeneration' without ['default'] returns the inner array, which
+		// then fails the (string) type-hint of UniversalLLMAdapter's 4th argument with:
+		//   "Argument #4 ($model) must be of type string, array given"
+		//
+		// The admin UI (htdocs/ai/admin/setup.php "Prompt and custom AI models" tab) also
+		// stores the per-function model under AI_API_<SERVICE>_MODEL_TEXT (matching the
+		// convention already used by Ai::generateContent() for the same data). The
+		// previous lookup used AI_API_<SERVICE>_MODEL which is never written by that
+		// form, so the user-configured model was silently ignored.
+		$rawDefault = $servicesList[$serviceKey]['textgeneration'] ?? null;
+		if (is_array($rawDefault)) {
+			$defModel = $rawDefault['default'] ?? 'gpt-4o-mini';
+		} else {
+			$defModel = $rawDefault ?: 'gpt-4o-mini';
+		}
+		$prefix = 'AI_API_' . strtoupper($serviceKey);
+		$model = getDolGlobalString($prefix . '_MODEL_TEXT')
+			?: getDolGlobalString($prefix . '_MODEL')
+			?: $defModel;
+		// Defensive: coerce to string if anyone stored an array in this constant
+		if (is_array($model)) {
+			$model = $model['default'] ?? $defModel;
+		}
+		if (!is_string($model) || $model === '') {
+			$model = (string) $defModel;
+		}
 		$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
 
 		if (!empty($apiKey)) {
