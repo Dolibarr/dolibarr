@@ -361,7 +361,6 @@ if (empty($reshook)) {
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
 		$error_array = array();
-		$created_array = array();
 		$db->begin();
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
@@ -372,7 +371,6 @@ if (empty($reshook)) {
 					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
 				} else {
 					$nbcreated++;
-					$created_array[$id] = $tmpmember->getNomUrl(1);
 				}
 			} else {
 				$error++;
