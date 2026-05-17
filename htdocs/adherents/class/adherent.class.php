@@ -1835,7 +1835,7 @@ class Adherent extends CommonObject
 	 */
 	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null, $ref_ext = '')
 	{
-		global $user;
+		global $user, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
@@ -1844,6 +1844,22 @@ class Adherent extends CommonObject
 		// Clean parameters
 		if (!$amount) {
 			$amount = 0;
+		}
+
+		if ($this->statut != Adherent::STATUS_VALIDATED) {
+			$autoValidate = getDolGlobalInt('MEMBER_AUTO_VALIDATE_ON_SUBSCRIPTION');
+
+			if ($autoValidate) {
+				$result = $this->validate($user);
+				if ($result < 0) {
+					$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
+					return -1;
+				}
+				dol_syslog("Auto-validated member " . $this->ref . " (ID: " . $this->id . ") upon subscription creation (Config: MEMBER_AUTO_VALIDATE_ON_SUBSCRIPTION=1)", LOG_INFO);
+			} else {
+				$this->error = "MEMBER_AUTO_VALIDATE_ON_SUBSCRIPTION=".$autoValidate;
+				return -1;
+			}
 		}
 
 		$this->db->begin();

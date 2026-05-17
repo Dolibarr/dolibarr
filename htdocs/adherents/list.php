@@ -352,7 +352,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Create external user
+	// createsubscription_confirm
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
@@ -360,6 +360,8 @@ if (empty($reshook)) {
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
+		$error_array = array();
+		$created_array = array();
 		$db->begin();
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
@@ -367,8 +369,10 @@ if (empty($reshook)) {
 				$result = $tmpmember->subscription($now, (float) $amount, 0, '', $label);
 				if ($result < 0) {
 					$error++;
+					$error_array[$id] = $tmpmember->getNomUrl(1) . '&mdash;' . $tmpmember->error;
 				} else {
 					$nbcreated++;
+					$created_array[$id] = $tmpmember->getNomUrl(1);
 				}
 			} else {
 				$error++;
@@ -379,7 +383,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), $error_array, 'errors');
 			$db->rollback();
 		}
 	}
