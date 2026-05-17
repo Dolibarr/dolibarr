@@ -283,16 +283,16 @@ if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if ($search_dateadh_start) {
-    $sql .= " AND c.dateadh >= '".$db->idate($search_dateadh_start)."'";
+	$sql .= " AND c.dateadh >= '".$db->idate($search_dateadh_start)."'";
 }
 if ($search_dateadh_end) {
-    $sql .= " AND c.dateadh <= '".$db->idate($search_dateadh_end)."'";
+	$sql .= " AND c.dateadh <= '".$db->idate($search_dateadh_end)."'";
 }
 if ($search_datef_start) {
-    $sql .= " AND c.datef >= '".$db->idate($search_datef_start)."'";
+	$sql .= " AND c.datef >= '".$db->idate($search_datef_start)."'";
 }
 if ($search_datef_end) {
-    $sql .= " AND c.datef <= '".$db->idate($search_datef_end)."'";
+	$sql .= " AND c.datef <= '".$db->idate($search_datef_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
