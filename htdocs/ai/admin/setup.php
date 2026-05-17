@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,6 +108,16 @@ foreach ($arrayofai as $ia => $iarecord) {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
 	}
 }
+
+// Menu visibility toggle: AI_MENU_HIDE_TOOLSMENU
+// HIDE semantics (absent = visible, present = hidden) is intentional: when
+// FormSetup::setAsYesNo is rendered with JS enabled, ajax_constantonoff DELETES
+// the row from llx_const on toggle-off instead of storing "0". With a SHOW
+// constant we could not distinguish "default" (visible) from "explicitly off"
+// once the toggle has been cycled. With a HIDE constant the absent state is
+// unambiguous and means "visible", matching the default behavior.
+$item = $formSetup->newItem('AI_MENU_HIDE_TOOLSMENU');
+$item->setAsYesNo();
 
 $setupnotempty = + count($formSetup->items);
 

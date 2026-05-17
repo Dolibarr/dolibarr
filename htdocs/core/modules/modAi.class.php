@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,6 +270,52 @@ class modAi extends DolibarrModules
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AI */
+		// Tools-menu integration: expose the AI Assistant and Setup pages under
+		// the standard Dolibarr "Tools" main menu, so users who don't have the
+		// AI top-toolbar picto in their workflow can still reach the AI pages
+		// from the familiar Tools area. Pattern mirrors modApi, modBarcode,
+		// modModuleBuilder and modOpenSurvey (fk_mainmenu=tools).
+		// Visibility is controlled by the AI_MENU_HIDE_TOOLSMENU admin toggle
+		// declared on the AI Setup page (HIDE semantics: absent = visible,
+		// present = hidden; see commit message for rationale).
+		$this->menu[$r++] = array(
+			'fk_menu'  => 'fk_mainmenu=tools',
+			'type'     => 'left',
+			'titre'    => 'AI',
+			'prefix'   => img_picto('', 'fa-robot', 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'tools',
+			'leftmenu' => 'ai',
+			'url'      => '/ai/assistant/index.php?mainmenu=tools&leftmenu=ai',
+			'langs'    => 'other',
+			'position' => 200,
+			'enabled'  => '$conf->ai->enabled && !getDolGlobalString("AI_MENU_HIDE_TOOLSMENU")',
+			'perms'    => '1',
+			'target'   => '',
+			'user'     => 2,
+		);
+
+		$this->menu[$r++] = array(
+			'fk_menu'  => 'fk_mainmenu=tools,fk_leftmenu=ai',
+			'type'     => 'left',
+			'titre'    => 'AIAssistant',
+			'mainmenu' => 'tools',
+			'leftmenu' => 'ai_assistant_tools',
+			'url'      => '/ai/assistant/index.php?mainmenu=tools&leftmenu=ai',
+			'langs'    => 'other',
+			'position' => 201,
+			'enabled'  => '$conf->ai->enabled && !getDolGlobalString("AI_MENU_HIDE_TOOLSMENU")',
+			'perms'    => '1',
+			'target'   => '',
+			'user'     => 2,
+		);
+
+		// Setup entry intentionally NOT exposed under the Tools menu: API-key
+		// configuration is an admin-only task that already lives under the
+		// standard "Configuration -> Modules/Applications -> AI Assistant ->
+		// Setup" flow shared by every other Dolibarr module. Duplicating it
+		// here would clutter the Tools menu for non-admins (who would see it
+		// gated behind $user->admin anyway) and dilute the "daily-use tools"
+		// purpose of the Tools area.
 		/* END MODULEBUILDER LEFTMENU AI */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
