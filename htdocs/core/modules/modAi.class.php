@@ -266,9 +266,55 @@ class modAi extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
+		// Top menu "AI" with a robot icon -- visible once the module is enabled.
+		$this->menu[$r++] = array(
+			'fk_menu'  => '',                          // '' means top-level
+			'type'     => 'top',
+			'titre'    => 'AI',
+			'prefix'   => img_picto('', 'fa-robot', 'class="pictofixedwidth valignmiddle"'),
+			'mainmenu' => 'ai',
+			'leftmenu' => '',
+			'url'      => '/ai/assistant/index.php',
+			'langs'    => 'other',
+			'position' => 1000,
+			'enabled'  => '$conf->ai->enabled',
+			'perms'    => '1',
+			'target'   => '',
+			'user'     => 2,                           // 0=internal, 1=external, 2=both
+		);
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AI */
+		// Left sub-menu "Assistant" under the AI top menu.
+		$this->menu[$r++] = array(
+			'fk_menu'  => 'fk_mainmenu=ai',
+			'type'     => 'left',
+			'titre'    => 'AIAssistant',
+			'mainmenu' => 'ai',
+			'leftmenu' => 'ai_assistant',
+			'url'      => '/ai/assistant/index.php',
+			'langs'    => 'other',
+			'position' => 100,
+			'enabled'  => '$conf->ai->enabled',
+			'perms'    => '1',
+			'target'   => '',
+			'user'     => 2,
+		);
+		// Left sub-menu "Setup" (admins only).
+		$this->menu[$r++] = array(
+			'fk_menu'  => 'fk_mainmenu=ai',
+			'type'     => 'left',
+			'titre'    => 'Setup',
+			'mainmenu' => 'ai',
+			'leftmenu' => 'ai_setup',
+			'url'      => '/ai/admin/setup.php',
+			'langs'    => 'admin',
+			'position' => 200,
+			'enabled'  => '$conf->ai->enabled',
+			'perms'    => '$user->admin',
+			'target'   => '',
+			'user'     => 0,                           // 0=internal only (admin)
+		);
 		/* END MODULEBUILDER LEFTMENU AI */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
