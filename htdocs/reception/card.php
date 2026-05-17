@@ -2546,8 +2546,8 @@ if ($action == 'create' && $permissiontoadd) {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 
-		if (empty($origin)) {
-			$origin = 'order_supplier';
+		if (empty($origin) || $origin == 'order_supplier') {
+			$origin = 'supplier_order';
 		}
 
 		if ($origin_id > 0) {
@@ -2558,7 +2558,7 @@ if ($action == 'create' && $permissiontoadd) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
-			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'order_supplier') ? 'commande_fournisseur' : $origin)."det as obj";
+			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'supplier_order') ? 'commande_fournisseur' : $origin)."det as obj";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
