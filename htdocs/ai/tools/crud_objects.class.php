@@ -196,6 +196,12 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 						"header" => [
 							"type" => "object",
 							"description" => "Invoice header data. Must include 'socid' (Customer ID).",
+							"properties" => [
+								"socid" => ["type" => "integer", "description" => "Customer ID (Thirdparty ID)"],
+								"date" => ["type" => "string", "description" => "Invoice date (YYYY-MM-DD)"],
+								"note_public" => ["type" => "string", "description" => "Public note"],
+								"note_private" => ["type" => "string", "description" => "Private note"]
+							],
 							"required" => ["socid"]
 						],
 						"lines" => [
@@ -233,6 +239,13 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 						"header" => [
 							"type" => "object",
 							"description" => "Header data. Must include 'socid'.",
+							"properties" => [
+								"socid" => ["type" => "integer", "description" => "Thirdparty ID (Customer for proposal, Supplier for supplier_*)"],
+								"date" => ["type" => "string", "description" => "Document date (YYYY-MM-DD)"],
+								"duree_validite" => ["type" => "integer", "description" => "Validity in days (proposal only)"],
+								"note_public" => ["type" => "string", "description" => "Public note"],
+								"note_private" => ["type" => "string", "description" => "Private note"]
+							],
 							"required" => ["socid"]
 						],
 						"lines" => [
