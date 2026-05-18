@@ -148,6 +148,9 @@ AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last 
 AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
+MaxParticipants=Max participants
+MaxParticipantsHelp=Maximum number of participants allowed
+MaxParticipantsFor=Maximum number of participants allowed for this %s
 Busy=Busy
 ExportDataset_event1=List of agenda events
 DefaultWorkingDays=Default working days range in week (Example: 1-5, 1-6)
