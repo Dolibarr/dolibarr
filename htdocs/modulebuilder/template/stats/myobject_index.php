@@ -174,8 +174,10 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbiny
 
 
 $px1 = new DolGraph();
+$displaypx1 = false;
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
+	$displaypx1 = true;
 	$px1->SetData($data);
 	$i = $startyear;
 	$legend = array();
@@ -225,8 +227,10 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 $px2 = new DolGraph();
+$displaypx2 = false;
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
+	$displaypx2 = true;
 	$px2->SetData($data);
 	$i = $startyear;
 	$legend = array();
@@ -273,8 +277,10 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 $px3 = new DolGraph();
+$displaypx3 = false;
 $mesg = $px3->isGraphKo();
 if (!$mesg) {
+	$displaypx3 = true;
 	$px3->SetData($data);
 	$i = $startyear;
 	$legend = array();
@@ -435,16 +441,16 @@ print '<table class="border centpercent"><tr class="pair nohover"><td align="cen
 if ($mesg) {
 	print $mesg;
 } else {
-	if (isset($px1)) {
+	if ($displaypx1) {
 		print $px1->show();
 		print "<br>\n";
 	}
 	/*
-	if (isset($px2)) {
+	if ($displaypx2) {
 		print $px2->show();
 		print "<br>\n";
 	}
-	if (isset($px2)) {
+	if ($displaypx3) {
 		print $px3->show();
 		print "<br>\n";
 	}

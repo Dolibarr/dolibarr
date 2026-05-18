@@ -589,7 +589,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { getDocument } = await getPdfLib();
             const arrayBuffer = await file.arrayBuffer();
-            const pdf = await getDocument({ data: arrayBuffer }).promise;
+            // cMapUrl + standardFontDataUrl are REQUIRED for PDFs that ship with
+            // custom CID fonts referencing ToUnicode CMaps (extremely common with
+            // generators like TCPDF, wkhtmltopdf, iText, etc.). Without these,
+            // getTextContent() returns raw glyph codes that look like garbled
+            // base64. jsdelivr is used here because cdnjs (used elsewhere for the
+            // pdf.js bundle) does not distribute the cmaps/ and standard_fonts/
+            // resource directories.
+            const PDFJS_RES = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.149';
+            const pdf = await getDocument({
+                data: arrayBuffer,
+                cMapUrl: PDFJS_RES + '/cmaps/',
+                cMapPacked: true,
+                standardFontDataUrl: PDFJS_RES + '/standard_fonts/',
+            }).promise;
 
             let fullText = "";
             const totalPages = pdf.numPages; // Get total pages
@@ -688,7 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 class SpeechPipeline {
                     static task = 'automatic-speech-recognition';
-                    static model = 'Xenova/whisper-small.en'; 
+                    static model = 'Xenova/whisper-small.en';
                     static instance = null;
 
                     static async getInstance(progress_callback = null) {

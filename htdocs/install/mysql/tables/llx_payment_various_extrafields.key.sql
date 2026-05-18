@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2026 Aloïs Micard  <a.micard@vold.lu>
+-- Copyright (C) 2013		Jean-Francois FERRY			<jfefe@aternatik.fr>
+-- Copyright (C) 2026		Solution Libre SAS			<contact@solution-libre.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,8 +17,5 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_properties_fk_product (fk_product);
-ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_properties_fk_entrepot (fk_entrepot);
 
-ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
-ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_extrafields (fk_object);

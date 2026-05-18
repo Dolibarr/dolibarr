@@ -1,12 +1,11 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2018      Alexandre Spangaro   	<aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Solution Libre SAS		<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,27 +22,27 @@
  */
 
 /**
- *  \file       htdocs/asset/admin/asset_extrafields.php
- *  \ingroup    asset
- *  \brief      Page to setup extra fields of asset
+ *  \file       htdocs/admin/bank_various_payment_extrafields.php
+ *  \ingroup    bank
+ *  \brief      Page to setup extra fields of various payments
  */
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
-
-require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("assets", "admin", "companies"));
+$langs->loadLangs(array("admin", "banks", "other"));
 
+$extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
@@ -51,7 +50,7 @@ $type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'asset'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'payment_various'; // Must match the table_element of PaymentVarious
 
 if (!$user->admin) {
 	accessforbidden();
@@ -65,48 +64,43 @@ if (!$user->admin) {
 require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 
-
 /*
  * View
  */
 
-$help_url = '';
-$page_name = "AssetSetup";
-$textobject = $langs->transnoentitiesnoconv("Assets");
+$textobject = $langs->transnoentitiesnoconv("VariousPayments");
 
-llxHeader('', $langs->trans("AssetSetup"), $help_url);
+llxHeader('', $langs->trans("BankSetupModule"));
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
 
-$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
-print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
+$head = bank_admin_prepare_head(null);
 
-
-$head = assetAdminPrepareHead();
-
-print dol_get_fiche_head($head, 'asset_extrafields', $langs->trans($page_name), -1, 'asset');
+print dol_get_fiche_head($head, 'bank_various_payment_extrafields', $langs->trans("BankSetupModule"), -1, '');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
 
 
-/*
- * Creation of an optional field
- */
+// Buttons
+if ($action != 'create' && $action != 'edit') {
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
+	print "</div>";
+}
+
+
+// Creation of an optional field
 if ($action == 'create') {
 	print '<br><div id="newattrib"></div>';
-	print load_fiche_titre($langs->trans('NewAttribute'));
-
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/*
- * Edition of an optional field
- */
+// Edition of an optional field
 if ($action == 'edit' && !empty($attrname)) {
 	print "<br>";
-	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
-
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
