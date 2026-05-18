@@ -233,7 +233,8 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 		$link=DOL_URL_ROOT.'/projet/card.php?id='.abs($task["task_id"]);
 		$fetchresult = $projectstatic->fetch(abs($task["task_id"]));
 		if ($fetchresult > 0) {
-			$name = $projectstatic->getNomUrl(0, 'withproject', 1);
+			$tmpname = $projectstatic->getNomUrl(0, 'withproject', 1);
+			$name = '<span style="font-size: 1.2em; font-weight: bold;">' . $tmpname . '</span>';
 		} else {
 			$name = $task['task_name'];
 		}
