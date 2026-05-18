@@ -175,6 +175,5 @@ $arrayresult = $form->selectForFormsList($objecttmp, (string) $htmlname, 0, 0, $
 $db->close();
 
 if ($outjson) {
-	$debug = json_encode($arrayresult);
 	print json_encode($arrayresult);
 }
