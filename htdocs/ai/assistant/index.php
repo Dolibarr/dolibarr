@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,12 @@ require '../../main.inc.php';
 // Security check
 if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
+}
+// Per-user gate: the Assistant page is now governed by the standard
+// 'ai/assistant/use' right (granted by default to new users), so admins
+// can revoke access per user/group via the standard permission UI.
+if (!$user->hasRight('ai', 'assistant', 'use')) {
+	accessforbidden();
 }
 
 global $langs;
