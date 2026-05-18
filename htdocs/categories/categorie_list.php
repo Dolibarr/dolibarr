@@ -63,9 +63,11 @@ if (empty($mode)) {
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
+$MAP_TYPE_TITLE_AREA = array();
 if (is_numeric($type)) {	// deprecated: must use the category code instead of id. For backward compatibility.
 	$tmpcategory = new Categorie($db);
 	$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+	$MAP_TYPE_TITLE_AREA = $tmpcategory->MAP_TYPE_TITLE_AREA;
 	$type = $MAP_ID_TO_CODE[(int) $type];
 }
 $nosearch = GETPOSTINT('nosearch');
@@ -237,7 +239,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+$title .= ' ('.$langs->trans(empty($MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : $MAP_TYPE_TITLE_AREA[$type]).')';
 //$help_url = "EN:Module_Categorie|FR:Module_Categorie_FR|ES:Módulo_Categorie";
 $help_url = '';
 $morejs = array();
