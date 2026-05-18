@@ -27,10 +27,24 @@ class ContactPersistenceAddressModeTest extends CommonClassTest
 	 */
 	private function createThirdpartyFixture(): Societe
 	{
+		$suffix = dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand();
 		$thirdparty = new Societe($this->savdb);
 		$thirdparty->initAsSpecimen();
-		$thirdparty->name = 'Address mode thirdparty '.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand();
+		$thirdparty->name = 'Address mode thirdparty '.$suffix;
 		$thirdparty->client = 1;
+		$thirdparty->fournisseur = 0;
+		$thirdparty->code_client = 'CC-'.$suffix;
+		$thirdparty->code_fournisseur = '';
+		$thirdparty->email = 'address-mode-thirdparty-'.$suffix.'@example.test';
+		$thirdparty->tva_intra = 'FR'.$suffix;
+		$thirdparty->euid = 'FR-RCSXXXX-'.$suffix;
+		$thirdparty->idprof1 = 'idprof1-'.$suffix;
+		$thirdparty->idprof2 = 'idprof2-'.$suffix;
+		$thirdparty->idprof3 = 'idprof3-'.$suffix;
+		$thirdparty->idprof4 = 'idprof4-'.$suffix;
+		$thirdparty->idprof5 = 'idprof5-'.$suffix;
+		$thirdparty->idprof6 = 'idprof6-'.$suffix;
+		$thirdparty->code_compta_client = '411'.$suffix;
 
 		$result = $thirdparty->create($this->savuser);
 		$this->assertGreaterThan(0, $result, 'Thirdparty creation failed: '.$thirdparty->error);
