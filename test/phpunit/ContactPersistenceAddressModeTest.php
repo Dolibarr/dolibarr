@@ -27,7 +27,7 @@ class ContactPersistenceAddressModeTest extends CommonClassTest
 	 */
 	private function createThirdpartyFixture(): Societe
 	{
-		$suffix = dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand();
+		$suffix = dol_print_date(dol_now(), 'dayhourlogsmall').mt_rand(10, 99);
 		$thirdparty = new Societe($this->savdb);
 		$thirdparty->initAsSpecimen();
 		$thirdparty->name = 'Address mode thirdparty '.$suffix;
