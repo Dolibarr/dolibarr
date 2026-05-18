@@ -79,7 +79,7 @@ llxHeader('', $langs->trans('Categories'), '');
 //$object->info($object->id);
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+$title .= ' ('.$langs->trans(empty($object->MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : $object->$MAP_TYPE_TITLE_AREA[$type]).')';
 
 $head = categories_prepare_head($object, $type);
 print dol_get_fiche_head($head, 'info', $langs->trans($title), -1, 'category');
