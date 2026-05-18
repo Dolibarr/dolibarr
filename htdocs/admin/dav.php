@@ -24,9 +24,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
@@ -115,7 +114,7 @@ if ($action == 'edit') {
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$tooltiphelp .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+			$tooltiphelp .= $langs->trans("RESTRICT_ON_IPHelp").'<br>'.$langs->trans("Example").': '.$langs->trans("IPListExample");
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';

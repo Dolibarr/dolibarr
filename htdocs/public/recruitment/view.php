@@ -471,11 +471,11 @@ if ($action != 'dosubmit') {
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate fieldrequired left">'.$langs->trans("Email").'</td><td class="left">';
-		print img_picto("", "email").'<input type="text" class="flat minwidth100 --success" name="email" value="'.$email.'">';
+		print img_picto("", "email", 'class="pictofixedwidth"').'<input type="text" class="flat minwidth100 --success" name="email" value="'.$email.'">';
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Phone").'</td><td class="left">';
-		print img_picto("", "phone").'<input type="text" class="flat minwidth100 --success" name="phone" value="'.$phone.'">';
+		print img_picto("", "phone", 'class="pictofixedwidth"').'<input type="text" class="flat minwidth100 --success" name="phone" value="'.$phone.'">';
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left minwidth300">'.$langs->trans("DateOfBirth").'</td><td class="left">';

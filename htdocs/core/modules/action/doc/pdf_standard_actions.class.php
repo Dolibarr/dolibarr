@@ -241,7 +241,7 @@ class pdf_standard_actions
 			$pdf->SetTitle($outputlangs->convToOutputCharset($this->title));
 			$pdf->SetSubject($outputlangs->convToOutputCharset($this->subject));
 			$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 			$pdf->SetKeywords($outputlangs->convToOutputCharset($this->title." ".$this->subject));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -345,7 +345,7 @@ class pdf_standard_actions
 				if ($obj->fk_project > 0) {
 					$projectstatic->fetch($obj->fk_project);
 					if ($projectstatic->ref) {
-						$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->ref);
+						$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode((string) $projectstatic->ref);
 					}
 				}
 

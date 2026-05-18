@@ -71,7 +71,8 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 				'memory' => $query['memory_usage'],
 				'is_success' => $query['is_success'],
 				'error_code' => $query['error_code'],
-				'error_message' => $query['error_message']
+				'error_message' => $query['error_message'],
+				'backtrace' => isset($query['backtrace']) ? $query['backtrace'] : null
 			);
 			$totalExecTime += $query['duration'];
 			$totalMemoryUsage += $query['memory_usage'];

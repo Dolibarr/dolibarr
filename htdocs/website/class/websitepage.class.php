@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -279,21 +279,48 @@ class WebsitePage extends CommonObject
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
 
+		// Check there is no PHP into HTML header
+		$dataposted = trim($this->htmlheader);		// Must accept tags like '<script>' and '<link>'
+		$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
+		$dataposted = str_replace('<?=', '<?php', $dataposted);
+
+		// Test if page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($this->content);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			// Note: This one may be uselss because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+			$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to create a page with PHP content in HTML header without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
 		return $this->createCommon($user, $notrigger);
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int       	$id             		Id object.
-	 *                                  			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
-	 *                                  			- If value is < 0, we must exclude this ID.
-	 * @param 	?string    	$website_id     		Web site id (page name must also be filled if this parameter is used)
-	 * @param 	?string    	$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
-	 * @param 	?string    	$aliasalt       		Alternative alias to search page (slow)
-	 * @param	int			$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
-	 * @param	string		$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
-	 * @return 	int<-1,1>							Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int       		$id             		Id object.
+	 *                          	        			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+	 *                              	    			- If value is < 0, we must exclude this ID.
+	 * @param 	int|string|null $website_id     		Web site id (page name must also be filled if this parameter is used)
+	 * @param 	?string    		$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
+	 * @param 	?string    		$aliasalt       		Alternative alias to search page (slow)
+	 * @param	int				$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
+	 * @param	string			$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
+	 * @return 	int<-1,1>								Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null, $translationparentid = 0, $translationparentlang = '')
 	{
@@ -334,7 +361,7 @@ class WebsitePage extends CommonObject
 				$sql .= ' AND t.rowid <> '.((int) abs($id));
 			}
 			if (null !== $website_id) {
-				$sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
+				$sql .= " AND t.fk_website = ".((int) $website_id);
 				if ($page) {
 					$pagetouse = $page;
 					$langtouse = '';

@@ -279,6 +279,8 @@ class MouvementStock extends CommonObject
 		}
 		$now = (!empty($datem) ? $datem : dol_now());
 
+		//print "livraison fk_product=".$fk_product." entrepot_id=".$entrepot_id; exit;
+
 		// Check parameters
 		if (!($fk_product > 0)) {
 			return 0;
@@ -331,7 +333,8 @@ class MouvementStock extends CommonObject
 		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 			$productChildrenNb = $product->hasFatherOrChild(1);
 		}
-		if (($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && ($productChildrenNb == 0 || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) {
+
+		if ($product->isStockManaged() && ($productChildrenNb == 0 || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) { // For kit parent, we disable stock move, except if option PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE is set. For this option on, code must be completed to finish implementation, for example to have kit supported in shipments.
 			$movestock = 1;
 		}
 
@@ -861,8 +864,6 @@ class MouvementStock extends CommonObject
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
-		global $conf;
-
 		$skip_batch = !isModEnabled('productbatch');
 
 		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
@@ -889,8 +890,6 @@ class MouvementStock extends CommonObject
 	 */
 	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0, $disablestockchangeforsubproduct = 0)
 	{
-		global $conf;
-
 		$skip_batch = !isModEnabled('productbatch');
 
 		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, $disablestockchangeforsubproduct, $donotcleanemptylines);
@@ -1131,25 +1130,25 @@ class MouvementStock extends CommonObject
 		$s = '';
 		switch ($this->type) {
 			case "0":
-				$s = '<span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockIncreaseAfterCorrectTransfer');
 				}
 				break;
 			case "1":
-				$s = '<span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockDecreaseAfterCorrectTransfer');
 				}
 				break;
 			case "2":
-				$s = '<span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockDecrease');
 				}
 				break;
 			case "3":
-				$s = '<span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockIncrease');
 				}

@@ -33,11 +33,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "errors", "propal"));
@@ -61,6 +60,7 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'propal';
+
 
 /*
  * Actions
@@ -159,6 +159,18 @@ if ($action == 'updateMask') {
 		$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 		$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOSTISSET('PROPOSAL_ALLOW_ONLINESIGN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ALLOW_ONLINESIGN", GETPOST('PROPOSAL_ALLOW_ONLINESIGN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOSTISSET('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN", GETPOST('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
@@ -264,6 +276,7 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'prop
  */
 print load_fiche_titre($langs->trans("ProposalsNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
@@ -359,7 +372,7 @@ foreach ($dirmodels as $reldir) {
 		}
 	}
 }
-print "</table><br>\n";
+print "</table></div><br>\n";
 
 
 /*
@@ -390,7 +403,8 @@ if ($resql) {
 }
 
 
-print "<table class=\"noborder\" width=\"100%\">\n";
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
@@ -511,6 +525,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 
 
 /*
@@ -679,9 +694,20 @@ print '</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
 print '<td>';
-print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
+print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 1, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
 print '</td></tr>';
 
+/*
+if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SecurityToken").'</td><td>';
+	print '<input class="minwidth300"  type="text" id="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" name="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" value="' . getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN').'" spellcheck="false">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+	}
+	print '</td></tr>';
+}
+*/
 
 // Notifications
 print '<tr class="oddeven">';
@@ -706,6 +732,11 @@ print '</form>';
 
 print "</table>\n<br>";
 
+$constname = 'PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN';
+
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword($constname);
 
 
 // End of page

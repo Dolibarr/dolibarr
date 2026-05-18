@@ -111,7 +111,7 @@ $search_vat = trim(GETPOST('search_vat', 'alpha'));
 $search_sale = "";
 if (GETPOSTISARRAY('search_sale')) {
 	$search_sale = GETPOST('search_sale', 'array:int');
-} elseif (GETPOSTISSET('search_sale')) {
+} elseif (GETPOSTISSET('search_sale') && GETPOSTINT('search_sale') > 0) {
 	$search_sale = array(GETPOSTINT('search_sale'));
 }
 $search_categ_cus = GETPOSTINT("search_categ_cus");
@@ -347,6 +347,9 @@ $arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepr
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -1476,7 +1479,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth125', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level

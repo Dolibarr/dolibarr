@@ -139,8 +139,17 @@ class SupplierProposals extends DolibarrApi
 				continue;
 			}
 
-			$this->supplier_proposal->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				$this->supplier_proposal->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
+				}
+				continue;
+			}
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {
@@ -148,6 +157,7 @@ class SupplierProposals extends DolibarrApi
 		  }
 		  $this->propal->lines = $lines;
 		}*/
+
 		if ($this->supplier_proposal->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating supplier proposal", array_merge(array($this->supplier_proposal->error), $this->supplier_proposal->errors));
 		}
@@ -189,11 +199,11 @@ class SupplierProposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->supplier_proposal->array_options[$index] = $val;
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
 				}
 				continue;
 			}
-			$this->supplier_proposal->$field = $value;
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
 
 		// update end of validity date

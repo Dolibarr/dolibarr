@@ -260,7 +260,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
-	print '<div id="proposal" class="undertopmenu"></div>';
+	print '<div id="proposal" class="anchorundermenu"></div>';
 
 	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
 	print '<div class="div-table-responsive-no-min">';
@@ -350,7 +350,7 @@ if (isModEnabled('propal')) {
 }
 
 if (isModEnabled('order')) {
-	print '<div id="order" class="undertopmenu"></div>';
+	print '<div id="order" class="anchorundermenu"></div>';
 
 	$langs->load("orders");
 	print load_fiche_titre($langs->trans('CustomersOrders'), '', 'order');
@@ -430,7 +430,7 @@ if (isModEnabled('order')) {
 }
 
 if (isModEnabled('contract')) {
-	print '<div id="contrat" class="undertopmenu"></div>';
+	print '<div id="contrat" class="anchorundermenu"></div>';
 
 	print load_fiche_titre($langs->trans("Contract"), '', 'contract');
 	print '<div class="div-table-responsive-no-min">';
@@ -474,7 +474,7 @@ if (isModEnabled('contract')) {
 
 
 if (isModEnabled('invoice')) {
-	print '<div id="invoice" class="undertopmenu"></div>';
+	print '<div id="invoice" class="anchorundermenu"></div>';
 
 	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 
@@ -600,7 +600,7 @@ if (isModEnabled('invoice')) {
 		print ajax_constantonoff('PDF_INVOICE_SHOW_VAT_ANALYSIS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("PDF_INVOICE_SHOW_VAT_ANALYSIS", $arrval, $conf->global->PDF_INVOICE_SHOW_VAT_ANALYSIS);
+		print $form->selectarray("PDF_INVOICE_SHOW_VAT_ANALYSIS", $arrval, getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS'));
 	}
 	print '</td></tr>';
 
@@ -612,7 +612,7 @@ if (isModEnabled('invoice')) {
 		print ajax_constantonoff('PDF_INVOICE_SHOW_BALANCE_SUMMARY');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("PDF_INVOICE_SHOW_BALANCE_SUMMARY", $arrval, $conf->global->PDF_INVOICE_SHOW_BALANCE_SUMMARY);
+		print $form->selectarray("PDF_INVOICE_SHOW_BALANCE_SUMMARY", $arrval, getDolGlobalInt('PDF_INVOICE_SHOW_BALANCE_SUMMARY'));
 	}
 	print '</td></tr>';
 
@@ -624,7 +624,7 @@ if (isModEnabled('invoice')) {
 		print ajax_constantonoff('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT", $arrval, $conf->global->SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT);
+		print $form->selectarray("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT", $arrval, getDolGlobalInt('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT'));
 	}
 	print '</td></tr>';
 	*/

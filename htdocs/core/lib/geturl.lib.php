@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,20 +30,22 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * To test there is no error, you can do:  if (empty($resultget['curl_error_no']) && $resultget['http_code'] == 200) ...
+ *
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
- * @param	string	  			$url 			    URL to call.
+ * @param	string	  					$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
- * @param	string    			$param			    Parameters of URL (x=value1&y=value2 urlencoded even with POST) or may be a formatted content with $postorget='POST/PUTALREADYFORMATED'
- * @param	int<0,1>  			$followlocation		0=Do not follow, 1=Follow location.
- * @param	string[]  			$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
- * @param	string[]  			$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
- * @param	int<0,2>  			$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
- * @param	int<-1,1>  			$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
- * @param	int					$timeoutconnect		Timeout for connection time
- * @param	int					$timeoutresponse	Timeout for total time including connection
- * @param	array<int,mixed>|null	$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
- * @param	string				$morelogsuffix		If set to a string '_suffix', some logs are also added into the file "dolibarr_suffix.log"
+ * @param	string|array<mixed,mixed>	$param			    Parameters of URL (x=value1&y=value2 urlencoded even with POST) or may be a formatted content with $postorget='POSTALREADYFORMATED/PUTALREADYFORMATED'
+ * @param	int<0,1>  					$followlocation		0=Do not follow, 1=Follow location.
+ * @param	string[]  					$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
+ * @param	string[]  					$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
+ * @param	int<0,2>  					$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
+ * @param	int<-1,1>  					$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
+ * @param	int							$timeoutconnect		Timeout for connection time
+ * @param	int							$timeoutresponse	Timeout for total time including connection
+ * @param	array<int,mixed>|null		$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string						$morelogsuffix		If set to a string '_suffix', some logs are also added into the file "dolibarr_suffix.log"
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array(), $morelogsuffix = '')
@@ -57,10 +59,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
-		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
 	}
 	if ($morelogsuffix) {
-		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param, LOG_DEBUG, 0, $morelogsuffix);
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
 	}
 
 	if (!function_exists('curl_init')) {
@@ -264,17 +266,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			if (function_exists('gethostbyname')) {
-				$iptocheck = gethostbyname($hosttocheck);
-			} else {
-				$iptocheck = $hosttocheck;
-			}
-			// TODO Resolve ip v6
+			$iptocheck = resolveDns($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
-			$iptocheck = '0'; //
+			$iptocheck = '0'; // will disabled check on IP
 		}
 
 		if ($iptocheck) {
@@ -355,6 +352,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_msg'] = curl_error($ch);
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
+
 		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, '_curl');
 		}
@@ -394,6 +392,43 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// @phpstan-ignore-next-line
 	return $rep;
 }
+
+
+/**
+ * Resolve a hostname into its IP
+ *
+ * @param	string	$hosttocheck		Hostname to check
+ * @return	string						First ip found (IP v4 or IP v6). If resolution fails, the $hosttocheck is returned.
+ */
+function resolveDns($hosttocheck)
+{
+	$iptocheck = null;
+
+	// Resolve $hosttocheck to get the IP $iptocheck
+	if (function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION')) {
+		try {
+			$records = dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
+
+			if (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ip'])) {			// We take the first one
+				$iptocheck = $records[0]['ip'];
+			} elseif (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ipv6'])) {	// We take the first one
+				$iptocheck = $records[0]['ipv6'];
+			}
+		} catch (Exception $e) {
+			// Nothing done
+		}
+	} elseif (function_exists('gethostbyname')) {	// resolve only ipv4
+		$iptocheck = gethostbyname($hosttocheck);
+	} else {
+		$iptocheck = $hosttocheck;
+	}
+
+	if ($iptocheck === null) {
+		$iptocheck = $hosttocheck;
+	}
+	return $iptocheck;
+}
+
 
 /**
  * Is IP allowed
@@ -458,6 +493,7 @@ function isIPAllowed($iptocheck, $localurl)
  * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
+ * @see getRootURLFromURL()
  */
 function getDomainFromURL($url, $mode = 0)
 {
@@ -513,6 +549,7 @@ function getDomainFromURL($url, $mode = 0)
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
+ * @see getDomainFromURL()
  */
 function getRootURLFromURL($url)
 {

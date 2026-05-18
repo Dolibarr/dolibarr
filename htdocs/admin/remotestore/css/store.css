@@ -111,6 +111,7 @@ div.divsearchfield {
 }
 .updatedApp{
     background-color: #25a580;
+    line-height: 1em;
 }
 .notcompatible {
     color: red;
@@ -124,7 +125,7 @@ div.divsearchfield {
 tr.app {
     height: 200px;
 }
-tr.app td {
+tr.app2 td {
 	border-bottom: 1px solid #888;
 }
 div#newsDoli.tabBar {

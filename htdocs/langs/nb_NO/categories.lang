@@ -92,6 +92,7 @@ AddCustomerIntoCategory=Tildel kategorien til kunden
 AddSupplierIntoCategory=Tilordne kategorien til leverandør
 AddFichinterIntoCategory=Tildel kategorien til intervensjonen
 AddOrderIntoCategory=Tilordne kategorien til ordre
+AddMoIntoCategory=Tilordne kategorien til produksjonsordre
 AddInvoiceIntoCategory=Tilordne kategorien til faktura
 AddSupplierOrderIntoCategory=Tilordne kategorien til leverandørordre
 AddSupplierInvoiceIntoCategory=Tildel kategorien til leverandørfaktura

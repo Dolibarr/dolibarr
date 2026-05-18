@@ -113,12 +113,6 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	if (empty($conf->use_javascript_ajax)) {
-		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!($result > 0)) {
-			$error++;
-		}
-	}
 
 	if (!$error) {
 		$db->commit();
@@ -327,16 +321,6 @@ if (!empty($conf->use_javascript_ajax)) {
 if (getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE'));
 }
 print '</td></tr>';
 

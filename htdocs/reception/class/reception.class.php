@@ -14,6 +14,7 @@
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,6 +208,7 @@ class Reception extends CommonObject
 	 */
 	public $detail_batch;
 
+	const STATUS_CANCELED = -1;
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
@@ -1500,7 +1502,7 @@ class Reception extends CommonObject
 								$origin_object->loadReceptions();
 								//var_dump($this->$origin->receptions);exit;
 								if (count($origin_object->receptions) <= 0) {
-									$origin_object->setStatut(3); // ordered
+									$origin_object->setStatut(3); // CommandeFournisseur ordered
 								}
 							}
 						}
@@ -1849,7 +1851,7 @@ class Reception extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Object utilisateur qui modifie
+	 *	@param      User			$user        		Object User who makes the update
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
@@ -2437,7 +2439,7 @@ class Reception extends CommonObject
 							}
 							//var_dump($this->$origin->receptions);exit;
 							if ($setStatut) {
-								$this->origin_object->setStatut(3); // ordered
+								$this->origin_object->setStatut(3); // CommandeFournisseur ordered
 							}
 						}
 					}

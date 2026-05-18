@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur 		<eldy@stocks.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -442,7 +442,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Stock"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -618,7 +618,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 						// Lot/series
 						$pdf->SetXY($this->posxqty, $curY);
-						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, $productlot->batch, 0, 'R');
+						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, (string) $productlot->batch, 0, 'R');
 
 						// Inv. code
 						$pdf->SetXY($this->posxup, $curY);

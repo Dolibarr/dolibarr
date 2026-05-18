@@ -455,7 +455,6 @@ Level
 Lifetime
 LinkedElementsInvalidDeleted
 LinkedToAConcialitedTransaction
-ListOfAttendeesPerConference
 ListTicketsLinkToContract
 Load
 LocalTaxReport
@@ -539,7 +538,6 @@ NoEstablishmentFound
 NoMail
 NoModuleFound
 NoOperations
-NoPasswordGenerationRuleConfigured
 NoReader
 NoRecordedUnpaidInvoices
 NoRecords
@@ -939,7 +937,6 @@ Don
 ECM
 EmptyMessageNotAllowedError
 ErrorInputRequired
-ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
 Extra
 FailedToConnectToSFTPAfterSSHAuthentication
@@ -1014,7 +1011,6 @@ TicketMessageMailSignatureText
 TicketSetupPage
 Timeline
 Transfer
-TryAnotherConnectionMode
 UndefinedKey
 UnknownType
 UpdateMember

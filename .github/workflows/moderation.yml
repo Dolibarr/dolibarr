@@ -1,0 +1,60 @@
+# Github action to experiment automatic moderation
+name: Moderation Bot
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+  pull_request_review_comment:
+    types: [created, edited]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  moderate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Moderate comments
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const franc = require('franc')
+
+            const comment = context.payload.comment.body || ''
+            const lower = comment.toLowerCase()
+
+            // Détection YouTube Music
+            const forbiddenPatterns = [
+              'music.youtube.com',
+              'youtu.be',
+              'youtube.com/watch'
+            ]
+
+            const hasYoutubeMusic = forbiddenPatterns.some(p => lower.includes(p))
+
+            // Détection langue
+            let isEnglish = true
+
+            try {
+              const lang = franc(comment)
+              isEnglish = lang === 'eng'
+            } catch (e) {
+              console.log('Language detection failed:', e)
+            }
+
+            console.log('Detected language:', isEnglish ? 'english' : 'not english')
+
+            #if (hasYoutubeMusic || !isEnglish) {
+            if (hasYoutubeMusic) {
+              console.log('Deleting comment...')
+
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: context.payload.comment.id
+              })
+            }

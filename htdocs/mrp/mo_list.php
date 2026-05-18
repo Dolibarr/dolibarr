@@ -122,7 +122,18 @@ if (GETPOSTISSET('formfilteraction')) {
 $searchCategoryMoList = GETPOST('search_category_mo_list', 'array:int');
 $search = array();
 foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha') !== '') {
+	if ($key == 'status' && GETPOSTISSET('search_status')) {
+		$search_status = GETPOST('search_status', 'array:int');
+		if (empty($search_status) && GETPOST('search_status', 'alpha') !== '') {
+			$search_status = GETPOST('search_status', 'int');
+			if ($search_status !== -1) {
+				$search_status = array($search_status);
+			} else {
+				$search_status = '';
+			}
+		}
+		$search[$key] = $search_status;
+	} elseif (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -358,22 +369,40 @@ if ($object->ismultientitymanaged == 1) {
 
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
-		if ($key == 'status' && $search[$key] == -1) {
-			continue;
-		}
-		if ($key == 'status' && $search[$key] == -2) {
-			$sql .= " AND (t.status IN (".$db->sanitize($object::STATUS_VALIDATED.",".$object::STATUS_INPROGRESS)."))";
-			if ($search_option == 'late') {
+		if ($key == 'status') {
+			if ($search[$key] === -1 || (is_array($search[$key]) && (count($search[$key]) == 0 || (count($search[$key]) == 1 && reset($search[$key]) == -1)))) {
+				continue;
+			}
+
+			$status_to_search = array();
+			if (is_array($search[$key])) {
+				foreach ($search[$key] as $status_val) {
+					if ($status_val == -2) {
+						$status_to_search[] = $object::STATUS_VALIDATED;
+						$status_to_search[] = $object::STATUS_INPROGRESS;
+					} elseif ($status_val !== '' && $status_val >= 0) {
+						$status_to_search[] = $status_val;
+					}
+				}
+			} elseif ($search[$key] == -2) {
+				$status_to_search[] = $object::STATUS_VALIDATED;
+				$status_to_search[] = $object::STATUS_INPROGRESS;
+			} elseif ($search[$key] !== '' && $search[$key] >= 0) {
+				$status_to_search[] = $search[$key];
+			}
+
+			if (!empty($status_to_search)) {
+				$sql .= " AND t.status IN (".$db->sanitize(implode(',', array_unique($status_to_search))).")";
+			}
+
+			if ($search_option == 'late' && (in_array(-2, (array) $search[$key]) || in_array($object::STATUS_VALIDATED, (array) $search[$key]) || in_array($object::STATUS_INPROGRESS, (array) $search[$key]))) {
 				$sql .= " AND (t.date_end_planned < '".$db->idate(dol_now() - getWarningDelay('mrp', 'progress'))."')";
 			}
 			continue;
 		}
+
 		if ($key == 'fk_parent_line' && $search[$key] != '') {
 			$sql .= natural_search('moparent.ref', $search[$key], 0);
-			continue;
-		}
-		if ($key == 'status') {
-			$sql .= natural_search('t.status', (string) $search[$key], 0);
 			continue;
 		}
 
@@ -542,7 +571,7 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'day='.GETPOSTINT('search_'.$key.'day');
 		$param .= '&search_'.$key.'year='.GETPOSTINT('search_'.$key.'year');
 	} elseif ($search[$key] != '') {
-		$param .= '&search_'.$key.'='.urlencode($search[$key]);
+		$param .= '&search_'.$key.'='.urlencode((string) $search[$key]);
 	}
 }
 if ($searchCategoryMoOperator == 1) {
@@ -688,7 +717,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -700,7 +729,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -729,8 +758,10 @@ foreach ($object->fields as $key => $val) {
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			if ($key == 'status') {
 				$val['arrayofkeyval'][-2] = $langs->trans("StatusMrpValidated").'+'.$langs->trans("StatusMrpProgress");
+				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) && $search[$key] !== '' && $search[$key] != -1 ? (array) $search[$key] : array()), 0, 0, 'maxwidth100', 0, 0, '', '', '');
+			} else {
+				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 			}
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -754,7 +785,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -770,7 +801,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -804,7 +835,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -873,10 +904,10 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -965,7 +996,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

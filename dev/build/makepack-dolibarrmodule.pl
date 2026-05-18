@@ -7,24 +7,24 @@
 #----------------------------------------------------------------------------
 ## no critic (InputOutput::ProhibitExplicitStdin,InputOutput::RequireBriefOpen)
 
-use strict;
+#use strict;
 use warnings;
 use Cwd;
 use Term::ANSIColor;
 
-$OWNER = "ldestailleur";
-$GROUP = "ldestailleur";
+my $OWNER = "ldestailleur";
+my $GROUP = "ldestailleur";
 
-@LISTETARGET       = ("ZIP");    # Possible packages
-%REQUIREMENTTARGET = (           # Tool requirement for each package
+my @LISTETARGET       = ("ZIP");    # Possible packages
+my %REQUIREMENTTARGET = (           # Tool requirement for each package
 	"TGZ" => "tar",
 	"ZIP" => "7z"
 );
-%ALTERNATEPATH = ();
+my %ALTERNATEPATH = ();
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION = '1.0';
-$VERSION  = "3.5 (build $REVISION)";
+my $REVISION = '1.0';
+my $VERSION  = "3.5 (build $REVISION)";
 
 #------------------------------------------------------------------------------
 # MAIN
@@ -146,8 +146,9 @@ foreach my $PROJECT (@PROJECTLIST) {
 	  . "/core/modules/mod"
 	  . ucfirst($PROJECT)
 	  . ".class.php";
+	my $IN;
 	$result = open(
-		my $IN,
+		$IN,
 		"<",
 		$SOURCE
 		  . "/htdocs/"
@@ -156,10 +157,10 @@ foreach my $PROJECT (@PROJECTLIST) {
 		  . ucfirst($PROJECT)
 		  . ".class.php"
 	);
-	$custom = false;
+	$custom = 1;
 	if ( !$result ) {
 		$result = open(
-			my $IN,
+			$IN,
 			"<",
 			$SOURCE
 			  . "/htdocs/custom/"
@@ -179,12 +180,12 @@ foreach my $PROJECT (@PROJECTLIST) {
 		}
 	}
 	else {
-		$custom = true;
+		$custom = 0;
 	}
 	while (<$IN>) {
 		if ( $_ =~ /this->version\s*=\s*'([\d\.]+)'/ ) {
 			$PROJVERSION = $1;
-			break;
+			last;
 		}
 	}
 	close $IN;
@@ -318,8 +319,8 @@ foreach my $PROJECT (@PROJECTLIST) {
 				print "Now, we will copy all files declared in the makepack-"
 				  . $PROJECT
 				  . ".conf into the directory $BUILDROOT\n";
-
-				open( my $IN2, "<", "makepack-" . $PROJECT . ".conf" )
+				my $IN2;
+				open( $IN2, "<", "makepack-" . $PROJECT . ".conf" )
 				  or die "Error: Can't open conf file makepack-"
 				  . $PROJECT
 				  . ".conf for reading.\n";
@@ -364,13 +365,13 @@ foreach my $PROJECT (@PROJECTLIST) {
 				}
 				close $IN2;
 
-				@timearray = localtime( time() );
-				$fulldate =
-				    ( $timearray[5] + 1900 ) . '-'
-				  . ( $timearray[4] + 1 ) . '-'
-				  . $timearray[3] . ' '
-				  . $timearray[2] . ':'
-				  . $timearray[1];
+#				@timearray = localtime( time() );
+#				$fulldate =
+#				    ( $timearray[5] + 1900 ) . '-'
+#				  . ( $timearray[4] + 1 ) . '-'
+#				  . $timearray[3] . ' '
+#				  . $timearray[2] . ':'
+#				  . $timearray[1];
 
 #open(VF,">$BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt");
 #print "Create version file $BUILDROOT/$PROJECTLC/dev/build/version-".$PROJECTLC.".txt with date ".$fulldate."\n";

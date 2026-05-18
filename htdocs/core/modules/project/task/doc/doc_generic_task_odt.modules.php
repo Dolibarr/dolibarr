@@ -4,9 +4,9 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:string}			$refdetail			Reference array
+	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:int|string}			$refdetail			Reference array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array<string,int|string>			Return a substitution array
 	 */
@@ -276,13 +276,13 @@ class doc_generic_task_odt extends ModelePDFTask
 	{
 		// phpcs:enable
 		return array(
-			'projref_type' => $refdetail['type'],
-			'projref_ref' => $refdetail['ref'],
+			'projref_type' => (string) $refdetail['type'],
+			'projref_ref' => (string) $refdetail['ref'],
 			'projref_date' => dol_print_date($refdetail['date'], 'day'),
-			'projref_socname' => $refdetail['socname'],
+			'projref_socname' => (string) $refdetail['socname'],
 			'projref_amountht' => price($refdetail['amountht'], 0, $outputlangs),
 			'projref_amountttc' => price($refdetail['amountttc'], 0, $outputlangs),
-			'projref_status' => $refdetail['status']
+			'projref_status' => (int) $refdetail['status']
 		);
 	}
 
@@ -461,9 +461,12 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param	Task		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath		Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails			Do not show line details
+	 *  @param	int<0,1>	$hidedesc				Do not show desc
+	 *  @param	int<0,1>	$hideref				Do not show ref
 	 *	@return	int<-1,1>							1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath = '')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -502,7 +505,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				}
 			}
 			$project = new Project($this->db);
-			$project->fetch($object->fk_project);
+			$project->fetch((int) $object->fk_project);
 			$project->fetch_thirdparty();
 
 			$dir = $conf->project->dir_output."/".$project->ref."/";
@@ -643,15 +646,15 @@ class doc_generic_task_odt extends ModelePDFTask
 						}
 					}
 					// Check for segment
-					$foundtagforlines = 1;
+					$listlinestaskres = null;
 					try {
 						$listlinestaskres = $odfHandler->setSegment('tasksressources');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlinestaskres = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+					if ($listlinestaskres && (is_array($contact_array) && count($contact_array) > 0)) {
 						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
@@ -685,12 +688,12 @@ class doc_generic_task_odt extends ModelePDFTask
 					}
 
 					// Check for segment
-					$foundtagforlines = 1;
+					$listlinestasktime = null;
 					try {
 						$listlinestasktime = $odfHandler->setSegment('taskstimes');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlinestasktime = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 
@@ -705,7 +708,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$sql .= " ORDER BY t.element_date DESC";
 
 					$resql = $this->db->query($sql);
-					if ($foundtagforlines && $resql) {
+					if ($listlinestasktime !== null && $resql) {
 						$num = $this->db->num_rows($resql);
 						$i = 0;
 						$tasks = array();
@@ -741,15 +744,15 @@ class doc_generic_task_odt extends ModelePDFTask
 
 					// Replace tags of project files
 					// Check for segment
-					$foundtagforlines = 1;
+					$listtasksfiles = null;
 					try {
 						$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listtasksfiles = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines) {
+					if ($listtasksfiles !== null) {
 						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
 						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
@@ -778,15 +781,15 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Replace tags of project files
 				// Check for segment
-				$foundtagforlines = 1;
+				$listlines = null;
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 				} catch (OdfExceptionSegmentNotFound $e) {
 					// We may arrive here if tags for lines not present into template
-					$foundtagforlines = 0;
+					$listlines = null;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines) {
+				if ($listlines !== null) {
 					try {
 						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
@@ -822,15 +825,15 @@ class doc_generic_task_odt extends ModelePDFTask
 					}
 				}
 				// Check for segment
-				$foundtagforlines = 1;
+				$listlines = null;
 				try {
 					$listlines = $odfHandler->setSegment('projectcontacts');
 				} catch (OdfExceptionSegmentNotFound $e) {
 					// We may arrive here if tags for lines not present into template
-					$foundtagforlines = 0;
+					$listlines = null;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+				if ($listlines !== null && (is_array($contact_array) && count($contact_array) > 0)) {
 					try {
 						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {

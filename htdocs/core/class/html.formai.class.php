@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,16 +27,16 @@
 /**
  *       \file       htdocs/core/class/html.formai.class.php
  *       \ingroup    core
- *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      File for class FormAI class to generate HTML forms for single email
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Class permettant la generation du formulaire html d'envoi de mail unitaire
- *      Usage: $formail = new FormAI($db)
- *             $formai->proprietes=1 ou chaine ou tableau de valeurs
- *             $formai->show_form() affiche le formulaire
+ *      Class to generate HTML forms for single email
+ *      Usage: $formai = new FormAI($db)
+ *             $formai->proprietes=1 or string or table of values
+ *             $formai->show_form() shows the form
  */
 class FormAI extends Form
 {
@@ -127,7 +127,7 @@ class FormAI extends Form
 		}
 
 		if (empty($onlyenhancements) || in_array($onlyenhancements, array('texttranslation'))) {
-			$out .= ($out ? '<br>' : '');
+			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_translation'.$htmlContent.'" class="ai_translation'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'language', 'class="pictofixedwidth paddingrightonly"');
 			$out .= $formadmin->select_language("", "ai_translation".$htmlContent."_select", 0, array(), $langs->trans("TranslateByAI").'...', 0, 0, 'minwidth250 ai_translation'.$htmlContent.'_select');
@@ -136,19 +136,19 @@ class FormAI extends Form
 
 		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textsummarize'))) {
 			$summarizearray = getListForAISummarize();
-			$out .= ($out ? '<br>' : '');
+			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
+			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, '', 1, 0, 0, '', 'minwidth250 ai_summarize'.$htmlContent.'_select');
 			$out .= '</div>';
 		}
 
 		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textrephrase'))) {
 			$stylearray = getListForAIRephraseStyle();
-			$out .= ($out ? '<br>' : '');
+			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, 'minwidth250 ai_rephraser'.$htmlContent.'_select', 1);
+			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, '', 1, 0, 0, '', 'minwidth250 ai_rephraser'.$htmlContent.'_select');
 			$out .= '</div>';
 		}
 
@@ -207,14 +207,14 @@ class FormAI extends Form
 				});
 
 				$('#ai_summarize".$htmlContent."_select').on('change', function() {
-					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
+					console.log('We change #ai_summarize".$htmlContent."_select with length '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
 					}
 				});
 
 				$('#ai_rephraser".$htmlContent."_select').on('change', function() {
-					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
+					console.log('We change #ai_summarize".$htmlContent."_select with mode '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
 					}
@@ -238,10 +238,11 @@ class FormAI extends Form
 					instructions = '';
 					htmlname = '".dol_escape_js($htmlContent)."';
 					format = '".dol_escape_js($format)."';
-					functionai = $(element).data('functionai');		/* element is the html element we have manipulated in the ai tool */
+					functionai = $(element).data('functionai');				/* element is the html element we have manipulated in the ai tool */
+					style = $('#ai_rephraser'+htmlname+'_select').val();
 					texttomodify = '';
 
-					console.log('htmlname='+htmlname+' functionai='+functionai);
+					console.log('htmlname='+htmlname+' functionai='+functionai+' style='+style);
 					if ($('#'+htmlname).is('div')) {
 						texttomodify = $('#'+htmlname).html();	/* for div */
 					} else {
@@ -289,8 +290,12 @@ class FormAI extends Form
 						}
 						instructions = 'Summarize the following text '+ (unit == 'percent' ? 'by ' : 'in') + width + ' ' + unit + ': ' + texttomodify;
 					} else if (functionai == 'textrephraser') {
-						style = $('#ai_rephraser'+htmlname+'_select').val();
-						instructions = 'Rephrase the following text in a '+style+' style: ' + texttomodify;
+						if (style == 'spellchecker') {
+							instructions = 'Fix spelling and grammar errors in the following text : ' + texttomodify;
+							functionai = 'textspellchecker';
+						} else {
+							instructions = 'Rephrase the following text in a '+style+' style: ' + texttomodify;
+						}
 					} else if (functionai == 'textgenerationextrafield'){
 						instructions = $(element).val();
 					} else {
