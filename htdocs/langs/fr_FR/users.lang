@@ -170,5 +170,3 @@ ForcePasswordChange=Forcer le changement de mot de passe à la prochaine connexi
 AtNextLogin=Au prochain raccordement
 UserDoesNotHaveRightsToChangeHisPassword=Ce utilisateur n'a pas les droits pour modifier son propre mot de passe
 NotPossible=Impossible
-LoginBadCharUnauthorized=Caractères non autorisés dans les logins
-LoginBadCharUnauthorizedHelp=Les caractères saisis ici seront interdits dans les logins utilisateur. Si vous laissez vide et enregistrez, aucun caractère ne sera interdit. Valeur par défaut historique si rien n'a jamais été configuré : %s

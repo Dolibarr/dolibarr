@@ -126,7 +126,7 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 	$badChars = getDolGlobalLoginBadCharUnauthorized();
 	$sanitized_login = $login;
 
-	if (preg_match('/['.preg_quote($badChars, '/').']/', $login)) {
+	if ($badChars !== '' && preg_match('/['.preg_quote($badChars, '/').']/', $login)) {
 		// First try preferred_username from OIDC (common standard claim)
 		if (property_exists($userinfo, 'preferred_username') && !empty($userinfo->preferred_username)) {
 			$preferred = $userinfo->preferred_username;

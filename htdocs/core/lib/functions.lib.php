@@ -296,11 +296,17 @@ function getDolGlobalString($key, $default = '')
  */
 function getDolGlobalLoginBadCharUnauthorized()
 {
-	if (getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED_ALLOW_EMPTY')) {
-		return '';
+	global $dolibarr_login_badcharunauthorized;
+
+	if (isset($dolibarr_login_badcharunauthorized)) {
+		if ($dolibarr_login_badcharunauthorized === 'MAIN_LOGIN_BADCHARUNAUTHORIZED') {
+			return getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+		}
+
+		return (string) $dolibarr_login_badcharunauthorized;
 	}
 
-	return getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+	return ',@<>"\'';
 }
 
 /**
