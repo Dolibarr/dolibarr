@@ -34,7 +34,7 @@ parameters:
 		- htdocs/includes/mobiledetect/*
 		- htdocs/includes/nusoap/*
 		- htdocs/includes/OAuth/*
-		- htdocs/includes/odtphp/zip/*
+		- htdocs/includes/odtphp/*
 		- htdocs/includes/parsedown/*
 		- htdocs/includes/php-iban/*
 		- htdocs/includes/phpoffice/*

@@ -3482,6 +3482,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($result > 0) {
 					$adh->ref = $adh->getFullName($langs);
 					print $adh->getNomUrl(-1);
+					print ' &mdash; '.$adh->getLibStatut(0);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 				}

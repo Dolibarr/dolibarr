@@ -51,7 +51,7 @@ button.dropdown-item.global-search-item {
 	display: block;
 }
 
-
+#topmenu-tool a,
 #topmenu-global-search-dropdown a.login-dropdown-a,
 #topmenu-quickadd-dropdown a.login-dropdown-a,
 #topmenu-bookmark-dropdown a.login-dropdown-a,
@@ -347,7 +347,7 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+#topmenu-tool,
 #topmenu-login-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,

@@ -9,11 +9,11 @@
  * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2026	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1138,6 +1138,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$staticcontractline = new ContratLigne($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -1525,10 +1526,10 @@ if ($action == 'create') {
 
 
 		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Line info of thirdparty discounts
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
@@ -1560,6 +1561,86 @@ if ($action == 'create') {
 		print "</table>";
 
 		print '</div>';
+		print '<div class="fichehalfright">';
+
+		print '<!-- amounts -->'."\n";
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield centpercent">';
+
+		// Qty by service status
+		print '<tr><td class="titlefield">'."".'</td>';
+		print '<td class=right>'.$langs->trans('Total').'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(0, 5, 0).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 0).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 1).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(5, 5, 0).'</td>';
+		print '</tr>';
+
+		$all= $object->getTotalizedLines(-1, 0);
+		$draft= $object->getTotalizedLines(0, 0);
+		$enabled= $object->getTotalizedLines(4, 0);
+		$expired= $object->getTotalizedLines(4, 1);
+		$close= $object->getTotalizedLines(5, 0);
+
+		print '<tr><td class="titlefield">'.$langs->trans("Qty").'</td>';
+		print '<td class="right nowrap">'.price2num($all['total_qty']).'</td>';
+		print '<td class="right">'.price2num($draft['total_qty']).'</td>';
+		print '<td class="right">'.price2num($enabled['total_qty']).'</td>';
+		print '<td class="right">'.price2num($expired['total_qty']).'</td>';
+		print '<td class="right">'.price2num($close['total_qty']).'</td>';
+		print '</tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
+		print '<td class="nowraponall amountcard right">'.price($all['total_ht']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($draft['total_ht']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($enabled['total_ht']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($expired['total_ht']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($close['total_ht']).'</td>';
+		print '</tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("TotalVAT").'</td>';
+		print '<td class="nowraponall amountcard right nowrap">'.price($all['total_tva']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($draft['total_tva']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($enabled['total_tva']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($expired['total_tva']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($close['total_tva']).'</td>';
+		print '</tr>';
+
+		if ($mysoc->localtax1_assuj == "1" || $all['total_localtax1'] != 0) {
+			print '<tr><td class="titlefield">' . $langs->trans("TotalLT1") . '</td>';
+			print '<td class="nowraponall amountcard right nowrap">' . price($all['total_localtax1']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($draft['total_localtax1']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($enabled['total_localtax1']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($expired['total_localtax1']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($close['total_localtax1']) . '</td>';
+			print '</tr>';
+		}
+
+		if ($mysoc->localtax2_assuj == "1" || $all['total_localtax2'] != 0) {
+			print '<tr><td class="titlefield">' . $langs->trans("TotalLT2") . '</td>';
+			print '<td class="nowraponall amountcard right nowrap">' . price($all['total_localtax2']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($draft['total_localtax2']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($enabled['total_localtax2']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($expired['total_localtax2']) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($close['total_localtax2']) . '</td>';
+			print '</tr>';
+		}
+
+		print '<tr><td class="titlefield">'.$langs->trans("TotalTTC").'</td>';
+		print '<td class="nowraponall amountcard right nowrap">'.price($all['total_ttc']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($draft['total_ttc']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($enabled['total_ttc']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($expired['total_ttc']).'</td>';
+		print '<td class="nowraponall amountcard right">'.price($close['total_ttc']).'</td>';
+		print '</tr>';
+
+		print "</table>";
+
+		print '</div>';
+		print '</div>';
+
+		print '<div class="clearboth"></div><br>';
 
 		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('contrat', 'creer')) {
 			print '</form>';

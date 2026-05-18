@@ -2261,13 +2261,16 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= top_menu_search();
 		}
 
+		// Add AI picto
+		$toprightmenu .= top_menu_ai();
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
 		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
 			// Add the import file link
@@ -2716,6 +2719,33 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  *
  * @return  string                  HTML content
  */
+function top_menu_ai()
+{
+	global $conf, $langs;
+
+	// Button disabled on text browser
+	/*if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}*/
+
+	$html = '';
+
+	if (isModEnabled('ai')) {
+		$html .= '<!-- div for quick ai link -->
+	    <div id="topmenu-tool" class="atoplogin dropdown inline-block">
+	        <a accesskey="a" class="nofocusvisible" href="'.DOL_URL_ROOT.'/ai/assistant/index.php" title="'.$langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)"><i class="fa fa-magic"></i></a>
+	    </div>';
+	}
+
+	return $html;
+}
+
+/**
+ * Build the tooltip on top menu quick add.
+ * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_quickadd()
 {
 	global $conf, $langs;
@@ -2730,7 +2760,7 @@ function top_menu_quickadd()
 	if (!empty($conf->use_javascript_ajax)) {
 		$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="a" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' a)"><i class="fa fa-plus-circle"></i></a>
+        <a accesskey="c" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' c)"><i class="fa fa-plus-circle"></i></a>
         <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
 		if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {    // This may be set by some pages that use different jquery version to avoid errors
