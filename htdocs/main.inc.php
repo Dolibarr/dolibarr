@@ -317,7 +317,7 @@ if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') != DOL_VERSION) {
 	$checkifupgraderequired = true;
 }
-if ($checkifupgraderequired) {
+if ($checkifupgraderequired && !defined('MAIN_VERSION_DISABLE_DB_CHECK')) {
 	$versiontocompare = getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL'));
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
@@ -2005,7 +2005,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			}
 
 			// jQuery jeditable for Edit In Place features
-			if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !defined('DISABLE_JQUERY_JEDITABLE')) {
+			/*if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !defined('DISABLE_JQUERY_JEDITABLE')) {
 				print '<!-- JS to manage editInPlace feature -->'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.js?' . $ext . '"></script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js?' . $ext . '"></script>'."\n";
@@ -2020,9 +2020,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
 				print 'var withInPlace = 300;'; // width in pixel for default string edit
 				print '</script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/editinplace.js?' . $ext . '"></script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js?' . $ext . '"></script>'."\n";
-			}
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			}*/
 			if (!defined('DISABLE_SELECT2') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
 				// jQuery plugin "mutiselect", "multiple-select", "select2", ...
 				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT');
@@ -2261,13 +2261,16 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= top_menu_search();
 		}
 
+		// Add AI picto
+		$toprightmenu .= top_menu_ai();
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
 		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
 			// Add the import file link
@@ -2716,6 +2719,33 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  *
  * @return  string                  HTML content
  */
+function top_menu_ai()
+{
+	global $conf, $langs;
+
+	// Button disabled on text browser
+	/*if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}*/
+
+	$html = '';
+
+	if (isModEnabled('ai')) {
+		$html .= '<!-- div for quick ai link -->
+	    <div id="topmenu-tool" class="atoplogin dropdown inline-block">
+	        <a accesskey="a" class="nofocusvisible" href="'.DOL_URL_ROOT.'/ai/assistant/index.php" title="'.$langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)"><i class="fa fa-magic"></i></a>
+	    </div>';
+	}
+
+	return $html;
+}
+
+/**
+ * Build the tooltip on top menu quick add.
+ * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_quickadd()
 {
 	global $conf, $langs;
@@ -2730,7 +2760,7 @@ function top_menu_quickadd()
 	if (!empty($conf->use_javascript_ajax)) {
 		$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="a" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' a)"><i class="fa fa-plus-circle"></i></a>
+        <a accesskey="c" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' c)"><i class="fa fa-plus-circle"></i></a>
         <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
 		if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {    // This may be set by some pages that use different jquery version to avoid errors

@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,7 +298,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_help_array;
 	/**
-	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>|array<array<string,string>>
+	 * @var array<array<array{rule:string,file?:string,classfile:string,class:string,method:string,method_params:string[]}>>|array<array<string,string>>
 	 *
 	 * Other example:
 	 * modBanque: [<int>]=array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG')

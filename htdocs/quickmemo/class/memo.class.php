@@ -1024,14 +1024,14 @@ class Memo extends CommonObject
 		$return .= '<div class="quickmemo-info" >';
 		$return .= '	<div class="quickmemo-info__create" >';
 		$return .= '		<span class="quickmemo-info__user-create-name">'.$this->showOutputField($this->fields['fk_user_creat'], 'fk_user_creat', $this->user_creation_id).'</span>';
-		$return .= ' 		<span class="quickmemo-info__date_create">'.dol_print_date($this->date_creation, '%d/%m/%Y %H:%M').'</span>';
+		$return .= ' 		<span class="quickmemo-info__date_create">'.dol_print_date($this->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 		$return .= '	</div>';
 
 
 		if (!empty($this->tms) && $this->tms != $this->date_creation) {
 			$return .= '	<div class="quickmemo-info__update" >';
 
-			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->date_modification, '%d/%m/%Y %H:%M').'</span>';
+			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->date_modification, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 			if ($this->user_modification_id != $this->user_creation_id) {
 				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_modif'], 'fk_user_modif', $this->user_modification_id).'</span>';
 			}
@@ -1042,7 +1042,7 @@ class Memo extends CommonObject
 		if (!empty($this->date_archived) && $this->status == self::STATUS_ARCHIVED) {
 			$return .= '	<div class="quickmemo-info__update" >';
 
-			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoArchived') . ' ' .dol_print_date($this->date_archived, '%d/%m/%Y %H:%M').'</span>';
+			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoArchived') . ' ' .dol_print_date($this->date_archived, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 			if ($this->fk_user_modif != $this->fk_user_archived) {
 				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_archived'], 'fk_user_archived', $this->fk_user_archived).'</span>';
 			}
@@ -1660,6 +1660,10 @@ class Memo extends CommonObject
 		];
 		$jsConfVars = array_merge($defaultJsConfVars, $jsConfVars);
 
+		if (!empty($jsConfVars['elementType'])) {
+			$jsConfVars['shareBtnStatus'] = 1;
+		}
+
 		// LOAD Memo class
 		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('quickmemo/css/memo.css', 1) . '">'."\n";
 		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('quickmemo/css/memo-dialog.css', 1) . '">'."\n";
@@ -1704,10 +1708,10 @@ class Memo extends CommonObject
 
 		$memo->shared_on_element = $this->shared_on_element;
 		$memo->private = (int) $this->private;
-		$memo->date_creation = dol_print_date($this->date_creation, '%d/%m/%Y %H:%M');
+		$memo->date_creation = dol_print_date($this->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel');
 		$memo->date_change =  '';
 		if (!empty($this->tms) && ((int) $this->date_creation !== (int) $this->tms || (int) $this->fk_user_modif > 0)) {
-			$memo->date_change = dol_print_date($this->tms, '%d/%m/%Y %H:%M');
+			$memo->date_change = dol_print_date($this->tms, '%d/%m/%Y %H:%M', 'tzuserrel');
 		}
 
 		$memo->fk_user_creat = $this->fk_user_creat;

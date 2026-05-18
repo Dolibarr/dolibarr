@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022  Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	        <christophe@altairis.fr>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,6 +423,7 @@ $sellby = 0;
 $qty = 0;
 $price = '0';
 $entrepot = 0;
+$product = 0;
 
 // Remove a dispatched line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive) {

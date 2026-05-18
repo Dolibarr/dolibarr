@@ -4862,6 +4862,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.tagtd { padding-top: 5px; padding-bottom: 5px; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
@@ -5757,7 +5758,7 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	border-radius: 5px;
 }
 
-div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral, div.fiche div.green {
 	box-shadow: 1px 1px 6px #d4d4d4;
 	margin: 1em 0em 1.2em 0em;
 }
@@ -6723,7 +6724,7 @@ td.peruser_holiday_imp {
 
 
 /* ============================================================================== */
-/*  jQuery - jeditable for inline edit                                            */
+/*  Edit in place                                                                 */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
@@ -7615,8 +7616,10 @@ input.select2-input {
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 li.select2-selection__choice {
-	white-space: break-spaces;
+	/* white-space: break-spaces; */
+	white-space: nowrap;
 }
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }

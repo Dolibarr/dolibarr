@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Franck Moreau				<franck.moreau@theobald.com>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,6 +83,7 @@ $permissiontoadd = $user->hasRight('loan', 'write');
  */
 
 if ($action == 'createecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
+	$result = -1;
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -120,6 +121,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule) && $permission
 }
 
 if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
+	$result = -1;
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {

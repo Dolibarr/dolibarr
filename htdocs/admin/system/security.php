@@ -629,7 +629,7 @@ print '<br>';
 // File extension locked in upload by default
 
 print '<strong>'.$langs->trans("UploadExtensionRestriction").'</strong>: ';
-print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION')));
+print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent()))));
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.implode(', ', getExecutableContent()).')</span>';
 print '<br>';
 print '<br>';
@@ -1044,6 +1044,32 @@ print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.getDol
 print '<br>';
 
 print '<strong>MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED</strong> = '.getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+
+
+
+/*
+ * If we call URL with param security.php/test/test and security.php/test%2Ftest, we can get information if
+ * AllowEncodedSlashes is enabled or not.
+ * Note: When there is a string after the page.php/... and before the ? or #, it is available into the $_SERVER["PATH_INFO"].
+ * Note about $_SERVER:
+ * REQUEST_URI: 	/test/before_rewrite/script.php/path/info?q=helloword
+ * PHP_SELF: 		/test/after_rewrite/script.php/path/info
+ * QUERY_STRING: 	q=helloword
+ * SCRIPT_NAME: 	/test/after_rewrite/script.php
+ * PATH_INFO: 		/path/info  						(usually not defined because there is no text between  page.php/... and before the ? or #)
+ * SCRIPT_FILENAME: /var/www/test/php/script.php
+ * __FILE__ : 		/var/www/test/php/script_included.php
+ */
+$request = $_SERVER['REQUEST_URI'];
+if (strpos($request, '%2F') !== false) {		// It seems than even when AllowEncodedSlashes=NoDecode, behaviour is forced to On on some servers.
+	echo '<br><strong>AllowEncodedSlashes probably enabled (NoDecode)</strong>';
+} elseif (strpos($request, '/test/test') !== false) {
+	echo '<br><strong>AllowEncodedSlashes enabled with decoding On</strong>';
+} else {
+	//echo 'Cannot determine';
+}
+
+
 
 print '</div>';
 

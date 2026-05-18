@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,21 +329,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-donation page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
-
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
@@ -602,10 +587,10 @@ while ($i < $imaxinloop) {
 
 	$donationstatic->setVarsFromFetchObj($obj);
 
-	$donationstatic->id = $obj->rowid;
+	$donationstatic->id = (int) $obj->rowid;
 	$donationstatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 	$donationstatic->date = $db->jdate($obj->datedon);
-	$donationstatic->status = $obj->status;
+	$donationstatic->status = (int) $obj->status;
 	$donationstatic->lastname = $obj->lastname;
 	$donationstatic->firstname = $obj->firstname;
 	$object = $donationstatic;
@@ -699,7 +684,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
 
 		// Status
-		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+		print '<td class="center">'.$donationstatic->LibStatut($donationstatic->status, 5).'</td>';
 
 		// Action column
 		if (empty($conf->main_checkbox_left_column)) {
