@@ -1846,22 +1846,6 @@ class Adherent extends CommonObject
 			$amount = 0;
 		}
 
-		if ($this->statut != Adherent::STATUS_VALIDATED) {
-			$autoValidate = getDolGlobalInt('MEMBER_AUTO_VALIDATE_ON_SUBSCRIPTION');
-
-			if ($autoValidate) {
-				$result = $this->validate($user);
-				if ($result < 0) {
-					$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
-					return -1;
-				}
-				dol_syslog("Auto-validated member " . $this->ref . " (ID: " . $this->id . ") upon subscription creation (Config: MEMBER_AUTO_VALIDATE_ON_SUBSCRIPTION=1)", LOG_INFO);
-			} else {
-				$this->error = "MEMBER_AUTO_VALIDATE_ON_SUBSCRIPTION=".$autoValidate;
-				return -1;
-			}
-		}
-
 		$this->db->begin();
 
 		if ($datesubend) {
@@ -1902,6 +1886,17 @@ class Adherent extends CommonObject
 				$error++;
 			}
 
+			$noAutoValidate = getDolGlobalInt('MEMBER_DO_NOT_AUTO_VALIDATE_ON_SUBSCRIPTION');
+			if (!$error && !$noAutoValidate && ($this->statut == Adherent::STATUS_DRAFT || $this->statut == Adherent::STATUS_RESILIATED)) {
+				$preStatus = $this->statut;
+				$result = $this->validate($user);
+				if ($result < 0) {
+					$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
+				    dol_syslog("ErrorValidationFailed for member=".$this->id." which had status=".$preStatus, LOG_ERR);
+					$error++;
+				}
+			}
+
 			if (!$error) {
 				$this->db->commit();
 				return $rowid;
@@ -1910,6 +1905,21 @@ class Adherent extends CommonObject
 				return -2;
 			}
 		} else {
+			// CRITICAL FIX: Manually copy error from the child object if not set on self
+			if (empty($this->error) && isset($subscription->error) && !empty($subscription->error)) {
+				$this->error = $subscription->error;
+			}
+
+			// Also check the errors array
+			if (empty($this->error) && isset($subscription->errors) && is_array($subscription->errors) && count($subscription->errors) > 0) {
+				$this->error = $subscription->errors[0];
+			}
+
+			// If still empty, try to get the last DB error directly
+			if (empty($this->error) && !empty($this->db->lasterror)) {
+				$this->error = $this->db->lasterror;
+			}
+
 			$this->setErrorsFromObject($subscription);
 			$this->db->rollback();
 			return -1;
