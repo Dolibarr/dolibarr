@@ -696,7 +696,6 @@ class Members extends DolibarrApi
 				throw new RestException(422, $errorMsg);
 			}
 			return $result;
-
 		} catch (Exception $e) {
 			// This catches the DB exception that escaped subscription()
 			$msg = $e->getMessage();
