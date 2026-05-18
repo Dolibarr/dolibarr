@@ -266,8 +266,8 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		// Type
 		$typeLabel = '';
-		if (!empty($type) && !empty(Categorie::$MAP_TYPE_TITLE_AREA[$type])) {
-			$typeLabel = $langs->trans(Categorie::$MAP_TYPE_TITLE_AREA[$type]);
+		if (!empty($type) && !empty($object->MAP_TYPE_TITLE_AREA[$type])) {
+			$typeLabel = $langs->trans($object->MAP_TYPE_TITLE_AREA[$type]);
 		}
 
 		if (!empty($typeLabel)) {
