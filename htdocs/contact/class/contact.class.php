@@ -527,7 +527,7 @@ class Contact extends CommonObject
 			if ($this->socid > 0) {
 				// Preserve backward compatibility: legacy callers may link a thirdparty
 				// and still expect explicit contact postal fields to remain authoritative.
-				$this->use_thirdparty_address = $this->getLegacyResolvedUseThirdpartyAddressValue();
+				$this->use_thirdparty_address = (int) $this->getLegacyResolvedUseThirdpartyAddressValue();
 			} else {
 				$this->use_thirdparty_address = self::USE_THIRDPARTY_ADDRESS_NO;
 			}
@@ -535,10 +535,10 @@ class Contact extends CommonObject
 		if (empty($this->priv)) {
 			$this->priv = 0;
 		}
-		if (!empty($this->statut) && empty($this->status)) {
+		if (isset($this->statut) && !empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
 		}
-		if (empty($this->status)) {
+		if (!isset($this->status) || empty($this->status)) {
 			$this->status = 0; // This is to convert '' into '0' to avoid bad sql request
 			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 		}
@@ -668,10 +668,10 @@ class Contact extends CommonObject
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
 		$this->country_id = (empty($this->country_id) || $this->country_id < 0) ? 0 : $this->country_id;
-		if (!empty($this->statut) && empty($this->status)) {
+		if (isset($this->statut) && !empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
 		}
-		if (empty($this->status)) {
+		if (!isset($this->status) || empty($this->status)) {
 			$this->status = 0;
 			$this->statut = 0;
 		}
@@ -681,7 +681,7 @@ class Contact extends CommonObject
 		if ($this->socid <= 0) {
 			$this->use_thirdparty_address = self::USE_THIRDPARTY_ADDRESS_NO;
 		} elseif (!isset($this->use_thirdparty_address)) {
-			$this->use_thirdparty_address = $this->getLegacyResolvedUseThirdpartyAddressValue();
+			$this->use_thirdparty_address = (int) $this->getLegacyResolvedUseThirdpartyAddressValue();
 		}
 		$this->setUpperOrLowerCase();
 		$this->resetEffectiveAddressCache();
@@ -2002,7 +2002,7 @@ class Contact extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if (!empty($this->statut) && empty($this->status)) {
+		if (isset($this->statut) && !empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
 		}
 		if ($this->status == $status) {
