@@ -353,19 +353,12 @@ class JsonResponse
 	 */
 	public function output()
 	{
-		global $db;
-
 		if (!headers_sent()) {
 			top_httphead('application/json');
 			http_response_code($this->httpResponseCode);
 		}
 
 		print $this->getResponse();
-
-		if (is_object($db) && !empty($db->connected)) {
-			$db->close();
-		}
-
 		exit;
 	}
 }
