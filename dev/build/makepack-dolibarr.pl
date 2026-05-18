@@ -87,7 +87,7 @@ $DIR ||= '.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE = "$DIR/../..";
-$DESTI  = "$SOURCE/build";
+$DESTI  = "$SOURCE/dev/build";
 if ( $SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i ) {
 	print
 	  "Error: Launch the script $PROG.$Extension with its full path from /.\n";
@@ -399,7 +399,7 @@ else {
 $atleastonerpm = 0;
 foreach my $target ( sort keys %CHOOSEDTARGET ) {
 	if ( $target =~ /RPM/i ) {
-		if ( $atleastonerpm && ( $DESTI eq "$SOURCE/build" ) ) {
+		if ( $atleastonerpm && ( $DESTI eq "$SOURCE/dev/build" ) ) {
 			print
 "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell packager where it can create subdirs for each generated package.\n";
 			exit;
@@ -677,6 +677,7 @@ if ($nboftargetok) {
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.project`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
+		$ret = `rm -f  $BUILDROOT/$PROJECT/.pyproject.toml`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.settings`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.stickler.yml`;
@@ -1058,6 +1059,7 @@ if ($nboftargetok) {
 			if ( $RPMDIR eq "" ) { $RPMDIR = $ENV{'HOME'} . "/rpmbuild"; }
 
 			print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
+			print "RPMDIR = $RPMDIR\n";
 
 			print "Remove target " . $FILENAMERPM . "...\n";
 			unlink( "$NEWDESTI/" . $FILENAMERPM );

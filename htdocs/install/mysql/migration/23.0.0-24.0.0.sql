@@ -532,4 +532,7 @@ ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_replacement integer DEFAULT NULL;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee_replacement (fk_replacement);
+
+ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
 -- end of migration

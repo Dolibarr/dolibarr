@@ -72,8 +72,9 @@ class ToolThirdParty extends McpTool
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
-						"id" => ["type" => "integer", "required" => true]
-					]
+						"id" => ["type" => "integer", "description" => "The unique numerical ID of the thirdparty."]
+					],
+					"required" => ["id"]
 				]
 			],
 			[
@@ -82,7 +83,7 @@ class ToolThirdParty extends McpTool
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
-						"name" => ["type" => "string", "description" => "Name of the thirdparty", "required" => true],
+						"name" => ["type" => "string", "description" => "Name of the thirdparty"],
 						"type" => ["type" => "string", "enum" => ["customer", "prospect", "supplier", "both", "none"], "default" => "customer", "description" => "Type of thirdparty. 'none' means not a customer or prospect."],
 						"email" => ["type" => "string", "description" => "Email address"],
 						"phone" => ["type" => "string", "description" => "Phone number"],
@@ -105,7 +106,7 @@ class ToolThirdParty extends McpTool
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
-						"id" => ["type" => "integer", "description" => "The ID of the thirdparty to update.", "required" => true],
+						"id" => ["type" => "integer", "description" => "The ID of the thirdparty to update."],
 						"name" => ["type" => "string", "description" => "The new name for the thirdparty."],
 						"email" => ["type" => "string", "description" => "The new email address."],
 						"phone" => ["type" => "string", "description" => "The new phone number."],
@@ -123,7 +124,7 @@ class ToolThirdParty extends McpTool
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
-						"id" => ["type" => "integer", "description" => "The ID of the thirdparty.", "required" => true]
+						"id" => ["type" => "integer", "description" => "The ID of the thirdparty."]
 					],
 					"required" => ["id"]
 				]
@@ -136,11 +137,10 @@ class ToolThirdParty extends McpTool
 					"properties" => [
 						"thirdparty_identifier" => [
 							"type" => ["string", "integer"],
-							"description" => "The ID or name of the thirdparty to add the contact to.",
-							"required" => true
+							"description" => "The ID or name of the thirdparty to add the contact to."
 						],
-						"firstname" => ["type" => "string", "description" => "Contact's first name.", "required" => true],
-						"lastname" => ["type" => "string", "description" => "Contact's last name.", "required" => true],
+						"firstname" => ["type" => "string", "description" => "Contact's first name."],
+						"lastname" => ["type" => "string", "description" => "Contact's last name."],
 						"email" => ["type" => "string", "description" => "Contact's email address."],
 						"phone" => ["type" => "string", "description" => "Contact's phone number."],
 						"role" => ["type" => "string", "description" => "Contact's role or position within the company."]
