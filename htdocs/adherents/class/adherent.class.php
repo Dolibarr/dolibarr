@@ -2181,9 +2181,10 @@ class Adherent extends CommonObject
 	 *		Function that validate a member
 	 *
 	 *		@param	User	$user		user adherent qui valide
+	 *		@param	int		$notrigger	1=disable trigger UPDATE (when called by create)
 	 *		@return	int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function validate($user)
+	public function validate($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2211,11 +2212,13 @@ class Adherent extends CommonObject
 			$this->status = self::STATUS_VALIDATED;
 
 			// Call trigger
-			$result = $this->call_trigger('MEMBER_VALIDATE', $user);
-			if ($result < 0) {
-				$error++;
-				$this->db->rollback();
-				return -1;
+			if (!$notrigger) {
+				$result = $this->call_trigger('MEMBER_VALIDATE', $user);
+				if ($result < 0) {
+					$error++;
+					$this->db->rollback();
+					return -1;
+				}
 			}
 			// End call triggers
 

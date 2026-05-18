@@ -7616,8 +7616,10 @@ input.select2-input {
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 li.select2-selection__choice {
-	white-space: break-spaces;
+	/* white-space: break-spaces; */
+	white-space: nowrap;
 }
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }

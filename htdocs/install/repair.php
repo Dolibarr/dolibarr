@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
- * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Vincent de Grandpré     <vincent@de-grandpre.quebec>
+ * Copyright (C) 2025       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Solution Libre SAS      <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -414,7 +415,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				'fichinter' => 'fichinter', 'fichinterdet' => 'fichinterdet',
 				'inventory' => 'inventory',
 				'actioncomm' => 'actioncomm', 'bom_bom' => 'bom_bom', 'mrp_mo' => 'mrp_mo',
-				'adherent_type' => 'adherent_type', 'user' => 'user', 'partnership' => 'partnership', 'projet' => 'projet', 'projet_task' => 'projet_task', 'ticket' => 'ticket');
+				'adherent_type' => 'adherent_type', 'user' => 'user', 'partnership' => 'partnership', 'projet' => 'projet', 'projet_task' => 'projet_task', 'ticket' => 'ticket', 'payment_various' => 'payment_various');
 	//$listofmodulesextra = array('fichinter'=>'fichinter');
 
 	print '<tr><td colspan="2"><br>*** Check that fields into the extra table structure match the table of definition. If not, add column into table</td></tr>';

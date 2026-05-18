@@ -61,12 +61,12 @@ class CdavLib
 	/**
 	 * Base sql request for calendar events
 	 *
-	 * @param 	int 		$calid 			Calendar id
+	 * @param 	int 		$calendarId 	Calendar id
 	 * @param 	int|bool	$oid			Oid
 	 * @param	int|bool	$ouri			Ouri
 	 * @return string
 	 */
-	public function getSqlCalEvents($calid, $oid = false, $ouri = false)
+	public function getSqlCalEvents($calendarId, $oid = false, $ouri = false)
 	{
 		// TODO : replace GROUP_CONCAT by
 		$sql = 'SELECT
@@ -94,7 +94,7 @@ class CdavLib
 				FROM '.MAIN_DB_PREFIX.'actioncomm AS a';
 		$sql .= " LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON co.rowid = sp.fk_pays
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_country as cos ON cos.rowid = s.fk_pays
-				WHERE 	a.id IN (SELECT ar.fk_actioncomm FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar WHERE ar.element_type='user' AND ar.fk_element=".((int) $calid).")
+				WHERE 	a.id IN (SELECT ar.fk_actioncomm FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar WHERE ar.element_type='user' AND ar.fk_element=".((int) $calendarId).")
 						AND a.code IN (SELECT cac.code FROM '.MAIN_DB_PREFIX.'c_actioncomm cac WHERE cac.type <> 'systemauto')
 						AND a.entity IN (".getEntity('societe', 1).")";
 		// TODO Restrict on external users
@@ -112,11 +112,11 @@ class CdavLib
 	/**
 	 * Convert calendar row to VCalendar string
 	 *
-	 * @param 	int		$calid		Calendar id
+	 * @param 	int		$calendarId	Calendar id
 	 * @param	Object	$obj		Object id
 	 * @return string
 	 */
-	public function toVCalendar($calid, $obj)
+	public function toVCalendar($calendarId, $obj)
 	{
 		/*$categ = array();
 		if($obj->soc_client)
@@ -169,7 +169,7 @@ class CdavLib
 		$caldata .= "LAST-MODIFIED:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
 		$caldata .= "DTSTAMP:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
 		if ($obj->sourceuid == '') {
-			$caldata .= "UID:".$obj->id.'-ev-'.$calid.'-cal-'.constant('CDAV_URI_KEY')."\n";
+			$caldata .= "UID:".$obj->id.'-ev-'.$calendarId.'-cal-'.constant('CDAV_URI_KEY')."\n";
 		} else {
 			$caldata .= "UID:".$obj->sourceuid."\n";
 		}
@@ -251,24 +251,24 @@ class CdavLib
 	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{
-		$calid = (int) $calendarId;
+		$calendarId = (int) $calendarId;
 		$calevents = array();
 
 		if (!$this->user->rights->agenda->myactions->read) {
 			return $calevents;
 		}
 
-		if ($calid != $this->user->id && (!isset($this->user->rights->agenda->allactions->read) || !$this->user->rights->agenda->allactions->read)) {
+		if ($calendarId != $this->user->id && (!isset($this->user->rights->agenda->allactions->read) || !$this->user->rights->agenda->allactions->read)) {
 			return $calevents;
 		}
 
-		$sql = $this->getSqlCalEvents($calid);
+		$sql = $this->getSqlCalEvents($calendarId);
 
 		$result = $this->db->query($sql);
 
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
-				$calendardata = $this->toVCalendar($calid, $obj);
+				$calendardata = $this->toVCalendar($calendarId, $obj);
 
 				if ($bCalendarData) {
 					$calevents[] = array(
