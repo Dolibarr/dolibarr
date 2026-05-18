@@ -111,7 +111,7 @@ if ($objectdesc) {
 	$classpath = '';
 	if (!empty($InfoFieldList[1])) {
 		$classpath = dol_sanitizePathName($InfoFieldList[1]);
-	}	
+	}
 
 	//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
 	$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
