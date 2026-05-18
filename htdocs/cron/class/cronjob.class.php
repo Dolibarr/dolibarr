@@ -3,7 +3,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1617,7 +1617,7 @@ class Cronjob extends CommonObject
 	 * Reprogram a job
 	 *
 	 * @param	string		$userlogin		User login
-	 * @param	integer		$now			Date returned by dol_now()
+	 * @param	int			$now			Date returned by dol_now()
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
 	public function reprogram_jobs(string $userlogin, int $now)
@@ -1647,13 +1647,13 @@ class Cronjob extends CommonObject
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $now + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $now + ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			} else {
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $this->datestart + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->datestart + ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		}
@@ -1664,7 +1664,7 @@ class Cronjob extends CommonObject
 				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
 					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
 				} else {
-					$this->datenextrun += ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun += ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		} else {

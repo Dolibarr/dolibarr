@@ -159,6 +159,9 @@ if ($resql) {
 		}
 
 		$label .= $row['nom'];
+		if (!empty($row['name_alias'])) {
+			$label .= ' (' . $row['name_alias'] . ')';
+		}
 
 		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 			$label .= ($row['address'] ? ' - '.$row['address'] : '').($row['zip'] ? ' - '.$row['zip'] : '').($row['town'] ? ' '.$row['town'] : '');

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
  * \brief AI Request Log Viewer with Payload Inspection
  */
 
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -30,17 +31,9 @@
  * @var User $user
  * @var Form $form
  */
-
-require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
-
-
-// Access Control
-if (!$user->admin) {
-	accessforbidden();
-}
 
 // Load translations
 $langs->loadLangs(array("admin", "other"));
@@ -66,9 +59,9 @@ $search_time_max = GETPOST('search_time_max', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 
 // Pagination parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -89,6 +82,15 @@ $search_array = array(
 	'search_time_max' => $search_time_max,
 	'search_status' => $search_status
 );
+
+// Access Control
+if (!$user->admin) {
+	accessforbidden();
+}
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
+}
+
 
 /*
  * Actions
@@ -160,6 +162,7 @@ if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter_x', 
 	$page = 0;
 }
 
+
 /*
  * View
  */
@@ -170,11 +173,11 @@ if ($contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search_array as $key => $val) {
 	if (!empty($val) || $val === '0') {
-		$param .= '&' . $key . '=' . urlencode($val);
+		$param .= '&' . urlencode($key) . '=' . urlencode($val);
 	}
 }
 
@@ -220,23 +223,23 @@ if (!empty($where)) {
 }
 
 // Get total count for pagination
-$sqlCount = "SELECT COUNT(*) as total
+$sqlCount = "SELECT COUNT(l.rowid) as total
              FROM " . MAIN_DB_PREFIX . "ai_request_log as l
-             LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid
-             $whereSQL";
-$resCount = $db->query($sqlCount);
-$totalRecords = $resCount ? $db->fetch_object($resCount)->total : 0;
+             LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid";
+$sqlCount .= $whereSQL;
+$resqlCount = $db->query($sqlCount);
+$totalRecords = $resqlCount ? $db->fetch_object($resqlCount)->total : 0;
 
 
-$sql = "SELECT l.*, u.login
+$sql = "SELECT l.rowid, u.login, l.date_request, l.query_text, l.tool_name, l.provider, l.execution_time, l.status, l.error_msg, l.raw_request_payload, l.raw_response_payload
         FROM " . MAIN_DB_PREFIX . "ai_request_log as l
-        LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid
-        $whereSQL
-        ORDER BY $sortfield $sortorder
-        LIMIT " . $offset . ", " . $limit;
+        LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid";
+$sql .= $whereSQL;
+$sql .= $db->order($sortfield, $sortorder);
+$sql .= $db->plimit($limit, $offset);
 
-$res = $db->query($sql);
-$num = $db->num_rows($res);
+$resql = $db->query($sql);
+$num = $db->num_rows($resql);
 
 // Create object for list
 $object = new stdClass();
@@ -351,9 +354,9 @@ print '</div>';
 print '</td>';
 print '</tr>';
 
-if ($res && $db->num_rows($res) > 0) {
+if ($resql && $num > 0) {
 	$i = 0;
-	while ($obj = $db->fetch_object($res)) {
+	while ($obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
 
 		// Date

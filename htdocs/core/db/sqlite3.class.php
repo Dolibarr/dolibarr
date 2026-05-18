@@ -67,7 +67,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  @param	    string	$name		Nom de la database
 	 *  @param	    int		$port		Port of database server
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf;
 
@@ -628,7 +628,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  SQLite3Result	$resultset   Curseur de la requete voulue
+	 *	@param  SQLite3Result|null	$resultset		Result set of request
 	 *	@return	void
 	 */
 	public function free($resultset = null)
@@ -882,15 +882,15 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$listtables = array();
 
-		$like = '';
+		$sanitizedlike = '';
 		if ($table) {
 			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
 
-			$like = "LIKE '".$this->escape($tmptable)."'";
+			$sanitizedlike = "LIKE '".$this->escape($tmptable)."'";
 		}
-		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+		$sanitizedtmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
 
-		$sql = "SHOW TABLES FROM ".$tmpdatabase." ".$like.";";
+		$sql = "SHOW TABLES FROM ".$sanitizedtmpdatabase." ".$sanitizedlike.";";
 		//print $sql;
 		$result = $this->query($sql);
 		if ($result) {
@@ -914,15 +914,15 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$listtables = array();
 
-		$like = '';
+		$sanitizedlike = '';
 		if ($table) {
 			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
 
-			$like = "LIKE '".$this->escape($tmptable)."'";
+			$sanitizedlike = "LIKE '".$this->escape($tmptable)."'";
 		}
-		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+		$sanitizedtmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
 
-		$sql = "SHOW FULL TABLES FROM ".$tmpdatabase." ".$like.";";
+		$sql = "SHOW FULL TABLES FROM ".$sanitizedtmpdatabase." ".$sanitizedlike.";";
 		//print $sql;
 		$result = $this->query($sql);
 		if ($result) {
@@ -947,9 +947,9 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$infotables = array();
 
-		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+		$sanitizedtmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
 
-		$sql = "SHOW FULL COLUMNS FROM ".$tmptable.";";
+		$sql = "SHOW FULL COLUMNS FROM ".$sanitizedtmptable.";";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
@@ -1019,9 +1019,9 @@ class DoliDBSqlite3 extends DoliDB
 			$i++;
 		}
 		if ($primary_key != "") {
-			$pk = "PRIMARY KEY(".$this->sanitize($primary_key).")";
+			$sanitizedpk = "PRIMARY KEY(".$this->sanitize($primary_key).")";
 		} else {
-			$pk = "";
+			$sanitizedpk = "";
 		}
 
 
@@ -1041,7 +1041,7 @@ class DoliDBSqlite3 extends DoliDB
 		}
 		$sql .= implode(',', $sqlfields);
 		if ($primary_key != "") {
-			$sql .= ",".$pk;
+			$sql .= ",".$sanitizedpk;
 		}
 		if ($unique_keys != "") {
 			$sql .= ",".implode(',', $sqluq);
@@ -1069,9 +1069,9 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLDropTable($table)
 	{
 		// phpcs:enable
-		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+		$sanitizedtmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
 
-		$sql = "DROP TABLE ".$tmptable;
+		$sql = "DROP TABLE ".$sanitizedtmptable;
 
 		if (!$this->query($sql)) {
 			return -1;
@@ -1091,7 +1091,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLDescTable($table, $field = "")
 	{
 		// phpcs:enable
-		$sql = "DESC ".$table." ".$field;
+		$sql = "DESC ".$this->sanitize($table)." ".$this->sanitize($field);
 
 		dol_syslog(get_class($this)."::DDLDescTable ".$sql, LOG_DEBUG);
 		$this->_results = $this->query($sql);
@@ -1113,7 +1113,7 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
+		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 
 		if ($field_desc['type'] !== 'datetimegmt') {
 			$sql .= $this->sanitize($field_desc['type']);
@@ -1161,7 +1161,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string}	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)

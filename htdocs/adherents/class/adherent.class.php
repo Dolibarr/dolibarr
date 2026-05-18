@@ -363,7 +363,7 @@ class Adherent extends CommonObject
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox' => 1),
-		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => 1, 'position' => 40),
+		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'pass' => array('type' => 'varchar(50)', 'label' => 'Pass', 'enabled' => 1, 'visible' => 3, 'position' => 45),
 		'pass_crypted' => array('type' => 'varchar(128)', 'label' => 'Pass crypted', 'enabled' => 1, 'visible' => 3, 'position' => 50),
 		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 55),
@@ -2181,9 +2181,10 @@ class Adherent extends CommonObject
 	 *		Function that validate a member
 	 *
 	 *		@param	User	$user		user adherent qui valide
+	 *		@param	int		$notrigger	1=disable trigger UPDATE (when called by create)
 	 *		@return	int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function validate($user)
+	public function validate($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2211,11 +2212,13 @@ class Adherent extends CommonObject
 			$this->status = self::STATUS_VALIDATED;
 
 			// Call trigger
-			$result = $this->call_trigger('MEMBER_VALIDATE', $user);
-			if ($result < 0) {
-				$error++;
-				$this->db->rollback();
-				return -1;
+			if (!$notrigger) {
+				$result = $this->call_trigger('MEMBER_VALIDATE', $user);
+				if ($result < 0) {
+					$error++;
+					$this->db->rollback();
+					return -1;
+				}
 			}
 			// End call triggers
 

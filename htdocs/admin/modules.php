@@ -10,6 +10,7 @@
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke	 		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -307,7 +308,7 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 				*/
 
-				// Check if module is in the remote malware list
+				// Check if module is in the remote malware blacklist (at URL DolibarrModules::URL_FOR_BLACKLISTED_MODULES)
 				if (!$error) {
 					if (GETPOST('checkforcompliance') == 'on') {
 						try {
@@ -328,6 +329,7 @@ if ($action == 'install' && $allowonlineinstall) {
 
 				if (!$error) {
 					// TODO Make more test ???
+					// Call validateZipFile() in functions2.lib.php ?
 				}
 
 				// We check if this is a metapackage (and wecomplete with child packages)
@@ -527,7 +529,6 @@ $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
 
-
 // Load $modules (required for the badge count)
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -653,7 +654,11 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Module ".get_class($objMod)." not qualified");
 							}
 						} else {
-							print info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							// Skip warning for modules being refactored (class split in progress)
+							$silentModules = array('modSupplierOrder', 'modSupplierInvoice', 'modFournisseur');
+							if (!in_array($modName, $silentModules)) {
+								print info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							}
 						}
 					} catch (Exception $e) {
 						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
@@ -841,6 +846,39 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$linenum = 0;
 	$atleastonequalified = 0;
 	$atleastoneforfamily = 0;
+
+	print '<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery(".modulefamilygroup").each(function() {
+			var $group = jQuery(this);
+			var $title = $group.find(".titre.inline-block").first();
+			var $nextContainer = $group.nextAll(".div-table-responsive, .box-flex-container").first();
+			if ($title.length && !$title.children(".modulefamilytoggleicon").length) {
+				$title.prepend("<i class=\"fa modulefamilytoggleicon paddingleft paddingleftright\"></i> ");
+			}
+			var $icon = $title.children(".modulefamilytoggleicon").first();
+			var isVisible = $nextContainer.is(":visible");
+			if ($icon.length && $nextContainer.length) {
+				$icon.toggleClass("fa-folder-open", isVisible);
+				$icon.toggleClass("fa-folder", !isVisible);
+			}
+		});
+
+		jQuery(document).on("click", ".modulefamilygroup", function() {
+			var $group = jQuery(this);
+			var $nextContainer = $group.nextAll(".div-table-responsive, .box-flex-container").first();
+			if ($nextContainer.length) {
+				var $icon = $group.find(".modulefamilytoggleicon").first();
+				var isVisible = $nextContainer.is(":visible");
+				$nextContainer.stop(true, true).slideToggle(150);
+				if ($icon.length) {
+					$icon.toggleClass("fa-folder-open", !isVisible);
+					$icon.toggleClass("fa-folder", isVisible);
+				}
+			}
+		});
+	});
+	</script>';
 
 	foreach ($orders as $key => $value) {
 		$linenum++;
@@ -1520,7 +1558,7 @@ if ($mode == 'deploy') {
 			print $langs->trans("YouCanSubmitFile").'<br><br><br>';
 
 			print '<span class="opacitymedium"><input class="paddingright" type="checkbox" name="checkforcompliance" id="checkforcompliance"'.(getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES') ? ' disabled="disabled"' : 'checked="checked"').'>';
-			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp")).'</label>';
+			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp").'<br><br>'.DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'</label>';
 			print '</span><br><br>';
 
 			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb

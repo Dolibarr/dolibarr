@@ -170,3 +170,4 @@ ForcePasswordChange=Force password change at next login
 AtNextLogin=At next connection
 UserDoesNotHaveRightsToChangeHisPassword=This user doesn't have the rights to change his own password
 NotPossible=Not possible
+NoPasswordGenerationRuleConfigured=The engine or rule to generate password has not been set or is set to empty password in the setup page.

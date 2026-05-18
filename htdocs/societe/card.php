@@ -375,6 +375,7 @@ if (empty($reshook)) {
 			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ? GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOST('capital');	// Can be null or 0 or a float value
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
+			$object->fk_account				= GETPOSTINT('fk_account') > 0 ? GETPOSTINT('fk_account') : 0;
 
 			$object->euid					= GETPOST('euid', 'alphanohtml');
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
@@ -1324,7 +1325,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignores autocomplete
+		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off" spellcheck="false">'; // Chrome ignores autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1569,7 +1570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($object, 0);
 			}
-			print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
+			print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24" spellcheck="false">';
 			print '</td><td>';
 			$s = $modCodeClient->getToolTip($langs, $object, 0);
 			print $form->textwithpicto('', $s, 1);
@@ -1605,6 +1606,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print $form->selectarray('status', array('1' => $langs->trans('InActivity'), '0' => $langs->trans('ActivityCeased')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
 			*/
+
+			// Default bank account
+			if (isModEnabled('bank') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_BANK_ACCOUNT')) {
+				print '<tr><td>';
+				print $langs->trans('DefaultBankAccount');
+				print '</td>';
+				print '<td>';
+				$form->select_comptes(GETPOST('fk_account'), 'fk_account', 0, '', 1);
+				print "</td>";
+				print '</tr>';
+			}
 
 			// Barcode
 			if (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
@@ -2480,6 +2492,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '</td></tr>';
 
+				if (isModEnabled('bank') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_BANK_ACCOUNT')) {
+					// TODO
+					// Allow to edit field default bank account like we can in creation mode
+				}
 
 				// Barcode
 				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
@@ -2766,7 +2782,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Type - Workforce/Staff
 				print '<tr class="morefields"><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.(($conf->browser->layout == 'phone' || getDolGlobalString('SOCIETE_DISABLE_WORKFORCE')) ? ' colspan="3"' : '').'>';
-				print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+				print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), '', 1);
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -3466,6 +3482,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($result > 0) {
 					$adh->ref = $adh->getFullName($langs);
 					print $adh->getNomUrl(-1);
+					print ' &mdash; '.$adh->getLibStatut(0);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 				}

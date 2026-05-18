@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,7 +111,7 @@ class EmailCollector extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
@@ -1397,7 +1397,9 @@ class EmailCollector extends CommonObject
 					if (is_array($tmpvalues)) {
 						foreach ($tmpvalues as $tmpvalue) {
 							$tmpvalue = trim((string) $tmpvalue);
-							if ($tmpvalue === '') continue;
+							if ($tmpvalue === '') {
+								continue;
+							}
 
 							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
 								foreach ($tmpmatches[0] as $tmpemail) {
@@ -1416,7 +1418,9 @@ class EmailCollector extends CommonObject
 					if (is_array($tmpvalues)) {
 						foreach ($tmpvalues as $tmpvalue) {
 							$tmpvalue = trim((string) $tmpvalue);
-							if ($tmpvalue === '') continue;
+							if ($tmpvalue === '') {
+								continue;
+							}
 
 							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
 								foreach ($tmpmatches[1] as $tmpdomain) {
@@ -1595,7 +1599,9 @@ class EmailCollector extends CommonObject
 					if (is_array($tmpvalues)) {
 						foreach ($tmpvalues as $tmpvalue) {
 							$tmpvalue = trim((string) $tmpvalue);
-							if ($tmpvalue === '') continue;
+							if ($tmpvalue === '') {
+								continue;
+							}
 
 							if (preg_match_all('/[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}/i', $tmpvalue, $tmpmatches)) {
 								foreach ($tmpmatches[0] as $tmpemail) {
@@ -1614,7 +1620,9 @@ class EmailCollector extends CommonObject
 					if (is_array($tmpvalues)) {
 						foreach ($tmpvalues as $tmpvalue) {
 							$tmpvalue = trim((string) $tmpvalue);
-							if ($tmpvalue === '') continue;
+							if ($tmpvalue === '') {
+								continue;
+							}
 
 							if (preg_match_all('/[a-z0-9._%+\\-]+@([a-z0-9.\\-]+\\.[a-z]{2,})/i', $tmpvalue, $tmpmatches)) {
 								foreach ($tmpmatches[1] as $tmpdomain) {
@@ -2682,6 +2690,36 @@ class EmailCollector extends CommonObject
 				 }
 				 */
 
+				// Persist attachments for some linked objects (so hooks can rely on files on disk).
+				$savedattachments = array();
+				$savedattachmentsdir = '';
+				$savedattachmentsnote = '';
+				if (empty($mode) && !empty($attachments) && $fk_element_id > 0 && $fk_element_type === 'order_supplier' && $objectemail instanceof CommandeFournisseur) {
+					$orderref = isset($objectemail->ref) ? (string) $objectemail->ref : '';
+					if ($orderref !== '' && !empty($conf->fournisseur->commande)) {
+						$entityforobject = isset($objectemail->entity) ? (int) $objectemail->entity : (int) $conf->entity;
+						$basedir = (!empty($conf->fournisseur->commande->multidir_output[$entityforobject]) ? $conf->fournisseur->commande->multidir_output[$entityforobject] : $conf->fournisseur->commande->dir_output);
+						$savedattachmentsdir = rtrim($basedir, '/').'/'.dol_sanitizeFileName($orderref);
+						$savedattachments = $this->saveEmailCollectorAttachmentsToDir($savedattachmentsdir, $attachments);
+						if (!empty($savedattachments)) {
+							$operationslog .= '<br>Saved '.count($savedattachments).' attachment(s) into '.dol_escape_htmltag($savedattachmentsdir);
+						}
+					}
+				}
+				if (!empty($savedattachments)) {
+					$names = array();
+					foreach ($savedattachments as $attmeta) {
+						if (!is_array($attmeta) || empty($attmeta['name'])) {
+							continue;
+						}
+						$names[] = (string) $attmeta['name'];
+					}
+					if (!empty($names)) {
+						$savedattachmentsnote = $langs->trans("NbOfAttachedFiles").' : '.count($names);
+						$savedattachmentsnote .= ' ('.implode(', ', array_slice($names, 0, 10)).(count($names) > 10 ? '...' : '').')';
+					}
+				}
+
 
 				// Now do all operations for the email (extract variables and creating data)
 				if ($mode < 2) {	// 0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
@@ -2736,6 +2774,9 @@ class EmailCollector extends CommonObject
 						}
 						if ($sendtocc) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
+						}
+						if ($savedattachmentsnote) {
+							$descriptionmeta = dol_concatdesc($descriptionmeta, $savedattachmentsnote);
 						}
 
 						if ($operation['type'] == 'ticket') {
@@ -3740,8 +3781,10 @@ class EmailCollector extends CommonObject
 								$description = dol_concatdesc($description, $messagetext);
 
 								$descriptionfull = $description;
-								$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-								$descriptionfull = dol_concatdesc($descriptionfull, $header);
+								if (!getDolGlobalString('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER')) {
+									$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+									$descriptionfull = dol_concatdesc($descriptionfull, $header);
+								}
 
 								$candidaturetocreate->subject = $subject;
 								$candidaturetocreate->message = $description;
@@ -3847,12 +3890,17 @@ class EmailCollector extends CommonObject
 								'subject' => $subject,
 								'header' => $header,
 								'attachments' => $attachments,
+								'savedattachments' => $savedattachments,
+								'savedattachmentsdir' => $savedattachmentsdir,
 							);
 							$reshook = $hookmanager->executeHooks('doCollectImapOneCollector', $parameters, $this, $operation['type']);
 
 							if ($reshook < 0) {
 								$errorforthisaction++;
 								$this->error = $hookmanager->resPrint;
+								if (!empty($hookmanager->resPrint)) {
+									$operationslog .= '<br>Hook error: '.dol_escape_htmltag($hookmanager->resPrint);
+								}
 							}
 							if ($errorforthisaction) {
 								$errorforactions++;
@@ -4276,6 +4324,138 @@ class EmailCollector extends CommonObject
 		}
 
 		return (string) $subject;
+	}
+
+	/**
+	 * Save IMAP attachments into a target directory and return metadata (relative to DOL_DATA_ROOT).
+	 *
+	 * @param 	string	$destdir		Absolute target dir
+	 * @param 	array<int|string,\Webklex\PHPIMAP\Attachment|string>	$attachments	Array of Webklex\PHPIMAP\Attachment OR array(filename => raw_data)
+	 * @return 	array<int,array<string,mixed>>
+	 */
+	private function saveEmailCollectorAttachmentsToDir($destdir, $attachments)
+	{
+		$destdir = rtrim((string) $destdir, '/');
+		if ($destdir === '' || empty($attachments) || !is_array($attachments)) {
+			return array();
+		}
+
+		if (!dol_is_dir($destdir)) {
+			if (dol_mkdir($destdir) < 0) {
+				return array();
+			}
+		}
+
+		$stored = array();
+		$seenHashes = array();
+
+		// Build a hash map of existing files to avoid storing duplicates.
+		$filelist = dol_dir_list($destdir, 'files', 0, '', '(\\.meta|_preview.*.*\\.png)$', 'date', SORT_DESC, 0, 1);
+		foreach ($filelist as $fileinfo) {
+			if (empty($fileinfo['fullname']) || !is_file($fileinfo['fullname']) || !is_readable($fileinfo['fullname'])) {
+				continue;
+			}
+			$hash = hash_file('sha256', $fileinfo['fullname']);
+			if ($hash !== false && empty($seenHashes[$hash])) {
+				$seenHashes[$hash] = $fileinfo['name'];
+			}
+		}
+
+		// Compute path relative to DOL_DATA_ROOT (used by hooks to reopen attachments later).
+		$relativeDir = '';
+		if (defined('DOL_DATA_ROOT')) {
+			$root = rtrim((string) DOL_DATA_ROOT, '/').'/';
+			$destdirwithslash = $destdir.'/';
+			if (strpos($destdirwithslash, $root) === 0) {
+				$relativeDir = rtrim(substr($destdirwithslash, strlen($root)), '/');
+			}
+		}
+
+		$index = 0;
+		foreach ($attachments as $key => $attachment) {
+			$index++;
+			$origName = '';
+			$content = '';
+			$mime = null;
+
+			// PHP-IMAP (Webklex): array of Attachment objects.
+			if (is_object($attachment)) {
+				'@phan-var-force Webklex\PHPIMAP\Attachment $attachment';
+				/** @var \Webklex\PHPIMAP\Attachment $attachment */
+				try {
+					$origName = (string) $attachment->getName(); // Webklex Attachment uses magic __call
+				} catch (Throwable $e) {
+					$origName = '';
+				}
+				try {
+					$content = (string) $attachment->getContent(); // Webklex Attachment uses magic __call
+				} catch (Throwable $e) {
+					$content = '';
+				}
+				try {
+					$tmpmime = (string) $attachment->getContentType(); // Webklex Attachment uses magic __call
+					$mime = ($tmpmime !== '' ? $tmpmime : null);
+				} catch (Throwable $e) {
+					$mime = null;
+				}
+			} else {
+				// Native IMAP: array(filename => raw_data).
+				$origName = (string) $key;
+				$content = (string) $attachment;
+			}
+
+			if ($origName === '' || $origName === 'undefined') {
+				$origName = 'attachment-'.$index;
+			}
+			if ($content === '') {
+				continue;
+			}
+
+			$safeName = dol_sanitizeFileName($origName, '_', 1, 0);
+			if ($safeName === '') {
+				$safeName = 'attachment-'.$index;
+			}
+
+			$contentHash = hash('sha256', $content);
+			$finalName = $safeName;
+			$useExisting = false;
+			if (!empty($seenHashes[$contentHash])) {
+				$finalName = $seenHashes[$contentHash];
+				if (file_exists($destdir.'/'.$finalName)) {
+					$useExisting = true;
+				}
+			}
+
+			if (!$useExisting) {
+				$n = 1;
+				while (file_exists($destdir.'/'.$finalName)) {
+					$finalName = preg_replace('/(\\.[A-Za-z0-9]{1,10})$/', '', $safeName).'-'.$n;
+					if (preg_match('/\\.[A-Za-z0-9]{1,10}$/', $safeName, $m)) {
+						$finalName .= $m[0];
+					}
+					$n++;
+				}
+
+				$this->saveAttachment($destdir, $finalName, $content);
+				$seenHashes[$contentHash] = $finalName;
+			}
+
+			$fullPath = $destdir.'/'.$finalName;
+			$size = (file_exists($fullPath) ? filesize($fullPath) : null);
+			$sizevalue = ($size === false ? null : $size);
+			$sha256 = $contentHash;
+
+			$stored[] = array(
+				'name' => $finalName,
+				'original_name' => $origName,
+				'relative_path' => ($relativeDir !== '' ? $relativeDir.'/'.$finalName : ''),
+				'content_type' => $mime,
+				'size' => ($sizevalue !== null ? (int) $sizevalue : null),
+				'sha256' => $sha256,
+			);
+		}
+
+		return $stored;
 	}
 
 	/**

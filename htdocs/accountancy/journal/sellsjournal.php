@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2014		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent de Grandporé        <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -524,7 +524,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->client = 3;
 
-		$invoicestatic->id = $key;
+		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
 		$invoicestatic->type = $val["type"];
 		$invoicestatic->close_code = $val["close_code"];
@@ -564,7 +564,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
-					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_doc = (int) $key;
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are the source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
@@ -614,7 +614,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$bookkeeping->doc_ref = $val["ref"];
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'customer_invoice';
-				$bookkeeping->fk_doc = $key;
+				$bookkeeping->fk_doc = (int) $key;
 				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 				$bookkeeping->thirdparty_code = $companystatic->code_client;
 
@@ -682,7 +682,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
-					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_doc = (int) $key;
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
@@ -763,7 +763,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
-						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_doc = (int) $key;
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = $companystatic->code_client;
 
@@ -831,7 +831,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
-						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_doc = (int) $key;
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = $companystatic->code_client;
 
@@ -950,7 +950,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->client = 3;
 
-		$invoicestatic->id = $key;
+		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
 		$invoicestatic->type = $val["type"];
 		$invoicestatic->close_code = $val["close_code"];
@@ -1204,7 +1204,7 @@ if (empty($action) || $action == 'view') {
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->client = 3;
 
-		$invoicestatic->id = $key;
+		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
 		$invoicestatic->type = $val["type"];
 		$invoicestatic->close_code = $val["close_code"];

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005     	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin       	<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '200');
 $hookmanager->initHooks(array('bankstats', 'globalcard'));
 
 // Security check
+$id = 0;
 if (GETPOST('account') || GETPOST('ref')) {
 	$id = GETPOST('account') ? GETPOST('account') : GETPOST('ref');
 }
@@ -122,6 +123,11 @@ if ($result < 0) {
 	}
 
 	$resql = $db->query($sql);
+
+	// Defaults
+	$max = dol_now();
+	$min = $max - 3600 * 24;
+
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$obj = $db->fetch_object($resql);
@@ -129,9 +135,6 @@ if ($result < 0) {
 		$max = dol_get_last_hour($db->jdate($obj->max));
 	} else {
 		dol_print_error($db);
-	}
-	if (empty($min)) {
-		$min = dol_now() - 3600 * 24;
 	}
 
 	$log = "graph.php: min=".$min." max=".$max;
