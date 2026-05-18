@@ -1351,7 +1351,7 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
+										$computedFieldPos = isset($arrayfield[$val]) ? ((int) $arrayfield[$val]) : 0;
 										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$newval = $res; 	// We get new value computed.
