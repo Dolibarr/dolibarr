@@ -1846,6 +1846,25 @@ class Adherent extends CommonObject
 			$amount = 0;
 		}
 
+		$enforceStatus = getDolGlobalInt('MEMBER_ONLY_SUBSCRIPTION_ON_VALIDATED_RESILIATED');
+		if ($enforceStatus) {
+			$allowedStatuses = array(
+				Adherent::STATUS_VALIDATED,
+				Adherent::STATUS_RESILIATED
+			);
+
+			if (!in_array($this->statut, $allowedStatuses)) {
+				$this->error = $langs->trans("ErrorMemberStatusNotAllowedForSubscription", $this->getLibStatut());
+				$this->errors[] = $this->error;
+				return -1; // Fail immediately, no transaction needed
+			}
+		}
+		if ($this->statut == Adherent::STATUS_EXCLUDED) {
+			$this->error = $langs->trans("ErrorMemberStatusNotAllowedForSubscription", $this->getLibStatut());
+			$this->errors[] = $this->error;
+			return -1; // Fail immediately, no transaction needed
+		}
+
 		$this->db->begin();
 
 		if ($datesubend) {
