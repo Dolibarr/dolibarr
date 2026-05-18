@@ -649,6 +649,7 @@ class ActionComm extends CommonObject
 		$sql .= "num_vote,";
 		$sql .= "event_paid,";
 		$sql .= "status,";
+		$sql .= "max_participants,";
 		$sql .= "ip";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)', ";
@@ -691,6 +692,7 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
 		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
 		$sql .= (!empty($this->status) ? (int) $this->status : "0").", ";
+		$sql .= (!empty($this->max_participants) ? (int) $this->max_participants : "null").", ";
 		$sql .= (!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
