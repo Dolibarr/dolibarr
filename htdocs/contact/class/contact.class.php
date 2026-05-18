@@ -1983,7 +1983,7 @@ class Contact extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->socid = $socid;
-		$this->use_thirdparty_address = ($socid > 0 ? self::USE_THIRDPARTY_ADDRESS_YES : self::USE_THIRDPARTY_ADDRESS_NO);
+		$this->use_thirdparty_address = self::USE_THIRDPARTY_ADDRESS_NO;
 		$this->status = 1;
 
 		return 1;

@@ -265,11 +265,12 @@ class ContactAddressResolutionTest extends CommonClassTest
 		$this->assertGreaterThan(0, $result, 'Contact fetch failed: '.$refetched->error);
 
 		$effectiveaddressobject = $refetched->getEffectiveAddressObject();
+		$effectiveaddressfields = $refetched->getEffectiveAddressFields();
 
 		$this->assertInstanceOf(Societe::class, $effectiveaddressobject);
-		$this->assertSame('Persisted thirdparty street', $effectiveaddressobject->address);
-		$this->assertSame('75001', $effectiveaddressobject->zip);
-		$this->assertSame('Paris', $effectiveaddressobject->town);
+		$this->assertSame('Persisted thirdparty street', $effectiveaddressfields['address']);
+		$this->assertSame('75001', $effectiveaddressfields['zip']);
+		$this->assertSame('Paris', $effectiveaddressfields['town']);
 	}
 
 	/**
