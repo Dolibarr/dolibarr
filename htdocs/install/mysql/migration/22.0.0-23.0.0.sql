@@ -437,4 +437,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
+-- Rename OIDC enable constant: openidconnect was converted from a module to a config-level feature (#36051)
+UPDATE llx_const SET name = 'MAIN_AUTHENTICATION_OIDC_ON' WHERE name = 'MAIN_MODULE_OPENIDCONNECT';
+
 -- end of migration
