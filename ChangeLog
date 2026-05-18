@@ -30,11 +30,46 @@ The following changes may create regressions for some external modules, but were
 
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
-FIX: IDOR on messaging.php - credit Aksoum Abderrahmane
-FIX: Some remaining cross-customer object creation on API (proposal, orders) - credit Mitch311
-SEC: Set the default seed key EVENTORGANIZATION_SECUREKEY at module install - credit Shunsuke Hashimoto (@futabato)
-SEC: Better sanitization param for GETPOST of htmlheader of website page - See commit bbbbb56c6455514dcd0acca53afc17a92ed21bb9
 
+FIX: #36589 (#38037)
+FIX: #37552 (#38073)
+FIX: #37649 (#38101)
+FIX: #37759
+FIX: #37760
+FIX: #37761
+FIX: #37762
+FIX: #37805
+FIX: #38074 (#38075)
+FIX: #38131 (#38140)
+FIX: Accountancy - Select journal - Problem with the label (#37979)
+FIX: AccountingAccount cache — silent reference mutation in accounting journals (#37981)
+FIX: a param must not come from end user entry.
+FIX: api create invoice. Do not allow a user limited as sale
+FIX: avoid error when deleting a category (#37864)
+FIX: avoid error with postgresql (#37865)
+FIX: avoid Table 'llx_categorie_project_task' doesn't exist (#37861)
+FIX: broken feature with api auth and Multicompany transverse mode (#37868)
+FIX: do not print Extrafields in PDF if printable is 0 (#37789)
+FIX: draft invoice paid when add absolute discount == remain to pay (#38104)
+FIX: extrafield selectlist when there is a linked table (#37706)
+FIX: Limit standard on price list (#37944)
+FIX: missing "blob:" in the assistant for CSP editor.
+FIX: option MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE
+FIX: product price.php: preserve default_vat_code and tva_npr when auto-creating initial product_price row (#38034)
+FIX: propagate fk_warehouse from BOM/MO to production lines in createProduction() and processBOM() (#38147)
+FIX: selected default value ko on select_produits_fournisseurs_list()
+FIX: Set default warehouse on order create. (#37815)
+FIX: Site root missing in $backtopage. (#37804)
+FIX: use company default RIB when it is defined (#38016)
+FIX: wrong "REFERENCES" for foreign key of fk_project_task (report this fix in 23 to 24) (#37874)
+FIX: IDOR on messaging.php - Credit Aksoum Abderrahmane
+FIX: Some remaining cross-customer object creation on API (proposal, orders) - Credit Mitch311
+FIX: add permission test on legacy filemanager - Credit Aksoum Abderrahmane
+FIX: Can use AI module to make SSRF call. Credit Dilip
+FIX: #GHSA-crgg-h74r-2m8r (#37636)
+FIX: #GHSA-hq5j-39f9-qxcv (#37812)
+FIX: SQL Injection via Operator Injection in Contract Service List
+SEC: Better sanitization param for GETPOST of htmlheader of website page - See commit bbbbb56c6455514dcd0acca53afc17a92ed21bb9
 
 
 ***** ChangeLog for 23.0.2 compared to 23.0.1 *****

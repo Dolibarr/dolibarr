@@ -356,6 +356,7 @@ if (empty($reshook)) {
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
+		$label = GETPOST("label");
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
@@ -363,7 +364,7 @@ if (empty($reshook)) {
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
 			if ($res > 0) {
-				$result = $tmpmember->subscription($now, (float) $amount);
+				$result = $tmpmember->subscription($now, (float) $amount, 0, '', $label);
 				if ($result < 0) {
 					$error++;
 				} else {
@@ -830,6 +831,7 @@ if ($massaction == 'createsubscription') {
 	$formquestion = array(
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
+		array('label' => $langs->trans("Label"), 'type' => 'text', 'value' => '', 'name' => 'label'),
 		array('type' => 'separator'),
 		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
 	);

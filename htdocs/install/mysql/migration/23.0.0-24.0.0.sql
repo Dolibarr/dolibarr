@@ -541,4 +541,6 @@ CREATE TABLE llx_payment_various_extrafields
 
 ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_extrafields (fk_object);
 
+ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
 -- end of migration
