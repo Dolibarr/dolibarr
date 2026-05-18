@@ -3,7 +3,7 @@
  * Copyright (C) 2024       Jose Martinez           <jose.martinez@pichinov.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -200,7 +200,7 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		return Categorie::$MAP_TYPE_TITLE_AREA;
+		return $this->category->MAP_TYPE_TITLE_AREA;
 	}
 
 	/**
