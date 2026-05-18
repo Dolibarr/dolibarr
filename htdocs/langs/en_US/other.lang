@@ -419,7 +419,6 @@ AIWelcomeMessage=Hi! I'm your Dolibarr assistant. How can I help you today?
 ErrorThirdPartyNotFound=Error ThirdParty Not Found
 TotalValue=Total Value
 Expenses=Expenses
-AIAssistant=AI Assistant
 ClearChatHistoryTitle=Clear Chat History
 Clear=Clear
 OptionTextOnly=Text Only

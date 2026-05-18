@@ -33,6 +33,10 @@
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
+if (!defined('SUBTOTALS_SPECIAL_CODE')) {
+	define('SUBTOTALS_SPECIAL_CODE', 81);
+}
+
 /**
  *		Description and activation class for module subtotals
  */

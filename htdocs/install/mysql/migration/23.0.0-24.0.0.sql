@@ -530,4 +530,17 @@ ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_pro
 ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
 
+-- Add extrafields on various payment
+CREATE TABLE llx_payment_various_extrafields
+(
+	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object                 integer NOT NULL,
+	import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_extrafields (fk_object);
+
+ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
 -- end of migration
