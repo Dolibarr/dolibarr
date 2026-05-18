@@ -109,8 +109,8 @@ foreach ($categstatic->MAP_ID as $key => $idtype) {
 	$arrayofcateg[$key] = array();
 	$arrayofcateg[$key]['key'] = $key;
 	$arrayofcateg[$key]['nb'] = $countobjects[$idtype] ?? 0;
-	$arrayofcateg[$key]['label'] = $langs->transnoentitiesnoconv($categstatic->$MAP_TYPE_TITLE_AREA[$key]);
-	$arrayofcateg[$key]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic->$MAP_TYPE_TITLE_AREA[$key]));
+	$arrayofcateg[$key]['label'] = $langs->transnoentitiesnoconv($categstatic->MAP_TYPE_TITLE_AREA[$key]);
+	$arrayofcateg[$key]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic->MAP_TYPE_TITLE_AREA[$key]));
 }
 $arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
