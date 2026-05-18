@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,6 +219,7 @@ if (in_array($action, array("view_ticket", "presend", "close", "confirm_public_c
 	}
 }
 
+
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
@@ -253,7 +255,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
-		print '<!-- public view ticket -->';
+		print '<!-- public view ticket if if -->';
 		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		// Confirmation close
@@ -406,8 +408,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
+			$formticket->withtitletopic = 1;
 
-			$formticket->showMessageForm('100%');
+			$formticket->showMessageForm('100%', 1);
 		}
 
 		if ($action != 'presend') {
@@ -443,14 +446,16 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Message list
 		print '<div class="ticketpublicarea ticketlargemargin">';
+		print '<h3>';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
+		print '</h3>';
 		print '</div>';
 
 		$object->viewTicketMessages(false, true, $object->dao);
 
 		print '<br>';
 	} else {
-		print '<!-- public view ticket -->';
+		print '<!-- public view ticket if else -->';
 		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener">'.$langs->trans("GoBack").'</a></div>';
@@ -458,7 +463,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 	}
 } else {
-	print '<!-- public view ticket -->';
+	print '<!-- public view ticket else -->';
 	print '<div class="ticketpublicarea ticketlargemargin">';
 
 	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';

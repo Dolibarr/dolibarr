@@ -331,7 +331,7 @@ class Interventions extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->fichinter->array_options[$index] = $this->_checkValForAPI($field, $val, $this->fichinter);
+					$this->fichinter->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->fichinter);
 				}
 				continue;
 			}

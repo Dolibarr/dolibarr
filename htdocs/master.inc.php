@@ -11,7 +11,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ require_once 'filefunc.inc.php';
  */
 '
 @phan-var-force ?string $dolibarr_main_db_prefix
+@phan-var-force ?string $dolibarr_main_db_collation
 @phan-var-force ?string $dolibarr_main_db_encryption
 @phan-var-force ?string $dolibarr_main_db_cryptkey
 @phan-var-force ?string $dolibarr_main_limit_users
@@ -112,6 +113,11 @@ if (!defined('LOG_DEBUG')) {
 		define('LOG_DEBUG', 7);
 	}
 }
+
+if (!defined('SUBTOTALS_SPECIAL_CODE')) {
+	define('SUBTOTALS_SPECIAL_CODE', 81);
+}
+
 
 /*
  * Disable some not used PHP stream
@@ -270,6 +276,13 @@ if (!defined('NOREQUIREUSER')) {
  */
 if (!defined('NOHOOKMANAGER')) {
 	$hookmanager = new HookManager($db);
+}
+/*
+ * Create $extrafields object
+ */
+if ($db !== null) {
+	require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+	$extrafields = new ExtraFields($db);
 }
 
 

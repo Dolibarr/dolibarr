@@ -8,7 +8,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,9 +163,9 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Insert the line into database
 	 *
-	 *	@param		User	$user 		Object user that make creation
-	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		Return integer <0 if ko, >0 if ok
+	 *	@param		User		$user 		Object user that make creation
+	 *	@param		int<0,1>	$notrigger	Disable all triggers
+	 *	@return		int			Return integer <0 if ko, >0 if ok
 	 */
 	public function insert($user, $notrigger = 0)
 	{
@@ -192,7 +192,7 @@ class FichinterLigne extends CommonObjectLine
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
-				$rangToUse = $obj->max + 1;
+				$rangToUse = (int) $obj->max + 1;
 			} else {
 				dol_print_error($this->db);
 				$this->db->rollback();

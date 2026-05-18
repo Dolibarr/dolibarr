@@ -44,12 +44,12 @@ create table llx_facture
   date_closing			datetime,								-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,			-- 1 if invoice is payed completely. Deprecated. Use instead statut = 2 and close_code is null or = ''
 
-  remise_percent		real     DEFAULT 0,						-- remise relative
-  remise_absolue		real     DEFAULT 0,						-- remise absolue
-  remise				real     DEFAULT 0,						-- remise totale calculee
+  remise_percent		real     DEFAULT 0,						-- remise relative (deprecated, not used)
+  remise_absolue		real     DEFAULT 0,						-- remise absolue (deprecated, not used)
+  remise				real     DEFAULT 0,						-- remise totale calculee (deprecated, not used)
 
   close_code			varchar(16),							-- Code for reason of closing without complete payment. '' if payment is complete.
-  close_missing_amount	double(24,8),							-- Amount missing when closing with a not complete payment. 0 if payment is complete.
+  close_missing_amount	double(24,8),							-- TODO Amount missing when closing with a not complete payment. 0 if payment is complete.
   close_note			varchar(128),							-- Comment on closing without complete payment
 
   total_tva				double(24,8)     DEFAULT 0,				-- amount total tva apres remise totale
@@ -105,9 +105,10 @@ create table llx_facture
   situation_counter   smallint,  -- situation counter. The number into the serie: 1, 2, ...
   situation_final     smallint,  -- 0 by default, 1 it if is the final invoice.
 
-  retained_warranty							real DEFAULT NULL,  -- % of the retained warranty (to calculate the amount to pay later)
-  retained_warranty_date_limit				date DEFAULT NULL,
-  retained_warranty_fk_cond_reglement		integer  DEFAULT NULL,			-- payment condition of retained warranty
+  retained_warranty							real DEFAULT NULL,  		-- % of the retained warranty (to calculate the amount - on the inc tax basis - to pay later by getRetainedWarrantyAmount)
+  retained_warranty_amount 					double(24,8) DEFAULT NULL,	-- to store the amount of the retained warranty once calculated and rounded from the % - duplicate, not reliable, just for info
+  retained_warranty_date_limit				date DEFAULT NULL,			-- when we can request the retained warranty (used to update the flag payment late or not)
+  retained_warranty_fk_cond_reglement		integer  DEFAULT NULL,		-- payment condition of retained warranty
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format

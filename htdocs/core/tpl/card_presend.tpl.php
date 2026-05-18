@@ -27,6 +27,7 @@
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $action
  * @var string $trackid
@@ -37,6 +38,11 @@
  * @var string[] $arrayoffamiliestoexclude	Example: array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  * @var string $file
  * @var ?string $inreplyto
+ * @var int $hidedetails
+ * @var int $hidedesc
+ * @var int $hideref
+ * @var string $recruitername
+ * @var string $recruitermail
  */
 '
 @phan-var-force int<0,1> $diroutput
@@ -98,6 +104,11 @@ if ($action == 'presend') {
 		}
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		// When the email form is resubmitted (e.g. Apply button to select a template),
+		// lang_id is not in POST but langsmodels is. Use it to preserve the language selection.
+		if (empty($newlang) && GETPOST('langsmodels', 'aZ09')) {
+			$newlang = GETPOST('langsmodels', 'aZ09');
 		}
 	}
 
@@ -261,7 +272,8 @@ if ($action == 'presend') {
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
 		// For example if element is project
-		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (property_exists($object, 'socid') && !empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
 		if (is_object($object->thirdparty)) {

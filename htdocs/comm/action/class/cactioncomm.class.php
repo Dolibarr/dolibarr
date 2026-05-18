@@ -153,7 +153,7 @@ class CActionComm
 	 *  @param  'id'|'code'|'all'      $idorcode       'id' or 'code' or 'all'
 	 *  @param  string		$excludetype    Type to exclude ('system' or 'systemauto')
 	 *  @param  int<-2,1>	$onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
-	 *  @param  string      $morefilter     Add more SQL filter
+	 *  @param  string      $morefilter     Add more SQL filter. Must be USF filter.
 	 *  @param  int<0,1>	$shortlabel     1=Get short label instead of long label
 	 *	@return	int<-1,-1>|array{id:array<int,string>,code:array<string,string>,all:array<string,array{id:string,label:string,type:string,color:mixed,picto:string}>,AC_OTH_AUTO?:mixed}	Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
 	 */
@@ -181,7 +181,7 @@ class CActionComm
 			$sql .= " AND type <> '".$this->db->escape($excludetype)."'";
 		}
 		if ($morefilter) {
-			$sql .= " AND ".$morefilter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($morefilter);
 		}
 		// If AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST is defined, we use position as main sort criterion
 		// otherwise we use type as main sort criterion

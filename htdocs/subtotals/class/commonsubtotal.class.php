@@ -20,9 +20,6 @@
  * or see https://www.gnu.org/
  */
 
-if (!defined('SUBTOTALS_SPECIAL_CODE')) {
-	define('SUBTOTALS_SPECIAL_CODE', 81);
-}
 
 /**
  *

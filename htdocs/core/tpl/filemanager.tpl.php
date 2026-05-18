@@ -23,19 +23,24 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var EcmDirectory $ecmdir
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var EcmDirectory $ecmdir
  * @var Website $website
  *
  * @var string $action
+ * @var string $sortfield
+ * @var string $sortorder
+ * @var string $url
  * @var ?string $module
  * @var int $section
  * @var string $filepathnoext
  * @var string $pageid
  * @var int $formalreadyopen
+ * @var string $websitekey
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -78,8 +83,8 @@ if ($module == 'ecm') {
 	$showroot = 0;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
-	$permtoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permtoadd = $user->hasRight("website", "write");
+	$permtoupload = $user->hasRight("website", "write");
 	$showroot = 1;
 }
 
@@ -115,7 +120,7 @@ if ($permtoadd) {
 	print '</a>';
 }
 if ($module == 'ecm') {
-	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&module='.$module : '').($section ? '&section='.$section : '')));
 	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';

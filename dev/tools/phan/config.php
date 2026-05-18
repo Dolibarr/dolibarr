@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This is the phan config file used by .github/workflows/phan.yml
@@ -152,6 +152,7 @@ $VALID_MODULE_MAPPING = array(
 	'productsupplierprice' => null,
 	'project' => 'Projet',
 	'propal' => 'Propale',
+	'quickmemo' => null,
 	'receiptprinter' => 'ReceiptPrinter',
 	'reception' => 'Reception',
 	'recruitment' => 'Recruitment',
@@ -213,7 +214,7 @@ $EXTRAFIELDS_TYPE2LABEL = array(
 	);
 
 
-$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
+$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename', '\$dirofmodule'))).')$/';
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
 
 $extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
@@ -278,6 +279,7 @@ return [
 		'dolibarr_main_db_encrypted_pass' => 'string',
 		'dolibarr_main_db_host' => 'string',
 		'dolibarr_main_db_pass' => 'string',
+		'dolibarr_main_db_type' => '?string',
 		'dolibarr_main_demo' => 'string',
 		'dolibarr_main_document_root' => 'string',
 		'dolibarr_main_url_root' => 'string',
@@ -527,6 +529,7 @@ return [
 		'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
 		'pdo_pgsql'  => PHAN_DIR . '/stubs/pdo_pgsql.phan_php',
 		'pdo_sqlite'  => PHAN_DIR . '/stubs/pdo_sqlite.phan_php',
+		'phpunit'  => PHAN_DIR . '/stubs/phpunit.phan_php',
 		'pgsql'  => PHAN_DIR . '/stubs/pgsql.phan_php',
 		'session'  => PHAN_DIR . '/stubs/session.phan_php',
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
