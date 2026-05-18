@@ -10,7 +10,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2023-2024	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2023-2026	Charlene Benke				<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -322,7 +322,7 @@ $help_url = '';
 llxHeader("", $langs->trans("Categories"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+$title .= ' ('.$langs->trans(empty($object->MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : $object->MAP_TYPE_TITLE_AREA[$type]).')';
 
 $head = categories_prepare_head($object, $type);
 print dol_get_fiche_head($head, 'card', $langs->trans($title), -1, 'category');
