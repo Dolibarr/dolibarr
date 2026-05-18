@@ -1912,7 +1912,7 @@ class Adherent extends CommonObject
 				$result = $this->validate($user);
 				if ($result < 0) {
 					$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
-				    dol_syslog("ErrorValidationFailed for member=".$this->id." which had status=".$preStatus, LOG_ERR);
+					dol_syslog("ErrorValidationFailed for member=".$this->id." which had status=".$preStatus, LOG_ERR);
 					$error++;
 				}
 			}
