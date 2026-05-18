@@ -40,6 +40,7 @@ $config['exclude_file_regex'] = '@^('  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analyzed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
 		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
+		.'|dev/tools/phpstan/stubs/.*'  // @phpstan-ignore-line
 		//.'|htdocs/[^mi](?!.*(pdf_|tcpdf)).*\.php'  // @phpstan-ignore-line
 		//.'|htdocs/(?!.*modules.*(pdf_|pdf.lib)).*\.php'  // @phpstan-ignore-line
 		.')@';  // @phpstan-ignore-line

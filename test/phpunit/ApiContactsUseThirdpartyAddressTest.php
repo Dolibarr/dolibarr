@@ -72,9 +72,10 @@ class ApiContactsUseThirdpartyAddressTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $conf;
 
-		$conf = $this->savconf;
 		if (is_object($conf)) {
 			$conf->loghandlers = array();
 		}

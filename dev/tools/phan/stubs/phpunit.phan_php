@@ -13,10 +13,11 @@ class TestCase {
 	public static function assertSame($expected, $actual, string $message = ''): void {}
 	public static function assertNotNull($actual, string $message = ''): void {}
 	public static function assertNull($actual, string $message = ''): void {}
+	public static function assertInstanceOf(string $expected, $actual, string $message = ''): void {}
 	public static function assertCount(int $expectedCount, $haystack, string $message = ''): void {}
 	public static function assertEmpty($actual, string $message = ''): void {}
 	public static function assertNotEmpty($actual, string $message = ''): void {}
-	public static function expectException(string $exception): void {}
+	public function expectException(string $exception): void {}
 	public static function assertFileNotExists(string $filename, string $message = ''): void {}
 	public static function assertFileDoesNotExist(string $filename, string $message = ''): void {}
 	public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void {}

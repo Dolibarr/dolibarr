@@ -68,12 +68,9 @@ class SocieteImportExportAddressModeContractTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
-		global $conf, $db, $langs, $user, $mysoc;
+		parent::setUp();
 
-		$conf = $this->savconf;
-		$db = $this->savdb;
-		$langs = $this->savlangs;
-		$user = $this->savuser;
+		global $conf, $mysoc;
 		$mysoc = $this->savmysoc;
 		if (is_object($conf)) {
 			$conf->loghandlers = array();

@@ -59,10 +59,9 @@ class ContactDocSubstitutionTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
-		global $conf, $db, $langs;
-		$conf = $this->savconf;
-		$db = $this->savdb;
-		$langs = $this->savlangs;
+		parent::setUp();
+
+		global $conf;
 		if (is_object($conf)) {
 			$conf->loghandlers = array();
 		}

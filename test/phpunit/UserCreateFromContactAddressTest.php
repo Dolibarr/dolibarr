@@ -65,12 +65,9 @@ class UserCreateFromContactAddressTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
-		global $conf, $db, $langs, $user;
+		parent::setUp();
 
-		$conf = $this->savconf;
-		$db = $this->savdb;
-		$langs = $this->savlangs;
-		$user = $this->savuser;
+		global $conf;
 		if (is_object($conf)) {
 			$conf->loghandlers = array();
 		}

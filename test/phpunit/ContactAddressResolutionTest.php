@@ -63,11 +63,9 @@ class ContactAddressResolutionTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
-		global $conf, $db, $langs, $user;
-		$conf = $this->savconf;
-		$db = $this->savdb;
-		$langs = $this->savlangs;
-		$user = $this->savuser;
+		parent::setUp();
+
+		global $conf;
 		if (is_object($conf)) {
 			$conf->loghandlers = array();
 		}
@@ -86,6 +84,41 @@ class ContactAddressResolutionTest extends CommonClassTest
 		$contact->socid = 1;
 
 		return $contact;
+	}
+
+	/**
+	 * Build a contact fixture whose effective address source is controlled by the test.
+	 *
+	 * @param Societe $effective Effective address object
+	 * @return Contact
+	 */
+	private function buildContactResolvingTo(Societe $effective): Contact
+	{
+		return new class($this->savdb, $effective) extends Contact {
+			/**
+			 * @var Societe
+			 */
+			private $effective;
+
+			/**
+			 * @param DoliDB  $db Database handler
+			 * @param Societe $effective Effective address object
+			 */
+			public function __construct($db, Societe $effective)
+			{
+				parent::__construct($db);
+				$this->effective = $effective;
+			}
+
+			/**
+			 * @param   Societe|null $thirdparty Unused preloaded thirdparty
+			 * @return  CommonObject
+			 */
+			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
+			{
+				return $this->effective;
+			}
+		};
 	}
 
 	/**
@@ -202,6 +235,44 @@ class ContactAddressResolutionTest extends CommonClassTest
 	}
 
 	/**
+	 * Effective address resolution must load the linked thirdparty when no preloaded object is provided.
+	 *
+	 * @return void
+	 */
+	public function testGetEffectiveAddressObjectLoadsPersistedThirdparty(): void
+	{
+		$thirdparty = new Societe($this->savdb);
+		$thirdparty->initAsSpecimen();
+		$thirdparty->name = 'Effective address thirdparty '.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand();
+		$thirdparty->client = 1;
+		$thirdparty->address = 'Persisted thirdparty street';
+		$thirdparty->zip = '75001';
+		$thirdparty->town = 'Paris';
+
+		$result = $thirdparty->create($this->savuser);
+		$this->assertGreaterThan(0, $result, 'Thirdparty creation failed: '.$thirdparty->error);
+
+		$contact = $this->buildContact();
+		$contact->socid = (int) $thirdparty->id;
+		$contact->use_thirdparty_address = Contact::USE_THIRDPARTY_ADDRESS_YES;
+		$contact->address = 'Copied contact street';
+
+		$contactid = $contact->create($this->savuser, 1);
+		$this->assertGreaterThan(0, $contactid, 'Contact creation failed: '.$contact->error);
+
+		$refetched = new Contact($this->savdb);
+		$result = $refetched->fetch((int) $contactid);
+		$this->assertGreaterThan(0, $result, 'Contact fetch failed: '.$refetched->error);
+
+		$effectiveaddressobject = $refetched->getEffectiveAddressObject();
+
+		$this->assertInstanceOf(Societe::class, $effectiveaddressobject);
+		$this->assertSame('Persisted thirdparty street', $effectiveaddressobject->address);
+		$this->assertSame('75001', $effectiveaddressobject->zip);
+		$this->assertSame('Paris', $effectiveaddressobject->town);
+	}
+
+	/**
 	 * Effective address cache must follow manual rehydration of static Contact instances.
 	 *
 	 * @return void
@@ -267,31 +338,7 @@ class ContactAddressResolutionTest extends CommonClassTest
 		$effective->zip = '75001';
 		$effective->town = 'Paris';
 
-		$contact = new class($this->savdb, $effective) extends Contact {
-			/**
-			 * @var Societe
-			 */
-			private $effective;
-
-			/**
-			 * @param DoliDB  $db Database handler
-			 * @param Societe $effective Effective address object
-			 */
-			public function __construct($db, Societe $effective)
-			{
-				parent::__construct($db);
-				$this->effective = $effective;
-			}
-
-			/**
-			 * @param   Societe|null $thirdparty Unused preloaded thirdparty
-			 * @return  CommonObject
-			 */
-			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
-			{
-				return $this->effective;
-			}
-		};
+		$contact = $this->buildContactResolvingTo($effective);
 
 		$contact->socid = 1;
 		$contact->use_thirdparty_address = Contact::USE_THIRDPARTY_ADDRESS_YES;
@@ -328,31 +375,7 @@ class ContactAddressResolutionTest extends CommonClassTest
 		$effective->town = 'Paris';
 		$effective->country_code = 'FR';
 
-		$contact = new class($this->savdb, $effective) extends Contact {
-			/**
-			 * @var Societe
-			 */
-			private $effective;
-
-			/**
-			 * @param DoliDB  $db Database handler
-			 * @param Societe $effective Effective address object
-			 */
-			public function __construct($db, Societe $effective)
-			{
-				parent::__construct($db);
-				$this->effective = $effective;
-			}
-
-			/**
-			 * @param   Societe|null $thirdparty Unused preloaded thirdparty
-			 * @return  CommonObject
-			 */
-			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
-			{
-				return $this->effective;
-			}
-		};
+		$contact = $this->buildContactResolvingTo($effective);
 
 		$contact->lastname = 'Doe';
 		$contact->firstname = 'Jane';
@@ -382,31 +405,7 @@ class ContactAddressResolutionTest extends CommonClassTest
 		$effective->country_code = 'FR';
 		$effective->country = 'France';
 
-		$contact = new class($this->savdb, $effective) extends Contact {
-			/**
-			 * @var Societe
-			 */
-			private $effective;
-
-			/**
-			 * @param DoliDB  $db Database handler
-			 * @param Societe $effective Effective address object
-			 */
-			public function __construct($db, Societe $effective)
-			{
-				parent::__construct($db);
-				$this->effective = $effective;
-			}
-
-			/**
-			 * @param   Societe|null $thirdparty Unused preloaded thirdparty
-			 * @return  CommonObject
-			 */
-			public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
-			{
-				return $this->effective;
-			}
-		};
+		$contact = $this->buildContactResolvingTo($effective);
 
 		$contact->lastname = 'Doe';
 		$contact->firstname = 'Jane';
