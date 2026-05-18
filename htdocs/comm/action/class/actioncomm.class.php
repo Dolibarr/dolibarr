@@ -899,6 +899,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
 		$sql .= " a.fk_user_action,";
+		$sql .= " a.max_participants,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
@@ -993,6 +994,7 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
+				$this->max_participants = $obj->max_participants;
 
 				//email information
 				$this->email_msgid = $obj->email_msgid;
