@@ -1367,11 +1367,11 @@ class Form
 	 * Injects custom options (before/after) into a select list securely.
 	 *
 	 * @param array<int, string> $options        Associative array of [key => label]. Keys must be integers (typically negative for before/after options).
-	 * @param array<int|string>     $selected       Array of currently selected values.
-	 * @param int                   $outputmode     0=HTML only, 1=Simple Array, 2=Detailed Array.
-	 * @param string                $out            Reference to the HTML output string (passed by ref for efficiency).
-	 * @param array                 $outarray       Reference to the simple output array.
-	 * @param array                 $outarray2      Reference to the detailed output array.
+	 * @param array<int|string>  $selected       Array of currently selected values.
+	 * @param int                $outputmode     0=HTML only, 1=Simple Array, 2=Detailed Array.
+	 * @param string             $out            Reference to the HTML output string (passed by ref for efficiency).
+	 * @param array<string, string>              $outarray       Reference to the simple output array.
+	 * @param array<string, array{id: string, label: string, labelhtml: string, color: string, picto: string}> $outarray2 Reference to the detailed output array.
 	 * @return void
 	 */
 	private function injectCustomOptionsSecure(array $options, array $selected, int $outputmode, string &$out, array &$outarray, array &$outarray2): void
