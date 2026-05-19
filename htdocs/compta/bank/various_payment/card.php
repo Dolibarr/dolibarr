@@ -107,7 +107,7 @@ if (empty($reshook)) {
 	if ($cancel) {
 		if ($action != 'addlink' && $action != 'setaccountancy_code' && $action != 'setsubledger_account') {
 			$urltogo = $backtopage ? $backtopage : dol_buildpath('/compta/bank/various_payment/list.php', 1);
-			header("Location: " . $urltogo);
+			header("Location: ".$urltogo);
 			exit;
 		}
 		if ($id > 0) {
@@ -160,7 +160,7 @@ if (empty($reshook)) {
 		}
 
 		if (!checkGeneralAccountAllowsAuxiliary($db, $object->accountancy_code, $object->subledger_account)) {
-			setEventMessages($langs->trans("ErrorAccountNotCentralized").". ".$langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
+			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
 			$error++;
 		}
 		if (empty($datep) || empty($datev)) {
@@ -215,8 +215,8 @@ if (empty($reshook)) {
 			$ret = $object->create($user);
 			if ($ret > 0) {
 				$db->commit();
-				$urltogo = ($backtopage ? $backtopage : DOL_URL_ROOT . '/compta/bank/various_payment/list.php');
-				header("Location: " . $urltogo);
+				$urltogo = ($backtopage ? $backtopage : dolBuildUrl(DOL_URL_ROOT.'/compta/bank/various_payment/list.php'));
+				header("Location: ".$urltogo);
 				exit;
 			} else {
 				$db->rollback();
@@ -247,7 +247,7 @@ if (empty($reshook)) {
 
 				if ($result >= 0) {
 					$db->commit();
-					header("Location: " . DOL_URL_ROOT . '/compta/bank/various_payment/list.php');
+					header("Location: ".dolBuildUrl(DOL_URL_ROOT.'/compta/bank/various_payment/list.php'));
 					exit;
 				} else {
 					$object->error = $accountline ? $accountline->error : 'No AccountLine';
@@ -315,7 +315,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
 		} else {
-			$object->label = $langs->trans("CopyOf").' ' . $object->label;
+			$object->label = $langs->trans("CopyOf").' '.$object->label;
 		}
 
 		$newdatepayment = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_paymentmonth'), GETPOSTINT('clone_date_paymentday'), GETPOSTINT('clone_date_paymentyear'));
@@ -345,7 +345,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 				$db->commit();
 				$db->close();
 
-				header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+				header("Location: ".dolBuildurl($_SERVER["PHP_SELF"], ["id" => $id]));
 				exit;
 			} else {
 				$id = $originalId;
@@ -457,7 +457,7 @@ if ($action == 'create') {
 		<?php
 	}
 
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" method="POST">';
 	print '<input type="hidden" name="token" value="' . newToken().'">';
 	print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	print '<input type="hidden" name="action" value="add">';
@@ -483,13 +483,13 @@ if ($action == 'create') {
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300 maxwidth150onsmartphone" value="' . ($label ? $label : $langs->trans("VariousPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300 maxwidth150onsmartphone" value="'.($label ? $label : $langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth50 maxwidth100" value="' . $amount . '">';
+	print '<input name="amount" id="amount" class="minwidth50 maxwidth100" value="'.$amount.'">';
 	print ' '.$langs->getCurrencySymbol();
 	print '</td></tr>';
 
@@ -513,10 +513,10 @@ if ($action == 'create') {
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
-		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="' . GETPOST("num_payment").'"></td></tr>' . "\n";
+		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>' . "\n";
 
 		// Check transmitter
-		print '<tr><td class="' . (GETPOST('paymenttype') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn"><label for="fieldchqemetteur">'.$langs->trans('CheckTransmitter');
+		print '<tr><td class="'.(GETPOST('paymenttype') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn"><label for="fieldchqemetteur">'.$langs->trans('CheckTransmitter');
 		print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 		print '</label></td>';
 		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="' . GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
