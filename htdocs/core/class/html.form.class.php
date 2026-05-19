@@ -1366,12 +1366,12 @@ class Form
 	/**
 	 * Injects custom options (before/after) into a select list securely.
 	 *
-	 * @param array<int, string> $options
-	 * @param array<int|string>  $selected
-	 * @param int                $outputmode
-	 * @param string             $out
-	 * @param array<int, string> $outarray
-	 * @param array<int, array{id: int, label: string, labelhtml: string, color: string, picto: string}> $outarray2
+	 * @param array<int, string> $options        Associative array of custom options [key => label].
+	 * @param array<int|string>  $selected       Array of currently selected values.
+	 * @param int                $outputmode     Output mode: 0=HTML, 1=Simple Array, 2=Detailed Array.
+	 * @param string             $out            Reference to the HTML output string.
+	 * @param array<int, string> $outarray       Reference to the simple output array.
+	 * @param array<int, array{id: int, label: string, labelhtml: string, color: string, picto: string}> $outarray2 Reference to the detailed output array.
 	 * @return void
 	 */
 	private function injectCustomOptionsSecure(array $options, array $selected, int $outputmode, string &$out, array &$outarray, array &$outarray2): void
