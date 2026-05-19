@@ -226,10 +226,10 @@ class ToolEmailCleaner extends McpTool
 
 		$sql = "SELECT rowid, collector_id, msgid, cleaning_confidence, cleaning_model, prompt_code, prompt_version, context_profile_code, context_profile_version, date_creation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::TABLE_CLEANING;
-		$sql .= " WHERE entity = ".$entity;
+		$sql .= " WHERE entity = ".((int) $entity);
 
 		if ($collectorId > 0) {
-			$sql .= " AND collector_id = ".$collectorId;
+			$sql .= " AND collector_id = ".((int) $collectorId);
 		}
 		if ($messageId !== '') {
 			$sql .= " AND msgid = '".$this->db->escape($messageId)."'";
@@ -304,14 +304,14 @@ class ToolEmailCleaner extends McpTool
 
 		$sql = "SELECT rowid, entity, collector_id, msgid, raw_hash, clean_hash, clean_body, cleaning_json, cleaning_confidence, cleaning_model, prompt_code, prompt_version, context_profile_code, context_profile_version, handoff_payload_json, date_creation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::TABLE_CLEANING;
-		$sql .= " WHERE entity = ".$entity;
+		$sql .= " WHERE entity = ".((int) $entity);
 
 		if ($cleaningId > 0) {
-			$sql .= " AND rowid = ".$cleaningId;
+			$sql .= " AND rowid = ".((int) $cleaningId);
 		} elseif ($messageId !== '') {
 			$sql .= " AND msgid = '".$this->db->escape($messageId)."'";
 			if ($collectorId > 0) {
-				$sql .= " AND collector_id = ".$collectorId;
+				$sql .= " AND collector_id = ".((int) $collectorId);
 			}
 			$sql .= " ORDER BY rowid DESC";
 		} else {
@@ -410,13 +410,13 @@ class ToolEmailCleaner extends McpTool
 
 		$sql = "SELECT rowid, status, priority, collector_id, message_id, email_date, email_from, email_subject, attachment_name, attachment_relpath, attachment_sha256, detected_doc_type, confidence, needs_human_review, attempts, last_error, datec, date_review, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF;
-		$sql .= " WHERE entity = ".$entity;
+		$sql .= " WHERE entity = ".((int) $entity);
 
 		if ($status !== '') {
 			$sql .= " AND status = '".$this->db->escape($status)."'";
 		}
 		if ($collectorId > 0) {
-			$sql .= " AND collector_id = ".$collectorId;
+			$sql .= " AND collector_id = ".((int) $collectorId);
 		}
 		if ($messageId !== '') {
 			$sql .= " AND message_id = '".$this->db->escape($messageId)."'";
@@ -425,7 +425,7 @@ class ToolEmailCleaner extends McpTool
 			$sql .= " AND detected_doc_type = '".$this->db->escape($docType)."'";
 		}
 		if ($needsHumanReview === 0 || $needsHumanReview === 1) {
-			$sql .= " AND needs_human_review = ".$needsHumanReview;
+			$sql .= " AND needs_human_review = ".((int) $needsHumanReview);
 		}
 
 		$sql .= " ORDER BY priority ASC, rowid DESC";
@@ -498,7 +498,7 @@ class ToolEmailCleaner extends McpTool
 
 		$sql = "SELECT rowid, entity, status, priority, source, collector_id, message_id, email_date, email_from, email_subject, attachment_name, attachment_relpath, attachment_sha256, detected_doc_type, extraction_json, matching_json, proposed_object_type, proposed_object_id, confidence, needs_human_review, review_note, attempts, last_error, fk_user_review, date_review, datec, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF;
-		$sql .= " WHERE entity = ".$entity." AND rowid = ".$queueId;
+		$sql .= " WHERE entity = ".((int) $entity)." AND rowid = ".((int) $queueId);
 		$sql .= $this->db->plimit(1);
 
 		$resql = $this->db->query($sql);
@@ -563,12 +563,12 @@ class ToolEmailCleaner extends McpTool
 
 		$sql = "SELECT rowid, entity, fk_cleaning, handoff_version, consumer_code, payload_json, payload_hash, quality_status, low_confidence_json, date_creation, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::TABLE_HANDOFF;
-		$sql .= " WHERE entity = ".$entity;
+		$sql .= " WHERE entity = ".((int) $entity);
 
 		if ($handoffId > 0) {
-			$sql .= " AND rowid = ".$handoffId;
+			$sql .= " AND rowid = ".((int) $handoffId);
 		} elseif ($cleaningId > 0) {
-			$sql .= " AND fk_cleaning = ".$cleaningId;
+			$sql .= " AND fk_cleaning = ".((int) $cleaningId);
 			$sql .= " ORDER BY rowid DESC";
 		} else {
 			return ['error' => "Missing selector: use 'handoff_id' or 'cleaning_id'."];
