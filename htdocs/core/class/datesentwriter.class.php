@@ -64,6 +64,11 @@ class DateSentWriter
 	/**
 	 * Persist date_sent on the given object (overwrites any existing value).
 	 *
+	 * Core objects are handled via TABLE_MAP. For custom module objects not in TABLE_MAP,
+	 * a hook 'writeDateSent' is fired on context 'datesentwriter'. The hook receives
+	 * $parameters['when'] (unix timestamp) and $object by reference. Return > 0 to signal handled.
+	 * Declare the hook in the module descriptor: $this->module_parts['hooks'] = array('datesentwriter').
+	 *
 	 * @param  CommonObject $object Object to update — must have a valid id and a supported element type
 	 * @param  int          $when   Unix timestamp of the send event
 	 * @return int                  1 on success, 0 if element is not supported (silent skip), -1 on error
@@ -71,13 +76,33 @@ class DateSentWriter
 	public function write(CommonObject $object, int $when): int
 	{
 		if ($object->id <= 0) {
-			dol_syslog('DateSentWriter: object without valid id, element='.($object->element ?? ''), LOG_WARNING);
+			dol_syslog('DateSentWriter: object without valid id, element='.($object->element ?? ''), LOG_DEBUG);
+			return -1;
+		}
+
+		if ($when <= 0) {
+			dol_syslog('DateSentWriter: invalid timestamp ('.$when.') for element='.($object->element ?? ''), LOG_DEBUG);
 			return -1;
 		}
 
 		if (!isset(self::TABLE_MAP[$object->element])) {
+			global $hookmanager;
+			if (!empty($hookmanager)) {
+				$hookmanager->initHooks(array('datesentwriter'));
+				$reshook = $hookmanager->executeHooks('writeDateSent', array('when' => $when), $object);
+				if ($reshook > 0) {
+					return 1;
+				}
+			}
 			dol_syslog('DateSentWriter: unsupported element '.$object->element, LOG_DEBUG);
 			return 0;
+		}
+
+		// Defence in depth: the 12 supported classes all declare ?int $date_sent.
+		// Guard against future callers passing a class missing the property (PHP 8.2 dynamic-property deprecation).
+		if (!property_exists($object, 'date_sent')) {
+			dol_syslog('DateSentWriter: object of element='.$object->element.' has no date_sent property', LOG_WARNING);
+			return -1;
 		}
 
 		$table = $this->db->prefix().self::TABLE_MAP[$object->element];
