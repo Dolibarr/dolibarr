@@ -1366,7 +1366,7 @@ class Form
 	/**
 	 * Injects custom options (before/after) into a select list securely.
 	 *
-	 * @param array<string, string> $options        Associative array of [key => label]. Keys must be strings or castable to strings.
+	 * @param array<int, string> $options        Associative array of [key => label]. Keys must be integers (typically negative for before/after options).
 	 * @param array<int|string>     $selected       Array of currently selected values.
 	 * @param int                   $outputmode     0=HTML only, 1=Simple Array, 2=Detailed Array.
 	 * @param string                $out            Reference to the HTML output string (passed by ref for efficiency).
@@ -1399,7 +1399,7 @@ class Form
 			$isSelected = '';
 
 			// Only check selection if $selected is a non-empty array
-			if (!empty($selected) && is_array($selected)) {
+			if (!empty($selected)) {
 				// Use strict comparison for safety, but cast selected item to string for comparison
 				// to match our sanitized key type.
 				foreach ($selected as $selItem) {
