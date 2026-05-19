@@ -1364,6 +1364,75 @@ class Form
 	}
 
 	/**
+	 * Injects custom options (before/after) into a select list securely.
+	 *
+	 * @param array<string, string> $options        Associative array of [key => label]. Keys must be strings or castable to strings.
+	 * @param array<int|string>     $selected       Array of currently selected values.
+	 * @param int                   $outputmode     0=HTML only, 1=Simple Array, 2=Detailed Array.
+	 * @param string                $out            Reference to the HTML output string (passed by ref for efficiency).
+	 * @param array                 $outarray       Reference to the simple output array.
+	 * @param array                 $outarray2      Reference to the detailed output array.
+	 * @return void
+	 */
+	private function injectCustomOptionsSecure(array $options, array $selected, int $outputmode, string &$out, array &$outarray, array &$outarray2): void {
+		// Early exit if no options to process
+		if (empty($options)) {
+			return;
+		}
+
+		// Sort keys numerically/alphabetically to ensure deterministic order
+		// ksort handles mixed keys safely
+		ksort($options);
+
+		foreach ($options as $rawKey => $rawLabel) {
+			// --- SECURITY: Sanitize Key ---
+			// Ensure key is a string to prevent type confusion in HTML value attribute
+			// and to ensure consistent comparison logic.
+			$safeKey = (string) $rawKey;
+
+			// --- SECURITY: Sanitize Label ---
+			// Escape HTML entities to prevent XSS in the label text
+			$safeLabel = dol_escape_htmltag($rawLabel);
+
+			// --- LOGIC: Determine Selection State ---
+			$isSelected = '';
+
+			// Only check selection if $selected is a non-empty array
+			if (!empty($selected) && is_array($selected)) {
+				// Use strict comparison for safety, but cast selected item to string for comparison
+				// to match our sanitized key type.
+				foreach ($selected as $selItem) {
+					if ((string) $selItem === $safeKey) {
+						$isSelected = ' selected';
+						break;
+					}
+				}
+			}
+
+			// --- OUTPUT: Generate Safe HTML ---
+			// Construct the option tag. The value attribute is the sanitized key.
+			// The inner text is the sanitized label.
+			$out .= '<option value="' . $safeKey . '"' . $isSelected . '>' . $safeLabel . '</option>' . "\n";
+
+			// --- OUTPUT: Populate Arrays (if requested) ---
+			if ($outputmode === 2) {
+				// Detailed array mode
+				$outarray2[$safeKey] = [
+					'id'	  => $safeKey,
+					'label'   => $rawLabel, // Keep raw for internal logic if needed, but labelhtml is escaped
+					'labelhtml' => $safeLabel,
+					'color'   => '',
+					'picto'   => ''
+				];
+			} elseif ($outputmode === 1) {
+				// Simple array mode
+				$outarray[$safeKey] = $rawLabel;
+			}
+			// If outputmode is 0, we only care about the HTML string ($out)
+		}
+	}
+
+	/**
 	 * Return inline JS for country-selector → phone code sync (output once per page).
 	 *
 	 * When the country select changes, fetches the phone code via AJAX and updates
@@ -2484,17 +2553,19 @@ class Form
 	 * @param int 				$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int<-1,1>			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 			$morefilter 	Add more filters into sql request (Example: '(employee:=:1)'). This value must not come from user input.
-	 * @param int<0,3> 			$showalso 		0=default list, 1=add also a value "Everybody" at beginning of list, 2=add also a value "My team" at beginning of list (if user has at least 1 people), 3=add also "Everybody" + "My Team"
+	 * @param int<0,4> 			$showalso 		0=default list, 1=add also a value "Everybody" at beginning of list, 2=add also a value "My team" at beginning of list (if user has at least 1 people), 3=add also "Everybody" + "My Team", 4=add also a value "All Project Contacts" at beginning of list
 	 * @param string 			$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 			$morecss 		More css
 	 * @param int<0,1> 			$notdisabled 	Show only active users (note: this will also happen, whatever is this option, if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
 	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array, 2=Detailed array
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
+	 * @param array<int,string>	$before 		Array of custom options to insert BEFORE the list of users. Keys must be negative integers (e.g. -5, -6) to avoid collision with real user IDs. Values are the labels.
+	 * @param array<int,string>	$after 			Array of custom options to insert AFTER the list of users. Keys must be negative integers. Values are the labels.
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0, $before = [], $after = [])
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2642,13 +2713,16 @@ class Form
 
 		dol_syslog(get_class($this) . "::select_dolusers", LOG_DEBUG);
 
+		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : ' minwidth200') . '" id="' . $htmlname . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . ' ' . ($disabled ? ' disabled' : '') . '>';
+		// 1. Inject $before options
+		$this->injectCustomOptionsSecure($before, $selected, $outputmode, $out, $outarray, $outarray2);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
-				$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : ' minwidth200') . '" id="' . $htmlname . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" ' . ($multiple ? 'multiple' : '') . ' ' . ($disabled ? ' disabled' : '') . '>';
 				if ($show_empty && !$multiple) {
 					$textforempty = ' ';
 					if (!empty($conf->use_javascript_ajax)) {
@@ -2822,7 +2896,6 @@ class Form
 				$out .= '<select class="flat" id="' . $htmlname . '" name="' . $htmlname . '" disabled>';
 				$out .= '<option value="">' . $langs->trans("None") . '</option>';
 			}
-			$out .= '</select>';
 
 			if ($num && !$forcecombo) {
 				// Enhance with select2
@@ -2832,6 +2905,12 @@ class Form
 		} else {
 			dol_print_error($this->db);
 		}
+
+		// 2. Inject $after options
+		$this->injectCustomOptionsSecure($after, $selected, $outputmode, $out, $outarray, $outarray2);
+
+        // Now close the tag
+        $out .= '</select>';
 
 		$this->num = $num;
 

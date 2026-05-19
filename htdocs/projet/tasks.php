@@ -340,20 +340,31 @@ if ($search_task_budget_amount) {
 if ($search_task_billable && $search_task_billable != '-1') {
 	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
 }
-if (!empty($search_assignment)) {
+
+// Assignment filter: works from both $search_user_id and $search_assignment
+$assignmentFilter = 0;
+if (!empty($search_user_id) && $search_user_id < -1) {
+    $assignmentFilter = $search_user_id;
+} elseif (!empty($search_assignment)) {
+    $assignmentFilter = (int) $search_assignment;
+}
+
+if ($assignmentFilter != 0) {
 	$subq = "SELECT 1 FROM " . $db->prefix() . "element_contact ec INNER JOIN " . $db->prefix() . "c_type_contact tc ON ec.fk_c_type_contact = tc.rowid WHERE ec.element_id = t.rowid AND tc.element = 'project_task'";
 
-	switch ($search_assignment) {
-		case 'assigned':
+	// this is ugly, find the variable called assignmentOptions and see the explanation for these numbers.
+	// we use these numbers because select_dolusers() want's to use integers and not strings.
+	switch ($assignmentFilter) {
+		case -100:
 			$morewherefilterarray[] = "EXISTS (" . $subq . ")";
 			break;
-		case 'unassigned':
+		case -101:
 			$morewherefilterarray[] = "NOT EXISTS (" . $subq . ")";
 			break;
-		case 'assigned_internal':
+		case -102:
 			$morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'internal')";
 			break;
-		case 'assigned_external':
+		case -103:
 			$morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'external')";
 			break;
 	}
@@ -997,23 +1008,26 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
+	// 1. Define custom options with safe negative keys
+	$assignmentOptions = array(
+		-100 => $langs->trans("Assigned"),
+		-101 => $langs->trans("Unassigned"),
+		-102 => $langs->trans("AssignedToInternalUsers"),
+		-103 => $langs->trans("AssignedToExternalContacts"),
+	);
+
 	// Filter on assigned users
 	$moreforfilter = '';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
-	$moreforfilter .= '</div>';
 
-	// Assignment status filter
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto('', 'contact', 'class="pictofixedwidth"');
-	$assignmentOptions = array(
-		'assigned'          => $langs->trans("Assigned"),
-		'unassigned'        => $langs->trans("Unassigned"),
-		'assigned_internal' => $langs->trans("AssignedToInternalUsers"),
-		'assigned_external' => $langs->trans("AssignedToExternalContacts"),
+	$moreforfilter .= $form->select_dolusers(
+		userselected: $tmpuser->id > 0 ? $tmpuser->id : '',
+		htmlname: 'search_user_id',
+		show_empty: $langs->trans("TasksAssignedTo"), // Placeholder
+		before: $assignmentOptions,                   // Your custom top options
+		showalso: 0                                   // Disable built-in "Everybody/My Team" to avoid clutter
 	);
-	$moreforfilter .= $form->selectarray('search_assignment', (array) $assignmentOptions, (string) $search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
 	$moreforfilter .= '</div>';
 
 	if ($moreforfilter) {
