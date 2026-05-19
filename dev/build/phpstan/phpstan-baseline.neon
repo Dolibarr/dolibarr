@@ -7111,12 +7111,6 @@ parameters:
 			path: ../../../htdocs/projet/card.php
 
 		-
-			message: '#^Method Projects\:\:getRoles\(\) should return array\<object\> but returns list\<string\>\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_projects.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Project\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
