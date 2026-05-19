@@ -33,6 +33,7 @@ create table llx_contrat
 
   fin_validite				datetime,	-- not used
   date_cloture				datetime,	-- not used
+  date_sent					datetime,	-- date du dernier envoi email
 
   fk_soc					integer NOT NULL,
   fk_projet					integer,

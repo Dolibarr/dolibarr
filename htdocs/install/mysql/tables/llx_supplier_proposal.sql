@@ -26,6 +26,7 @@ CREATE TABLE llx_supplier_proposal (
   datec datetime DEFAULT NULL,
   date_valid datetime DEFAULT NULL,
   date_cloture datetime DEFAULT NULL,
+  date_sent datetime DEFAULT NULL,                    -- date du dernier envoi email
   fk_user_author integer DEFAULT NULL,
   fk_user_modif integer DEFAULT NULL,
   fk_user_valid integer DEFAULT NULL,

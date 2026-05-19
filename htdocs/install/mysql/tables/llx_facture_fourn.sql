@@ -39,6 +39,7 @@ create table llx_facture_fourn
   date_valid			date,						   -- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                     -- last modification date
   date_closing			datetime,                      -- date closing
+  date_sent             datetime,                      -- date du dernier envoi email
   libelle				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,
   amount				double(24,8)     DEFAULT 0 NOT NULL,

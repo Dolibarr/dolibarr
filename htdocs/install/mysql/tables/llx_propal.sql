@@ -38,6 +38,7 @@ create table llx_propal
   date_valid			datetime,						-- date de validation
   date_signature		datetime,						-- date signature
   date_cloture			datetime,						-- date de cloture
+  date_sent             datetime,                       -- date du dernier envoi email
   fk_user_author		integer,						-- user making creation
   fk_user_modif         integer,						-- user making last change
   fk_user_valid			integer,						-- user validating

@@ -42,6 +42,7 @@ create table llx_facture
   date_valid			date,									-- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
   date_closing			datetime,								-- date de cloture
+  date_sent             datetime,                           -- date du dernier envoi email
   paye					smallint DEFAULT 0 NOT NULL,			-- 1 if invoice is payed completely. Deprecated. Use instead statut = 2 and close_code is null or = ''
 
   remise_percent		real     DEFAULT 0,						-- remise relative (deprecated, not used)
