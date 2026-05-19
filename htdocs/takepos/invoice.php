@@ -2074,6 +2074,9 @@ if ($placeid > 0) {
 				if ($line->special_code == "4") {
 					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 				}
+				$htmlsupplements[$line->fk_parent_line] .= ' data-product="'.$line->fk_product.'"';
+				$htmlsupplements[$line->fk_parent_line] .= ' data-unit="'.$line->fk_unit.'"';
+				$htmlsupplements[$line->fk_parent_line] .= ' data-price-ttc="'.$line->subprice * (1 + $line->tva_tx / 100).'"';
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
 				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow.png');
@@ -2119,6 +2122,9 @@ if ($placeid > 0) {
 			if ($line->special_code == "4") {
 				$htmlforlines .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 			}
+			$htmlforlines .= ' data-product="'.$line->fk_product.'"';
+			$htmlforlines .= ' data-unit="'.$line->fk_unit.'"';
+			$htmlforlines .= ' data-price-ttc="'.$line->subprice * (1 + $line->tva_tx / 100).'"';
 			$htmlforlines .= '>';
 			$htmlforlines .= '<td class="left">';
 			if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {

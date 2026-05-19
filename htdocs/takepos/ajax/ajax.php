@@ -279,7 +279,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		}
 	}
 
-	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc' ;
+	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc, p.fk_unit' ;
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 		if (getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 			$sql .= ', ps.reel';
@@ -337,7 +337,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	}
 
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && !getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
-		$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc';
+		$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc, p.fk_unit';
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
@@ -382,6 +382,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 				'barcode' => $obj->barcode,
 				'price' => empty($objProd->multiprices[$pricelevel]) ? $obj->price : $objProd->multiprices[$pricelevel],
 				'price_ttc' => empty($objProd->multiprices_ttc[$pricelevel]) ? $obj->price_ttc : $objProd->multiprices_ttc[$pricelevel],
+				'fk_unit' => $obj->fk_unit,
 				'object' => 'product',
 				'img' => $ig,
 				'qty' => 1,
