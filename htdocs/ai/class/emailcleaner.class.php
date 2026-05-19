@@ -626,6 +626,7 @@ class EmailCleaner
 			'ai_transparency_label' => 'AI-generated technical preprocessing output',
 			'human_review_required' => 1,
 			'autonomous_business_action_allowed' => 0,
+			'pii_redaction_enabled' => (getDolGlobalInt('AI_PRIVACY_REDACTION', 0) ? 1 : 0),
 			'ai_system_used' => ((string) $engine === 'ai' ? 1 : 0),
 			'fallback_used' => ($fallbackUsed ? 1 : 0),
 			'cleaning_confidence' => (float) $confidence,
@@ -754,9 +755,22 @@ class EmailCleaner
 
 		$maxInput = (int) getDolGlobalInt('AI_EMAILCLEANER_MAX_INPUT', 16000);
 		if ($maxInput <= 1000) $maxInput = 16000;
+		$redactionEnabled = (int) getDolGlobalInt('AI_PRIVACY_REDACTION', 0);
+		$guard = null;
+		$fromForPrompt = $from;
+		$subjectForPrompt = $subject;
 		$bodyForPrompt = $rawBody;
 		if (strlen($bodyForPrompt) > $maxInput) {
 			$bodyForPrompt = substr($bodyForPrompt, 0, $maxInput);
+		}
+		if ($redactionEnabled) {
+			require_once DOL_DOCUMENT_ROOT.'/ai/class/privacy_guard.class.php';
+			if (class_exists('PrivacyGuard')) {
+				$guard = new PrivacyGuard();
+				$fromForPrompt = $guard->mask((string) $fromForPrompt);
+				$subjectForPrompt = $guard->mask((string) $subjectForPrompt);
+				$bodyForPrompt = $guard->mask((string) $bodyForPrompt);
+			}
 		}
 
 		$prompt = "You are an EmailCleaner for ERP ingestion.\n";
@@ -774,13 +788,16 @@ class EmailCleaner
 		$prompt .= "  \"confidence\": number\n";
 		$prompt .= "}\n";
 		$prompt .= "Email metadata:\n";
-		$prompt .= "FROM: ".$from."\n";
-		$prompt .= "SUBJECT: ".$subject."\n";
+		$prompt .= "FROM: ".$fromForPrompt."\n";
+		$prompt .= "SUBJECT: ".$subjectForPrompt."\n";
 		$prompt .= "BODY:\n".$bodyForPrompt;
 
 		$generated = $ai->generateContent($prompt, 'auto', 'textgeneration', '');
 		if (is_array($generated) && !empty($generated['error'])) return $out;
 		if (!is_string($generated) || trim($generated) === '') return $out;
+		if ($guard) {
+			$generated = $guard->unmaskAiResponse($generated);
+		}
 
 		$decoded = self::decodeJsonFromAiString($generated);
 		if (empty($decoded) || !is_array($decoded)) return $out;
