@@ -673,6 +673,10 @@ if (!$error && $massaction == 'confirm_presend') {
 
 							$error = 0;
 
+							// Prepare date_sent writer (one instance for all objects in this batch)
+							require_once DOL_DOCUMENT_ROOT.'/core/class/datesentwriter.class.php';
+							$dateSentWriter = new DateSentWriter($db);
+
 							// Insert logs into agenda
 							foreach ($listofqualifiedobj as $objid2 => $objectobj2) {
 								if ((!$oneemailperrecipient) && $objid2 != $objectid) {
@@ -750,6 +754,12 @@ if (!$error && $massaction == 'confirm_presend') {
 										setEventMessages($db->lasterror(), null, 'errors');
 										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
+								}
+
+								// Update date_sent on each successfully sent object (best-effort: failure does not block email delivery)
+								$reswrite = $dateSentWriter->write($objectobj2, dol_now());
+								if ($reswrite < 0) {
+									dol_syslog('DateSentWriter massaction failed for element='.$objectobj2->element.' id='.$objid2, LOG_WARNING);
 								}
 
 								$nbsent++; // Nb of object sent
