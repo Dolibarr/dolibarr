@@ -2883,8 +2883,8 @@ class Form
 					$out .= '</option>';
 
 					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength) . $moreinfo;
-					$outarray2[$userstatic->id] = array(
-						'id' => $userstatic->id,
+					$outarray2[(int) $userstatic->id] = array(
+						'id' => (int) $userstatic->id,
 						'label' => $labeltoshow,
 						'labelhtml' => $labeltoshowhtml,
 						'color' => '',
