@@ -38,7 +38,6 @@ create table llx_propal
   date_valid			datetime,						-- date de validation
   date_signature		datetime,						-- date signature
   date_cloture			datetime,						-- date de cloture
-  date_sent             datetime,                       -- date du dernier envoi email
   fk_user_author		integer,						-- user making creation
   fk_user_modif         integer,						-- user making last change
   fk_user_valid			integer,						-- user validating
@@ -74,6 +73,7 @@ create table llx_propal
   last_main_doc			varchar(255),					-- relative filepath+filename of the last main generated document
 
   date_livraison		date DEFAULT NULL,				-- delivery date
+  date_sent             datetime,                       -- date du dernier envoi email
   fk_shipping_method    integer,                        -- shipping method id
   fk_warehouse		    integer DEFAULT NULL,           -- warehouse id
   fk_availability		integer NULL,

@@ -42,7 +42,6 @@ create table llx_facture
   date_valid			date,									-- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
   date_closing			datetime,								-- date de cloture
-  date_sent             datetime,                           -- date du dernier envoi email
   paye					smallint DEFAULT 0 NOT NULL,			-- 1 if invoice is payed completely. Deprecated. Use instead statut = 2 and close_code is null or = ''
 
   remise_percent		real     DEFAULT 0,						-- remise relative (deprecated, not used)
@@ -83,6 +82,7 @@ create table llx_facture
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- default payment term (30 days, end of month...)
   fk_mode_reglement		integer,								-- default payment mode (cash, card, cheque, ...)
   date_lim_reglement	date,									-- due date
+  date_sent             datetime,                           -- date du dernier envoi email
 
   payment_reference     varchar(25),                            -- SEPA and any other national or custom payment id (use case for this field is not clear)
   fk_thirdparty_rib_id	integer NULL,							-- ID of thirdparty payment mode in llx_societe_rib

@@ -26,7 +26,6 @@ CREATE TABLE llx_supplier_proposal (
   datec datetime DEFAULT NULL,
   date_valid datetime DEFAULT NULL,
   date_cloture datetime DEFAULT NULL,
-  date_sent datetime DEFAULT NULL,                    -- date du dernier envoi email
   fk_user_author integer DEFAULT NULL,
   fk_user_modif integer DEFAULT NULL,
   fk_user_valid integer DEFAULT NULL,
@@ -54,6 +53,7 @@ CREATE TABLE llx_supplier_proposal (
   last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
 
   date_livraison date DEFAULT NULL,
+  date_sent datetime DEFAULT NULL,                    -- date du dernier envoi email
   fk_shipping_method integer DEFAULT NULL,
   import_key varchar(14) DEFAULT NULL,
   extraparams varchar(255) DEFAULT NULL,

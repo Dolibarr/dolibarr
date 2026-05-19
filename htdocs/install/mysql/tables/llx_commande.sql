@@ -35,7 +35,6 @@ create table llx_commande
   date_creation				datetime,						-- date de creation
   date_valid				datetime,						-- date de validation
   date_cloture				datetime,						-- date de cloture
-  date_sent                 datetime,                       -- date du dernier envoi email
   date_commande				date,							-- date de la commande
   fk_user_author			integer,						-- user making creation, may be null if created by automated process
   fk_user_modif				integer,						-- user making last change
@@ -73,6 +72,7 @@ create table llx_commande
   fk_mode_reglement			integer,						-- mode de reglement
 
   date_livraison			datetime DEFAULT NULL,
+  date_sent                 datetime,                       -- date du dernier envoi email
   fk_shipping_method		integer,						-- shipping method id
   fk_warehouse				integer DEFAULT NULL,
   fk_availability			integer NULL,

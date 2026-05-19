@@ -39,7 +39,6 @@ create table llx_facture_fourn
   date_valid			date,						   -- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                     -- last modification date
   date_closing			datetime,                      -- date closing
-  date_sent             datetime,                      -- date du dernier envoi email
   libelle				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,
   amount				double(24,8)     DEFAULT 0 NOT NULL,
@@ -75,6 +74,7 @@ create table llx_facture_fourn
   fk_cond_reglement		integer,   	                   -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,                	   -- mode de reglement (CHQ, VIR, ...)
   date_lim_reglement 	date,                          -- date limite de reglement
+  date_sent             datetime,                      -- date du dernier envoi email
 
   payment_reference     varchar(25),                    -- SEPA and any other national or custom payment id (use case for this field is not clear)
   fk_thirdparty_rib_id	integer NULL,					-- ID of thirdparty payment mode in llx_societe_rib
