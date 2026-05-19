@@ -1020,14 +1020,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$moreforfilter = '';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-
-	$moreforfilter .= $form->select_dolusers(
-		userselected: $tmpuser->id > 0 ? $tmpuser->id : '',
-		htmlname: 'search_user_id',
-		show_empty: $langs->trans("TasksAssignedTo"), // Placeholder
-		before: $assignmentOptions,                   // Your custom top options
-		showalso: 0                                   // Disable built-in "Everybody/My Team" to avoid clutter
-	);
+	$moreforfilter .= $form->select_dolusers(($tmpuser->id > 0 ? $tmpuser->id : ''), 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '', '0', 0, 0, '', 0, '', '', 0, 0, false, 0, $assignmentOptions);
 	$moreforfilter .= '</div>';
 
 	if ($moreforfilter) {
