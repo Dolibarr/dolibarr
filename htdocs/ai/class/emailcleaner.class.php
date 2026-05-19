@@ -383,6 +383,21 @@ class EmailCleaner
 	/**
 	 * Insert cleaner output row into SQL storage.
 	 *
+	 * @param int $entity Entity id
+	 * @param int $collectorId Collector id
+	 * @param string $msgid Message id
+	 * @param string $rawBody Raw message body
+	 * @param string $cleanedText Cleaned message body
+	 * @param array $segments Cleaner segments
+	 * @param float $confidence Cleaner confidence
+	 * @param string $engine Cleaner engine
+	 * @param string|null $model AI model identifier
+	 * @param string $promptCode Prompt code
+	 * @param string $promptVersion Prompt version
+	 * @param string $contextProfileCode Context profile code
+	 * @param string $contextProfileVersion Context profile version
+	 * @param array $emailContext Extracted email context
+	 * @param array $handoffPayload Handoff payload
 	 * @return int
 	 */
 	private function insertCleaningRow($entity, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $handoffPayload)
