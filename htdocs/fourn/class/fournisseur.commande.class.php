@@ -319,6 +319,11 @@ class CommandeFournisseur extends CommonOrder
 	public $date_lim_reglement;
 
 	/**
+	 * @var int|null Timestamp of last successful email send
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @var array<int,float>
 	 */
 	public $receptions = array();
@@ -392,6 +397,7 @@ class CommandeFournisseur extends CommonOrder
 		'date_approve2' => array('type' => 'datetime', 'label' => 'DateApprove2', 'enabled' => 1, 'visible' => 3, 'position' => 725),
 		'date_commande' => array('type' => 'date', 'label' => 'OrderDateShort', 'enabled' => 1, 'visible' => 1, 'position' => 70),
 		'date_livraison' => array('type' => 'datetime', 'label' => 'DeliveryDate', 'enabled' => 'getDolGlobalInt("ORDER_DISABLE_DELIVERY_DATE") ? 0 : 1', 'visible' => 1, 'position' => 74),
+		'date_sent' => array('type' => 'datetime', 'label' => 'DateSent', 'enabled' => 1, 'visible' => -1, 'position' => 75, 'notnull' => 0),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 41),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'notnull' => -1, 'position' => 80),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => 3, 'position' => 711),
@@ -513,7 +519,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " c.localtax1, c.localtax2, ";
 		$sql .= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
 		$sql .= " c.fk_user_author as user_author_id, c.fk_user_valid as user_validation_id, c.fk_user_approve as user_approve_id, c.fk_user_approve2 as user_approve_id2,";
-		$sql .= " c.date_commande as date_commande, c.date_livraison as delivery_date, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
+		$sql .= " c.date_commande as date_commande, c.date_livraison as delivery_date, c.date_sent, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
 		$sql .= " c.fk_account,";
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.last_main_doc, c.extraparams, c.billed,";
 		$sql .= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
@@ -583,6 +589,8 @@ class CommandeFournisseur extends CommonOrder
 				$this->date = $this->date_creation;
 			}
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
+			$tmp_date_sent = $this->db->jdate($obj->date_sent);
+			$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 			$this->remise_percent = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_input_method;
 			$this->methode_commande = $obj->methode_commande;

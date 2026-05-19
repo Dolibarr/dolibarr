@@ -185,6 +185,11 @@ class FactureFournisseur extends CommonInvoice
 	public $date_echeance;
 
 	/**
+	 * @var int|null Timestamp of last successful email send
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @var float
 	 * @deprecated See $total_ttc, $total_ht, $total_tva
 	 */
@@ -320,6 +325,7 @@ class FactureFournisseur extends CommonInvoice
 		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyTotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 230),
 		'date_pointoftax' => array('type' => 'date', 'label' => 'Date pointoftax', 'enabled' => 1, 'visible' => -1, 'position' => 235),
 		'date_valid' => array('type' => 'date', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 240),
+		'date_sent' => array('type' => 'datetime', 'label' => 'DateSent', 'enabled' => 1, 'visible' => -1, 'position' => 241, 'notnull' => 0),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'Last main doc', 'enabled' => 1, 'visible' => -1, 'position' => 245),
 		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 900),
@@ -912,6 +918,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.fk_account,";
 		$sql .= " t.fk_mode_reglement,";
 		$sql .= " t.date_lim_reglement,";
+		$sql .= " t.date_sent,";
 		$sql .= " t.note_private,";
 		$sql .= " t.note_public,";
 		$sql .= " t.model_pdf,";
@@ -994,6 +1001,8 @@ class FactureFournisseur extends CommonInvoice
 				$this->mode_reglement_code  = $obj->mode_reglement_code;
 				$this->mode_reglement       = $obj->mode_reglement_label;
 				$this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 				$this->note                 = $obj->note_private; // deprecated
 				$this->note_private			= $obj->note_private;
 				$this->note_public          = $obj->note_public;

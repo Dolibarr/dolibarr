@@ -130,6 +130,11 @@ class SupplierProposal extends CommonObject
 	public $delivery_date;
 
 	/**
+	 * @var int|null Timestamp of last successful email send
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @deprecated Use $date_creation
 	 * @see $date_creation
 	 * @var int|string
@@ -1283,6 +1288,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", p.datec, GREATEST(p.tms, pef.tms) as date_modification";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_livraison as delivery_date";
+		$sql .= ", p.date_sent";
 		$sql .= ", p.model_pdf, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut as status";
@@ -1338,6 +1344,8 @@ class SupplierProposal extends CommonObject
 				$this->date = $this->date_creation;
 				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
 				$this->delivery_date = $this->db->jdate($obj->delivery_date);
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 				$this->shipping_method_id = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
 				$this->last_main_doc    = $obj->last_main_doc;
