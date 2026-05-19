@@ -1,0 +1,98 @@
+<?php
+/* Copyright (C) 2026  Contributors to Dolibarr project
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file    htdocs/core/class/datesentwriter.class.php
+ * \ingroup core
+ * \brief   Service to persist date_sent on supported CommonObjects
+ */
+
+/**
+ * Records the timestamp of the last successful email send on a supported CommonObject.
+ *
+ * Return codes: 1 = success, 0 = unsupported element (silent skip), -1 = error.
+ * Never throws exceptions. Never calls triggers or UI methods.
+ */
+class DateSentWriter
+{
+	/** @var DoliDB */
+	private DoliDB $db;
+
+	/**
+	 * Map from CommonObject::$element to table name (without prefix).
+	 * Only these 12 elements are supported — whitelist protects against arbitrary table writes.
+	 *
+	 * @var array<string,string>
+	 */
+	private const TABLE_MAP = array(
+		'propal'            => 'propal',
+		'commande'          => 'commande',
+		'facture'           => 'facture',
+		'supplier_proposal' => 'supplier_proposal',
+		'order_supplier'    => 'commande_fournisseur',
+		'invoice_supplier'  => 'facture_fourn',
+		'contrat'           => 'contrat',
+		'expedition'        => 'expedition',
+		'delivery'          => 'delivery',
+		'reception'         => 'reception',
+		'fichinter'         => 'fichinter',
+		'project'           => 'projet',
+	);
+
+	/**
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 * Persist date_sent on the given object (overwrites any existing value).
+	 *
+	 * @param  CommonObject $object Object to update — must have a valid id and a supported element type
+	 * @param  int          $when   Unix timestamp of the send event
+	 * @return int                  1 on success, 0 if element is not supported (silent skip), -1 on error
+	 */
+	public function write(CommonObject $object, int $when): int
+	{
+		if ($object->id <= 0) {
+			dol_syslog('DateSentWriter: object without valid id, element='.($object->element ?? ''), LOG_WARNING);
+			return -1;
+		}
+
+		if (!isset(self::TABLE_MAP[$object->element])) {
+			dol_syslog('DateSentWriter: unsupported element '.$object->element, LOG_DEBUG);
+			return 0;
+		}
+
+		$table = $this->db->prefix().self::TABLE_MAP[$object->element];
+
+		$sql  = "UPDATE ".$table;
+		$sql .= " SET date_sent = '".$this->db->idate($when)."'";
+		$sql .= " WHERE rowid = ".intval($object->id);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_syslog('DateSentWriter error: '.$this->db->lasterror(), LOG_WARNING);
+			return -1;
+		}
+
+		$object->date_sent = $when;
+		return 1;
+	}
+}
