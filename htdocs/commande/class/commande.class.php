@@ -286,6 +286,11 @@ class Commande extends CommonOrder
 	public $pos_source;
 
 	/**
+	 * @var int|null Timestamp of last successful email send
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @var array<int,float>	Array with lines of all shipments (qty)
 	 */
 	public $expeditions;
@@ -337,6 +342,7 @@ class Commande extends CommonOrder
 		'date_commande' => array('type' => 'date', 'label' => 'Date', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'csslist' => 'nowraponall'),
 		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 62, 'csslist' => 'nowraponall'),
 		'date_cloture' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'csslist' => 'nowraponall'),
+		'date_sent' => array('type' => 'datetime', 'label' => 'DateSent', 'enabled' => 1, 'visible' => -1, 'position' => 66, 'notnull' => 0),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'fk_user_cloture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserClosing', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'source' => array('type' => 'smallint(6)', 'label' => 'Source', 'enabled' => 1, 'visible' => -1, 'position' => 95),
@@ -1999,6 +2005,7 @@ class Commande extends CommonOrder
 		$sql .= ', c.amount_ht, c.total_ht, c.total_ttc, c.total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.deposit_percent, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
 		$sql .= ', c.fk_account';
 		$sql .= ', c.date_commande, c.date_valid, c.tms';
+		$sql .= ', c.date_sent';
 		$sql .= ', c.date_livraison as delivery_date';
 		$sql .= ', c.fk_shipping_method';
 		$sql .= ', c.fk_warehouse';
@@ -2067,6 +2074,8 @@ class Commande extends CommonOrder
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
 				$this->date_creation		= $this->db->jdate($obj->date_creation);
 				$this->date_validation      = $this->db->jdate($obj->date_valid);
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 				$this->date_modification    = $this->db->jdate($obj->tms);
 				$this->source				= $obj->source;
 				$this->billed				= $obj->billed;
@@ -4026,6 +4035,7 @@ class Commande extends CommonOrder
 		$sql = 'SELECT c.rowid, date_creation as datec, tms as datem,';
 		$sql .= ' date_valid as datev,';
 		$sql .= ' date_cloture as datecloture,';
+		$sql .= ' date_sent,';
 		$sql .= ' fk_user_author, fk_user_valid, fk_user_cloture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
@@ -4048,6 +4058,8 @@ class Commande extends CommonOrder
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 				$this->date_cloture      = $this->db->jdate($obj->datecloture);
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 			}
 
 			$this->db->free($result);
