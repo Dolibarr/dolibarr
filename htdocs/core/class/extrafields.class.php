@@ -47,7 +47,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,emptyonclone:array<string,int<0,1>>,loaded?:int,count:int,aiprompt:array<string,string>}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,personal_data:array<string,int<0,1>>,emptyonclone:array<string,int<0,1>>,loaded?:int,count:int,aiprompt:array<string,string>}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -164,9 +164,11 @@ class ExtraFields
 	 *  @param	string			$aiprompt			Ai prompt value
 	 *  @param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
 	 *  @param	int<0,1>		$showintooltip		Is attribute to be show on tooltip
+	 *  @param	int<0,1>		$personal_data		Is attribute a personal data (RGPD,nLPD/LGPD)
+	 *
 	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0, $personal_data = 0)
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -202,7 +204,7 @@ class ExtraFields
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone, $showintooltip);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone, $showintooltip, $personal_data);
 			$err2 = $this->errno;
 			if ($result2 > 0
 				|| ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')
@@ -243,9 +245,11 @@ class ExtraFields
 	 *  @param  int<0,1>        $printable          Is extrafield displayed on PDF
 	 *  @param  array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
 	 *	@param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
+	 *  @param  int<0,1>		$showintooltip		Show in tooltip
+	 *  @param	int<0,1>		$personal_data		Is attribute a personal data (RGPD,nLPD/LGPD)
 	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
-	public function updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $emptyonclone = 0)
+	public function updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $emptyonclone = 0, $showintooltip = 0, $personal_data = 0)
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -271,13 +275,13 @@ class ExtraFields
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate') {
 			dol_syslog(get_class($this).'::thisupdate', LOG_DEBUG);
-			$result = $this->update($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, '', $emptyonclone);
+			$result = $this->update($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, '', $emptyonclone, $showintooltip, $personal_data);
 		}
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
 			dol_syslog(get_class($this).'::thislabel', LOG_DEBUG);
-			$result2 = $this->update_label($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, '', $emptyonclone);
+			$result2 = $this->update_label($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, '', $emptyonclone, $showintooltip, $personal_data);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
@@ -432,10 +436,11 @@ class ExtraFields
 	 *  @param  string          $aiprompt     	Ai prompt value
 	 *	@param	int<0,1>		$emptyonclone	Is attribute to be emptied after object clone
 	 *	@param	int<0,1>		$showintooltip	Is attribute to be show on tooltip
+	 *  @param	int<0,1>		$personal_data		Is attribute a personal data (RGPD,nLPD/LGPD)
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0, $personal_data = 0)
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -465,6 +470,9 @@ class ExtraFields
 		}
 		if (empty($alwayseditable)) {
 			$alwayseditable = 0;
+		}
+		if (empty($personal_data)) {
+			$personal_data = 0;
 		}
 		if (empty($emptyonclone)) {
 			$emptyonclone = 0;
@@ -526,7 +534,8 @@ class ExtraFields
 			$sql .= " cssview,";
 			$sql .= " aiprompt,";
 			$sql .= " emptyonclone,";
-			$sql .= " showintooltip";
+			$sql .= " showintooltip,";
+			$sql .= " personal_data";
 			$sql .= " )";
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
@@ -556,7 +565,8 @@ class ExtraFields
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
 			$sql .= " '".$this->db->escape($aiprompt)."',";
 			$sql .= " ".((int) $emptyonclone).' ,';
-			$sql .= " ".((int) $showintooltip);
+			$sql .= " ".((int) $showintooltip).' ,';
+			$sql .= " ".((int) $personal_data);
 			$sql .= ')';
 
 			if ($this->db->query($sql)) {
@@ -704,10 +714,11 @@ class ExtraFields
 	 *  @param	string	$aiprompt			Ai prompt value
 	 *	@param	int<0,1>	$emptyonclone		Is attribute to be emptied after object clone
 	 *	@param	int<0,1>	$showintooltip		Is attribute to be show on tooltip
+	 *  @param	int<0,1>	$personal_data		Is attribute a personal data (RGPD,nLPD/LGPD)
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0, $personal_data = 0)
 	{
 		global $action, $hookmanager;
 
@@ -789,7 +800,7 @@ class ExtraFields
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip);
+				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip, 'personal_data' => $personal_data);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -805,7 +816,7 @@ class ExtraFields
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
 					dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone, $showintooltip);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone, $showintooltip, $personal_data);
 				}
 				if ($result > 0) {
 					$sql = '';
@@ -865,14 +876,15 @@ class ExtraFields
 	 *  @param	string	$aiprompt			Ai prompt value
 	 *	@param	int<0,1>	$emptyonclone	Is attribute to be emptied after object clone
 	 *	@param	int<0,1>	$showintooltip	Is attribute to be show on tooltip
+	 *  @param	int<0,1>	$personal_data		Is attribute a personal data (RGPD,nLPD/LGPD)
 	 *  @return	int							Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0)
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0, $showintooltip = 0, $personal_data = 0)
 	{
 		// phpcs:enable
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable.", ".$aiprompt.", ".$showintooltip);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable.", ".$aiprompt.", ".$showintooltip.", ".$personal_data);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') {
@@ -899,6 +911,9 @@ class ExtraFields
 		}
 		if (empty($alwayseditable)) {
 			$alwayseditable = 0;
+		}
+		if (empty($personal_data)) {
+			$personal_data = 0;
 		}
 		if (empty($emptyonclone)) {
 			$emptyonclone = 0;
@@ -976,7 +991,8 @@ class ExtraFields
 			$sql .= " cssview,";
 			$sql .= " aiprompt,";
 			$sql .= " showintooltip,";
-			$sql .= " emptyonclone";
+			$sql .= " emptyonclone,";
+			$sql .= " personal_data";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($attrname)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
@@ -1006,7 +1022,8 @@ class ExtraFields
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
 			$sql .= " '".$this->db->escape($aiprompt)."',";
 			$sql .= " ".((int) $showintooltip)." ,";
-			$sql .= " ".((int) $emptyonclone);
+			$sql .= " ".((int) $emptyonclone)." ,";
+			$sql .= " ".((int) $personal_data);
 			$sql .= ")";
 
 			$resql2 = $this->db->query($sql);
@@ -1061,8 +1078,8 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, showintooltip, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt,";
-		$sql .= " css, cssview, csslist";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, showintooltip, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt";
+		$sql .= " , css, cssview, csslist, personal_data";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype && $elementtype != 'all') {
@@ -1119,6 +1136,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
 					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
 					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
+					$this->attributes[$tab->elementtype]['personal_data'][$tab->name] = $tab->personal_data;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 					$count++;
@@ -2832,6 +2850,9 @@ class ExtraFields
 
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan) ? 'colspan="' . $colspan . '"' : '').'>';
+		if ($mode == 'create' || $mode == 'edit') {
+			$out .= '<br>';
+		}
 		// Some js code will be injected here to manage the collapsing of extrafields
 		// Output the picto
 		$out .= '<span class="'.($extrafield_collapse_display_value ? 'cursorpointer ' : '').($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';

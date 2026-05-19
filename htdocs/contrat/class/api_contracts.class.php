@@ -777,7 +777,7 @@ class Contracts extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contract->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contract);
+					$this->contract->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contract);
 				}
 				continue;
 			}

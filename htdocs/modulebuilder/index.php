@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -277,11 +277,11 @@ function getLicenceHeader($user, $langs, $now)
  * Actions
  */
 
-if ($dirins && $action == 'initmodule' && $modulename /* && $user->hasRight("modulebuilder", "run") // already checked */) {
-	$modulename = ucfirst($modulename); // Force first letter in uppercase
+if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
+	$modulename = dol_string_nounprintableascii(dol_string_unaccent(ucwords($modulename))); 		// Force first letter in uppercase
 	$destdir = '/not_set/';
 
-	if (preg_match('/[^a-z0-9_]/i', $modulename)) {
+	if (preg_match('/[^a-z0-9]/i', $modulename)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 	}
@@ -1078,15 +1078,15 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 }
 
 // Init an object
-if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->hasRight("modulebuilder", "run") // already checked */) {
+if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on permission already done
 	$warning = 0;
 
-	$objectname = ucfirst($objectname);
+	$objectname = dol_string_nounprintableascii(dol_string_unaccent(ucwords($objectname))); 		// Force first letter in uppercase
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
 
-	if (preg_match('/[^a-z0-9_]/i', $objectname)) {
+	if (preg_match('/[^a-z0-9]/i', $objectname)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 		$tabobj = 'newobject';
@@ -1434,6 +1434,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php' => 'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 			);
 		}
+		$class = null;
 		if (GETPOST('generatepermissions', 'aZ09')) {
 			$firstobjectname = 'myobject';
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -1655,6 +1656,29 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 		$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
 	}
 
+	if (! $error && GETPOST('nogeneratelines', 'aZ09')) {
+		$checkComment = checkExistComment($moduledescriptorfile, 0);
+		if ($checkComment < 0) {
+			$warning++;
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
+		} else {
+			// File path
+			$TFilePaths = [
+				$destdir . '/class/' . strtolower($objectname) . '.class.php',
+				$destdir . '/class/api_' . strtolower($module) . '.class.php',
+				$destdir . '/' . strtolower($objectname) . '_card.php'
+			];
+
+			// Pattern to remove everything between the tags
+			$pattern = '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
+			foreach ($TFilePaths as $filePath) {
+				if (! removePatternFromFile($filePath, $pattern)) {
+					$error++;
+				}
+			}
+		}
+	}
+
 	if (!$error) {
 		// Edit PHP files to make replacement
 		foreach ($filetogenerate as $destfile) {
@@ -1688,6 +1712,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 		}
 	}
 
+	$object = null;
 	if (!$error) {
 		// Edit the class file to write properties
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask);
@@ -1705,7 +1730,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 			writePropsInAsciiDoc($file, $objectname, $destfile);
 		}
 	}
-	if (!$error) {
+	if (!$error && $object !== null) {
 		// Edit sql with new properties
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, '', $object);
 
@@ -1757,6 +1782,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel) /* && $user->ha
 		dol_include_once($pathtofile);
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
@@ -1768,6 +1794,8 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel) /* && $user->ha
 			}
 		} else {
 			$error++;
+		}
+		if ($moduleobj === null) {
 			$langs->load("errors");
 			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 			exit;
@@ -1907,6 +1935,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
 
+	$object = null;
 	// Edit the class file to write properties
 	if (!$error) {
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry, $moduletype);
@@ -1919,7 +1948,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 	}
 
 	// Edit sql with new properties
-	if (!$error) {
+	if (!$error && $object !== null) {
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object, $moduletype);
 
 		if ($result <= 0) {
@@ -1951,6 +1980,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 	$destdir = $dirins.'/'.strtolower($module);
 	dol_mkdir($destdir);
 
+	$object = null;
 	// Edit the class file to write properties
 	if (!$error) {
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
@@ -1963,7 +1993,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 	}
 
 	// Edit sql with new properties
-	if (!$error) {
+	if (!$error && $object !== null) {
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
 
 		if ($result <= 0) {
@@ -2199,6 +2229,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2210,6 +2241,8 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		}
 	} else {
 		$error++;
+	}
+	if ($moduleobj === null) {
 		$langs->load("errors");
 		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
@@ -2285,6 +2318,7 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') /* && 
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2296,6 +2330,8 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') /* && 
 		}
 	} else {
 		$error++;
+	}
+	if ($moduleobj === null) {
 		$langs->load("errors");
 		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
@@ -2355,6 +2391,7 @@ if ($dirins && $action == 'generatepackage' /* && $user->hasRight("modulebuilder
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2366,6 +2403,8 @@ if ($dirins && $action == 'generatepackage' /* && $user->hasRight("modulebuilder
 		}
 	} else {
 		$error++;
+	}
+	if ($moduleobj === null) {
 		$langs->load("errors");
 		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
@@ -3290,6 +3329,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 	$modulelowercase = strtolower($module);
 	$loadclasserrormessage = '';
 
+	$class = null;
 	// Load module
 	try {
 		$fullpathdirtodescriptor = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -3505,13 +3545,13 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="editorname" value="'.(GETPOSTISSET('editorname') ? GETPOST('editorname') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME', $mysoc->name)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
+	print '<input type="text" name="editorname" value="'.(GETPOSTISSET('editorname') ? GETPOST('editorname') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME', $mysoc->name)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'" spellcheck="false"><br>';
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
+	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'" spellcheck="false"><br>';
 	print '</div></div>';
 
 	print '</div>';	// End div tagtable
@@ -3610,7 +3650,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=exportimport&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Export").'-'.$langs->trans("Import");
+		$head2[$h][1] = $langs->trans("ImportExportProfiles");
 		$head2[$h][2] = 'exportimport';
 		$h++;
 
@@ -3684,6 +3724,16 @@ if ($module == 'initmodule') {
 				// List of setup pages
 				$listofsetuppages = dol_dir_list($realpathofmodule.'/admin', 'files', 0, '\.php$');
 				foreach ($listofsetuppages as $setuppage) {
+					// If this is a page for extrafields setup of an object
+					$reg = array();
+					if (preg_match('/^([a-z]+)_extrafields.php/', $setuppage['relativename'], $reg)) {
+						// Check that object has $isextrafieldmanaged property set. If not, we should not show this file.
+						$fileofclass = $realpathofmodule.'/class/'.$reg[1].'.class.php';
+						if (is_readable($fileofclass) && !preg_match('/public\s+\$isextrafieldmanaged\s+=\s+1/', file_get_contents($fileofclass))) {
+							continue;
+						}
+					}
+
 					//var_dump($setuppage);
 					print '<tr><td>';
 					print '<span class="fa fa-file"></span> ';
@@ -3750,7 +3800,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("Description");
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'desc') {
-						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->description).'">';
+						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->description).'" spellcheck="false">';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
@@ -3821,7 +3871,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("Picto");
 					print '</td><td>';
 					if ($action == 'edit_modulepicto' && GETPOST('keydescription', 'alpha') === 'picto') {
-						print '<input class="minwidth200 maxwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'">';
+						print '<input class="minwidth200 maxwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'" spellcheck="false">';
 
 						print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]] where faprefix can be far,far, facolor can be a text like \'red\' orvalue like \'#FF0000\' and fasize is CSS font size like \'1em\'');
 
@@ -3844,7 +3894,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("EditorName");
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_name') {
-						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_name).'">';
+						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_name).'" spellcheck="false">';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyname" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
@@ -3857,7 +3907,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("EditorUrl");
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_url') {
-						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_url).'">';
+						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_url).'" spellcheck="false">';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyeditorurl" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
@@ -4123,6 +4173,7 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label class="margintoponly" for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
+				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
@@ -6777,6 +6828,7 @@ if ($module == 'initmodule') {
 				exit;
 			}
 
+			$outputfilezip = null;
 			$arrayversion = explode('.', $moduleobj->version, 3);
 			if (count($arrayversion)) {
 				$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].(empty($arrayversion[1]) ? '.0' : '.'.$arrayversion[1]).(empty($arrayversion[2]) ? '' : ".".$arrayversion[2]).".zip";

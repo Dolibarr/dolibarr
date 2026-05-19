@@ -916,11 +916,6 @@ abstract class CommonObject
 
 
 	/**
-	 * @var int 		Populated by setRetainedWarrantyPaymentTerms()
-	 */
-	public $retained_warranty_fk_cond_reglement;
-
-	/**
 	 * @var int 		Populated by setWarehouse()
 	 */
 	public $warehouse_id;
@@ -3263,37 +3258,6 @@ abstract class CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
-			$this->error = 'Status of the object is incompatible '.$this->status;
-			return -2;
-		}
-	}
-
-	/**
-	 *  Change the retained warranty payments terms
-	 *
-	 *  @param		int		$id		Id of new payment terms
-	 *  @return		int				>0 if OK, <0 if KO
-	 */
-	public function setRetainedWarrantyPaymentTerms($id)
-	{
-		dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
-		if ($this->status >= 0 || $this->element == 'societe') {
-			$fieldname = 'retained_warranty_fk_cond_reglement';
-
-			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((int) $id);
-			$sql .= ' WHERE rowid='.((int) $this->id);
-
-			if ($this->db->query($sql)) {
-				$this->retained_warranty_fk_cond_reglement = $id;
-				return 1;
-			} else {
-				dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Error '.$sql.' - '.$this->db->error());
-				$this->error = $this->db->error();
-				return -1;
-			}
-		} else {
-			dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
 			$this->error = 'Status of the object is incompatible '.$this->status;
 			return -2;
 		}
@@ -9664,6 +9628,8 @@ abstract class CommonObject
 								}
 							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
 								$value = (!empty($this->array_options["options_".$key]) || (isset($this->array_options["options_".$key]) && $this->array_options["options_".$key] === '0')) ? $this->array_options["options_".$key] : '';
+							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('varchar', 'char'))) {
+								$value = (isset($this->array_options["options_".$key]) && $this->array_options["options_".$key] !== '') ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}

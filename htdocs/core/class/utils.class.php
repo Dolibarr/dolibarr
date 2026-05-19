@@ -3,7 +3,7 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -817,6 +817,7 @@ class Utils
 		dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($this->db);
@@ -831,7 +832,7 @@ class Utils
 			exit;
 		}
 
-		$arrayversion = explode('.', $moduleobj->version, 3);
+		$arrayversion = $moduleobj === null ? array() : explode('.', $moduleobj->version, 3);
 		if (count($arrayversion)) {
 			$FILENAMEASCII = strtolower($module).'.asciidoc';
 			$FILENAMEDOC = strtolower($module).'.html';

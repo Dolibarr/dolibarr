@@ -36,11 +36,11 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -131,7 +131,6 @@ $donotclearsession = GETPOST('donotclearsession') ? GETPOST('donotclearsession')
 $object = new ActionComm($db);
 $cactioncomm = new CActionComm($db);
 $contact = new Contact($db);
-$extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 $form = new Form($db);
@@ -420,10 +419,21 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
-			}
 			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
+			}
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -1001,8 +1011,20 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
+			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
 			}
 
 			$hasPermissionOnLinkedObject = 0;
@@ -1485,7 +1507,10 @@ if ($action == 'create') {
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$default = getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT', 'AC_RDV');
+		$default = getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT', 'AC_OTH');
+		if (empty($default)) {
+			$default = 'AC_OTH';
+		}
 		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
 		$selectedvalue = GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default);
 		print $formactions->select_type_actions($selectedvalue, "actioncode", "systemauto", 0, -1, 0, 1);	// TODO Replace 0 with -2 in onlyautoornot
@@ -1866,9 +1891,22 @@ if ($action == 'create') {
 		$elProp = getElementProperties($origin);
 		$modulecodetouseforpermissioncheck = $elProp['module'];
 		// Keep permission check aligned with rights class aliases (see restrictedArea()).
-		if ($modulecodetouseforpermissioncheck == 'productbatch') {
-			$modulecodetouseforpermissioncheck = 'produit';
+		$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+		switch ($modulecodetouseforpermissioncheck) {
+			case 'productbatch':
+				$modulecodetouseforpermissioncheck = 'produit';
+				break;
+			case 'eventorganization':
+				// Event organization relies on Project permissions
+				$modulecodetouseforpermissioncheck = 'projet';
+				$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+				break;
+			default:
+				// No mapping needed, keep original values
+				break;
 		}
+
 		if ($user->hasRight($modulecodetouseforpermissioncheck, 'read') || $user->hasRight($modulecodetouseforpermissioncheck, $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}

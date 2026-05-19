@@ -167,8 +167,6 @@ $arrayfields = array(
 	'd.rowid' => array('label' => 'ID', 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
 	'd.ref' => array('label' => "Ref", 'checked' => 1),
 	'd.civility' => array('label' => "Civility", 'checked' => 0),
-	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
-	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
 	'd.gender' => array('label' => "Gender", 'checked' => 0),
 	'd.societe' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
@@ -358,6 +356,7 @@ if (empty($reshook)) {
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
+		$label = GETPOST("label");
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
@@ -365,7 +364,7 @@ if (empty($reshook)) {
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
 			if ($res > 0) {
-				$result = $tmpmember->subscription($now, (float) $amount);
+				$result = $tmpmember->subscription($now, (float) $amount, 0, '', $label);
 				if ($result < 0) {
 					$error++;
 				} else {
@@ -798,6 +797,7 @@ $queryforbutton['mode'] = 'common';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl($_SERVER["PHP_SELF"], $queryforbutton), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $queryforbutton['mode'] = 'kanban';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl($_SERVER["PHP_SELF"], $queryforbutton), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/geo.php', 1).'?mode=memberbycountry&objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/card.php', ['action' => 'create']), '', $user->hasRight('adherent', 'creer'));
 
@@ -831,6 +831,7 @@ if ($massaction == 'createsubscription') {
 	$formquestion = array(
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
+		array('label' => $langs->trans("Label"), 'type' => 'text', 'value' => '', 'name' => 'label'),
 		array('type' => 'separator'),
 		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
 	);
@@ -911,16 +912,16 @@ if (!empty($arrayfields['d.civility']['checked'])) {
 	print '<input class="flat maxwidth50imp" type="text" name="search_civility" value="'.dol_escape_htmltag($search_civility).'"></td>';
 }
 
-// First Name
-if (!empty($arrayfields['d.firstname']['checked'])) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth75imp" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
-}
-
 // Last Name
 if (!empty($arrayfields['d.lastname']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
+}
+
+// First Name
+if (!empty($arrayfields['d.firstname']['checked'])) {
+	print '<td class="liste_titre left">';
+	print '<input class="flat maxwidth75imp" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
 }
 
 // Gender
@@ -953,13 +954,10 @@ if (!empty($arrayfields['d.morphy']['checked'])) {
 
 // Member Type
 if (!empty($arrayfields['t.libelle']['checked'])) {
-	print '</td>';
-}
-if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '<td class="liste_titre">';
 	$listetype = $membertypestatic->liste_array();
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray("search_type", $listetype, $search_type, 1, 0, 0, '', 0, 32);
+	print $form->selectarray("search_type", $listetype, $search_type, 1, 0, 0, '', 0, 32, 0, '', 'minwidth75 maxwidth100');
 	print '</td>';
 }
 
@@ -1120,12 +1118,12 @@ if (!empty($arrayfields['d.civility']['checked'])) {
 	print_liste_field_titre($arrayfields['d.civility']['label'], $_SERVER["PHP_SELF"], 'd.civility', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['d.firstname']['checked'])) {
-	print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], 'd.firstname', '', $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
 if (!empty($arrayfields['d.lastname']['checked'])) {
 	print_liste_field_titre($arrayfields['d.lastname']['label'], $_SERVER["PHP_SELF"], 'd.lastname', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['d.firstname']['checked'])) {
+	print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], 'd.firstname', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.gender']['checked'])) {
@@ -1333,21 +1331,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Firstname
-		if (!empty($arrayfields['d.firstname']['checked'])) {
-			print '<td class="tdoverflowmax125">';
-			print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
-			//print $obj->firstname;
-			print "</td>\n";
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
 		// Lastname
 		if (!empty($arrayfields['d.lastname']['checked'])) {
 			print '<td class="tdoverflowmax125">';
 			print $memberstatic->getNomUrl(0, 0, 'card', 'lastname');
 			//print $obj->lastname;
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Firstname
+		if (!empty($arrayfields['d.firstname']['checked'])) {
+			print '<td class="tdoverflowmax125">';
+			print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
+			//print $obj->firstname;
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1390,7 +1388,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['t.libelle']['checked'])) {
 			$membertypestatic->id = $obj->type_id;
 			$membertypestatic->label = $obj->type;
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall tdoverflowmax100">';
 			print $membertypestatic->getNomUrl(1, 32);
 			print '</td>';
 			if (!$i) {

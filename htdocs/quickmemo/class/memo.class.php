@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1023,14 +1024,14 @@ class Memo extends CommonObject
 		$return .= '<div class="quickmemo-info" >';
 		$return .= '	<div class="quickmemo-info__create" >';
 		$return .= '		<span class="quickmemo-info__user-create-name">'.$this->showOutputField($this->fields['fk_user_creat'], 'fk_user_creat', $this->user_creation_id).'</span>';
-		$return .= ' 		<span class="quickmemo-info__date_create">'.dol_print_date($this->date_creation, '%d/%m/%Y %H:%M').'</span>';
+		$return .= ' 		<span class="quickmemo-info__date_create">'.dol_print_date($this->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 		$return .= '	</div>';
 
 
 		if (!empty($this->tms) && $this->tms != $this->date_creation) {
 			$return .= '	<div class="quickmemo-info__update" >';
 
-			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->date_modification, '%d/%m/%Y %H:%M').'</span>';
+			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoModified') . ' ' .dol_print_date($this->date_modification, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 			if ($this->user_modification_id != $this->user_creation_id) {
 				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_modif'], 'fk_user_modif', $this->user_modification_id).'</span>';
 			}
@@ -1041,7 +1042,7 @@ class Memo extends CommonObject
 		if (!empty($this->date_archived) && $this->status == self::STATUS_ARCHIVED) {
 			$return .= '	<div class="quickmemo-info__update" >';
 
-			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoArchived') . ' ' .dol_print_date($this->date_archived, '%d/%m/%Y %H:%M').'</span>';
+			$return .= ' 		<span class="quickmemo-info__date_update">'.$langs->trans('QuickMemoArchived') . ' ' .dol_print_date($this->date_archived, '%d/%m/%Y %H:%M', 'tzuserrel').'</span>';
 			if ($this->fk_user_modif != $this->fk_user_archived) {
 				$return .= '		<span class="quickmemo-info__user-update-name">'.$langs->trans('QuickMemoBy') . ' ' .$this->showOutputField($this->fields['fk_user_archived'], 'fk_user_archived', $this->fk_user_archived).'</span>';
 			}
@@ -1237,7 +1238,7 @@ class Memo extends CommonObject
 	 * @param mixed $color the color to check
 	 * @return bool
 	 */
-	static public function checkColor($color)
+	public static function checkColor($color)
 	{
 		if (!is_string($color)) {
 			return false;
@@ -1255,7 +1256,7 @@ class Memo extends CommonObject
 	 *
 	 * @return string[]
 	 */
-	static public function getColorPreset()
+	public static function getColorPreset()
 	{
 
 		$colorsConf = getDolGlobalString('QUICKMEMO_COLORS_PRESET');
@@ -1311,7 +1312,7 @@ class Memo extends CommonObject
 
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'memoContext' =>& $memoContext
+			'memoContext' => & $memoContext
 		);
 
 		$reshook = $hookmanager->executeHooks('getMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -1329,7 +1330,7 @@ class Memo extends CommonObject
 	 *
 	 * @return void
 	 */
-	static public function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
+	public static function completeMemoContextMapping(array &$contextTabMapping, string $tabContext, string $dolibarrContext = '')
 	{
 		$dolibarrContext = trim($dolibarrContext) ?: $tabContext;
 
@@ -1401,7 +1402,9 @@ class Memo extends CommonObject
 		$commonCardContext = ['document', 'agenda', 'contactcard', 'stats']; // for common object
 		$modules = ['order', 'propal', 'invoice', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'contract', 'product', 'shipping'];
 		foreach ($modules as $module) {
-			if (!isModEnabled($module) && $onlyActiveModules) { continue; }
+			if (!isModEnabled($module) && $onlyActiveModules) {
+				continue;
+			}
 
 			$moduleClean = str_replace('_', '', $module);
 
@@ -1423,7 +1426,7 @@ class Memo extends CommonObject
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'contextTabMapping' =>& $contextTabMapping,
+			'contextTabMapping' => & $contextTabMapping,
 			'onlyActiveModules' => $onlyActiveModules
 		);
 
@@ -1451,9 +1454,9 @@ class Memo extends CommonObject
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
-			'list' =>& $list
+			'list' => & $list
 		);
-		$object = null;
+		$object = null;  // @phan-suppress-next-line PhanPluginConstantVariableNull
 		$reshook = $hookmanager->executeHooks('getAvailableMemoContext', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$list = $hookmanager->resArray;
@@ -1462,9 +1465,15 @@ class Memo extends CommonObject
 		// Security check
 		$result = [];
 		foreach ($list as $k => $v) {
-			if (!is_string($v)) { continue; }
-			if (strlen($v) > 64) { continue; }
-			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) { continue; }
+			if (!is_string($v)) {
+				continue;
+			}
+			if (strlen($v) > 64) {
+				continue;
+			}
+			if (preg_match('/^[a-zA-Z0-9_]+$/', $k) !== 1) {
+				continue;
+			}
 			$result[] = $v;
 		}
 
@@ -1495,8 +1504,8 @@ class Memo extends CommonObject
 			  AND (m.private = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
 		$obj = $this->db->getRow($sql);
@@ -1534,11 +1543,11 @@ class Memo extends CommonObject
           AND (COALESCE(m.private, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
-		$sql.= ' ORDER BY COALESCE(mu.pos_z, m.pos_z) ASC';
+		$sql .= ' ORDER BY COALESCE(mu.pos_z, m.pos_z) ASC';
 		return $sql;
 	}
 
@@ -1572,11 +1581,11 @@ class Memo extends CommonObject
 			//$sql.= ' AND (m.context_tab = \''.$this->db->escape($context_tab).'\' OR m.element_type = \'\' ) ';
 		}
 
-		if ((int) $id > 0 ) {
-			$sql.= ' AND m.rowid = ' . (int) $id;
+		if ((int) $id > 0) {
+			$sql .= ' AND m.rowid = ' . (int) $id;
 		}
 
-		$sql.= " ORDER BY m.rank_tpl DESC, m.rowid ASC  "; // Due to multiple type of sort panel  rank_tpl is reversed higher is first and  rowid ASC to keep last add is last
+		$sql .= " ORDER BY m.rank_tpl DESC, m.rowid ASC  "; // Due to multiple type of sort panel  rank_tpl is reversed higher is first and  rowid ASC to keep last add is last
 
 		return $sql;
 	}
@@ -1629,7 +1638,7 @@ class Memo extends CommonObject
 			return false;
 		}
 
-		if (defined('NOREQUIRETRAN') || empty($user) || empty($user->id) || (int) $user->socid> 0 ) {
+		if (defined('NOREQUIRETRAN') || empty($user) || empty($user->id) || (int) $user->socid > 0) {
 			return false;
 		}
 
@@ -1650,6 +1659,10 @@ class Memo extends CommonObject
 			'userDeleteRight' => $user->hasRight('quickmemo', 'memo', 'delete')
 		];
 		$jsConfVars = array_merge($defaultJsConfVars, $jsConfVars);
+
+		if (!empty($jsConfVars['elementType'])) {
+			$jsConfVars['shareBtnStatus'] = 1;
+		}
 
 		// LOAD Memo class
 		print '<link rel="stylesheet" type="text/css" href="'.dol_buildpath('quickmemo/css/memo.css', 1) . '">'."\n";
@@ -1695,10 +1708,10 @@ class Memo extends CommonObject
 
 		$memo->shared_on_element = $this->shared_on_element;
 		$memo->private = (int) $this->private;
-		$memo->date_creation = dol_print_date($this->date_creation, '%d/%m/%Y %H:%M');
+		$memo->date_creation = dol_print_date($this->date_creation, '%d/%m/%Y %H:%M', 'tzuserrel');
 		$memo->date_change =  '';
 		if (!empty($this->tms) && ((int) $this->date_creation !== (int) $this->tms || (int) $this->fk_user_modif > 0)) {
-			$memo->date_change = dol_print_date($this->tms, '%d/%m/%Y %H:%M');
+			$memo->date_change = dol_print_date($this->tms, '%d/%m/%Y %H:%M', 'tzuserrel');
 		}
 
 		$memo->fk_user_creat = $this->fk_user_creat;
@@ -1727,7 +1740,7 @@ class Memo extends CommonObject
 	 *
 	 * @return stdClass
 	 */
-	static public function getJsMemoDefault()
+	public static function getJsMemoDefault()
 	{
 		$memo = new stdClass();
 		$memo->id = null;

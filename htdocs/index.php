@@ -91,16 +91,18 @@ $title = $langs->trans("HomeArea").' - '.$appli;
 
 llxHeader('', $title);
 
+$boxwork = ''; // Ensure this is initialised
 
 $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
+// Show the user message of the day (MOTD)
 if (getDolGlobalString('MAIN_MOTD')) {
-	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
+	$motd = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
 
 	$substitutionarray = getCommonSubstitutionArray($langs);
 	complete_substitutions_array($substitutionarray, $langs);
-	$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
+	$texttoshow = make_substitutions($motd, $substitutionarray, $langs);
 
 	print "\n<!-- Start of welcome text -->\n";
 	print '<table class="centpercent notopnoleftnoright"><tr><td>';
@@ -113,6 +115,39 @@ if (getDolGlobalString('MAIN_MOTD')) {
  * Show specific warnings
  */
 
+// Specific warning for legal announcement
+if (getDolGlobalString('MAIN_FORCE_SYSTEM_MESSAGE')) {
+	$langs->loadLangs(array("other"));
+	$messagetoshow = $langs->trans(getDolGlobalString('MAIN_FORCE_SYSTEM_MESSAGE'));
+	$messagetoshow = info_admin($messagetoshow, 0, 0, 'warning', 'clearboth');
+
+	$tmpobject = new stdClass();
+	$parameters = array('type' => 'MAIN_FORCE_SYSTEM_MESSAGE');
+	$reshook = $hookmanager->executeHooks('messageOfTheDay', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook == 0) {
+		$messagetoshow .= $hookmanager->resPrint;
+	}
+	if ($messagetoshow) {	// $message is an HTML string.
+		print '<!-- show system message -->';
+		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('a', 'div', 'span', 'b'));
+	}
+}
+
+// Specific warning to recommend upgrade
+if (getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE') || getDolGlobalString('MAIN_FORCE_UPGRADE_URL')) {
+	$langs->loadLangs(array("other"));
+	if (is_numeric(getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE'))) {
+		$messagetoshow = $langs->trans("YourInstallIsOldThanksToUpgrade");
+	} else {
+		$messagetoshow = $langs->trans(getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE', "YourInstallIsOldThanksToUpgrade"));
+	}
+	if (getDolGlobalString('MAIN_FORCE_UPGRADE_URL')) {
+		$messagetoshow .= '<br><a href="'.getDolGlobalString('MAIN_FORCE_UPGRADE_URL').'" target="_blank">'.getDolGlobalString('MAIN_FORCE_UPGRADE_URL').'</a>';
+	}
+	$messagetoshow = info_admin($messagetoshow, 0, 0, 'warning', 'clearboth');
+	print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b'));
+}
+
 // Specific warning to propose to upgrade invoice situation to progressive mode
 /*
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
@@ -122,20 +157,21 @@ if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 }
 */
 
+
 /*
  * Show security warnings
  */
 
 // Security warning if install.lock file is missing or if conf file is writable
 if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
-	$message = '';
+	$messagetoshow = '';
 
 	// Check if install lock file is present
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
+		$messagetoshow .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
 	}
 
 	// Conf files must be in read only mode
@@ -149,21 +185,19 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
-			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
+			$messagetoshow .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
 		}
 	}
 
-	$object = new stdClass();
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('infoadmin', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	$tmpobject = new stdClass();
+	$parameters = array('type' => 'MAIN_REMOVE_INSTALL_WARNING');
+	$reshook = $hookmanager->executeHooks('messageOfTheDay', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook == 0) {
-		$message .= $hookmanager->resPrint;
+		$messagetoshow .= $hookmanager->resPrint;
 	}
-	if ($message) {	// $message is an HTML string.
+	if ($messagetoshow) {	// $message is an HTML string.
 		print '<!-- show security warning -->';
-		print dol_string_onlythesehtmltags($message, 1, 0, 0, 0, array('div', 'span', 'b'));
-		//print '<br>';
-		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b'));
 	}
 }
 

@@ -491,6 +491,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setretainedwarrantyconditions' && $usercancreate) {
+		/** @var Facture $object */
 		$object->fetch($id);
 		$object->retained_warranty_fk_cond_reglement = 0; // To clean property
 		$result = $object->setRetainedWarrantyPaymentTerms(GETPOSTINT('retained_warranty_fk_cond_reglement'));
@@ -689,9 +690,11 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$newremaintopay = $object->getRemainToPay(0);
-				if ($newremaintopay == 0) {
-					$object->setPaid($user);
+				if ($object->status == Facture::STATUS_VALIDATED) {
+					$newremaintopay = $object->getRemainToPay(0);
+					if ($newremaintopay == 0) {
+						$object->setPaid($user);
+					}
 				}
 			}
 		}
@@ -3775,8 +3778,8 @@ if ($action == 'create') {
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
-			'@phan-var-force Commande|Propal|Contrat|Expedition $objectsrc';
-			/** @var Commande|Propal|Contrat|Expedition $objectsrc */
+			'@phan-var-force Commande|Propal|Contrat|Expedition|Facture $objectsrc';
+			/** @var Commande|Propal|Contrat|Expedition|Facture $objectsrc */
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -4539,10 +4542,9 @@ if ($action == 'create') {
 			$retained_warranty_fk_cond_reglement = GETPOSTINT('retained_warranty_fk_cond_reglement');
 			if (empty($retained_warranty_fk_cond_reglement)) {
 				$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
-				if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
-					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
-				} else {
-					$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
+				if ($objectsrc instanceOf Facture && !empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
+					// Facture->retained_warranty_fk_cond_reglement (does not exist on Expedition)
+					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement; // @phan-suppress-current-line PhanUndeclaredProperty
 				}
 			}
 			print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);

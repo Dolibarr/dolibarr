@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,6 +133,9 @@ if ($id > 0 || !empty($ref)) {
 $extrafields->fetch_name_optionals_label($taskstatic->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
 
+// Default to no permission
+$permissiontoread = 0;
+$permissiontodelete = 0;
 
 // Default sort order (if not yet defined by previous GETPOST)
 /* if (!$sortfield) {
@@ -467,6 +470,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_ta
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
 $userWrite = 0;
+$massactionbutton = '';
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -614,7 +618,7 @@ if ($id > 0 || !empty($ref)) {
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
-	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions) ?? '';
 
 	// Project card
 
@@ -982,7 +986,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	}
 
 	// Show the massaction checkboxes only when this page is not opened from the Extended POS
-	if ($massactionbutton && $contextpage != 'poslist') {
+	if (!empty($massactionbutton) && $contextpage != 'poslist') {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
