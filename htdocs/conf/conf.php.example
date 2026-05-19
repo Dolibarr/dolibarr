@@ -15,16 +15,15 @@
 // ======================
 // This parameter defines the root URL of your Dolibarr index.php page without ending "/".
 // It must link to the directory htdocs
-// In most cases, this is autodetected but it's still required
-// * to show full url bookmarks for some services (ie: agenda rss export url, ...)
-// * or when using Apache dir aliases (autodetect fails)
-// * or when using nginx (autodetect fails)
+// In most cases, root URL is autodetected by application but this parameter remains required to:
+// * show full url bookmarks for some services (ie: agenda rss export url, ...)
+// * when using Apache dir aliases (autodetect fails)
+// * when using nginx (autodetect may fails)
 //
 // Examples:
-// $dolibarr_main_url_root='http://localhost';
-// $dolibarr_main_url_root='http://mydolibarrvirtualhost';
-// $dolibarr_main_url_root='http://myserver/dolibarr/htdocs';
-// $dolibarr_main_url_root='http://myserver/dolibarralias';
+// $dolibarr_main_url_root='https://mydolibarrvirtualhost';
+// $dolibarr_main_url_root='https://myserver/dolibarr/htdocs';
+// $dolibarr_main_url_root='https://myserver/dolibarralias';
 //
 $dolibarr_main_url_root='';
 

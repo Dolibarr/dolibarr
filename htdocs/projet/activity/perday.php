@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       François Legastelois    <flegastelois@teclib.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,20 +266,24 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 
 	if (is_array($_POST)) {
 		foreach ($_POST as $key => $time) {
-			if (intval($time) > 0) {
+			$time = (int) $time;
+			if ($time > 0) {
 				$matches = array();
 				// Hours or minutes of duration
 				if (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches)) {
 					$id = $matches[1];
 					if ($id > 0) {
+						if (!array_key_exists($id, $timespent_duration)) {
+							$timespent_duration[$id] = 0;
+						}
 						// We store HOURS in seconds
 						if ($matches[2] == 'hour') {
-							$timespent_duration[$id] += (int) $time * 60 * 60;
+							$timespent_duration[$id] += $time * 60 * 60;
 						}
 
 						// We store MINUTES in seconds
 						if ($matches[2] == 'min') {
-							$timespent_duration[$id] += (int) $time * 60;
+							$timespent_duration[$id] += $time * 60;
 						}
 					}
 				}
@@ -298,7 +302,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 				unset($object->progress);
 			}
 
-			$object->timespent_duration = $val;
+			$object->timespent_duration = (int) $val;
 			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
 			if (GETPOSTINT($key."hour") != '' && GETPOSTINT($key."hour") >= 0) {	// If hour was entered

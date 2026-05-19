@@ -3912,7 +3912,11 @@ class CommandeFournisseur extends CommonOrder
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				empty($this->receptions[$obj->rowid]) ? $this->receptions[$obj->rowid] = $obj->qty : $this->receptions[$obj->rowid] += $obj->qty;
+				if (empty($this->receptions[$obj->rowid])) {
+					$this->receptions[$obj->rowid] = (float) $obj->qty;
+				} else {
+					$this->receptions[$obj->rowid] += (float) $obj->qty;
+				}
 				$i++;
 			}
 			$this->db->free($resql);

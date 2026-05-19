@@ -892,7 +892,7 @@ class SkillRank extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return CommonObjectLine[]|CommonObject[]|stdClass[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{

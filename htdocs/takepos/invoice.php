@@ -728,14 +728,16 @@ if (empty($reshook)) {
 			$placeid = $invoice->create($user);
 
 			if ($placeid < 0) {
-				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
-			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
-			$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-			$sql .= " WHERE rowid = ".((int) $placeid);
-			$resql = $db->query($sql);
-			if (!$resql) {
 				$error++;
+				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+			} else {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+				$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				}
 			}
 
 			if (!$error) {
@@ -747,7 +749,7 @@ if (empty($reshook)) {
 	}
 
 	$tva_npr = 0;
-	// If we add a line by click on product (invoice exists here because it was created juste before if it didn't exists)
+	// If we add a line by clicking on a product (invoice exists here because it was created juste before if it didn't exists)
 	if ($action == "addline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
@@ -1009,18 +1011,23 @@ if (empty($reshook)) {
 				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 			}
 		}*/
+		$db->begin();
 
-		if ($idline > 0 && $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
+		if ($idline > 0 && $placeid > 0) { 	// If invoice exists and a line is selected.
 			$invoice->deleteLine($idline);
 			$invoice->fetch($placeid);
-		} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
+		} elseif ($placeid > 0) {           // If invoice exists but no line selected (delete from another device or with no line selected), proceed to delete the last line.
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
 			$resql = $db->query($sql);
-			$row = $db->fetch_array($resql);
-			$deletelineid = $row[0];
-			$invoice->deleteLine($deletelineid);
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$deletelineid = $obj->rowid;
+				$invoice->deleteLine($deletelineid);
+			}
 			$invoice->fetch($placeid);
 		}
+
+		$db->commit();
 
 		if (count($invoice->lines) == 0) {
 			$invoice->delete($user);

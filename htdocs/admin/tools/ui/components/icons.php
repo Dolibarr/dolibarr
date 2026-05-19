@@ -400,5 +400,5 @@ function getImgPictoNameList()
 
 	asort($imgpicto);
 
-	return array_unique($imgpicto);
+	return array_unique($imgpicto);  // @phpstan-ignore return.type
 }

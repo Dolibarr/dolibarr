@@ -112,6 +112,8 @@ if (empty($massaction)) {
 @phan-var-force string $uploaddir
 ';
 
+/** @var string[] $TMsg */
+$TMsg = array();
 
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) {
@@ -1993,6 +1995,7 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 	$objecttmp = new $objectclass($db);
 	if ($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') {
 		$nbok = 0;
+		/** @var string[] $TMsg */
 		$TMsg = array();
 
 		$unique_arr = array_unique($toselect);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,17 @@ if (!defined('NOREQUIREAJAX')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var int $section
+ * @var string $module
+ * @var ?string $mode
+ * @var string $dolibarr_main_data_root
  */
+
+'
+@phan-var-force int $section
+@phan-var-force string $module
+@phan-var-force ?string $mode
+';
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$res = @include '../../main.inc.php';

@@ -444,8 +444,8 @@ class Menubase
 				$this->title = $obj->title;
 				$this->prefix = $obj->prefix;
 				$this->langs = $obj->langs;
-				$this->perms = str_replace("\"", "'", $obj->perms);
-				$this->enabled = str_replace("\"", "'", $obj->enabled);
+				$this->perms = (string) str_replace("\"", "'", $obj->perms);
+				$this->enabled = (string) str_replace("\"", "'", $obj->enabled);
 				$this->user = $obj->user;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->showtopmenuinframe = $obj->showtopmenuinframe;
