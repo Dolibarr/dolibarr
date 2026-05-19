@@ -1313,7 +1313,7 @@ if (!defined('NOREQUIRETRAN')) {
 	// accesskey is for Mac:               CTRL + Option + key for all browsers
 
 	// Note: $con->browser->os and $conf->browser->name may not be defined if we are in CLI mode.
-	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
+	$conf->browser->stringforfirstkey = $langs->transnoentities("KeyboardShortcut");
 	if (!empty($conf->browser->os) && $conf->browser->os == 'macintosh') {
 		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
 	} else {
