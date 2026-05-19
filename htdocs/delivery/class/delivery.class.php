@@ -105,6 +105,11 @@ class Delivery extends CommonObject
 	public $date_valid;
 
 	/**
+	 * @var ?int Date the document was sent to the third party
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @var string model pdf
 	 */
 	public $model_pdf;
@@ -330,6 +335,7 @@ class Delivery extends CommonObject
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
 		$sql .= " l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
 		$sql .= ", l.date_delivery, l.fk_address, l.model_pdf";
+		$sql .= ", l.date_sent";
 		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql .= ', l.fk_incoterms, l.location_incoterms';
 		$sql .= ", i.libelle as label_incoterms";
@@ -348,6 +354,8 @@ class Delivery extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid           = $this->db->jdate($obj->date_valid);
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 				$this->ref                  = $obj->ref;
 				$this->ref_customer         = $obj->ref_customer;
 				$this->socid                = $obj->fk_soc;

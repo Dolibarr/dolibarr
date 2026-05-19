@@ -171,6 +171,11 @@ class Contrat extends CommonObject
 	public $date_contrat;
 
 	/**
+	 * @var ?int Date the document was sent to the third party
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @var ?int
 	 */
 	public $commercial_signature_id;
@@ -271,6 +276,7 @@ class Contrat extends CommonObject
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'date_contrat' => array('type' => 'datetime', 'label' => 'Date contrat', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'date_sent' => array('type' => 'datetime', 'label' => 'DateSent', 'enabled' => 1, 'visible' => -1, 'position' => 46),
 		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 50, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 70),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 75),
@@ -725,6 +731,7 @@ class Contrat extends CommonObject
 		$sql .= " entity,";
 		$sql .= " signed_status,";
 		$sql .= " date_contrat as datecontrat,";
+		$sql .= " date_sent,";
 		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
@@ -770,6 +777,8 @@ class Contrat extends CommonObject
 
 					$this->date_contrat = $this->db->jdate($obj->datecontrat);
 					$this->date_creation = $this->db->jdate($obj->datecontrat);
+					$tmp_date_sent = $this->db->jdate($obj->date_sent);
+					$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 
 					$this->user_author_id = $obj->fk_user_author;
 

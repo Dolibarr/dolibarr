@@ -254,6 +254,11 @@ class Expedition extends CommonObject
 	public $date_valid;
 
 	/**
+	 * @var ?int Date the document was sent to the third party
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @var string[]
 	 */
 	public $meths;
@@ -856,6 +861,7 @@ class Expedition extends CommonObject
 		$sql .= ", e.date_valid";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
+		$sql .= ", e.date_sent";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
 		$sql .= ", e.note_private, e.note_public";
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
@@ -902,6 +908,8 @@ class Expedition extends CommonObject
 				$this->date_expedition      = $this->db->jdate($obj->date_expedition); // TODO deprecated
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planned
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->model_pdf            = $obj->model_pdf;
 				$this->shipping_method_id   = $obj->fk_shipping_method;

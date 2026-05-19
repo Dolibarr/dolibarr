@@ -62,6 +62,7 @@ class Fichinter extends CommonObject
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 45),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'date_sent' => array('type' => 'datetime', 'label' => 'DateSent', 'enabled' => 1, 'visible' => -1, 'position' => 56),
 		'datei' => array('type' => 'date', 'label' => 'Datei', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 70),
@@ -230,6 +231,11 @@ class Fichinter extends CommonObject
 	 * @var null|int|''		Date the intervention receipt has been delivered
 	 */
 	public $delivery_date_receipt;
+
+	/**
+	 * @var ?int Date the document was sent to the third party
+	 */
+	public ?int $date_sent = null;
 
 	/**
 	 * Author Id
@@ -506,6 +512,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
+		$sql .= " f.date_sent,";
 		$sql .= " f.tms as datem,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
@@ -538,6 +545,8 @@ class Fichinter extends CommonObject
 				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 				$this->fk_project   = $obj->fk_project;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
