@@ -15,6 +15,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ai/class/emailcleaner.class.php';
 
 /**
  * Class ActionsAi
@@ -96,17 +97,17 @@ class ActionsAi extends CommonHookActions
 		if (!getDolGlobalInt('AI_EMAILCLEANER_ENABLED', 0)) return 0;
 		$this->ensureStorageTables();
 
-		$rawBody = self::normalizeText((string) ($parameters['messagetext'] ?? ''));
+		$rawBody = EmailCleaner::normalizeText((string) ($parameters['messagetext'] ?? ''));
 		$subject = (string) ($parameters['subject'] ?? '');
 		$header = (string) ($parameters['header'] ?? '');
 		$from = (string) ($parameters['from'] ?? '');
-		$to = self::extractHeaderFieldValue($header, 'To');
-		$cc = self::extractHeaderFieldValue($header, 'Cc');
-		$replyTo = self::extractHeaderFieldValue($header, 'Reply-To');
-		$headerDate = self::extractHeaderFieldValue($header, 'Date');
-		$inReplyTo = self::extractHeaderFieldValue($header, 'In-Reply-To');
-		$referencesRaw = self::extractHeaderFieldValue($header, 'References');
-		$references = self::extractHeaderMessageIds($referencesRaw);
+		$to = EmailCleaner::extractHeaderFieldValue($header, 'To');
+		$cc = EmailCleaner::extractHeaderFieldValue($header, 'Cc');
+		$replyTo = EmailCleaner::extractHeaderFieldValue($header, 'Reply-To');
+		$headerDate = EmailCleaner::extractHeaderFieldValue($header, 'Date');
+		$inReplyTo = EmailCleaner::extractHeaderFieldValue($header, 'In-Reply-To');
+		$referencesRaw = EmailCleaner::extractHeaderFieldValue($header, 'References');
+		$references = EmailCleaner::extractHeaderMessageIds($referencesRaw);
 		$collectorId = (!empty($object->id) ? (int) $object->id : 0);
 		$entity = (!empty($conf->entity) ? (int) $conf->entity : 1);
 		$isolatedMode = (int) getDolGlobalInt('AI_EMAILCLEANER_ISOLATED_MODE', 1);
@@ -114,18 +115,18 @@ class ActionsAi extends CommonHookActions
 		$objectId = ($isolatedMode ? 0 : (!empty($parameters['objectid']) ? (int) $parameters['objectid'] : 0));
 		$hasAttachments = (!empty($parameters['attachments']) && is_array($parameters['attachments']));
 		$actionParamRaw = (string) ($parameters['actionparam'] ?? '');
-		$actionParamCfg = self::parseActionParamConfig($actionParamRaw);
+		$actionParamCfg = EmailCleaner::parseActionParamConfig($actionParamRaw);
 		$contextProfileCode = trim((string) (!empty($actionParamCfg['context_profile_code']) ? $actionParamCfg['context_profile_code'] : ''));
 		$contextProfileVersion = trim((string) (!empty($actionParamCfg['context_profile_version']) ? $actionParamCfg['context_profile_version'] : ''));
 
 		if (trim($rawBody) === '') return 0;
 
-		$msgid = self::extractMessageIdFromHeader($header);
+		$msgid = EmailCleaner::extractMessageIdFromHeader($header);
 		if ($msgid === '') {
 			$msgid = sha1($subject."\n".$from."\n".substr($rawBody, 0, 4000));
 		}
-		$replyOnly = self::extractReplyOnlyTextBasic($rawBody);
-		$quotedContext = self::extractQuotedThreadSnippetBasic($rawBody, 1200);
+		$replyOnly = EmailCleaner::extractReplyOnlyTextBasic($rawBody);
+		$quotedContext = EmailCleaner::extractQuotedThreadSnippetBasic($rawBody, 1200);
 		$emailContext = array(
 			'threading' => array(
 				'message_id' => $msgid,
@@ -142,7 +143,7 @@ class ActionsAi extends CommonHookActions
 			'meta' => array(
 				'date_header' => ($headerDate !== '' ? $headerDate : null),
 				'subject' => $subject,
-				'subject_normalized' => self::normalizeText($subject),
+				'subject_normalized' => EmailCleaner::normalizeText($subject),
 				'collector_id' => $collectorId,
 				'thirdparty_id' => ($thirdpartyId > 0 ? $thirdpartyId : null),
 				'object_id' => ($objectId > 0 ? $objectId : null),
@@ -155,7 +156,7 @@ class ActionsAi extends CommonHookActions
 				'has_quoted_context' => ($quotedContext !== '' ? 1 : 0),
 			),
 		);
-		$attachmentRows = self::collectAttachmentRowsForQueue(
+		$attachmentRows = EmailCleaner::collectAttachmentRowsForQueue(
 			(isset($parameters['attachments']) && is_array($parameters['attachments']) ? $parameters['attachments'] : array()),
 			(isset($parameters['savedattachments']) && is_array($parameters['savedattachments']) ? $parameters['savedattachments'] : array()),
 			(string) ($parameters['savedattachmentsdir'] ?? '')
@@ -168,13 +169,14 @@ class ActionsAi extends CommonHookActions
 			}
 		}
 
-		$cleanResult = $this->runEmailCleaner($subject, $from, $rawBody);
+		$emailCleaner = new EmailCleaner($this->db);
+		$cleanResult = $emailCleaner->runEmailCleaner($subject, $from, $rawBody);
 		$cleanedText = (string) ($cleanResult['clean_body'] ?? '');
 		$confidence = (float) ($cleanResult['confidence'] ?? 0.0);
 		$segments = (!empty($cleanResult['segments']) && is_array($cleanResult['segments'])) ? $cleanResult['segments'] : array();
 		$engine = (string) ($cleanResult['engine'] ?? 'fallback');
 		$fallbackUsed = !empty($cleanResult['fallback_used']);
-		$hCleanup = self::buildNoiseSummaryFromSegments($segments);
+		$hCleanup = EmailCleaner::buildNoiseSummaryFromSegments($segments);
 		$handoffPayload = array(
 			'handoff_version' => 'emailcleaner_v1',
 			'email' => array(
@@ -239,7 +241,7 @@ class ActionsAi extends CommonHookActions
 		if ($hasPdfAttachments && getDolGlobalInt('AI_UNASSIGNED_PDF_QUEUE_ENABLED', 1)) {
 			foreach ($attachmentRows as $attRow) {
 				if (empty($attRow['is_pdf'])) continue;
-				$docType = self::detectPdfDocTypeFromAttachmentNameAndText((string) ($attRow['name'] ?? ''), $cleanedText);
+				$docType = EmailCleaner::detectPdfDocTypeFromAttachmentNameAndText((string) ($attRow['name'] ?? ''), $cleanedText);
 				$qid = $this->insertUnassignedPdfQueueRow(
 					$entity,
 					$collectorId,
@@ -581,491 +583,4 @@ class ActionsAi extends CommonHookActions
 		@file_put_contents($file, $line."\n", FILE_APPEND);
 	}
 
-	/**
-	 * Parse action parameter configuration (JSON).
-	 *
-	 * @param string $raw
-	 * @return array<string,mixed>
-	 */
-	private static function parseActionParamConfig($raw)
-	{
-		$raw = trim((string) $raw);
-		if ($raw === '') return array();
-		if ($raw[0] !== '{') return array('context_profile_code' => $raw);
-		$dec = json_decode($raw, true);
-		if (!is_array($dec)) return array();
-		return $dec;
-	}
-
-	/**
-	 * Build minimal excluded-noise summary from segments.
-	 *
-	 * @param array<int,mixed> $segments
-	 * @return array<string,mixed>
-	 */
-	private static function buildNoiseSummaryFromSegments($segments)
-	{
-		$out = array('counts' => array(), 'samples' => array());
-		if (empty($segments) || !is_array($segments)) return $out;
-		foreach ($segments as $seg) {
-			if (!is_array($seg)) continue;
-			$type = strtolower(trim((string) ($seg['type'] ?? 'unknown')));
-			$text = trim((string) ($seg['text'] ?? ''));
-			if ($type === '') $type = 'unknown';
-			if (empty($out['counts'][$type])) $out['counts'][$type] = 0;
-			$out['counts'][$type]++;
-			if ($text !== '' && (empty($out['samples'][$type]) || !is_array($out['samples'][$type]))) $out['samples'][$type] = array();
-			if ($text !== '' && is_array($out['samples'][$type]) && count($out['samples'][$type]) < 2) {
-				$out['samples'][$type][] = (strlen($text) > 180 ? substr($text, 0, 180) : $text);
-			}
-		}
-		return $out;
-	}
-
-	/**
-	 * Extract attachment rows with stable metadata.
-	 *
-	 * @param array<int,mixed> $attachments
-	 * @param array<int,mixed> $savedAttachments
-	 * @param string $savedDir
-	 * @return array<int,array<string,mixed>>
-	 */
-	private static function collectAttachmentRowsForQueue($attachments, $savedAttachments, $savedDir = '')
-	{
-		$out = array();
-		$savedByName = array();
-		if (is_array($savedAttachments)) {
-			foreach ($savedAttachments as $sa) {
-				if (!is_array($sa)) continue;
-				$n = trim((string) ($sa['name'] ?? ''));
-				if ($n === '') continue;
-				$savedByName[strtolower($n)] = $sa;
-			}
-		}
-
-		if (is_array($attachments)) {
-			foreach ($attachments as $att) {
-				$name = '';
-				$relative = '';
-				$sha = '';
-				if (is_object($att)) {
-					if (method_exists($att, 'getName')) $name = (string) $att->getName();
-					if (method_exists($att, 'getPath')) $relative = (string) $att->getPath();
-					if (method_exists($att, 'getContent')) {
-						$content = (string) $att->getContent();
-						if ($content !== '') $sha = hash('sha256', $content);
-					}
-				} elseif (is_array($att)) {
-					$name = (string) (!empty($att['name']) ? $att['name'] : '');
-					$relative = (string) (!empty($att['path']) ? $att['path'] : '');
-				}
-				if ($name === '') continue;
-				$lookup = strtolower($name);
-				if (isset($savedByName[$lookup]) && is_array($savedByName[$lookup])) {
-					$sa = $savedByName[$lookup];
-					if (!empty($sa['relative_path'])) $relative = (string) $sa['relative_path'];
-					if (!empty($sa['sha256'])) $sha = (string) $sa['sha256'];
-				}
-				if ($sha === '' && $relative !== '') {
-					$candidate = $relative;
-					if ($candidate[0] !== '/' && $savedDir !== '') $candidate = rtrim($savedDir, '/').'/'.$candidate;
-					if (@is_readable($candidate)) {
-						$h = @hash_file('sha256', $candidate);
-						if (is_string($h) && $h !== '') $sha = $h;
-					}
-				}
-				$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-				$out[] = array(
-					'name' => $name,
-					'relative_path' => $relative,
-					'sha256' => $sha,
-					'is_pdf' => ($ext === 'pdf'),
-				);
-			}
-		}
-
-		if (empty($out) && is_array($savedAttachments)) {
-			foreach ($savedAttachments as $sa) {
-				if (!is_array($sa)) continue;
-				$name = trim((string) ($sa['name'] ?? ''));
-				if ($name === '') continue;
-				$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-				$out[] = array(
-					'name' => $name,
-					'relative_path' => (string) ($sa['relative_path'] ?? ''),
-					'sha256' => (string) ($sa['sha256'] ?? ''),
-					'is_pdf' => ($ext === 'pdf'),
-				);
-			}
-		}
-
-		return $out;
-	}
-
-	/**
-	 * Detect document-like type from attachment name and cleaned text.
-	 *
-	 * @param string $filename
-	 * @param string $cleanedText
-	 * @return string
-	 */
-	private static function detectPdfDocTypeFromAttachmentNameAndText($filename, $cleanedText)
-	{
-		$nameLow = strtolower(dol_string_nospecial((string) $filename));
-		$textLow = strtolower(dol_string_nospecial((string) $cleanedText));
-		if (preg_match('/\b(invoice|factura|fatura|fattura|facture)\b/', $nameLow.' '.$textLow)) return 'invoice_like';
-		if (preg_match('/\b(order|pedido|booking|reserva|reservation|proforma|pro forma)\b/', $nameLow.' '.$textLow)) return 'order_like';
-		return 'unknown';
-	}
-
-	/**
-	 * Run AI cleaner with conservative fallback.
-	 *
-	 * @param string $subject
-	 * @param string $from
-	 * @param string $rawBody
-	 * @return array<string,mixed>
-	 */
-	private function runEmailCleaner($subject, $from, $rawBody)
-	{
-		$out = array(
-			'clean_body' => self::fallbackCleanBody($rawBody),
-			'confidence' => 0.40,
-			'segments' => array(),
-			'engine' => 'fallback',
-			'fallback_used' => true,
-		);
-
-		require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
-		$ai = new Ai($this->db);
-		if (empty($ai->getApiService())) return $out;
-
-		$maxInput = (int) getDolGlobalInt('AI_EMAILCLEANER_MAX_INPUT', 16000);
-		if ($maxInput <= 1000) $maxInput = 16000;
-		$bodyForPrompt = $rawBody;
-		if (strlen($bodyForPrompt) > $maxInput) {
-			$bodyForPrompt = substr($bodyForPrompt, 0, $maxInput);
-		}
-
-		$prompt = "You are an EmailCleaner for ERP ingestion.\n";
-		$prompt .= "Task: separate current message content from quoted thread and repetitive noise.\n";
-		$prompt .= "Important constraints:\n";
-		$prompt .= "- Do NOT classify business intent and do NOT decide any action.\n";
-		$prompt .= "- Be conservative: when unsure, keep text in clean_body.\n";
-		$prompt .= "- Return valid JSON only.\n";
-		$prompt .= "JSON schema:\n";
-		$prompt .= "{\n";
-		$prompt .= "  \"clean_body\": string,\n";
-		$prompt .= "  \"segments\": [\n";
-		$prompt .= "    {\"type\":\"main_content|quoted_thread|signature|legal_disclaimer|system_noise|unknown\",\"text\":string}\n";
-		$prompt .= "  ],\n";
-		$prompt .= "  \"confidence\": number\n";
-		$prompt .= "}\n";
-		$prompt .= "Email metadata:\n";
-		$prompt .= "FROM: ".$from."\n";
-		$prompt .= "SUBJECT: ".$subject."\n";
-		$prompt .= "BODY:\n".$bodyForPrompt;
-
-		$generated = $ai->generateContent($prompt, 'auto', 'textgeneration', '');
-		if (is_array($generated) && !empty($generated['error'])) return $out;
-		if (!is_string($generated) || trim($generated) === '') return $out;
-
-		$decoded = self::decodeJsonFromAiString($generated);
-		if (empty($decoded) || !is_array($decoded)) return $out;
-
-		$cleanBody = self::normalizeText((string) ($decoded['clean_body'] ?? ''));
-		if ($cleanBody === '') return $out;
-
-		$confidence = (float) ($decoded['confidence'] ?? 0.0);
-		if ($confidence < 0) $confidence = 0;
-		if ($confidence > 1) $confidence = 1;
-
-		$minConfidence = (float) getDolGlobalString('AI_EMAILCLEANER_MIN_CONFIDENCE', '0.60');
-		if ($minConfidence <= 0 || $minConfidence > 1) $minConfidence = 0.60;
-
-		$segments = array();
-		if (!empty($decoded['segments']) && is_array($decoded['segments'])) {
-			foreach ($decoded['segments'] as $seg) {
-				if (!is_array($seg)) continue;
-				$type = trim((string) ($seg['type'] ?? 'unknown'));
-				$text = self::normalizeText((string) ($seg['text'] ?? ''));
-				if ($text === '') continue;
-				if ($type === '') $type = 'unknown';
-				$segments[] = array('type' => $type, 'text' => $text);
-				if (count($segments) >= 80) break;
-			}
-		}
-
-		if ($confidence < $minConfidence) {
-			// Conservative fallback: keep more context if confidence is low.
-			$out['clean_body'] = self::fallbackCleanBody($rawBody);
-			$out['confidence'] = $confidence;
-			$out['segments'] = $segments;
-			$out['engine'] = 'ai_low_confidence_fallback';
-			$out['fallback_used'] = true;
-			return $out;
-		}
-
-		$out['clean_body'] = $cleanBody;
-		$out['confidence'] = $confidence;
-		$out['segments'] = $segments;
-		$out['engine'] = 'ai';
-		$out['fallback_used'] = false;
-
-		return $out;
-	}
-
-	/**
-	 * Conservative fallback cleaner.
-	 *
-	 * @param string $rawBody
-	 * @return string
-	 */
-	private static function fallbackCleanBody($rawBody)
-	{
-		$text = self::normalizeText($rawBody);
-		if ($text === '') return '';
-
-		$lines = preg_split('/\n+/', $text);
-		if (!is_array($lines)) return trim($text);
-
-		$out = array();
-		foreach ($lines as $line) {
-			$line = trim((string) $line);
-			if ($line === '') continue;
-
-			$low = dol_string_nospecial($line);
-			$low = strtolower($low);
-			if (preg_match('/^(from|de|sent|enviado|to|para|subject|asunto)\b[^:]{0,12}:/i', $line)) break;
-			if (strpos($low, 'original message') !== false) break;
-			if (strpos($low, 'mensaje original') !== false) break;
-			if (strpos($low, 'forwarded message') !== false) break;
-			if (preg_match('/^\>+/', $line)) continue;
-			if (preg_match('/\b(confidential|privacidad|confidencialidad)\b/i', $line)) continue;
-
-			$out[] = $line;
-			if (strlen(implode("\n", $out)) > 6000) break;
-		}
-
-		$clean = trim(implode("\n", $out));
-		if ($clean === '') {
-			$clean = trim(substr($text, 0, 2000));
-		}
-
-		return $clean;
-	}
-
-	/**
-	 * Normalize text to UTF-8 LF-only.
-	 *
-	 * @param string $text
-	 * @return string
-	 */
-	private static function normalizeText($text)
-	{
-		$text = (string) $text;
-		$text = str_replace("\r\n", "\n", $text);
-		$text = str_replace("\r", "\n", $text);
-		return trim($text);
-	}
-
-	/**
-	 * Extract Message-ID from raw RFC822 header.
-	 *
-	 * @param string $header
-	 * @return string
-	 */
-	private static function extractMessageIdFromHeader($header)
-	{
-		$header = (string) $header;
-		if ($header === '') return '';
-		if (preg_match('/^Message-ID:\s*<([^>]+)>/mi', $header, $m)) {
-			return trim((string) $m[1]);
-		}
-		if (preg_match('/^Message-ID:\s*([^\s]+)/mi', $header, $m)) {
-			return trim(str_replace(array('<', '>'), '', (string) $m[1]));
-		}
-		return '';
-	}
-
-	/**
-	 * Extract unfolded RFC822 header value.
-	 *
-	 * @param string $header
-	 * @param string $fieldName
-	 * @return string
-	 */
-	private static function extractHeaderFieldValue($header, $fieldName)
-	{
-		$header = str_replace("\r\n", "\n", (string) $header);
-		$header = str_replace("\r", "\n", $header);
-		$fieldName = trim((string) $fieldName);
-		if ($header === '' || $fieldName === '') return '';
-
-		$re = '/^'.preg_quote($fieldName, '/').'\s*:\s*(.+)$/mi';
-		if (!preg_match($re, $header, $m, PREG_OFFSET_CAPTURE)) return '';
-
-		$val = (string) ($m[1][0] ?? '');
-		$offset = (int) ($m[1][1] ?? 0);
-		$after = substr($header, $offset + strlen($val));
-		if ($after !== '') {
-			$lines = preg_split("/\n/", $after);
-			if (is_array($lines)) {
-				foreach ($lines as $ln) {
-					if ($ln === '') break;
-					if (preg_match('/^[ \t]+/', $ln)) {
-						$val .= ' '.trim($ln);
-						continue;
-					}
-					break;
-				}
-			}
-		}
-
-		return trim(str_replace(array('<', '>'), '', $val));
-	}
-
-	/**
-	 * Parse message-id list from References-like header.
-	 *
-	 * @param string $raw
-	 * @return array<int,string>
-	 */
-	private static function extractHeaderMessageIds($raw)
-	{
-		$raw = trim((string) $raw);
-		if ($raw === '') return array();
-
-		$out = array();
-		if (preg_match_all('/<([^>]+)>/', $raw, $m)) {
-			foreach ((array) ($m[1] ?? array()) as $v) {
-				$v = trim((string) $v);
-				if ($v === '') continue;
-				$out[] = $v;
-			}
-		}
-		if (empty($out)) {
-			$parts = preg_split('/\s+/', str_replace(array(',', ';'), ' ', $raw));
-			if (is_array($parts)) {
-				foreach ($parts as $p) {
-					$p = trim(str_replace(array('<', '>'), '', (string) $p));
-					if ($p === '' || strpos($p, '@') === false) continue;
-					$out[] = $p;
-				}
-			}
-		}
-
-		$out = array_values(array_unique($out));
-		if (count($out) > 20) $out = array_slice($out, -20);
-		return $out;
-	}
-
-	/**
-	 * Extract reply-only part with a conservative separator strategy.
-	 *
-	 * @param string $body
-	 * @return string
-	 */
-	private static function extractReplyOnlyTextBasic($body)
-	{
-		$body = self::normalizeText((string) $body);
-		if ($body === '') return '';
-
-		$separators = array(
-			'-----Original Message-----',
-			'----- Original Message -----',
-			'-----Mensaje original-----',
-			'----- Mensaje original -----',
-			'-----Mensagem original-----',
-			'----- Mensagem original -----',
-			'----- Forwarded message -----',
-		);
-		foreach ($separators as $sep) {
-			$pos = stripos($body, $sep);
-			if ($pos !== false && $pos > 0) {
-				return trim(substr($body, 0, $pos));
-			}
-		}
-
-		$lines = preg_split("/\n/", $body);
-		if (!is_array($lines)) return $body;
-		$out = array();
-		foreach ($lines as $line) {
-			$trim = trim((string) $line);
-			if ($trim === '') {
-				if (!empty($out)) $out[] = '';
-				continue;
-			}
-			if (preg_match('/^(from|de|sent|enviado|to|para|subject|asunto)\b[^:]{0,12}:/i', $trim)) break;
-			if (preg_match('/^>+/', $trim)) break;
-			$out[] = $line;
-			if (strlen(implode("\n", $out)) > 4000) break;
-		}
-
-		return trim(implode("\n", $out));
-	}
-
-	/**
-	 * Build compact quoted context snippet for auditing/context transfer.
-	 *
-	 * @param string $body
-	 * @param int $maxLen
-	 * @return string
-	 */
-	private static function extractQuotedThreadSnippetBasic($body, $maxLen = 1200)
-	{
-		$body = self::normalizeText((string) $body);
-		$maxLen = (int) $maxLen;
-		if ($body === '') return '';
-		if ($maxLen <= 0) $maxLen = 1200;
-
-		$startPos = false;
-		foreach (array('original message', 'mensaje original', 'mensagem original', 'forwarded message') as $needle) {
-			$p = stripos($body, $needle);
-			if ($p !== false && ($startPos === false || $p < $startPos)) $startPos = $p;
-		}
-		if ($startPos === false) {
-			$lines = preg_split("/\n/", $body);
-			if (!is_array($lines)) return '';
-			$quoteLines = array();
-			foreach ($lines as $ln) {
-				$t = trim((string) $ln);
-				if ($t === '') continue;
-				if (preg_match('/^\>+/', $t)) {
-					$quoteLines[] = preg_replace('/^\>+\s*/', '', $t);
-				}
-			}
-			$txt = trim(implode("\n", $quoteLines));
-			return (strlen($txt) > $maxLen ? substr($txt, 0, $maxLen) : $txt);
-		}
-
-		$txt = trim(substr($body, (int) $startPos));
-		if (strlen($txt) > $maxLen) $txt = substr($txt, 0, $maxLen);
-		return $txt;
-	}
-
-	/**
-	 * Decode JSON from AI output that may contain wrappers.
-	 *
-	 * @param string $raw
-	 * @return array<string,mixed>|null
-	 */
-	private static function decodeJsonFromAiString($raw)
-	{
-		$raw = trim((string) $raw);
-		if ($raw === '') return null;
-
-		$decoded = json_decode($raw, true);
-		if (is_array($decoded)) return $decoded;
-
-		$first = strpos($raw, '{');
-		$last = strrpos($raw, '}');
-		if ($first === false || $last === false || $last <= $first) return null;
-
-		$payload = substr($raw, $first, $last - $first + 1);
-		$decoded = json_decode($payload, true);
-		if (!is_array($decoded)) return null;
-
-		return $decoded;
-	}
 }
