@@ -1555,6 +1555,13 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
+		// Date sent (read-only — automatically set on email send)
+		if ($object->date_sent) {
+			print '<tr><td class="titlefield">'.$langs->trans('DateSent').'</td>';
+			print '<td>'.dol_print_date($object->date_sent, 'dayhour', 'tzserver').'</td>';
+			print '</tr>';
+		}
+
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
