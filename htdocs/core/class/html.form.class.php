@@ -1374,7 +1374,8 @@ class Form
 	 * @param array                 $outarray2      Reference to the detailed output array.
 	 * @return void
 	 */
-	private function injectCustomOptionsSecure(array $options, array $selected, int $outputmode, string &$out, array &$outarray, array &$outarray2): void {
+	private function injectCustomOptionsSecure(array $options, array $selected, int $outputmode, string &$out, array &$outarray, array &$outarray2): void
+	{
 		// Early exit if no options to process
 		if (empty($options)) {
 			return;
@@ -2909,8 +2910,8 @@ class Form
 		// 2. Inject $after options
 		$this->injectCustomOptionsSecure($after, $selected, $outputmode, $out, $outarray, $outarray2);
 
-        // Now close the tag
-        $out .= '</select>';
+		// Now close the tag
+		$out .= '</select>';
 
 		$this->num = $num;
 

@@ -344,16 +344,16 @@ if ($search_task_billable && $search_task_billable != '-1') {
 // Assignment filter: works from both $search_user_id and $search_assignment
 $assignmentFilter = 0;
 if (!empty($search_user_id) && $search_user_id < -1) {
-    $assignmentFilter = $search_user_id;
+	$assignmentFilter = $search_user_id;
 } elseif (!empty($search_assignment)) {
-    $assignmentFilter = (int) $search_assignment;
+	$assignmentFilter = (int) $search_assignment;
 }
 
 if ($assignmentFilter != 0) {
 	$subq = "SELECT 1 FROM " . $db->prefix() . "element_contact ec INNER JOIN " . $db->prefix() . "c_type_contact tc ON ec.fk_c_type_contact = tc.rowid WHERE ec.element_id = t.rowid AND tc.element = 'project_task'";
 
 	// this is ugly, find the variable called assignmentOptions and see the explanation for these numbers.
-	// we use these numbers because select_dolusers() want's to use integers and not strings.
+	// we use these numbers because select_dolusers() wants to use integers and not strings.
 	switch ($assignmentFilter) {
 		case -100:
 			$morewherefilterarray[] = "EXISTS (" . $subq . ")";
