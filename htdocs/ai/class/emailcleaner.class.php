@@ -156,6 +156,7 @@ class EmailCleaner
 		$engine = (string) ($cleanResult['engine'] ?? 'fallback');
 		$fallbackUsed = !empty($cleanResult['fallback_used']);
 		$hCleanup = self::buildNoiseSummaryFromSegments($segments);
+		$complianceMeta = self::buildComplianceMetadata($engine, $fallbackUsed, $confidence);
 		$handoffPayload = array(
 			'handoff_version' => 'emailcleaner_v1',
 			'email' => array(
@@ -179,6 +180,7 @@ class EmailCleaner
 				'fallback_used' => ($fallbackUsed ? 1 : 0),
 			),
 			'excluded_noise_summary' => $hCleanup,
+			'compliance' => $complianceMeta,
 			'needs_reprocessing' => ($fallbackUsed || $confidence < (float) getDolGlobalString('AI_EMAILCLEANER_MIN_CONFIDENCE', '0.60') ? 1 : 0),
 			'needs_pdf_review' => ($hasPdfAttachments ? 1 : 0),
 		);
@@ -212,6 +214,7 @@ class EmailCleaner
 			'engine' => $engine,
 			'fallback_used' => ($fallbackUsed ? 1 : 0),
 			'email_context' => $emailContext,
+			'compliance' => $complianceMeta,
 			'handoff_payload_json' => $handoffPayload,
 			'date_cleaning_gmt' => dol_print_date(dol_now('gmt'), '%Y-%m-%d %H:%M:%S'),
 		);
@@ -604,6 +607,31 @@ class EmailCleaner
 			}
 		}
 		return $out;
+	}
+
+	/**
+	 * Build compliance metadata for transparency and supervision.
+	 *
+	 * @param string $engine Cleaner engine
+	 * @param bool $fallbackUsed 1 if fallback mode was used
+	 * @param float $confidence Cleaner confidence
+	 * @return array<string,mixed>
+	 */
+	public static function buildComplianceMetadata($engine, $fallbackUsed, $confidence)
+	{
+		$minConfidence = (float) getDolGlobalString('AI_EMAILCLEANER_MIN_CONFIDENCE', '0.60');
+		if ($minConfidence <= 0 || $minConfidence > 1) $minConfidence = 0.60;
+
+		return array(
+			'ai_transparency_label' => 'AI-generated technical preprocessing output',
+			'human_review_required' => 1,
+			'autonomous_business_action_allowed' => 0,
+			'ai_system_used' => ((string) $engine === 'ai' ? 1 : 0),
+			'fallback_used' => ($fallbackUsed ? 1 : 0),
+			'cleaning_confidence' => (float) $confidence,
+			'confidence_threshold' => $minConfidence,
+			'policy_scope' => 'diagnostic_only_no_business_decision',
+		);
 	}
 
 	/**
