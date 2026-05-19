@@ -160,31 +160,45 @@ class ToolEmailCleaner extends McpTool
 	public function execute(string $name, array $args)
 	{
 		if (!$this->canReadEmailData()) {
-			return ['error' => "Permission Denied: You don't have rights to read email cleaner data."];
+			return $this->appendComplianceMetadata(['error' => "Permission Denied: You don't have rights to read email cleaner data."]);
 		}
 
+		$result = null;
 		switch ($name) {
 			case 'list_email_cleaner_runs':
-				return $this->listEmailCleanerRuns($args);
+				$result = $this->listEmailCleanerRuns($args);
+				break;
 
 			case 'get_email_cleaner_run':
-				return $this->getEmailCleanerRun($args);
+				$result = $this->getEmailCleanerRun($args);
+				break;
 
 			case 'get_email_thread_context':
-				return $this->getEmailThreadContext($args);
+				$result = $this->getEmailThreadContext($args);
+				break;
 
 			case 'list_email_pdf_queue':
-				return $this->listEmailPdfQueue($args);
+				$result = $this->listEmailPdfQueue($args);
+				break;
 
 			case 'get_email_pdf_queue_item':
-				return $this->getEmailPdfQueueItem($args);
+				$result = $this->getEmailPdfQueueItem($args);
+				break;
 
 			case 'get_email_handoff_payload':
-				return $this->getEmailHandoffPayload($args);
+				$result = $this->getEmailHandoffPayload($args);
+				break;
 
 			default:
-				return ['error' => "Tool function '$name' not found."];
+				$result = ['error' => "Tool function '$name' not found."];
+				break;
 		}
+
+		if (is_array($result)) {
+			return $this->appendComplianceMetadata($result);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -664,5 +678,23 @@ class ToolEmailCleaner extends McpTool
 		if ($val < 0) $val = 0;
 		if ($val > 1) $val = 1;
 		return $val;
+	}
+
+	/**
+	 * Append compliance disclosure to MCP responses.
+	 *
+	 * @param array<string,mixed> $result Tool output
+	 * @return array<string,mixed>
+	 */
+	private function appendComplianceMetadata(array $result): array
+	{
+		$result['compliance'] = array(
+			'ai_transparency_label' => 'AI-derived technical evidence',
+			'human_review_required' => 1,
+			'autonomous_business_action_allowed' => 0,
+			'policy_scope' => 'diagnostic_only_no_business_decision',
+		);
+
+		return $result;
 	}
 }
