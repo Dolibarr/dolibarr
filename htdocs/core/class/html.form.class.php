@@ -1366,70 +1366,47 @@ class Form
 	/**
 	 * Injects custom options (before/after) into a select list securely.
 	 *
-	 * @param array<int, string> $options        Associative array of [key => label]. Keys must be integers (typically negative for before/after options).
-	 * @param array<int|string>  $selected       Array of currently selected values.
-	 * @param int                $outputmode     0=HTML only, 1=Simple Array, 2=Detailed Array.
-	 * @param string             $out            Reference to the HTML output string (passed by ref for efficiency).
-	 * @param array<string, string>              $outarray       Reference to the simple output array.
-	 * @param array<string, array{id: string, label: string, labelhtml: string, color: string, picto: string}> $outarray2 Reference to the detailed output array.
+	 * @param array<int, string> $options
+	 * @param array<int|string>  $selected
+	 * @param int                $outputmode
+	 * @param string             $out
+	 * @param array<int, string> $outarray
+	 * @param array<int, array{id: int, label: string, labelhtml: string, color: string, picto: string}> $outarray2
 	 * @return void
 	 */
 	private function injectCustomOptionsSecure(array $options, array $selected, int $outputmode, string &$out, array &$outarray, array &$outarray2): void
 	{
-		// Early exit if no options to process
 		if (empty($options)) {
 			return;
 		}
 
-		// Sort keys numerically/alphabetically to ensure deterministic order
-		// ksort handles mixed keys safely
 		ksort($options);
 
-		foreach ($options as $rawKey => $rawLabel) {
-			// --- SECURITY: Sanitize Key ---
-			// Ensure key is a string to prevent type confusion in HTML value attribute
-			// and to ensure consistent comparison logic.
-			$safeKey = (string) $rawKey;
-
-			// --- SECURITY: Sanitize Label ---
-			// Escape HTML entities to prevent XSS in the label text
-			$safeLabel = dol_escape_htmltag($rawLabel);
-
-			// --- LOGIC: Determine Selection State ---
+		foreach ($options as $key => $label) {
+			$safeLabel = dol_escape_htmltag($label);
 			$isSelected = '';
 
-			// Only check selection if $selected is a non-empty array
 			if (!empty($selected)) {
-				// Use strict comparison for safety, but cast selected item to string for comparison
-				// to match our sanitized key type.
 				foreach ($selected as $selItem) {
-					if ((string) $selItem === $safeKey) {
+					if ((string) $selItem === (string) $key) {
 						$isSelected = ' selected';
 						break;
 					}
 				}
 			}
 
-			// --- OUTPUT: Generate Safe HTML ---
-			// Construct the option tag. The value attribute is the sanitized key.
-			// The inner text is the sanitized label.
-			$out .= '<option value="' . $safeKey . '"' . $isSelected . '>' . $safeLabel . '</option>' . "\n";
-
-			// --- OUTPUT: Populate Arrays (if requested) ---
+			$out .= '<option value="' . (string) $key . '"' . $isSelected . '>' . $safeLabel . '</option>' . "\n";
 			if ($outputmode === 2) {
-				// Detailed array mode
-				$outarray2[$safeKey] = [
-					'id'	  => $safeKey,
-					'label'   => $rawLabel, // Keep raw for internal logic if needed, but labelhtml is escaped
+				$outarray2[$key] = [
+					'id'      => $key,
+					'label'   => $label,
 					'labelhtml' => $safeLabel,
 					'color'   => '',
 					'picto'   => ''
 				];
 			} elseif ($outputmode === 1) {
-				// Simple array mode
-				$outarray[$safeKey] = $rawLabel;
+				$outarray[$key] = $label;
 			}
-			// If outputmode is 0, we only care about the HTML string ($out)
 		}
 	}
 
@@ -2564,7 +2541,7 @@ class Form
 	 * @param array<int,string>	$before 		Array of custom options to insert BEFORE the list of users. Keys must be negative integers (e.g. -5, -6) to avoid collision with real user IDs. Values are the labels.
 	 * @param array<int,string>	$after 			Array of custom options to insert AFTER the list of users. Keys must be negative integers. Values are the labels.
 	 * @return array<string|int, array{id: string|int, label: string, labelhtml: string, color: string, picto: string}>|string
-	* @see select_dolgroups()
+	 * @see select_dolgroups()
 	 */
 	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0, $before = [], $after = [])
 	{
@@ -2884,13 +2861,13 @@ class Form
 					$out .= '</option>';
 
 					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength) . $moreinfo;
-					array_push($outarray2, array(
+					$outarray2[(int) $userstatic->id] = array(
 						'id' => (int) $userstatic->id,
 						'label' => $labeltoshow,
 						'labelhtml' => $labeltoshowhtml,
 						'color' => '',
 						'picto' => ''
-					));
+					);
 
 					$i++;
 				}
