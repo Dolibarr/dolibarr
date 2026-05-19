@@ -2896,9 +2896,19 @@ class Form
 		if ($outputmode == 2) {
 			return $outarray2;
 		} elseif ($outputmode) {
-			return $outarray;
+			// Convert $outarray to the expected format
+			$convertedArray = [];
+			foreach ($outarray as $key => $value) {
+				$convertedArray[$key] = [
+					'id' => $key,
+					'label' => $value,
+					'labelhtml' => $value,
+					'color' => '',
+					'picto' => ''
+				];
+			}
+			return $convertedArray;
 		}
-
 		return $out;
 	}
 
