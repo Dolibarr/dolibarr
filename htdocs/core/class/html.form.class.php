@@ -2540,7 +2540,7 @@ class Form
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
 	 * @param array<int,string>	$before 		Array of custom options to insert BEFORE the list of users. Keys must be negative integers (e.g. -5, -6) to avoid collision with real user IDs. Values are the labels.
 	 * @param array<int,string>	$after 			Array of custom options to insert AFTER the list of users. Keys must be negative integers. Values are the labels.
-	 * @return array<string|int, array{id: string|int, label: string, labelhtml: string, color: string, picto: string}>|string
+	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
 	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0, $before = [], $after = [])
@@ -2896,18 +2896,7 @@ class Form
 		if ($outputmode == 2) {
 			return $outarray2;
 		} elseif ($outputmode) {
-			// Convert $outarray to the expected format
-			$convertedArray = [];
-			foreach ($outarray as $key => $value) {
-				$convertedArray[$key] = [
-					'id' => $key,
-					'label' => $value,
-					'labelhtml' => $value,
-					'color' => '',
-					'picto' => ''
-				];
-			}
-			return $convertedArray;
+			return $outarray;
 		}
 		return $out;
 	}
