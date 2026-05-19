@@ -194,7 +194,7 @@ class ToolEmailCleaner extends McpTool
 	 */
 	private function canReadEmailData(): bool
 	{
-		if (empty($this->user) || empty($this->user->id)) return false;
+		if (empty($this->user->id)) return false;
 		if (!is_object($this->conf) || !isModEnabled('ai')) return false;
 		if (!isModEnabled('emailcollector')) return false;
 		if (!getDolGlobalInt('AI_EMAILCLEANER_ENABLED', 0)) return false;

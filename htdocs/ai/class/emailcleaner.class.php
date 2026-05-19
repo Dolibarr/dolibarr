@@ -388,7 +388,7 @@ class EmailCleaner
 	 * @param string $msgid Message id
 	 * @param string $rawBody Raw message body
 	 * @param string $cleanedText Cleaned message body
-	 * @param array $segments Cleaner segments
+	 * @param array<int,array<string,mixed>> $segments Cleaner segments
 	 * @param float $confidence Cleaner confidence
 	 * @param string $engine Cleaner engine
 	 * @param string|null $model AI model identifier
@@ -396,8 +396,8 @@ class EmailCleaner
 	 * @param string $promptVersion Prompt version
 	 * @param string $contextProfileCode Context profile code
 	 * @param string $contextProfileVersion Context profile version
-	 * @param array $emailContext Extracted email context
-	 * @param array $handoffPayload Handoff payload
+	 * @param array<string,mixed> $emailContext Extracted email context
+	 * @param array<string,mixed> $handoffPayload Handoff payload
 	 * @return int
 	 */
 	private function insertCleaningRow($entity, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $handoffPayload)
@@ -599,7 +599,7 @@ class EmailCleaner
 			if (empty($out['counts'][$type])) $out['counts'][$type] = 0;
 			$out['counts'][$type]++;
 			if ($text !== '' && (empty($out['samples'][$type]) || !is_array($out['samples'][$type]))) $out['samples'][$type] = array();
-			if ($text !== '' && is_array($out['samples'][$type]) && count($out['samples'][$type]) < 2) {
+			if ($text !== '' && count($out['samples'][$type]) < 2) {
 				$out['samples'][$type][] = (strlen($text) > 180 ? substr($text, 0, 180) : $text);
 			}
 		}
@@ -655,7 +655,7 @@ class EmailCleaner
 					if ($candidate[0] !== '/' && $savedDir !== '') $candidate = rtrim($savedDir, '/').'/'.$candidate;
 					if (@is_readable($candidate)) {
 						$h = @hash_file('sha256', $candidate);
-						if (is_string($h) && $h !== '') $sha = $h;
+						if (is_string($h)) $sha = $h;
 					}
 				}
 				$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
@@ -882,7 +882,7 @@ class EmailCleaner
 
 		$out = array();
 		if (preg_match_all('/<([^>]+)>/', $raw, $m)) {
-			foreach ((array) ($m[1] ?? array()) as $v) {
+			foreach ((array) $m[1] as $v) {
 				$v = trim((string) $v);
 				if ($v === '') continue;
 				$out[] = $v;
