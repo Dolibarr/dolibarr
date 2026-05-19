@@ -163,7 +163,7 @@ class ToolEmailCleaner extends McpTool
 			return $this->appendComplianceMetadata(['error' => "Permission Denied: You don't have rights to read email cleaner data."]);
 		}
 
-		$result = null;
+		$result = array();
 		switch ($name) {
 			case 'list_email_cleaner_runs':
 				$result = $this->listEmailCleanerRuns($args);
@@ -194,11 +194,7 @@ class ToolEmailCleaner extends McpTool
 				break;
 		}
 
-		if (is_array($result)) {
-			return $this->appendComplianceMetadata($result);
-		}
-
-		return $result;
+		return $this->appendComplianceMetadata($result);
 	}
 
 	/**
