@@ -1914,7 +1914,7 @@ class Form
 	 * @param int<0,1>			$showcode 		Show code in list
 	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 * @see select_company()
-	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
+	 * @phpstan-return ($outputmode is 1 ? array<int,array{id:int,label:string,labelhtml:string,color:string,picto:string}> : string)
 	 */
 	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -2634,6 +2634,7 @@ class Form
 
 		$out = '';
 		$outarray = array();
+		/** @var array<int, array{id: int, label: string, labelhtml: string, color: string, picto: string}> $outarray2 */
 		$outarray2 = array();
 
 		// Do we want to show the label of entity into the combo list ?
@@ -2883,13 +2884,13 @@ class Form
 					$out .= '</option>';
 
 					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength) . $moreinfo;
-					$outarray2[(int) $userstatic->id] = array(
+					array_push($outarray2, array(
 						'id' => (int) $userstatic->id,
 						'label' => $labeltoshow,
 						'labelhtml' => $labeltoshowhtml,
 						'color' => '',
 						'picto' => ''
-					);
+					));
 
 					$i++;
 				}
