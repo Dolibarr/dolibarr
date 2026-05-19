@@ -345,7 +345,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 				$db->commit();
 				$db->close();
 
-				header("Location: ".dolBuildurl($_SERVER["PHP_SELF"], ["id" => $id]));
+				header("Location: ".dolBuildUrl($_SERVER["PHP_SELF"], ["id" => $id]));
 				exit;
 			} else {
 				$id = $originalId;
@@ -653,14 +653,14 @@ if ($id) {
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="' . newToken().'">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects(-1, (string) $object->fk_project, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, (property_exists($object, 'socid') ? $object->socid : 0), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -706,7 +706,7 @@ if ($id) {
 	} else {
 		$sens = $langs->trans("Debit");
 	}
-	print '<tr><td>'.$langs->trans("Sens").'</td><td>' . $sens . '</td></tr>';
+	print '<tr><td>'.$langs->trans("Sens").'</td><td>'.$sens.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
@@ -807,10 +807,10 @@ if ($id) {
 			if ($alreadyaccounted) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id=' . $object->id . '&action=delete&token=' . newToken().'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token=' . newToken().'">'.$langs->trans("Delete").'</a></div>';
 			}
 		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . (dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
