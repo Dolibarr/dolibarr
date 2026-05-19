@@ -54,10 +54,10 @@ class ActionsAi extends CommonHookActions
 	/**
 	 * Add AI Email Cleaner action in EmailCollector operations.
 	 *
-	 * @param array<string,mixed> $parameters
-	 * @param CommonObject $object
-	 * @param string $action
-	 * @param HookManager $hookmanager
+	 * @param array<string,mixed> $parameters Hook context parameters
+	 * @param CommonObject $object Email collector object
+	 * @param string $action Current action code
+	 * @param HookManager $hookmanager Hook manager
 	 * @return int
 	 */
 	public function addMoreActionsEmailCollector($parameters, &$object, &$action, $hookmanager)
@@ -75,10 +75,10 @@ class ActionsAi extends CommonHookActions
 	/**
 	 * Execute AI cleaner when EmailCollector operation type is "hook_ai_emailcleaner".
 	 *
-	 * @param array<string,mixed> $parameters
-	 * @param CommonObject $object
-	 * @param string $action
-	 * @param HookManager $hookmanager
+	 * @param array<string,mixed> $parameters Hook context parameters
+	 * @param CommonObject $object Email collector object
+	 * @param string $action Current action code
+	 * @param HookManager $hookmanager Hook manager
 	 * @return int
 	 */
 	public function doCollectImapOneCollector($parameters, &$object, &$action, $hookmanager)

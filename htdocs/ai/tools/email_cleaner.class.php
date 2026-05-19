@@ -153,8 +153,8 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Execute tool.
 	 *
-	 * @param string $name
-	 * @param array<string,mixed> $args
+	 * @param string $name Tool function name
+	 * @param array<string,mixed> $args Tool arguments
 	 * @return mixed
 	 */
 	public function execute(string $name, array $args)
@@ -206,7 +206,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * List cleaner runs.
 	 *
-	 * @param array<string,mixed> $args
+	 * @param array<string,mixed> $args Filter and pagination arguments
 	 * @return array<string,mixed>
 	 */
 	private function listEmailCleanerRuns(array $args): array
@@ -288,7 +288,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Get one cleaner run.
 	 *
-	 * @param array<string,mixed> $args
+	 * @param array<string,mixed> $args Selector arguments
 	 * @return array<string,mixed>
 	 */
 	private function getEmailCleanerRun(array $args): array
@@ -356,7 +356,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Get only the technical email thread context from a cleaner run.
 	 *
-	 * @param array<string,mixed> $args
+	 * @param array<string,mixed> $args Selector arguments
 	 * @return array<string,mixed>
 	 */
 	private function getEmailThreadContext(array $args): array
@@ -390,7 +390,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * List unassigned PDF queue.
 	 *
-	 * @param array<string,mixed> $args
+	 * @param array<string,mixed> $args Filter and pagination arguments
 	 * @return array<string,mixed>
 	 */
 	private function listEmailPdfQueue(array $args): array
@@ -481,7 +481,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Get one queue item.
 	 *
-	 * @param array<string,mixed> $args
+	 * @param array<string,mixed> $args Queue selector arguments
 	 * @return array<string,mixed>
 	 */
 	private function getEmailPdfQueueItem(array $args): array
@@ -548,7 +548,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Get handoff payload.
 	 *
-	 * @param array<string,mixed> $args
+	 * @param array<string,mixed> $args Handoff selector arguments
 	 * @return array<string,mixed>
 	 */
 	private function getEmailHandoffPayload(array $args): array
@@ -604,7 +604,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Check if a table is available.
 	 *
-	 * @param string $tableWithoutPrefix
+	 * @param string $tableWithoutPrefix SQL table name without DB prefix
 	 * @return bool
 	 */
 	private function isTableAvailable(string $tableWithoutPrefix): bool
@@ -623,7 +623,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Decode json string, fallback to raw.
 	 *
-	 * @param string $raw
+	 * @param string $raw Raw value from database storage
 	 * @return mixed
 	 */
 	private function decodeJsonOrRaw(string $raw)
@@ -640,7 +640,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Sanitize limit.
 	 *
-	 * @param mixed $raw
+	 * @param mixed $raw User-provided limit
 	 * @return int
 	 */
 	private function sanitizeLimit($raw): int
@@ -654,7 +654,7 @@ class ToolEmailCleaner extends McpTool
 	/**
 	 * Sanitize confidence value or return null.
 	 *
-	 * @param mixed $raw
+	 * @param mixed $raw User-provided confidence value
 	 * @return float|null
 	 */
 	private function sanitizeConfidenceOrNull($raw): ?float
