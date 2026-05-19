@@ -45,7 +45,7 @@ class DateSentWriterTest extends CommonClassTest
 
         foreach (['propal', 'commande', 'facture', 'supplier_proposal',
                   'order_supplier', 'invoice_supplier', 'contrat',
-                  'expedition', 'delivery', 'reception', 'fichinter', 'project'] as $key) {
+                  'shipping', 'delivery', 'reception', 'fichinter', 'project'] as $key) {
             $this->assertArrayHasKey($key, $map, "Missing key: $key");
         }
         print __METHOD__." ok\n";

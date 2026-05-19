@@ -46,7 +46,7 @@ class DateSentWriter
 		'order_supplier'    => 'commande_fournisseur',
 		'invoice_supplier'  => 'facture_fourn',
 		'contrat'           => 'contrat',
-		'expedition'        => 'expedition',
+		'shipping'          => 'expedition',
 		'delivery'          => 'delivery',
 		'reception'         => 'reception',
 		'fichinter'         => 'fichinter',
