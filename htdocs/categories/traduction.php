@@ -210,7 +210,7 @@ $formother = new FormOther($db);
 llxHeader("", "", $langs->trans("Translation"));
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+$title .= ' ('.$langs->trans(empty($object->MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : $object->MAP_TYPE_TITLE_AREA[$type]).')';
 
 $head = categories_prepare_head($object, $type);
 

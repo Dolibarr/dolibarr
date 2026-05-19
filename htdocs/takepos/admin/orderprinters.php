@@ -105,7 +105,7 @@ $categstatic = new Categorie($db);
 $form = new Form($db);
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+$title .= ' ('.$langs->trans(empty($categstatic->MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : $categstatic->MAP_TYPE_TITLE_AREA[$type]).')';
 
 $arrayofjs = array(
 	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',

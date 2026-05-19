@@ -195,7 +195,7 @@ class Categorie extends CommonObject
 	/**
 	 * @var array<string,string> 	Title/Label mapping from type string
 	 */
-	public static $MAP_TYPE_TITLE_AREA = array(
+	public $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
 		'service'				=> 'Services',
 		'customer'				=> 'ProspectsOrCustomers',
@@ -417,7 +417,7 @@ class Categorie extends CommonObject
 					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
 					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
-					self::$MAP_TYPE_TITLE_AREA[$mapCode] = isset($mapList['label']) ? $mapList['label'] : null;
+					$this->MAP_TYPE_TITLE_AREA[$mapCode] = isset($mapList['label']) ? $mapList['label'] : null;
 				}
 			}
 		}

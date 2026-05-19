@@ -77,6 +77,17 @@ $title = $langs->trans("Categories");
 
 llxHeader('', $title, '', '', 0, 0, '', '');
 
+// Get list of category type
+$arrayofcateg = array();
+foreach ($categstatic->MAP_ID as $key => $idtype) {
+	$arrayofcateg[$idtype] = array();
+	$arrayofcateg[$idtype]['key'] = $key;
+	$arrayofcateg[$idtype]['nb'] = 0;
+	$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv($categstatic->MAP_TYPE_TITLE_AREA[$key]);
+	$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic->MAP_TYPE_TITLE_AREA[$key]));
+}
+$arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
+
 // Get number of tags per category type
 $countobjects = [];
 $sql = "SELECT type as idtype, COUNT(rowid) as nb";
@@ -98,8 +109,8 @@ foreach ($categstatic->MAP_ID as $key => $idtype) {
 	$arrayofcateg[$key] = array();
 	$arrayofcateg[$key]['key'] = $key;
 	$arrayofcateg[$key]['nb'] = $countobjects[$idtype] ?? 0;
-	$arrayofcateg[$key]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
-	$arrayofcateg[$key]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
+	$arrayofcateg[$key]['label'] = $langs->transnoentitiesnoconv($categstatic->MAP_TYPE_TITLE_AREA[$key]);
+	$arrayofcateg[$key]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic->MAP_TYPE_TITLE_AREA[$key]));
 }
 $arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
