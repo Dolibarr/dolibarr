@@ -500,6 +500,16 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 								}
 							}
 
+							// Update date_sent on last successful email send
+							if (property_exists($object, 'date_sent')) {
+								require_once DOL_DOCUMENT_ROOT.'/core/class/datesentwriter.class.php';
+								$dateSentWriter = new DateSentWriter($db);
+								$reswrite = $dateSentWriter->write($object, dol_now());
+								if ($reswrite < 0) {
+									dol_syslog('DateSentWriter failed for element='.$object->element.' id='.$object->id, LOG_WARNING);
+								}
+							}
+
 							$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;
