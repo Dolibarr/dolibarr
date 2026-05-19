@@ -1914,7 +1914,7 @@ class Form
 	 * @param int<0,1>			$showcode 		Show code in list
 	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 * @see select_company()
-	 * @phpstan-return ($outputmode is 1 ? array<int,array{id:int,label:string,labelhtml:string,color:string,picto:string}> : string)
+	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
 	 */
 	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -2563,8 +2563,8 @@ class Form
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
 	 * @param array<int,string>	$before 		Array of custom options to insert BEFORE the list of users. Keys must be negative integers (e.g. -5, -6) to avoid collision with real user IDs. Values are the labels.
 	 * @param array<int,string>	$after 			Array of custom options to insert AFTER the list of users. Keys must be negative integers. Values are the labels.
-	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
-	 * @see select_dolgroups()
+	 * @return array<string|int, array{id: string|int, label: string, labelhtml: string, color: string, picto: string}>|string
+	* @see select_dolgroups()
 	 */
 	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0, $before = [], $after = [])
 	{
