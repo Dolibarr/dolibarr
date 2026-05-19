@@ -2819,9 +2819,6 @@ class Ticket extends CommonObject
 			$listofnames = $resarray['listofnames'];
 			$listofmimes = $resarray['listofmimes'];
 
-			// Retrieve internal contact datas
-			$internal_contacts = $object->getInfosTicketInternalContact(1);
-
 			// Retrieve email of all contacts (external)
 			$external_contacts = $object->getInfosTicketExternalContact(1);
 			$external_resources = [];
@@ -2854,6 +2851,9 @@ class Ticket extends CommonObject
 					 * Send emails to assigned users (public area notification)
 					 */
 					if (getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED')) {
+						// Retrieve internal contact datas
+						$internal_contacts = $object->getInfosTicketInternalContact(1);
+
 						$assigned_user_dont_have_email = '';
 
 						$sendto = array();
@@ -2956,6 +2956,9 @@ class Ticket extends CommonObject
 					 * Send emails to internal users (linked contacts) then, if private is not set, to external users (linked contacts or thirdparty email if no contact set)
 					 */
 					if ((int) $send_email > 0) {
+						// Retrieve internal contact datas
+						$internal_contacts = $object->getInfosTicketInternalContact(1);
+
 						$sendto = array();
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// Set default subject
