@@ -198,6 +198,11 @@ class Propal extends CommonObject
 	public $fin_validite;
 
 	/**
+	 * @var int|null Timestamp of last successful email send
+	 */
+	public ?int $date_sent = null;
+
+	/**
 	 * @var int ID of user author
 	 */
 	public $user_author_id;
@@ -381,6 +386,7 @@ class Propal extends CommonObject
 		'fin_validite' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'date_cloture' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'date_sent' => array('type' => 'datetime', 'label' => 'DateSent', 'enabled' => 1, 'visible' => -1, 'position' => 76, 'notnull' => 0),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 85),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 90),
@@ -1661,6 +1667,7 @@ class Propal extends CommonObject
 		$sql .= ", p.date_signature as dates";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_cloture";
+		$sql .= ", p.date_sent";
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
 		$sql .= ", p.date_livraison as delivery_date";
@@ -1748,6 +1755,8 @@ class Propal extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 				$this->date_signature = $this->db->jdate($obj->dates); // Signature date
 				$this->date_cloture = $this->db->jdate($obj->date_cloture); // Closing date
+				$tmp_date_sent = $this->db->jdate($obj->date_sent);
+				$this->date_sent = ($tmp_date_sent !== '' && $tmp_date_sent !== false) ? (int) $tmp_date_sent : null;
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
