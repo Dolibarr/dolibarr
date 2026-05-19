@@ -633,10 +633,10 @@ class EmailCleaner
 				$relative = '';
 				$sha = '';
 				if (is_object($att)) {
-					if (method_exists($att, 'getName')) $name = (string) $att->getName();
-					if (method_exists($att, 'getPath')) $relative = (string) $att->getPath();
-					if (method_exists($att, 'getContent')) {
-						$content = (string) $att->getContent();
+					if (is_callable(array($att, 'getName'))) $name = (string) call_user_func(array($att, 'getName'));
+					if (is_callable(array($att, 'getPath'))) $relative = (string) call_user_func(array($att, 'getPath'));
+					if (is_callable(array($att, 'getContent'))) {
+						$content = (string) call_user_func(array($att, 'getContent'));
 						if ($content !== '') $sha = hash('sha256', $content);
 					}
 				} elseif (is_array($att)) {
