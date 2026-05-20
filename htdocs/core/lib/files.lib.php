@@ -850,6 +850,52 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	return 1;
 }
 
+/**
+ * Removes content from a file that matches a given pattern.
+ *
+ * @param string $filePath Path to the file to be processed.
+ * @param string $pattern Regular expression pattern to identify the content to remove.
+ * @return bool Returns true if the operation was successful, false otherwise.
+ */
+function removePatternFromFile(string $filePath, string $pattern): bool
+{
+	// Check if the file exists
+	if (! file_exists($filePath)) {
+		dol_syslog("files.lib.php::removePatternFromFile: File $filePath does not exist", LOG_WARNING);
+
+		return false;
+	}
+
+	// Read the file content
+	$content = file_get_contents($filePath);
+	if ($content === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Unable to read the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Remove content matching the pattern
+	$updatedContent = preg_replace($pattern, '', $content);
+	if ($updatedContent === null) {
+		dol_syslog("files.lib.php::removePatternFromFile: Error while processing the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Write the updated content back to the file
+	$result = file_put_contents($filePath, $updatedContent);
+	if ($result === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Permission denied to overwrite the target file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	dol_syslog("files.lib.php::removePatternFromFile: Content successfully removed in the file $filePath", LOG_INFO);
+
+	return true;
+}
+
+
 
 /**
  * Copy a file to another file.

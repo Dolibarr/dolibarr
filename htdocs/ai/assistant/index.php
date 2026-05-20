@@ -18,11 +18,13 @@
  */
 
 /**
- * \file htdocs/ai/assistant/index.php
+ * \file 	htdocs/ai/assistant/index.php
  * \ingroup ai
- * \brief Main Chat Interface for MCP Server AI Assistant
+ * \brief 	Main Chat Interface for MCP Server AI Assistant
  */
 
+// Load Dolibarr environment
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -31,11 +33,8 @@
  * @var User $user
  */
 
-// Load Dolibarr environment
-require '../../main.inc.php';
-
 // Security check
-if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 

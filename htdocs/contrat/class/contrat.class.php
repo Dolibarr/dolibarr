@@ -1,18 +1,20 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Destailleur Laurent     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Florian Henry             <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2018  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024       William Mead            <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2949,6 +2951,45 @@ class Contrat extends CommonObject
 		$return .= '</div>';
 
 		return $return;
+	}
+
+	/**
+	 *  Return totalized lines
+	 *
+	 *  @param	int		$statut			Status of lines
+	 *  @param	int		$expired		1=expired, 0=not expired
+	 *  @return array<string,mixed>|int		Array of totalized lines or int if error
+	 */
+	public function getTotalizedLines($statut, int $expired)
+	{
+		$sql = "SELECT SUM(cd.qty) as total_qty, SUM(cd.total_ht) as total_ht, SUM(cd.total_tva) as total_tva, SUM(cd.total_ttc) as total_ttc,";
+		$sql .= " SUM(cd.total_localtax1) as total_localtax1, SUM(cd.total_localtax2) as total_localtax2";
+		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+		$sql .= " WHERE cd.fk_contrat =".((int) $this->id);
+		if ($statut >= 0) {
+			$sql .= " AND cd.statut = ".((int) $statut);
+			if ($expired > 0) {
+				$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
+			} else {
+				$sql .= " AND cd.date_fin_validite >= '".$this->db->idate(dol_now())."'";
+			}
+		}
+		$ret = $this->db->query($sql);
+		$response = array();
+		if ($ret) {
+			$obj = $this->db->fetch_object($ret);
+			$response['total_qty'] = $obj->total_qty;
+			$response['total_ht'] = $obj->total_ht;
+			$response['total_tva'] = $obj->total_tva;
+			$response['total_localtax1'] = $obj->total_localtax1;
+			$response['total_localtax2'] = $obj->total_localtax2;
+			$response['total_ttc'] = $obj->total_ttc;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		return $response;
 	}
 
 	// @Todo getLibSignedStatus, LibSignedStatus

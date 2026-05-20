@@ -1656,6 +1656,29 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
 	}
 
+	if (! $error && GETPOST('nogeneratelines', 'aZ09')) {
+		$checkComment = checkExistComment($moduledescriptorfile, 0);
+		if ($checkComment < 0) {
+			$warning++;
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
+		} else {
+			// File path
+			$TFilePaths = [
+				$destdir . '/class/' . strtolower($objectname) . '.class.php',
+				$destdir . '/class/api_' . strtolower($module) . '.class.php',
+				$destdir . '/' . strtolower($objectname) . '_card.php'
+			];
+
+			// Pattern to remove everything between the tags
+			$pattern = '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
+			foreach ($TFilePaths as $filePath) {
+				if (! removePatternFromFile($filePath, $pattern)) {
+					$error++;
+				}
+			}
+		}
+	}
+
 	if (!$error) {
 		// Edit PHP files to make replacement
 		foreach ($filetogenerate as $destfile) {
@@ -4150,6 +4173,7 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label class="margintoponly" for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
+				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';

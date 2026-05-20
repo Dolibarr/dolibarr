@@ -852,16 +852,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($permissiontoadd) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 				}
 			}
 
 			// Reload BOM
 			if ($object->status == $object::STATUS_DRAFT && $object->fk_bom > 0) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reload&token='.newToken().'">'.$langs->trans("Reload").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reload&token='.newToken().'" title="'.dolPrintHTMLForAttribute($langs->trans("ReInitializeHelp")).'">'.$langs->trans("ReInitialize").'</a>';
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Reload').'</a>'."\n";
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("ReInitializeHelp").'<br>'.$langs->trans("NotEnoughPermissions")).'">'.$langs->trans('ReInitialize').'</a>'."\n";
 				}
 			}
 
