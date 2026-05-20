@@ -1399,6 +1399,130 @@ class Form
 		return $out;
 	}
 
+	private function makeAddLinkToObject($object, $key, $possiblelink, $num, $resqllist)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $langs, $form;
+		if (empty($form)) {
+			$form = new Form($this->db);
+		}
+		$htmltoenteralink = '';
+		$i = 0;
+
+		// headers
+		$htmltoenteralink .= '<tr class="liste_titre">';
+		$htmltoenteralink .= '<td class="nowrap"></td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("RefCustomer") . '</td>';
+		$htmltoenteralink .= '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
+		$htmltoenteralink .= '</tr>';
+
+		// rows with data
+		while ($i < $num) {
+			$objp = $this->db->fetch_object($resqllist);
+			$alreadylinked = false;
+			if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
+				if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
+					$alreadylinked = true;
+				}
+			}
+			$htmltoenteralink .= '<tr class="oddeven">';
+			$htmltoenteralink .= '<td>';
+			if ($alreadylinked) {
+				$htmltoenteralink .= img_picto('', 'link');
+			} else {
+				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= '</td>';
+			$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
+			$htmltoenteralink .= '<td class="right">';
+			if ($possiblelink['label'] == 'LinkToContract') {
+				$htmltoenteralink .= $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
+			}
+			$htmltoenteralink .= '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
+			$htmltoenteralink .= '</td>';
+			$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			$htmltoenteralink .= '</tr>';
+			$i++;
+		}
+
+		return $htmltoenteralink;
+	}
+
+	private function makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $langs, $form;
+		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		$attendeestatic = new ConferenceOrBoothAttendee($this->db);
+		$companystatic = new Societe($this->db);
+		$projectstatic = new Project($this->db);
+		if (empty($form)) {
+			$form = new Form($this->db);
+		}
+		$htmltoenteralink = '';
+		$i = 0;
+
+		// headers
+		$htmltoenteralink .= '<tr class="liste_titre">';
+		$htmltoenteralink .= '<td class="nowrap"></td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Name") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Email") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("DateOfRegistration") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Project") . '</td>';
+		$htmltoenteralink .= '</tr>';
+
+		// rows with data
+		while ($i < $num) {
+			$objp = $this->db->fetch_object($resqllist);
+			$alreadylinked = false;
+			if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
+				if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
+					$alreadylinked = true;
+				}
+			}
+			$htmltoenteralink .= '<tr class="oddeven">';
+			$htmltoenteralink .= '<td>';
+			if ($alreadylinked) {
+				$htmltoenteralink .= img_picto('', 'link');
+			} else {
+				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= '</td>';
+			$fetchattendee = $attendeestatic->fetch($objp->rowid);
+			if ($fetchattendee) {
+				$htmltoenteralink .= '<td>' . $attendeestatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			$htmltoenteralink .= '<td>' . $objp->email . '</td>';
+			$fetchcompany = $companystatic->fetch($objp->socid);
+			if ($fetchcompany) {
+				$htmltoenteralink .= '<td>' . $companystatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->date_subscription . '</td>';
+			$fetchcproject = $projectstatic->fetch($objp->fk_project);
+			if ($fetchcproject) {
+				$htmltoenteralink .= '<td>' . $projectstatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->fk_project . '</td>';
+			}
+			$htmltoenteralink .= '</tr>';
+			$i++;
+		}
+
+		return $htmltoenteralink;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
