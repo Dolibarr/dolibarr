@@ -1407,9 +1407,9 @@ class Form
 	 *
 	 * @param 	CommonObject 	$object 			The source object we are linking from
 	 * @param 	string 			$key 				The element type key (e.g., 'invoice', 'order', 'propal')
-	 * @param 	array 			$possiblelink 		Array containing link configuration (sql, label, linkname, etc.)
+	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
 	 * @param 	int 			$num 				Number of records returned from the SQL query
-	 * @param 	DoliDB 			$resqllist 		Database result resource from the SQL query
+	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
 	 * @return  string 							HTML table rows for the link selection table
 	 */
 	private function makeAddLinkToObject($object, $key, $possiblelink, $num, $resqllist)
@@ -1473,9 +1473,9 @@ class Form
 	 *
 	 * @param 	CommonObject 			$object 			The source object we are linking from (e.g., propal, order)
 	 * @param 	string 					$key 				The element type key ('conferenceorboothattendee')
-	 * @param 	array 					$possiblelink 		Array containing link configuration (sql, label, linkname, etc.)
+	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
 	 * @param 	int 					$num 				Number of records returned from the SQL query
-	 * @param 	DoliDB 					$resqllist 		Database result resource from the SQL query
+	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
 	 * @return  string 									HTML table rows for the attendee link selection table
 	 */
 	private function makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist)
