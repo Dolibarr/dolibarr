@@ -207,7 +207,26 @@ if (GETPOST('buttonreset', 'alpha')) {
 if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 	$modulenameval = '';
+
+	$isExternalDownload = 0;
+	$producttoinstall = GETPOST('producttoinstall', 'array');
+
 	// $original_file should match format module_modulename-x.y[.z].zip
+	if ($producttoinstall) {
+		$isExternalDownload = 1;
+		$tmpExternalModuleZipFile = $remotestore->getModuleZIP($producttoinstall); // Return the zip file path.
+		if ($tmpExternalModuleZipFile) {
+			// We fill $_FILES with the zip file we just created to reuse the same code as if file was uploaded by user
+			$_FILES['fileinstall'] = array(
+				'name' => basename($tmpExternalModuleZipFile),
+				'type' => 'application/zip',
+				'tmp_name' => $tmpExternalModuleZipFile,
+				'error' => 0,
+				'size' => filesize($tmpExternalModuleZipFile)
+			);
+		}
+	}
+
 	$tmpfile = $_FILES['fileinstall']['tmp_name'];
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
@@ -215,7 +234,11 @@ if ($action == 'install' && $allowonlineinstall) {
 
 	if (!$original_file) {
 		$langs->load("Error");
-		setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
+		if ($isExternalDownload) {
+			setEventMessages($langs->trans("ErrorFailToDownloadModuleFromSource", $producttoinstall['name']), null, 'warnings');
+		} else {
+			setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
+		}
 		$error++;
 	} else {
 		if (!$error && !preg_match('/\.zip$/i', $original_file)) {
@@ -247,7 +270,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
 		}
 
-		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error']);
+		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error'], 0, 'addedfile', '', $isExternalDownload ? 1 : 0);
 		if ((int) $result > 0) {
 			$resultuncompress = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
