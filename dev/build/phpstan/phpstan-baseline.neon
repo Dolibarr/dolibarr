@@ -8845,12 +8845,6 @@ parameters:
 			path: ../../../htdocs/theme/eldy/manifest.json.php
 
 		-
-			message: '#^Variable \$menumanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/theme/eldy/style.css.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
