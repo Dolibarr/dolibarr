@@ -575,7 +575,7 @@ class ExternalModules
 				// Direct install
 				if (($product['direct-download'] && $product['direct-download'] == 'yes') || $product['source'] === 'dolistore') {
 					$disableInstall = !empty($compatible) && $compatible === 'NotCompatible';
-					// $disableInstall = false; // TODO: remove this.
+					$disableInstall = false; // TODO: remove this.
 					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
 					$fields = ['action' => 'install', 'token' => newToken()];
 					foreach ($product as $key => $value) {
@@ -590,12 +590,12 @@ class ExternalModules
 						. (!$disableInstall ? ' data-confirm-title="' . dol_escape_htmltag($langs->trans("extModuleConfirmInstallTitle")) . '"' : '')
 						. (!$disableInstall ? ' data-confirm-text="' . dol_escape_htmltag($langs->transnoentities(
 							"extModuleConfirmInstallText",
-							$product['label']   ?? '',
+							$product['label'] ?? '',
 							$product['module_version'] ?? '',
-							$product['ref']     ?? '',
-							$product['tms']    ?? ''
+							$product['ref'] ?? '',
+							!empty($product['tms']) ? dol_print_date($product['tms'], '%d/%m/%Y') : ''
 						)) . '"' : '')
-						. '>' . $langs->trans("Install") . '</button>';
+						. '>' . $langs->trans("install") . '</button>';
 				}
 			}
 
@@ -692,7 +692,7 @@ class ExternalModules
 		}
 
 		// JS for confirm install
-		$confirmLabel = dol_escape_js($langs->trans("Install"));
+		$confirmLabel = dol_escape_js($langs->trans("install"));
 		$cancelLabel = dol_escape_js($langs->trans("Cancel"));
 		$html .= '<script>
 		$(document).on("click","[data-confirm]",function(){
