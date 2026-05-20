@@ -1399,6 +1399,19 @@ class Form
 		return $out;
 	}
 
+	/**
+	 *  Generate HTML table rows for standard object linking (invoices, orders, proposals, etc.).
+	 *
+	 *  This method creates the table body rows with checkboxes for selecting objects to link.
+	 *  It displays Ref, RefCustomer, AmountHTShort, and Company columns.
+	 *
+	 * @param 	CommonObject 	$object 			The source object we are linking from
+	 * @param 	string 			$key 				The element type key (e.g., 'invoice', 'order', 'propal')
+	 * @param 	array 			$possiblelink 		Array containing link configuration (sql, label, linkname, etc.)
+	 * @param 	int 			$num 				Number of records returned from the SQL query
+	 * @param 	DoliDB 			$resqllist 		Database result resource from the SQL query
+	 * @return  string 							HTML table rows for the link selection table
+	 */
 	private function makeAddLinkToObject($object, $key, $possiblelink, $num, $resqllist)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1451,6 +1464,20 @@ class Form
 		return $htmltoenteralink;
 	}
 
+	/**
+	 *  Generate HTML table rows for conference/booth attendee linking.
+	 *
+	 *  This method creates custom table body rows specifically for ConferenceOrBoothAttendee objects.
+	 *  It displays Ref, Name, Email, Company, DateOfRegistration, and Project columns.
+	 *  Uses getNomUrl() for clickable links to attendee, company, and project records.
+	 *
+	 * @param 	CommonObject 			$object 			The source object we are linking from (e.g., propal, order)
+	 * @param 	string 					$key 				The element type key ('conferenceorboothattendee')
+	 * @param 	array 					$possiblelink 		Array containing link configuration (sql, label, linkname, etc.)
+	 * @param 	int 					$num 				Number of records returned from the SQL query
+	 * @param 	DoliDB 					$resqllist 		Database result resource from the SQL query
+	 * @return  string 									HTML table rows for the attendee link selection table
+	 */
 	private function makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
