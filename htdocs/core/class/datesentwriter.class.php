@@ -76,12 +76,12 @@ class DateSentWriter
 	public function write(CommonObject $object, int $when): int
 	{
 		if ($object->id <= 0) {
-			dol_syslog('DateSentWriter: object without valid id, element='.($object->element ?? ''), LOG_DEBUG);
+			dol_syslog('DateSentWriter: object without valid id, element='.$object->element, LOG_DEBUG);
 			return -1;
 		}
 
 		if ($when <= 0) {
-			dol_syslog('DateSentWriter: invalid timestamp ('.$when.') for element='.($object->element ?? ''), LOG_DEBUG);
+			dol_syslog('DateSentWriter: invalid timestamp ('.$when.') for element='.$object->element, LOG_DEBUG);
 			return -1;
 		}
 
