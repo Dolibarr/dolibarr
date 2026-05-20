@@ -1547,7 +1547,7 @@ if (empty($reshook)) {
 				// Source facture
 				$object->fac_rec = GETPOSTINT('fac_rec');
 
-				$id = $object->create($user); // This include recopy of links from recurring invoice and recurring invoice lines
+				$id = $object->create($user, 0, 0, 0, 0); // This include recopy of links from recurring invoice and recurring invoice lines
 			}
 		}
 

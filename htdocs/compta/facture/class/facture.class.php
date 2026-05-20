@@ -456,9 +456,10 @@ class Facture extends CommonInvoice
 	 *	@param  int		$notrigger				1=Does not execute triggers, 0 otherwise
 	 * 	@param	int		$forceduedate			If set, do not recalculate due date from payment condition but force it with value
 	 *  @param	int		$updatecurrencyrate		Update currency rate when generation done from template invoice
+	 *  @param  int     $inheritExtraFields     1=Inherit extra fields from template (default), 0=Keep current object values (allow clearing)
 	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function create(User $user, $notrigger = 0, $forceduedate = 0, $updatecurrencyrate = 0)
+	public function create(User $user, $notrigger = 0, $forceduedate = 0, $updatecurrencyrate = 0, $inheritExtraFields = 1)
 	{
 		global $langs, $conf, $mysoc;
 		$error = 0;
@@ -604,7 +605,9 @@ class Facture extends CommonInvoice
 			$this->note_private = trim($this->note_private);
 			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 
-			$this->array_options = $_facrec->array_options;
+			if ($inheritExtraFields) {
+				$this->array_options = $_facrec->array_options;
+			}
 
 			if (!$this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
