@@ -886,6 +886,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'member') {
 			$feature = 'adherent';
 		}
+		if ($feature == 'category') {
+			$feature = 'categorie';
+		}
 		if ($feature == 'project') {
 			$feature = 'projet';
 		}
