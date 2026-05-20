@@ -11149,8 +11149,6 @@ class Form
 						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module) ? '@'.$module : ''). '">';
 						$htmltoenteralink .= '<table class="noborder">';
 
-						// for general objects
-//						$htmltoenteralink .= $this->makeAddLinkToObject($object, $key, $possiblelink, $num, $resqllist);
 						switch ($key) {
 							case 'conferenceorboothattendee':
 								// Custom logic for linking to attendees
