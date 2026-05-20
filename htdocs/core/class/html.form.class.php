@@ -1473,15 +1473,9 @@ class Form
 	 *
 	 * @param 	CommonObject 			$object 			The source object we are linking from (e.g., propal, order)
 	 * @param 	string 					$key 				The element type key ('conferenceorboothattendee')
-<<<<<<< HEAD
 	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
 	 * @param 	int 					$num 				Number of records returned from the SQL query
 	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
-=======
-	 * @param 	array 					$possiblelink 		Array containing link configuration (sql, label, linkname, etc.)
-	 * @param 	int 					$num 				Number of records returned from the SQL query
-	 * @param 	DoliDB 					$resqllist 		Database result resource from the SQL query
->>>>>>> 8c0be7bda95 (pre-commit missing php doc #38359 #16309)
 	 * @return  string 									HTML table rows for the attendee link selection table
 	 */
 	private function makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist)
