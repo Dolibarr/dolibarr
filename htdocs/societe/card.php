@@ -1490,6 +1490,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$selectedcustomer = ((GETPOSTISSET('customer') && $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
 			$selectedsupplier = ((GETPOSTISSET('supplier') && $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
 
+			if ($selectedprospect && $selectedcustomer && getDolGlobalString("SOCIETE_DISABLE_PROSPECTSCUSTOMERS")) {
+				// If both are not allowed, we reset $selectedcustomer
+				$selectedcustomer = 0;
+			}
+
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
 				print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';

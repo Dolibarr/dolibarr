@@ -6894,10 +6894,17 @@ abstract class CommonObject
 
 			switch ($attributeType) {
 				case 'int':
+				case 'duration':
+				case 'stars':
 					if (!is_numeric($value) && $value != '') {
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
+						$new_array_options[$key] = null;
+					}
+					break;
+				case 'boolean':
+					if ($value === '' || $value === false || $value === null) {
 						$new_array_options[$key] = null;
 					}
 					break;
