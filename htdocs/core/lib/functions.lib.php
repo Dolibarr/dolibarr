@@ -3649,14 +3649,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (!empty($object->name_alias)) {
 		/** @var Societe $object */
 		'@phan-var-force Societe $object';
-		$morehtmlref .= '<div class="refidno opacitymedium">' . dol_escape_htmltag($object->name_alias) . '</div>';
+		$morehtmlref .= '<div class="refidno opacitymedium banner-object-name-alias">' . dol_escape_htmltag($object->name_alias) . '</div>';
 	}
 
 	// Add label
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
 		/** @var Product|Account|Task $object */
 		if (!empty($object->label)) {
-			$morehtmlref .= '<div class="refidno opacitymedium">' . $object->label . '</div>';
+			$morehtmlref .= '<div class="refidno banner-object-label">' . $object->label . '</div>';
 		}
 	}
 	// Show address and email
@@ -3670,7 +3670,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/' . preg_quote($object->element, '/') . '/i', getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
-		$morehtmlref .= '<div class="refidno opacitymedium">';
+		$morehtmlref .= '<div class="refidno opacitymedium banner-object-technical-id">';
 		$morehtmlref .= $langs->trans("TechnicalID") . ': ' . ((int) $object->id);
 		$morehtmlref .= '</div>';
 	}
@@ -3691,7 +3691,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	// $morehtmlstatus is part under the status
 	// $morehtmlright is part of htmlright
 
-	print '<div class="' . ($onlybanner ? 'arearefnobottom ' : 'arearef ') . 'heightref valignmiddle centpercent">';
+	print '<div class="' . ($onlybanner ? 'arearefnobottom ' : 'arearef ') . 'heightref valignmiddle centpercent object-banner-tab-container" data-module-part="'.dolPrintHTMLForAttribute($modulepart).'">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';
