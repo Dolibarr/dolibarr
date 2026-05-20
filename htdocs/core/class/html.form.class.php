@@ -1536,6 +1536,7 @@ class Form
 			} else {
 				$htmltoenteralink .= '<td>' . $objp->name . '</td>';
 			}
+			$htmltoenteralink .= '<td>' . $objp->date_subscription . '</td>';
 			$fetchcproject = $projectstatic->fetch($objp->fk_project);
 			if ($fetchcproject) {
 				$htmltoenteralink .= '<td>' . $projectstatic->getNomUrl(0). '</td>';
