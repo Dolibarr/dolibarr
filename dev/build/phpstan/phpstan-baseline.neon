@@ -5251,18 +5251,6 @@ parameters:
 			path: ../../../htdocs/ftp/index.php
 
 		-
-			message: '#^Parameter \#1 \$ftp of function ftp_nlist expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/ftp/index.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_rawlist expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/ftp/index.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 3
