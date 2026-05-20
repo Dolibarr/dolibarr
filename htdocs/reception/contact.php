@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,7 @@ $action = GETPOST('action', 'aZ09');
 $object = new Reception($db);
 $typeobject = '';
 $origin = '';
+$objectsrc = null;
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -81,6 +82,7 @@ if ($user->socid > 0) {
 }
 
 // TODO Test on reception module on only
+$result = -1;
 if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
@@ -120,7 +122,8 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	} else {
+	} elseif ($objectsrc !== null) {
+		$mesgs = array();
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -130,10 +133,10 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
 	}
-} elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer')) {
+} elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer') && $objectsrc !== null) {
 	// bascule du statut d'un contact
 	$result = $objectsrc->swapContactStatus(GETPOSTINT('ligne'));
-} elseif ($action == 'deletecontact' && $user->hasRight('reception', 'creer')) {
+} elseif ($action == 'deletecontact' && $user->hasRight('reception', 'creer') && $objectsrc !== null) {
 	// Efface un contact
 	$result = $objectsrc->delete_contact(GETPOSTINT("lineid"));
 
@@ -189,7 +192,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
-			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
+			if ($objectsrc !== null && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($objectsrc->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);

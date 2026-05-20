@@ -6,7 +6,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -380,6 +380,8 @@ if (!file_exists($conffile)) {
 	// Requirements met/all ok: display the next step button
 	if ($checksok) {
 		$ok = false;
+		$db = null;
+		$validfoundconf = false;
 
 		// Try to create db connection
 		if (file_exists($conffile)) {
@@ -389,6 +391,8 @@ if (!file_exists($conffile)) {
 					print '<span class="error">A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.</span><br>'."\n";
 					dol_syslog("A '".$conffiletoshow."' file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the '".$conffiletoshow."' file.", LOG_WARNING);
 				} else {
+					$validfoundconf = true;
+
 					require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 					// If password is encoded, we decode it
@@ -423,7 +427,7 @@ if (!file_exists($conffile)) {
 
 		$dolibarrlastupgradeversionarray = array();
 		// If database access is available, we set more variables
-		if ($ok) {
+		if ($db !== null && $ok) {
 			if (empty($dolibarr_main_db_encryption)) {
 				$dolibarr_main_db_encryption = 0;
 			}
@@ -444,6 +448,8 @@ if (!file_exists($conffile)) {
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 			$dolibarrversiontoinstallarray = versiondolibarrarray();
+		} elseif ($validfoundconf) {
+			print 'Failed to connect with data found int the current conf.php file.<br>';
 		}
 
 		// Show title
@@ -664,9 +670,9 @@ $("div#AShowChoices").click(function() {
     $("div#navail_choices").toggle();
 
     if ($("div#navail_choices").css("display") == "none") {
-        $(this).text("> '.$langs->trans('ShowNotAvailableOptions').'...");
+        $(this).text(\'> '.dol_escape_js($langs->transnoentitiesnoconv('ShowNotAvailableOptions')).'...\');
     } else {
-        $(this).text("'.$langs->trans('HideNotAvailableOptions').'...");
+        $(this).text(\'> '.dol_escape_js($langs->transnoentitiesnoconv('HideNotAvailableOptions')).'...\');
     }
 
 });

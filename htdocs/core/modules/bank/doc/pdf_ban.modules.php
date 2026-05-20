@@ -180,7 +180,7 @@ class pdf_ban extends ModeleBankAccountDoc
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("BAN"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("BAN"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -205,7 +205,7 @@ class pdf_ban extends ModeleBankAccountDoc
 				// Affiche notes
 				if (!empty($object->note_public)) {
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref - 1, $tab_top - 2, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref - 1, $tab_top - 2, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - ($tab_top - 2);
 

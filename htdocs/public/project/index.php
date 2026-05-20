@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -120,9 +120,10 @@ if (empty($conf->project->enabled)) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 

@@ -5,6 +5,7 @@
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +142,13 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 	if (empty($ciphering)) {
 		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
@@ -194,15 +201,22 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority (coming from $dolibarr_main_instance_unique_id)
+			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
 		} else {
-			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
 			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
 	$reg = array();
+
+	// Old method (no more used, kept for compatibility)
+	if (preg_match('/^crypted:(.+)$/', $chain, $reg)) {
+		return dol_decode($reg[1]);
+	}
+
+	// New method
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
 		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
@@ -532,13 +546,20 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'evaluation';
 	}
 
-	// @todo check : project_task
-	// @todo possible ?
-	// elseif (substr($features, -3, 3) == 'det') {
-	// 	$features = substr($features, 0, -3);
-	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
-	// 	$features = substr($features, 0, -4);
-	// }
+	// When the object is a task (element='project_task') and $feature2 is empty,
+	// $checkUserAccessToObject() falls into the $checkproject path and uses the task ID
+	// as project ID, which always fails. Setting $feature2='project_task' triggers the
+	// normalization at line 974 that redirects to the $checktask path, which correctly
+	// resolves $task->fk_project before calling getProjectsAuthorizedForUser().
+	if (is_object($object) && in_array($object->element, array('project_task', 'task'))
+		&& (empty($features) || in_array($features, array('projet', 'project')))
+		&& empty($feature2)) {
+		$features = 'projet';
+		$feature2 = 'project_task';
+		if (empty($tableandshare)) {
+			$tableandshare = 'projet_task';
+		}
+	}
 
 	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -1044,32 +1065,32 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 		// Check permission for objectid on entity only
 		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
-			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+			$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
 			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
 				if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
-						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+						$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND dbt.entity IS NOT NULL";
 					} else {
 						$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+						$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND ((ug.fk_user = dbt.rowid";
 						$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 						$sql .= " OR dbt.entity = 0)"; // Show always superadmin
 					}
 				} else {
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			} else {
 				$reg = array();
 				if ($parenttableforentity && preg_match('/(.*)@(.*)/', $parenttableforentity, $reg)) {
-					$sql .= ", ".MAIN_DB_PREFIX.$reg[2]." as dbtp";
-					$sql .= " WHERE dbt.".$reg[1]." = dbtp.rowid AND dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= ", ".MAIN_DB_PREFIX.$db->sanitize($reg[2])." as dbtp";
+					$sql .= " WHERE dbt.".$db->sanitize($reg[1])." = dbtp.rowid AND dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbtp.entity IN (".getEntity($sharedelement, 1).")";
 				} else {
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			}
@@ -1111,23 +1132,23 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if (in_array($feature, $checkparentsoc) && $objectid > 0) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
 			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)"; // Contact not linked to a company or to a company of user
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (isModEnabled('multicompany')) {
 				// If multicompany and internal users with all permissions, check user is in correct entity
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 
@@ -1146,9 +1167,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 			$checkonentitydone = 1;
@@ -1169,9 +1190,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				}
 			} else {
 				$sharedelement = 'project'; // for multicompany compatibility
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 
@@ -1185,22 +1206,22 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if (empty($dbt_keyfield)) {
 					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 				}
-				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_keyfield).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
+				$sql .= " AND dbt.".$db->sanitize($dbt_keyfield)." = ".((int) $user->socid);
 			} elseif (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
+				if (empty($dbt_keyfield)) {
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
+				}
 				if ($feature != 'ticket') {
-					if (empty($dbt_keyfield)) {
-						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
-					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
-					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
+					$sql .= " AND sc.fk_soc = dbt.".$db->sanitize($dbt_keyfield);
 					$sql .= " AND (sc.fk_user = ".((int) $user->id);
 					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 						$userschilds = $user->getAllChildIds();
@@ -1209,18 +1230,18 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= ')';
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
-					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
+					$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".((int) $user->id);
-					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$db->sanitize($dbt_keyfield)." AND sc.fk_user = ".((int) $user->id);
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
+					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR dbt.".$dbt_keyfield." IS NULL OR dbt.".$dbt_keyfield." = 0)";
 				}
 			} elseif (isModEnabled('multicompany')) {
 				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
-				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
@@ -1462,4 +1483,50 @@ function getMaxFileSizeArray()
 	//var_dump($maxmin);
 
 	return array('max' => $max, 'maxmin' => $maxmin, 'maxphptoshow' => $maxphptoshow, 'maxphptoshowparam' => $maxphptoshowparam);
+}
+
+/**
+ * Check if IP address is in CIDR range
+ *
+ * @param	string		$ip			IP address to check (ex: 192.168.0.50, 2001:db8:3333:4444::5555:6666)
+ * @param	string		$cidr		Network IP CIDR notation (ex: 192.168.0.0/24, 2001:db8:3333:4444::/64)
+ * @return	int						1 if IP is in CIDR range, 0 if IP out of CIDR range, -1 if check error
+ */
+function checkIPInCidr($ip, $cidr)
+{
+	list($network, $prefix) = explode('/', $cidr, 2);
+
+	// Convert IPs to binary format
+	$ip_bin = @inet_pton($ip);
+	$net_bin = @inet_pton($network);
+	if ($ip_bin === false || $net_bin === false) {
+		return -1;
+	}
+
+	// Require same address IPvX family
+	if (strlen($ip_bin) !== strlen($net_bin)) {
+		return -1;
+	}
+
+	// Comparison boundaries
+	$total_bits = strlen($ip_bin) * 8;
+	$prefix = max(0, min((int) $prefix, $total_bits));
+	$full_bytes = intdiv($prefix, 8);
+	$rem_bits = $prefix % 8;
+
+	// Compare full bytes and partial bytes
+	if ($full_bytes > 0) {
+		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {
+			return 0;
+		}
+	}
+	if ($rem_bits > 0) {
+		$mask = (0xFF << (8 - $rem_bits)) & 0xFF;
+		$ip_byte = ord($ip_bin[$full_bytes]);
+		$net_byte = ord($net_bin[$full_bytes]);
+		if (($ip_byte & $mask) !== ($net_byte & $mask)) {
+			return 0;
+		}
+	}
+	return 1;
 }

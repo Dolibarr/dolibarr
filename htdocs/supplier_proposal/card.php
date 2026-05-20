@@ -10,11 +10,11 @@
  * Copyright (C) 2012-2013	Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolG
 $hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
 $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
-// Nombre de ligne pour choix de produit/service predefinis
+// Number of line to choose predefined product/service from
 $NBLINES = 4;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -101,6 +101,7 @@ $object = new SupplierProposal($db);
 $extrafields = new ExtraFields($db);
 
 $objectsrc = null;
+$classname = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -157,6 +158,9 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
+$fournprice = 0;
+$buyingprice = 0;
 
 if (empty($reshook)) {
 	$backurlforlist = DOL_URL_ROOT.'/supplier_proposal/list.php';
@@ -425,6 +429,7 @@ if (empty($reshook)) {
 						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 					}
 
+					$classname = null;
 					$id = $object->create($user);
 					if ($id > 0) {
 						dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -656,7 +661,7 @@ if (empty($reshook)) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				continue;
 			}
-			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line->subprice, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
 		// Handling adding a new title line for subtotals module
@@ -730,10 +735,11 @@ if (empty($reshook)) {
 		if (isset($desc) && isset($depth)) {
 			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
 		} else {
+			$result = -1;
 			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
 		}
 
-		if (isset($result) && $result >= 0) {
+		if ($result >= 0) {
 			$ret = $object->fetch($object->id); // Reload to get new records
 			$object->fetch_thirdparty();
 
@@ -1397,10 +1403,6 @@ if (empty($reshook)) {
 				$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), $object->deposit_percent);
 			}
 		}
-		//} elseif ($action == 'setremisepercent' && $usercancreate) {
-		//	$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
-		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Payment mode
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
@@ -1644,14 +1646,16 @@ if ($action == 'create') {
 
 
 		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td colspan="2">';
-		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		$list = ModelePDFSupplierProposal::liste_modeles($db);
-		$preselected = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT', getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF'));
-		print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		print "</td></tr>";
+		if (count($list) > 0) {
+			print '<tr>';
+			print '<td>'.$langs->trans("DefaultModel").'</td>';
+			print '<td colspan="2">';
+			print img_picto('', 'pdf', 'class="pictofixedwidth"');
+			$preselected = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT', getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF'));
+			print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+			print "</td></tr>";
+		}
 
 		// Project
 		if (isModEnabled('project')) {
@@ -1705,12 +1709,10 @@ if ($action == 'create') {
 
 
 		// Lines from source
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && $classname !== null) {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-				//$objectsrc->remise_absolue = $remise_absolue;
-				//$objectsrc->remise_percent = $remise_percent;
 				$objectsrc->update_price(1, 'auto', 1);
 			}
 
@@ -1858,7 +1860,7 @@ if ($action == 'create') {
 		// Confirmation delete product/service line
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	} elseif ($action == 'ask_subtotal_deleteline') {
-		// Confirmation de la suppression d'une ligne subtotal
+		// Generate form to ask confirmation to delete a subtotal line
 		$langs->load("subtotals");
 		$title = "DeleteSubtotalLine";
 		$question = "ConfirmDeleteSubtotalLine";
@@ -2385,7 +2387,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&object='.$object->element.'&amp;token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $object->socid).'&action=clone&object='.urlencode($object->element).'&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 				}
 
 				// Delete

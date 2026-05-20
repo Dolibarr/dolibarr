@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Anthony Berton 			<anthony.berton@bb2a.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -210,8 +211,10 @@ if (empty($reshook)) {
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+	//BEGIN MODULEBUILDER LINES
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+	//END MODULEBUILDER LINES
 
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
@@ -265,7 +268,6 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card')
 // 	});
 // });
 // </script>';
-
 
 // Part to create
 if ($action == 'create') {
@@ -346,20 +348,18 @@ if (($id || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$head = myobjectPrepareHead($object);
-
-	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
-
 	$formconfirm = '';
 
 	// Confirmation to delete (using preloaded confirm popup)
 	if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 'action-delete');
 	}
+	//BEGIN MODULEBUILDER LINES
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
+	//END MODULEBUILDER LINES
 
 	// Clone confirmation
 	if ($action == 'clone') {
@@ -404,8 +404,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $formconfirm;
 
 
+
+	$head = myobjectPrepareHead($object);
+
+	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
+
+
 	// Object card
 	// ------------------------------------------------------------
+
 	$linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
@@ -445,7 +452,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
@@ -468,7 +474,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
-
+	//BEGIN MODULEBUILDER LINES
 	/*
 	 * Lines
 	 */
@@ -498,6 +504,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1);
 		}
 
+		//BEGIN MODULEBUILDER LINES
 		// Form to add new line
 		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 			if ($action != 'editline') {
@@ -513,6 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		}
+		//END MODULEBUILDER LINES
 
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';
@@ -521,8 +529,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print "</form>\n";
 	}
-
-
+	//END MODULEBUILDER LINES
 	// Buttons for actions
 
 	if ($action != 'presend' && $action != 'editline') {
@@ -559,7 +566,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			/*

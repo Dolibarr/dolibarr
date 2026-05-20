@@ -6,7 +6,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,19 +34,17 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'users'));
-
-$extrafields = new ExtraFields($db);			// may be used by some inc.php files
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');

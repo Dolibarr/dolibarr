@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,8 +111,11 @@ if ($object->id > 0) {
 
 
 		// Proposal card
-
-		$linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+		$query = ['restore_lastsearch_values' => 1];
+		if (!empty($socid) && $socid > 0) {
+			$query += ['socid' => $socid];
+		}
+		$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/propal/list.php', $query).'">'.$langs->trans("BackToList").'</a>';
 
 
 		$morehtmlref = '<div class="refidno">';
@@ -130,7 +133,7 @@ if ($object->id > 0) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);

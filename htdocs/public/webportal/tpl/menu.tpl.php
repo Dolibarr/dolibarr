@@ -62,6 +62,26 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
+	// menu interventions
+	if (isModEnabled('intervention') && getDolGlobalInt('WEBPORTAL_FICHEINTER_LIST_ACCESS')) {
+		$navMenu['ficheinter_list'] = array(
+			'id' => 'ficheinter_list',
+			'rank' => 35,
+			'url' => $context->getControllerUrl('ficheinterlist'),
+			'name' => $langs->trans('WebPortalFicheinterListMenu'),
+			'group' => 'administrative'
+		);
+	}
+	// menu tickets
+	if (isModEnabled('ticket') && getDolGlobalInt('WEBPORTAL_TICKET_LIST_ACCESS')) {
+		$navMenu['ticket_list'] = array(
+			'id' => 'ticket_list',
+			'rank' => 36,
+			'url' => $context->getControllerUrl('ticketlist'),
+			'name' => $langs->trans('WebPortalTicketListMenu'),
+			'group' => 'administrative'
+		);
+	}
 	// menu documents (GED)
 	if (getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS')) {
 		$navMenu['document_list'] = array(
@@ -119,7 +139,7 @@ if ($context->userIsLog()) {
 			'id' => 'user_account',
 			'rank' => 99998,
 			'url' => false,
-			'name' => '<img class="top-nav-icon user-account" src="' . WebPortalTheme::getIconImagesUrl() . 'user.svg" aria-hidden="true" /> '.$context->logged_thirdparty->getFullName($langs),
+			'name' => '<img class="top-nav-icon user-account" src="' . WebPortalTheme::getIconImagesUrl() . 'user.svg" aria-hidden="true" /> <span class="user-account-name">'.$context->logged_thirdparty->getFullName($langs).'</span>',
 		);
 	}
 
@@ -197,7 +217,7 @@ if (empty($reshook)) {
 					// ajout du group au menu
 					$navMenu[$groupId] = $groupItem;
 
-					// suppression des items enfant du group du menu
+					// remove child item of the group of the menu
 					foreach ($groupItem['children'] as $menuId => $menuItem) {
 						if (isset($navMenu[$menuId])) {
 							unset($navMenu[$menuId]);
@@ -213,6 +233,20 @@ if (empty($reshook)) {
 }
 ?>
 <nav class="primary-top-nav container-fluid">
+	<ul class="menu-entries-alt">
+		<?php
+		// show menu
+		print '<li data-deep="0" class="nav-item">';
+		print '	<details class="main-nav-dropdown dropdown">';
+		print '		<summary><img class="top-nav-icon menu-icon-dropdown" src="' . WebPortalTheme::getIconImagesUrl() . 'menu.svg" alt="'.dol_escape_htmltag($langs->trans("Menu")).'" /></summary>';
+		print '		<ul >';
+		print 			getNav($navMenu);
+		print '		</ul>';
+		print '	</details>';
+		print '</li>';
+		?>
+	</ul>
+
 	<ul class="brand">
 		<li class="brand">
 		<?php
@@ -235,12 +269,7 @@ if (empty($reshook)) {
 	}
 	?>
 	</ul>
-	<ul class="menu-entries-alt">
-	<?php
-	// show menu
-	print '<li data-deep="0" class="--item-propal-list nav-item "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
-	?>
-	</ul>
+
 	<ul class="logout">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {

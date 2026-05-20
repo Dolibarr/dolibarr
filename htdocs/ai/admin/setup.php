@@ -2,8 +2,9 @@
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Lamrani Abdel
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,7 +12,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY, without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -27,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
-require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
 
@@ -66,23 +66,29 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
-// List all available IA
+// List all available AI
 $arrayofai = getListOfAIServices();
 
 // List all available features
 $arrayofaifeatures = getListOfAIFeatures();
 
+// Main Service Selection
 $item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 $item->setAsSelect($arrayofai);
 $item->cssClass = 'minwidth150';
 
+// Loop for Provider Configs
 foreach ($arrayofai as $ia => $iarecord) {
+	if ($ia == '-1') {
+		continue;
+	}
 	$ialabel = $iarecord['label'];
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
 	$item->cssClass = 'minwidth500';*/
 
+	// API Key
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
@@ -91,9 +97,10 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->cssClass = 'minwidth500 text-security input'.$ia;
 	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
 
+	// API URL
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
-	$item->defaultFieldValue = '';
+	$item->defaultFieldValue =  $iarecord['url'];
 	$item->fieldParams['trClass'] = 'iaservice iaurl '.$ia;
 	$item->cssClass = 'minwidth500 input'.$ia;
 	if ($ia == 'custom') {
@@ -254,7 +261,14 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
 
-	print '<br><textarea id="'.$htmlname.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
+	print ' &nbsp; ';
+	if (getDolGlobalString("AI_DEBUG")) {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOnInFile", 'dolibarr_ai.log').'</span>';
+	} else {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOff", 'dolibarr_ai.log').'</span>';
+	}
+
+	print '<br><textarea id="'.$htmlname.'" placeholder="Click on picto to enter a prompt or enter a message and click picto to make text transformation..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
 
 	print '<br><br>';
 
@@ -268,8 +282,15 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
 
+	print ' &nbsp; ';
+	if (getDolGlobalString("AI_DEBUG")) {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOnInFile", 'dolibarr_ai.log').'</span>';
+	} else {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOff", 'dolibarr_ai.log').'</span>';
+	}
+
 	print '<br>';
-	$doleditor = new DolEditor($htmlname, '', '', 100, 'dolibarr_details');
+	$doleditor = new DolEditor($htmlname, '', '', 150, 'dolibarr_details');
 	print $doleditor->Create(1);
 
 	print '</form>';

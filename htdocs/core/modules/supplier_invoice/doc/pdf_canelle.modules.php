@@ -269,7 +269,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfInvoiceTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -1186,7 +1186,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 		$posy += 1;

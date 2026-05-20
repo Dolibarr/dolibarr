@@ -49,7 +49,7 @@
  *		@param	int		$info_bits					Miscellaneous information on line
  *		@param	int<0,1>	$type					0/1=Product/service
  *		@param  string|Societe|null $seller			Third party seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
- *		@param  array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+ *		@param  array{}|array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}		$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  float	$progress					Situation invoices progress (value from 0 to 100, 100 by default)
  *		@param  float	$multicurrency_tx           Currency rate (1 by default)
  * 		@param  float	$pu_devise					Amount in currency

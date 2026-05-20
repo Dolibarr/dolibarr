@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionProgram=Version programme
-VersionLastInstall=Version d'installation initiale
 VersionLastUpgrade=Version de la dernière mise à jour
 VersionRecommanded=Recommandée
 FileCheckDesc=Cet outil vous permet to vérifier l'intégrité des fichiers et la configuration de votre application en comparant chaque fichier avec les fichiers officiels. La valeur de certaines constantes de configuration pourrait être vérifiée aussi. Vous pouvez utiliser cet outil pour déterminer si des fichiers ont été modifiés (ex: par un pirate informatique)

@@ -92,6 +92,7 @@ AddCustomerIntoCategory=Ordne die Kategorie dem Kunden zu
 AddSupplierIntoCategory=Ordne die Kategorie dem Lieferanten zu
 AddFichinterIntoCategory=Katoegorie einem Serviceauftrag zuordnen
 AddOrderIntoCategory=Kategorie einem Kundenauftrag zuweisen
+AddMoIntoCategory=Die Kategorie einem Fertigungsauftrag zuweisen
 AddInvoiceIntoCategory=Kategorie einer Rechnung zuweisen
 AddSupplierOrderIntoCategory=Kategorie einer Lieferantenbestellung zuweisen
 AddSupplierInvoiceIntoCategory=Kategorie einer Lieferantenrechnung zuweisen

@@ -144,7 +144,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
-	global $db;
+	global $conf, $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("dolSavePageContent We regenerate the tpl page filetpl=".$filetpl);
@@ -221,8 +221,10 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 		$tplcontent .= '<meta name="dolibarr:pageid" content="'.((int) $objectpage->id).'" />'."\n";
 
-		// Add favicon
-		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
+		// Add favicon if not already done in htmlheader
+		$htmldeaderindestdir = dol_sanitizePathName($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html');
+		$htmlheader = file_get_contents($htmldeaderindestdir);
+		if (in_array($objectpage->type_container, array('page', 'blogpost')) && !preg_match('/'.preg_quote('rel="icon"', '/').'/', $htmlheader)) {
 			$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
 		}
 
@@ -350,7 +352,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		$tplcontent .= $objectpage->content."\n";
 
-		// Add logic to handle view and actions for managing parameters in the config page
+		// Add logic to handle view and actions for managing parameters in the special config page
 		if ($objectpage->type_container == 'setup') {
 			$content = '<div id="websitetemplateconfigpage">'."\n";
 			$content .= '<?php'."\n";
@@ -828,6 +830,34 @@ function showWebsiteTemplates(Website $website, int $refresh)
 
 	$colspan = 2;
 
+	$importButtonIsDisabled = 0;
+
+	global $dolibarr_website_allow_custom_php;
+	if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 1) {
+		$notdisabledsystemfunction = '';
+		$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+		foreach ($systemfunctions as $systemfunction) {
+			// @phpstan-ignore-next-line
+			if (function_exists($systemfunction)) {
+				$notdisabledsystemfunction .= ($notdisabledsystemfunction ? ', ' : '').$systemfunction;
+			}
+		}
+		if ($notdisabledsystemfunction) {
+			print '<div class="warning">';
+			print $langs->trans("ImportOfWebsiteTemplateIncludingPHPIsAllowedIf", 'warning');
+			print '</div>';
+
+			$importButtonIsDisabled = 1;
+		}
+	}
+	if (empty($dolibarr_website_allow_custom_php)) {
+		print '<div class="warning">';
+		print $langs->trans("ImportOfWebsiteTemplateIncludingPHPIsDisabled", 'warning');
+		print '</div>';
+
+		$importButtonIsDisabled = 1;
+	}
+
 	print '<!-- For website template import -->'."\n";
 	print '<table class="noborder centpercent">';
 
@@ -909,7 +939,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 							if ($user->hasRight('website', 'delete')) {
 								print ' <a href="'.$_SERVER["PHP_SELF"].'?action=deletetemplate&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'">'.img_picto('', 'delete').'</a>';
 							}
-							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
+							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button'.($importButtonIsDisabled ? ' disabled' : '').'">'.$langs->trans("Load").'</a>';
 							print '</div>';
 
 							$i++;
@@ -935,7 +965,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 
 
 /**
- * Check a new string containing only php code (including <php tag)
+ * Check that the new string $phpfullcodestring contains only php code (including <php tag)
  * - Block if user has no permission to change PHP code.
  * - Block also if bad code found in the new string.
  *
@@ -956,6 +986,11 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
+		global $dolibarr_website_allow_custom_php;
+		if (empty($dolibarr_website_allow_custom_php)) {
+			$error++;
+			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		}
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');

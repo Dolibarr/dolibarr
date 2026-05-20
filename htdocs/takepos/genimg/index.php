@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 }
 /**
  * @var Conf $conf
+ * @var DoliDB $db
  */
 $id = GETPOSTINT('id');
 $w = GETPOSTINT('w');
@@ -104,21 +106,5 @@ if ($query == "cat") {
 		}
 	}
 } else {
-	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resized when downloaded.
-
-	// The file
-	$filename = $query.".jpg";
-
-	// Dimensions
-	list($width, $height) = getimagesize($filename);
-	$new_width = $w;
-	$new_height = $h;
-
-	// Resample
-	$image_p = imagecreatetruecolor($new_width, $new_height);
-	$image = imagecreatefromjpeg($filename);
-	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-
-	// Output
-	imagejpeg($image_p, null, 100);
+	print 'Invalid param query. Must be "cat" or "pro"';
 }

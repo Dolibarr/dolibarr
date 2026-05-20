@@ -171,13 +171,13 @@ class CGenericDic extends CommonDict
 		}
 
 		$sql = "SELECT";
-		$sql .= " t.".$fieldrowid.",";
+		$sql .= " ".$this->db->sanitize("t.".$fieldrowid).",";
 		$sql .= " t.code,";
-		$sql .= " t.".$fieldlabel." as label,";
+		$sql .= " ".$this->db->sanitize("t.".$fieldlabel)." as label,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($id) {
-			$sql .= " WHERE t.".$fieldrowid." = ".((int) $id);
+			$sql .= " WHERE ".$this->db->sanitize("t.".$fieldrowid)." = ".((int) $id);
 		} elseif ($code) {
 			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
@@ -410,7 +410,7 @@ class CGenericDic extends CommonDict
 
 		if (!$error) {
 			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
-			$sql .= " WHERE ".$fieldrowid." = ".((int) $this->id);
+			$sql .= " WHERE ".$this->db->sanitize($fieldrowid)." = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

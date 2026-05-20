@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -30,6 +30,7 @@ require '../main.inc.php';
  * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -63,7 +64,6 @@ $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString(
 
 // Initialize a technical objects
 $object = new BOM($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomcard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -153,8 +153,8 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
-	$triggersendname = 'BOM_SENTBYMAIL';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_BOM_TO';
+	$triggersendname = $object->TRIGGER_PREFIX.'_SENTBYMAIL';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_'.$object->TRIGGER_PREFIX.'_TO';
 	$trackid = 'bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
@@ -166,6 +166,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$bom_child_id = GETPOSTINT('bom_id');
+		$idprod = 0;
 		if ($bom_child_id > 0) {
 			$bom_child = new BOM($db);
 			$res = $bom_child->fetch($bom_child_id);
@@ -779,7 +780,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom', 'clone', $permissiontoadd);
 			}
 
 			// Close / Cancel

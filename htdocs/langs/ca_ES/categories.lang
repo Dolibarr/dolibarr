@@ -92,6 +92,7 @@ AddCustomerIntoCategory=Assignar la categoria al client
 AddSupplierIntoCategory=Assignar la categoria al proveïdor
 AddFichinterIntoCategory=Assignar la categoria a la intervenció
 AddOrderIntoCategory=Assigna la categoria a l'ordre
+AddMoIntoCategory=Assignar la categoria a l'ordre de fabricació
 AddInvoiceIntoCategory=Assigna la categoria a la factura
 AddSupplierOrderIntoCategory=Assigna la categoria a la comanda del proveïdor
 AddSupplierInvoiceIntoCategory=Assigna la categoria a la factura del proveïdor

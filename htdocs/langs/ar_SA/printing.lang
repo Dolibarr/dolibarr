@@ -46,6 +46,10 @@ IPP_Color=اللون
 IPP_Device=جهاز
 IPP_Media=وسائل الإعلام طابعة
 IPP_Supported=نوع من وسائل الإعلام
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=لا أحد
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=اللون
 DirectPrintingJobsDesc=هذا عمل القوائم صفحة الطباعة تم العثور عليها ل الطابعات المتوفرة.
 GoogleAuthNotConfigured=لم يتم إعداد Google OAuth. تمكين الوحدة النمطية OAuth وتعيين معرف / سر Google.
 GoogleAuthConfigured=تم العثور على بيانات اعتماد Google OAuth في إعداد وحدة OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=المتغيرات التكوين للسائق الط
 PrintingDriverDescprintipp=متغيرات التكوين لطباعة أكواب السائق.
 PrintTestDescprintgcp=قائمة طابعات جوجل الغيمة طباعة.
 PrintTestDescprintipp=قائمة طابعات الكؤوس.
-Testbbbb
+PrinterLocation=Printer location

@@ -157,6 +157,7 @@ install:
   #sudo apt install composer
   composer -V
   sudo composer -n config -g vendor-dir htdocs/includes
+  sudo composer -n config audit.block-insecure false
   sudo chmod -R a+rwx /home/travis/.config/composer
   echo
 
@@ -531,6 +532,9 @@ script:
     php upgrade.php 22.0.0 23.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade22002300.log || cat $TRAVIS_BUILD_DIR/upgrade22002300.log
     php upgrade2.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-2.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-2.log
     php step5.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-3.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-3.log
+    php upgrade.php 23.0.0 24.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade23002400.log || cat $TRAVIS_BUILD_DIR/upgrade23002400.log
+    php upgrade2.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-2.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-2.log
+    php step5.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-3.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-3.log
     set +e
     echo
 
@@ -571,6 +575,8 @@ script:
     # Execute phpunit, check its exit status and that the phpunit output shows a test summary
     phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
     echo "Phpunit return code = $phpunitresult"
+    echo "Content of end of apache error.log"
+    sudo tail -n 200 /var/log/apache2/travis_error_log
     # Comment next line if you want to go to the end to see the dolibarr.log file.
     [ $phpunitresult == 0 ] || exit $phpunitresult
     echo

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2010		François Legastelois		<flegastelois@teclib.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -503,7 +503,7 @@ if ($usertoprocess->id != $user->id) {
 }
 print '<div class="taskiddiv inline-block">';
 print img_picto('', 'projecttask', 'class="pictofixedwidth"');
-$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, 'widthcentpercentminusx', '', 'all', $usertoprocess);
+$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, 'widthcentpercentminusx maxwidth500', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'position', 0, 'maxwidth150onsmartphone');
@@ -545,12 +545,12 @@ if ($form->num > 1 || empty($conf->dol_optimize_smallscreen)) {
 if (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'" spellcheck="false">';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_thirdparty" class="maxwidth100" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_thirdparty" class="maxwidth100" value="'.dol_escape_htmltag($search_thirdparty).'" spellcheck="false">';
 	$moreforfilter .= '</div>';
 }
 
@@ -587,12 +587,12 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 print '<tr class="liste_titre_filter">';
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 }
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 }
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 // TASK fields
 $search_options_pattern = 'search_task_options_';
 $extrafieldsobjectkey = 'projet_task';
@@ -602,7 +602,7 @@ if (!empty($arrayfields['t.planned_workload']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="width50" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
 if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<td class="liste_titre"></td>';
@@ -641,11 +641,11 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
 	print '<span class="nowraponall">';
-	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
+	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphotosmall" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
 	print '</span>';
 	print '</th>';
-	print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+	print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-3).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
 }
 foreach ($TWeek as $week_number) {
 	print '<th width="6%" class="center bold hide"><a href="'.DOL_URL_ROOT.'/projet/activity/perweek.php?year='.$year.'&month='.$month.'&day='.$TFirstDays[$week_number].'">'.$langs->trans("WeekShort").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</a></th>';
@@ -777,7 +777,7 @@ if (count($tasksarray) > 0) {
 		$THolidays[$weekNb]["ids"] = array();
 		$THolidays[$weekNb]["days"] = 0;
 		foreach ($holiday->holiday as $key => $h) {
-			if (!empty($THolidays[$weekNb]["ids"]) && in_array($h->rowid, $THolidays[$weekNb]["ids"])) {
+			if (!empty($THolidays[$weekNb]["ids"]) && in_array($h["id"], $THolidays[$weekNb]["ids"])) {
 				continue;
 			}
 			$startweekholiday = (int) (($h["date_debut"] <= $weekstart) ? $weekstart : $h["date_debut"]);
@@ -785,7 +785,7 @@ if (count($tasksarray) > 0) {
 			$halfdays = (int) $h["halfday"];
 			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays, $usertoprocess->country_id);
 
-			$THolidays[$weekNb]["ids"][] = $h->rowid;
+			$THolidays[$weekNb]["ids"][] = $h["id"];
 			$THolidays[$weekNb]["days"] += $nbdays;
 			$totaldayholiday += $nbdays;
 		}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -33,13 +40,6 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "banks", "companies", "donations"));
@@ -109,8 +109,8 @@ if (empty($object->id)) {
 
 $h = 0;
 
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/don/payment/card.php?id='.$id;
+$head = [];
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/payment/card.php', ['id'=> $id]);
 $head[$h][1] = $langs->trans("DonationPayment");
 $hselected = (string) $h;
 $h++;
@@ -236,9 +236,9 @@ print '<div class="tabsAction">';
 if (empty($action)) {
 	if ($user->hasRight('don', 'supprimer')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', 1);
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), '', 1);
 		} else {
-			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), '', $_SERVER["PHP_SELF"].'?id='.$object->id.'#', '', 1, [ 'attr' => ['classOverride' => 'butActionRefused']]);
+			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), '', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id], false, '#'), '', 1, ['attr' => ['classOverride' => 'butActionRefused']]);
 		}
 	}
 }

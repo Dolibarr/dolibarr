@@ -230,7 +230,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 		$pdf->SetSubject($outputlangs->transnoentities("AccountancyBookkeeping"));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBookkeeping"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
@@ -653,7 +653,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
+		$text = (string) $this->emetteur->name;
 		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 
