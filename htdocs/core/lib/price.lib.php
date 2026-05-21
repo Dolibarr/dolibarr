@@ -220,22 +220,22 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	// if input unit price is 'HT', we need to have the totals with main VAT for a correct calculation
 	if ($price_base_type != 'TTC') {
-		$tot_sans_remise_withvat = price2num($tot_sans_remise * (1 + ($txtva / 100)), 'MU');
-		$tot_avec_remise_withvat = price2num($tot_avec_remise * (1 + ($txtva / 100)), 'MU');
+		$tot_sans_remise_withvat = (float) price2num($tot_sans_remise * (1 + ($txtva / 100)), 'MU');
+		$tot_avec_remise_withvat = (float) price2num($tot_avec_remise * (1 + ($txtva / 100)), 'MU');
 
 		$tot_sans_remise_withoutvat = $tot_sans_remise;
 		$tot_avec_remise_withoutvat = $tot_avec_remise;
 
 		$pu_withouttax = $pu;
-		$pu_withmainvat = price2num($pu * (1 + ($txtva / 100)), 'MU');
+		$pu_withmainvat = (float) price2num($pu * (1 + ($txtva / 100)), 'MU');
 	} else {
 		$tot_sans_remise_withvat = $tot_sans_remise;
 		$tot_avec_remise_withvat = $tot_avec_remise;
 
-		$tot_sans_remise_withoutvat = price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MU');
-		$tot_avec_remise_withoutvat = price2num($tot_avec_remise / (1 + ($txtva / 100)), 'MU');
+		$tot_sans_remise_withoutvat = (float) price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MU');
+		$tot_avec_remise_withoutvat = (float) price2num($tot_avec_remise / (1 + ($txtva / 100)), 'MU');
 
-		$pu_withouttax = price2num($pu / (1 + ($txtva / 100)), 'MU');
+		$pu_withouttax = (float) price2num($pu / (1 + ($txtva / 100)), 'MU');
 		$pu_withmainvat = $pu;
 	}
 
