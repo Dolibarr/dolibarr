@@ -221,13 +221,12 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var int ID into llx_ecm_files table to link line to attached file
 	 */
 	public $fk_ecm_files;
-	
+
 	/**
 	 * @var int 0: not check, 1 :tchecked ok -1 : not good
 	 */
 	public $tcheck_file;
 
-	
 	/**
 	 * @var string
 	 */
