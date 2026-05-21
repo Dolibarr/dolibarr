@@ -101,13 +101,13 @@ if ($id > 0 || !empty($ref)) {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	if (!empty($object->origin)) {
+	if (!empty($object->origin) && $object->origin_id > 0) {
 		$origin = $object->origin;
 		$typeobject = $object->origin;
 
 		$object->fetch_origin();
 	}
-	$isStandaloneShipment = !empty($object->id) && empty($object->origin) && getDolGlobalString('SHIPMENT_STANDALONE');
+	$isStandaloneShipment = !empty($object->id) && !($object->origin_id > 0) && getDolGlobalString('SHIPMENT_STANDALONE');
 }
 
 // $id is id of a purchase order.
@@ -130,7 +130,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-$isStandaloneShipment = !empty($object->id) && empty($object->origin) && getDolGlobalString('SHIPMENT_STANDALONE');
+$isStandaloneShipment = !empty($object->id) && !($object->origin_id > 0) && getDolGlobalString('SHIPMENT_STANDALONE');
 
 if (empty($reshook)) {
 	// Update a dispatched line
