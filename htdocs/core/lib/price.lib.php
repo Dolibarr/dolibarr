@@ -352,13 +352,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 	if ($uselocaltax1_rate && $apply_tax) {
 		$result[14] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withoutvat, 'MT'); // amount tax1 for total_ht_without_discount
-		$result[8] += $result[14]; // total_ttc_without_discount + tax1
+		$result[8] += (float) $result[14]; // total_ttc_without_discount + tax1
 
 		$result[9] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withoutvat, 'MT'); // amount tax1 for total_ht
-		$result[2] += $result[9]; // total_ttc + tax1
+		$result[2] += (float) $result[9]; // total_ttc + tax1
 
 		$result[11] = price2num(($pu_withouttax * (1 + ($localtax1_rate / 100))) - $pu_withouttax, 'MU'); // amount tax1 for pu_ht
-		$result[5] += $result[11]; // pu_ht + tax1
+		$result[5] += (float) $result[11]; // pu_ht + tax1
 	}
 
 	$apply_tax = false;
@@ -379,13 +379,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 	if ($uselocaltax2_rate && $apply_tax) {
 		$result[15] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withoutvat, 'MT'); // amount tax2 for total_ht_without_discount
-		$result[8] += $result[15]; // total_ttc_without_discount + tax2
+		$result[8] += (float) $result[15]; // total_ttc_without_discount + tax2
 
 		$result[10] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withoutvat, 'MT'); // amount tax2 for total_ht
-		$result[2] += $result[10]; // total_ttc + tax2
+		$result[2] += (float) $result[10]; // total_ttc + tax2
 
 		$result[12] = price2num(($pu_withouttax * (1 + ($localtax2_rate / 100))) - $pu_withouttax, 'MU'); // amount tax2 for pu_ht
-		$result[5] += $result[12]; // pu_ht + tax2
+		$result[5] += (float) $result[12]; // pu_ht + tax2
 	}
 
 	// If rounding is not using base 10 (rare)
