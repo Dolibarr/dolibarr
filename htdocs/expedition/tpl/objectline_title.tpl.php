@@ -84,8 +84,6 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 
 if (isModEnabled('stock')) {
 	print '<th class="linecolwarehousesource left">'.$langs->trans('WarehouseSource').'</th>';
-	print '<th class="linecolstockavailable right">'.$langs->trans('StockAvailable').'</th>';
-	print '<th class="linecolstockafter right">'.$langs->trans('StockAfterShipment').'</th>';
 }
 
 print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim
