@@ -1542,6 +1542,12 @@ if ($step == 4 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	// Create class to use for import
@@ -2086,6 +2092,12 @@ if ($step == 5 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	$importid = GETPOST("importid", 'alphanohtml');
 
