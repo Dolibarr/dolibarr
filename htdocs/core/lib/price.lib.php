@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2002-2006  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2008  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2013  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2012       Christophe Battarel         <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador             <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,13 +261,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	if ($uselocaltax1_rate && $apply_tax) {
 		$result[14] = price2num(($tot_sans_remise_withvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withvat, 'MT');
-		$localtaxes[0] += $result[14];
+		$localtaxes[0] += (float) $result[14];
 
 		$result[9] = price2num(($tot_avec_remise_withvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withvat, 'MT');
-		$localtaxes[1] += $result[9];
+		$localtaxes[1] += (float) $result[9];
 
 		$result[11] = price2num(($pu_withmainvat * (1 + ($localtax1_rate / 100))) - $pu_withmainvat, 'MU');
-		$localtaxes[2] += $result[11];
+		$localtaxes[2] += (float) $result[11];
 	}
 
 	$apply_tax = false;
