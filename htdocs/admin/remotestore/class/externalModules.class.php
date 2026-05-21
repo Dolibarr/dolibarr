@@ -575,7 +575,7 @@ class ExternalModules
 				// Direct install
 				if (($product['direct-download'] && $product['direct-download'] == 'yes') || $product['source'] === 'dolistore') {
 					$disableInstall = ($compatible === 'NotCompatible');
-					$disableInstall = false; // TODO: remove this.
+					// $disableInstall = false; // TODO: remove this.
 					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
 					$fields = ['action' => 'install', 'token' => newToken()];
 					foreach ($product as $key => $value) {
@@ -1318,8 +1318,8 @@ class ExternalModules
 	/**
 	 * Download a Dolibarr module from a Git repository URL or Dolistore download URL.
 	 *
-	 * @param  array			$producttoinstall Product information array
-	 * @return string|false		Path to the final ZIP file, or false on error
+	 * @param  array<string, mixed> 	$producttoinstall Product information array
+	 * @return string|false				Path to the final ZIP file, or false on error
 	 */
 	public function getModuleZIP($producttoinstall = array())
 	{
