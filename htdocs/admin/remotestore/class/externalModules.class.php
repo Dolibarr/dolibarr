@@ -1459,13 +1459,13 @@ class ExternalModules
 			CURLOPT_SSL_VERIFYPEER => false,
 			CURLOPT_SSL_VERIFYHOST => 0,
 		]);
-		curl_exec($ch);
+		$exec_result = curl_exec($ch);
 		$http_code  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$curl_error = curl_error($ch);
 		curl_close($ch);
 		fclose($fp);
 
-		if (!empty($curl_error) || $http_code !== 200 || filesize(dol_osencode($dest_file)) === 0) {
+		if ($exec_result === false || !empty($curl_error) || $http_code !== 200 || filesize(dol_osencode($dest_file)) === 0) {
 			dol_syslog(
 				__METHOD__ . ': Download failed — HTTP ' . $http_code . ' — ' . $curl_error . ' — ' . $url,
 				LOG_WARNING

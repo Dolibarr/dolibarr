@@ -227,7 +227,7 @@ if ($action == 'install' && $allowonlineinstall) {
 		}
 	}
 
-	$tmpfile = $_FILES['fileinstall']['tmp_name'];
+	$tmpfile = (string) $_FILES['fileinstall']['tmp_name'];
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
 	$newfile = dol_sanitizePathName($conf->admin->dir_temp.'/'.$original_file.'/'.$original_file);
