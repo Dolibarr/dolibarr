@@ -178,7 +178,7 @@ if ($mysoc->country_code && in_array($mysoc->country_code, array_keys($arrayofei
 	$modulefound = '';
 	if (!empty($einvoiceneed['module'])) {
 		foreach ($einvoiceneed['module'] as $module) {
-			if (isModEnabled($module)) {
+			if (in_array($module, $conf->modules)) {
 				$modulefound = $module;
 				break;
 			}
