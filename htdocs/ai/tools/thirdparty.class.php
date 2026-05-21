@@ -55,7 +55,7 @@ class ToolThirdParty extends McpTool
 		return [
 			[
 				"name" => "search_thirdparties",
-				"description" => "Search for a thirdparty by ID, name, alias, code, or email. If an ID is provided, it returns an exact match. If a name is provided, it returns a list of matches.",
+				"description" => "Search for a thirdparty by ID, name, alias, code, or email. If a numerical ID is provided alone, it returns an exact match. If a name is provided, it returns a list of matches.",
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
@@ -63,6 +63,19 @@ class ToolThirdParty extends McpTool
 						"type" => ["type" => "string", "enum" => ["customer", "prospect", "supplier"], "description" => "Filter by type (optional)."],
 						"country_code" => ["type" => "string", "description" => "ISO 2-letter country code (e.g. US, FR, GR) (optional)."],
 						"limit" => ["type" => "integer", "default" => 5]
+					],
+					"required" => ["query"]
+				]
+			],
+			[
+				"name" => "count_thirdparties",
+				"description" => "Count the number of thirdparties matching the search criteria.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"query" => ["type" => ["string", "integer"], "description" => "A name/alias/code/email to search for."],
+						"type" => ["type" => "string", "enum" => ["customer", "prospect", "supplier"], "description" => "Filter by type (optional)."],
+						"country_code" => ["type" => "string", "description" => "ISO 2-letter country code (e.g. US, FR, GR) (optional)."]
 					],
 					"required" => ["query"]
 				]
@@ -174,8 +187,10 @@ class ToolThirdParty extends McpTool
 	{
 		switch ($name) {
 			case 'search_thirdparties':
-				return $this->search($args);
-			case 'get_thirdparty_details':
+				return $this->search($args, 0);
+			case 'count_thirdparties':
+				return $this->search($args, 1);
+			case 'get_thirdparty_details':			// Get info of agiven thidparty
 				return $this->getDetails($args);
 			case 'create_thirdparty':
 				return $this->create($args);
@@ -198,10 +213,10 @@ class ToolThirdParty extends McpTool
 	 *                                                                                                 - country_code: ISO country code on 2 chars (FR, US, GR...)
 	 *                                                                                                 - type: 'customer', 'prospect', 'supplier'
 	 *                                                                                                 - limit: Limit results (default 5)
+	 * @param	int		$count		If set to 1, returns only the count of results.
 	 * @return array{error:string}|list<array{id:int,name:string,alias:string,code_cust:string,code_sup:string,email:string,type:string,url:string}>
-	 *
 	 */
-	private function search(array $args)
+	private function search(array $args, int $count = 0)
 	{
 		if (!$this->user->hasRight('societe', 'lire')) {
 			return ["error" => "Permission Denied"];
@@ -216,9 +231,17 @@ class ToolThirdParty extends McpTool
 		if ($limit <= 0) {
 			$limit = 5;
 		}
+		if ($limit > 1000) {
+			dol_syslog("Search DB Error: Too many record requested", LOG_ERR);
+			return ["error" => "DB Error"];
+		}
 
 		// Dolibarr SQL construction
-		$sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.email, s.client, s.fournisseur";
+		if ($count) {
+			$sql = "SELECT COUNT(s.rowid) as nb";
+		} else {
+			$sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.email, s.client, s.fournisseur";
+		}
 		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
 		if ($country_code) {
 			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON s.fk_pays = c.rowid AND c.code = '".$this->db->escape($country_code)."'";
@@ -245,7 +268,7 @@ class ToolThirdParty extends McpTool
 		}
 
 		$sql .= " ORDER BY s.nom ASC";
-		$sql .= " LIMIT " . (int) $limit;
+		$sql .= $this->db->plimit($limit);
 
 		$resql = $this->db->query($sql);
 
@@ -257,6 +280,16 @@ class ToolThirdParty extends McpTool
 		$data = [];
 
 		while ($obj = $this->db->fetch_object($resql)) {
+			if ($count) {
+				$data[] = [
+					"count" => (int) $obj->nb
+				];
+
+				$this->db->free($resql);
+
+				return $data;
+			}
+
 			$roles = [];
 
 			// Cast strictly to ensure type safety in logic
