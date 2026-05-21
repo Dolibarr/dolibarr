@@ -1751,6 +1751,42 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		}
 	}
 
+	if (!$error && $ncObj !== null) {
+		// Apply object name substitution to ALL PHP files in the module directory.
+		// initmodule only substitutes the module name; files it creates (e.g. testmodindex.php,
+		// lib/testmod.lib.php, admin/setup.php) still contain myobject/mymodule placeholders
+		// that must be resolved when an object is first added.
+		$licenceValueAll = getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+			? dol_print_date($now, '%Y') . ' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+			: getLicenceHeader($user, $langs, $now);
+		$moduleReplacementAll = array_merge(
+			$ncObj->getSubstitutionMap(),
+			[
+				'htdocs/modulebuilder/template/'                            => $ncObj->moduleNameLower,
+				'---Replace with your own copyright and developer email---' => $licenceValueAll,
+			]
+		);
+		$allModulePhpFiles = dol_dir_list($destdir, 'files', 1, '\.php$');
+		if (is_array($allModulePhpFiles) && !empty($allModulePhpFiles)) {
+			foreach ($allModulePhpFiles as $phpFileval) {
+				$result = dolReplaceInFile($phpFileval['fullname'], $moduleReplacementAll);
+				if ($result < 0) {
+					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpFileval['fullname']), null, 'warnings');
+				}
+			}
+		}
+		// Delete initmodule placeholder files superseded by initobject-generated files.
+		$moduleLowerForPlaceholder = strtolower($module);
+		foreach ([
+			$destdir . '/stats/myobject_index.php',
+			$destdir . '/lib/' . $moduleLowerForPlaceholder . '_myobject.lib.php',
+		] as $placeholder) {
+			if (file_exists($placeholder)) {
+				dol_delete_file($placeholder);
+			}
+		}
+	}
+
 	$object = null;
 	if (!$error) {
 		// Edit the class file to write properties
