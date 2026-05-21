@@ -1360,6 +1360,8 @@ if (empty($reshook)) {
 					}
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the clean form after line creation
+				exit();
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
@@ -3151,15 +3153,7 @@ if ($action == 'create' && $usercancreate) {
 			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 				if ($action != 'editline') {
 					// Add products/services form
-
-					$parameters = array();
-					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-					if ($reshook < 0) {
-						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					}
-					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $mysoc, $soc, '/expedition/tpl');
-					}
+					require DOL_DOCUMENT_ROOT.'/expedition/tpl/objectline_create.tpl.php';
 				}
 			}
 

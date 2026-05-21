@@ -66,16 +66,9 @@ if (empty($filtertype)) {
 
 $formproduct = new FormProduct($object->db);
 
-// Define colspan for the button 'Add'
-$colspan = 1;
-
-
-// Lines for extrafield
-$objectline = new ExpeditionLigne($this->db);
-
 print "<!-- BEGIN PHP TEMPLATE expedition/tpl/objectline_create.tpl.php -->\n";
 
-$nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
+$nolinesbefore = (count($object->lines) == 0 || $forcetoshowtitlelines);
 
 if ($nolinesbefore) {
 	print '<tr class="liste_titre nodrag nodrop">';
@@ -87,11 +80,17 @@ if ($nolinesbefore) {
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
+	}
+
 	if (isModEnabled('stock')) {
 		print '<td class="linecolwarehousesource left">'.$langs->trans('WarehouseSource').'</td>';
 	}
 
-	print '<td class="linecoledit right">'.$langs->trans('Add').'</td>';
+	print '<td class="linecoledit"></td>';
+	print '<td class="linecoldelete"></td>';
+	print '<td class="linecolmove"></td>';
 
 	print '</tr>';
 }
@@ -145,22 +144,18 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	echo '</span>';
 }
 
-
-if (!empty($extrafields)) {
-	$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
-
-	if (!empty($temps)) {
-		print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
-		print $temps;
-		print '</div>';
-	}
-}
 print '</td>';
 
 // Qty
 $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
+
+// Unit, kept empty because standalone shipments use the catalog product unit.
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecoluseunit left"></td>';
+}
 
 // Warehouse source
 if (isModEnabled('stock')) {
@@ -174,10 +169,14 @@ if (isModEnabled('stock')) {
 	print '</td>';
 }
 
-$coldisplay += $colspan;
-print '<td class="bordertop nobottom linecoledit right valignmiddle" colspan="' . $colspan . '">';
+$coldisplay++;
+print '<td class="bordertop nobottom linecoledit right valignmiddle">';
 print '<input type="submit" class="button button-add small" name="addline" id="addline" value="' . $langs->trans('Add') . '">';
 print '</td>';
+$coldisplay++;
+print '<td class="bordertop nobottom linecoldelete"></td>';
+$coldisplay++;
+print '<td class="bordertop nobottom linecolmove"></td>';
 print '</tr>';
 
 ?>
