@@ -850,6 +850,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save')) {
 		if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
+			$langs->load('errors');
 			// Update a line
 			// Clean parameters
 
@@ -858,7 +859,8 @@ if (empty($reshook)) {
 			}
 			$object->fetch_thirdparty();
 
-			$qty = GETPOST('qty', 'alpha');
+			$qty_raw = GETPOST('qty', 'alpha');
+			$qty = price2num($qty_raw, 'MS', 2);
 			$description = '';
 			$fk_parent = 0;
 			$element_type = 'shipping';
@@ -888,6 +890,37 @@ if (empty($reshook)) {
 				}
 			}
 
+			if (!GETPOSTISSET('qty') || $qty_raw === '') {
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+				$error++;
+			} elseif ($qty <= 0) {
+				setEventMessages($langs->trans('ErrorValueForTooLow', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+				$error++;
+			}
+
+			$prod = null;
+			if (!$error) {
+				if ($fk_product <= 0) {
+					$labelproductfield = (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) ? 'ProductOrService' : 'Product';
+					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($labelproductfield)), null, 'errors');
+					$error++;
+				} else {
+					$prod = new Product($db);
+					if ($prod->fetch($fk_product) <= 0) {
+						setEventMessages($prod->error ? $prod->error : $langs->trans("ErrorRecordNotFound"), $prod->errors, 'errors');
+						$error++;
+					}
+				}
+			}
+
+			if (!$error && isModEnabled('stock') && $prod instanceof Product) {
+				$warehouseIdToCheck = ($fk_entrepot < 0) ? (int) $shipline->entrepot_id : (int) $fk_entrepot;
+				$isServiceAllowedWithoutWarehouse = (getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && (int) $prod->type == Product::TYPE_SERVICE);
+				if ($warehouseIdToCheck <= 0 && !$isServiceAllowedWithoutWarehouse && $prod->stockable_product == Product::ENABLED_STOCK) {
+					setEventMessages($langs->trans("ErrorWarehouseRequiredIntoShipmentLine"), null, 'errors');
+					$error++;
+				}
+			}
 
 			if (!$error) {
 				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, 0, $array_options, $fk_entrepot);
@@ -1165,11 +1198,9 @@ if (empty($reshook)) {
 		$predef = '';
 		$description = '';
 		$fk_parent = 0;
-		$fk_elementdet = '';
 		$element_type = 'shipping';
 		$fk_unit = '';
 		$idprod = 0;
-		$fk_product = 0;
 		$fk_entrepot = 0;
 		if (isModEnabled('stock') && GETPOSTISSET('entrepot_id')) {
 			$fk_entrepot = GETPOSTINT('entrepot_id');
@@ -1178,7 +1209,6 @@ if (empty($reshook)) {
 			}
 		}
 		$rang = '';
-		$prod_entry_mode = 'predef';
 		$idprod = GETPOSTINT('idprod');
 		if ($idprod <= 0) {
 			$labelproductfield = (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) ? 'ProductOrService' : 'Product';
@@ -1186,7 +1216,8 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
+		$qty_raw = GETPOST('qty'.$predef, 'alpha');
+		$qty = price2num($qty_raw, 'MS', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1199,32 +1230,21 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
-			$error++;
-		}
-
-		if ($qty == '') {
+		if (!GETPOSTISSET('qty'.$predef) || $qty_raw === '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
-		}
-		if ($qty < 0) {
-			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
-			$error++;
-		}
-		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
+		} elseif ($qty <= 0) {
+			setEventMessages($langs->trans('ErrorValueForTooLow', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
 
-		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
+		if (!$error && isModEnabled('variants')) {
 			if ($combinations = GETPOST('combinations', 'array')) {
 				// Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-					$fk_product = $idprod; // Update $fk_product with the fetched child product
 				} else {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
@@ -1232,19 +1252,60 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
+		$prod = null;
+		if (!$error) {
+			$prod = new Product($db);
+			if ($prod->fetch($idprod) <= 0) {
+				setEventMessages($prod->error ? $prod->error : $langs->trans("ErrorRecordNotFound"), $prod->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if (!$error && isModEnabled('stock') && $prod instanceof Product) {
+			$isServiceAllowedWithoutWarehouse = (getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && (int) $prod->type == Product::TYPE_SERVICE);
+			if ($fk_entrepot <= 0 && !$isServiceAllowedWithoutWarehouse && $prod->stockable_product == Product::ENABLED_STOCK) {
+				setEventMessages($langs->trans("ErrorWarehouseRequiredIntoShipmentLine"), null, 'errors');
+				$error++;
+			}
+		}
+
+		if (!$error && $qty > 0 && $idprod > 0 && $prod instanceof Product) {
 			// Clean parameters
-			if (!empty($idprod) && $idprod > 0) {
-				$prod = new Product($db);
-				$prod->fetch($idprod);
-				$desc = $prod->label;
-				$description = $desc;
-				// Define output language
+			$desc = $prod->label;
+			$description = $desc;
+			// Define output language
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if (GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$description = (!empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
+			} else {
+				$description = $prod->description;
+			}
+			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
+				$description = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+			} else {
+				$description = $line_desc;
+			}
+
+			// Add custom code and origin country into description
+			if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
+				$tmptxt = '(';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
+					if (GETPOST('lang_id', 'alpha')) {
+						$newlang = GETPOST('lang_id', 'alpha');
 					}
 					if (empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
@@ -1252,68 +1313,32 @@ if (empty($reshook)) {
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
-
-					$description = (!empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
-				} else {
-					$description = $prod->description;
-				}
-				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
-					$description = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
-				} else {
-					$description = $line_desc;
-				}
-
-				// Add custom code and origin country into description
-				if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
-					$tmptxt = '(';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-						$outputlangs = $langs;
-						$newlang = '';
-						if (GETPOST('lang_id', 'alpha')) {
-							$newlang = GETPOST('lang_id', 'alpha');
-						}
-						if (empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
-						}
-						if (!empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-							$outputlangs->load('products');
-						}
-						if (!empty($prod->customcode)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
-						}
-						if (!empty($prod->customcode) && !empty($prod->country_code)) {
-							$tmptxt .= ' - ';
-						}
-						if (!empty($prod->country_code)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
-						}
-					} else {
-						if (!empty($prod->customcode)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
-						}
-						if (!empty($prod->customcode) && !empty($prod->country_code)) {
-							$tmptxt .= ' - ';
-						}
-						if (!empty($prod->country_code)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
-						}
+					if (!empty($prod->customcode)) {
+						$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
 					}
-					$tmptxt .= ')';
-					$description = dol_concatdesc($desc, $tmptxt);
+					if (!empty($prod->customcode) && !empty($prod->country_code)) {
+						$tmptxt .= ' - ';
+					}
+					if (!empty($prod->country_code)) {
+						$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
+					}
+				} else {
+					if (!empty($prod->customcode)) {
+						$tmptxt .= $langs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
+					}
+					if (!empty($prod->customcode) && !empty($prod->country_code)) {
+						$tmptxt .= ' - ';
+					}
+					if (!empty($prod->country_code)) {
+						$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
+					}
 				}
-				$type = $prod->type;
-				$fk_unit = $prod->fk_unit;
-			} else {
-				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
-				$desc = $line_desc;
-				$type = GETPOST('type');
-				$fk_unit = GETPOST('units', 'alpha');
-				$description = $desc;
-				$fk_elementdet = '';
+				$tmptxt .= ')';
+				$description = dol_concatdesc($desc, $tmptxt);
 			}
+			$fk_unit = $prod->fk_unit;
 			$desc = dol_htmlcleanlastbr($desc);
 
 			// Insert line
