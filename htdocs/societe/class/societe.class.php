@@ -4193,7 +4193,7 @@ class Societe extends CommonObject
 				}
 				$this->db->free($resql);
 			} else {
-				setEventMessage($langs->trans('GetCompanyChildrenError', $this->db->lasterror()), 'errors');
+				setEventMessage($this->db->lasterror(), 'errors');
 			}
 		}
 		// Return a default value when $company_id is not greater than 0
