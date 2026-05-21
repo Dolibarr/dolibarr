@@ -574,7 +574,7 @@ class ExternalModules
 
 				// Direct install
 				if (($product['direct-download'] && $product['direct-download'] == 'yes') || $product['source'] === 'dolistore') {
-					$disableInstall = !empty($compatible) && $compatible === 'NotCompatible';
+					$disableInstall = ($compatible === 'NotCompatible');
 					$disableInstall = false; // TODO: remove this.
 					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
 					$fields = ['action' => 'install', 'token' => newToken()];
@@ -1321,7 +1321,7 @@ class ExternalModules
 	 * @param  array			$producttoinstall Product information array
 	 * @return string|false		Path to the final ZIP file, or false on error
 	 */
-	public function getModuleZIP(array $producttoinstall): string|false
+	public function getModuleZIP($producttoinstall = array())
 	{
 		global $conf;
 
@@ -1407,26 +1407,28 @@ class ExternalModules
 	 * @param  string  $dest_path   Local path to write the downloaded file (directory, not including filename)
 	 * @return string|false         Full path of downloaded file on success, false on failure
 	 */
-	private function _downloadFile(string $url, string $dest_path): string|false
+	private function _downloadFile(string $url, string $dest_path)
 	{
 		// HEAD request to get real filename from Content-Disposition
 		$filename = '';
 		$ch = curl_init($url);
 		curl_setopt_array($ch, [
 			CURLOPT_NOBODY         => true,
+			CURLOPT_HEADER         => true,
+			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_TIMEOUT        => 30,
 			CURLOPT_SSL_VERIFYPEER => false,
 			CURLOPT_SSL_VERIFYHOST => 0,
-			CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$filename) {
-				if (preg_match('/Content-Disposition:.*filename=["\']?([^"\';\r\n]+)/i', $header, $m)) {
-					$filename = trim($m[1], " \t\"'");
-				}
-				return strlen($header);
-			},
 		]);
-		curl_exec($ch);
+		$headers = curl_exec($ch);
 		curl_close($ch);
+
+		// Try to extract filename from Content-Disposition header
+		if (preg_match_all('/Content-Disposition:.*filename=["\']?([^"\';\r\n]+)/i', $headers, $m)) {
+			$filename = trim(end($m[1]), " \t\"'");
+		}
+
 
 		// If filename is not found in headers, try to extract it from URL
 		if (empty($filename)) {

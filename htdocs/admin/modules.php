@@ -232,6 +232,12 @@ if ($action == 'install' && $allowonlineinstall) {
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
 	$newfile = dol_sanitizePathName($conf->admin->dir_temp.'/'.$original_file.'/'.$original_file);
 
+	if (empty($tmpfile)) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+		$error++;
+	}
+
 	if (!$original_file) {
 		$langs->load("Error");
 		if ($isExternalDownload) {
@@ -249,11 +255,6 @@ if ($action == 'install' && $allowonlineinstall) {
 		if (!$error && !preg_match('/^(module[a-zA-Z0-9]*_|theme_|).*\-([0-9][0-9\.]*)(\s\(\d+\)\s)?\.zip$/i', $original_file)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
-			$error++;
-		}
-		if (empty($tmpfile)) {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			$error++;
 		}
 	}
