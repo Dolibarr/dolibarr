@@ -141,6 +141,19 @@ if (isModEnabled('stock')) {
 		}
 	}
 	print '</td>';
+
+	$stockStatus = array('stock_available' => null, 'stock_after' => null, 'can_validate' => true);
+	if (function_exists('expedition_standalone_get_stock_status') && !empty($line->fk_product) && !empty($line->entrepot_id)) {
+		$stockStatus = expedition_standalone_get_stock_status($object->db, $object->id, (int) $line->fk_product, (int) $line->entrepot_id, (float) $line->qty, (int) $line->id);
+	}
+	print '<td class="linecolstockavailable nowrap right">';
+	$coldisplay++;
+	print function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_available']) : '';
+	print '</td>';
+	print '<td class="linecolstockafter nowrap right'.(empty($stockStatus['can_validate']) ? ' error' : '').'">';
+	$coldisplay++;
+	print function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_after']) : '';
+	print '</td>';
 }
 
 if ($this->status == 0 && $user->hasRight('expedition', 'write') && $action != 'selectlines') {

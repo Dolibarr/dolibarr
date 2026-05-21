@@ -158,13 +158,18 @@ if (isModEnabled('stock')) {
 	$coldisplay++;
 	print '<td class="nobottom linecolwarehousesource left">';
 	if (!empty($line->fk_product)) {
-		$stockMin = false;
-		if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-			$stockMin = 0;
-		}
-		print $formproduct->selectWarehouses(!empty($line->entrepot_id) ? $line->entrepot_id : 'ifone', 'entrepot_id', '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+		print $formproduct->selectWarehouses(!empty($line->entrepot_id) ? $line->entrepot_id : 'ifone', 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, false, 'e.ref');
 	}
 	print '</td>';
+
+	$stockStatus = array('stock_available' => null, 'stock_after' => null, 'can_validate' => true);
+	if (function_exists('expedition_standalone_get_stock_status') && !empty($line->fk_product) && !empty($line->entrepot_id)) {
+		$stockStatus = expedition_standalone_get_stock_status($object->db, $object->id, (int) $line->fk_product, (int) $line->entrepot_id, (float) $line->qty, (int) $line->id);
+	}
+	$coldisplay++;
+	print '<td class="nobottom linecolstockavailable right"><span id="standalone_stock_available">'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_available']) : '').'</span></td>';
+	$coldisplay++;
+	print '<td class="nobottom linecolstockafter right"><span id="standalone_stock_after"'.(empty($stockStatus['can_validate']) ? ' class="error"' : '').'>'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_after']) : '').'</span></td>';
 }
 
 $coldisplay += $colspan;
@@ -174,5 +179,94 @@ print '<input type="submit" class="reposition button buttongen margintoponly mar
 print '<input type="submit" class="reposition button buttongen margintoponly marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</td>';
 print '</tr>';
+
+if (isModEnabled('stock')) {
+	?>
+<script>
+jQuery(document).ready(function() {
+	var standaloneWarehouseRequest = null;
+	var standaloneWarehouseTimer = null;
+
+	function getStandaloneWarehouseFallback($warehouse) {
+		var $warehouseOptions = $warehouse.find('option').filter(function() {
+			return parseInt(jQuery(this).val(), 10) > 0;
+		});
+
+		if ($warehouseOptions.length === 1) {
+			return $warehouseOptions.first().val();
+		}
+
+		return $warehouse.find('option[value="-1"]').length ? '-1' : '';
+	}
+
+	function setStandaloneWarehouse(selectedWarehouse) {
+		var $warehouse = jQuery('#entrepot_id');
+		if (!$warehouse.length) {
+			return;
+		}
+
+		var selectedValue = parseInt(selectedWarehouse, 10);
+		if (selectedValue > 0 && $warehouse.find('option[value="' + selectedValue + '"]').length) {
+			$warehouse.val(selectedValue);
+		} else {
+			$warehouse.val(getStandaloneWarehouseFallback($warehouse));
+		}
+
+		$warehouse.trigger('change');
+	}
+
+	function updateStandaloneStock(response) {
+		var stockAvailable = response && response.stock_available_formatted ? response.stock_available_formatted : '';
+		var stockAfter = response && response.stock_after_formatted ? response.stock_after_formatted : '';
+
+		jQuery('#standalone_stock_available').text(stockAvailable);
+		jQuery('#standalone_stock_after').text(stockAfter).toggleClass('error', !!(response && response.can_validate === false));
+	}
+
+	function refreshStandaloneWarehouse(keepWarehouse) {
+		var $warehouse = jQuery('#entrepot_id');
+		var idprod = jQuery('#product_id').val();
+
+		if (!$warehouse.length || !idprod || parseInt(idprod, 10) <= 0) {
+			updateStandaloneStock(null);
+			return;
+		}
+
+		var data = {
+			action: 'ajaxselectstandalonewarehouse',
+			token: '<?php echo currentToken(); ?>',
+			id: '<?php echo (int) $object->id; ?>',
+			lineid: '<?php echo (int) $line->id; ?>',
+			idprod: idprod,
+			qty: jQuery('#qty').val(),
+			entrepot_id: $warehouse.val(),
+			keepwarehouse: keepWarehouse ? 1 : 0
+		};
+
+		if (standaloneWarehouseRequest) {
+			standaloneWarehouseRequest.abort();
+		}
+
+		standaloneWarehouseRequest = jQuery.getJSON('<?php echo DOL_URL_ROOT; ?>/expedition/card.php', data, function(response) {
+			if (!keepWarehouse && response && typeof response.selected !== 'undefined') {
+				setStandaloneWarehouse(response.selected);
+			}
+			updateStandaloneStock(response);
+		});
+	}
+
+	function scheduleStandaloneWarehouseRefresh(keepWarehouse) {
+		window.clearTimeout(standaloneWarehouseTimer);
+		standaloneWarehouseTimer = window.setTimeout(function() {
+			refreshStandaloneWarehouse(keepWarehouse);
+		}, 250);
+	}
+
+	jQuery('#qty').on('change keyup', function() { scheduleStandaloneWarehouseRefresh(false); });
+	jQuery('#entrepot_id').on('change', function() { scheduleStandaloneWarehouseRefresh(true); });
+});
+</script>
+	<?php
+}
 
 print "<!-- END PHP TEMPLATE objectline_edit.tpl.php -->\n";

@@ -86,6 +86,8 @@ if ($nolinesbefore) {
 
 	if (isModEnabled('stock')) {
 		print '<td class="linecolwarehousesource left">'.$langs->trans('WarehouseSource').'</td>';
+		print '<td class="linecolstockavailable right">'.$langs->trans('StockAvailable').'</td>';
+		print '<td class="linecolstockafter right">'.$langs->trans('StockAfterShipment').'</td>';
 	}
 
 	print '<td class="linecoledit"></td>';
@@ -162,17 +164,25 @@ if (isModEnabled('stock')) {
 	$coldisplay++;
 	print '<td class="bordertop nobottom linecolwarehousesource left">';
 	$selectedWarehouse = GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone';
+	$idprodforwarehouse = GETPOSTINT('idprod');
+	$qtyforwarehouse = price2num(GETPOSTISSET('qty') ? GETPOST('qty', 'alpha') : 1, 'MS', 2);
+	if ($idprodforwarehouse > 0 && function_exists('expedition_standalone_resolve_product_id')) {
+		$idprodforwarehouse = expedition_standalone_resolve_product_id($object->db, $idprodforwarehouse, GETPOST('combinations', 'array:alphanohtml'));
+	}
 	if (!GETPOSTISSET('entrepot_id') && function_exists('expedition_standalone_get_warehouse_for_product_qty')) {
-		$idprodforwarehouse = GETPOSTINT('idprod');
-		if ($idprodforwarehouse > 0 && function_exists('expedition_standalone_resolve_product_id')) {
-			$idprodforwarehouse = expedition_standalone_resolve_product_id($object->db, $idprodforwarehouse, GETPOST('combinations', 'array:alphanohtml'));
-		}
-		$qtyforwarehouse = price2num(GETPOSTISSET('qty') ? GETPOST('qty', 'alpha') : 1, 'MS', 2);
-		$computedWarehouse = expedition_standalone_get_warehouse_for_product_qty($object->db, $idprodforwarehouse, (float) $qtyforwarehouse);
+		$computedWarehouse = expedition_standalone_get_warehouse_for_product_qty($object->db, $object->id, $idprodforwarehouse, (float) $qtyforwarehouse);
 		$selectedWarehouse = ($computedWarehouse > 0) ? $computedWarehouse : 'ifone';
 	}
 	print $formproduct->selectWarehouses($selectedWarehouse, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, false, 'e.ref');
 	print '</td>';
+	$stockStatus = array('stock_available' => null, 'stock_after' => null, 'can_validate' => true);
+	if (function_exists('expedition_standalone_get_stock_status') && (int) $selectedWarehouse > 0 && $idprodforwarehouse > 0) {
+		$stockStatus = expedition_standalone_get_stock_status($object->db, $object->id, $idprodforwarehouse, (int) $selectedWarehouse, (float) $qtyforwarehouse);
+	}
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolstockavailable right"><span id="standalone_stock_available">'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_available']) : '').'</span></td>';
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolstockafter right"><span id="standalone_stock_after"'.(empty($stockStatus['can_validate']) ? ' class="error"' : '').'>'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_after']) : '').'</span></td>';
 }
 
 $coldisplay++;
@@ -222,11 +232,20 @@ jQuery(document).ready(function() {
 		$warehouse.trigger('change');
 	}
 
-	function refreshStandaloneWarehouse() {
+	function updateStandaloneStock(response) {
+		var stockAvailable = response && response.stock_available_formatted ? response.stock_available_formatted : '';
+		var stockAfter = response && response.stock_after_formatted ? response.stock_after_formatted : '';
+
+		jQuery('#standalone_stock_available').text(stockAvailable);
+		jQuery('#standalone_stock_after').text(stockAfter).toggleClass('error', !!(response && response.can_validate === false));
+	}
+
+	function refreshStandaloneWarehouse(keepWarehouse) {
 		var $warehouse = jQuery('#entrepot_id');
 		var idprod = jQuery('#idprod').val();
 
 		if (!$warehouse.length || !idprod || parseInt(idprod, 10) <= 0) {
+			updateStandaloneStock(null);
 			return;
 		}
 
@@ -235,7 +254,9 @@ jQuery(document).ready(function() {
 			token: '<?php echo currentToken(); ?>',
 			id: '<?php echo (int) $object->id; ?>',
 			idprod: idprod,
-			qty: jQuery('#qty').val()
+			qty: jQuery('#qty').val(),
+			entrepot_id: $warehouse.val(),
+			keepwarehouse: keepWarehouse ? 1 : 0
 		};
 
 		jQuery('select[name^="combinations["]').each(function() {
@@ -247,20 +268,24 @@ jQuery(document).ready(function() {
 		}
 
 		standaloneWarehouseRequest = jQuery.getJSON('<?php echo DOL_URL_ROOT; ?>/expedition/card.php', data, function(response) {
-			if (response && typeof response.selected !== 'undefined') {
+			if (!keepWarehouse && response && typeof response.selected !== 'undefined') {
 				setStandaloneWarehouse(response.selected);
 			}
+			updateStandaloneStock(response);
 		});
 	}
 
-	function scheduleStandaloneWarehouseRefresh() {
+	function scheduleStandaloneWarehouseRefresh(keepWarehouse) {
 		window.clearTimeout(standaloneWarehouseTimer);
-		standaloneWarehouseTimer = window.setTimeout(refreshStandaloneWarehouse, 250);
+		standaloneWarehouseTimer = window.setTimeout(function() {
+			refreshStandaloneWarehouse(keepWarehouse);
+		}, 250);
 	}
 
-	jQuery('#idprod').on('change', scheduleStandaloneWarehouseRefresh);
-	jQuery('#qty').on('change keyup', scheduleStandaloneWarehouseRefresh);
-	jQuery(document).on('change', 'select[name^="combinations["]', scheduleStandaloneWarehouseRefresh);
+	jQuery('#idprod').on('change', function() { scheduleStandaloneWarehouseRefresh(false); });
+	jQuery('#qty').on('change keyup', function() { scheduleStandaloneWarehouseRefresh(false); });
+	jQuery('#entrepot_id').on('change', function() { scheduleStandaloneWarehouseRefresh(true); });
+	jQuery(document).on('change', 'select[name^="combinations["]', function() { scheduleStandaloneWarehouseRefresh(false); });
 <?php } ?>
 });
 

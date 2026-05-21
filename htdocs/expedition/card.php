@@ -176,11 +176,27 @@ if ($action == 'ajaxselectstandalonewarehouse') {
 
 	$idprodforwarehouse = GETPOSTINT('idprod');
 	$qtyforwarehouse = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
+	$lineidforwarehouse = GETPOSTINT('lineid');
+	$requestedwarehouse = GETPOSTINT('entrepot_id');
+	$keepwarehouse = GETPOSTINT('keepwarehouse');
 	$combinationsforwarehouse = GETPOST('combinations', 'array:alphanohtml');
 	$idprodforwarehouse = expedition_standalone_resolve_product_id($db, $idprodforwarehouse, $combinationsforwarehouse);
-	$selectedwarehouse = expedition_standalone_get_warehouse_for_product_qty($db, $idprodforwarehouse, (float) $qtyforwarehouse);
+	if ($keepwarehouse) {
+		$selectedwarehouse = ($requestedwarehouse > 0) ? $requestedwarehouse : 0;
+	} else {
+		$selectedwarehouse = expedition_standalone_get_warehouse_for_product_qty($db, $object->id, $idprodforwarehouse, (float) $qtyforwarehouse, $lineidforwarehouse);
+	}
+	$stockstatus = expedition_standalone_get_stock_status($db, $object->id, $idprodforwarehouse, $selectedwarehouse, (float) $qtyforwarehouse, $lineidforwarehouse);
 
-	print json_encode(array('selected' => $selectedwarehouse));
+	print json_encode(array(
+		'selected' => $selectedwarehouse,
+		'stock_available' => $stockstatus['stock_available'],
+		'stock_available_formatted' => expedition_standalone_format_stock_qty($stockstatus['stock_available']),
+		'stock_after' => $stockstatus['stock_after'],
+		'stock_after_formatted' => expedition_standalone_format_stock_qty($stockstatus['stock_after']),
+		'can_validate' => $stockstatus['can_validate'],
+		'stockable' => $stockstatus['stockable'],
+	));
 	exit;
 }
 
@@ -236,14 +252,134 @@ function expedition_standalone_resolve_product_id($db, $idprod, $combinations)
 }
 
 /**
+ * Format a stock quantity for standalone shipment stock columns.
+ *
+ * @param	float|null	$qty	Quantity to format
+ * @return	string
+ */
+function expedition_standalone_format_stock_qty($qty)
+{
+	if ($qty === null) {
+		return '';
+	}
+
+	return price((float) $qty, 0, '', 0, 0);
+}
+
+/**
+ * Return quantity already assigned to the same product and warehouse on this standalone shipment.
+ *
+ * @param	DoliDB	$db				Database handler
+ * @param	int		$shipmentId		Shipment id
+ * @param	int		$idprod			Product id
+ * @param	int		$warehouseId	Warehouse id
+ * @param	int		$excludedLineId	Shipment line id to exclude
+ * @return	float
+ */
+function expedition_standalone_get_reserved_qty($db, $shipmentId, $idprod, $warehouseId, $excludedLineId = 0)
+{
+	if ($shipmentId <= 0 || $idprod <= 0 || $warehouseId <= 0) {
+		return 0.0;
+	}
+
+	$sql = 'SELECT SUM(qty) as qty';
+	$sql .= ' FROM '.$db->prefix().'expeditiondet';
+	$sql .= ' WHERE fk_expedition = '.((int) $shipmentId);
+	$sql .= ' AND fk_product = '.((int) $idprod);
+	$sql .= ' AND fk_entrepot = '.((int) $warehouseId);
+	if ($excludedLineId > 0) {
+		$sql .= ' AND rowid <> '.((int) $excludedLineId);
+	}
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		return 0.0;
+	}
+
+	$obj = $db->fetch_object($resql);
+	$db->free($resql);
+
+	return $obj ? (float) price2num($obj->qty, 'MS') : 0.0;
+}
+
+/**
+ * Return stock currently available for a product into a warehouse.
+ *
+ * @param	DoliDB	$db				Database handler
+ * @param	int		$idprod			Product id
+ * @param	int		$warehouseId	Warehouse id
+ * @param	float	$qty			Requested quantity, used for virtual product stock loading
+ * @return	float|null				Null when product is not stockable or cannot be checked
+ */
+function expedition_standalone_get_warehouse_stock($db, $idprod, $warehouseId, $qty = 0.0)
+{
+	if (!isModEnabled('stock') || $idprod <= 0 || $warehouseId <= 0) {
+		return null;
+	}
+
+	$product = new Product($db);
+	if ($product->fetch($idprod) <= 0 || $product->stockable_product != Product::ENABLED_STOCK) {
+		return null;
+	}
+
+	$productChildrenNb = 0;
+	if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+		$productChildrenNb = $product->hasFatherOrChild(1);
+	}
+	if ($productChildrenNb > 0) {
+		$product->loadStockForVirtualProduct('warehouseopen', $qty);
+	} else {
+		$product->load_stock('warehouseopen');
+	}
+
+	return empty($product->stock_warehouse[$warehouseId]) ? 0.0 : (float) $product->stock_warehouse[$warehouseId]->real;
+}
+
+/**
+ * Return stock status for a standalone shipment line.
+ *
+ * @param	DoliDB	$db				Database handler
+ * @param	int		$shipmentId		Shipment id
+ * @param	int		$idprod			Product id
+ * @param	int		$warehouseId	Warehouse id
+ * @param	float	$qty			Current line quantity
+ * @param	int		$lineId			Current shipment line id, 0 for new line
+ * @return	array{stock_available:?float,stock_after:?float,can_validate:bool,stockable:bool}
+ */
+function expedition_standalone_get_stock_status($db, $shipmentId, $idprod, $warehouseId, $qty, $lineId = 0)
+{
+	$stockAvailable = expedition_standalone_get_warehouse_stock($db, $idprod, $warehouseId, $qty);
+	if ($stockAvailable === null) {
+		return array(
+			'stock_available' => null,
+			'stock_after' => null,
+			'can_validate' => true,
+			'stockable' => false,
+		);
+	}
+
+	$reservedQty = expedition_standalone_get_reserved_qty($db, $shipmentId, $idprod, $warehouseId, $lineId);
+	$stockAfter = $stockAvailable - $reservedQty - (float) $qty;
+
+	return array(
+		'stock_available' => $stockAvailable,
+		'stock_after' => $stockAfter,
+		'can_validate' => !(getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') && $stockAfter < 0),
+		'stockable' => true,
+	);
+}
+
+/**
  * Select the best warehouse for a standalone shipment line.
  *
- * @param	DoliDB	$db		Database handler
- * @param	int		$idprod	Product id
- * @param	float	$qty	Requested quantity
- * @return	int				Warehouse id, or 0 to keep the standard 'ifone' behavior
+ * @param	DoliDB	$db				Database handler
+ * @param	int		$shipmentId		Shipment id
+ * @param	int		$idprod			Product id
+ * @param	float	$qty			Requested quantity
+ * @param	int		$lineId			Current shipment line id, 0 for new line
+ * @return	int						Warehouse id, or 0 to keep the standard 'ifone' behavior
  */
-function expedition_standalone_get_warehouse_for_product_qty($db, $idprod, $qty)
+function expedition_standalone_get_warehouse_for_product_qty($db, $shipmentId, $idprod, $qty, $lineId = 0)
 {
 	$defaultWarehouseId = expedition_standalone_get_default_warehouse_id();
 
@@ -255,17 +391,72 @@ function expedition_standalone_get_warehouse_for_product_qty($db, $idprod, $qty)
 	$formproduct->loadWarehouses($idprod, '', '', true, array(), false, 'stock DESC, e.ref');
 	$warehouses = $formproduct->cache_warehouses;
 
-	if ($defaultWarehouseId > 0 && !empty($warehouses[$defaultWarehouseId]) && (float) $warehouses[$defaultWarehouseId]['stock'] >= (float) $qty) {
-		return $defaultWarehouseId;
+	if ($defaultWarehouseId > 0 && !empty($warehouses[$defaultWarehouseId])) {
+		$reservedQty = expedition_standalone_get_reserved_qty($db, $shipmentId, $idprod, $defaultWarehouseId, $lineId);
+		if ((float) $warehouses[$defaultWarehouseId]['stock'] - $reservedQty >= (float) $qty) {
+			return $defaultWarehouseId;
+		}
 	}
 
 	foreach ($warehouses as $warehouse) {
-		if ((float) $warehouse['stock'] >= (float) $qty) {
+		$reservedQty = expedition_standalone_get_reserved_qty($db, $shipmentId, $idprod, (int) $warehouse['id'], $lineId);
+		if ((float) $warehouse['stock'] - $reservedQty >= (float) $qty) {
 			return (int) $warehouse['id'];
 		}
 	}
 
+	if ($defaultWarehouseId <= 0 && count($warehouses) == 1) {
+		$warehouse = reset($warehouses);
+		return (int) $warehouse['id'];
+	}
+
 	return $defaultWarehouseId;
+}
+
+/**
+ * Return validation errors when a standalone shipment would create forbidden negative stock.
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	int		$shipmentId	Shipment id
+ * @return	string[]
+ */
+function expedition_standalone_get_negative_stock_errors($db, $shipmentId)
+{
+	global $langs;
+
+	if (!isModEnabled('stock') || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') || $shipmentId <= 0) {
+		return array();
+	}
+
+	$sql = 'SELECT ed.fk_product, ed.fk_entrepot, SUM(ed.qty) as qty, p.ref, p.label, p.stockable_product, ps.reel as stock, e.ref as warehouse_ref';
+	$sql .= ' FROM '.$db->prefix().'expeditiondet as ed';
+	$sql .= ' INNER JOIN '.$db->prefix().'product as p ON p.rowid = ed.fk_product';
+	$sql .= ' LEFT JOIN '.$db->prefix().'entrepot as e ON e.rowid = ed.fk_entrepot';
+	$sql .= ' LEFT JOIN '.$db->prefix().'product_stock as ps ON ps.fk_product = ed.fk_product AND ps.fk_entrepot = ed.fk_entrepot';
+	$sql .= ' WHERE ed.fk_expedition = '.((int) $shipmentId);
+	$sql .= ' AND ed.fk_product > 0';
+	$sql .= ' AND ed.fk_entrepot > 0';
+	$sql .= ' GROUP BY ed.fk_product, ed.fk_entrepot, p.ref, p.label, p.stockable_product, ps.reel, e.ref';
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		return array($db->lasterror());
+	}
+
+	$errors = array();
+	while ($obj = $db->fetch_object($resql)) {
+		if ((int) $obj->stockable_product != Product::ENABLED_STOCK) {
+			continue;
+		}
+
+		$stockAfter = (float) $obj->stock - (float) $obj->qty;
+		if ($stockAfter < 0) {
+			$errors[] = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $obj->ref).' - '.$langs->trans('Warehouse').': '.$obj->warehouse_ref.' - '.$langs->trans('StockAfterShipment').': '.expedition_standalone_format_stock_qty($stockAfter);
+		}
+	}
+	$db->free($resql);
+
+	return $errors;
 }
 
 /*
@@ -718,33 +909,42 @@ if (empty($reshook)) {
 		$action == 'confirm_valid' && $confirm == 'yes' && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'creer'))
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'shipping_advance', 'validate')))
 	) {
-		$object->fetch_thirdparty();
+		$standaloneStockErrors = array();
+		if (empty($object->origin) && getDolGlobalString('SHIPMENT_STANDALONE')) {
+			$standaloneStockErrors = expedition_standalone_get_negative_stock_errors($db, $object->id);
+		}
 
-		$result = $object->valid($user);
-
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
+		if (!empty($standaloneStockErrors)) {
+			setEventMessages(null, $standaloneStockErrors, 'errors');
 		} else {
-			// Define output language
-			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				$outputlangs = $langs;
-				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-					$newlang = GETPOST('lang_id', 'aZ09');
-				}
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
-				}
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
-				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
+			$object->fetch_thirdparty();
 
-				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result < 0) {
-					dol_print_error($db, $object->error, $object->errors);
+			$result = $object->valid($user);
+
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				// Define output language
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$model = $object->model_pdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					if ($result < 0) {
+						dol_print_error($db, $object->error, $object->errors);
+					}
 				}
 			}
 		}
