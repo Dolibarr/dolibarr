@@ -566,6 +566,13 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 				if (count($objects) >= 1) {
 					addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
 				}
+				// Fix PHPDoc header and class-declaration residuals left by addObjectsToApiFile.
+				// 'MYOBJECT' (uppercase) is excluded to preserve the /* BEGIN MODULEBUILDER API MYOBJECT */
+				// placeholder that addObjectsToApiFile keeps for future object additions.
+				$headerFix = $arrayreplacement;
+				unset($headerFix['MYOBJECT']);
+				dolReplaceInFile($destfile, $headerFix);
+				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
 			} else {
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				dolReplaceInFile($destfile, $arrayreplacement);
