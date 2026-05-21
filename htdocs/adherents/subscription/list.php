@@ -138,7 +138,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => isset($socid) ? $socid : null);
+$parameters = array('socid' => null);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -480,7 +480,7 @@ if (!empty($arrayfields['d.login']['checked'])) {
 
 if (!empty($arrayfields['c.note']['checked'])) {
 	print '<td class="liste_titre">';
-	print '';
+	print '<input class="flat maxwidth100" type="text" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 	print '</td>';
 }
 

@@ -144,6 +144,10 @@ class SecurityTest extends CommonClassTest
 		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
 
+		$_SERVER["PHP_SELF"] = '/dolibarr/htdocs/admin/index.php/aaa%bbb';
+		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect % inside URL');
+
 		$test = 'select @@version';
 		$result = testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL1a. Should find an attack on POST param and did not.');

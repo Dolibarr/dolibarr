@@ -37,7 +37,6 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once '../lib/bookcal.lib.php';
 
 // Load translation files required by the page

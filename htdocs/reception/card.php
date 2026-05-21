@@ -38,6 +38,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -65,14 +73,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 $langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'sendings'));
 
@@ -393,13 +393,12 @@ if (empty($reshook)) {
 				$object->origin_type = 'order_supplier';
 				$classname = 'CommandeFournisseur';
 			} else {
-				$classname = ucfirst($object->origin);
+				$classname = ucfirst($object->origin_type);
 			}
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch($object->origin_id);
 
 			$object->socid = $objectsrc->socid;
-			$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 
 			$product = new Product($db);
 			$batch_line = array();
@@ -1612,7 +1611,27 @@ if ($action == 'create' && $permissiontoadd) {
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			} elseif (empty($reshook)) {
-				$dispatchLines = array_merge($dispatchLines, $hookmanager->resArray);
+				// Only merge if resArray is a valid, non-empty array
+				if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
+					// Check if the merge would overwrite valid data with NULL
+					$tempMerged = array_merge($dispatchLines, $hookmanager->resArray);
+
+					// Sanity check: ensure our existing keys are still valid arrays
+					$corrupted = false;
+					foreach ($dispatchLines as $idx => $val) {
+						if (!is_array($tempMerged[$idx]) || !isset($tempMerged[$idx]['fk_commandefourndet'])) {
+							$corrupted = true;
+							break;
+						}
+					}
+
+					if (!$corrupted) {
+						$dispatchLines = $tempMerged;
+					} else {
+						// If merge corrupted data, ignore the hook result and keep original
+						error_log("WARNING: Hook dataProcessing returned invalid data, ignoring merge.");
+					}
+				}
 			} elseif ($reshook > 0) {
 				// $resArray starts from [0], we need $dispatchLines to start from [1], so we shift it
 				$dispatchLines = $hookmanager->resArray;
@@ -1622,7 +1641,7 @@ if ($action == 'create' && $permissiontoadd) {
 			}
 
 			print '<script type="text/javascript">
-            jQuery(document).ready(function() {
+			jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function(event) {
 					event.preventDefault();';
 			$i = 1;
@@ -1639,8 +1658,8 @@ if ($action == 'create' && $permissiontoadd) {
 				$i++;
 			}
 			print '});
-        	});
-            </script>';
+			});
+			</script>';
 
 			print '<br>';
 
@@ -2526,7 +2545,7 @@ if ($action == 'create' && $permissiontoadd) {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 
-		if (empty($origin)) {
+		if (empty($origin) || $origin == 'order_supplier') {
 			$origin = 'supplier_order';
 		}
 

@@ -2261,13 +2261,16 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= top_menu_search();
 		}
 
+		// Add AI picto
+		$toprightmenu .= top_menu_ai();
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
 		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
 			// Add the import file link
@@ -2716,6 +2719,56 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  *
  * @return  string                  HTML content
  */
+function top_menu_ai()
+{
+	global $conf, $langs;
+
+	// Button disabled on text browser
+	/*if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}*/
+
+	$html = '';
+
+	if (isModEnabled('ai') && getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+		// Open the AI Assistant in a popup overlay rather than navigating away,
+		// so the user keeps their current page context while interacting with
+		// the assistant. Uses the standard Dolibarr helper which builds an
+		// iframe-in-jQuery-UI-dialog (modal, 80% width, height-150) and auto-
+		// appends dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=NAME
+		// so the embedded page renders without the surrounding chrome.
+		// JS-disabled fallback: the helper degrades to target="_blank".
+		// $label is used by dolButtonToOpenUrlInDialogPopup() both for the
+		// title="" tooltip on the <a> AND for the jQuery UI dialog title.
+		// Include the keyboard-shortcut hint (matching the convention used
+		// e.g. by the PublicVirtualCardUrl call earlier in this file and by
+		// bookmark/quickadd/search) so the icon tooltip on hover reads e.g.
+		// "AI Assistant (Ctrl Alt a)" -- the dialog title shows the same.
+		$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
+		$aibtn = dolButtonToOpenUrlInDialogPopup(
+			'aiassistant',
+			$ailabel,
+			'<i class="fa fa-magic"></i>',
+			'/ai/assistant/index.php',
+			'',
+			'nofocusvisible',
+			'',
+			'',
+			'a'
+		);
+		$html .= '<!-- div for quick ai link (opens AI Assistant in popup) -->
+	    <div id="topmenu-tool" class="atoplogin dropdown inline-block">'.$aibtn.'</div>';
+	}
+
+	return $html;
+}
+
+/**
+ * Build the tooltip on top menu quick add.
+ * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_quickadd()
 {
 	global $conf, $langs;
@@ -2730,7 +2783,7 @@ function top_menu_quickadd()
 	if (!empty($conf->use_javascript_ajax)) {
 		$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="a" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' a)"><i class="fa fa-plus-circle"></i></a>
+        <a accesskey="c" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' c)"><i class="fa fa-plus-circle"></i></a>
         <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
 		if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {    // This may be set by some pages that use different jquery version to avoid errors
