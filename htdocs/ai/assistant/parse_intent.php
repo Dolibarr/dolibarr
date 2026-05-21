@@ -159,7 +159,7 @@ try {
 
 	// Add common short English/French/Spanish commands that users often type
 	// regardless of the UI language.
-	$commonCommands = ['show', 'find', 'search', 'list', 'get', 'voir', 'chercher', 'lista', 'buscar'];
+	$commonCommands = ['show', 'find', 'search', 'list', 'get', 'voir', 'chercher', 'affiche', 'lista', 'buscar'];
 	$dynamicStopWords = array_unique(array_merge($dynamicStopWords, $commonCommands));		// $dynamicStopWords is an array of words
 
 
@@ -217,6 +217,8 @@ try {
 		return mb_strlen($b) - mb_strlen($a);
 	});
 
+	dol_syslog("parse_intent.php We have candidates into text that may be a thirdparty. List is ".join(',', $candidates), LOG_DEBUG);
+
 	if (!empty($candidates)) {
 		foreach ($candidates as $phrase) {
 			// We use LIKE '...' to match the start of the company name.
@@ -262,7 +264,7 @@ try {
 			dol_syslog("AI Pro: Non-Latin language detected. Sending full (cleaned) schema.");
 			$toolsSchema = $allToolsSchema;
 		} else {
-			// Detect Category using Hybrid (Translations + Synonyms)
+			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
 			$detectedCategories = classifyIntentUniversal($query, $langs);
 
 			// Filter Logic
@@ -345,7 +347,13 @@ try {
 
 		if (!empty($apiKey)) {
 			$adapter = new UniversalLLMAdapter($adapterType, $apiKey, $url, $model, $timeout);
+
+			dol_syslog("parse_intent.php Call AI API", LOG_DEBUG);
+
 			$rawResponse = $adapter->generate($systemPrompt, $query);
+
+			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
+			dol_syslog('rawResponse='.$rawResponse, LOG_DEBUG);
 
 			//var_dump($rawResponse);exit;
 
@@ -362,7 +370,7 @@ try {
 				$clean = trim($clean);
 
 				$matches = array();
-				if (preg_match('/\{.*\}/s', $clean, $matches)) {
+				if (preg_match('/^\{.*\}$/s', $clean, $matches)) {
 					$clean = $matches[0];
 				}
 
@@ -374,14 +382,25 @@ try {
 				// Removed carriage returns and newlines
 				$clean = preg_replace('/[\r\n]/', ' ', $clean);
 
-				$intentJSON = json_decode($clean, true);
+				// If answer is a json string or not
+				if (strpos($clean, '{') === 0) {
+					// This may be a json string
+					$intentJSON = json_decode($clean, true);
+				} else {
+					$intentJSON = [
+						"tool" => "respond_to_user",
+						'arguments' => [
+							"message" => $clean
+						]
+					];
+				}
 
 				// Ensure no placeholders remain in the data structure.
 				if ($guard && isset($intentJSON['arguments'])) {
 					$intentJSON['arguments'] = recursiveUnmaskValues($intentJSON['arguments'], $guard);
 				}
 
-				// Validation check: Ensure the AI selected a tool that actually exists in our filtered schema.
+				// Validation check: Check if the AI selected a tool that actually exists in our filtered schema.
 				if ($intentJSON && isset($intentJSON['tool'])) {
 					$validToolNames = array_column($toolsSchema, 'name');
 					if (!in_array($intentJSON['tool'], $validToolNames)) {
@@ -403,15 +422,12 @@ try {
 					$mappedToolsSchema = array_column($toolsSchema, null, 'name');
 					$confidence = calculateConfidence($intentJSON, $mappedToolsSchema, $rawResponse);
 
-					dol_syslog("AI Intent: " . json_encode([
-						'query' => $query,
-						'intent' => $intentJSON,
-						'confidence' => $confidence
-					]), LOG_DEBUG);
+					dol_syslog("parse_intent.php AI Intent: " . json_encode(['query' => $query, 'intent' => $intentJSON, 'confidence' => $confidence]), LOG_DEBUG);
 				}
 			}
 		}
 	}
+
 
 	// Handle no AI Intent
 	if (!$intentJSON || !isset($intentJSON['tool'])) {
