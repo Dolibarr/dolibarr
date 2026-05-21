@@ -288,13 +288,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 	if ($uselocaltax2_rate && $apply_tax) {
 		$result[15] = price2num(($tot_sans_remise_withvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withvat, 'MT');
-		$localtaxes[0] += $result[15];
+		$localtaxes[0] += (float) $result[15];
 
 		$result[10] = price2num(($tot_avec_remise_withvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withvat, 'MT');
-		$localtaxes[1] += $result[10];
+		$localtaxes[1] += (float) $result[10];
 
 		$result[12] = price2num(($pu_withmainvat * (1 + ($localtax2_rate / 100))) - $pu_withmainvat, 'MU');
-		$localtaxes[2] += $result[12];
+		$localtaxes[2] += (float) $result[12];
 	}
 
 	//dol_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
