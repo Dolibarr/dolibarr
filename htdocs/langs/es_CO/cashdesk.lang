@@ -43,7 +43,6 @@ PrintCustomerOnReceipts=Imprimir cliente en boletos | recibos
 EnableBarOrRestaurantFeatures=Habilitar funciones para bar o restaurante
 ConfirmDeletionOfThisPOSSale=¿Confirma la eliminación de esta venta actual?
 ConfirmDiscardOfThisPOSSale=¿Quieres descartar esta venta actual?
-History=Historia
 NumberOfTerminals=Numero de terminales
 TerminalSelect=Seleccione el terminal que desea utilizar:
 BasicPhoneLayout=En los teléfonos, reemplace el POS con un diseño mínimo (solo registre pedidos, sin generación de facturas, sin impresión de recibos)

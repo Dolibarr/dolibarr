@@ -984,7 +984,7 @@ if (empty($reshook)) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid || in_array($object->fk_user_author, $childids)) {
-			$result = $object->setStatut(0);
+			$result = $object->setStatut(ExpenseReport::STATUS_DRAFT);
 
 			if ($result > 0) {
 				// Define output language
@@ -2104,10 +2104,11 @@ if ($action == 'create') {
 			print "</table>";
 			print '</div>';
 
+			print '<div class="clearboth"></div>';
 			print '</div>';
 
 
-			print '<div class="clearboth"></div><br><br>';
+			print '<br><br>';
 
 			print '<div style="clear: both;"></div>';
 
@@ -2931,7 +2932,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 	// Clone
 	if ($user->hasRight('expensereport', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */

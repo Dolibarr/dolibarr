@@ -261,7 +261,7 @@ class Boms extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->bom->array_options[$index] = $this->_checkValForAPI($field, $val, $this->bom);
+					$this->bom->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->bom);
 				}
 				continue;
 			}

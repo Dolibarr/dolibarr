@@ -817,12 +817,9 @@ class Tva extends CommonObject
 	 */
 	public function getSommePaiement()
 	{
-		$table = 'payment_vat';
-		$field = 'fk_tva';
-
 		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= ' FROM '.MAIN_DB_PREFIX."payment_vat";
+		$sql .= " WHERE fk_tva = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -960,7 +957,7 @@ class Tva extends CommonObject
 			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}
 		if (property_exists($this, 'type_payment')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
 		}
 		if (property_exists($this, 'datev')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';

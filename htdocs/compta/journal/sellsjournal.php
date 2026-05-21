@@ -162,15 +162,15 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 }
 
 $tabfac = array();
+$tabht = array();
+$tabtva = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+$tabttc = array();
+$tabcompany = array();
 
 $result = $db->query($sql);
 if ($result) {
-	$tabht = array();
-	$tabtva = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabttc = array();
-	$tabcompany = array();
 	$account_localtax1 = 0;
 	$account_localtax2 = 0;
 
@@ -279,7 +279,7 @@ $invoicestatic = new Facture($db);
 $companystatic = new Client($db);
 
 foreach ($tabfac as $key => $val) {
-	$invoicestatic->id = $key;
+	$invoicestatic->id = (int) $key;
 	$invoicestatic->ref = $val["ref"];
 	$invoicestatic->type = $val["type"];
 

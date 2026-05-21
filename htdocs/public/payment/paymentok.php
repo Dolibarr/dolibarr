@@ -317,7 +317,7 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 				// Nothing to do
 				dol_syslog("Call to GetExpressCheckoutDetails return ".$ack, LOG_DEBUG, 0, '_payment');
 			} else {
-				dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING, 0, '_payment');
+				dol_syslog("Call to GetExpressCheckoutDetails return error: ".formatLogObject($resArray), LOG_WARNING, 0, '_payment');
 			}
 
 			dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
@@ -343,7 +343,7 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 
 				$ispaymentok = true;
 			} else {
-				dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING, 0, '_payment');
+				dol_syslog("Call to DoExpressCheckoutPayment return error: ".formatLogObject($resArray2), LOG_WARNING, 0, '_payment');
 
 				//Display a user friendly Error on the page using any of the following error information returned by PayPal
 				$ErrorCode = urldecode($resArray2["L_ERRORCODE0"]);
@@ -422,7 +422,13 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 				}
 
 				// Check amount and currency
-				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				// Handle zero-decimal currencies that don't use cents/subunits
+				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
+					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
+				} else {
+					$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents for most currencies
+				}
 				$expectedCurrency = strtolower($currencyCodeType);
 
 				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
@@ -524,7 +530,7 @@ $fulltag = $FULLTAG;
 $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 
 
-dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
+dol_syslog("ispaymentok=".$ispaymentok." tmptag=".formatLogObject($tmptag), LOG_DEBUG, 0, '_payment');
 
 
 // Set $appli for emails title
@@ -614,10 +620,6 @@ if ($ispaymentok) {
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
-						// - If not found, take the default amount
-						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-						}
 						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 						//if (empty($amount)) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
@@ -1208,7 +1210,7 @@ if ($ispaymentok) {
 							// TODO Send a warning email.
 						}
 
-						$object->classifyBilled($user);		// The invoice has been create from the order so total is the same, so we can classify order to billed (even if payment may be partial).
+						$object->classifyBilled($user);		// The invoice has been created from the order so total is the same, so we can classify order to billed (even if payment may be partial).
 
 						$invoice->validate($user);			// This may re-classify all linked orders to billed (done previously) if amount of invoice is ok by triggers, depending on the workflow module setup.
 
@@ -1272,7 +1274,7 @@ if ($ispaymentok) {
 							}
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+								if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
 									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
@@ -2014,7 +2016,7 @@ if ($ispaymentok) {
 							}
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+								if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
 									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
@@ -2104,7 +2106,7 @@ if (empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
 		if ($TRANSACTIONID) {
-			print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
+			print $langs->trans("ThisIsTransactionId")." : ".$TRANSACTIONID."<br><br>\n";
 		}
 
 		print '<center>';
@@ -2335,7 +2337,7 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentok of the website.
+		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentok of the website.
 
 		// Paymentok page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
@@ -2350,7 +2352,7 @@ if (!empty($doactionsthenredirect)) {
 	} else {
 		// Redirect to an error page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentko of the website.
 
 		// Paymentko page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {

@@ -721,6 +721,16 @@ function New() {
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
+	if (invoiceid == '') {
+		$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
+			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		});
+
+		ClearSearch(false);
+		$("#idcustomer").val("");
+		return;
+	}
+
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken();?>&id='+invoiceid, function(data) {
 		var r;
 
@@ -741,7 +751,6 @@ function New() {
 		}
 	});
 }
-
 /**
  * Search products
  *
@@ -1522,6 +1531,7 @@ if (isALNERunningVersion()) {
 }
 
 // Button to print receipt
+// This section should be same than into invoice.php
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
 	if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		// If TAKEPOS_PRINT_SERVER is an URL
@@ -1555,6 +1565,7 @@ if (getDolGlobalInt('TAKEPOS_ADD_BUTTON_OPEN_DRAWER'.$term) > 0) {
 	);
 }
 
+// If there is an open cash control started
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".((int) $conf->entity)." AND ";
 $sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";
@@ -1643,7 +1654,7 @@ if ($reshook == 0) {  //add buttons
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
 			print '<input type="text" id="search" class="input-search-takepos input-nobottom" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';
-			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch(false);">'.img_picto('', 'searchclear').'</a>';
+			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch(false);">'.img_picto('', 'searchclear.png').'</a>';
 			print '</div>';
 		}
 		?>

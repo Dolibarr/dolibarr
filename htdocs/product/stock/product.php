@@ -83,7 +83,7 @@ $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 $d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 $pdluoid = GETPOSTINT('pdluoid');
-$batchnumber = GETPOST('batch_number', 'aZ09comma');
+$batchnumber = GETPOST('batch_number', 'alpha');
 if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
 }
@@ -1137,7 +1137,7 @@ if ($showstockdetails) {
 			print '<td class="right">'.$stock_real.($stock_real < 0 ? ' '.img_warning() : '').'</td>';
 
 			// PMP
-			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
+			print '<td class="right nowraponall">'.($usercancreadsupplierprice ? (price2num($object->pmp) ? price2num($object->pmp, 'MU') : '') : '').'</td>';
 
 			// Value purchase
 			if ($usercancreadsupplierprice) {

@@ -525,7 +525,7 @@ if ($result >= 0) {
 	// Date payment
 	print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
 	$datepayment = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-	$datepayment = ($datepayment == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepayment);
+	$datepayment = ($datepayment == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datepayment);
 	$adddateof = array(array('adddateof'=>$facture->date));
 	$adddateof[] = array('adddateof'=>$facture->date_lim_reglement, 'labeladddateof'=>$langs->transnoentities('DateDue'));
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_paiement", 1, 1, 0, '', '', $adddateof);

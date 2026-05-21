@@ -11,7 +11,7 @@
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la class des functions predefinie de composants html autre
+ *	\brief      File for the class of other predefined html components
  */
 
 
 /**
- *	Class permettant la generation de composants html autre
+ *	Class to help generate other html components
  *	Only common components are here.
  */
 class FormOther
@@ -140,17 +140,17 @@ class FormOther
 	/**
 	 *    Return HTML select list of export models
 	 *
-	 *    @param    string	$selected          Id modele pre-selectionne
-	 *    @param    string	$htmlname          Nom de la zone select
-	 *    @param    string	$type              Type des modeles recherches
-	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User we want templates
+	 *    @param    string		$selected          Id of the preselected model
+	 *    @param    string		$htmlname          Name of the selected zone
+	 *    @param    string		$type              Type of the desired models
+	 *    @param    int|string	$useempty          Show an empty value in list
+	 *    @param    int			$fk_user           User we want templates
 	 *    @return	void
 	 */
 	public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs;
 
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."export_model";
@@ -163,7 +163,11 @@ class FormOther
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($useempty) {
-				print '<option value="-1">&nbsp;</option>';
+				if (is_numeric($useempty)) {
+					print '<option value="-1">&nbsp;</option>';
+				} else {
+					print '<option value="-1">'.$langs->trans($useempty).'</option>';
+				}
 			}
 
 			$tmpuser = new User($this->db);
@@ -182,13 +186,16 @@ class FormOther
 				}
 
 				if ($selected == $obj->rowid) {
-					print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
+					print '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($label).'">';
 				} else {
-					print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
+					print '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($label).'">';
 				}
 				print $label;
 				print '</option>';
 				$i++;
+			}
+			if ($num == 0) {
+				print '<option value="-1" disabled data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->transnoentitiesnoconv("NoPredefinedExportProfileYet").'</span>').'">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</option>';
 			}
 			print "</select>";
 			print ajax_combobox($htmlname);
@@ -202,11 +209,11 @@ class FormOther
 	/**
 	 *    Return list of export models
 	 *
-	 *    @param    string	$selected          Id modele pre-selectionne
-	 *    @param    string	$htmlname          Nom de la zone select
-	 *    @param    string	$type              Type des modeles recherches
-	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User that has created the template
+	 *    @param    string		$selected          Id of the preselected model
+	 *    @param    string		$htmlname          Name of the selected zone
+	 *    @param    string		$type              Type of the desired models
+	 *    @param    int|string	$useempty          Show an empty value in list
+	 *    @param    int			$fk_user           User that has created the template
 	 *    @return	void
 	 */
 	public function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -224,8 +231,10 @@ class FormOther
 		$result = $this->db->query($sql);
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($useempty) {
+			if (is_numeric($useempty)) {
 				print '<option value="-1">&nbsp;</option>';
+			} else {
+				print '<option value="-1">'.$langs->trans($useempty).'</option>';
 			}
 
 			$tmpuser = new User($this->db);
@@ -251,6 +260,9 @@ class FormOther
 				print $label;
 				print '</option>';
 				$i++;
+			}
+			if ($num == 0) {
+				print '<option value="-1" disabled data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</span>').'">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</option>';
 			}
 			print "</select>";
 			print ajax_combobox($htmlname);
@@ -364,7 +376,7 @@ class FormOther
 	/**
 	 *    Return a HTML select list to select a percent
 	 *
-	 *    @param	integer	$selected      	Percentage pre-selectionne
+	 *    @param	int		$selected      	Preselected percentage
 	 *    @param    string	$htmlname      	Name of HTML combo list
 	 *    @param	int		$disabled		Disabled or not
 	 *    @param    int		$increment     	Increment value
@@ -655,7 +667,7 @@ class FormOther
 	/**
 	 *	Return list of project and tasks
 	 *
-	 *	@param  int		$selectedtask   		Pre-selected task
+	 *	@param  int		$selectedtask   		Preselected task
 	 *  @param  int		$projectid				Project id
 	 * 	@param  string	$htmlname    			Name of html select
 	 * 	@param	int		$modeproject			1 to restrict on projects owned by user
@@ -830,7 +842,7 @@ class FormOther
 	/**
 	 *  Output a HTML code to select a color
 	 *
-	 *  @param	string		$set_color		Pre-selected color
+	 *  @param	string		$set_color		Preselected color
 	 *  @param	string		$prefix			Name of HTML field
 	 *  @param	string		$form_name		Deprecated. Not used.
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
@@ -848,7 +860,7 @@ class FormOther
 	/**
 	 *  Output a HTML code to select a color. Field will return an hexa color like '334455'.
 	 *
-	 *  @param	string		$set_color				Pre-selected color with format '#......'
+	 *  @param	string		$set_color				Preselected color with format '#......'
 	 *  @param	string		$prefix					Name of HTML field
 	 *  @param	null|''		$form_name				Deprecated. Not used.
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
@@ -1509,13 +1521,13 @@ class FormOther
 	public function select_dictionary($htmlname, $dictionarytable, $keyfield = 'code', $labelfield = 'label', $selected = '', $useempty = 0, $moreattrib = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 
 		$langs->load("admin");
 
-		$sql = "SELECT rowid, ".$keyfield.", ".$labelfield;
+		$sql = "SELECT rowid, ".$this->db->sanitize($keyfield).", ".$this->db->sanitize($labelfield);
 		$sql .= " FROM ".$this->db->prefix().$dictionarytable;
-		$sql .= " ORDER BY ".$labelfield;
+		$sql .= $this->db->order($labelfield);
 
 		dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1553,7 +1565,7 @@ class FormOther
 	 *	Return an html string with a select combo box to choose yes or no
 	 *
 	 *	@param	string		$htmlname		Name of html select field
-	 *	@param	string		$value			Pre-selected value
+	 *	@param	string		$value			Preselected value
 	 *	@param	int			$option			0 return automatic/manual, 1 return 1/0
 	 *	@param	bool		$disabled		true or false
 	 *  @param	int      	$useempty		1=Add empty line
@@ -1601,7 +1613,7 @@ class FormOther
 	 */
 	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
-		global $langs, $extrafields, $form;
+		global $form;
 
 		$arrayofgroupbylabel = array();
 		foreach ($arrayofgroupby as $key => $val) {

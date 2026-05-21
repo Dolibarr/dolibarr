@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2015  Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -288,7 +288,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -348,16 +348,17 @@ class pdf_espadon extends ModelePdfExpedition
 				if (!empty($notetoshow) || !empty($object->tracking_number)) {
 					$tab_top -= 2;
 					$tab_topbeforetrackingnumber = $tab_top;
+					$height_trackingnumber = 0;
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
-						$height_trackingnumber = 4;
+						$tracking_block_start_y = $tab_top;
 
 						$pdf->SetFont('', 'B', $default_font_size - 2);
-						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
 						$tab_top_alt = $pdf->GetY();
 
-						$object->getUrlTrackingStatus($object->tracking_number);
+						$object->getUrlTrackingStatus((string) $object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
@@ -373,12 +374,15 @@ class pdf_espadon extends ModelePdfExpedition
 									$label .= $object->tracking_url;
 								}
 
-								$height_trackingnumber += 4;
 								$pdf->SetFont('', 'B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 							}
 						}
 						$tab_top = $pdf->GetY();
+						$height_trackingnumber = $tab_top - $tracking_block_start_y;
+						if ($height_trackingnumber < 4) {
+							$height_trackingnumber = 4;
+						}
 					}
 
 					// Notes
@@ -532,7 +536,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
 						$newcode = (string) $object->ref;
@@ -956,7 +960,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		if ($this->getColumnStatus('qty_shipped') && $totalToShip) {
-			$this->printStdColumnContent($pdf, $tab2_top, 'qty_shipped', $totalToShip);
+			$this->printStdColumnContent($pdf, $tab2_top, 'qty_shipped', (string) $totalToShip);
 		}
 
 		if ($this->getColumnStatus('totalexcltax')) {

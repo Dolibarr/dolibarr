@@ -5,7 +5,7 @@
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -683,8 +683,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 					// Security check
 					$socid = 0;
-					if (!empty($object->fk_soc)) {
-						$socid = $object->fk_soc;
+					if (!empty($object->socid)) {
+						$socid = $object->socid;
 					}
 
 					$tasksarray = $taskstatic->getTasksArray(null, null, $object->id, $socid, 0);
@@ -896,6 +896,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listlines = $odfHandler->setSegment('projectcontacts');
 
 						foreach ($contact_arrray as $contact) {
+							$objectdetail = null;
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($contact['id']);
@@ -907,6 +908,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 								$soc = new Societe($this->db);
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
+							} else {
+								dol_syslog('Unexpected contact source:'.$contact['source'].'.'. getCallerInfoString(), LOG_ERR);
+								continue;
 							}
 							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
 
@@ -1064,7 +1068,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$element->fetch_thirdparty();
 
 									//Ref object
-									$ref_array['ref'] = $element->ref;
+									$ref_array['ref'] = (string) $element->ref;
 
 									//Date object
 									$dateref = $element->date;
@@ -1086,8 +1090,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 									//Amount object
 									if (empty($valueref['disableamount'])) {
 										if (!empty($element->total_ht)) {
-											$ref_array['amountht'] = $element->total_ht;
-											$ref_array['amountttc'] = $element->total_ttc;
+											$ref_array['amountht'] = (float) $element->total_ht;
+											$ref_array['amountttc'] = (float) $element->total_ttc;
 										} else {
 											$ref_array['amountht'] = 0;
 											$ref_array['amountttc'] = 0;

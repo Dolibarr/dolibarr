@@ -3,7 +3,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1341,6 +1341,56 @@ class Cronjob extends CommonObject
 			return -1;
 		}
 
+		// Safety net: If the job execution ends unexpectedly (fatal error, timeout, explicit exit, ...),
+		// the row may remain stuck with processing=1 and will never be selected again by runners
+		// (they fetch jobs with processing=0 by default). We register a shutdown handler to unlock it.
+		$cronjobid = (int) $this->id;
+		$cronjobpid = (int) $this->pid;
+		$dbs = $this->db;
+		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbs) {
+			if (empty($cronjobid) || empty($dbs)) {
+				return;
+			}
+
+			try {
+				// Ensure we are not trapped into a transaction left open by the job.
+				$dbs->rollback();
+			} catch (Throwable $e) {
+				// Ignore
+			}
+
+			// If job is already closed, do nothing.
+			$sql = "SELECT processing, pid, datelastresult FROM ".MAIN_DB_PREFIX."cronjob WHERE rowid = ".((int) $cronjobid);
+			$resql = $dbs->query($sql);
+			if (!$resql) {
+				return;
+			}
+			$obj = $dbs->fetch_object($resql);
+			$dbs->free($resql);
+
+			if (!$obj || (int) $obj->processing !== 1 || !empty($obj->datelastresult)) {
+				return;
+			}
+
+			// Protect against unlocking a job started by another PID (concurrent runner).
+			if (!empty($obj->pid) && (int) $obj->pid !== (int) $cronjobpid) {
+				return;
+			}
+
+			$now = dol_now();
+			$lastoutput = 'Cron job aborted unexpectedly (shutdown).';
+
+			$lastError = error_get_last();
+			if (is_array($lastError) && !empty($lastError['message'])) {
+				$lastoutput .= ' Last error: '.dol_trunc($lastError['message'], 2000, 'right', 'UTF-8', 1);
+			}
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
+			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
+			$dbs->query($sql);
+		});
+
 		// Run a method
 		if ($this->jobtype == 'method') {
 			// Deny to launch a method from a deactivated module
@@ -1567,7 +1617,7 @@ class Cronjob extends CommonObject
 	 * Reprogram a job
 	 *
 	 * @param	string		$userlogin		User login
-	 * @param	integer		$now			Date returned by dol_now()
+	 * @param	int			$now			Date returned by dol_now()
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
 	public function reprogram_jobs(string $userlogin, int $now)
@@ -1597,13 +1647,13 @@ class Cronjob extends CommonObject
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $now + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $now + ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			} else {
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $this->datestart + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->datestart + ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		}
@@ -1614,7 +1664,7 @@ class Cronjob extends CommonObject
 				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
 					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
 				} else {
-					$this->datenextrun += ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun += ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		} else {

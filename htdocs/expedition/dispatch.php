@@ -33,6 +33,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -44,14 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'receptions'));
@@ -498,7 +497,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	// Linked documents
 
 	// @phpstan-ignore-next-line
-	if (($objectsrc instanceOf Commande) && $object->origin_object->id && isModEnabled('order')) {
+	if (($objectsrc instanceof Commande) && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -507,7 +506,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print '</tr>';
 	}
 	// @phpstan-ignore-next-line
-	if (($objectsrc instanceOf Propal) && $object->origin_object->id && isModEnabled("propal")) {
+	if (($objectsrc instanceof Propal) && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -600,7 +599,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			$db->free($resql);
 		}
 
-		if ($objectsrc instanceOf Commande) {
+		if ($objectsrc instanceof Commande) {
 			//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 			$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
 			$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
@@ -745,13 +744,15 @@ if ($object->id > 0 || !empty($object->ref)) {
 								$tmpproduct = $conf->cache['product'][$objp->fk_product];
 							}
 
-							$linktoprod = $tmpproduct->getNomUrl(1);
-							$linktoprod .= ' - '.$objp->label."\n";
+							$linktoprod = '<div class="twolinesmax lineheightsmall">';
+							$linktoprod .= $tmpproduct->getNomUrl(1);
+							$linktoprod .= '<br><span class="opacitymedium small">'.dolPrintHTML($objp->label)."</span>\n";
+							$linktoprod .= '</div>';
 
 							if ($is_mod_batch_enabled) {
 								if ($objp->tobatch) {
 									// Product
-									print '<td id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
+									print '<td class="tdoverflowbydiv nopaddingtopimp nopaddingbottomimp" id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
 									print $linktoprod;
 									print "</td>";
 									print '<td class="dispatch_batch_number"></td>';
@@ -952,7 +953,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 										$dispatch_line_batch_current = null;
 										if (!empty($objd->batch_list)) {
 											$dispatch_line_batch_count = count($objd->batch_list);
-											// if only one batch found, this batch is pre-selected
+											// if only one batch found, this batch is preselected
 											if ($dispatch_line_batch_count == 1) {
 												$dispatch_line_batch_current = current($objd->batch_list);
 											}

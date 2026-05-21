@@ -240,7 +240,7 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->SetSubject($outputlangs->transnoentities("AccountancyBalance"));
 		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBalance"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
@@ -303,7 +303,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$groupDebit = $groupCredit = $totalDebit = $totalCredit = 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			$accountingAccount = new AccountingAccount($this->db);
-			$accountingAccount->fetch(0, $object->lines[$i]->numero_compte);
+			$accountingAccount->fetch(0, $object->lines[$i]->numero_compte, true);
 
 			// Init the first account group
 			if (empty($accountGroup)) {
@@ -317,7 +317,7 @@ class pdf_balance extends ModelePdfAccountancy
 					$curY,
 					$nexY,
 					$default_font_size,
-					$langs->trans('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountGroup),
+					$langs->transnoentitiesnoconv('Total') . ' ' . $langs->transnoentitiesnoconv('AccountancyGroup' . $accountGroup),
 					$tab_top_newpage,
 					$groupDebit,
 					$groupCredit
@@ -511,7 +511,7 @@ class pdf_balance extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->transnoentitiesnoconv('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountingAccount->pcg_type),
+				$langs->transnoentitiesnoconv('Total') . ' ' . $langs->transnoentitiesnoconv('AccountancyGroup' . $accountingAccount->pcg_type),
 				$tab_top_newpage,
 				$groupDebit,
 				$groupCredit
@@ -532,7 +532,6 @@ class pdf_balance extends ModelePdfAccountancy
 			$totalDebit,
 			$totalCredit,
 		);
-
 
 
 		// Show square

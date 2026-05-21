@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplir_proposal/doc/pdf_zenith.modules.php
+ *	\file       htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
  *	\ingroup    fournisseur
  *	\brief      File of class to generate suppliers proposals from zenith model
  */
@@ -295,7 +295,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("SupplierProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("SupplierProposal")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -1426,7 +1426,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 
 
-			// If CUSTOMER contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contact that follow order is 'CUSTOMER'
+			// If CUSTOMER contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contact that follow-up a supplier proposal is 'CUSTOMER'
 			$usecontact = false;
 			if (!getDolGlobalInt('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT')) {
 				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');

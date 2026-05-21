@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Juanjo Menent 		    <jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke          <Charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,6 +134,12 @@ print dol_get_fiche_head($head, 'captcha', '', -1);
 
 print '<br>';
 
+// Set if a captcha is used on at least one place
+$showavailablecaptcha = 0;
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	$showavailablecaptcha = 1;
+}
+
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -163,8 +170,11 @@ if (isModEnabled('societe')) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
+	print '</td></tr>';
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
+		$showavailablecaptcha = 1;
+	}
 }
-print '</td></tr>';
 
 if (isModEnabled('ticket')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Public ticket creation</td><td class="right" width="100">';
@@ -177,8 +187,11 @@ if (isModEnabled('ticket')) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+		$showavailablecaptcha = 1;
+	}
+	print '</td></tr>';
 }
-print '</td></tr>';
 
 if (isModEnabled('member')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Membership public subscription</td><td class="right" width="100">';
@@ -191,8 +204,11 @@ if (isModEnabled('member')) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_MEMBER&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
+		$showavailablecaptcha = 1;
+	}
+	print '</td></tr>';
 }
-print '</td></tr>';
 
 if (isModEnabled('don')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Donation public form</td><td class="right" width="100">';
@@ -205,8 +221,11 @@ if (isModEnabled('don')) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_DONATION&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
+		$showavailablecaptcha = 1;
+	}
+	print '</td></tr>';
 }
-print '</td></tr>';
 
 if (isModEnabled('recruitment')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - Recruitment public form</td><td class="right" width="100">';
@@ -219,29 +238,33 @@ if (isModEnabled('recruitment')) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT')) {
+		$showavailablecaptcha = 1;
+	}
+	print '</td></tr>';
 }
-print '</td></tr>';
+
+
+if (isModEnabled('webportal')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("UseCaptchaCode").' - WebPortal public form</td><td class="right" width="100">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) {
+		$showavailablecaptcha = 1;
+	}
+	print '</td></tr>';
+}
 
 print '</table>';
 print '</div>';
 
-// Set if a captcha is used on at least one place
-$showavailablecaptcha = 0;
-if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-	$showavailablecaptcha = 1;
-}
-if (isModEnabled('societe') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
-	$showavailablecaptcha = 1;
-}
-if (isModEnabled('ticket') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
-	$showavailablecaptcha = 1;
-}
-if (isModEnabled('member') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
-	$showavailablecaptcha = 1;
-}
-if (isModEnabled('don') && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
-	$showavailablecaptcha = 1;
-}
 
 $selectedcaptcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 

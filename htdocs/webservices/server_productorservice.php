@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -358,7 +358,7 @@ $server->register(
 
 
 /**
- * Get produt or service
+ * Get product or service
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
@@ -1028,9 +1028,9 @@ function getProductsForCategory($authentication, $id, $lang = '')
 			if ($result > 0) {
 				$table = "product";
 				$field = "product";
-				$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
+				$sql  = "SELECT fk_".$db->sanitize($field)." FROM ".MAIN_DB_PREFIX."categorie_".$db->sanitize($table);
 				$sql .= " WHERE fk_categorie = ".((int) $id);
-				$sql .= " ORDER BY fk_".$field." ASC";
+				$sql .= " ORDER BY fk_".$db->sanitize($field)." ASC";
 
 
 				dol_syslog("getProductsForCategory get id of product into category", LOG_DEBUG);

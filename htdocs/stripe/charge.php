@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,6 +190,8 @@ if (!$rowid) {
 				$type = $langs->trans("sepadebit");
 			} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'ideal') {
 				$type = $langs->trans("iDEAL");
+			} else {
+				$type = '';
 			}
 
 			// Why this ?

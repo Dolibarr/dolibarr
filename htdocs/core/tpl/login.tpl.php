@@ -70,6 +70,15 @@ if ($size > 10000) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var HookManager $hookmanager
+ *
+ * @var string $action
+ * @var string $captcha
+ * @var string $message
+ * @var string $title
+ * @var ?string $php_self
+ */
 '
 @phan-var-force HookManager $hookmanager
 @phan-var-force string $action
@@ -88,15 +97,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 @phan-var-force string $titletruedolibarrversion
 @phan-var-force string $urllogo
 @phan-var-force int<0,1> $forgetpasslink
+@phan-var-force string $title
+@phan-var-force ?string $php_self
 ';
-
-/**
- * @var HookManager $hookmanager
- * @var string $action
- * @var string $captcha
- * @var string $message
- * @var string $title
- */
 
 
 /*
@@ -181,7 +184,6 @@ if (getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_ON', 0) > 0 && isset($conf->file->
 	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
 		dolSetCookie('DOL_rollback_url_'.$prefix, $_SERVER['REQUEST_URI'], time() + 3600);	// $_SERVER["REQUEST_URI"] is for example /mydolibarr/mypage.php
 	}
-
 	// Auto redirect if OpenID Connect is the only authentication
 	if ($conf->file->main_authentication === 'openid_connect') {
 		// Avoid redirection hell

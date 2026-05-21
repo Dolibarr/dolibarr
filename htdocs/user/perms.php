@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
+/* Copyright (C) 2002-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,6 +129,15 @@ if (empty($reshook)) {
 
 		$object->clearrights();
 		$object->loadRights();
+
+		// We redirect to avoid to get an URL with token inside
+		$qs = $_SERVER["QUERY_STRING"];
+		$qs = preg_replace('/&action=addrights/', '', $qs);
+		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
+		$qs = preg_replace('/&confirm=yes/', '', $qs);
+		//var_dump($qs);exit;
+		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
+		exit;
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -148,6 +158,14 @@ if (empty($reshook)) {
 
 		$object->clearrights();
 		$object->loadRights();
+
+		// We redirect to avoid to get an URL with token inside
+		$qs = $_SERVER["QUERY_STRING"];
+		$qs = preg_replace('/&action=delrights/', '', $qs);
+		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
+		$qs = preg_replace('/&confirm=yes/', '', $qs);
+		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
+		exit;
 	}
 }
 
@@ -157,6 +175,9 @@ $db->begin();
 $modules = array();
 $modulesdir = dolGetModulesDirs();
 
+// Modules to ignore depending on supplier module mode
+$excludedModules = getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD') ? array('modFournisseur') : array('modSupplierOrder', 'modSupplierInvoice');
+
 foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
 	if (is_resource($handle)) {
@@ -165,6 +186,11 @@ foreach ($modulesdir as $dir) {
 				$modName = substr($file, 0, dol_strlen($file) - 10);
 
 				if ($modName) {
+					// Exclude old/new supplier descriptors depending on MAIN_USE_NEW_SUPPLIERMOD
+					if (in_array($modName, $excludedModules, true)) {
+						continue;
+					}
+
 					include_once $dir.$file;
 					$objMod = new $modName($db);
 					'@phan-var-force DolibarrModules $objMod';
@@ -661,7 +687,7 @@ foreach ($arrayofpermission as $i => $obj) {
 	print '<td class="maxwidthonsmartphone">';
 	print '</td>';
 
-		// Permission and tick (2 columns)
+	// Permission and tick (2 columns)
 	if (!empty($object->admin) && !empty($objMod->rights_admin_allowed)) {    // Permission granted because admin
 		print '<!-- perm is a perm allowed to any admin -->';
 		if ($caneditperms) {
@@ -679,7 +705,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		print '<!-- user has perm -->';
 		if ($caneditperms) {
 			print '<td class="center nowrap">';
-			print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+			print '<a class="reposition addexpandedmodulesinparamlist" id="'.$obj->id.'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 			//print img_edit_remove($langs->trans("Remove"));
 			print img_picto($langs->trans("Remove"), 'switch_on');
 			print '</a>';
@@ -705,7 +731,7 @@ foreach ($arrayofpermission as $i => $obj) {
 			// Do not own permission
 			if ($caneditperms) {
 				print '<td class="center nowrap">';
-				print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+				print '<a class="reposition addexpandedmodulesinparamlist" id="'.$obj->id.'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 				//print img_edit_add($langs->trans("Add"));
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a>';
@@ -723,7 +749,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		print '<!-- do not own permission -->';
 		if ($caneditperms) {
 			print '<td class="center nowrap">';
-			print '<a class="reposition addexpandedmodulesinparamlist" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
+			print '<a class="reposition addexpandedmodulesinparamlist" id="'.$obj->id.'" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'addrights', 'entity' => $entity, 'rights' => $obj->id, 'confirm' => 'yes', 'updatedmodulename' => $obj->module], true).'">';
 			//print img_edit_add($langs->trans("Add"));
 			print img_picto($langs->trans("Add"), 'switch_off');
 			print '</a>';

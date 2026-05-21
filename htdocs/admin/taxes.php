@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,11 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,11 @@ if (isModEnabled('accounting')) {
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'objects', 'companies', 'products'));

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2026 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
@@ -11,6 +11,7 @@
  * Copyright (C) 2016	   Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +35,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +43,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "products"));
@@ -636,7 +636,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultPriceType").'</td>';
 print '<td class="right">';
-print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
+print $form->selectPriceBaseType(getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
 print '</td>';
 print '</tr>';
 
@@ -644,8 +644,12 @@ print '</tr>';
 if (isModEnabled("order") || isModEnabled("invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
-	print '<td align="right">';
-	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	print '<td class="right">';
+	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+		print '<span class="opacitymedium">'.$langs->trans("NotSupportedWithRuleForCustomerPrice").'</span>';
+	} else {
+		print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	}
 	print '</td>';
 	print '</tr>';
 }
@@ -654,7 +658,7 @@ if (isModEnabled("order") || isModEnabled("invoice")) {
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging", $langs->transnoentities("PackagingForThisProduct")), $langs->trans("PackagingForThisProductDesc")).'</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
 	print '</td>';
 	print '</tr>';
@@ -748,7 +752,7 @@ print $form->selectarray("PRODUIT_DESC_IN_FORM", $arrayofchoices, getDolGlobalIn
 print '</td>';
 print '</tr>';
 
-// Activate propal merge produt card
+// Activate propal merge product card
 /* Kept as hidden feature only. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
 
 print '<tr class="oddeven">';

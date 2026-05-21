@@ -8,7 +8,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023-2024	Charlene Benke				<charlene@patas-monkey.com>
  *
@@ -37,17 +37,17 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("categories", "compta", "mrp"));
+$langs->loadLangs(array("categories", "compta", "mrp", "stocks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -104,7 +104,6 @@ if (is_numeric($type)) {
 	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
-$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 /*
@@ -606,7 +605,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			}
 
 			print '<table class="noborder centpercent">'."\n";
-			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Ref").'</td></tr>'."\n";
+			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($prods) > 0) {
 				$i = 0;
@@ -620,7 +619,22 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					print '<td class="nowrap tdtop">';
 					print $prod->getNomUrl(1);
 					print "</td>\n";
-					print '<td class="tdtop">'.dolPrintHTML($prod->label)."</td>\n";
+
+					$product_thumbnail_html = '';
+					if (!empty($prod->entity)) {
+						$product_thumbnail = $prod->show_photos('product', $conf->product->multidir_output[(int) $prod->entity], 1, 1, 0, 0, 0, 80);
+						if ($prod->nbphoto > 0) {
+							$product_thumbnail_html = $product_thumbnail;
+						}
+					}
+					print '<td class="left">' . $product_thumbnail_html . '</td>';
+					$product_stock_info = "";
+					if (isModEnabled("stock") && ($user->hasRight("stock", "read"))) {
+						$product_stock_info = "<br>" . $langs->trans("Stock") . ": " . $prod->stock_reel;
+					}
+
+					print '<td class="tdtop">' . dolPrintHTML($prod->label) . "<br>" . dolPrintHTML($prod->description) . $product_stock_info . "</td>\n";
+
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {

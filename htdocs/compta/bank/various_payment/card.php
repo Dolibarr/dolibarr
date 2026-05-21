@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2017-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023       Joachim Kueter          <git-jk@bloxera.com>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Solution Libre SAS      <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,18 +28,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-}
 
 /**
  * @var Conf $conf
@@ -47,6 +36,20 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "banks", "bills", "categories", "compta", "users"));
@@ -65,7 +68,7 @@ $amount = GETPOST("amount");
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project');
-if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
 } else {
 	$subledger_account = GETPOST("subledger_account", "alpha");
@@ -83,6 +86,9 @@ $hookmanager->initHooks(array('variouscard', 'globalcard'));
 $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
+
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 $permissiontodelete = $user->hasRight('banque', 'modifier');
@@ -147,6 +153,12 @@ if (empty($reshook)) {
 
 		$object->sens = GETPOSTINT('sens');
 		$object->fk_project = GETPOSTINT('fk_project');
+
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		if ($ret < 0) {
+			$error++;
+		}
 
 		if (!checkGeneralAccountAllowsAuxiliary($db, $object->accountancy_code, $object->subledger_account)) {
 			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
@@ -486,6 +498,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth50 maxwidth100" value="'.$amount.'">';
+	print ' '.$langs->getCurrencySymbol();
 	print '</td></tr>';
 
 	// Bank
@@ -506,19 +519,19 @@ if ($action == 'create') {
 	// Number
 	if (isModEnabled("bank")) {
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
 		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 
 		// Check transmitter
 		print '<tr><td class="'.(GETPOST('paymenttype') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn"><label for="fieldchqemetteur">'.$langs->trans('CheckTransmitter');
-		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 		print '</label></td>';
 		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
 
 		// Bank name
 		print '<tr><td><label for="chqbank">'.$langs->trans('Bank');
-		print ' <em>('.$langs->trans("ChequeBank").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
 		print '</label></td>';
 		print '<td><input id="chqbank" name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 	}
@@ -537,6 +550,8 @@ if ($action == 'create') {
 	}
 
 	// Other attributes
+	print $object->showOptionals($extrafields, 'create');
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -544,7 +559,7 @@ if ($action == 'create') {
 	// Category
 	if (is_array($options) && count($options) && isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
-		print img_picto('', 'category').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
+		print img_picto('', 'category', 'class="pictofixedwidth"').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
 		print '</td></tr>';
 	}
 
@@ -569,11 +584,7 @@ if ($action == 'create') {
 		/** @var FormAccounting $formaccounting */
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
 		print '<td>';
-		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-			print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
-		} else {
-			print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
-		}
+		print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
 		print '</td></tr>';
 	} else { // For external software
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
@@ -585,7 +596,16 @@ if ($action == 'create') {
 	print '<tr><td>';
 	$labelsens = $form->textwithpicto($langs->trans('Sens'), $langs->trans("AccountingDirectionHelp"));
 	print $form->editfieldkey($labelsens, 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
-	$sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+	$sensarray = array(
+		'0' => array('label' => $langs->trans("Debit")),
+		'1' => array('label' => $langs->trans("Credit"))
+	);
+	// We can't use this module to enter customer payments
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+	if (isALNERunningVersion()) {
+		$sensarray['1']['disabled'] = 1;
+	}
+
 	print $form->selectarray('sens', $sensarray, $sens, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 	print '</td></tr>';
 
@@ -728,7 +748,7 @@ if ($id) {
 	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (int) (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
 	if ($action == 'editsubledger_account' && (!$alreadyaccounted && $permissiontoadd)) {
-		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		if (getDolGlobalString('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT') > 0) {
 			/** @var FormAccounting $formaccounting */
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->subledger_account, 'subledger_account', 1, 1, '', 1);
 		} else {
@@ -786,7 +806,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
 	}
 
 	// Delete

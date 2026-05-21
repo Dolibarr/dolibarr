@@ -116,7 +116,7 @@ class TraceableDB extends DoliDB
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
+	 *   @param	    int|''		$param      Date TMS to convert
 	 *	 @param		'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
@@ -378,6 +378,22 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
+	 * Check if full query tracing is enabled
+	 *
+	 * Full tracing captures backtrace for ALL queries, not just failed ones.
+	 * This is useful for debugging but has performance impact.
+	 *
+	 * @return bool True if full tracing is enabled
+	 */
+	protected function isFullTracingEnabled()
+	{
+		if (isset($_COOKIE['debugbar_full_tracing'])) {
+			return $_COOKIE['debugbar_full_tracing'] === '1';
+		}
+		return false;
+	}
+
+	/**
 	 * End query tracing
 	 *
 	 * @param      string   $sql       query string
@@ -391,13 +407,20 @@ class TraceableDB extends DoliDB
 		$endMemory   = memory_get_usage(true);
 		$memoryDelta = $endMemory - $this->startMemory;
 
+		// Capture backtrace for failed queries, or if full tracing is enabled
+		$backtrace = null;
+		if (!$resql || $this->isFullTracingEnabled()) {
+			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		}
+
 		$this->queries[] = array(
 			'sql'           => $sql,
 			'duration'      => $duration,
 			'memory_usage'  => $memoryDelta,
 			'is_success'    => $resql ? true : false,
 			'error_code'    => $resql ? null : $this->db->lasterrno(),
-			'error_message' => $resql ? null : $this->db->lasterror()
+			'error_message' => $resql ? null : $this->db->lasterror(),
+			'backtrace'     => $backtrace
 		);
 	}
 
@@ -574,7 +597,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
-	 * @param    array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 	Array with description of field format
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)

@@ -714,7 +714,7 @@ print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3<
 print '<br>';
 
 print '<span class="opacitymedium">';
-print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key').'<br>';
+print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key or dolibarr_main_instance_unique_id').'<br>';
 print '</span>';
 
 print '<br>';

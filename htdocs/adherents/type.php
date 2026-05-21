@@ -36,15 +36,14 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // Load translation files required by the page
@@ -104,7 +103,7 @@ $mail_valid = GETPOST("mail_valid", 'restricthtml');
 
 // Initialize a technical object
 $object = new AdherentType($db);
-$extrafields = new ExtraFields($db);
+
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
 // Fetch optionals attributes and labels
@@ -474,13 +473,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 				if (!empty($arrayfields['t.morphy']['checked'])) {
 					print '<td class="center">';
-					if ($objp->morphy == 'phy') {
-						print $langs->trans("Physical");
-					} elseif ($objp->morphy == 'mor') {
-						print $langs->trans("Moral");
-					} else {
-						print $langs->trans("MorAndPhy");
-					}
+					print $membertype->getmorphylib($objp->morphy, 1);
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.duration']['checked'])) {
@@ -503,8 +496,12 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				if (!empty($arrayfields['t.caneditamount']['checked'])) {
 					print '<td class="center">'.yn($objp->caneditamount).'</td>';
 				}
+				// Minimum amount
 				if (!empty($arrayfields['t.minimumamount']['checked'])) {
-					print '<td class="center">'.price($objp->minimumamount).'</td>';
+					print '<td class="center">';
+					$minimumamount = ((is_null($objp->minimumamount) || $objp->minimumamount === '') ? '' : price($objp->minimumamount));
+					print $minimumamount;
+					print '</td>';
 				}
 				if (!empty($arrayfields['t.amount']['checked'])) {
 					print '<td class="center">';
@@ -520,7 +517,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
-					print '<td class="center">'.dol_escape_htmltag($objp->amountformuladescription).'</td>';
+					print '<td class="center">'.dolPrintHTML($objp->amountformuladescription).'</td>';
 				}
 				if (!empty($arrayfields['t.vote']['checked'])) {
 					print '<td class="center">'.yn($objp->vote).'</td>';
@@ -579,7 +576,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tbody>';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" value= "'. $label. '" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value= "'. $label. '" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
@@ -592,7 +589,7 @@ if ($action == 'create') {
 		"mor" => $langs->trans("Moral"),
 	];
 	print '<tr><td><span>'.$langs->trans("MembersNature").'</span></td><td>';
-	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
+	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy', 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print "</td></tr>";
 
 	print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
@@ -604,11 +601,11 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MinimumAmountShort").'</td><td>';
-	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : price($minimumamount)).'">';
+	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : ($minimumamount ? price($minimumamount): '')).'">';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
-	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
+	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : '').'">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td>';
@@ -621,7 +618,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-	print '<input name="duration_value" size="5" value="'. $duration_value .'"> ';
+	print '<input name="duration_value" size="5" value="'. ($duration_value ? $duration_value : 1) .'"> ';
 	print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOSTISSET("duration_unit") ? GETPOST('duration_unit', 'aZ09') : 'y', 0, 1);
 	print '</td></tr>';
 
@@ -677,7 +674,9 @@ if ($rowid > 0) {
 		print '<table class="tableforfield border centpercent">';
 
 		// Morphy
-		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
+		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >';
+		print $object->getmorphylib($object->morphy, 1);
+		print '</td>';
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
@@ -1124,9 +1123,9 @@ if ($rowid > 0) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.dolPrintHTML($object->id).'</td></tr>';
 
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
 		print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
@@ -1164,7 +1163,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('amountformuladescription', $object->amountformuladescription, '', 220, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+		$doleditor = new DolEditor('amountformuladescription', $object->amountformuladescription, '', 120, 'dolibarr_details', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1179,7 +1178,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_details', '', false, false, isModEnabled('fckeditor'), 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

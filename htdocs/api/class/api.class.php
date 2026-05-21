@@ -109,32 +109,99 @@ class DolibarrApi
 				}
 				if ($object->fields[$field]['type'] == 'select') {
 					// Check values are in the list of possible 'options'
-					// TODO
+					return sanitizeVal($value, 'alphanohtml');
 				}
 				if ($object->fields[$field]['type'] == 'sellist' || $object->fields[$field]['type'] == 'checkbox') {
-					// TODO
+					return sanitizeVal($value, 'alphanohtml');
 				}
 				if ($object->fields[$field]['type'] == 'boolean' || $object->fields[$field]['type'] == 'radio') {
-					// TODO
+					return sanitizeVal($value, 'alphanohtml');
 				}
 				if ($object->fields[$field]['type'] == 'email') {
 					return sanitizeVal($value, 'email');
 				}
 				if ($object->fields[$field]['type'] == 'password') {
-					return sanitizeVal($value, 'none');
+					return sanitizeVal($value, 'password');
 				}
 				// Others will use 'alphanohtml'
 			}
 
+			// In case of a field with unknown type (legacy code), we use other tricks to guess a more accurate type
+
+			// We try to use its name to have a chance to sanitize it
+			if (preg_match('/^fk_/i', $field)) {
+				// We accept only integer
+				return sanitizeVal($value, 'int');
+			}
 			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 				return sanitizeVal($value, 'restricthtml');
-			} else {
-				return sanitizeVal($value, 'alphanohtml');
 			}
+
+			return sanitizeVal($value, 'alphanohtml');
 		} else {	// Example when $field = 'extrafields' and $value = content of $object->array_options
 			$newarrayvalue = array();
 			foreach ($value as $tmpkey => $tmpvalue) {
 				$newarrayvalue[$tmpkey] = $this->_checkValForAPI($tmpkey, $tmpvalue, $object);
+			}
+
+			return $newarrayvalue;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Check and convert a string depending on its type/name.
+	 *
+	 * @param	string			$field		Field name
+	 * @param	string|string[]	$value		Value to check/clean
+	 * @param	Object			$object		Object
+	 * @return 	string|array<string,mixed>	Value cleaned
+	 */
+	protected function _checkValExtrafieldsForAPI($field, $value, $object)
+	{
+		global $extrafields;
+
+		// phpcs:enable
+		if (!is_array($value)) {
+			// Sanitize the value using its type declared into ->fields of $object
+			$typeOfExtraField = '';
+			if (!empty($extrafields->attributes) && !empty($extrafields->attributes[$object->table_element])
+				&& !empty($extrafields->attributes[$object->table_element]['type'])
+				&& !empty($extrafields->attributes[$object->table_element]['type'][$field])) {
+				$typeOfExtraField = $extrafields->attributes[$object->table_element]['type'][$field];
+			}
+
+			if ($typeOfExtraField) {
+				if (strpos($typeOfExtraField, 'int') || strpos($typeOfExtraField, 'double') || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
+					return sanitizeVal($value, 'int');
+				}
+				if ($object->array_options[$field]['type'] == 'html') {
+					return sanitizeVal($value, 'restricthtml');
+				}
+				if ($object->array_options[$field]['type'] == 'select') {
+					// TODO Check values are in the list of possible 'options'
+					return sanitizeVal($value, 'alphanohtml');
+				}
+				if ($typeOfExtraField == 'sellist' || $typeOfExtraField == 'checkbox') {
+					return sanitizeVal($value, 'alphanohtml');
+				}
+				if ($typeOfExtraField == 'boolean' || $typeOfExtraField == 'radio') {
+					return sanitizeVal($value, 'alphanohtml');
+				}
+				if ($typeOfExtraField == 'email') {
+					return sanitizeVal($value, 'email');
+				}
+				if ($typeOfExtraField == 'password') {
+					return sanitizeVal($value, 'password');
+				}
+				// Others will use 'alphanohtml'
+			}
+
+			return sanitizeVal($value, 'alphanohtml');
+		} else {	// Example when $field = 'extrafields' and $value = content of $object->array_options
+			$newarrayvalue = array();
+			foreach ($value as $tmpkey => $tmpvalue) {
+				$newarrayvalue[$tmpkey] = $this->_checkValExtrafieldsForAPI($tmpkey, $tmpvalue, $object);
 			}
 
 			return $newarrayvalue;
@@ -382,13 +449,13 @@ class DolibarrApi
 	/**
 	 * Check access by user to a given resource
 	 *
-	 * @param string	$resource		element to check
-	 * @param int		$resource_id	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
-	 * @param string	$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
-	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
-	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
-	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
-	 * @return bool
+	 * @param 	string				$resource		element to check
+	 * @param 	int|string|Object	$resource_id	Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+	 * @param 	string				$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+	 * @param 	string				$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+	 * @param 	string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+	 * @param 	string				$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @return 	bool
 	 */
 	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
 	{

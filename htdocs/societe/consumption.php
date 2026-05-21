@@ -5,7 +5,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,6 +151,9 @@ print '</td></tr>';
 
 //if (isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
 $elementTypeArray = array();
+
+$sql = '';
+$where = '';
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';
@@ -467,7 +470,7 @@ $total_ht = 0;
 $param = '';
 $num = 0;
 
-if ($sql_select) {
+if ($sql_select && $sql !== '') {
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -498,7 +501,7 @@ if ($sql_select) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', 'nogreyscale', $limit);
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="liste centpercent noborder">'."\n";
@@ -547,7 +550,7 @@ if ($sql_select) {
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('TotalHT', $_SERVER['PHP_SELF'], 'total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('UnitPrice', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
-	$parameters = array('param'=>$param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print "</tr>\n";
@@ -781,7 +784,7 @@ if ($sql_select) {
 	}
 	$db->free($resql);
 } elseif (empty($type_element) || $type_element == -1) {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '', 0, '', 'nogreyscale', $limit);
 
 	print '<table class="liste centpercent noborder">'."\n";
 	// Titles with sort buttons
@@ -797,7 +800,7 @@ if ($sql_select) {
 
 	print "</table>";
 } else {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '', 0, '', 'nogreyscale', $limit);
 
 	print '<table class="liste centpercent">'."\n";
 

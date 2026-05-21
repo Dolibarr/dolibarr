@@ -20,11 +20,11 @@ if [[ -z "${GITHUB_TOKEN:-}" ]]; then
 fi
 if [[ -z "${GITHUB_REPOSITORY:-}" ]]; then
 	echo "GITHUB_REPOSITORY is not set" >&2
-	exit 1
+	exit 2
 fi
 if [[ -z "${GITHUB_EVENT_PATH:-}" ]]; then
 	echo "GITHUB_EVENT_PATH is not set" >&2
-	exit 1
+	exit 3
 fi
 
 # Extract the pull request number from the event payload
@@ -34,7 +34,6 @@ if [[ "$pr_number" == "null" ]]; then
 	exit 0
 fi
 
-# Split repository into owner and repo name
 # Split repository into owner and repo name using Bash parameter expansion
 owner="${GITHUB_REPOSITORY%%/*}"  # Extract text before the first '/'
 repo="${GITHUB_REPOSITORY##*/}"   # Extract text after the last '/'
@@ -42,6 +41,7 @@ repo="${GITHUB_REPOSITORY##*/}"   # Extract text after the last '/'
 page=1
 per_page=100
 changed_php_files=()
+changed_lang_files=()
 
 # Loop through all pages to gather changed files
 while true; do
@@ -52,6 +52,9 @@ while true; do
 	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.php$")) | .filename')
 	changed_php_files+=("${files[@]}")
 
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.lang$")) | .filename')
+    changed_lang_files+=("${files[@]}")
+
 	# Check if we have reached the last page (less than per_page results)
 	count=$(echo "$response" | jq 'length')
 	if (( count < per_page )); then
@@ -61,11 +64,22 @@ while true; do
 done
 
 
-# Build a space-separated string of changed PHP files
+# Build a space-separated string of changed PHP and lang files
 # This does not cope with files that have spaces.
 # But such files do not exist in the project (at least not for the
 # files we are filtering).
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
+all_changed_lang=$(IFS=" " ; echo "${changed_lang_files[*]}")
+
+
+forbidden_files=""
+#forbidden_files=$(echo "$all_changed_lang" | grep -E 'htdocs/langs/([^/]+)/.*\.lang$' | grep -v 'htdocs/langs/en_US/')
+#if [ -n "$forbidden_files" ]; then
+#  echo "You tried to modify one or more language files that are not allowed to be modified in Pull requests."
+#  echo "$forbidden_files"
+#  echo "To modify translations that are not the source language (en_US), you must modify them from transifex.com"
+#  exit 10
+#fi
 
 
 # Determine changed files flag
@@ -79,8 +93,10 @@ fi
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
 	echo "any_changed=${any_changed}" >> "$GITHUB_OUTPUT"
 	echo "all_changed_files=${all_changed_files}" >> "$GITHUB_OUTPUT"
+	echo "forbidden_files=${forbidden_files}" >> "$GITHUB_OUTPUT"
 else
 	# Otherwise, print the outputs
 	echo "any_changed=${any_changed}"
 	echo "all_changed_files=${all_changed_files}"
+	echo "forbidden_files=${forbidden_files}"
 fi

@@ -240,7 +240,7 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -630,7 +630,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0, 0, 0);
 
 		if (!empty($object->tracking_number)) {
-			$object->getUrlTrackingStatus($object->tracking_number);
+			$object->getUrlTrackingStatus((string) $object->tracking_number);
 			if (!empty($object->tracking_url)) {
 				if ($object->shipping_method_id > 0) {
 					// Get code using getLabelFromKey

@@ -291,7 +291,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -549,7 +549,7 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->startTransaction();
 								// Label
 								$pdf->SetXY($this->posxref, $curY);
-								$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+								$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 								$pageposafter = $pdf->getPage();
 								if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 									$pdf->rollbackTransaction(true);
@@ -559,7 +559,7 @@ class pdf_beluga extends ModelePDFProjects
 									// Label
 									$pdf->SetXY($this->posxref, $curY);
 									$posybefore = $pdf->GetY();
-									$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+									$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 									$pageposafter = $pdf->getPage();
 									$posyafter = $pdf->GetY();
 									if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -607,7 +607,7 @@ class pdf_beluga extends ModelePDFProjects
 											// Label
 											$pdf->SetXY($this->posxref, $curY);
 											$posybefore = $pdf->GetY();
-											$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+											$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 											$pageposafter = $pdf->getPage();
 											$posyafter = $pdf->GetY();
 										}

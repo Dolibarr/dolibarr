@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,6 +219,7 @@ if (in_array($action, array("view_ticket", "presend", "close", "confirm_public_c
 	}
 }
 
+
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
@@ -253,7 +255,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
-		print '<!-- public view ticket -->';
+		print '<!-- public view ticket if if -->';
 		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		// Confirmation close
@@ -265,20 +267,16 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		print '<table class="ticketpublictable centpercent tableforfield">';
 
-		// Ref
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+		// Ref - Tracking ID
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").' / '.$langs->trans("TicketTrackId").'</td><td>';
 		print img_picto('', 'ticket', 'class="pictofixedwidth"');
-		print dol_escape_htmltag($object->dao->ref);
-		print '</td></tr>';
-
-		// Tracking ID
-		print '<tr><td>'.$langs->trans("TicketTrackId").'</td><td>';
-		print dol_escape_htmltag($object->dao->track_id);
+		print dolPrintHTML($object->dao->ref);
+		print '<span class="opacitylow"> &nbsp; / &nbsp; '.dolPrintHTML($object->dao->track_id).'</span>';
 		print '</td></tr>';
 
 		// Subject
 		print '<tr><td>'.$langs->trans("Subject").'</td><td>';
-		print '<span class="bold">';
+		print '<span class="bold large">';
 		print dol_escape_htmltag($object->dao->subject);
 		print '</span>';
 		print '</td></tr>';
@@ -308,6 +306,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
+		print img_picto('', 'calendar', 'class="pictofixedwidth"');
 		print dol_print_date($object->dao->datec, 'dayhour');
 		print '</td></tr>';
 
@@ -341,14 +340,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// User assigned
-		print '<tr><td>'.$langs->trans("AssignedTo").'</td><td>';
 		if ($object->dao->fk_user_assign > 0) {
+			print '<tr><td>'.$langs->trans("AssignedTo").'aaaa</td><td>';
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_assign);
 			print img_picto('', 'user', 'class="pictofixedwidth"');
 			print $fuser->getFullName($langs, 0);
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// External contributors
 		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')) {
@@ -409,8 +408,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
+			$formticket->withtitletopic = 1;
 
-			$formticket->showMessageForm('100%');
+			$formticket->showMessageForm('100%', 1);
 		}
 
 		if ($action != 'presend') {
@@ -429,12 +429,12 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			// List ticket
 			print '<div class="inline-block divButAction"><a class="left" style="padding-right: 50px" href="javascript:$(\'#form_view_ticket_list\').submit();">'.$langs->trans('ViewMyTicketList').'</a></div>';
 
-			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+			if ($object->dao->status < Ticket::STATUS_CLOSED) {
 				// New message
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('TicketAddMessage').'</a></div>';
 
 				// Close ticket
-				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+				if ($object->dao->status >= Ticket::STATUS_NOT_READ && $object->dao->status < Ticket::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}
@@ -445,15 +445,17 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 
 		// Message list
-		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+		print '<div class="ticketpublicarea ticketlargemargin">';
+		print '<h3>';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
+		print '</h3>';
 		print '</div>';
 
 		$object->viewTicketMessages(false, true, $object->dao);
 
 		print '<br>';
 	} else {
-		print '<!-- public view ticket -->';
+		print '<!-- public view ticket if else -->';
 		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener">'.$langs->trans("GoBack").'</a></div>';
@@ -461,7 +463,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 	}
 } else {
-	print '<!-- public view ticket -->';
+	print '<!-- public view ticket else -->';
 	print '<div class="ticketpublicarea ticketlargemargin">';
 
 	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';

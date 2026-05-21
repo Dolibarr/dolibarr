@@ -560,7 +560,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
+		global $extrafields;
 
 		if (empty($object->country) && !empty($object->country_code)) {
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
@@ -585,13 +585,14 @@ abstract class CommonDocGenerator
 			$array_key.'_country' => $object->country,
 			$array_key.'_poste' => $object->poste,
 			$array_key.'_socid' => $object->socid,
-			$array_key.'_statut' => $object->statut,
+			$array_key.'_statut' => $object->statut ? $object->statut : $object->status,
 			$array_key.'_code' => $object->code,
 			$array_key.'_email' => $object->email,
 			$array_key.'_phone_pro' => $object->phone_pro,
 			$array_key.'_phone_perso' => $object->phone_perso,
 			$array_key.'_phone_mobile' => $object->phone_mobile,
 			$array_key.'_fax' => $object->fax,
+			$array_key.'_birthday_locale' => (!empty($object->birthday) ? dol_print_date($object->birthday, 'day', false, $outputlangs) : ''),
 			$array_key.'_birthday' => $object->birthday,
 			$array_key.'_default_lang' => $object->default_lang,
 			$array_key.'_note_public' => $object->note_public,
@@ -1581,15 +1582,18 @@ abstract class CommonDocGenerator
 
 		$parameters = array(
 			'curY' => &$curY,
-			'columnText' => $columnText,
+			'columnText' => &$columnText,
 			'colKey' => $colKey,
 			'pdf' => &$pdf,
 		);
 		$reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0 && isset($hookmanager->resArray['columnText'])) {
+			$columnText = $hookmanager->resArray['columnText'];
+		}
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
-		if (!$reshook) {
+		if (!$reshook || $reshook > 0) {
 			if (empty($columnText)) {
 				return 0;
 			}
@@ -1742,7 +1746,7 @@ abstract class CommonDocGenerator
 
 
 	/**
-	 *  display extrafields columns content
+	 *  Display extrafields columns content on documents
 	 *
 	 *  @param	CommonObject|CommonObjectLine	$object    		line of common object
 	 *  @param 	Translate 						$outputlangs    Output language
@@ -1804,9 +1808,20 @@ abstract class CommonDocGenerator
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 				// Enable extrafield ?
 				$enabled = 0;
+				if (!empty($extrafields->attributes[$object->table_element]['enabled'][$key])) {
+					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
+				}
+
+				if (!$enabled) {
+					continue;
+				}
+
+				// Reset enabled: only printable attribute determines PDF visibility
+				$enabled = 0;
 				$disableOnEmpty = 0;
+				$printable = 0;
 				if (!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
-					$printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
+					$printable = (int) $extrafields->attributes[$object->table_element]['printable'][$key];
 					if (in_array($printable, $params['printableEnable']) || in_array($printable, $params['printableEnableNotEmpty'])) {
 						$enabled = 1;
 					}
@@ -1816,7 +1831,7 @@ abstract class CommonDocGenerator
 					}
 				}
 
-				if (empty($enabled)) {
+				if (empty($enabled) || empty($printable)) {
 					continue;
 				}
 
@@ -1957,7 +1972,7 @@ abstract class CommonDocGenerator
 	 * @param float			$tab_top        Tab top position
 	 * @param float			$tab_height     Default tab height
 	 * @param Translate		$outputlangs    Output language
-	 * @param int			$hidetop        Hide top
+	 * @param int<0,1>		$hidetop        Hide top
 	 * @return float						Height of col tab titles
 	 */
 	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)

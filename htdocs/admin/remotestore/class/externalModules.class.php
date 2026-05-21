@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2025		Mohamed DAOUD       <mdaoud@dolicloud.com>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
@@ -394,7 +394,7 @@ class ExternalModules
 				$dolistoreProductsTotal = 0;
 			} else {
 				$dolistoreProducts = $this->adaptData($getDolistoreProducts['response']['products'], 'dolistore');
-				$dolistoreProductsTotal = $getDolistoreProducts['response']['total'];
+				$dolistoreProductsTotal = (int) $getDolistoreProducts['response']['total'];
 				$this->numberTotalOfProducts += $dolistoreProductsTotal;
 			}
 		}
@@ -605,21 +605,23 @@ class ExternalModules
 			} else {
 				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
 			}
-			$html .= ' &nbsp; '.$langs->trans('Ref').' '.dolPrintHTML(preg_replace('/@.*$/', '', $product["ref"]));
-			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
-			$html .= '</small><br>';
-			//$html .= '<div class="appSource valignmiddle inline-block">'.$langs->trans('Source').' &nbsp; </div>';
-			$html .= '<div class="appSource valignmiddle inline-block">';
+			$html .= ' &nbsp; &nbsp; ';
+
+			$html .= '<div class="appSource inline-block valigntop">';
 			if ($product["source"] == 'dolistore') {
-				//$html .= img_picto('DoliStore', 'shop', 'class="pictofixedwidth"');
-				$html .= '<img border="0" title="'.dolPrintHTML($langs->trans('Source').": DoliStore").'" class="imgautosize imgmaxwidth100 valignmiddle" style="height: 14px" src="'.DOL_URL_ROOT.'/theme/dolistore_squarred.svg">';
+				$html .= '<img border="0" title="'.dolPrintHTML($langs->trans('Source').": DoliStore").'" class="imgautosize valignmiddle inline-block pictofixedwidth" style="height: 14px" src="'.DOL_URL_ROOT.'/theme/dolistore_squarred.svg">';
 			} elseif ($product["source"] == 'githubcommunity') {
 				$html .= img_picto($langs->trans('Source').': GitHub community repo', 'group', 'class="pictofixedwidth valignmiddle"');
 			} else {
 				$html .= img_picto($langs->trans('Source').': '.$langs->trans('Other'), 'generic', 'class="pictofixedwidth"');
 			}
-			//$html .= $product["source"];
-			$html .= '</div> &nbsp;';
+			$html .= '</div>';
+
+			$html .= $langs->trans('Ref').' '.dolPrintHTML(preg_replace('/@.*$/', '', $product["ref"]));
+			$html .= '</small><br>';
+
+
+			$html .= '&nbsp;';
 			if (!empty($product['phpmin']) && $product['phpmin'] != 'unknown') {
 				$html .= ' <span class="badge-secondary small" style="padding: 3px; border-radius: 5px">PHP min '.$product['phpmin'].'</span>';
 			}
