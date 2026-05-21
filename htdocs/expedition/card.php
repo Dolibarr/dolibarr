@@ -1116,37 +1116,101 @@ if (empty($reshook)) {
 	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoadd) {
 		// delete a line
 		$object->fetch($id);
-		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
 		$line->fk_expedition = $object->id;
+		$isStandaloneShipment = !($object->origin_id > 0) && getDolGlobalString('SHIPMENT_STANDALONE');
 
-		$num_prod = count($lines);
-		for ($i = 0; $i < $num_prod; $i++) {
-			if ($lines[$i]->id == $line_id) {
-				if (count($lines[$i]->details_entrepot) > 1) {
-					// delete multi warehouse lines
-					foreach ($lines[$i]->details_entrepot as $details_entrepot) {
-						$line->id = $details_entrepot->line_id;
+		if ($isStandaloneShipment) {
+			if ($line->fetch($line_id) <= 0 || (int) $line->fk_expedition !== (int) $object->id) {
+				$error++;
+				setEventMessages($line->error ? $line->error : $langs->trans("ErrorRecordNotFound"), $line->errors, 'errors');
+			} else {
+				$line_id_list = array();
+				$line->findAllChild($line_id, $line_id_list, 0);
+				$child_line_id_list = array_reverse($line_id_list, true);
+				foreach ($child_line_id_list as $child_line_id_arr) {
+					foreach ($child_line_id_arr as $child_line_id) {
+						$child_line = new ExpeditionLigne($db);
+						if ($child_line->fetch($child_line_id) <= 0 || (int) $child_line->fk_expedition !== (int) $object->id) {
+							$error++;
+							setEventMessages($child_line->error ? $child_line->error : $langs->trans("ErrorRecordNotFound"), $child_line->errors, 'errors');
+							break;
+						}
+						if ($object->deleteLine($user, $child_line_id) < 0) {
+							$error++;
+							break;
+						}
+					}
+					if ($error) {
+						break;
+					}
+				}
+
+				if (!$error && $object->deleteLine($user, $line_id) < 0) {
+					$error++;
+				}
+			}
+			unset($_POST["lineid"]);
+
+			if (!$error) {
+				$object->line_order(true);
+
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+					$ret = $object->fetch($object->id); // Reload to get new records
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				}
+
+				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+				exit();
+			} else {
+				if (!empty($object->error) || !empty($object->errors)) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		} else {
+			$lines = $object->lines;
+
+			$num_prod = count($lines);
+			for ($i = 0; $i < $num_prod; $i++) {
+				if ($lines[$i]->id == $line_id) {
+					$details_entrepot = (isset($lines[$i]->details_entrepot) && is_countable($lines[$i]->details_entrepot)) ? $lines[$i]->details_entrepot : array();
+					if (count($details_entrepot) > 1) {
+						// delete multi warehouse lines
+						foreach ($details_entrepot as $details_entrepot_line) {
+							$line->id = $details_entrepot_line->line_id;
+							if (!$error && $line->delete($user) < 0) {
+								$error++;
+							}
+						}
+					} else {
+						// delete single warehouse line
+						$line->id = $line_id;
 						if (!$error && $line->delete($user) < 0) {
 							$error++;
 						}
 					}
-				} else {
-					// delete single warehouse line
-					$line->id = $line_id;
-					if (!$error && $line->delete($user) < 0) {
-						$error++;
-					}
 				}
+				unset($_POST["lineid"]);
 			}
-			unset($_POST["lineid"]);
-		}
 
-		if (!$error) {
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-			exit();
-		} else {
-			setEventMessages($line->error, $line->errors, 'errors');
+			if (!$error) {
+				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+				exit();
+			} else {
+				setEventMessages($line->error, $line->errors, 'errors');
+			}
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save')) {
 		if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
