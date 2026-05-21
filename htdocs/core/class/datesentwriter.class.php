@@ -105,9 +105,7 @@ class DateSentWriter
 			return -1;
 		}
 
-		$table = $this->db->prefix().self::TABLE_MAP[$object->element];
-
-		$sql  = "UPDATE ".$table;
+		$sql  = "UPDATE ".$this->db->sanitize($this->db->prefix().self::TABLE_MAP[$object->element]);
 		$sql .= " SET date_sent = '".$this->db->idate($when)."'";
 		$sql .= " WHERE rowid = ".intval($object->id);
 
