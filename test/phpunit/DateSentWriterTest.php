@@ -40,8 +40,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @property mixed $savuser
  * @property mixed $savlangs
  * @property mixed $savdb
+ * @phpstan-ignore class.notFound
  */
-// @phpstan-ignore-next-line class.notFound
 class DateSentWriterTest extends CommonClassTest
 {
 	/**
