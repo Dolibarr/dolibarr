@@ -8,13 +8,13 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/test/phpunit/NamingContractTest.php
+ * \file    test/phpunit/NamingContractTest.php
  * \ingroup modulebuilder
  * \brief   Unit tests for NamingContract and StrictNamingContractValidator.
  */
 
-require_once dirname(__FILE__) . '/../../class/NamingContract.class.php';
-require_once dirname(__FILE__) . '/../../class/NamingContractValidator.class.php';
+require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContract.class.php';
+require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContractValidator.class.php';
 
 /**
  * @backupGlobals disabled
