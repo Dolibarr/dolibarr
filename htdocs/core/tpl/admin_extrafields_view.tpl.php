@@ -95,6 +95,7 @@ print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td class="center">'.$langs->trans("Unique").'</td>';
 print '<td class="center">'.$langs->trans("Mandatory").'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
@@ -165,6 +166,8 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
 		// Can always be editable ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
+		// Personal data ?
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['personal_data'][$key])."</td>\n";
 		// Will be emptied on clone ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['emptyonclone'][$key])."</td>\n";
 		// Visible
@@ -213,7 +216,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print "</tr>";
 	}
 } else {
-	$colspan = 17;
+	$colspan = 18;
 	if (isModEnabled('multicompany')) {
 		$colspan++;
 	}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2020-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,10 +44,6 @@
  * @var User $user
  *
  * @var ?int[]		$toselect  			Items selected on page, only used to see if not empty here
- * @var ?int		$SHOWLEGEND			Show legend or not
- * @var	string		$customreportkey	Custom report key
- * @var string		$customsql			Custom SQL
- * @var ?string[]	$search_groupby		Array with the third dimension
  */
 '
 @phan-var-force ?int[] $toselect
@@ -97,9 +93,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 
 	$search_measures = array_map('sanititzekey', $search_measures);
-	$search_xaxis = array_map('sanititzekey', isset($search_xaxis) ? $search_xaxis : array());
+	$search_xaxis = array_map('sanititzekey', $search_xaxis);
 	$search_yaxis = array_map('sanititzekey', $search_yaxis);
-	$search_groupby = array_map('sanititzekey', isset($search_groupby) ? $search_groupby : array());
+	$search_groupby = array_map('sanititzekey', $search_groupby);
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -116,9 +112,23 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$object = null;
 } else {
 	// When included into a main page
+	/**
+	 * @var ?int		$SHOWLEGEND			Show legend or not
+	 * @var	string		$customreportkey	Custom report key
+	 * @var ?string		$customsql			Custom SQL
+	 * @var ?string[]	$search_groupby		Array with the third dimension
+	 * @var int			$page
+	 * @var string		$sortfield
+	 * @var string		$sortorder
+	 */
 	'
 	@phan-var-force int<0,1> $SHOWLEGEND
-	@phan-var-force string customreportkey
+	@phan-var-force string $customreportkey
+	@phan-var-force ?string $customsql
+	@phan-var-force ?string[]	$search_groupby		Array with the third dimension
+	@phan-var-force int $page
+	@phan-var-force string $sortfield
+	@phan-var-force string $sortorder
 	';
 
 	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.

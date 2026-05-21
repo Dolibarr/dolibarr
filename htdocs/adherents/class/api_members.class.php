@@ -434,7 +434,7 @@ class Members extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$member->array_options[$index] = $this->_checkValForAPI($field, $val, $member);
+					$member->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $member);
 				}
 				continue;
 			}
@@ -666,6 +666,7 @@ class Members extends DolibarrApi
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
 	 * @throws	RestException	422		Malformed data
+	 * @throws	RestException	500		server error
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
@@ -675,6 +676,9 @@ class Members extends DolibarrApi
 		if (!is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
 			throw new RestException(422, 'Malformed data: subscription start or end date, or subscription amount, is not numeric');
 		}
+		if ($start_date > $end_date) {
+			throw new RestException(422, 'Malformed data: subscription start is not larger than end date');
+		}
 
 		$member = new Adherent($this->db);
 		$result = $member->fetch($id);
@@ -682,7 +686,12 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
-		return $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
+		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
+		if ($result < 1) {
+			throw new RestException(500, $member->error);
+		} else {
+			return $result;
+		}
 	}
 
 	/**

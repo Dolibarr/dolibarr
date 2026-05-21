@@ -114,7 +114,7 @@ if ($action == 'edit') {
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$tooltiphelp .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+			$tooltiphelp .= $langs->trans("RESTRICT_ON_IPHelp").'<br>'.$langs->trans("Example").': '.$langs->trans("IPListExample");
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';

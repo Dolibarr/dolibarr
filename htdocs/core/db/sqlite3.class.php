@@ -628,7 +628,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  SQLite3Result	$resultset   Curseur de la requete voulue
+	 *	@param  SQLite3Result|null	$resultset		Result set of request
 	 *	@return	void
 	 */
 	public function free($resultset = null)

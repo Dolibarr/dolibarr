@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2021  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Solution Libre SAS          <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +273,13 @@ class PaymentVarious extends CommonObject
 			return -1;
 		}
 
-		if (!$notrigger) {
+		// Actions on extra fields
+		$result = $this->insertExtraFields();
+		if ($result < 0) {
+			$error++;
+		}
+
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PAYMENT_VARIOUS_MODIFY', $user);
 			if ($result < 0) {
@@ -354,6 +361,10 @@ class PaymentVarious extends CommonObject
 				$this->rappro               = $obj->rappro;
 				$this->bank_num_releve      = $obj->bank_num_releve;
 			}
+
+			// Fetch extrafields
+			$this->fetch_optionals();
+
 			$this->db->free($resql);
 
 			return 1;
@@ -533,6 +544,12 @@ class PaymentVarious extends CommonObject
 			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
+				// Insert extrafields
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+
 				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

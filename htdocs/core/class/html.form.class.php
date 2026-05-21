@@ -176,7 +176,7 @@ class Form
 		$ret = '';
 
 		// TODO change for compatibility
-		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;/', $typeofdata)) {
+		if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;/', $typeofdata)) {
 			if ($perm) {
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_' . $tmp[0] . (!empty($tmp[1]) ? ' ' . $tmp[1] : '') . '" id="' . $htmlname . '">';
@@ -304,7 +304,7 @@ class Form
 		}
 
 		// When option to edit inline is activated
-		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) {
+		if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, ($perm ? 1 : 0), $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			if ($editaction == '') {
@@ -1123,7 +1123,7 @@ class Form
 	/**
 	 *  Return a select list of country phone calling codes
 	 *
-	 *  @param	string		$selected			Pre-selected phone code value (e.g. "+33")
+	 *  @param	string		$selected			Preselected phone code value (e.g. "+33")
 	 *  @param	string		$htmlname			Name of HTML select element
 	 *  @param	string		$morecss			More CSS classes
 	 *  @param	int			$showempty			Show empty option (1) or not (0)
@@ -4232,7 +4232,7 @@ class Form
 	 * @param 	string|int	$selected 						Preselected product
 	 * @param 	string 		$htmlname 						Name of HTML Select
 	 * @param 	string 		$filtertype 					Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param 	string 		$filtre 						Deprecated. Not used.
+	 * @param 	string 		$notused 						Deprecated. Not used.
 	 * @param 	array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
 	 * @param 	int<0,1>	$hidelabel 						Hide label (0=no, 1=yes)
 	 * @param 	int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
@@ -4241,7 +4241,7 @@ class Form
 	 * @param	int			$nooutput						1=do not output but return string instead
 	 * @return  string|void									HTML select or nothing
 	 */
-	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '', $nooutput = 0)
+	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $notused = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -4268,7 +4268,7 @@ class Form
 
 			$s .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
-			$s = $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
+			$s = $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $notused, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
 		}
 
 		if ($nooutput) {
@@ -4287,7 +4287,7 @@ class Form
 	 * @param string 	$selected 			Product price preselected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
 	 * @param string 	$htmlname 			Name of HTML select
 	 * @param ''|int<0,1> 	$filtertype 		Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string 	$filtre 			Deprecated. Not used.
+	 * @param string 	$notused 			Deprecated. Not used.
 	 * @param string 	$filterkey 			Filter of produdts
 	 * @param int 		$statut 			-1=Return all products, 0=Products not on buy, 1=Products on buy
 	 * @param int 		$outputmode 		0=HTML select string, 1=Array
@@ -4298,7 +4298,7 @@ class Form
 	 * @param string 	$placeholder 		Placeholder
 	 * @return array<array<string,mixed>>|string                	Array of keys for json or HTML component
 	 */
-	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
+	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $notused = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
 		// phpcs:enable
 		global $langs, $conf, $user;
@@ -4626,9 +4626,12 @@ class Form
 				}
 
 				$optstart = '<option value="' . $outkey . '"';
-				if ($selected && $selected == $objp->idprodfournprice) {
+				if ($selected && preg_match('/^idprod_/', (string) $selected) && (string) $selected == 'idprod_'.$objp->rowid) {
+					$optstart .= ' selected';
+				} elseif ($selected && (string) $selected == (string) $objp->idprodfournprice) {
 					$optstart .= ' selected';
 				}
+
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) {
 					$optstart .= ' disabled';
 				}

@@ -3,7 +3,7 @@
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -593,7 +593,10 @@ class Lettering extends BookKeeping
 		// Cross-fiscal-year matching is forbidden
 		if (count($fiscalYearRows) > 1) {
 			$periods = array_map(
-				/** @param object $row */
+				/**
+				 * @param object $row
+				 * @return string
+				 */
 				function ($row) {
 					return dol_print_date($this->db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($this->db->jdate($row->date_end), 'day');
 				},

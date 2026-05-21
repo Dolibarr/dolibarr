@@ -361,8 +361,10 @@ class Contacts extends DolibarrApi
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
+				$this->contact->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contact);
 				}
 				continue;
 			}
@@ -430,7 +432,7 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contact);
 				}
 				continue;
 			}

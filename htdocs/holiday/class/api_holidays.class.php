@@ -282,7 +282,7 @@ class Holidays extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->holiday->array_options[$index] = $this->_checkValForAPI($field, $val, $this->holiday);
+					$this->holiday->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->holiday);
 				}
 				continue;
 			}

@@ -39,10 +39,10 @@ create table llx_facturedet
   qty							real,								-- Quantity (example 2). Note: for credit note, the price is negative, not the quantity. Like for discount, price is negative, not quantity.
 
   remise_percent				real       DEFAULT 0,				-- % of discount on line (example 20%)
-  remise						real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (example 20)
+  remise						real       DEFAULT 0,				-- Deprecated (Do, not use)
   fk_remise_except				integer    NULL,					-- Link to table of flat discounts
-  subprice						double(24,8),						-- unit price HT (example 100)
-  subprice_ttc      			double(24,8) DEFAULT 0,    	        -- unit price if price was entered including tax
+  subprice						double(24,8),						-- unit price HT (example 100) - discount not included
+  subprice_ttc      			double(24,8) DEFAULT 0,    	        -- unit price if price was entered including tax - discount not included
   price							double(24,8),						-- Deprecated (Do not use)
   total_ht						double(24,8),						-- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva						double(24,8),						-- Total TVA de la ligne toute quantite et incluant remise ligne et globale

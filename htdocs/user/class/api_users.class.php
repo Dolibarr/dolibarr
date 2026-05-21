@@ -461,7 +461,7 @@ class Users extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->useraccount->array_options[$index] = $this->_checkValForAPI($field, $val, $this->useraccount);
+					$this->useraccount->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->useraccount);
 				}
 				continue;
 			}
@@ -1090,7 +1090,7 @@ class Users extends DolibarrApi
 		$notification->fk_user = $id;
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1165,7 +1165,7 @@ class Users extends DolibarrApi
 			if ($field === 'fk_action') {
 				throw new RestException(500, 'Error creating User Notification, request_data contains fk_action key');
 			}
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1260,7 +1260,7 @@ class Users extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {
