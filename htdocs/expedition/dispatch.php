@@ -89,6 +89,7 @@ if (GETPOSTISSET("projectid")) {
 
 $object = new Expedition($db);
 $objectorder = new Commande($db);
+$isStandaloneShipment = false;
 
 
 if ($id > 0 || !empty($ref)) {
@@ -106,6 +107,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$object->fetch_origin();
 	}
+	$isStandaloneShipment = !empty($object->id) && empty($object->origin) && getDolGlobalString('SHIPMENT_STANDALONE');
 }
 
 // $id is id of a purchase order.
@@ -128,6 +130,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+$isStandaloneShipment = !empty($object->id) && empty($object->origin) && getDolGlobalString('SHIPMENT_STANDALONE');
 
 if (empty($reshook)) {
 	// Update a dispatched line
@@ -289,7 +292,30 @@ if (empty($reshook)) {
 							$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
 							$expeditiondispatch->fk_parent = GETPOSTINT('fk_parent'.$dispatch_line_suffix);
 							$expeditiondispatch->fk_product = $prod_id;
-							if (!($expeditiondispatch->fk_parent > 0)) {
+							if ($isStandaloneShipment) {
+								$expeditiondispatch->element_type = 'shipping';
+
+								$source_line_id = GETPOSTINT($fk_commandedet);
+								$source_line = new ExpeditionLigne($db);
+								$source_line_loaded = 0;
+								if ($expeditiondispatch->fk_parent > 0) {
+									$source_line_loaded = $source_line->fetch($expeditiondispatch->fk_parent);
+								}
+								if ($source_line_loaded <= 0 && $source_line_id > 0) {
+									$source_line_loaded = $source_line->fetch($source_line_id);
+								}
+								if ($source_line_loaded > 0) {
+									$expeditiondispatch->fk_unit = $source_line->fk_unit;
+									$expeditiondispatch->description = $source_line->description;
+									$expeditiondispatch->rang = $source_line->rang;
+								} elseif ($prod_id > 0) {
+									$tmp_product = new Product($db);
+									if ($tmp_product->fetch($prod_id) > 0) {
+										$expeditiondispatch->fk_unit = $tmp_product->fk_unit;
+										$expeditiondispatch->description = $tmp_product->description;
+									}
+								}
+							} elseif (!($expeditiondispatch->fk_parent > 0)) {
 								$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
 							}
 							$expeditiondispatch->qty = $newqty;
@@ -574,12 +600,26 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
-		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each product id
+		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each source line
 		$products_dispatched = array();
-		$sql = "SELECT ed.fk_elementdet as rowid, sum(ed.qty) as qty";
-		$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
-		$sql .= " WHERE ed.fk_expedition = ".((int) $object->id);
-		$sql .= " GROUP BY ed.fk_elementdet";
+		if ($isStandaloneShipment) {
+			$standalone_dispatched_qty_sql = "l.qty + COALESCE((SELECT SUM(child.qty)";
+			$standalone_dispatched_qty_sql .= " FROM ".$db->prefix()."expeditiondet as child";
+			$standalone_dispatched_qty_sql .= " WHERE child.fk_parent = l.rowid";
+			$standalone_dispatched_qty_sql .= " AND child.fk_expedition = l.fk_expedition";
+			$standalone_dispatched_qty_sql .= " AND child.fk_product = l.fk_product";
+			$standalone_dispatched_qty_sql .= "), 0)";
+
+			$sql = "SELECT l.rowid, (".$standalone_dispatched_qty_sql.") as qty";
+			$sql .= " FROM ".$db->prefix()."expeditiondet as l";
+			$sql .= " WHERE l.fk_expedition = ".((int) $object->id);
+			$sql .= " AND (l.fk_parent IS NULL OR l.fk_parent = 0)";
+		} else {
+			$sql = "SELECT ed.fk_elementdet as rowid, sum(ed.qty) as qty";
+			$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
+			$sql .= " WHERE ed.fk_expedition = ".((int) $object->id);
+			$sql .= " GROUP BY ed.fk_elementdet";
+		}
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -596,9 +636,14 @@ if ($object->id > 0 || !empty($object->ref)) {
 			$db->free($resql);
 		}
 
-		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
-		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
-		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
+		if ($isStandaloneShipment) {
+			$sql = "SELECT l.rowid, l.fk_product, 0 as subprice, 0 as remise_percent, '' AS sref, (".$standalone_dispatched_qty_sql.") as qty,";
+			$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
+		} else {
+			//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
+			$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
+			$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
+		}
 		// Enable hooks to alter the SQL query (SELECT)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
@@ -612,11 +657,21 @@ if ($object->id > 0 || !empty($object->ref)) {
 		}
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " FROM ".$db->prefix()."commandedet as l";
-		$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
-		$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
-		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-			$sql .= " AND l.product_type = 0";
+		if ($isStandaloneShipment) {
+			$sql .= " FROM ".$db->prefix()."expeditiondet as l";
+			$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
+			$sql .= " WHERE l.fk_expedition = ".((int) $object->id);
+			$sql .= " AND (l.fk_parent IS NULL OR l.fk_parent = 0)";
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+				$sql .= " AND p.fk_product_type = 0";
+			}
+		} else {
+			$sql .= " FROM ".$db->prefix()."commandedet as l";
+			$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
+			$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+				$sql .= " AND l.product_type = 0";
+			}
 		}
 		// Enable hooks to alter the SQL query (WHERE)
 		$parameters = array();
@@ -796,16 +851,26 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '<td></td>'; // Warehouse column
 
 						$sql  = "SELECT ed.rowid, ed.fk_parent";
-						$sql .= ", cd.fk_product";
+						if ($isStandaloneShipment) {
+							$sql .= ", ed.fk_product";
+						} else {
+							$sql .= ", cd.fk_product";
+						}
 						$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty')." as qty";
 						$sql .= ", ".$db->ifsql('eb.rowid IS NULL OR eb.fk_warehouse IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse')." as fk_warehouse";
 						$sql .= ", eb.batch, eb.eatby, eb.sellby";
 						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
-						$sql .= " WHERE ed.fk_elementdet = ".(int) $objp->rowid;
-						$sql .= " AND ed.fk_expedition = ".(int) $object->id;
-						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
+						if ($isStandaloneShipment) {
+							$sql .= " WHERE ed.fk_expedition = ".(int) $object->id;
+							$sql .= " AND (ed.rowid = ".(int) $objp->rowid." OR (ed.fk_parent = ".(int) $objp->rowid." AND ed.fk_product = ".(int) $objp->fk_product."))";
+							$sql .= " ORDER BY CASE WHEN ed.fk_parent IS NULL OR ed.fk_parent = 0 THEN 0 ELSE 1 END, ed.rowid";
+						} else {
+							$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
+							$sql .= " WHERE ed.fk_elementdet = ".(int) $objp->rowid;
+							$sql .= " AND ed.fk_expedition = ".(int) $object->id;
+							$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
+						}
 
 						$resultsql = $db->query($sql);
 						$j = 0;
@@ -991,7 +1056,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 										print '<td>';
 										print '<input id="fk_commandedet' . $suffix . '" name="fk_commandedet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
 										print '<input id="idline' . $suffix . '" name="idline' . $suffix . '" type="hidden" value="' . $objd->rowid . '">';
-										print '<input id="fk_parent' . $suffix . '" name="fk_parent' . $suffix . '" type="hidden" value="' . $objd->fk_parent . '">';
+										$fk_parent_for_post = ($isStandaloneShipment && !($objd->fk_parent > 0)) ? $objd->rowid : $objd->fk_parent;
+										print '<input id="fk_parent' . $suffix . '" name="fk_parent' . $suffix . '" type="hidden" value="' . $fk_parent_for_post . '">';
 										print '<input name="productbatch' . $suffix . '" type="hidden" value="' . $objd->fk_product . '">';
 
 										print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
@@ -1051,7 +1117,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 										print '<td colspan="'.$colspan.'">';
 										print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 										print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
-										print '<input id="fk_parent'.$suffix.'" name="fk_parent'.$suffix.'" type="hidden" value="'.$objd->fk_parent.'">';
+										$fk_parent_for_post = ($isStandaloneShipment && !($objd->fk_parent > 0)) ? $objd->rowid : $objd->fk_parent;
+										print '<input id="fk_parent'.$suffix.'" name="fk_parent'.$suffix.'" type="hidden" value="'.$fk_parent_for_post.'">';
 										print '<input name="product'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
 										print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 										print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
