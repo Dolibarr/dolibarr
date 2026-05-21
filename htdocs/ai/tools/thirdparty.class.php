@@ -252,11 +252,11 @@ class ToolThirdParty extends McpTool
 			$sql .= " AND s.rowid = " . (int) $query;
 			$limit = 1;
 		} else {
-			$sql .= " AND (s.nom LIKE '%" . $this->db->escape($q) . "%'";
-			$sql .= " OR s.name_alias LIKE '%" . $this->db->escape($q) . "%'";
-			$sql .= " OR s.code_client LIKE '%" . $this->db->escape($q) . "%'";
-			$sql .= " OR s.code_fournisseur LIKE '%" . $this->db->escape($q) . "%'";
-			$sql .= " OR s.email LIKE '%" . $this->db->escape($q) . "%')";
+			$sql .= " AND (s.nom LIKE '%" . $this->db->escape($query) . "%'";
+			$sql .= " OR s.name_alias LIKE '%" . $this->db->escape($query) . "%'";
+			$sql .= " OR s.code_client LIKE '%" . $this->db->escape($query) . "%'";
+			$sql .= " OR s.code_fournisseur LIKE '%" . $this->db->escape($query) . "%'";
+			$sql .= " OR s.email LIKE '%" . $this->db->escape($query) . "%')";
 		}
 
 		if ($type === 'customer') {

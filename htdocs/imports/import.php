@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Christophe Battarel         <christophe.battarel@altairis.fr>
+ * Copyright (C) 2022       Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -703,6 +703,12 @@ if ($step == 3 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	if (empty($separator)) {
@@ -1536,6 +1542,12 @@ if ($step == 4 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	// Create class to use for import
@@ -2080,6 +2092,12 @@ if ($step == 5 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	$importid = GETPOST("importid", 'alphanohtml');
 
