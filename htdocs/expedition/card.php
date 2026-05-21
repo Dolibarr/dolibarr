@@ -3427,42 +3427,303 @@ if ($action == 'create' && $usercancreate) {
 		if (!empty($object->table_element_line)) {
 			// Show object lines
 			$result = $object->getLinesArray();
+			$lines = $object->lines;
+			$num_prod = count($lines);
 
-			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
-			<input type="hidden" name="token" value="' . newToken().'">
-			<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-			<input type="hidden" name="mode" value="">
-			<input type="hidden" name="page_y" value="">
-			<input type="hidden" name="id" value="' . $object->id.'">
-			';
+			$extrafields->fetch_name_optionals_label($object->table_element_line);
 
-			if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+			if ($action == 'editline') {
+				print '	<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'#line_'.$line_id.'" method="POST">
+				<input type="hidden" name="token" value="' . newToken().'">
+				<input type="hidden" name="action" value="updateline">
+				<input type="hidden" name="mode" value="">
+				<input type="hidden" name="id" value="' . $object->id.'">
+				';
 			}
+
+			print '<br>';
 
 			print '<div class="div-table-responsive-no-min">';
-			if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-				print '<table id="tablelines" class="noborder noshadow" width="100%">';
+			print '<table class="noborder centpercent" id="tablelines" >';
+			print '<thead>';
+			print '<tr class="liste_titre">';
+			if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+				print '<td width="5" class="center linecolnum">&nbsp;</td>';
 			}
-
-			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1, '/expedition/tpl');
+			print '<td  class="linecoldescription" >' . $langs->trans("Products") . '</td>';
+			print '<td class="center linecolqty">' . $langs->trans("QtyOrdered") . '</td>';
+			print '<td class="center linecolqtyinothershipments">' . $langs->trans("QtyInOtherShipments") . '</td>';
+			if ($action == 'editline') {
+				$editColspan = 3;
+				if (!isModEnabled('stock')) {
+					$editColspan--;
+				}
+				if (!isModEnabled('productbatch')) {
+					$editColspan--;
+				}
+				print '<td class="center linecoleditlineotherinfo" colspan="' . $editColspan . '">';
+				if ($object->status <= 1) {
+					print $langs->trans("QtyToShip");
+				} else {
+					print $langs->trans("QtyShipped");
+				}
+				if (isModEnabled('stock')) {
+					print ' - ' . $langs->trans("WarehouseSource");
+				}
+				if (isModEnabled('productbatch')) {
+					print ' - ' . $langs->trans("Batch");
+				}
+				print '</td>';
+			} else {
+				if ($object->status <= 1) {
+					print '<td class="center linecolqtytoship">' . $langs->trans("QtyToShip") . '</td>';
+				} else {
+					print '<td class="center linecolqtyshipped">' . $langs->trans("QtyShipped") . '</td>';
+				}
+				if (isModEnabled('stock')) {
+					print '<td class="left linecolwarehousesource">' . $langs->trans("WarehouseSource") . '</td>';
+				}
+				if (isModEnabled('productbatch')) {
+					print '<td class="left linecolbatch">' . $langs->trans("Batch") . '</td>';
+				}
 			}
+			print '<td class="center linecolweight">' . $langs->trans("CalculatedWeight") . '</td>';
+			print '<td class="center linecolvolume">' . $langs->trans("CalculatedVolume") . '</td>';
+			if ($object->status == 0) {
+				print '<td class="linecoledit"></td>';
+				print '<td class="linecoldelete" width="10"></td>';
+			}
+			print "</tr>\n";
+			print '</thead>';
 
-			// Form to add new line
-			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
-				if ($action != 'editline') {
-					// Add products/services form
-					require DOL_DOCUMENT_ROOT.'/expedition/tpl/objectline_create.tpl.php';
+			$outputlangs = $langs;
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+				$object->fetch_thirdparty();
+				$newlang = '';
+				if (GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
 				}
 			}
 
-			if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-				print '</table>';
+			print '<tbody>';
+
+			$conf->cache['product'] = array();
+			$conf->cache['warehouse'] = array();
+			for ($i = 0; $i < $num_prod; $i++) {
+				$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => array(), 'editColspan' => !empty($editColspan) ? $editColspan : 0, 'outputlangs' => $outputlangs);
+				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+
+				if (empty($reshook)) {
+					$line = $lines[$i];
+					$product = null;
+					if ($line->fk_product > 0) {
+						$product_id = (int) $line->fk_product;
+						if (!isset($conf->cache['product'][$product_id])) {
+							$product = new Product($db);
+							if ($product->fetch($product_id) > 0) {
+								$conf->cache['product'][$product_id] = $product;
+							} else {
+								$product = null;
+							}
+						} else {
+							$product = $conf->cache['product'][$product_id];
+						}
+					}
+
+					$product_type = is_object($product) ? (int) $product->type : Product::TYPE_PRODUCT;
+					$product_tobatch = is_object($product) ? (int) $product->status_batch : 0;
+					$product_stockable = is_object($product) ? (int) $product->stockable_product : Product::ENABLED_STOCK;
+					$line_qty = price($line->qty, 0, '', 0, 0);
+					$unit_order = '';
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+						$unit_order = measuringUnitString((int) ($line->fk_unit ?: (is_object($product) ? $product->fk_unit : 0)));
+					}
+
+					print '<tr class="oddeven" id="row-' . $line->id . '" data-id="' . $line->id . '" data-element="' . $line->element . '" >';
+
+					if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+						print '<td class="center linecolnum">' . ($i + 1) . '</td>';
+					}
+
+					print '<td class="linecoldescription">';
+					print '<div id="line_'.$line->id.'"></div>';
+					if (is_object($product) && $line->fk_product > 0) {
+						$label = (!empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $product->label;
+						$text = $product->getNomUrl(1);
+						$text .= ' - ' . $label;
+						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($line->description));
+						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
+						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
+							print (!empty($line->description) && $line->description != $label) ? '<br>' . dol_htmlentitiesbr($line->description) : '';
+						}
+					} else {
+						if ($product_type == Product::TYPE_SERVICE) {
+							$text = img_object($langs->trans('Service'), 'service');
+						} else {
+							$text = img_object($langs->trans('Product'), 'product');
+						}
+						print $text . ' ' . nl2br($line->description);
+					}
+					print "</td>\n";
+
+					print '<td class="center linecolqty">' . $line_qty . ($unit_order ? ' ' . $unit_order : '') . '</td>';
+					print '<td class="linecolqtyinothershipments center nowrap">0</td>';
+
+					if ($action == 'editline' && $line->id == $line_id) {
+						print '<td colspan="' . $editColspan . '" class="center">';
+						print '<input type="hidden" name="lineid" value="' . ((int) $line->id) . '">';
+						if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+							print '<input type="hidden" name="units" value="' . ((int) $line->fk_unit) . '">';
+						}
+						print '<table class="nobordernopadding centpercent"><tr>';
+						print '<td><input class="qtyl right" name="qty" id="qty" type="text" size="4" value="' . dol_escape_htmltag((string) $line->qty) . '">' . ($unit_order ? ' ' . $unit_order : '') . '</td>';
+						if (isModEnabled('stock')) {
+							print '<td>';
+							if ($product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+								print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span><input type="hidden" name="entrepot_id" value="0">';
+							} elseif ($line->fk_product > 0) {
+								$stockMin = false;
+								if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+									$stockMin = 0;
+								}
+								print $formproduct->selectWarehouses(!empty($line->entrepot_id) ? $line->entrepot_id : 'ifone', 'entrepot_id', '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+							}
+							print '</td>';
+						}
+						if (isModEnabled('productbatch')) {
+							print '<td>';
+							if ($product_tobatch) {
+								print $langs->trans("NA");
+							}
+							print '</td>';
+						}
+						print '</tr></table></td>';
+					} else {
+						print '<td class="' . ($object->status <= 1 ? 'linecolqtytoship' : 'linecolqtyshipped') . ' center">' . $line_qty . ($unit_order ? ' ' . $unit_order : '') . '</td>';
+
+						if (isModEnabled('stock')) {
+							print '<td class="linecolwarehousesource tdoverflowmax200">';
+							if ($product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+								print '<span class="opacitymedium">(' . $langs->trans("Service") . ')</span>';
+							} elseif ($line->entrepot_id > 0 && $product_stockable == Product::ENABLED_STOCK) {
+								$warehouse_id = (int) $line->entrepot_id;
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+									$warehouse = new Entrepot($db);
+									$warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $warehouse;
+								} else {
+									$warehouse = $conf->cache['warehouse'][$warehouse_id];
+								}
+								print $warehouse->getNomUrl(1);
+							}
+							print '</td>';
+						}
+
+						if (isModEnabled('productbatch')) {
+							print '<td class="linecolbatch">';
+							if ($product_tobatch) {
+								print $langs->trans("NA");
+							}
+							print '</td>';
+						}
+					}
+
+					print '<td class="center linecolweight">';
+					if ($product_type == Product::TYPE_PRODUCT && is_object($product)) {
+						print $product->weight * $line->qty . ' ' . measuringUnitString(0, "weight", $product->weight_units);
+					} else {
+						print '&nbsp;';
+					}
+					print '</td>';
+
+					print '<td class="center linecolvolume">';
+					if ($product_type == Product::TYPE_PRODUCT && is_object($product)) {
+						print $product->volume * $line->qty . ' ' . measuringUnitString(0, "volume", $product->volume_units);
+					} else {
+						print '&nbsp;';
+					}
+					print '</td>';
+
+					if ($action == 'editline' && $line->id == $line_id) {
+						print '<td class="center" colspan="2" valign="middle">';
+						print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="' . $langs->trans("Save") . '"><br>';
+						print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
+						print '</td>';
+					} elseif ($object->status == Expedition::STATUS_DRAFT) {
+						print '<td class="linecoledit center">';
+						print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=editline&token=' . newToken() . '&lineid=' . $line->id . '">' . img_edit() . '</a>';
+						print '</td>';
+						print '<td class="linecoldelete" width="10">';
+						print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=deleteline&token=' . newToken() . '&lineid=' . $line->id . '">' . img_delete() . '</a>';
+						print '</td>';
+					}
+					print "</tr>";
+
+					$colspan = 7;
+					if (isModEnabled('productbatch')) {
+						$colspan++;
+					}
+					if (isModEnabled('stock')) {
+						$colspan++;
+					}
+
+					$line->fetch_optionals();
+					if ($action == 'editline' && $line->id == $line_id) {
+						print $line->showOptionals($extrafields, 'edit', array('colspan' => $colspan), '', '', '', 'card');
+					} else {
+						print $line->showOptionals($extrafields, 'view', array('colspan' => $colspan), '', '', '', 'card');
+					}
+				}
 			}
+
+			if (empty($num_prod)) {
+				$colspan = 7;
+				if (isModEnabled('productbatch')) {
+					$colspan++;
+				}
+				if (isModEnabled('stock')) {
+					$colspan++;
+				}
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">' . $langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")) . '</span></td></tr>';
+			}
+
+			print '</tbody>';
+			print "</table>\n";
 			print '</div>';
 
-			print "</form>\n";
+			if ($action == 'editline') {
+				print "</form>\n";
+			}
+
+			if ($object->status == Expedition::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline') {
+				print '<br>';
+				print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
+				<input type="hidden" name="token" value="' . newToken().'">
+				<input type="hidden" name="action" value="addline">
+				<input type="hidden" name="mode" value="">
+				<input type="hidden" name="page_y" value="">
+				<input type="hidden" name="id" value="' . $object->id.'">
+				';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table id="tablelines_add" class="noborder noshadow centpercent">';
+				$oldforcetoshowtitlelines = isset($forcetoshowtitlelines) ? $forcetoshowtitlelines : 0;
+				$forcetoshowtitlelines = 1;
+				require DOL_DOCUMENT_ROOT.'/expedition/tpl/objectline_create.tpl.php';
+				$forcetoshowtitlelines = $oldforcetoshowtitlelines;
+				print '</table>';
+				print '</div>';
+				print "</form>\n";
+			}
 		}
 	}
 
