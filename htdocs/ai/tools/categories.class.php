@@ -411,7 +411,6 @@ class ToolCategories extends McpTool
 	 */
 	private function searchCategories($args)
 	{
-
 		if (
 			!$this->user->hasRight('categorie', 'lire')
 			&& !$this->user->hasRight('produit', 'lire')
@@ -426,6 +425,15 @@ class ToolCategories extends McpTool
 		$scope_filter = !empty($args['scope']) ? $args['scope'] : '';
 		$limit = isset($args['limit']) ? max(1, min(100, (int) $args['limit'])) : 20;
 		$offset = isset($args['offset']) ? max(0, (int) $args['offset']) : 0;
+
+		// Safety fallback
+		if ($limit <= 0) {
+			$limit = 5;
+		}
+		if ($limit > 1000) {
+			dol_syslog("Search DB Error: Too many record requested", LOG_ERR);
+			return ["error" => "DB Error"];
+		}
 
 		$cat_type_map = $this->getCategoryTypeMap();
 
