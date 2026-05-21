@@ -2896,3 +2896,5 @@ AllFeatures=All features
 DataWillBeRefreshedEvery=Data will be refreshed only once every %s, instead of being recalculated at each access.
 DebugOnInFile=Dedicated debug file is on (%s)
 DebugOff=Dedicated debug file off
+SetupDescriptionEInvoice=You country (%s) is elligible to use E-invoicing. You should enable and setup a module for the E-invoicing system of your country.
+AnEInvoiceModuleHasBeenEnabled=A module to manage E-invoice seems to have been already enabled.
