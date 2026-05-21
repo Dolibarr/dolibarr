@@ -161,11 +161,17 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 if (isModEnabled('stock')) {
 	$coldisplay++;
 	print '<td class="bordertop nobottom linecolwarehousesource left">';
-	$stockMin = false;
-	if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-		$stockMin = 0;
+	$selectedWarehouse = GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone';
+	if (!GETPOSTISSET('entrepot_id') && function_exists('expedition_standalone_get_warehouse_for_product_qty')) {
+		$idprodforwarehouse = GETPOSTINT('idprod');
+		if ($idprodforwarehouse > 0 && function_exists('expedition_standalone_resolve_product_id')) {
+			$idprodforwarehouse = expedition_standalone_resolve_product_id($object->db, $idprodforwarehouse, GETPOST('combinations', 'array:alphanohtml'));
+		}
+		$qtyforwarehouse = price2num(GETPOSTISSET('qty') ? GETPOST('qty', 'alpha') : 1, 'MS', 2);
+		$computedWarehouse = expedition_standalone_get_warehouse_for_product_qty($object->db, $idprodforwarehouse, (float) $qtyforwarehouse);
+		$selectedWarehouse = ($computedWarehouse > 0) ? $computedWarehouse : 'ifone';
 	}
-	print $formproduct->selectWarehouses(GETPOSTINT('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone', 'entrepot_id', '', 1, 0, GETPOSTINT('idprod'), '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+	print $formproduct->selectWarehouses($selectedWarehouse, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, false, 'e.ref');
 	print '</td>';
 }
 
@@ -183,26 +189,79 @@ print '</tr>';
 
 <script>
 
-/* JQuery for product free or predefined select */
 jQuery(document).ready(function() {
-	/* When changing predefined product, we reload list of supplier prices required for margin combo */
-	$("#idprod").change(function()
-	{
-		console.log("#idprod change triggered");
+<?php if (isModEnabled('stock')) { ?>
+	var standaloneWarehouseRequest = null;
+	var standaloneWarehouseTimer = null;
 
-		  /* To set focus */
-		  if (jQuery('#idprod').val() > 0)
-			{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
-			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-			{
-				var editor = CKEDITOR.instances['dp_desc'];
-				   if (editor) { editor.focus(); }
+	function getStandaloneWarehouseFallback($warehouse) {
+		var $warehouseOptions = $warehouse.find('option').filter(function() {
+			return parseInt(jQuery(this).val(), 10) > 0;
+		});
+
+		if ($warehouseOptions.length === 1) {
+			return $warehouseOptions.first().val();
+		}
+
+		return $warehouse.find('option[value="-1"]').length ? '-1' : '';
+	}
+
+	function setStandaloneWarehouse(selectedWarehouse) {
+		var $warehouse = jQuery('#entrepot_id');
+		if (!$warehouse.length) {
+			return;
+		}
+
+		var selectedValue = parseInt(selectedWarehouse, 10);
+		if (selectedValue > 0 && $warehouse.find('option[value="' + selectedValue + '"]').length) {
+			$warehouse.val(selectedValue);
+		} else {
+			$warehouse.val(getStandaloneWarehouseFallback($warehouse));
+		}
+
+		$warehouse.trigger('change');
+	}
+
+	function refreshStandaloneWarehouse() {
+		var $warehouse = jQuery('#entrepot_id');
+		var idprod = jQuery('#idprod').val();
+
+		if (!$warehouse.length || !idprod || parseInt(idprod, 10) <= 0) {
+			return;
+		}
+
+		var data = {
+			action: 'ajaxselectstandalonewarehouse',
+			token: '<?php echo currentToken(); ?>',
+			id: '<?php echo (int) $object->id; ?>',
+			idprod: idprod,
+			qty: jQuery('#qty').val()
+		};
+
+		jQuery('select[name^="combinations["]').each(function() {
+			data[jQuery(this).attr('name')] = jQuery(this).val();
+		});
+
+		if (standaloneWarehouseRequest) {
+			standaloneWarehouseRequest.abort();
+		}
+
+		standaloneWarehouseRequest = jQuery.getJSON('<?php echo DOL_URL_ROOT; ?>/expedition/card.php', data, function(response) {
+			if (response && typeof response.selected !== 'undefined') {
+				setStandaloneWarehouse(response.selected);
 			}
-			}
-	});
+		});
+	}
+
+	function scheduleStandaloneWarehouseRefresh() {
+		window.clearTimeout(standaloneWarehouseTimer);
+		standaloneWarehouseTimer = window.setTimeout(refreshStandaloneWarehouse, 250);
+	}
+
+	jQuery('#idprod').on('change', scheduleStandaloneWarehouseRefresh);
+	jQuery('#qty').on('change keyup', scheduleStandaloneWarehouseRefresh);
+	jQuery(document).on('change', 'select[name^="combinations["]', scheduleStandaloneWarehouseRefresh);
+<?php } ?>
 });
 
 </script>

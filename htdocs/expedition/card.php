@@ -38,6 +38,11 @@
  *	\brief      Card of a shipment
  */
 
+// Keep the CSRF token stable for the standalone warehouse selector AJAX call.
+if (isset($_GET['action']) && $_GET['action'] === 'ajaxselectstandalonewarehouse' && !defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+
 // Load Dolibarr environment
 require '../main.inc.php';
 /**
@@ -68,6 +73,9 @@ if (isModEnabled("propal")) {
 }
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
+}
+if (isModEnabled('variants')) {
+	require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductCombination.class.php';
 }
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -157,6 +165,25 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
+if ($action == 'ajaxselectstandalonewarehouse') {
+	top_httphead('application/json');
+
+	if (!$usercancreate || !getDolGlobalString('SHIPMENT_STANDALONE') || !empty($origin) || empty($object->id) || !isModEnabled('stock')) {
+		http_response_code(403);
+		print json_encode(array('error' => 'Forbidden'));
+		exit;
+	}
+
+	$idprodforwarehouse = GETPOSTINT('idprod');
+	$qtyforwarehouse = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
+	$combinationsforwarehouse = GETPOST('combinations', 'array:alphanohtml');
+	$idprodforwarehouse = expedition_standalone_resolve_product_id($db, $idprodforwarehouse, $combinationsforwarehouse);
+	$selectedwarehouse = expedition_standalone_get_warehouse_for_product_qty($db, $idprodforwarehouse, (float) $qtyforwarehouse);
+
+	print json_encode(array('selected' => $selectedwarehouse));
+	exit;
+}
+
 $upload_dir = $conf->expedition->dir_output . '/sending';
 
 $editColspan = 0;
@@ -167,6 +194,79 @@ $shipping_method_id = null;
 $warehouse_id = null;
 $note_public = null;
 $note_private = null;
+
+/**
+ * Return default warehouse id according to the same priority as FormProduct::selectWarehouses('ifone').
+ *
+ * @return int
+ */
+function expedition_standalone_get_default_warehouse_id()
+{
+	global $user;
+
+	if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
+		return getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE');
+	}
+
+	if (getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+		return (int) $user->fk_warehouse;
+	}
+
+	return 0;
+}
+
+/**
+ * Resolve product variant when combination values are provided.
+ *
+ * @param	DoliDB					$db				Database handler
+ * @param	int						$idprod			Parent product id
+ * @param	array<int|string,mixed>	$combinations	Variant attribute/value pairs
+ * @return	int										Resolved product id, 0 when combination is incomplete or unknown
+ */
+function expedition_standalone_resolve_product_id($db, $idprod, $combinations)
+{
+	if ($idprod <= 0 || !isModEnabled('variants') || empty($combinations) || !is_array($combinations)) {
+		return $idprod;
+	}
+
+	$prodcomb = new ProductCombination($db);
+	$res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations);
+
+	return ($res && !empty($res->fk_product_child)) ? (int) $res->fk_product_child : 0;
+}
+
+/**
+ * Select the best warehouse for a standalone shipment line.
+ *
+ * @param	DoliDB	$db		Database handler
+ * @param	int		$idprod	Product id
+ * @param	float	$qty	Requested quantity
+ * @return	int				Warehouse id, or 0 to keep the standard 'ifone' behavior
+ */
+function expedition_standalone_get_warehouse_for_product_qty($db, $idprod, $qty)
+{
+	$defaultWarehouseId = expedition_standalone_get_default_warehouse_id();
+
+	if (!isModEnabled('stock') || $idprod <= 0 || $qty <= 0) {
+		return $defaultWarehouseId;
+	}
+
+	$formproduct = new FormProduct($db);
+	$formproduct->loadWarehouses($idprod, '', '', true, array(), false, 'stock DESC, e.ref');
+	$warehouses = $formproduct->cache_warehouses;
+
+	if ($defaultWarehouseId > 0 && !empty($warehouses[$defaultWarehouseId]) && (float) $warehouses[$defaultWarehouseId]['stock'] >= (float) $qty) {
+		return $defaultWarehouseId;
+	}
+
+	foreach ($warehouses as $warehouse) {
+		if ((float) $warehouse['stock'] >= (float) $qty) {
+			return (int) $warehouse['id'];
+		}
+	}
+
+	return $defaultWarehouseId;
+}
 
 /*
  * Actions
