@@ -438,7 +438,10 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 					'$this->version = \'1.0\''                                  => '$this->version = \'' . $version . '\'',
 					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \'' . $picto . '\';',
 					'modulefamily'                                              => $family,
-					'500000'                                                    => $idmodule,
+					// Key '500000' would be cast to int(500000) by PHP, then renumbered to 0 by
+					// array_merge — causing str_replace to search for '0' instead of '500000'.
+					// Use a string key that matches the exact assignment line to avoid this.
+					'$this->numero = 500000'                                    => '$this->numero = '.$idmodule,
 				]
 			);
 
