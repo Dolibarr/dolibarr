@@ -18,9 +18,8 @@ require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContra
 
 /**
  * @backupGlobals disabled
- * @phpstan-ignore class.notFound
  */
-class NamingContractTest extends \PHPUnit\Framework\TestCase
+class NamingContractTest extends \PHPUnit\Framework\TestCase // @phpstan-ignore class.notFound
 {
 	// ── NamingContract — properties ───────────────────────────────────────
 
