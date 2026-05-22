@@ -552,6 +552,6 @@ DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 --noqa:enable=PRS
 
-"INSERT INTO ".MAIN_DB_PREFIX."const (name, entity, value, type, visible, note) VALUES('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS', ".((int) $conf->entity).", '-1,0,1', 'string', 0, 'Allowed member subscription statuses: -1 (Draft), 0 (Resiliated), 1 (Validated)')";
+INSERT INTO ".MAIN_DB_PREFIX."const (name, entity, value, type, visible, note) VALUES('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS', ".((int) $conf->entity).", '-1,0,1', 'string', 0, 'Allowed member subscription statuses: -1 (Draft), 0 (Resiliated), 1 (Validated)');
 
 -- end of migration
