@@ -466,9 +466,10 @@ if (!function_exists('ftp_connect')) {
 			//$newsection='/home';
 
 			// List content of directory ($newsection = '/', '/home', ...)
-			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
+			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP') && !empty($conn_id)) {
 				if ($newsection == '/') {
 					//$newsection = '/./';
+					// @phpstan-ignore-next-line argument.type
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 				}
 
@@ -476,7 +477,7 @@ if (!function_exists('ftp_connect')) {
 				//$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
 				//$dirHandle = opendir("ssh2.sftp://".intval($conn_id).ssh2_sftp_realpath($conn_id, ".").'/./');
 
-				$contents = scandir('ssh2.sftp://'.intval($conn_id).$newsection);
+				$contents = scandir('ssh2.sftp://'.(is_resource($conn_id) ? intval($conn_id) : $conn_id).$newsection);
 				$buff = array();
 				foreach ($contents as $i => $key) {
 					$buff[$i] = "---------- - root root 1234 Aug 01 2000 ".$key;

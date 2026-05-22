@@ -31,16 +31,16 @@ The following changes may create regressions for some external modules, but were
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
 
-FIX: #36589 (#38037)
-FIX: #37552 (#38073)
-FIX: #37649 (#38101)
-FIX: #37759
-FIX: #37760
-FIX: #37761
-FIX: #37762
-FIX: #37805
-FIX: #38074 (#38075)
-FIX: #38131 (#38140)
+FIX: #36589 (#38037) There is no save button in the "Variant attributes extrafields" and "Variant attributes values extrafields" tabs of the product variant module
+FIX: #37552 (#38073) Webportal Proposals, Sales orders and Invoices links not working
+FIX: #37649 (#38101) Gross price not calculated in supplier orders
+FIX: #37759 Security: Sales Orders API Cross Customer Creation Privilege Escalation
+FIX: #37760 Security: Commercial Proposals API Cross Customer Creation Privilege Escalation
+FIX: #37761 Security: Tickets API Cross Customer Ticket Targeted Read Privilege Escalation
+FIX: #37762 Security: Tickets API Cross Customer Ticket Targeted Update Privilege Escalation
+FIX: #37805 Api endpoint /proposals/ref/{ref} fail with message : "Bad Request" - No proposal with id=0 can exist when using propal API and searching by ref
+FIX: #38074 (#38075) Asset Depreciation List - SQL error message
+FIX: #38131 (#38140) Bug in Recurring Customer Invoice
 FIX: Accountancy - Select journal - Problem with the label (#37979)
 FIX: AccountingAccount cache — silent reference mutation in accounting journals (#37981)
 FIX: a param must not come from end user entry.
@@ -66,7 +66,7 @@ FIX: IDOR on messaging.php - Credit Aksoum Abderrahmane
 FIX: Some remaining cross-customer object creation on API (proposal, orders) - Credit Mitch311
 FIX: add permission test on legacy filemanager - Credit Aksoum Abderrahmane
 FIX: Can use AI module to make SSRF call. Credit Dilip
-FIX: #GHSA-crgg-h74r-2m8r (#37636)
+FIX: #GHSA-crgg-h74r-2m8r (#37636) - FIX: Access to documents via the API for external users
 FIX: #GHSA-hq5j-39f9-qxcv (#37812)
 FIX: SQL Injection via Operator Injection in Contract Service List
 SEC: Better sanitization param for GETPOST of htmlheader of website page - See commit bbbbb56c6455514dcd0acca53afc17a92ed21bb9

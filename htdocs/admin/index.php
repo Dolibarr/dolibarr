@@ -172,9 +172,10 @@ $arrayofeinvoiceneed = array(
 	'PL' => array('module' => array('ksef'), 'search' => 'ksef')
 );
 
+$urleinvoice = '';
+
 if ($mysoc->country_code && in_array($mysoc->country_code, array_keys($arrayofeinvoiceneed))) {
 	$einvoiceneed = $arrayofeinvoiceneed[$mysoc->country_code];
-	$urleinvoice = '';
 	$modulefound = '';
 	if (!empty($einvoiceneed['module'])) {
 		foreach ($einvoiceneed['module'] as $module) {
