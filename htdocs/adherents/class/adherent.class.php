@@ -1846,7 +1846,7 @@ class Adherent extends CommonObject
 		$allowedStatuses = array_map('intval', explode(',', $allowedStatusesStr));
 		$currentMemberStatus = $this->statut;
 		if (!in_array($currentMemberStatus, $allowedStatuses)) {
-			dol_syslog('User='.$user->id.' tried to create subscription for member='.$this->id.' with status='.$currentMemberStatus.' only allowed are status='.$allowedStatusesStr, LOG_WARN);
+			dol_syslog('User='.$user->id.' tried to create subscription for member='.$this->id.' with status='.$currentMemberStatus.' only allowed are status='.$allowedStatusesStr, LOG_WARNING);
 			$error = $langs->trans("ErrorSubscriptionNotAllowed", $currentMemberStatus);
 			return -1;
 		}
