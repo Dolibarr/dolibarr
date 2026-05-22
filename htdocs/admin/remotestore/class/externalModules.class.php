@@ -1411,65 +1411,44 @@ class ExternalModules
 	{
 		// HEAD request to get real filename from Content-Disposition
 		$filename = '';
-		$ch = curl_init($url);
-		curl_setopt_array($ch, [
-			CURLOPT_NOBODY         => true,
-			CURLOPT_HEADER         => true,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_TIMEOUT        => 30,
-			CURLOPT_SSL_VERIFYPEER => false,
-			CURLOPT_SSL_VERIFYHOST => 0,
-		]);
-		$headers = curl_exec($ch);
-		curl_close($ch);
-
+		$head = getURLContent($url, 'HEAD');
 		// Try to extract filename from Content-Disposition header
-		if (preg_match_all('/Content-Disposition:.*filename=["\']?([^"\';\r\n]+)/i', $headers, $m)) {
-			$filename = trim(end($m[1]), " \t\"'");
+		if (!empty($head['header'])) {
+			if (preg_match_all('/Content-Disposition:.*filename=["\']?([^"\';\r\n]+)/i', $head['header'], $m)) {
+				$filename = trim(end($m[1]), " \t\"'");
+			}
 		}
-
 
 		// If filename is not found in headers, try to extract it from URL
 		if (empty($filename)) {
 			$filename = basename(parse_url($url, PHP_URL_PATH));
 		}
-		if (empty($filename)) {
+
+		// If filename is still empty or file name ne match the expected pattern (module_modulename-version.zip), log error and return false
+		if (empty($filename) || !preg_match('/^module_[a-z0-9_]+-[0-9]+\.[0-9]+\.[0-9]+\.zip$/i', $filename)) {
 			dol_syslog(__METHOD__ . ': Cannot determine filename from URL: ' . $url, LOG_ERR);
 			return false;
 		}
 
 		// Download the file
+		$response = getURLContent($url, 'GET');
+		if (empty($response['content']) || (isset($response['http_code']) && $response['http_code'] !== 200)) {
+			dol_syslog(
+				__METHOD__ . ': Download failed — HTTP ' . ($response['http_code'] ?? 'unknown') . ' — ' . $url,
+				LOG_WARNING
+			);
+			return false;
+		}
+
+		// Write to destination
 		$dest_file = $dest_path . '/' . $filename;
 		if (file_exists(dol_osencode($dest_file))) { // If file already exists, try to delete it first
 			chmod(dol_osencode($dest_file), 0755);
 			@unlink(dol_osencode($dest_file));
 		}
-		$fp = fopen(dol_osencode($dest_file), 'wb');
-		if (!$fp) {
-			dol_syslog(__METHOD__ . ': Cannot open file for writing: ' . $dest_file, LOG_ERR);
-			return false;
-		}
-
-		$ch = curl_init($url);
-		curl_setopt_array($ch, [
-			CURLOPT_FILE           => $fp,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_TIMEOUT        => 120,
-			CURLOPT_SSL_VERIFYPEER => false,
-			CURLOPT_SSL_VERIFYHOST => 0,
-		]);
-		$exec_result = curl_exec($ch);
-		$http_code  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		$curl_error = curl_error($ch);
-		curl_close($ch);
-		fclose($fp);
-
-		if ($exec_result === false || !empty($curl_error) || $http_code !== 200 || filesize(dol_osencode($dest_file)) === 0) {
-			dol_syslog(
-				__METHOD__ . ': Download failed — HTTP ' . $http_code . ' — ' . $curl_error . ' — ' . $url,
-				LOG_WARNING
-			);
+		$writtenfile = file_put_contents(dol_osencode($dest_file), $response['content']);
+		if ($writtenfile === false || $writtenfile === 0) {
+			dol_syslog(__METHOD__ . ': Cannot write file: ' . $dest_file, LOG_ERR);
 			@unlink(dol_osencode($dest_file));
 			return false;
 		}
