@@ -282,7 +282,7 @@ class ToolThirdParty extends McpTool
 
 		while ($obj = $this->db->fetch_object($resql)) {
 			if ($count) {
-				$data[] = [
+				$data = [
 					"count" => (int) $obj->nb
 				];
 
