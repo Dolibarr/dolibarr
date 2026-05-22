@@ -3127,13 +3127,10 @@ class Ticket extends CommonObject
 									$sendto = $hookmanager->resArray;
 								}
 
-								// If the user submitted the standardised form (with receiver[] multiselect
-								// and/or the free sendto input), override the auto-computed list with what
-								// the user actually chose / typed — same behaviour as other mail forms.
+								// If standardised form submitted, override auto-computed recipients with user selection
 								if (GETPOSTISSET('receiver_multiselect')) {
 									$sendto_manual = array();
 
-									// 1. Emails selected in the multiselect (keys = emails in our implementation)
 									$receiver_selected = GETPOST('receiver', 'array');
 									if (is_array($receiver_selected)) {
 										foreach ($receiver_selected as $email) {
@@ -3144,7 +3141,7 @@ class Ticket extends CommonObject
 										}
 									}
 
-									// 2. Free-text input (comma-separated, supports "Name <email>" format)
+									// Free input: plain email or "Name <email>", comma-separated
 									$sendto_free = GETPOST('sendto', 'alphawithlgt');
 									if ($sendto_free !== '') {
 										foreach (explode(',', $sendto_free) as $entry) {
@@ -3168,8 +3165,7 @@ class Ticket extends CommonObject
 									}
 								}
 
-								// Build CC list from the standardised form (receivercc[] multiselect + sendtocc free input).
-								// Always start with the global internal CC address if configured.
+								// CC: start with TICKET_SEND_INTERNAL_CC, then append form selection
 								$sendtocc = array();
 								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
 									foreach (explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC")) as $cc_entry) {
@@ -3181,7 +3177,6 @@ class Ticket extends CommonObject
 								}
 
 								if (GETPOSTISSET('receivercc_multiselect')) {
-									// Emails selected in the CC multiselect
 									$receivercc_selected = GETPOST('receivercc', 'array');
 									if (is_array($receivercc_selected)) {
 										foreach ($receivercc_selected as $email) {
@@ -3192,7 +3187,7 @@ class Ticket extends CommonObject
 										}
 									}
 
-									// Free-text CC input
+									// Free input: plain email or "Name <email>", comma-separated
 									$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
 									if ($sendtocc_free !== '') {
 										foreach (explode(',', $sendtocc_free) as $entry) {

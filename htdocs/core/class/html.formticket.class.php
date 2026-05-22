@@ -1745,21 +1745,17 @@ class FormTicket
 				print ' '.$form->textwithpicto('', $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
 				print '</td><td>';
 				if ($res) {
-					// === Input libre (comme withtofree dans FormMail) ===
-					// Valeur POST conservée si retour après erreur, vide sinon
 					$sendto_free = GETPOSTISSET('sendto') ? GETPOST('sendto', 'alphawithlgt') : '';
 					print '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.dol_escape_htmltag($sendto_free).'" />';
 					print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
 
-					// === Multiselect des contacts du ticket (comme withto dans FormMail) ===
-					// Les clés sont les adresses email (directement utilisables dans newMessage)
+					// Build recipient list; keys are email addresses (used directly in newMessage())
 					$contacts = $ticketstat->getInfosTicketInternalContact(1);
 					$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
 					$withto = array();
 					$seen_emails = array();
 
-					// Contacts internes et externes liés au ticket
 					if (is_array($contacts) && count($contacts) > 0) {
 						foreach ($contacts as $info_sendto) {
 							if ($info_sendto['email'] != '') {
@@ -1779,7 +1775,6 @@ class FormTicket
 						}
 					}
 
-					// Email d'origine (reply-to ou origin_email)
 					if (!empty($ticketstat->origin_replyto) && !in_array(strtolower($ticketstat->origin_replyto), $seen_emails)) {
 						$email = (string) $ticketstat->origin_replyto;
 						$withto[$email] = array(
@@ -1798,7 +1793,6 @@ class FormTicket
 						$seen_emails[] = strtolower($email);
 					}
 
-					// Email du tiers lié
 					if ($ticketstat->fk_soc > 0) {
 						$ticketstat->socid = $ticketstat->fk_soc;
 						$ticketstat->fetch_thirdparty();
@@ -1813,7 +1807,6 @@ class FormTicket
 						}
 					}
 
-					// Adresse globale de notification (si configurée)
 					if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 						$generic_email = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						if (!in_array(strtolower($generic_email), $seen_emails)) {
@@ -1825,9 +1818,7 @@ class FormTicket
 						}
 					}
 
-					// Présélection :
-					// - Premier affichage (mode=init) → tous les contacts présélectionnés par défaut
-					// - Retour après soumission → conserver la sélection de l'utilisateur
+					// Pre-select all contacts on first load; restore POST selection on re-display
 					if (GETPOSTISSET('receiver_multiselect')) {
 						$withtoselected = GETPOST('receiver', 'array');
 					} else {
@@ -1835,7 +1826,6 @@ class FormTicket
 					}
 
 					if (!empty($withto)) {
-						// multiselectarray generates its own wrapper span + hidden receiver_multiselect automatically
 						print $form->multiselectarray('receiver', $withto, $withtoselected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 1);
 					} else {
 						print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
@@ -1843,12 +1833,11 @@ class FormTicket
 				}
 				print '</td></tr>';
 
-				// Send to CC — editable field (same pattern as TO: free input + multiselect)
 				print '<tr class="email_line"><td>';
 				print $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
 				print '</td><td>';
 
-				// Free input: keep POST value on error return, otherwise pre-fill with global CC address if configured
+				// Pre-fill with TICKET_SEND_INTERNAL_CC on first load
 				if (GETPOSTISSET('receivercc_multiselect')) {
 					$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
 				} else {
@@ -1856,8 +1845,7 @@ class FormTicket
 				}
 				print '<input class="minwidth200" id="sendtocc" name="sendtocc" spellcheck="false" value="'.dol_escape_htmltag($sendtocc_free).'" />';
 
-				// Multiselect — reuse same $withto list built for the TO field; nothing pre-selected by default
-				// multiselectarray generates its own wrapper span + hidden receivercc_multiselect automatically
+				// Reuse $withto contact list; nothing pre-selected for CC
 				if (!empty($withto)) {
 					print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
 					$withtocc_selected = GETPOSTISSET('receivercc_multiselect') ? GETPOST('receivercc', 'array') : array();
