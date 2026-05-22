@@ -2,7 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
@@ -50,7 +50,7 @@ if ($pos == '/') {
 //define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
 
-// By default, upload of iles with this tool is no more possible.
+// By default, upload of files with this tool is no more possible.
 if (!getDolGlobalString('WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES')) {
 	accessforbidden('Upload of files in medias directory using this legacy tool is no more allowed');
 }

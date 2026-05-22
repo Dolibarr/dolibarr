@@ -807,7 +807,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$row['thm'] = 0;
 								}
 
-								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs);
+								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs); // @phpstan-ignore argument.type
 
 								foreach ($tmparray as $key => $val) {
 									try {

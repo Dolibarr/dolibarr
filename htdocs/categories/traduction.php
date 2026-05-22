@@ -176,7 +176,7 @@ if (empty($reshook) && $action == 'vedit' && $cancel != $langs->trans("Cancel") 
 		if ($key == $current_lang) {
 			$object->label       = $libelle;
 			$object->description = dol_htmlcleanlastbr($desc);
-			$object->update($user);
+			$object->update($user, 1);
 		} else {
 			$object->multilangs[$key]["label"]       = $libelle;
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($desc);

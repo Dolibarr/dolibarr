@@ -990,6 +990,9 @@ input.pageplusone {
 .anchorundermenu {
 	scroll-margin-top: 80px;
 }
+.banner-object-label {
+	opacity: 0.8;
+}
 
 select:invalid, select.--error {
 	color: gray;
@@ -6885,6 +6888,9 @@ div.cke_notifications_area .cke_notification_warning {
 /*  TinyMCE                                                                       */
 /* ============================================================================== */
 
+td.linecoldescription .tox.tox-tinymce {
+	margin-top: 8px;
+}
 .tox .tox-edit-area::before {
 	border: none !important;
 }
