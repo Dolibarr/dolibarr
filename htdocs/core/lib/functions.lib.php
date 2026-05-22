@@ -3666,7 +3666,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
 		/** @var Product|Account|Task $object */
 		if (!empty($object->label)) {
-			$morehtmlref .= '<div class="refidno opacitymedium">' . $object->label . '</div>';
+			$morehtmlref .= '<div class="refidno banner-object-label">' . $object->label . '</div>';
 		}
 	}
 	// Show address and email
@@ -3701,7 +3701,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	// $morehtmlstatus is part under the status
 	// $morehtmlright is part of htmlright
 
-	print '<div class="' . ($onlybanner ? 'arearefnobottom ' : 'arearef ') . 'heightref valignmiddle centpercent">';
+	print '<div class="' . ($onlybanner ? 'arearefnobottom ' : 'arearef ') . 'heightref valignmiddle centpercent object-banner-tab-container" data-module-part="'.dolPrintHTMLForAttribute($modulepart).'">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';
@@ -16373,6 +16373,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
 	}
 
+	$num = 0;
 	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
 
 	if ($sql || $sql2) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
@@ -16385,7 +16386,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		//TODO Add navigation with this limits...
 		$offset = 0;
 		$limit = $MAXWITHOUTPAGINATION;
-		$num = 0;
 
 		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
