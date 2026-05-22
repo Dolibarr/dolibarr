@@ -1529,6 +1529,16 @@ class Propal extends CommonObject
 						if ($res > 0) {
 							if ($update_prices === true) {
 								$pu_ht = $prod->price;
+								if (getDolGlobalString('MARGIN_TYPE') == '1') {
+									// bestsupplierprice TODO
+									$cost_price = $line->pa_ht; // ...no change
+								} elseif (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
+									// pmp
+									$cost_price = $prod->pmp;
+								} elseif (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
+									// costprice
+									$cost_price = $prod->cost_price;
+								}
 								$tva_tx = (string) get_default_tva($mysoc, $objsoc, $prod->id);
 								$remise_percent = $objsoc->remise_percent;
 
