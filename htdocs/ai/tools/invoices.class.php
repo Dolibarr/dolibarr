@@ -169,9 +169,17 @@ class ToolInvoices extends McpTool
 	 */
 	private function searchInvoices($args)
 	{
-		global $conf;
 		$limit = isset($args['limit']) ? (int) $args['limit'] : 10;
 		$status = isset($args['status']) ? $args['status'] : 'unpaid';
+
+		// Safety fallback
+		if ($limit <= 0) {
+			$limit = 5;
+		}
+		if ($limit > 1000) {
+			dol_syslog("Search DB Error: Too many record requested", LOG_ERR);
+			return ["error" => "DB Error"];
+		}
 
 		$sql = "SELECT f.rowid, f.ref, f.total_ttc, f.fk_statut, f.paye, f.datef, s.nom
 				FROM " . MAIN_DB_PREFIX . "facture as f

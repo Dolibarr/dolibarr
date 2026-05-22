@@ -164,6 +164,10 @@ $sourceList = array(
 	'9' => $langs->trans('AccountingJournalType9'),
 );
 
+if (getDolGlobalInt('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
+	$sourceList['6'] = $langs->trans('AccountingJournalType6');
+}
+
 /*
  * Actions
  */
