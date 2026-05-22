@@ -5251,18 +5251,6 @@ parameters:
 			path: ../../../htdocs/ftp/index.php
 
 		-
-			message: '#^Parameter \#1 \$ftp of function ftp_nlist expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/ftp/index.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_rawlist expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/ftp/index.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 3
@@ -6791,48 +6779,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/reassortlot.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''contracts''\|''invoices''\|''invoicessuppliers''\|''mrp''\|''orders''\|''orderssuppliers''\|''propal''\|''proposalssuppliers'' and ''invoices_suppliers'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/stats/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''contracts''\|''invoices''\|''invoicessuppliers''\|''mrp''\|''orders''\|''orderssuppliers''\|''propal''\|''proposalssuppliers'' and ''order'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/stats/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''contracts''\|''invoices''\|''invoicessuppliers''\|''mrp''\|''orders''\|''orderssuppliers''\|''propal''\|''proposalssuppliers'' and ''orders_suppliers'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/stats/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''contracts''\|''invoices''\|''invoicessuppliers''\|''mrp''\|''orders''\|''orderssuppliers''\|''propal''\|''proposalssuppliers'' and ''proposals_suppliers'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/stats/card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 2
-			path: ../../../htdocs/product/stats/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 4
-			path: ../../../htdocs/product/stats/card.php
-
-		-
-			message: '#^Variable \$year might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/product/stats/card.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -8831,12 +8777,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/theme/eldy/manifest.json.php
-
-		-
-			message: '#^Variable \$menumanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/theme/eldy/style.css.php
 
 		-
 			message: '#^If condition is always true\.$#'
