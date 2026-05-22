@@ -1528,7 +1528,6 @@ class Propal extends CommonObject
 						$res = $prod->fetch($line->fk_product);
 						if ($res > 0) {
 							if ($update_prices === true) {
-								$pu_ht = $prod->price;
 								$cost_price = $prod->cost_price;
 								$tva_tx = (string) get_default_tva($mysoc, $objsoc, $prod->id);
 								$remise_percent = $objsoc->remise_percent;
@@ -1564,7 +1563,6 @@ class Propal extends CommonObject
 								}
 
 								$line->subprice = $pu_ht;
-								$line->pa_ht = $cost_price;
 								$line->tva_tx = $tva_tx;
 								$line->remise_percent = $remise_percent;
 							}
