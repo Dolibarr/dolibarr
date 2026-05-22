@@ -252,7 +252,6 @@ if (empty($reshook)) {
 	$uploaddir = $conf->ticket->dir_output;
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-	/** @phan-var-force int $error */
 
 	// Close records
 	if (!$error && $massaction == 'close' && $permissiontoadd) {
