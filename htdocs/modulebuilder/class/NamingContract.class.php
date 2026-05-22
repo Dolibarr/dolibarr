@@ -35,22 +35,22 @@
 final class NamingContract
 {
 	/** @var string PascalCase module name, e.g. "MyModule" */
-	public readonly string $moduleNameCase;
+	public string $moduleNameCase;
 
 	/** @var string Lowercase module name, e.g. "mymodule" */
-	public readonly string $moduleNameLower;
+	public string $moduleNameLower;
 
 	/** @var string Uppercase module name, e.g. "MYMODULE" */
-	public readonly string $moduleNameUpper;
+	public string $moduleNameUpper;
 
 	/** @var string PascalCase object name, e.g. "MyObject" (empty string for module-only contracts) */
-	public readonly string $objectNameCase;
+	public string $objectNameCase;
 
 	/** @var string Lowercase object name, e.g. "myobject" (empty string for module-only contracts) */
-	public readonly string $objectNameLower;
+	public string $objectNameLower;
 
 	/** @var string Uppercase object name, e.g. "MYOBJECT" (empty string for module-only contracts) */
-	public readonly string $objectNameUpper;
+	public string $objectNameUpper;
 
 	/**
 	 * @param string $moduleName Raw module name — accepts any casing, ucfirst() is applied
