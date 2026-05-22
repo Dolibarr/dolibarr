@@ -5970,7 +5970,7 @@ class Form
 		$langs->loadLangs(array("admin", "banks"));
 		$num = 0;
 
-		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic";
+		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic, default_rib";
 		$sql .= " FROM " . $this->db->prefix() . "societe_rib";
 		$sql .=  " WHERE type = 'ban'";
 		if ($filtre) {
@@ -6005,7 +6005,7 @@ class Form
 				}
 				$out .= trim($obj->label);
 				if ($showibanbic) {
-					$out .= ' (' . $iban . '/' .$obj->bic. ')';
+					$out .= ' (' . $iban . '/' .$obj->bic. ')' . ($obj->default_rib ? ' ['.$langs->trans("ByDefault").']' : '');
 				}
 				$out .= '</option>';
 				$i++;

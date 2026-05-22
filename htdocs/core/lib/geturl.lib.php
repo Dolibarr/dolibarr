@@ -207,6 +207,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_HEADER, true);
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
@@ -373,7 +374,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+			if ($postorget == 'HEAD' || getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
 				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
 				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
 			}

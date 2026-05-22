@@ -34,6 +34,10 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+--noqa:disable=LT09
+--noqa:disable=RF03
+
+
 -- Vxx forgotten
 
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
@@ -97,15 +101,12 @@ create table llx_categorie_mo
   import_key   varchar(14)
 )ENGINE=innodb;
 
---noqa:disable=PRS
-ALTER TABLE llx_categorie_mo ADD PRIMARY KEY pk_categorie_mo (fk_categorie, fk_mo);
---noqa:enable=PRS
+
 ALTER TABLE llx_categorie_mo ADD INDEX idx_categorie_mo_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_mo ADD INDEX idx_categorie_mo_fk_mo (fk_mo);
 
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_fk_mo_rowid FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
-
 
 ALTER TABLE llx_facture ADD COLUMN fk_thirdparty_rib_id integer NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
@@ -188,7 +189,7 @@ UPDATE llx_rights_def SET perms = 'manage_advance' WHERE module = 'ticket' AND p
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
 UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
-UPDATE llx_document_model SET nom = 'sponge' WHERE nom = 'crabe' AND type = 'invoice' AND NOT EXISTS (SELECT nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'sponge' AND type = 'invoice') as subquery WHERE subquery.entity = entity);
+UPDATE llx_document_model SET nom = 'sponge' WHERE nom = 'crabe' AND type = 'invoice' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'sponge' AND type = 'invoice') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'crabe' AND type = 'invoice';
 
 ALTER TABLE llx_salary ADD COLUMN model_pdf varchar(255) DEFAULT NULL;
@@ -211,8 +212,6 @@ INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CLOSE','Stock transfer closed','Executed when a stock transfer is closed after destination stock increment','stocktransfer',676);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
-
-UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
 
@@ -546,4 +545,12 @@ ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_
 
 ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
+
+-- SQL with disabled check must be at end
+--noqa:disable=PRS
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
+--noqa:enable=PRS
+
+
 -- end of migration
