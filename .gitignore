@@ -2,6 +2,7 @@ htdocs/conf/conf.php
 htdocs/conf/conf.php.old
 htdocs/conf/conf.php.sav
 htdocs/conf/conf.php.back
+htdocs/custom-community
 documents/
 custom2/
 test/report/
@@ -19,10 +20,6 @@ default.properties
 Thumbs.db
 /dolibarr_genesis.mp4
 .phpunit.result.cache
-# Log files
-dolibarr_install.log
-upgrade.log
-doxygen_warnings.log
 # Vagrant generated files
 .vagrant
 # Composer installed repositories
@@ -76,7 +73,7 @@ doc/install.lock
 /phpstan-baseline.neon
 
 # Logs
-/*.log
+*.log
 
 # Vim swap files
 *.sw?

@@ -182,9 +182,9 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 
 $head = aiAdminPrepareHead();
-print dol_get_fiche_head($head, 'servermcp', "MCP Server", -1, "ai");
+print dol_get_fiche_head($head, 'assistant', "MCP Server", -1, "ai");
 
-print '<span class="opacitymedium">' . $langs->trans("ConfigHelp") . '</span><br><br>';
+print '<span class="opacitymedium">' . $langs->trans("ConfigAssistantHelp") . '</span><br><br>';
 
 $form = new Form($db);
 
@@ -212,11 +212,11 @@ print '<div class="neutral">';
 // Enable/Disable
 //print '<tr class="oddeven">';
 //print '<td class="titlefield" width="30%">'
-print $form->textwithpicto($langs->trans('EnableMCPServer'), $langs->trans('DisableMCPAI'));
+print $form->textwithpicto($langs->trans('EnableAssistant'), $langs->trans('DisableAssistant'));
 //print '</td>';
 //print '<td>';
 print ' &nbsp; ';
-print ajax_constantonoff('AI_MCP_ENABLED', array(), null, 0, 0, 1);
+print ajax_constantonoff('AI_ASSISTANT_ENABLED', array(), null, 0, 0, 1);
 //print ' <span class="opacitymedium">' . $langs->trans('DisableMCPAI') . '</span>';
 //print '</td>';
 //print '</tr>';
@@ -227,8 +227,7 @@ print '</div>';
 print '<br>';
 print '<br>';
 
-if (getDolGlobalString('AI_MCP_ENABLED')) {
-	/*
+if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -292,8 +291,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	// System Prompt
 	print '<tr class="oddeven">';
 	print '<td colspan="2">';
-	print '<strong>' . $langs->trans("SystemPrompt") . '</strong><br>';
-	print '<span class="opacitymedium small">' . $langs->trans("SystemPromptHelp") . '</span><br>';
+	print $form->textwithpicto($langs->trans("SystemPrompt"), $langs->trans("SystemPromptHelp")) . '<br><br>';
 	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 250, 'dolibarr_notes', 'In', false, false, true, ROWS_8, '90%');
 	$doleditor->Create();
 	print '</td>';
@@ -307,6 +305,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	print '<br>';
 	print '<br>';
+
 
 	// AI Provider Config and Connection testing
 	$services = getListOfAIServices();
@@ -331,16 +330,16 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		print '<div class="center">';
 
 		if ($currentService && $currentService !== '-1') {
-			print ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=test_provider&token='.newToken().'&service_key='.$currentService.'" class="button">Test Connection</a>';
+			print '<a class="reposition button smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=test_provider&token='.newToken().'&service_key='.urlencode($currentService).'">'.$langs->trans('TestConnection').'</a>';
 		}
 
 		print '</div>';
 	}
 
 	print '<br><br>';
-	*/
 
 	// External Access Configuration
+	/*
 	print load_fiche_titre($langs->trans("AiMcpExternalAccess"), '', 'fas fa-lock-open');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -397,18 +396,19 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	echo htmlspecialchars('
 	{
 	  "mcpServers": {
-	    "dolibarr": {
-	      "command": "node",
-	      "args": ["/path/to/mcp-bridge.js"],
-	      "env": {
-	        "DOLIBARR_URL": "'.$endpoint.'",
-	        "DOLIBARR_API_KEY": "'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"
-	      }
-	    }
+		"dolibarr": {
+		  "command": "node",
+		  "args": ["/path/to/mcp-bridge.js"],
+		  "env": {
+			"DOLIBARR_URL": "'.$endpoint.'",
+			"DOLIBARR_API_KEY": "'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"
+		  }
+		}
 	  }
 	}');
 	print '</pre>';
 	print '</div>';
+	*/
 }
 
 print dol_get_fiche_end();

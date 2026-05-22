@@ -1837,21 +1837,33 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$nature = '';
 
 								// Must match array $sourceList defined into journals_list.php
-								if ($objp->nature == 2 && isModEnabled('invoice') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
+								if ($objp->nature == 2
+									&& isModEnabled('invoice')
+									&& !getDolGlobalInt('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
 									$nature = "sells";
+								}
+								if ($objp->nature == 6
+									&& isModEnabled('takepos')
+									&& getDolGlobalInt('ACCOUNTING_DISSOCIATE_CASH_SALES')
+									&& !getDolGlobalInt('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
+									$nature = "cashsells";
 								}
 								if ($objp->nature == 3
 									&& isModEnabled('supplier_invoice')
-									&& !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_PURCHASES')) {
+									&& !getDolGlobalInt('ACCOUNTING_DISABLE_BINDING_ON_PURCHASES')) {
 									$nature = "purchases";
 								}
-								if ($objp->nature == 4 && isModEnabled('bank')) {
+								if ($objp->nature == 4
+									&& isModEnabled('bank')) {
 									$nature = "bank";
 								}
-								if ($objp->nature == 5 && isModEnabled('expensereport') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
+								if ($objp->nature == 5
+									&& isModEnabled('expensereport')
+									&& !getDolGlobalInt('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 									$nature = "expensereports";
 								}
-								if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
+								if ($objp->nature == 1
+									&& (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 									$nature = "various";
 								}
 								if ($objp->nature == 8) {
@@ -2225,7 +2237,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->hasRight('product', 'read'));
 			}
 			if (isModEnabled('propal') || isModEnabled('order') || isModEnabled('invoice') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->hasRight('product', 'read'));
+				$newmenu->add("/product/stats/index.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->hasRight('product', 'read'));
 			}
 
 			// Categories
@@ -2248,7 +2260,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->hasRight('service', 'read'));
 			}
 			if (isModEnabled('propal') || isModEnabled('order') || isModEnabled('invoice') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->hasRight('service', 'read'));
+				$newmenu->add("/product/stats/index.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->hasRight('service', 'read'));
 			}
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
