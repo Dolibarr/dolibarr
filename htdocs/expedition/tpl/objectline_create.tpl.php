@@ -103,12 +103,12 @@ $coldisplay = 0;
 // Adds a line numbering column
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	$coldisplay++;
-	echo '<td class="bordertop nobottom linecolnum center"></td>';
+	echo '<td class="bordertop linecolnum center"></td>';
 }
 
 // Product
 $coldisplay++;
-print '<td class="bordertop nobottom linecoldescription line minwidth500imp">';
+print '<td class="bordertop linecoldescription line minwidth500imp">';
 
 // Predefined product/service
 if (isModEnabled("product") || isModEnabled("service")) {
@@ -150,19 +150,19 @@ print '</td>';
 
 // Qty
 $coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
+print '<td class="bordertop linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
 // Unit, kept empty because standalone shipments use the catalog product unit.
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
-	print '<td class="bordertop nobottom linecoluseunit left"></td>';
+	print '<td class="bordertop linecoluseunit left"></td>';
 }
 
 // Warehouse source
 if (isModEnabled('stock')) {
 	$coldisplay++;
-	print '<td class="bordertop nobottom linecolwarehousesource left">';
+	print '<td class="bordertop linecolwarehousesource left">';
 	$selectedWarehouse = GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone';
 	$idprodforwarehouse = GETPOSTINT('idprod');
 	$qtyforwarehouse = price2num(GETPOSTISSET('qty') ? GETPOST('qty', 'alpha') : 1, 'MS', 2);
@@ -180,19 +180,19 @@ if (isModEnabled('stock')) {
 		$stockStatus = expedition_standalone_get_stock_status($object->db, $object->id, $idprodforwarehouse, (int) $selectedWarehouse, (float) $qtyforwarehouse);
 	}
 	$coldisplay++;
-	print '<td class="bordertop nobottom linecolstockavailable right"><span id="standalone_stock_available">'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_available']) : '').'</span></td>';
+	print '<td class="bordertop linecolstockavailable right"><span id="standalone_stock_available">'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_available']) : '').'</span></td>';
 	$coldisplay++;
-	print '<td class="bordertop nobottom linecolstockafter right"><span id="standalone_stock_after"'.(empty($stockStatus['can_validate']) ? ' class="error"' : '').'>'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_after']) : '').'</span></td>';
+	print '<td class="bordertop linecolstockafter right"><span id="standalone_stock_after"'.(empty($stockStatus['can_validate']) ? ' class="error"' : '').'>'.(function_exists('expedition_standalone_format_stock_qty') ? expedition_standalone_format_stock_qty($stockStatus['stock_after']) : '').'</span></td>';
 }
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecoledit right valignmiddle">';
+print '<td class="bordertop linecoledit right valignmiddle">';
 print '<input type="submit" class="button button-add small" name="addline" id="addline" value="' . $langs->trans('Add') . '">';
 print '</td>';
 $coldisplay++;
-print '<td class="bordertop nobottom linecoldelete"></td>';
+print '<td class="bordertop linecoldelete"></td>';
 $coldisplay++;
-print '<td class="bordertop nobottom linecolmove"></td>';
+print '<td class="bordertop linecolmove"></td>';
 print '</tr>';
 
 ?>
