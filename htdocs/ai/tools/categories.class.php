@@ -407,7 +407,7 @@ class ToolCategories extends McpTool
 	 * Searches for categories based on a query and type.
 	 *
 	 * @param array<string, mixed> $args Array containing 'query' (string), 'scope' (string), 'limit' (int), 'offset' (int).
-	 * @return list<array<string, mixed>> A list of found categories or an error array.
+	 * @return array{error:string}|array{count:int}|list<array<string, mixed>> A list of found categories or an error array.
 	 */
 	private function searchCategories($args)
 	{

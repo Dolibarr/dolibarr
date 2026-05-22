@@ -2579,7 +2579,7 @@ class ExtraFields
 						while ($obj = $this->db->fetch_object($resql)) {
 							$c = new Categorie($this->db);
 							$c->fetch($obj->rowid);
-							if ($mode != 'list') {
+							if ((string) $mode != 'list') {
 								$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 								foreach ($ways as $way) {
 									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';

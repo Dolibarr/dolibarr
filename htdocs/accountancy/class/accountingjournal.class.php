@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2017-2022	OpenDSI						<support@open-dsi.fr>
- * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
- * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2017-2022  OpenDSI                     <support@open-dsi.fr>
+ * Copyright (C) 2024-2026  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Alexandre Janniaux          <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,7 @@ class AccountingJournal extends CommonObject
 		3 => 'purchases',
 		4 => 'bank',
 		5 => 'expensereports',
+		6 => 'cash_sells',
 		8 => 'inventories',
 		9 => 'hasnew',
 	);
@@ -312,6 +313,8 @@ class AccountingJournal extends CommonObject
 			$prefix = '';
 			if ($nature == 9) {
 				return $langs->trans('AccountingJournalType9');
+			} elseif ($nature == 6 && getDolGlobalInt('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
+				return $langs->trans('AccountingJournalType6');
 			} elseif ($nature == 5) {
 				return $langs->trans('AccountingJournalType5');
 			} elseif ($nature == 4) {
@@ -326,6 +329,8 @@ class AccountingJournal extends CommonObject
 		} elseif ($mode == 1) {
 			if ($nature == 9) {
 				return $langs->trans('AccountingJournalType9');
+			} elseif ($nature == 6 && getDolGlobalInt('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
+				return $langs->trans('AccountingJournalType6');
 			} elseif ($nature == 5) {
 				return $langs->trans('AccountingJournalType5');
 			} elseif ($nature == 4) {
