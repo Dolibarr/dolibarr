@@ -1305,7 +1305,7 @@ class ActionComm extends CommonObject
 		if (!empty($this->status)) {
 			$sql .= ", status=".($this->status ? (int) $this->status : 0);
 		}
-		if (!empty($this->status)) {
+		if (!empty($this->max_participants)) {
 			$sql .= ", max_participants=".($this->max_participants ? (int) $this->max_participants : "null");
 		}
 		$sql .= " WHERE id=".((int) $this->id);
