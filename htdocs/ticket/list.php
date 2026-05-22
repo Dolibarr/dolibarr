@@ -254,7 +254,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
-	if (!$error && $massaction == 'close' && $permissiontoadd) {
+	if (!$error && $massaction == 'close' && $permissiontoadd) {	// @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php
 		$objecttmp = new Ticket($db);
 		$db->begin();
 
