@@ -1612,7 +1612,6 @@ class Form
 			if ($fetchsubscription) {
 				$htmltoenteralink .= '<td>' . $subscriptionstatic->getNomUrl(0). '</td>';
 			} else {
-				$htmltoenteralink .= '<!-- fetchsubscription='.$fetchsubscription.' -->';
 				$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
 			}
 			$htmltoenteralink .= '<td>' . $objp->note . '</td>';
