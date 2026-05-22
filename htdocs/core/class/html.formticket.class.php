@@ -1828,6 +1828,8 @@ class FormTicket
 					if (!empty($withto)) {
 						print $form->multiselectarray('receiver', $withto, $withtoselected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 1);
 					} else {
+						// No contacts linked: emit the flag hidden so newMessage() still reads the free sendto input
+						print '<input type="hidden" name="receiver_multiselect" value="1">';
 						print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
 					}
 				}
@@ -1850,6 +1852,9 @@ class FormTicket
 					print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
 					$withtocc_selected = GETPOSTISSET('receivercc_multiselect') ? GETPOST('receivercc', 'array') : array();
 					print $form->multiselectarray('receivercc', $withto, $withtocc_selected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 1);
+				} else {
+					// No contacts: emit the flag hidden so newMessage() still reads the free sendtocc input
+					print '<input type="hidden" name="receivercc_multiselect" value="1">';
 				}
 				print '</td></tr>';
 			} else {
