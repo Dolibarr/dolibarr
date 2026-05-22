@@ -336,7 +336,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  *
  * @param 	TCPDF     $pdf				PDF initialized object
  * @param 	string    $htmlcontent		HTML Content
- * @return 	int							Height
+ * @return 	float						Height
  * @see getStringHeight()
  */
 function pdfGetHeightForHtmlContent($pdf, $htmlcontent)

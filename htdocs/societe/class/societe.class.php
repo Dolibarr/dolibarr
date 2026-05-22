@@ -1024,8 +1024,14 @@ class Societe extends CommonObject
 		$this->code_compta_client = trim($this->code_compta_client ?? '');
 
 		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general ?? '');
+		if ($this->accountancy_code_customer_general === '-1') {
+			$this->accountancy_code_customer_general = '';
+		}
 		$this->accountancy_code_customer = trim((string) $this->code_compta_client);
 		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general ?? '');
+		if ($this->accountancy_code_supplier_general === '-1') {
+			$this->accountancy_code_supplier_general = '';
+		}
 		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
@@ -1537,8 +1543,14 @@ class Societe extends CommonObject
 		}
 
 		$this->accountancy_code_customer_general = trim((string) $this->accountancy_code_customer_general);
+		if ($this->accountancy_code_customer_general === '-1') {
+			$this->accountancy_code_customer_general = '';
+		}
 		$this->code_compta_client = trim((string) $this->code_compta_client);
 		$this->accountancy_code_supplier_general = trim((string) $this->accountancy_code_supplier_general);
+		if ($this->accountancy_code_supplier_general === '-1') {
+			$this->accountancy_code_supplier_general = '';
+		}
 		$this->code_compta_fournisseur = trim((string) $this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()

@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2003-2005  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio         <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2008-2011  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2026       Solution Libre SAS          <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,10 +231,16 @@ class modBanque extends DolibarrModules
 			'v.note'=>"payment", 'v.datec'=>"payment",
 			"p.ref"=>"project", "p.title"=>"project"
 		);
+		// Add extra fields
+		$keyforselect = 'payment_various';
+		$keyforelement = 'payment';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet as p ON v.fk_projet = p.rowid";
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_paiement as cp ON v.fk_typepayment = cp.id";
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_various_extrafields as extra ON v.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE v.entity IN ('.getEntity('payment_various').')';
 		$this->export_sql_order[$r] = ' ORDER BY v.datep';
 	}

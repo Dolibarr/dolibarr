@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022  Laurent Destaileur		<ely@users.sourceforge.net>
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -137,6 +137,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	}
 
 	// Check a batch number is provided if product need it
+	$producttmp = null;
 	if (!$error) {
 		$producttmp = new Product($db);
 		$producttmp->fetch($id_product);
@@ -151,7 +152,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 
 	// TODO Check qty is ok for stock move. Note qty may not be enough yet, but we make a check now to report a warning.
 	// What is more important is to have qty when doing action 'createmovements'
-	if (!$error) {
+	if (!$error && $producttmp !== null) {
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch()) {
 		} else {

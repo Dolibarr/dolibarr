@@ -23,7 +23,7 @@
  */
 
 /**
- *       \file       htdocs/product/stats/card.php
+ *       \file       htdocs/product/stats/index.php
  *       \ingroup    product
  *       \brief      Page of product statistics
  */
@@ -109,25 +109,65 @@ $htmlother = new FormOther($db);
 if (!($id > 0) && empty($ref) || $notab) {
 	$notab = 1;
 
-	llxHeader("", $langs->trans("ProductStatistics"), '', '', 0, 0, '', '', '', 'mod-product page-stats_card_general');
-
-	$helpurl = '';
-	if ($type == '0') {
-		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	$help_url = '';
+	if ($type === "" || $type === "-1") {
+		$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+		$title = $langs->trans("ProductsAndServices");
+	} elseif ($type == '0') {
+		$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 		//$title=$langs->trans("StatisticsOfProducts");
-		$title = $langs->trans("Statistics");
+		$title = $langs->trans("Products");
 	} else {
-		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 		//$title=$langs->trans("StatisticsOfProductsOrServices");
-		$title = $langs->trans("Statistics");
+		$title = $langs->trans("Services");
 	}
+
+	llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stats_card_general');
 
 	$picto = 'product';
 	if ($type == 1) {
 		$picto = 'service';
 	}
 
-	print load_fiche_titre($title, $mesg, $picto);
+
+	$page = 0;
+	$param = ($type === '' ? '' : '&type='.((int) $type));
+	$massactionbutton = '';
+	$limit = 0;
+	$num = 0;
+	$nbtotalofrecords = $langs->trans("Statistics");
+	$sortfield = '';
+	$sortorder = '';
+
+	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/list.php?&mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/product/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/product/stats/index.php?id=all'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+
+	$perm = false;
+	if ($type === "") {
+		$perm = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
+	} elseif ($type == Product::TYPE_SERVICE) {
+		$perm = $user->hasRight('service', 'creer');
+	} elseif ($type == Product::TYPE_PRODUCT) {
+		$perm = $user->hasRight('produit', 'creer');
+	}
+	$params = array();
+	if ($type === "") {
+		$params['forcenohideoftext'] = 1;
+	}
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	if ((isModEnabled('product') && $type === "") || $type == Product::TYPE_PRODUCT) {
+		$label = 'NewProduct';
+		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', (int) $perm, $params);
+	}
+	if ((isModEnabled('service') && $type === "") || $type == Product::TYPE_SERVICE) {
+		$label = 'NewService';
+		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', (int) $perm, $params);
+	}
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 } else {
 	$result = $object->fetch($id, $ref);
 
@@ -166,7 +206,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.((int) $type) : '');
+	$head[$h][0] = DOL_URL_ROOT.'/product/stats/index.php'.($type != '' ? '?type='.((int) $type) : '');
 	$head[$h][1] = $langs->trans("Chart");
 	$head[$h][2] = 'chart';
 	$h++;
@@ -180,7 +220,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	}
 
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
+	$head[$h][0] = DOL_URL_ROOT.'/product/stats/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
 	$head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
 	if ((string) $type == '0') {
 		$head[$h][1] = $langs->trans("ProductsPerPopularity");

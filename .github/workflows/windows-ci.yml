@@ -26,6 +26,7 @@ env:
   PHP_INI_SCAN_DIR: C:\myphpini
   CKEY: win-ci-2
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+  GS_VERSION: "10.07.0"   # Ghostscript version
 
 jobs:
   win-test:
@@ -53,6 +54,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # phpts: ts  # ts for thread-safe, default nts
+          # steps:
+
+      - name: Restore cache Ghostscript (also stores cache at end of workflow)
+        uses: actions/cache@v5
+        with:
+          path: |
+            C:\Program Files\gs
+          key: ${{ runner.os }}-imagick-ghostscript-${{ env.GS_VERSION }}
+
+      - name: Install Ghostscript if not found
+        run: |
+          $gsBinDir = "C:\Program Files\gs\gs${{ env.GS_VERSION }}\bin"
+          echo "$gsBinDir" >> $env:GITHUB_PATH
+          $gsPath = "$gsBinDir\gswin64c.exe"
+          if (-not (Test-Path $gsPath)) {
+            choco install ghostscript -y --no-progress --version=${{ env.GS_VERSION }}
+          }
+          if (-not (Test-Path "$gsBinDir\gs.exe")) {
+            New-Item -ItemType SymbolicLink -Path "$gsBinDir\gs.exe" -Target $gsPath -Force
+          }
+          DIR "$gsBinDir"
 
       # Restore cache
       - name: Restore cache
@@ -96,10 +118,13 @@ jobs:
           SET DATA_DIR=%CD%\documents
           SET TEST_DIR=%CD%\test
           SET INITDEMO_DIR=%CD%\dev\initdemo
+          SET SESSION_DIR=%TEMP%\php_sessions
+          mkdir %SESSION_DIR%
           ECHO "==== Create INI file to set open_basedir ==="
           echo [php] > %INIFILE%
-          echo open_basedir^="%HTDOCS_DIR%;%DATA_DIR%;%TEST_DIR%;%INITDEMO_DIR%;%PHPROOT%" >> %INIFILE%
-          REM Unset PHP_INI_SCAN_DIR to disable open_basedir restritions (to limit debug effort)
+          echo open_basedir^="%HTDOCS_DIR%;%DATA_DIR%;%TEST_DIR%;%INITDEMO_DIR%;%PHPROOT%;%SESSION_DIR%" >> %INIFILE%
+          echo session.save_path^="%SESSION_DIR%" >> %INIFILE%
+          REM Unset PHP_INI_SCAN_DIR to disable open_basedir restrictions (to limit debug effort)
           REM SET PHP_INI_SCAN_DIR=
           ECHO "==== Show contents of INI file to set open_basedir ==="
           type %INIFILE%

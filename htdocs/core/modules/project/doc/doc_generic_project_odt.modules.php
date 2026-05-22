@@ -683,8 +683,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 					// Security check
 					$socid = 0;
-					if (!empty($object->fk_soc)) {
-						$socid = $object->fk_soc;
+					if (!empty($object->socid)) {
+						$socid = $object->socid;
 					}
 
 					$tasksarray = $taskstatic->getTasksArray(null, null, $object->id, $socid, 0);

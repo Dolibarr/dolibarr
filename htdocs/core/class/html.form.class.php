@@ -176,7 +176,7 @@ class Form
 		$ret = '';
 
 		// TODO change for compatibility
-		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;/', $typeofdata)) {
+		if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;/', $typeofdata)) {
 			if ($perm) {
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_' . $tmp[0] . (!empty($tmp[1]) ? ' ' . $tmp[1] : '') . '" id="' . $htmlname . '">';
@@ -304,7 +304,7 @@ class Form
 		}
 
 		// When option to edit inline is activated
-		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) {
+		if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, ($perm ? 1 : 0), $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			if ($editaction == '') {
@@ -1123,7 +1123,7 @@ class Form
 	/**
 	 *  Return a select list of country phone calling codes
 	 *
-	 *  @param	string		$selected			Pre-selected phone code value (e.g. "+33")
+	 *  @param	string		$selected			Preselected phone code value (e.g. "+33")
 	 *  @param	string		$htmlname			Name of HTML select element
 	 *  @param	string		$morecss			More CSS classes
 	 *  @param	int			$showempty			Show empty option (1) or not (0)
