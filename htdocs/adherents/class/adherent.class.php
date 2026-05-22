@@ -1839,6 +1839,18 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
+		$allowedStatusesStr = getDolGlobalString("MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS");
+		if (empty($allowedStatusesStr)) {
+			$allowedStatusesStr = '-1,0,1';
+		}
+		$allowedStatuses = array_map('intval', explode(',', $allowedStatusesStr));
+		$currentMemberStatus = $this->statut;
+		if (!in_array($currentMemberStatus, $allowedStatuses)) {
+			dol_syslog('User='.$user->id.' tried to create subscription for member='.$this->id.' with status='.$currentMemberStatus.' only allowed are status='.$allowedStatusesStr, LOG_WARN);
+			$error = $langs->trans("ErrorSubscriptionNotAllowed", $currentMemberStatus);
+			return -1;
+		}
+
 		$error = 0;
 
 		// Clean parameters
@@ -1886,15 +1898,11 @@ class Adherent extends CommonObject
 				$error++;
 			}
 
-			$noAutoValidate = getDolGlobalInt('MEMBER_DO_NOT_AUTO_VALIDATE_ON_SUBSCRIPTION');
-			if (!$error && !$noAutoValidate && ($this->statut == Adherent::STATUS_DRAFT || $this->statut == Adherent::STATUS_RESILIATED)) {
-				$preStatus = $this->statut;
-				$result = $this->validate($user);
-				if ($result < 0) {
-					$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
-					dol_syslog("ErrorValidationFailed for member=".$this->id." which had status=".$preStatus, LOG_ERR);
-					$error++;
-				}
+			$result = $this->validate($user);
+			if ($result < 0) {
+				$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
+				dol_syslog("ErrorValidationFailed for member=".$this->id." which had status=".$currentMemberStatus, LOG_ERR);
+				$error++;
 			}
 
 			if (!$error) {
