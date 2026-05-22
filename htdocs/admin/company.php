@@ -450,11 +450,20 @@ if (!empty($conf->use_javascript_ajax)) {
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
+
+		  // Show/hide VAT exemption code field based on VAT option
+		  $("input[name=\"optiontva\"]").change(function() {
+			if ($(this).val() == "0") {
+				$("#vat_exemption_code_div").show();
+			} else {
+				$("#vat_exemption_code_div").hide();
+			}
+		  });
 	  });';
 	print '</script>'."\n";
 }
 
-print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
@@ -780,6 +789,17 @@ if ($mysoc->country_code == 'FR') {
 	$tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
 }
 print '<label for="no_vat">'.$form->textwithpicto($langs->trans("VATIsNotUsedDesc"), $tooltiphelp)."</label>";
+
+print '<div class="shownifvatnotused" id="vat_exemption_code_div"'.(getDolGlobalString('FACTURE_TVAOPTION') ? ' style="display: none;"' : '').'>';
+$placeholder = (($mysoc->country_code == 'FR') ? 'VATEX-FR-FRANCHISE' : '');
+$tooltiptext = $langs->trans("VATExemptionCodeDesc").'<br>'.$langs->trans("VATExemptionCodeDesc2").'<br>'.$langs->trans("VATExemptionCodeDesc3");
+if (($mysoc->country_code == 'FR')) {
+	$tooltiptext .= '<br><br>'.$langs->trans("Example").':<br>';
+	$tooltiptext .= 'VATEX-FR-FRANCHISE, VATEX-FR-CGI261-4, VATEX-FR-J, VATEX-FR-I, VATEX-FR-D, ...';
+}
+print $form->textwithpicto($langs->trans("VATExemptionCode"), $tooltiptext, 1, 'help', 'valignmiddle', 0, 3, 'exemptioncode').' <input type="text" name="MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE" placeholder="'.$placeholder.'" value="'.getDolGlobalString('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE').'">';
+print '</div>';
+
 print "</td></tr>\n";
 
 print "</table>";

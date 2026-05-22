@@ -237,7 +237,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+if ($type == 'product' || $type == 'service') {
+	$title .= ' ('.$langs->trans("ProductsOrServices").')';
+} else {
+	$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+}
 //$help_url = "EN:Module_Categorie|FR:Module_Categorie_FR|ES:Módulo_Categorie";
 $help_url = '';
 $morejs = array();

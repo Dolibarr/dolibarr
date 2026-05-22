@@ -24,7 +24,7 @@
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-if (!defined('NOCSRFCHECK')) {
+if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
 	define('NOCSRFCHECK', 1);
 }
 
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/tecnickcom/tcpdf/tcpdf.php';
 
 // Security check
-if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 

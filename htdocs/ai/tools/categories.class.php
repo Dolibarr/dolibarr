@@ -407,11 +407,10 @@ class ToolCategories extends McpTool
 	 * Searches for categories based on a query and type.
 	 *
 	 * @param array<string, mixed> $args Array containing 'query' (string), 'scope' (string), 'limit' (int), 'offset' (int).
-	 * @return list<array<string, mixed>> A list of found categories or an error array.
+	 * @return array{error:string}|array{count:int}|list<array<string, mixed>> A list of found categories or an error array.
 	 */
 	private function searchCategories($args)
 	{
-
 		if (
 			!$this->user->hasRight('categorie', 'lire')
 			&& !$this->user->hasRight('produit', 'lire')
@@ -426,6 +425,15 @@ class ToolCategories extends McpTool
 		$scope_filter = !empty($args['scope']) ? $args['scope'] : '';
 		$limit = isset($args['limit']) ? max(1, min(100, (int) $args['limit'])) : 20;
 		$offset = isset($args['offset']) ? max(0, (int) $args['offset']) : 0;
+
+		// Safety fallback
+		if ($limit <= 0) {
+			$limit = 5;
+		}
+		if ($limit > 1000) {
+			dol_syslog("Search DB Error: Too many record requested", LOG_ERR);
+			return ["error" => "DB Error"];
+		}
 
 		$cat_type_map = $this->getCategoryTypeMap();
 

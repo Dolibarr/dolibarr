@@ -4482,6 +4482,9 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	//$rep = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
 	//$rep .= '</div>';
 	$rep = $newemail;
+	if (getDolGlobalString('MAIN_MAIL_COPY_ON_CLICK')) {
+		 $rep .= showValueWithClipboardCPButton($newemail, 0, 'none');
+	}
 
 	if ($hookmanager) {
 		$parameters = array('cid' => $contactid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
@@ -7324,7 +7327,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  *	@param	?string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $morehtmlcenter     String in the middle ('' by default). We often find here string $massaction coming from $form->selectMassAction()
  *	@param	int		    $num				Number of records found by select with limit+1
- *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
+ *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown. Use a string to show a string.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	    $morehtmlright		More html to show (after arrows)
@@ -12516,7 +12519,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			$tmpo = ob_get_clean();
 			$isObBufferActive = false;
 		}
-		$error = 'dol_eval try/catch error : ';
+		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
 		return 'Exception during evaluation: ' . $s;

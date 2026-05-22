@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2017-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023       Joachim Kueter          <git-jk@bloxera.com>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Solution Libre SAS      <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,16 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -39,14 +50,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "banks", "bills", "categories", "compta", "users"));
@@ -83,6 +86,8 @@ $hookmanager->initHooks(array('variouscard', 'globalcard'));
 $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
+
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 $permissiontodelete = $user->hasRight('banque', 'modifier');
@@ -148,6 +153,12 @@ if (empty($reshook)) {
 		$object->sens = GETPOSTINT('sens');
 		$object->fk_project = GETPOSTINT('fk_project');
 
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		if ($ret < 0) {
+			$error++;
+		}
+
 		if (!checkGeneralAccountAllowsAuxiliary($db, $object->accountancy_code, $object->subledger_account)) {
 			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
 			$error++;
@@ -191,8 +202,6 @@ if (empty($reshook)) {
 		// Check currency
 		$currencyofpayment = $conf->currency;	// The currency of various payment is not yet asked, so we suppose it is the main company currency
 
-		//var_dump($currencyofpayment); var_dump($bankaccount->currency_code);
-
 		if (isModEnabled('multicurrency') && $currencyofpayment != $bankaccount->currency_code) {
 			// TODO Support this feature the same way we do it for invoice payment
 			// using the $value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
@@ -206,7 +215,7 @@ if (empty($reshook)) {
 			$ret = $object->create($user);
 			if ($ret > 0) {
 				$db->commit();
-				$urltogo = ($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
+				$urltogo = ($backtopage ? $backtopage : dolBuildUrl(DOL_URL_ROOT.'/compta/bank/various_payment/list.php'));
 				header("Location: ".$urltogo);
 				exit;
 			} else {
@@ -238,7 +247,7 @@ if (empty($reshook)) {
 
 				if ($result >= 0) {
 					$db->commit();
-					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
+					header("Location: ".dolBuildUrl(DOL_URL_ROOT.'/compta/bank/various_payment/list.php'));
 					exit;
 				} else {
 					$object->error = $accountline ? $accountline->error : 'No AccountLine';
@@ -336,7 +345,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 				$db->commit();
 				$db->close();
 
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				header("Location: ".dolBuildUrl($_SERVER["PHP_SELF"], ["id" => $id]));
 				exit;
 			} else {
 				$id = $originalId;
@@ -405,55 +414,50 @@ foreach ($arrayofbankcategs as $bankcategory) {
 if ($action == 'create') {
 	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-            			setPaymentType();
-            			$("#selectpaymenttype").change(function() {
-            				setPaymentType();
-            			});
-            			function setPaymentType()
-            			{
-							console.log("setPaymentType");
-            				var code = $("#selectpaymenttype option:selected").val();
-                            if (code == \'CHQ\' || code == \'VIR\')
-            				{
-            					if (code == \'CHQ\')
-			                    {
-			                        $(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
-			                    }
-            					if ($(\'#fieldchqemetteur\').val() == \'\')
-            					{
-            						var emetteur = jQuery(\'#thirdpartylabel\').val();
-            						$(\'#fieldchqemetteur\').val(emetteur);
-            					}
-            				}
-            				else
-            				{
-            					$(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
-            					$(\'#fieldchqemetteur\').val(\'\');
-            				}
-            			}
-						function toggleSubledger() {
-							var isCentral = $("#accountancy_code option:selected").data("centralized");
-							console.log("the selected general ledger account is centralised?", isCentral);
-							if (isCentral) {
-								$("#subledger_account").prop("disabled", false);
-							} else {
-								$("#subledger_account").prop("disabled", true);
-							}
+		?>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				setPaymentType();
+				$("#selectpaymenttype").change(function() {
+					setPaymentType();
+				});
+
+				function setPaymentType() {
+					console.log("setPaymentType");
+					var code = $("#selectpaymenttype option:selected").val();
+					if (code == "CHQ" || code == "VIR") {
+						if (code == 'CHQ') {
+							$('.fieldrequireddyn').addClass('fieldrequired');
 						}
-						toggleSubledger();
+						if ($('#fieldchqemetteur').val() == '') {
+							var emetteur = jQuery('#thirdpartylabel').val();
+							$('#fieldchqemetteur').val(emetteur);
+						}
+					} else {
+						$(".fieldrequireddyn").removeClass("fieldrequired");
+						$("#fieldchqemetteur").val("");
+					}
+				}
 
-						$("#accountancy_code").on("change", toggleSubledger);
-						$("#accountancy_code").on("select2:select", toggleSubledger);
-			';
+				function toggleSubledger() {
+					var isCentral = $("#accountancy_code option:selected").data("centralized");
+					console.log("the selected general ledger account is centralised?", isCentral);
+					if (isCentral) {
+						$("#subledger_account").prop("disabled", false);
+					} else {
+						$("#subledger_account").prop("disabled", true);
+					}
+				}
+				toggleSubledger();
 
-		print '	});'."\n";
-
-		print '	</script>'."\n";
+				$("#accountancy_code").on("change", toggleSubledger);
+				$("#accountancy_code").on("select2:select", toggleSubledger);
+			});
+		</script>
+		<?php
 	}
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -538,6 +542,8 @@ if ($action == 'create') {
 	}
 
 	// Other attributes
+	print $object->showOptionals($extrafields, 'create');
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -545,7 +551,7 @@ if ($action == 'create') {
 	// Category
 	if (is_array($options) && count($options) && isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
-		print img_picto('', 'category', 'class="pictofixedwidth"').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
+		print img_picto('', 'category', 'class="pictofixedwidth"') . Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
 		print '</td></tr>';
 	}
 
@@ -621,16 +627,16 @@ if ($id) {
 			array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1),
 			array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'clone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
 			array('type' => 'text', 'name' => 'clone_amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount)),
-			array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens").' '.$set_value_help, 'values' => $sensarray, 'default' => (string) $object->sens),
+			array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens").' ' . $set_value_help, 'values' => $sensarray, 'default' => (string) $object->sens),
 		);
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
+		print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
 	}
 
 	// Confirmation of the removal of the Various Payment
 	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteVariousPayment');
-		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
+		print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
 	}
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
@@ -643,7 +649,7 @@ if ($id) {
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">' . img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -669,7 +675,7 @@ if ($id) {
 	}
 
 	$morehtmlref .= '</div>';
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/bank/various_payment/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlstatus = '';
 
@@ -702,7 +708,7 @@ if ($id) {
 	}
 	print '<tr><td>'.$langs->trans("Sens").'</td><td>'.$sens.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">' . price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
 	// Account of Chart of account
 	$editvalue = '';
@@ -713,7 +719,7 @@ if ($id) {
 		print '</td><td>';
 		if ($action == 'editaccountancy_code' && (!$alreadyaccounted && $permissiontoadd)) {
 			//print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
-			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code, 'accountancy_code', 0, 1, '', 1);
+			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->accountancy_code, 'accountancy_code', 0, 1, '', 1);
 		} else {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(0, $object->accountancy_code, 1);
@@ -785,14 +791,14 @@ if ($id) {
 	/*
 	 * Action bar
 	 */
-	print '<div class="tabsAction">'."\n";
+	print '<div class="tabsAction">' . "\n";
 
 	// TODO
 	// Add button modify
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_DOCUMENT_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone']).'">'.$langs->trans("ToClone") . "</a></div>";
 	}
 
 	// Delete
@@ -801,7 +807,7 @@ if ($id) {
 			if ($alreadyaccounted) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token=' . newToken().'">'.$langs->trans("Delete").'</a></div>';
 			}
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';

@@ -35,7 +35,7 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', 1);
 }
-if (!defined('NOCSRFCHECK')) {
+if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
 	define('NOCSRFCHECK', 1);
 }
 
@@ -48,7 +48,8 @@ require_once DOL_DOCUMENT_ROOT . '/ai/class/privacy_guard.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 
 // Security check
-if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+	http_response_code(403);
 	accessforbidden('Module or feature not allowed');
 }
 
@@ -72,17 +73,17 @@ $rawResponseLog = "";
 $providerUsed = "offline";
 $errorDetails = "";
 
-$mcpEnabled = getDolGlobalInt('AI_MCP_ENABLED', 0);
+$assistantEnabled = getDolGlobalInt('AI_ASSISTANT_ENABLED', 0);
 $serviceKey = getDolGlobalString('AI_API_SERVICE');
 $doRedact = getDolGlobalInt('AI_PRIVACY_REDACTION', 0);
 $timeout = getDolGlobalInt('AI_REQUEST_TIMEOUT', 120);
 
 // Kill switch
-if (!$mcpEnabled) {
+if (!$assistantEnabled) {
 	$response = [
 		"tool" => "respond_to_user",
 		"arguments" => [
-			"message" => "AI service is currently disabled. Please contact your administrator to enable it."
+			"message" => "AI assistant service is currently disabled. Please contact your administrator to enable it."
 		]
 	];
 	ob_end_clean();
@@ -107,7 +108,7 @@ try {
 	// Privacy (Name Resolution & Masking)
 	$langs->loadLangs(array("main", "bills", "orders", "propal", "supplier_invoice", "supplier_order", "projects", "other"));
 
-	// Words we want to block in any language.
+	// Translation key of Words we want to block in any language.
 	$blockKeys = [
 		// Objects (Nouns)
 		'Bill',
@@ -141,10 +142,13 @@ try {
 		'Modify',
 		'Delete',
 		'Validate',
-		'Send'
+		'Send',
+		// Other
+		'Hello',
+		'Test'
 	];
 
-	// Resolve keys to the actual current language strings
+	// Resolve keys to the actual current language
 	$dynamicStopWords = [];
 	foreach ($blockKeys as $key) {
 		$word = $langs->transnoentities($key);
@@ -155,11 +159,11 @@ try {
 
 	// Add common short English/French/Spanish commands that users often type
 	// regardless of the UI language.
-	$commonCommands = ['show', 'find', 'search', 'list', 'get', 'voir', 'chercher', 'lista', 'buscar'];
-	$dynamicStopWords = array_unique(array_merge($dynamicStopWords, $commonCommands));
+	$commonCommands = ['show', 'find', 'search', 'list', 'get', 'voir', 'chercher', 'affiche', 'lista', 'buscar'];
+	$dynamicStopWords = array_unique(array_merge($dynamicStopWords, $commonCommands));		// $dynamicStopWords is an array of words
 
 
-	$cleanQuery = preg_replace('/[^\p{L}\p{N}\s\-]/u', '', $query);
+	$cleanQuery = preg_replace('/[^\p{L}\p{N}\s\-]/u', '', $query);							// Remove special chars from the prompt query
 	$words = preg_split('/\s+/', $cleanQuery, -1, PREG_SPLIT_NO_EMPTY);
 	$count = count($words);
 	$candidates = array();
@@ -187,6 +191,7 @@ try {
 		return true;
 	};
 
+	// Fill array $candidates of thirdparty name we may want to work with
 	for ($i = 0; $i < $count; $i++) {
 		// Single Word
 		if ($isValidPhrase($words[$i])) {
@@ -212,12 +217,12 @@ try {
 		return mb_strlen($b) - mb_strlen($a);
 	});
 
+	dol_syslog("parse_intent.php We have candidates into text that may be a thirdparty. List is ".implode(',', $candidates), LOG_DEBUG);
+
 	if (!empty($candidates)) {
 		foreach ($candidates as $phrase) {
-			$escapedPhrase = $db->escape($phrase);
-
 			// We use LIKE '...' to match the start of the company name.
-			$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $escapedPhrase . "%' LIMIT 1";
+			$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
 
 			$res = $db->query($sql);
 
@@ -259,29 +264,42 @@ try {
 			dol_syslog("AI Pro: Non-Latin language detected. Sending full (cleaned) schema.");
 			$toolsSchema = $allToolsSchema;
 		} else {
-			// Detect Category using Hybrid (Translations + Synonyms)
+			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
 			$detectedCategories = classifyIntentUniversal($query, $langs);
 
 			// Filter Logic
 			$toolsSchema = filterToolsProfessional($allToolsSchema, $detectedCategories);
 
-			dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) .
-				". Filtered to " . count($toolsSchema) . " tools.");
+			dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ". Filtered to " . count($toolsSchema) . " tools.");
 		}
 
 		// If we are sending a lot of tools (Non-Latin or Fallback), we strip descriptions.
-		$isLargeSchema = count($toolsSchema) > 20;
+		// The 20-tool threshold was likely chosen for GPT-3.5 (4K context window). Modern
+		// LLMs handle the full schema trivially: Gemini 2.5 Flash has a 1M token context,
+		// GPT-4o has 128K, Claude Sonnet has 1M. Compression hurts more than it helps
+		// today because it also truncates tool *descriptions* (down to 3 words), which
+		// breaks tool selection (e.g. "create_other_document" becomes "Create documents
+		// other" -- the LLM then thinks supplier_invoice creation is not available).
+		// We raise the threshold to 100 to effectively disable compression for the
+		// default install (~30 tools), while still leaving a safety net for very large
+		// custom installs that register dozens of additional addMcpTools hooks.
+		$isLargeSchema = count($toolsSchema) > 100;
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
 		// Build System Prompt
 		$basePrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are a professional Dolibarr assistant.";
 
-		$systemRules = "\n\nRules: Respond ONLY JSON. Format: {\"tool\":..., \"arguments\":{...}}. ";
+		$systemRules = "\n\nRules: Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded. Format: {\"tool\":..., \"arguments\":{...}}. ";
 		$systemRules .= "IMPORTANT: If the user asks for functionality that is NOT available in the list of Tools above, you MUST use the tool 'respond_to_user' to inform them that the specific feature is not available.";
 
+		// If MCP is disabled, we disable all tools
+		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
+			$toolsForLLM = array();
+		}
 
-
-		$systemPrompt = $basePrompt . "\n\nTools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . $systemRules . " Date: " . date('Y-m-d');
+		$systemPrompt = $basePrompt . "\n\n";
+		$systemPrompt .= "Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		$systemPrompt .= $systemRules . " Date: " . date('Y-m-d');
 
 		// Get API configuration
 		$servicesList = getListOfAIServices();
@@ -293,13 +311,51 @@ try {
 
 		$defUrl = $servicesList[$serviceKey]['url'] ?? '';
 		$url = getDolGlobalString('AI_API_' . strtoupper($serviceKey) . '_URL') ?: $defUrl;
-		$defModel = $servicesList[$serviceKey]['textgeneration'] ?? 'gpt-4o-mini';
-		$model = getDolGlobalString('AI_API_' . strtoupper($serviceKey) . '_MODEL') ?: $defModel;
+		// The model defaults declared in getListOfAIServices() are nested:
+		//   $servicesList[$key]['textgeneration'] = ['default' => 'model-name']
+		// Reading 'textgeneration' without ['default'] returns the inner array, which
+		// then fails the (string) type-hint of UniversalLLMAdapter's 4th argument with:
+		//   "Argument #4 ($model) must be of type string, array given"
+		//
+		// The admin UI (htdocs/ai/admin/setup.php "Prompt and custom AI models" tab) also
+		// stores the per-function model under AI_API_<SERVICE>_MODEL_TEXT (matching the
+		// convention already used by Ai::generateContent() for the same data). The
+		// previous lookup used AI_API_<SERVICE>_MODEL which is never written by that
+		// form, so the user-configured model was silently ignored.
+		$rawDefault = $servicesList[$serviceKey]['textgeneration'] ?? null;
+		if (is_array($rawDefault)) {
+			$defModel = $rawDefault['default'] ?? 'gpt-4o-mini';
+		} else {
+			$defModel = $rawDefault ?: 'gpt-4o-mini';
+		}
+		$prefix = 'AI_API_' . strtoupper($serviceKey);
+		$model = getDolGlobalString($prefix . '_MODEL_TEXT')
+			?: getDolGlobalString($prefix . '_MODEL')
+			?: $defModel;
+		// Defensive: coerce to string if anyone stored an array in this constant
+		if (is_array($model)) {
+			$model = $model['default'] ?? $defModel;
+		}
+		if (!is_string($model) || $model === '') {
+			$model = (string) $defModel;
+		}
 		$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
+
+
+		// The request.
+		// var_dump($query);
 
 		if (!empty($apiKey)) {
 			$adapter = new UniversalLLMAdapter($adapterType, $apiKey, $url, $model, $timeout);
+
+			dol_syslog("parse_intent.php Call AI API", LOG_DEBUG);
+
 			$rawResponse = $adapter->generate($systemPrompt, $query);
+
+			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
+			dol_syslog('rawResponse='.$rawResponse, LOG_DEBUG);
+
+			//var_dump($rawResponse);exit;
 
 			// Capture logs
 			$rawRequestLog = $adapter->lastRequest;
@@ -313,7 +369,8 @@ try {
 				$clean = preg_replace('/```json\s*|\s*```/s', '', $rawResponse);
 				$clean = trim($clean);
 
-				if (preg_match('/\{.*\}/s', $clean, $matches)) {
+				$matches = array();
+				if (preg_match('/^\{.*\}$/s', $clean, $matches)) {
 					$clean = $matches[0];
 				}
 
@@ -322,18 +379,32 @@ try {
 					$clean = $guard->unmaskAiResponse($clean);
 				}
 
-				$intentJSON = json_decode($clean, true);
+				// Removed carriage returns and newlines
+				$clean = preg_replace('/[\r\n]/', ' ', $clean);
+
+				// If answer is a json string or not
+				if (strpos($clean, '{') === 0) {
+					// This may be a json string
+					$intentJSON = json_decode($clean, true);
+				} else {
+					$intentJSON = [
+						"tool" => "respond_to_user",
+						'arguments' => [
+							"message" => $clean
+						]
+					];
+				}
 
 				// Ensure no placeholders remain in the data structure.
 				if ($guard && isset($intentJSON['arguments'])) {
 					$intentJSON['arguments'] = recursiveUnmaskValues($intentJSON['arguments'], $guard);
 				}
 
-				// Validation check: Ensure the AI selected a tool that actually exists in our filtered schema.
+				// Validation check: Check if the AI selected a tool that actually exists in our filtered schema.
 				if ($intentJSON && isset($intentJSON['tool'])) {
 					$validToolNames = array_column($toolsSchema, 'name');
 					if (!in_array($intentJSON['tool'], $validToolNames)) {
-						dol_syslog("AI Validation: Tool '" . $intentJSON['tool'] . "' not found in filtered schema. Switching to respond_to_user.", LOG_WARNING);
+						dol_syslog("AI Validation: Tool '" . $intentJSON['tool'] . "' not found in filtered schema. Send error message via respond_to_user.", LOG_WARNING);
 
 						// Force the standard response for non-existent functionality
 						$intentJSON = [
@@ -351,15 +422,12 @@ try {
 					$mappedToolsSchema = array_column($toolsSchema, null, 'name');
 					$confidence = calculateConfidence($intentJSON, $mappedToolsSchema, $rawResponse);
 
-					dol_syslog("AI Intent: " . json_encode([
-						'query' => $query,
-						'intent' => $intentJSON,
-						'confidence' => $confidence
-					]), LOG_DEBUG);
+					dol_syslog("parse_intent.php AI Intent: " . json_encode(['query' => $query, 'intent' => $intentJSON, 'confidence' => $confidence]), LOG_DEBUG);
 				}
 			}
 		}
 	}
+
 
 	// Handle no AI Intent
 	if (!$intentJSON || !isset($intentJSON['tool'])) {
@@ -727,12 +795,15 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 	$cleaned = [];
 
 	foreach ($tools as $tool) {
-		// Tool Description: Max 3 words
+		// Tool descriptions are how the LLM selects the right tool -- never truncate
+		// them, even when the schema is large. Truncating to 3 words ("Create documents
+		// other", "Add a single") breaks tool selection. If the schema really is too
+		// big for the chosen model, the right answer is to filter the toolset before
+		// it reaches the LLM (which is what filterToolsProfessional() already does
+		// upstream of this function), not to mutilate each tool's description.
+		// Parameter-level compression (stripping defaults, descriptions of optional
+		// fields, etc.) remains gated on $isLargeSchema below.
 		$desc = $tool['description'];
-		if ($isLargeSchema) {
-			$words = explode(' ', $desc);
-			$desc = implode(' ', array_slice($words, 0, 3));
-		}
 
 		// Get parameters
 		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];

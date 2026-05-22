@@ -251,12 +251,10 @@ if (empty($reshook)) {
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
 
-	global $error;
-	/** @phan-var-force int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
-	if (!$error && $massaction == 'close' && $permissiontoadd) {
+	if (!$error && $massaction == 'close' && $permissiontoadd) {	// @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php
 		$objecttmp = new Ticket($db);
 		$db->begin();
 

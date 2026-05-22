@@ -1,7 +1,7 @@
 /* Container */
 .ai-chat-container {
-    max-width: 900px;
-    margin: 20px auto;
+    /* max-width: 900px; */
+    /* margin: 20px auto; */
     background: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -425,4 +425,80 @@
 .btn-secondary {
     background-color: #6c757d;
     border-color: #6c757d;
+}
+
+
+/* -------------------------------------------------------------------------
+ * Popup mode (loaded via dol_openinpopup URL param from the top-toolbar
+ * AI icon -> dolButtonToOpenUrlInDialogPopup() iframe).
+ *
+ * Dolibarr core adds the body class "dol_openinpopup" when this param is
+ * set (htdocs/main.inc.php), so we can target popup-only tweaks here
+ * without touching index.php.
+ *
+ * Sizing strategy:
+ * The chat-container in standalone mode uses "height: 70vh; min-height:
+ * 650px" which is great on a full page but causes the dialog iframe to
+ * overflow on small windows. In popup mode we make the chat-container
+ * fill the iframe viewport exactly (height: 100% of body, body itself
+ * pinned to 100vh of iframe) and drop the 650px floor; .chat-history
+ * keeps its flex-grow:1 + overflow-y:auto so message scroll still works
+ * INTERNALLY without an iframe-level scrollbar.
+ *
+ * We also flatten the visual chrome (border, shadow, rounded corners,
+ * capped max-width, top margin) that is now redundant with the dialog
+ * frame, and hide the duplicate "AI Assistant" H2 (the dialog title bar
+ * already shows it).
+ * ------------------------------------------------------------------------- */
+body.dol_openinpopup {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* In popup mode the DOM is:
+ *   body > #id-container > .fiche > .ai-chat-container
+ * (top_menu and left_menu blocks are skipped by main.inc.php when
+ *  dol_openinpopup is set, but #id-container and .fiche are always
+ *  emitted). For "height: 100%" on .ai-chat-container to resolve to
+ *  the iframe viewport, every ancestor in the chain must also be
+ *  100% high. */
+body.dol_openinpopup #id-container,
+body.dol_openinpopup .fiche {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body.dol_openinpopup .ai-chat-container {
+    max-width: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+}
+
+/* Flexbox shrink fix: a flex-grow:1 child defaults to min-height:auto
+ * (content-based), which prevents the chat-history from shrinking below
+ * its message-content height and causes the WHOLE container to overflow
+ * the iframe after a long response. Forcing min-height:0 lets the
+ * chat-history shrink to fit the available column space and scroll
+ * INTERNALLY (overflow-y:auto is already on .chat-history). */
+body.dol_openinpopup .chat-history {
+    min-height: 0;
+}
+
+/* The dialog title bar already shows "AI Assistant", so hide the redundant
+ * H2 inside .chat-header but keep .header-controls (Clear + mode select). */
+body.dol_openinpopup .chat-header {
+    border-radius: 0;
+    justify-content: flex-end;
+}
+
+body.dol_openinpopup .chat-header h2 {
+    display: none;
 }

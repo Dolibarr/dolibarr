@@ -330,7 +330,7 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+#topmenu-tool,
 #topmenu-global-search-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,

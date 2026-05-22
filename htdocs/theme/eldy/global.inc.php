@@ -7053,6 +7053,10 @@ div.cke_notifications_area .cke_notification_warning {
 /*  TinyMCE                                                                       */
 /* ============================================================================== */
 
+td.linecoldescription .tox.tox-tinymce {
+	margin-top: 8px;
+}
+
 .tox .tox-edit-area::before {
 	border: none !important;
 }
@@ -7616,8 +7620,10 @@ input.select2-input {
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 li.select2-selection__choice {
-	white-space: break-spaces;
+	/* white-space: break-spaces; */
+	white-space: nowrap;
 }
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }

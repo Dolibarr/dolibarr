@@ -49,7 +49,7 @@ div.divsearchfield {
     margin-left: 15px;
 }
 .tree li {
-    font-size: 16px;
+    font-size: 1.1 em;
     position: relative;list-style: none;
 }
 .tree li:before {
@@ -193,7 +193,11 @@ textarea.row4{
     content:'';
     display: block;
 }
-h2.appTitle small{
+h2.appTitle {
+	font-size: 1.2em;
+}
+h2.appTitle .small {
+	font-size: 0.7em;
     font-weight: normal;
 }
 /*
@@ -261,7 +265,14 @@ span.details{
     .margeCote, .margeCoteDroite {
     	padding-left: 20px !important;
 	}
-	h2.appTitle small{
+	h2.appTitle {
+	    font-size: 0.85em;
+	}
+	h2.appTitle .small {
 	    font-size: 1em;
 	}
+	.storedesc {
+	    font-size: 0.9em;
+	}
+}
 }

@@ -23,13 +23,13 @@
  */
 
 /**
- * \file       htdocs/product/popuprop.php
+ * \file       htdocs/product/stats/popuprop.php
  * \ingroup    propal, commande, facture, product
  * \brief      List of products or services by popularity
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -56,10 +56,11 @@ if (!empty($user->socid)) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 if (!$sortfield) {
 	$sortfield = "c";
 }
@@ -80,29 +81,29 @@ restrictedArea($user, 'produit|service', 0, 'product&product', '', '');
 $form = new Form($db);
 $tmpproduct = new Product($db);
 
-$helpurl = '';
-if ($type == '0') {
-	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+$help_url = '';
+if ($type === "" || $type === "-1") {
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	$title = $langs->trans("ProductsAndServices");
+} elseif ($type == '0') {
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	//$title=$langs->trans("StatisticsOfProducts");
+	$title = $langs->trans("Products");
 } else {
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	//$title=$langs->trans("StatisticsOfProductsOrServices");
+	$title = $langs->trans("Services");
 }
-$title = $langs->trans("Statistics");
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-popuprop');
 
 
-llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-popuprop');
-
-print load_fiche_titre($title, '', 'product');
-
+$picto = 'product';
+if ($type == 1) {
+	$picto = 'service';
+}
 
 $param = '';
-$title = $langs->trans("ListProductServiceByPopularity");
-if ((string) $type == '1') {
-	$title = $langs->trans("ListServiceByPopularity");
-}
-if ((string) $type == '0') {
-	$title = $langs->trans("ListProductByPopularity");
-}
-
 if ($type != '') {
 	$param .= '&type='.urlencode($type);
 }
@@ -110,16 +111,51 @@ if ($mode != '') {
 	$param .= '&mode='.urlencode($mode);
 }
 
+$param .= ($type === '' ? '' : '&type='.((int) $type));
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/list.php?&mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/product/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/product/stats/index.php?id=all'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+
+$perm = false;
+if ($type === "") {
+	$perm = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
+} elseif ($type == Product::TYPE_SERVICE) {
+	$perm = $user->hasRight('service', 'creer');
+} elseif ($type == Product::TYPE_PRODUCT) {
+	$perm = $user->hasRight('produit', 'creer');
+}
+$params = array();
+if ($type === "") {
+	$params['forcenohideoftext'] = 1;
+}
+$newcardbutton .= dolGetButtonTitleSeparator();
+if ((isModEnabled('product') && $type === "") || $type == Product::TYPE_PRODUCT) {
+	$label = 'NewProduct';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', (int) $perm, $params);
+}
+if ((isModEnabled('service') && $type === "") || $type == Product::TYPE_SERVICE) {
+	$label = 'NewService';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', (int) $perm, $params);
+}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+
 
 $h = 0;
 $head = array();
 
-$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.((int) $type) : '');
+$head[$h][0] = DOL_URL_ROOT.'/product/stats/index.php'.($type != '' ? '?type='.((int) $type) : '');
 $head[$h][1] = $langs->trans("Chart");
 $head[$h][2] = 'chart';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
+$head[$h][0] = DOL_URL_ROOT.'/product/stats/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
 $head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
 if ((string) $type == '0') {
 	$head[$h][1] = $langs->trans("ProductsPerPopularity");
@@ -153,8 +189,8 @@ if ($mode == 'facture') {
 $sql .= ", ".MAIN_DB_PREFIX."product as p";
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 $sql .= " AND p.rowid = pd.fk_product";
-if ($type !== '') {
-	$sql .= " AND fk_product_type = ".((int) $type);
+if ($type !== '' && $type !== '-1') {
+	$sql .= " AND p.fk_product_type = ".((int) $type);
 }
 $sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type, p.tobuy, p.tosell, p.tobatch, p.barcode";
 
@@ -167,7 +203,7 @@ if (!empty($mode) && $mode != '-1') {
 		$totalnboflines = $db->num_rows($result);
 	}
 
-	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order($sortfield.', rowid', $sortorder);
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -189,6 +225,8 @@ if (!empty($mode) && $mode != '-1') {
 	}
 }
 //var_dump($infoprod);
+
+
 
 
 $arrayofmode = array(
@@ -272,6 +310,10 @@ if ($mode && $mode != '-1') {
 		print '<td>'.dol_escape_htmltag($vals['label']).'</td>';
 		print '<td class="right">'.$vals['nbline'].'</td>';
 		print "</tr>\n";
+	}
+
+	if (count($infoprod) == 0) {
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 } else {
 	print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("SelectTheTypeOfObjectToAnalyze").'</span></td></tr>';

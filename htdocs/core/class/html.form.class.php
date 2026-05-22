@@ -1123,7 +1123,7 @@ class Form
 	/**
 	 *  Return a select list of country phone calling codes
 	 *
-	 *  @param	string		$selected			Pre-selected phone code value (e.g. "+33")
+	 *  @param	string		$selected			Preselected phone code value (e.g. "+33")
 	 *  @param	string		$htmlname			Name of HTML select element
 	 *  @param	string		$morecss			More CSS classes
 	 *  @param	int			$showempty			Show empty option (1) or not (0)

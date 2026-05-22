@@ -164,7 +164,7 @@ if [ -s "${MISSING_FILE}.grep" ] ; then
 
 	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' ':*.js' \
 		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 error - Missing translation; @' > "${MISSING_FILE}.result"
 
 	if [ -s "${MISSING_FILE}.result" ] ; then
 		exit_code=1
