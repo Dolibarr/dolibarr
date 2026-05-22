@@ -330,7 +330,7 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 		print '<div class="center">';
 
 		if ($currentService && $currentService !== '-1') {
-			print '<a class="reposition button smallpaddingimp" href="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?action=test_provider&token='.dol_escape_htmltag(newToken()).'&service_key='.dol_escape_htmltag($currentService).'">'.$langs->trans('TestConnection').'</a>';
+			print '<a class="reposition button smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=test_provider&token='.newToken().'&service_key='.urlencode($currentService).'">'.$langs->trans('TestConnection').'</a>';
 		}
 
 		print '</div>';
