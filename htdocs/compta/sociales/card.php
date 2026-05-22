@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -28,6 +28,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -44,13 +52,6 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
@@ -60,7 +61,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'chargesocialescard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -79,7 +80,6 @@ $hookmanager->initHooks(array('taxcard', 'globalcard'));
 
 // Initialize a technical objects
 $object = new ChargeSociales($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('taxsocialcontributioncard', 'globalcard'));
 

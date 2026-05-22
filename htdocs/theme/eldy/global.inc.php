@@ -7053,6 +7053,10 @@ div.cke_notifications_area .cke_notification_warning {
 /*  TinyMCE                                                                       */
 /* ============================================================================== */
 
+td.linecoldescription .tox.tox-tinymce {
+	margin-top: 8px;
+}
+
 .tox .tox-edit-area::before {
 	border: none !important;
 }

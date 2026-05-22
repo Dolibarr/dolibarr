@@ -186,12 +186,12 @@ class UniversalLLMAdapter
 	/**
 	 * Execute HTTP Request via cURL
 	 *
-	 * @param string $url       Target API URL
-	 * @param array<string, mixed> $data      Request payload (keys are strings, values vary)
-	 * @param array<int, string>   $headers   List of HTTP headers (indexed array of strings)
-	 * @param bool   $isClaude  Flag to handle Anthropic response format
-	 * @param bool   $isGemini  Flag to handle Gemini response format
-	 * @return string|null      Returns the extracted text, an error message, or null
+	 * @param string 				$url       	Target API URL
+	 * @param array<string, mixed> 	$data      	Request payload (keys are strings, values vary)
+	 * @param array<int, string>   	$headers   	List of HTTP headers (indexed array of strings)
+	 * @param bool   				$isClaude  	Flag to handle Anthropic response format
+	 * @param bool   				$isGemini  	Flag to handle Gemini response format
+	 * @return string|null      				Returns the extracted text, an error message, or null
 	 */
 	private function curl(string $url, array $data, array $headers, bool $isClaude = false, bool $isGemini = false): ?string
 	{
@@ -213,9 +213,7 @@ class UniversalLLMAdapter
 		// Store an enriched payload so the admin Log Viewer ("VIEW LOGS" in the AI Server
 		// MCP setup page) shows something actionable when something goes wrong, not just
 		// a bare "Invalid JSON response from API." with an empty body.
-		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl
-			. "\n--- body (" . strlen($body) . " bytes) ---\n"
-			. $body;
+		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl . "\n--- body (" . strlen($body) . " bytes) ---\n"	. $body;
 
 		if (!empty($result['curl_error_no'])) {
 			return "Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")";
@@ -228,9 +226,7 @@ class UniversalLLMAdapter
 			// from a proxy, gateway timeout, etc. Surface the HTTP code and a short
 			// body snippet so the admin can diagnose without re-running with curl.
 			$snippet = substr($body, 0, 500);
-			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", "
-				. strlen($body) . " bytes). Body snippet: "
-				. ($snippet !== '' ? $snippet : '<empty>');
+			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>');
 		}
 
 		if (isset($json['error'])) {
