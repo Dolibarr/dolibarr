@@ -50,7 +50,7 @@ if ($pos == '/') {
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
 
 
-if (!empty($user->admin) && !$user->hasRight('website', 'write')) {
+if (!(empty($user->admin) || !$user->hasRight('website', 'write'))) {
 	accessforbidden('Need to be admin or having write permission on website module');
 	exit;
 }
