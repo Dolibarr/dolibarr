@@ -217,7 +217,7 @@ try {
 		return mb_strlen($b) - mb_strlen($a);
 	});
 
-	dol_syslog("parse_intent.php We have candidates into text that may be a thirdparty. List is ".join(',', $candidates), LOG_DEBUG);
+	dol_syslog("parse_intent.php We have candidates into text that may be a thirdparty. List is ".implode(',', $candidates), LOG_DEBUG);
 
 	if (!empty($candidates)) {
 		foreach ($candidates as $phrase) {

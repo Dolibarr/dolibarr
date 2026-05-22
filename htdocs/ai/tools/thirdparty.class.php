@@ -25,6 +25,7 @@
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
+
 /**
  * Class ToolThirdParty
  *
@@ -214,7 +215,7 @@ class ToolThirdParty extends McpTool
 	 *                                                                                                 - type: 'customer', 'prospect', 'supplier'
 	 *                                                                                                 - limit: Limit results (default 5)
 	 * @param	int		$count		If set to 1, returns only the count of results.
-	 * @return array{error:string}|list<array{id:int,name:string,alias:string,code_cust:string,code_sup:string,email:string,type:string,url:string}>
+	 * @return array{error:string}|array{count:int}|list<array{id:int,name:string,alias:string,code_cust:string,code_sup:string,email:string,type:string,url:string}>
 	 */
 	private function search(array $args, int $count = 0)
 	{
