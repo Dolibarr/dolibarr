@@ -4,6 +4,7 @@
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen                <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,10 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other", "projects", "bills"));
@@ -74,6 +79,8 @@ $projectid = $fk_project;
 $projectref = GETPOST('projectref');
 $withthirdparty = GETPOSTINT('withthirdparty');
 $thirdpartyid  = GETPOSTINT('thirdpartyid');
+$withmember = GETPOSTINT('withmember');
+$memberid    = GETPOSTINT('memberid');
 
 $withProjectUrl = '';
 $withThirdpartyUrl = '';
@@ -99,6 +106,8 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 if ($thirdpartyid > 0) {
 	$hookmanager->initHooks(array('thirdpartyattendee', 'globalcard'));
+} elseif ($memberid > 0) {
+	$hookmanager->initHooks(array('memberattendee', 'globalcard'));
 } else {
 	$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 }
@@ -322,6 +331,9 @@ if (!empty($projectstatic->id)) {
 if (!empty($thirdpartyid)) {
 	$sql .= " AND t.fk_soc = ".((int) $thirdpartyid);
 }
+if (!empty($memberid)) {
+	$sql .= " AND t.fk_member = ".((int) $memberid);
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -475,6 +487,44 @@ if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 
 				$tab = 'attendees';
 				print dol_get_fiche_head($head, $tab, $langs->trans("ThirdParty"), -1, 'company', 0, '', 'reposition');
 			}
+		}
+	}
+}
+
+if (($memberid > 0 && $user->hasRight('societe', 'lire'))) {
+	$withMemberUrl = '';
+
+	if (!empty($withmember)) {
+		// Tabs for member
+		$tab = 'eventorganisation';	// yes, it is called eventorganisation with s here and eventorganization with z elsewhere :-(
+		$withMemberUrl = "&withmember=1";
+
+		$memberstatic = new Adherent($db);
+		$res = $memberstatic->fetch($memberid);
+		if ($res > 0) {
+			$tmpobject = $object;
+			$object = $memberstatic; // $object must be of type Adherent when calling member_prepare_head
+			$head = member_prepare_head($memberstatic, 'attendees');
+			$object = $tmpobject;
+
+			print dol_get_fiche_head($head, 'eventorganization', $langs->trans("Member"), -1, 'member');
+
+			$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+			dol_banner_tab($memberstatic, 'memberid', $linkback, 1, 'rowid', 'nom');
+
+			print '<div class="fichecenter">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border centpercent tableforfield">';
+
+			print '</table>';
+			print '</div>';
+			print dol_get_fiche_end();
+
+			$head = conferenceorboothMemberPrepareHead($memberstatic);
+			$tab = 'attendees';
+			print dol_get_fiche_head($head, $tab, $langs->trans("Member"), -1, 'member', 0, '', 'reposition');
 		}
 	}
 }

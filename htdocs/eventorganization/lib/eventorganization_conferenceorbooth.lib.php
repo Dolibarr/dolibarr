@@ -2,6 +2,7 @@
 /* Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen                <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,6 +258,54 @@ function conferenceorboothThirdpartyPrepareHead($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorbooththirdparty@eventorganization');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorbooththirdparty@eventorganization', 'remove');
+
+	return $head;
+}
+
+/**
+ * Prepare array of tabs for ConferenceOrBooth member tab
+ *
+ * @param Adherent $object Adherent
+ * @return array<array{0:string,1:string,2:string}>
+ */
+function conferenceorboothMemberPrepareHead($object)
+{
+	dol_syslog('conferenceorboothMemberPrepareHead', LOG_DEBUG);
+	global $db, $langs, $conf;
+
+	$langs->load("eventorganization");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorboothattendee_list.php?memberid=' . $object->id . '&withmember=1';
+	$head[$h][1] = $langs->trans("Attendees");
+	$head[$h][2] = 'attendees';
+	// Enable caching of conf or booth count attendees
+	$nbAttendees = 0;
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+	$cachekey = 'count_attendees_conferenceorbooth_member_' . $object->id;
+	$dataretrieved = dol_getcache($cachekey);
+	if (!is_null($dataretrieved)) {
+		$nbAttendees = $dataretrieved;
+	} else {
+		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
+		$attendees = new ConferenceOrBoothAttendee($db);
+		$result = $attendees->fetchAll('', '', 0, 0, '(t.fk_soc:=:' . ((int) $object->id) . ')');
+		if (!is_array($result) && $result < 0) {
+			setEventMessages($attendees->error, $attendees->errors, 'errors');
+		} else {
+			$nbAttendees = count($result);
+		}
+		dol_setcache($cachekey, $nbAttendees, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+	}
+	if ($nbAttendees > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbAttendees . '</span>';
+	}
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorboothmember@eventorganization');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorboothmember@eventorganization', 'remove');
 
 	return $head;
 }

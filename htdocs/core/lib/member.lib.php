@@ -5,6 +5,7 @@
  * Copyright (C) 2017		Regis Houssin		    <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen                <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +31,13 @@
  *  Return array head with list of tabs to view object information
  *
  *  @param	Adherent	$object				Member
+ *	@param	string	$subtabs    Parameter for choosing subtab, currently used for either conferenceorbooth or attendee
  *  @return array<int,array<int,string>>	head links
  */
-function member_prepare_head(Adherent $object)
+function member_prepare_head(Adherent $object, $subtabs = '')
 {
 	global $db, $langs, $conf, $user;
+	dol_syslog('Member::member_prepare_head', LOG_DEBUG);
 
 	$h = 0;
 	$head = array();
@@ -90,6 +93,42 @@ function member_prepare_head(Adherent $object)
 			}
 			$h++;
 		}
+	}
+
+	if (isModEnabled('eventorganization') && isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
+		dol_syslog('Member::member_prepare_head::isModEnabled::eventorganization', LOG_DEBUG);
+		$langs->load('eventorganization');
+		$url_for_list = '/eventorganization/conferenceorboothattendee_list.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . $url_for_list, ['memberid' => $object->id, 'withmember' => 1]);
+		$head[$h][1] = $langs->trans("EventOrganization");
+
+		// Enable caching of attendee count
+		$nbAttendees = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_attendees_member_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbAttendees = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+			$conforboothattendee = new ConferenceOrBoothAttendee($db);
+			$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_member:=:'.((int) $object->id).')');
+
+			if (!is_array($result) && $result < 0) {
+				setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
+			} else {
+				$nbAttendees = count($result);
+			}
+			dol_setcache($cachekey, $nbAttendees, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		if ($nbAttendees > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Attendees")).'">'.$nbAttendees.'</span>';
+			$head[$h][1] .= '</span>';
+		}
+		// why are the head eventorganisation with s and the module is eventorganization with z?
+		$head[$h][2] = 'eventorganization';
+		$h++;
 	}
 
 	// Show more tabs from modules
