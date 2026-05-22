@@ -1746,7 +1746,7 @@ class FormTicket
 				print '</td><td>';
 				if ($res) {
 					$sendto_free = GETPOSTISSET('sendto') ? GETPOST('sendto', 'alphawithlgt') : '';
-					print '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.dol_escape_htmltag($sendto_free).'" />';
+					print '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" placeholder="email@domain.com" value="'.dol_escape_htmltag($sendto_free).'" />';
 
 					// Build recipient list; keys are email addresses (used directly in newMessage())
 					$contacts = $ticketstat->getInfosTicketInternalContact(1);
@@ -1830,7 +1830,7 @@ class FormTicket
 					} else {
 						// No contacts linked: emit the flag hidden so newMessage() still reads the free sendto input
 						print '<input type="hidden" name="receiver_multiselect" value="1">';
-						print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
+						print ' &nbsp;<span class="opacitymedium"><small>'.$langs->trans('WarningNoEMailsAdded').'</small></span>';
 					}
 				}
 				print '</td></tr>';
