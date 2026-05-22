@@ -1529,9 +1529,9 @@ class Propal extends CommonObject
 						if ($res > 0) {
 							if ($update_prices === true) {
 								$pu_ht = $prod->price;
+								$cost_price = $line->pa_ht; // ...no change
 								if (getDolGlobalString('MARGIN_TYPE') == '1') {
 									// bestsupplierprice TODO
-									$cost_price = $line->pa_ht; // ...no change
 								} elseif (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 									// pmp
 									$cost_price = $prod->pmp;
