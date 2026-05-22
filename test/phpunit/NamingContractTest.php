@@ -18,6 +18,9 @@ require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContra
 
 /**
  * @backupGlobals disabled
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
  */
 /** @phpstan-ignore class.notFound */
 class NamingContractTest extends \PHPUnit\Framework\TestCase
