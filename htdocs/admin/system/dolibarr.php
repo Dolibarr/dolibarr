@@ -497,11 +497,12 @@ foreach ($configfileparameters as $key => $value) {
 					++$i;
 				}
 			} elseif ($newkey == 'dolibarr_main_instance_unique_id') {
-				//print $conf->file->instance_unique_id;
-				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
-				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
+				$valuetoshow = $conf->file->instance_unique_id;
+				// $conf->file->instance_unique_id is defined into master.inc.php with:
+				// empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id
+
 				if (empty($dolibarr_main_prod)) {
-					print '<!-- '.$dolibarr_main_instance_unique_id.' (this will not be visible if $dolibarr_main_prod = 1 -->';
+					print '<!-- '.$valuetoshow.' (this will not be visible if $dolibarr_main_prod = 1 -->';
 					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
 					print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("ThisValueCanBeReadBecauseInstanceIsNotInProductionMode").'</span>';
 				} else {
@@ -512,7 +513,11 @@ foreach ($configfileparameters as $key => $value) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 				}
 				print '</td></tr>';
-				print '<tr class="oddeven"><td></td><td>&nbsp; => '.$langs->trans("HashForPing").'</td><td>'.md5('dolibarr'.$valuetoshow).'</td></tr>'."\n";
+
+				$algo = 'sha256';
+				$hash_unique_id = getHashUniqueIdOfRegistration($algo);
+
+				print '<tr class="oddeven"><td></td><td>&nbsp;<span title="Hash calculated with dol_hash(dolibarr.$dolibarr_main_instance_unique_id[.entity], sha256)"> => '.$langs->trans("HashForPing").'</span></td><td>'.$hash_unique_id.'</td></tr>'."\n";
 			} elseif ($newkey == 'dolibarr_main_prod') {
 				print ${$newkey};
 

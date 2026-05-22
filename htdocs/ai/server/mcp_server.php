@@ -20,7 +20,7 @@
 /**
  * \file    htdocs/ai/server/mcp_server.php
  * \ingroup ai
- * \brief   File of class to manage MCP Server
+ * \brief   File of the MCP Server service
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -52,7 +52,7 @@ while (ob_get_level()) {
 	ob_end_clean();
 }
 
-// Security check
+// Security check (a test on api_key is also done later)
 if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 	http_response_code(503);
 	echo json_encode([
@@ -119,6 +119,7 @@ if (!$valid) {
 	]);
 	exit;
 }
+
 
 // Load service user
 $userId = getDolGlobalInt('AI_MCP_USER_ID');
@@ -242,6 +243,7 @@ try {
 
 		$responses = [];
 
+		// Answer to all MCP requests following the MCP protocol
 		foreach ($request as $req) {
 			if (!is_array($req)) {
 				continue;

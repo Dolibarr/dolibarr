@@ -141,10 +141,10 @@ class ToolCrudObjects extends McpTool
 			// Order tool
 			[
 				"name" => "create_sales_order",
-				"description" => "Create a CUSTOMER SALES ORDER. This is specifically for creating ORDERS that customers place with you. USE THIS TOOL whenever user mentions: 'order', 'sales order', 'customer order', 'new order'. This is NOT for invoices or supplier orders. Examples of when to use this tool:
+				"description" => "Create a CUSTOMER SALES ORDER. This is specifically for creating ORDERS that customers place with you. USE THIS TOOL whenever user mentions: 'create', 'new' or 'add' with 'order', 'customer order' or 'sales order'. This is NOT for invoices or supplier orders. Examples of when to use this tool:
 - 'create order for customer X'
 - 'new order for Y'
-- 'order from customer Z'
+- 'add order from customer Z'
 - 'add order for X with 5 items'
 If user says 'order' without any qualifier, they mean a SALES ORDER - use this tool.",
 				"inputSchema" => [
@@ -184,7 +184,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			// Invoice tool
 			[
 				"name" => "create_customer_invoice",
-				"description" => "Create a customer invoice (bill). Do NOT use this for orders - use create_sales_order instead. Do NOT use this for payments - use pay_invoice instead. Examples: 'create invoice for customer X', 'bill customer Y'",
+				"description" => "Create a customer invoice (bill). Do NOT use this for orders - use create_sales_order instead. Do NOT use this for payments - use pay_invoice instead. Examples: 'create invoice for customer X', 'new bill customer Y'",
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [

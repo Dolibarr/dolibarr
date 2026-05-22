@@ -251,9 +251,8 @@ if (empty($reshook)) {
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
 
-	global $error;
-	/** @phan-var-force int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	/** @phan-var-force int $error */
 
 	// Close records
 	if (!$error && $massaction == 'close' && $permissiontoadd) {
