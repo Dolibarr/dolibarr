@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2026
+-- Copyright (C) 2026  Braito                  <braito4@hotmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
