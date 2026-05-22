@@ -571,6 +571,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 				// placeholder that addObjectsToApiFile keeps for future object additions.
 				$headerFix = $arrayreplacement;
 				unset($headerFix['MYOBJECT']);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				dolReplaceInFile($destfile, $headerFix);
 				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
 			} else {
