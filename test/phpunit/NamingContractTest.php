@@ -23,6 +23,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 {
 	// ── NamingContract — properties ───────────────────────────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testNormalizesModuleFromLowercase(): void
 	{
 		$nc = new NamingContract('invoice');
@@ -31,6 +34,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame('INVOICE', $nc->moduleNameUpper);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testNormalizesModuleFromPascalCase(): void
 	{
 		$nc = new NamingContract('Invoice');
@@ -39,6 +45,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame('INVOICE', $nc->moduleNameUpper);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testNormalizesObjectFromLowercase(): void
 	{
 		$nc = new NamingContract('invoice', 'request');
@@ -47,6 +56,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame('REQUEST', $nc->objectNameUpper);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testPreservesCompoundPascalCaseObject(): void
 	{
 		$nc = new NamingContract('Invoice', 'InvoiceRequest');
@@ -57,18 +69,27 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 
 	// ── NamingContract — map ──────────────────────────────────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testSubstitutionMapHasTwelveKeysWithObject(): void
 	{
 		$nc = new NamingContract('mymodule', 'myobject');
 		$this->assertCount(12, $nc->getSubstitutionMap());
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testSubstitutionMapHasSevenKeysModuleOnly(): void
 	{
 		$nc = new NamingContract('mymodule');
 		$this->assertCount(7, $nc->getSubstitutionMap());
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testSubstitutionMapOrderUpperBeforeLower(): void
 	{
 		$nc   = new NamingContract('mymodule', 'myobject');
@@ -87,11 +108,13 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 
 	// ── NamingContract — applyTo ──────────────────────────────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testApplyToReplacesAllTwelveVariants(): void
 	{
 		$nc       = new NamingContract('invoice', 'request');
-		$template = 'MYMODULE MyModule My module my module Mon module mon module mymodule'
-			. ' MYOBJECT MyObject My Object my object myobject';
+		$template = 'MYMODULE MyModule My module my module Mon module mon module mymodule MYOBJECT MyObject My Object my object myobject';
 		$result   = $nc->applyTo($template);
 
 		$this->assertStringNotContainsStringIgnoringCase('mymodule', $result);
@@ -104,6 +127,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertStringContainsString('request', $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testApplyToPreservesModulebuilderPermissionsMarker(): void
 	{
 		$nc      = new NamingContract('invoice', 'request');
@@ -113,6 +139,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertStringContainsString('/* END MODULEBUILDER PERMISSIONS */', $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testApplyToDoesNotAlterUntokenizedContent(): void
 	{
 		$nc      = new NamingContract('invoice', 'request');
@@ -122,6 +151,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 
 	// ── NamingContract — applyToFilename ─────────────────────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testApplyToFilenameReplacesLowercaseTokens(): void
 	{
 		$nc = new NamingContract('invoice', 'request');
@@ -130,6 +162,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame('admin/request_extrafields.php', $nc->applyToFilename('admin/myobject_extrafields.php'));
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testApplyToFilenameModuleOnlyIgnoresObjectToken(): void
 	{
 		$nc = new NamingContract('invoice');
@@ -138,6 +173,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 
 	// ── NamingContract — module-only contract ────────────────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testModuleOnlyContractHasEmptyObjectProps(): void
 	{
 		$nc = new NamingContract('invoice');
@@ -148,12 +186,18 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 
 	// ── NamingContract — guard ────────────────────────────────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testCollisionGuardThrowsOnIdenticalNames(): void
 	{
 		$this->expectException(\InvalidArgumentException::class);
 		new NamingContract('invoice', 'invoice');
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testCollisionGuardIsCaseInsensitive(): void
 	{
 		$this->expectException(\InvalidArgumentException::class);
@@ -162,6 +206,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 
 	// ── StrictNamingContractValidator — validateContent ──────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorCatchesResidualMyobjectLowercase(): void
 	{
 		$validator = new StrictNamingContractValidator();
@@ -170,6 +217,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertStringContainsString('myobject', $errors[0]);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorCatchesResidualMyobjectMixedCase(): void
 	{
 		$validator = new StrictNamingContractValidator();
@@ -177,6 +227,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertNotEmpty($errors);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorCatchesResidualMymodule(): void
 	{
 		$validator = new StrictNamingContractValidator();
@@ -185,6 +238,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertStringContainsString('mymodule', $errors[0]);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorAcceptsNonRenamableBeginMarker(): void
 	{
 		$validator = new StrictNamingContractValidator();
@@ -193,6 +249,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertEmpty($errors);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorAcceptsCleanContent(): void
 	{
 		$validator = new StrictNamingContractValidator();
@@ -202,6 +261,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 
 	// ── StrictNamingContractValidator — other methods ────────────────────
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorValidatesMatchingTriggerFilename(): void
 	{
 		$nc        = new NamingContract('Invoice');
@@ -211,6 +273,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorRejectsResidualTriggerFilename(): void
 	{
 		$nc        = new NamingContract('Invoice');
@@ -220,6 +285,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorValidatesMatchingClassName(): void
 	{
 		$nc        = new NamingContract('Invoice', 'Request');
@@ -228,6 +296,9 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertFalse($validator->validateClassName('MyObject', $nc));
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testValidatorValidatesRightsKey(): void
 	{
 		$nc        = new NamingContract('invoice', 'request');

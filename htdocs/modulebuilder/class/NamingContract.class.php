@@ -72,8 +72,8 @@ final class NamingContract
 
 		if (strtolower($moduleName) === strtolower($objectName)) {
 			throw new \InvalidArgumentException(
-				'Module and object names cannot be identical (case-insensitive match): '
-				. '"' . $moduleName . '" vs "' . $objectName . '"'
+				'Module and object names cannot be identical (case-insensitive match): "'
+				. $moduleName . '" vs "' . $objectName . '"'
 			);
 		}
 
@@ -117,7 +117,7 @@ final class NamingContract
 	/**
 	 * Apply the canonical substitution map to a string (file content).
 	 *
-	 * @param string $content
+	 * @param string $content File content to process
 	 * @return string
 	 */
 	public function applyTo(string $content): string

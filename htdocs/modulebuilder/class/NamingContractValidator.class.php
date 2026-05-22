@@ -40,8 +40,8 @@ interface NamingContractValidator
 	/**
 	 * Validate that a PHP class name matches the contract's objectNameCase.
 	 *
-	 * @param string $className
-	 * @param NamingContract $nc
+	 * @param string $className Class name to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateClassName(string $className, NamingContract $nc): bool;
@@ -51,8 +51,8 @@ interface NamingContractValidator
 	 *
 	 * Expected pattern: interface_NN_mod{ModuleNameCase}_{ModuleNameCase}Triggers.class.php
 	 *
-	 * @param string $filename
-	 * @param NamingContract $nc
+	 * @param string $filename Trigger filename to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateTriggerFilename(string $filename, NamingContract $nc): bool;
@@ -60,8 +60,8 @@ interface NamingContractValidator
 	/**
 	 * Validate that a URL path contains objectNameLower and no residual 'myobject'.
 	 *
-	 * @param string $url
-	 * @param NamingContract $nc
+	 * @param string $url URL path to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateUrl(string $url, NamingContract $nc): bool;
@@ -69,8 +69,8 @@ interface NamingContractValidator
 	/**
 	 * Validate a rights key matches format "moduleNameLower.objectNameLower.perms".
 	 *
-	 * @param string $rightsKey
-	 * @param NamingContract $nc
+	 * @param string $rightsKey Rights key to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateRightsKey(string $rightsKey, NamingContract $nc): bool;
@@ -97,8 +97,8 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	];
 
 	/**
-	 * @param string $content
-	 * @param string $filePath
+	 * @param string $content  Full file content to validate
+	 * @param string $filePath File path used in error messages
 	 * @return string[]
 	 */
 	public function validateContent(string $content, string $filePath): array
@@ -122,7 +122,7 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	}
 
 	/**
-	 * @param string $line
+	 * @param string $line Line content to check
 	 * @return bool
 	 */
 	private function lineContainsNonRenamableMarker(string $line): bool
@@ -136,8 +136,8 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	}
 
 	/**
-	 * @param string $className
-	 * @param NamingContract $nc
+	 * @param string $className Class name to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateClassName(string $className, NamingContract $nc): bool
@@ -146,8 +146,8 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	}
 
 	/**
-	 * @param string $filename
-	 * @param NamingContract $nc
+	 * @param string $filename Trigger filename to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateTriggerFilename(string $filename, NamingContract $nc): bool
@@ -161,8 +161,8 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	}
 
 	/**
-	 * @param string $url
-	 * @param NamingContract $nc
+	 * @param string $url URL path to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateUrl(string $url, NamingContract $nc): bool
@@ -173,8 +173,8 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	}
 
 	/**
-	 * @param string $rightsKey
-	 * @param NamingContract $nc
+	 * @param string $rightsKey Rights key to validate
+	 * @param NamingContract $nc Naming contract to compare against
 	 * @return bool
 	 */
 	public function validateRightsKey(string $rightsKey, NamingContract $nc): bool
