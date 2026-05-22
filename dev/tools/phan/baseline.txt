@@ -10,8 +10,8 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 370+ occurrences
-    // PhanUndeclaredGlobalVariable : 40+ occurrences
     // PhanTypeMismatchArgument : 35+ occurrences
+    // PhanUndeclaredGlobalVariable : 35+ occurrences
     // PhanTypeMismatchProperty : 20+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
@@ -124,7 +124,6 @@ return [
         'htdocs/fichinter/card-rec.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/fichinter/class/api_interventions.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/fichinter/class/fichinterrec.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/filefunc.inc.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/commande/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/fourn/facture/card-rec.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
