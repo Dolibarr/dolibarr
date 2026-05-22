@@ -1501,8 +1501,8 @@ class Form
 		$htmltoenteralink .= '<td>' . $langs->trans("Name") . '</td>';
 		$htmltoenteralink .= '<td>' . $langs->trans("Email") . '</td>';
 		$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
-		$htmltoenteralink .= '<td>' . $langs->trans("DateOfRegistration") . '</td>';
 		$htmltoenteralink .= '<td>' . $langs->trans("Project") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("DateOfRegistration") . '</td>';
 		$htmltoenteralink .= '</tr>';
 
 		// rows with data
@@ -1536,13 +1536,13 @@ class Form
 			} else {
 				$htmltoenteralink .= '<td>' . $objp->name . '</td>';
 			}
-			$htmltoenteralink .= '<td>' . $objp->date_subscription . '</td>';
 			$fetchcproject = $projectstatic->fetch($objp->fk_project);
 			if ($fetchcproject) {
 				$htmltoenteralink .= '<td>' . $projectstatic->getNomUrl(0). '</td>';
 			} else {
 				$htmltoenteralink .= '<td>' . $objp->fk_project . '</td>';
 			}
+			$htmltoenteralink .= '<td>' . $objp->date_subscription . '</td>';
 			$htmltoenteralink .= '</tr>';
 			$i++;
 		}
