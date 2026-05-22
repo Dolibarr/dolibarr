@@ -182,6 +182,18 @@ if ($action == 'updateMask') {
 	}
 	$res8 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', GETPOST('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res9 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_AFTER', GETPOST('MEMBER_SUBSCRIPTION_START_AFTER', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	$allowed_statuses = GETPOST('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS', 'array');
+	if (is_array($allowed_statuses)) {
+		$allowed_statuses = array_map('strval', $allowed_statuses);
+		sort($allowed_statuses);
+		$status_string = implode(',', $allowed_statuses);
+		if (empty($status_string)) {
+			$status_string = ' '; // this has to be non empty, and just a space works fine
+		}
+		$res10 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS', $status_string, 'string', 0, '', $conf->entity);
+	}
+
 	// Use vat for invoice creation
 	if (isModEnabled('invoice')) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -640,6 +652,22 @@ if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' || getDolGlobalStrin
 }
 print '</td>';
 print "</tr>\n";
+
+// Status selection for subscription creation
+print '<!-- which member status allows subscription creation -->';
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("MemberStatusAllowedForSubscription"), $langs->trans("MemberStatusAllowedForSubscriptionInfo"));
+print '</td><td>';
+$current_allowed = getDolGlobalString('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS');
+$allowed_array = !empty($current_allowed) ? explode(',', $current_allowed) : array('-1', '0', '1');
+$status_options = array(
+	(string) Adherent::STATUS_DRAFT      => $langs->trans("MemberStatusDraftShort"),
+	(string) Adherent::STATUS_VALIDATED  => $langs->trans("MemberStatusActiveShort"),
+	(string) Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
+	(string) Adherent::STATUS_EXCLUDED   => $langs->trans("MemberStatusExcludedShort")
+);
+print $form->multiselectarray('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS', $status_options, $allowed_array, 0, 0, 'minwidth400 maxwidth550');
+print '</td></tr>';
 
 // Use vat for invoice creation
 if (isModEnabled('invoice')) {
