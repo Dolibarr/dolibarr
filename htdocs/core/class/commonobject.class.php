@@ -10227,6 +10227,10 @@ abstract class CommonObject
 						} else {
 							$return .= '</div>';
 						}
+
+						if ($nbmax && $nbphoto >= $nbmax) {
+							break;
+						}
 					}
 				}
 
