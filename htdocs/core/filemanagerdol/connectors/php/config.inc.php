@@ -50,7 +50,7 @@ if ($pos == '/') {
 //define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
 
-// By default, upload of fwiles with this tool is no more possible.
+// By default, upload of files with this tool is no more possible.
 if (!getDolGlobalString('WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES')) {
 	accessforbidden('Upload of files in medias directory using this legacy tool is no more allowed');
 }
