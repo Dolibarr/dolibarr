@@ -3127,9 +3127,89 @@ class Ticket extends CommonObject
 									$sendto = $hookmanager->resArray;
 								}
 
+								// If the user submitted the standardised form (with receiver[] multiselect
+								// and/or the free sendto input), override the auto-computed list with what
+								// the user actually chose / typed — same behaviour as other mail forms.
+								if (GETPOSTISSET('receiver_multiselect')) {
+									$sendto_manual = array();
+
+									// 1. Emails selected in the multiselect (keys = emails in our implementation)
+									$receiver_selected = GETPOST('receiver', 'array');
+									if (is_array($receiver_selected)) {
+										foreach ($receiver_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $email;
+											}
+										}
+									}
+
+									// 2. Free-text input (comma-separated, supports "Name <email>" format)
+									$sendto_free = GETPOST('sendto', 'alphawithlgt');
+									if ($sendto_free !== '') {
+										foreach (explode(',', $sendto_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $entry;
+											}
+										}
+									}
+
+									if (!empty($sendto_manual)) {
+										$sendto = $sendto_manual;
+									}
+								}
+
+								// Build CC list from the standardised form (receivercc[] multiselect + sendtocc free input).
+								// Always start with the global internal CC address if configured.
 								$sendtocc = array();
 								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
-									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+									foreach (explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC")) as $cc_entry) {
+										$cc_entry = trim($cc_entry);
+										if ($cc_entry) {
+											$sendtocc[] = $cc_entry;
+										}
+									}
+								}
+
+								if (GETPOSTISSET('receivercc_multiselect')) {
+									// Emails selected in the CC multiselect
+									$receivercc_selected = GETPOST('receivercc', 'array');
+									if (is_array($receivercc_selected)) {
+										foreach ($receivercc_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $sendtocc)) {
+												$sendtocc[] = $email;
+											}
+										}
+									}
+
+									// Free-text CC input
+									$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
+									if ($sendtocc_free !== '') {
+										foreach (explode(',', $sendtocc_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $sendtocc)) {
+												$sendtocc[] = $email;
+											}
+										}
+									}
 								}
 
 								// Don't try to send email when no recipient

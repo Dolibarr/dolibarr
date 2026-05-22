@@ -1741,61 +1741,131 @@ class FormTicket
 			$action = '';
 			$reshook = $hookmanager->executeHooks('printFieldTicketEmailTo', $parameters, $this, $action);
 			if (empty($reshook)) {
-				print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
-				print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
+				print '<tr class="email_line"><td class="fieldrequired">'.$langs->trans('MailRecipients');
+				print ' '.$form->textwithpicto('', $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
 				print '</td><td>';
 				if ($res) {
-					// Retrieve email of all contacts (internal and external)
+					// === Input libre (comme withtofree dans FormMail) ===
+					// Valeur POST conservée si retour après erreur, vide sinon
+					$sendto_free = GETPOSTISSET('sendto') ? GETPOST('sendto', 'alphawithlgt') : '';
+					print '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.dol_escape_htmltag($sendto_free).'" />';
+					print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
+
+					// === Multiselect des contacts du ticket (comme withto dans FormMail) ===
+					// Les clés sont les adresses email (directement utilisables dans newMessage)
 					$contacts = $ticketstat->getInfosTicketInternalContact(1);
 					$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
-					$sendto = array();
+					$withto = array();
+					$seen_emails = array();
 
-					// Build array to display recipient list
+					// Contacts internes et externes liés au ticket
 					if (is_array($contacts) && count($contacts) > 0) {
-						foreach ($contacts as $key => $info_sendto) {
+						foreach ($contacts as $info_sendto) {
 							if ($info_sendto['email'] != '') {
-								$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">").' <small class="opacitymedium">('.dol_escape_htmltag($info_sendto['libelle']).")</small>";
+								$email_lc = strtolower($info_sendto['email']);
+								if (!in_array($email_lc, $seen_emails)) {
+									$label_text = trim($info_sendto['firstname'].' '.$info_sendto['lastname']).' <'.$info_sendto['email'].'>';
+									$label_html = dol_htmlentities(trim($info_sendto['firstname'].' '.$info_sendto['lastname']), ENT_QUOTES, 'UTF-8')
+										.' <span class="opacitymedium">('.dol_htmlentities($info_sendto['libelle'], ENT_QUOTES, 'UTF-8').')</span>';
+									$withto[$info_sendto['email']] = array(
+										'id'        => $info_sendto['email'],
+										'label'     => str_replace(array('<', '>'), array('(', ')'), $label_text),
+										'labelhtml' => $label_html,
+									);
+									$seen_emails[] = $email_lc;
+								}
 							}
 						}
 					}
 
-					if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
-						$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
-					} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
-						$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					// Email d'origine (reply-to ou origin_email)
+					if (!empty($ticketstat->origin_replyto) && !in_array(strtolower($ticketstat->origin_replyto), $seen_emails)) {
+						$email = (string) $ticketstat->origin_replyto;
+						$withto[$email] = array(
+							'id'        => $email,
+							'label'     => $email,
+							'labelhtml' => dol_escape_htmltag($email).' <span class="opacitymedium">('.$langs->trans('TicketEmailOriginIssuer').')</span>',
+						);
+						$seen_emails[] = strtolower($email);
+					} elseif ($ticketstat->origin_email && !in_array(strtolower($ticketstat->origin_email), $seen_emails)) {
+						$email = (string) $ticketstat->origin_email;
+						$withto[$email] = array(
+							'id'        => $email,
+							'label'     => $email,
+							'labelhtml' => dol_escape_htmltag($email).' <span class="opacitymedium">('.$langs->trans('TicketEmailOriginIssuer').')</span>',
+						);
+						$seen_emails[] = strtolower($email);
 					}
 
+					// Email du tiers lié
 					if ($ticketstat->fk_soc > 0) {
 						$ticketstat->socid = $ticketstat->fk_soc;
 						$ticketstat->fetch_thirdparty();
-
-						if (!empty($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
-							$sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
+						if (!empty($ticketstat->thirdparty->email) && !in_array(strtolower($ticketstat->thirdparty->email), $seen_emails)) {
+							$email = $ticketstat->thirdparty->email;
+							$withto[$email] = array(
+								'id'        => $email,
+								'label'     => $email,
+								'labelhtml' => dol_escape_htmltag($email).' <span class="opacitymedium">('.$langs->trans('Customer').')</span>',
+							);
+							$seen_emails[] = strtolower($email);
 						}
 					}
 
-					if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
-						$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
+					// Adresse globale de notification (si configurée)
+					if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
+						$generic_email = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+						if (!in_array(strtolower($generic_email), $seen_emails)) {
+							$withto[$generic_email] = array(
+								'id'        => $generic_email,
+								'label'     => $generic_email,
+								'labelhtml' => dol_escape_htmltag($generic_email).' <span class="opacitymedium">(generic)</span>',
+							);
+						}
 					}
 
-					// Print recipient list
-					if (is_array($sendto) && count($sendto) > 0) {
-						print img_picto('', 'email', 'class="pictofixedwidth"');
-						print implode(', ', $sendto);
+					// Présélection :
+					// - Premier affichage (mode=init) → tous les contacts présélectionnés par défaut
+					// - Retour après soumission → conserver la sélection de l'utilisateur
+					if (GETPOSTISSET('receiver_multiselect')) {
+						$withtoselected = GETPOST('receiver', 'array');
+					} else {
+						$withtoselected = array_keys($withto);
+					}
+
+					if (!empty($withto)) {
+						// multiselectarray generates its own wrapper span + hidden receiver_multiselect automatically
+						print $form->multiselectarray('receiver', $withto, $withtoselected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 1);
 					} else {
 						print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
 					}
 				}
 				print '</td></tr>';
+
+				// Send to CC — editable field (same pattern as TO: free input + multiselect)
+				print '<tr class="email_line"><td>';
+				print $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
+				print '</td><td>';
+
+				// Free input: keep POST value on error return, otherwise pre-fill with global CC address if configured
+				if (GETPOSTISSET('receivercc_multiselect')) {
+					$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
+				} else {
+					$sendtocc_free = getDolGlobalString('TICKET_SEND_INTERNAL_CC');
+				}
+				print '<input class="minwidth200" id="sendtocc" name="sendtocc" spellcheck="false" value="'.dol_escape_htmltag($sendtocc_free).'" />';
+
+				// Multiselect — reuse same $withto list built for the TO field; nothing pre-selected by default
+				// multiselectarray generates its own wrapper span + hidden receivercc_multiselect automatically
+				if (!empty($withto)) {
+					print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
+					$withtocc_selected = GETPOSTISSET('receivercc_multiselect') ? GETPOST('receivercc', 'array') : array();
+					print $form->multiselectarray('receivercc', $withto, $withtocc_selected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 1);
+				}
+				print '</td></tr>';
 			} else {
 				print $hookmanager->resPrint;
-			}
-			// Send to CC
-			$sendtocc = getDolGlobalString('TICKET_SEND_INTERNAL_CC');
-			if ($sendtocc) {
-				print '<tr class="email_line"><td><span class="">'.$langs->trans("MailCC").'</span></td>';
-				print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$sendtocc.'</span></td></tr>';
 			}
 		}
 
