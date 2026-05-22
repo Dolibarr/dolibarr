@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 380+ occurrences
+    // PhanUndeclaredProperty : 370+ occurrences
     // PhanUndeclaredGlobalVariable : 40+ occurrences
     // PhanTypeMismatchArgument : 35+ occurrences
     // PhanTypeMismatchProperty : 20+ occurrences
@@ -149,7 +149,6 @@ return [
         'htdocs/loan/note.php' => ['PhanUndeclaredProperty'],
         'htdocs/loan/payment/payment.php' => ['PhanUndeclaredProperty'],
         'htdocs/mrp/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/multicurrency/class/api_multicurrencies.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/multicurrency/class/multicurrency.class.php' => ['PhanTypeExpectedObjectPropAccess'],
         'htdocs/opensurvey/results.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/partnership/class/partnership.class.php' => ['PhanUndeclaredProperty'],

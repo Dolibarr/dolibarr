@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Jessica Kowal        <jessicakowal69@gmail.com>
@@ -529,8 +529,8 @@ class Projects extends DolibarrApi
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
 	 * @return array
-	 * @phan-return Object[]
-	 * @phpstan-return Object[]
+	 * @phan-return string[]
+	 * @phpstan-return string[]
 	 *
 	 * @url	GET {id}/roles
 	 */
