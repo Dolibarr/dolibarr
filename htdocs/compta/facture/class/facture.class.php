@@ -275,7 +275,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var int|null Timestamp of last successful email send
 	 */
-	public ?int $date_sent = null;
+	public $date_sent = null;
 
 	/**
 	 * @var ?int 	Order mode. How we received the invoice request (by phone, by email, ...)

@@ -30,7 +30,7 @@
 class DateSentWriter
 {
 	/** @var DoliDB */
-	private DoliDB $db;
+	private $db;
 
 	/**
 	 * Map from CommonObject::$element to table name (without prefix).

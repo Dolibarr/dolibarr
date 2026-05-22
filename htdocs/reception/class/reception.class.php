@@ -190,7 +190,7 @@ class Reception extends CommonObject
 	/**
 	 * @var ?int Date the document was sent to the third party
 	 */
-	public ?int $date_sent = null;
+	public $date_sent = null;
 
 	/**
 	 * @var array<int,string>

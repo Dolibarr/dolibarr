@@ -200,7 +200,7 @@ class Propal extends CommonObject
 	/**
 	 * @var int|null Timestamp of last successful email send
 	 */
-	public ?int $date_sent = null;
+	public $date_sent = null;
 
 	/**
 	 * @var int ID of user author

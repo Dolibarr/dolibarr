@@ -288,7 +288,7 @@ class Commande extends CommonOrder
 	/**
 	 * @var int|null Timestamp of last successful email send
 	 */
-	public ?int $date_sent = null;
+	public $date_sent = null;
 
 	/**
 	 * @var array<int,float>	Array with lines of all shipments (qty)
