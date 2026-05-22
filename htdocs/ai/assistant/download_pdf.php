@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW	<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +136,7 @@ try {
 
 		// Sections (Invoices, Orders, etc)
 		foreach ($data['details'] as $section => $rows) {
-			$sectionTitle = dol_escape_htmltag(ucwords(str_replace('_', ' ', $section)));
+			$sectionTitle = dol_escape_htmltag(ucwords((string) str_replace('_', ' ', $section)));
 			$html .= '<h3>' . $sectionTitle . '</h3>';
 
 			if (empty($rows) || !is_array($rows)) {

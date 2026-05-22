@@ -469,7 +469,7 @@ if (!function_exists('ftp_connect')) {
 			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP') && !empty($conn_id)) {
 				if ($newsection == '/') {
 					//$newsection = '/./';
-					// @phpstan-suppress-next-line argument.type
+					// @phpstan-ignore-next-line argument.type
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 				}
 

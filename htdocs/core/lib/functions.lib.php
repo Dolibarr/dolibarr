@@ -2241,12 +2241,12 @@ function dolSlugify($stringtoslugify)
 }
 
 /**
- *  Returns text escaped for inclusion into javascript code
+ * Returns text escaped for inclusion into JavaScript code.
  *
- *  @param	int|string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \ .
- *  @param	int<0,1>	$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
- *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
+ * @param	int|string	$stringtoescape			String to escape
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and " with \\.
+ * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
@@ -4240,7 +4240,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 			$default_timezone = @date_default_timezone_get();
 		}
 	} elseif (strrpos($gm, "tz,") !== false) {
-		$timezone = str_replace("tz,", "", $gm); // Example 'tz,Europe/Berlin'
+		$timezone = (string) str_replace("tz,", "", $gm); // Example 'tz,Europe/Berlin'
 		try {
 			$localtz = new DateTimeZone($timezone);
 		} catch (Exception $e) {
@@ -4483,7 +4483,7 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	//$rep .= '</div>';
 	$rep = $newemail;
 	if (getDolGlobalString('MAIN_MAIL_COPY_ON_CLICK')) {
-		 $rep .= showValueWithClipboardCPButton($newemail, 0, 'none');
+		$rep .= showValueWithClipboardCPButton($newemail, 0, 'none');
 	}
 
 	if ($hookmanager) {
