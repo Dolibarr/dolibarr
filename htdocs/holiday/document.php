@@ -6,7 +6,7 @@
  * Copyright (C) 2005       Simon TOSSER				<simon@kornog-computing.com>
  * Copyright (C) 2011-2012  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013       Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2018-2025  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         	<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -38,13 +46,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holiday', 'companies'));
@@ -81,8 +82,6 @@ if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 }
 
 $object = new Holiday($db);
-
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

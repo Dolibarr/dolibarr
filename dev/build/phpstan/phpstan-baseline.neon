@@ -6367,12 +6367,6 @@ parameters:
 			path: ../../../htdocs/mrp/mo_production.php
 
 		-
-			message: '#^Parameter \#1 \$object of method MultiCurrencies\:\:_cleanObjectDatasRate\(\) expects MultiCurrency, CurrencyRate given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/multicurrency/class/api_multicurrencies.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 4
@@ -7109,12 +7103,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/card.php
-
-		-
-			message: '#^Method Projects\:\:getRoles\(\) should return array\<object\> but returns list\<string\>\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/projet/class/api_projects.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Project\) and ''getLibStatut'' will always evaluate to true\.$#'
