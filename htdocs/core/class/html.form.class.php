@@ -1553,16 +1553,14 @@ class Form
 	/**
 	 *  Generate HTML table rows for ticket linking.
 	 *
-	 *  This method creates custom table body rows specifically for ConferenceOrBoothAttendee objects.
-	 *  It displays Ref, Name, Email, Company, DateOfRegistration, and Project columns.
-	 *  Uses getNomUrl() for clickable links to attendee, company, and project records.
+	 *  Uses getNomUrl() for clickable links to ticket, company, and project records.
 	 *
 	 * @param 	CommonObject 			$object 			The source object we are linking from (e.g., propal, order)
 	 * @param 	string 					$key 				The element type key ('ticket')
 	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
 	 * @param 	int 					$num 				Number of records returned from the SQL query
 	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
-	 * @return  string 									HTML table rows for the attendee link selection table
+	 * @return  string 									HTML table rows for the ticket link selection table
 	 */
 	private function makeAddLinkToTicket($object, $key, $possiblelink, $num, $resqllist)
 	{
@@ -1607,8 +1605,8 @@ class Form
 				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
 			}
 			$htmltoenteralink .= '</td>';
-			$fetchattendee = $ticketstatic->fetch($objp->rowid);
-			if ($fetchattendee) {
+			$fetchticket = $ticketstatic->fetch($objp->rowid);
+			if ($fetchticket) {
 				$htmltoenteralink .= '<td>' . $ticketstatic->getNomUrl(0). '</td>';
 			} else {
 				$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
