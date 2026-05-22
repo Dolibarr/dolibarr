@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  */
 class ToolCategories extends McpTool
 {
-
 	/**
 	 * 	Constructor
 	 *
@@ -649,9 +649,10 @@ class ToolCategories extends McpTool
 			$path_parts[] = ["label" => $cat->label];
 			$full_path = implode(' > ', array_map(
 				/**
-				* @param array{label:string} $p
-				*/
-				function ($p) {
+				 * @param array{label:string} $p
+				 * @return string
+				 */
+				static function ($p) {
 					return $p['label'];
 				},
 				$path_parts

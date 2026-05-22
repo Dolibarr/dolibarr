@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
  */
 class ToolCrudObjects extends McpTool
 {
-
 	/**
 	 * 	Constructor
 	 *
@@ -384,7 +384,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   } Arguments including type, header data, and optional lines.
 	 *
 	 * @return array<string, mixed>
-	 *
 	 */
 	private function createDocument(array $args)
 	{
@@ -508,7 +507,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   } Line arguments.
 	 *
 	 * @return array<string, mixed>
-	 *
 	 */
 	private function processAddLine(CommonObject $object, array $args)
 	{
@@ -685,7 +683,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * @param array{object_type:string,parent_id:int,product_id?:int,description?:string,quantity?:float|int,unit_price?:float|int,vat_rate?:float|int} $args Tool arguments for adding a line item
 	 *
 	 * @return array{success:bool,line_id?:int,error?:string}
-	 *
 	 */
 	private function addLineItem(array $args)
 	{
@@ -921,7 +918,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * @param   int    $lineId Line RowID.
 	 * @param   int    $unitId Unit RowID.
 	 *
-	 * @return  void
+	 * @return  void			Only attempts to update the database, no result indication
 	 */
 	private function updateLineUnit(string $type, int $lineId, int $unitId): void
 	{

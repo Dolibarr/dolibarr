@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2023-2024 	Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ $PHPSTANLEVEL = 9;
 // PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";
 $PHAN_BASELINE = "{$path}phan/baseline_extended.txt";		// BASELINE is ignored if it does not exist
-$PHAN_MIN_PHP = "7.0";
+$PHAN_MIN_PHP = "7.2";  // Set to minimum target version, avoids PhanCompatibleNullableTypePHP70 for instance
 $PHAN_MEMORY_OPT = "--memory-limit 5G";
 
 if (!is_readable($PHAN_CONFIG)) {
