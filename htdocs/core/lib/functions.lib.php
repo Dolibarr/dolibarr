@@ -4483,8 +4483,8 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	//$rep .= '</div>';
 	$rep = $newemail;
 	if (getDolGlobalString('MAIN_MAIL_COPY_ON_CLICK')) {
-			     $rep.=showValueWithClipboardCPButton($newemail,0,'none');
-			} 
+		 $rep .= showValueWithClipboardCPButton($newemail, 0, 'none');
+	}
 
 	if ($hookmanager) {
 		$parameters = array('cid' => $contactid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
