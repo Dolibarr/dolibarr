@@ -31,9 +31,9 @@ UseDiscountOnTotal=On subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Margin on Best vendor price
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Cost price
 UnitCharges=Unit charges
 Charges=Charges

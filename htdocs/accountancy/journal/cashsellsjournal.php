@@ -34,14 +34,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -50,6 +42,15 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta", "bills", "other", "accountancy", "errors"));
@@ -189,7 +190,7 @@ if ($date_start && $date_end) {
 	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
 if (getDolGlobalInt('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
-	$sql .= " AND (f.module_source IS NULL OR f.module_source <> 'takepos')";
+	$sql .= " AND f.module_source = 'takepos'";
 }
 // Define begin binding date
 if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
@@ -917,7 +918,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		$param .= '&date_endmonth='.$date_endmonth;
 		$param .= '&date_endyear='.$date_endyear;
 		$param .= '&in_bookkeeping='.$in_bookkeeping;
-		header("Location: ".$_SERVER['PHP_SELF'].($param ? '?'.$param : ''));
+		header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
 		exit;
 	}
 }
@@ -1395,7 +1396,7 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					$accountoshow = length_accountg($k);
 					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("AccountingJournalType2").')</span>';
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("AccountingJournalType6").')</span>';
 					} else {
 						print $accountoshow;
 					}

@@ -1416,6 +1416,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		llxFooter();
 	}
 
+	// End PHP
 	exit(0);
 }
 
