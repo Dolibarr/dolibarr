@@ -1573,6 +1573,7 @@ class Propal extends CommonObject
 								}
 
 								$line->subprice = $pu_ht;
+								$line->pa_ht = $cost_price;
 								$line->tva_tx = $tva_tx;
 								$line->remise_percent = $remise_percent;
 							}
