@@ -1291,7 +1291,7 @@ class ActionComm extends CommonObject
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
 		if (!empty($this->fk_element)) {
-			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
+			$sql .= ", fk_element=".(int) $this->fk_element;
 		}
 		if (!empty($this->elementtype)) {
 			$sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
@@ -1306,7 +1306,7 @@ class ActionComm extends CommonObject
 			$sql .= ", status=".($this->status ? (int) $this->status : 0);
 		}
 		if (!empty($this->max_participants)) {
-			$sql .= ", max_participants=".($this->max_participants ? (int) $this->max_participants : "null");
+			$sql .= ", max_participants=".(int) $this->max_participants;
 		}
 		$sql .= " WHERE id=".((int) $this->id);
 
