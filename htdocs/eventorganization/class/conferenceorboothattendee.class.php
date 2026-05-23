@@ -777,9 +777,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  array<string>   $labelparts         Array of parts to build the visible label.
+	 *                                              Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
+	 *                                              If empty/null, defaults to $this->ref.
 	 *  @return	string                              String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $labelparts = null)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -883,7 +886,30 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			// Build the visible label from $labelparts array
+			$display_text = '';
+			if (!empty($labelparts) && is_array($labelparts)) {
+				foreach ($labelparts as $part) {
+					if (property_exists($this, $part)) {
+						$val = $this->$part;
+						// Format specific types
+						if ($part == 'date_subscription' && !empty($val)) {
+							$val = dol_print_date($val, 'dayhour');
+						} elseif ($part == 'amount' && !empty($val)) {
+							$val = price($val);
+						}
+						$display_text .= $val;
+					} else {
+						// Static string (separator, space, etc.)
+						$display_text .= $part;
+					}
+				}
+			}
+			// Fallback to ref if no parts provided or result is empty
+			if (empty($display_text)) {
+				$display_text = $this->ref;
+			}
+			$result .= dol_escape_htmltag($display_text);
 		}
 
 		$result .= $linkend;
@@ -891,7 +917,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('conferenceorboothattendeedao'));
-		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result, 'labelparts' => $labelparts);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -900,6 +926,84 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *  Return a string to display a field value (overridden to show Name and Chain for 'fk_replacement')
+	 *
+	 *  @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>,noteditable?:int,default?:int|string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,cssview?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int,required?:int,picto?:string}	$val	Array of properties of field to show
+	 *  @param  string  $key      Key of attribute
+	 *  @param  mixed   $value    Preselected value to show
+	 *  @param  string  $moreparam    To add more parameters on html tag
+	 *  @param  string  $keysuffix    Prefix string to add into name and id of field
+	 *  @param  string  $keyprefix    Suffix string to add into name and id of field
+	 *  @param  mixed   $morecss      Value for CSS to use
+	 *  @param  array<string>   $labelparts		Array of parts to build the visible label.
+	 *                                    		Can contain field names (e.g. 'firstname') or static strings (e.g. ' - ').
+	 *                                          If empty/null, defaults to $this->ref.
+	 *
+	 *  @return string
+	 */
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $labelparts = array('firstname', ' ', 'lastname', ' #', 'id'))
+	{
+		global $langs;
+
+		if ($key == 'fk_replacement') {
+			$html = '';
+
+			// 1. Get the reverse chain (people I replaced / who came before me)
+			$replacedByChain = $this->getReplacedByChain();
+
+			// 2. Get the forward chain (people who replaced me / who came after me)
+			$forwardChain = array();
+			if (!empty($value)) {
+				$replacement = new ConferenceOrBoothAttendee($this->db);
+				if ($replacement->fetch((int) $value) > 0) {
+					$forwardChain[] = $replacement;
+					$forwardChain = array_merge($forwardChain, $replacement->getReplacementChain());
+				} else {
+					$langs->loadLangs(array("eventorganization", "errors"));
+					$forwardChain[] = null; // Marker for broken link
+				}
+			}
+
+			// 3. If neither chain exists, show nothing
+			if (empty($replacedByChain) && empty($forwardChain)) {
+				return '';
+			}
+
+			// 4. Build the display: [Reversed Past] → Me → [Future]
+			// Reverse the backward chain so oldest is first
+			if (!empty($replacedByChain)) {
+				$reversedChain = array_reverse($replacedByChain);
+				foreach ($reversedChain as $person) {
+					if (!empty($html)) $html .= ' &rarr; ';
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $labelparts);
+				}
+			}
+
+			// Add "Me"
+			if (!empty($html)) $html .= ' &rarr; ';
+
+			$meLabel = $langs->transnoentitiesnoconv("This");
+			// Generate link: No picto, Rich Tooltip, Text = "Me"
+			$html .= $this->getNomUrl(0, '', 0, 'badge badge-primary', -1, array($meLabel));
+
+
+			// Add forward chain
+			foreach ($forwardChain as $person) {
+				$html .= ' &rarr; ';
+				if ($person !== null) {
+					$html .= $person->getNomUrl(1, '', 0, '', -1, $labelparts);
+				} else {
+					$html .= '<span class="opacitymedium">' . $langs->trans("ErrorRefNotFound", $langs->trans("ConferenceOrBoothAttendee")) . '</span>';
+				}
+			}
+
+			return $html;
+		}
+
+		return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
 	}
 
 	/**
@@ -943,10 +1047,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatus[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_REPLACED] = $langs->trans('Replaced');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_REPLACED] = $langs->trans('Replaced');
 		}
 
 		$labelStatus = $this->labelStatus[$status];
@@ -957,7 +1063,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$statusType = 'status2';
 		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
+			$statusType = 'status8';
+		}
+		if ($status == self::STATUS_REPLACED) {
+			$statusType = 'status1';
 		}
 
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
