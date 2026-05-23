@@ -84,12 +84,16 @@ class Products extends DolibarrApi
 	 * @param  bool   $includetrans		   Load also the translations of product label and description
 	 * @return array|mixed                 Data without useless information
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
 	public function get($id, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No Product with id<1 can exist');
+		}
 		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
@@ -389,11 +393,16 @@ class Products extends DolibarrApi
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
 	public function put($id, $request_data = null)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No Product with id<1 can exist');
+		}
+
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'creer')) {
 			throw new RestException(403);
 		}
@@ -553,10 +562,17 @@ class Products extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @throws RestException
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500 System error
 	 */
 	public function delete($id)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No Product with id<1 can exist');
+		}
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'supprimer')) {
 			throw new RestException(403);
 		}
