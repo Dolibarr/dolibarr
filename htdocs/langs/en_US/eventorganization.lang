@@ -91,6 +91,12 @@ EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
 EvntOrgCancelled = Canceled
+# Agenda
+AttendeeReplacedBy=Attendee %s replaced by %s
+AttendeeBecameReplacementFor=Attendee %s became replacement for %s
+AttendeeReplacementSourceReset=Undid replacement for %s
+AttendeeReplacementTargetReset=%s is no longer a replacement attendee
+ExistingAttendeeReplacementTarget=Warning: %s original replacement %s was changed to %s
 # Other
 SuggestForm = Suggestion page
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
