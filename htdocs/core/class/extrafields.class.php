@@ -1931,7 +1931,7 @@ class ExtraFields
 						}
 					}
 
-					$InfoFieldList[5] = (string) $InfoFieldList[5] ?? '';
+					$InfoFieldList[5] = (string) $InfoFieldList[5];
 
 					$filter_categorie = false;
 					if (count($InfoFieldList) > 5 && ($InfoFieldList[5] != '')) {
