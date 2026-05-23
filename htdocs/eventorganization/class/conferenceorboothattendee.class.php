@@ -770,6 +770,159 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
+	 *	replace "me" with another ConferenceOrBoothAttendee + reset any existing replacement
+	 *
+	 *	@param	User	$user						User that modify
+	 *	@param	ConferenceOrBoothAttendee|null	$fk_replacement		The event attendee that replaces "me". If NULL, this function will UNDO the current replacement (clear link, reset to STATUS_VALIDATED original and STATUS_DRAFT on any currently $this->fk_replacement attendee)
+	 *	@param	int		$status_fk_replacement		The new status of fk_replacement, default is STATUS_VALIDATED
+	 *	@param	int		$status_source				The new status of "me", default is STATUS_REPLACED
+	 *	@param	int		$notrigger					1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$force_fk_replacement		0 (default) do not overwrite fk_replacement if it has a sane value, 1  overwrite fk_replacement regardless of the existing value of fk_replacement
+	 *
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function replaceMeWithAttendee($user, $fk_replacement, $status_fk_replacement = self::STATUS_VALIDATED, $status_source = self::STATUS_REPLACED, $notrigger = 0, $force_fk_replacement = 0)
+	{
+		global $langs;
+		// Protection
+		if (!is_null($fk_replacement) && isset($this->fk_replacement) && $this->fk_replacement == $fk_replacement->id) {
+			// User selected the SAME replacement that is already set
+			$this->error = "No change made: The replacement is already set to this attendee.";
+			return 0; // Return 0 (Nothing done) instead of error
+		}
+		if (!is_null($fk_replacement)) {
+			$allowed_statuses = array(self::STATUS_VALIDATED, self::STATUS_DRAFT);
+			if (!$force_fk_replacement && !in_array($this->status, $allowed_statuses)) {
+				$allowed_labels = array_map(function (int $s) {
+					return $this->LibStatut($s);
+				}, $allowed_statuses);
+				$error_text = 'Can not replace eventattendee=' . $this->id . '. Current status=' . $this->LibStatut($this->status) . ' is not allowed (must be ' . implode(' or ', $allowed_labels) . ')';
+				dol_syslog($error_text, LOG_ERR);
+				$this->error = $error_text;
+				return -1;
+			}
+		}
+		if (!is_null($fk_replacement) && $fk_replacement->id == $this->id) {
+			$error_text = 'Can not replace an attendee with itself';
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -2;
+		}
+		if (!in_array($status_fk_replacement, $this->list_possible_status)) {
+			$error_text = 'Invalid status_fk_replacement='.$status_fk_replacement;
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -3;
+		}
+		if (!in_array($status_source, $this->list_possible_status)) {
+			$error_text = 'Invalid status_source='.$status_source;
+			dol_syslog($error_text, LOG_ERR);
+			$this->error = $error_text;
+			return -4;
+		}
+		if (!$force_fk_replacement && !empty($this->fk_replacement) && !is_null($fk_replacement) && $this->fk_replacement != $fk_replacement->id) {
+			$error_text = 'Attendee ' . $this->id . ' already has a replacement (ID: ' . $this->fk_replacement . '). Use force_fk_replacement=1 to override.';
+			dol_syslog($error_text, LOG_WARNING);
+			$this->error = $error_text;
+			return -5;
+		}
+		if (is_null($fk_replacement) && empty($this->fk_replacement)) {
+			$this->error = "No replacement to undo.";
+			return -6;
+		}
+		if (is_null($fk_replacement) && $this->fk_replacement > 0) {
+			$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
+			$oldFetch = $oldReplacementAttendee->fetch($this->fk_replacement);
+			if ($oldFetch > 0) {
+				if (!empty($oldReplacementAttendee->fk_replacement)) {
+					$error_text = 'Cannot undo replacement for attendee ' . $this->id . '. The current replacement (ID: ' . $oldReplacementAttendee->id . ') is itself replaced by attendee (ID: ' . $oldReplacementAttendee->fk_replacement . '). Please undo the replacement for attendee ' . $oldReplacementAttendee->id . ' first.';
+					dol_syslog($error_text, LOG_WARNING);
+					$this->error = $error_text;
+					return -7;
+				}
+			} elseif ($oldFetch < 0) {
+				$this->error = "Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error;
+				return -8;
+			}
+		}
+
+		$this->db->begin();
+		try {
+			$oldReplacementAttendee = null;
+			// Original
+			if (is_null($fk_replacement)) {
+				$any_old_fk_replacement = $this->fk_replacement;
+				if ($any_old_fk_replacement > 0) {
+					$oldReplacementAttendee = new ConferenceOrBoothAttendee($this->db);
+					$oldFetch = $oldReplacementAttendee->fetch($any_old_fk_replacement);
+					if ($oldFetch > 0) {
+						if (!empty($oldReplacementAttendee->fk_replacement)) {
+							throw new Exception("Race condition: The replacement (ID: " . $oldReplacementAttendee->id . ") has been replaced by another attendee since the check.");
+						}
+
+						$oldReplacementAttendee->status = self::STATUS_DRAFT;
+						$oldStatusDraft = $oldReplacementAttendee->update($user, 1);
+						if ($oldStatusDraft < 0) {
+							throw new Exception("Update oldReplacementAttendee=" . $any_old_fk_replacement . " failed: " . $oldReplacementAttendee->error);
+						}
+					} else {
+						throw new Exception("Fetch oldReplacementAttendee failed: " . $oldReplacementAttendee->error);
+					}
+				}
+				$this->fk_replacement = 0;
+				$this->status = self::STATUS_VALIDATED;
+			} else {
+				$this->fk_replacement = $fk_replacement->id;
+				$this->status = $status_source;
+			}
+			$originalReplace = $this->update($user, 1); // we do our own trigger
+			if ($originalReplace < 0) {
+				throw new Exception("Update original attendee=".$this->id." failed: " . $this->error);
+			}
+
+			// call triggers
+			if (!$notrigger) {
+				if (is_null($fk_replacement)) {
+					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET', $user);
+					if ($result < 0) {
+						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET failed: " . $this->error);
+					}
+
+					if ($oldReplacementAttendee !== null) {
+						$oldReplacementAttendee->context['source_name'] = $this->getFullName($langs);
+						$oldUpdateResult = $oldReplacementAttendee->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET', $user);
+						if ($oldUpdateResult < 0) {
+							throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET failed: " . $oldReplacementAttendee->error);
+						}
+					}
+				} else {
+					$this->context['replacement_name'] = $fk_replacement->getFullName($langs);
+					$result = $this->call_trigger('CONFERENCEORBOOTHATTENDEE_REPLACED_SRC', $user);
+					if ($result < 0) {
+						throw new Exception("Trigger CONFERENCEORBOOTHATTENDEE_REPLACED_SRC failed: " . $this->error);
+					}
+					$fk_replacement->context['source_name'] = $this->getFullName($langs);
+					$replacementStatus = $fk_replacement->setStatusCommon($user, $status_fk_replacement, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REPLACED_TGT');
+					if ($replacementStatus < 0) {
+						throw new Exception("Update replacement status failed: " . $fk_replacement->error);
+					}
+				}
+			}
+
+			$this->db->commit();
+			return 1;
+		} catch (Exception $e) {
+			// 5. Rollback
+			// If we are here, the transaction is likely already rolled back
+			// if update() threw an exception that caused a DB error.
+			// But to be safe, we call rollback.
+			$this->db->rollback();
+			$this->error = $e->getMessage();
+			return -1;
+		}
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
