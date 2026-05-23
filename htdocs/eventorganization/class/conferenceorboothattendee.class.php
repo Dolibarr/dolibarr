@@ -903,6 +903,87 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
+	 *  Get the full replacement chain starting from this attendee.
+	 *  Traverses FORWARD: Finds who replaced this attendee, then who replaced them, etc.
+	 *  Example: If Alice (1) was replaced by Camilla (5), who was replaced by Sarah (2).
+	 *  Calling $alice->getReplacementChain() returns [Camilla, Sarah].
+	 *
+	 *  @return array<ConferenceOrBoothAttendee>   Array of ConferenceOrBoothAttendee objects
+	 */
+	public function getReplacementChain()
+	{
+		$chain = array();
+		$currentObj = $this;
+		$visitedIds = array($this->id);
+
+		// Traverse forward: Follow fk_replacement links
+		while (!empty($currentObj->fk_replacement)) {
+			// Loop protection
+			if (in_array($currentObj->fk_replacement, $visitedIds)) {
+				dol_syslog("Circular replacement loop detected at ID " . $currentObj->fk_replacement, LOG_WARNING);
+				break;
+			}
+			$visitedIds[] = $currentObj->fk_replacement;
+
+			// Fetch the next person
+			$nextObj = new ConferenceOrBoothAttendee($this->db);
+			if ($nextObj->fetch((int) $currentObj->fk_replacement) > 0) {
+				$chain[] = $nextObj;
+				$currentObj = $nextObj;
+			} else {
+				break;
+			}
+		}
+
+		return $chain;
+	}
+
+	/**
+	 *  Get the chain of people I replaced (Backward traversal).
+	 *  Example: If Sarah replaced Camilla, who replaced Alice.
+	 *  Calling $sarah->getReplacedChain() returns [Camilla, Alice].
+	 *
+	 *  @return array<ConferenceOrBoothAttendee>   Array of ConferenceOrBoothAttendee objects
+	 */
+	public function getReplacedByChain()
+	{
+		$chain = array();
+		$currentObj = $this;
+		$visitedIds = array($this->id);
+
+		// Traverse backward: Find who has fk_replacement = MY_ID
+		while (true) {
+			// Find the record where fk_replacement = currentObj->id
+			$sql = "SELECT rowid FROM " . $this->db->prefix() . "eventorganization_conferenceorboothattendee";
+			$sql .= " WHERE fk_replacement = " . ((int) $currentObj->id);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) break;
+
+			$obj = $this->db->fetch_object($resql);
+			if (!$obj) break; // No one replaced this person
+
+			// Loop protection
+			if (in_array($obj->rowid, $visitedIds)) {
+				dol_syslog("Circular loop detected in replaced chain at ID " . $obj->rowid, LOG_WARNING);
+				break;
+			}
+			$visitedIds[] = $obj->rowid;
+
+			// Fetch the person who replaced the current one
+			$replacer = new ConferenceOrBoothAttendee($this->db);
+			if ($replacer->fetch($obj->rowid) > 0) {
+				$chain[] = $replacer;
+				$currentObj = $replacer; // Move backward
+			} else {
+				break;
+			}
+		}
+
+		return $chain;
+	}
+
+	/**
 	 *  Return the label of the status
 	 *
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
