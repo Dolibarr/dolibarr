@@ -2366,7 +2366,9 @@ class Product extends CommonObject
 	 *  Get all price change logs for a product, enriched with supplier info
 	 *
 	 *  @param  int     $id         Id of the product
-	 *  @return array               Array of log objects with supplier info
+	 *  @return array<int, stdClass> Array of log objects with supplier info
+	 *  @phan-return array<int, stdClass>
+	 *  @phpstan-return array<int, stdClass>
 	 */
 	public function fetchAllPriceLogs($id)
 	{

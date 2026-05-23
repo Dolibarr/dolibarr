@@ -1166,7 +1166,9 @@ class Products extends DolibarrApi
 	 *	@param	string	$ref		Ref of element
 	 *	@param	string	$ref_ext	Ref ext of element
 	 *	@param	string	$barcode	Barcode of element
-	 *	@return	array				Array of price logs
+	 *	@return	array<int, stdClass> Array of price logs
+	 *	@phan-return array<int, stdClass>
+	 *	@phpstan-return array<int, stdClass>
 	 *
 	 *	@url GET {id}/purchase_prices/logs
 	 *
