@@ -820,7 +820,7 @@ class Interventions extends DolibarrApi
 			$objectline->desc = sanitizeVal($request_data->desc ?? $request_data->description, 'restricthtml');
 		}
 		if (isset($request_data->date)) {
-			$objectline->date = sanitizeVal($request_data->date);
+			$objectline->date = (int) sanitizeVal($request_data->date);
 		}
 		if (isset($request_data->duration)) {
 			$objectline->duration = (int) sanitizeVal($request_data->duration);
