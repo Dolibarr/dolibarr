@@ -326,8 +326,8 @@ foreach ($output_arrglpu as $valgitlog) {		// The most recent lines are first.
 			}
 
 			$arrayofalerts[$tmpval['commitid']] = $tmpval;
-		} elseif (array_key_exists($alreadyfoundcommitid, $arrayofalerts)) { // Test for static analysis
-			if (!array_key_exists('commitidbis', $arrayofalerts[$alreadyfoundcommitid])) {
+		} else { // Test for static analysis
+			if (!array_key_exists($alreadyfoundcommitid, $arrayofalerts) || !array_key_exists('commitidbis', $arrayofalerts[$alreadyfoundcommitid])) {
 				$arrayofalerts[$alreadyfoundcommitid]['commitidbis'] = array();
 			}
 
