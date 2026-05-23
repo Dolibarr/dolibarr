@@ -86,6 +86,14 @@ if (isModEnabled('bom')) {
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
+if (isModEnabled('project')) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	$project_static = new Project($db);
+} else {
+	$project_static = null;
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'other'));
@@ -123,6 +131,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOSTINT('socid');
 $duration_value = GETPOST('duration_value') === '' ? null : GETPOSTINT('duration_value');	// duration value can be an empty string
 $duration_unit = GETPOST('duration_unit', 'alpha');
+$fk_project = GETPOSTINT('fk_project');
 
 $accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 $accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -454,6 +463,12 @@ if (empty($reshook)) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
+	// Project
+	if ($action == 'classin' && $usercancreate) {
+		$object->setProject($fk_project);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit();
+	}
 
 	// Actions to build doc
 	$upload_dir = $conf->product->dir_output;
@@ -607,6 +622,10 @@ if (empty($reshook)) {
 			$object->localtax2_tx = $localtax2;
 			$object->localtax1_type = $localtax1_type;
 			$object->localtax2_type = $localtax2_type;
+
+			if ($fk_project) {
+				$object->fk_project = $fk_project;
+			}
 
 			$object->type = $type;
 			$object->status = GETPOSTINT('statut');
@@ -826,6 +845,10 @@ if (empty($reshook)) {
 				*/
 				$object->duration_value = $duration_value;
 				$object->duration_unit = $duration_unit;
+
+				if ($fk_project) {
+					$object->fk_project = $fk_project;
+				}
 
 				$object->canvas = GETPOST('canvas');
 				$object->net_measure = GETPOST('net_measure');
@@ -1364,6 +1387,11 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+} else {
+	$formproject = null;
+}
 $formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -1682,6 +1710,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 					print '<input name="desiredstock" type="hidden" value="0">';
 				}
+			}
+
+			// Project - action = create
+			if (isModEnabled('project')) {
+				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
+				print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print '</td></tr>';
 			}
 
 			if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
@@ -2311,6 +2346,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					*/
 				}
 
+				// Project - action = edit
+				if (isModEnabled('project')) {
+					print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
+					print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $object->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+					print '</td></tr>';
+				}
+
 				if ($object->isService() && isModEnabled('workstation')) {
 					// Default workstation
 					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
@@ -2625,6 +2667,30 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, (int) $usercancreate, $typeformat) : $langs->trans('Type');
 					print '</td><td>';
 					print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+					print '</td></tr>';
+				}
+
+				// Project - action is either view or edit_fk_project
+				if (isModEnabled("project")) {
+					$langs->load("projects");
+					print '<tr><td class="titlefieldmiddle">';
+					print $form->editfieldkey($langs->trans('Project'), 'fk_project', (string) $object->fk_project, $object, (int) $usercancreate);
+					print '</td><td>';
+					if ($action == 'editfk_project') {
+						print $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, 'fk_project', 0, 0, 0, 1, '', 'maxwidth300');
+					} else {
+						if (!empty($object->fk_project)) {
+							$project_static_result = $project_static->fetch($object->fk_project);
+							if ($project_static_result > 0 && $project_static->id > 0) {
+								print $project_static->getNomUrl(1);
+								if ($project_static->title) {
+									print '<span class="opacitymedium"> - '.dol_escape_htmltag($project_static->title).'</span>';
+								}
+							} else {
+								print (int) $object->fk_project;
+							}
+						}
+					}
 					print '</td></tr>';
 				}
 

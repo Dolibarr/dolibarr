@@ -62,6 +62,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+}
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -122,6 +127,9 @@ $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_expor
 $search_import_key = GETPOST("search_import_key", 'alpha');
 $search_finished = GETPOST("search_finished");
 $search_units = GETPOST('search_units', 'int');
+$search_fk_project = GETPOST('search_fk_project', 'alpha');
+$fk_project  = GETPOSTINT('fk_project');
+
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
@@ -187,7 +195,11 @@ if ((string) $type == '0') {
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new Product($db);
-$hookmanager->initHooks(array('productservicelist'));
+if ($fk_project > 0) {
+	$hookmanager->initHooks(array('projectlist', 'globalcard'));
+} else {
+	$hookmanager->initHooks(array('productservicelist'));
+}
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formproduct = new FormProduct($db);
@@ -296,6 +308,7 @@ $arrayfields = array(
 	'p.stock' => array('label' => "PhysicalStock", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 52),
 	'stock_virtual' => array('label' => "VirtualStock", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $virtualdiffersfromphysical), 'position' => 53),
 	'p.tobatch' => array('label' => "ManageLotSerial", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('productbatch')), 'position' => 60),
+	'p.fk_project' => array('label' => "fk_project", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('project')), 'position' => 64),
 	'p.fk_country' => array('label' => "Country", 'checked' => '0', 'position' => 100),
 	'p.fk_state' => array('label' => "State", 'checked' => '0', 'position' => 101),
 	$alias_product_perentity . '.accountancy_code_sell' => array('label' => "ProductAccountancySellCode", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 400),
@@ -384,6 +397,9 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 $parameters = array('arrayfields' => &$arrayfields);
+if ($fk_project > 0) {
+	$parameters['fk_project'] = $fk_project;
+}
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -447,6 +463,7 @@ if (empty($reshook)) {
 		$search_accountancy_code_buy_export = '';
 		$search_array_options = array();
 		$search_units = '';
+		$search_fk_project = '';
 	}
 
 	// Mass actions
@@ -488,7 +505,6 @@ if (empty($reshook)) {
 	}
 }
 
-
 /*
  * View
  */
@@ -497,6 +513,10 @@ $product_static = new Product($db);
 $workstation_static = null;
 if (isModEnabled('workstation')) {
 	$workstation_static = new Workstation($db);
+}
+$project_static = null;
+if (isModEnabled('project')) {
+	$project_static = new Project($db);
 }
 $product_fourn = new ProductFournisseur($db);
 
@@ -517,6 +537,9 @@ $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_
 $sql .= ' p.tobatch, ';
 if (isModEnabled('workstation')) {
 	$sql .= ' p.fk_default_workstation, ws.status as status_workstation, ws.ref as ref_workstation, ';
+}
+if (isModEnabled('project')) {
+	$sql .= ' p.fk_project, proj.title as project_title, proj.ref as project_ref, ';
 }
 if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -553,6 +576,10 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (isModEnabled('workstation')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation as ws ON (p.fk_default_workstation = ws.rowid)";
+}
+// Maybe small performance to be gained if LEFT JOIN's are only done when the field is actually enabled?
+if (isModEnabled('project')) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "projet as proj ON (p.fk_project = proj.rowid)";
 }
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
@@ -609,6 +636,10 @@ if (isModEnabled('variants') && !$show_childproducts) {
 	$sql .= " AND pac.rowid IS NULL";
 }
 
+if ($fk_project > 0 && isModEnabled('project')) {
+	$sql .= " AND p.fk_project = ".((int) $fk_project);
+}
+
 if ($search_id) {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
@@ -627,6 +658,9 @@ if ($search_label) {
 }
 if ($search_default_workstation) {
 	$sql .= natural_search('ws.ref', $search_default_workstation);
+}
+if ($search_fk_project) {
+	$sql .= natural_search(array("proj.ref","proj.title"), $search_fk_project);
 }
 if ($search_barcode) {
 	$sql .= natural_search('p.barcode', $search_barcode);
@@ -803,6 +837,81 @@ foreach ($searchCategoryProductList as $searchCategoryProduct) {
 //llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'classforhorizontalscrolloftabs');
 llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'bodyforlist mod-product page-list');
 
+if ($fk_project > 0) {
+	if ($project_static->fetch($fk_project) > 0) {
+		$project_static->fetch_thirdparty();
+
+		$savobject = $object;
+		$object = $project_static;
+
+		// To verify role of users
+		//$userAccess = $object->restrictedProjectArea($user,'read');
+		$userWrite = $project_static->restrictedProjectArea($user, 'write');
+		//$userDelete = $object->restrictedProjectArea($user,'delete');
+		//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+
+		'@phan-var-force Project $project_static';
+		$head = project_prepare_head($project_static);
+		if ($type == 0) {
+			print dol_get_fiche_head($head, 'product', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+		} elseif ($type == 1) {
+			print dol_get_fiche_head($head, 'service', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+		} else {
+			print dol_get_fiche_head($head, '', $langs->trans("Project"), -1, ($project_static->public ? 'projectpub' : 'project'));
+			dol_syslog("product/list.php::unknown type=".$type, LOG_ERR);
+		}
+
+		// Project card
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+		$morehtmlref = '<div class="refidno">';
+		// Title
+		$morehtmlref .= $project_static->title;
+		// Thirdparty
+		if (!empty($project_static->thirdparty->id) && $project_static->thirdparty->id > 0) {
+			$morehtmlref .= '<br>'.$project_static->thirdparty->getNomUrl(1, 'project');
+		}
+		$morehtmlref .= '</div>';
+
+		// Define a complementary filter for search of next/prev ref.
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$objectsListId = $project_static->getProjectsAuthorizedForUser($user, 0, 0);
+			$project_static->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
+		}
+
+		'@phan-var-force CommonObject $project_static';
+		dol_banner_tab($project_static, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+		print '<div class="fichecenter">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield centpercent">';
+
+		// Visibility
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+		if ($project_static->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans('SharedProject');
+		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans('PrivateProject');
+		}
+		print '</td></tr>';
+
+		print "</table>";
+
+		print '</div>';
+		print dol_get_fiche_end();
+
+		print '<br>';
+
+		$object = $savobject;
+	} else {
+		print "ErrorRecordNotFound";
+	}
+}
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Displays product removal confirmation
@@ -955,6 +1064,9 @@ if ($search_date_modif_endday) {
 if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
+if ($search_fk_project) {
+	$param .= "&search_fk_project=".urlencode($search_fk_project);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -1015,11 +1127,11 @@ if ($type === "") {
 $newcardbutton .= dolGetButtonTitleSeparator();
 if ((isModEnabled('product') && $type === "") || $type == Product::TYPE_PRODUCT) {
 	$label = 'NewProduct';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', (int) $perm, $params);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0'.($fk_project ? '&origin=projet_project&originid='.$fk_project : ''), '', (int) $perm, $params);
 }
 if ((isModEnabled('service') && $type === "") || $type == Product::TYPE_SERVICE) {
 	$label = 'NewService';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', (int) $perm, $params);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1'.($fk_project ? '&origin=projet_project&originid='.$fk_project : ''), '', (int) $perm, $params);
 }
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
@@ -1038,6 +1150,9 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 if (empty($arrayfields['p.fk_product_type']['checked'])) {
 	print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
+}
+if ($fk_project) {
+	print '<input type="hidden" name="fk_project" value="'.$fk_project.'" >';
 }
 
 $picto = 'product';
@@ -1257,6 +1372,13 @@ if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 	print '</td>';
 }
 
+// Project
+if (!empty($arrayfields['p.fk_project']['checked'])) {
+	print '<td class="liste_titre left">';
+	print '<input class="flat width75" type="text" name="search_fk_project" value="'.dol_escape_htmltag($search_fk_project).'">';
+	print '</td>';
+}
+
 // Sell price
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print '<td class="liste_titre right">';
@@ -1372,6 +1494,7 @@ if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra'
 if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy_export" value="'.dol_escape_htmltag($search_accountancy_code_buy_export).'"></td>';
 }
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
@@ -1538,6 +1661,10 @@ if (!empty($arrayfields['cu.label']['checked'])) {
 }
 if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_default_workstation']['label'], $_SERVER['PHP_SELF'], 'ws.ref', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.fk_project']['checked'])) {
+	print_liste_field_titre($arrayfields['p.fk_project']['label'], $_SERVER["PHP_SELF"], "p.fk_project", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.sellprice']['checked'])) {
@@ -1733,6 +1860,7 @@ while ($i < $imaxinloop) {
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
 		$product_static->stockable_product = $obj->stockable_product;
+		$product_static->fk_project = $obj->fk_project;
 		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
@@ -2093,6 +2221,23 @@ while ($i < $imaxinloop) {
 				$workstation_static->status = $obj->status_workstation;
 
 				print $workstation_static->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Project
+		if (!empty($arrayfields['p.fk_project']['checked'])) {
+			print '<td>';
+			if (isModEnabled('project') && !empty($obj->fk_project) && $project_static !== null) {
+				$project_static_result = $project_static->fetch($obj->fk_project);
+				if ($project_static_result > 0 && $project_static->id > 0) {
+					print $project_static->getNomUrl(1);
+				} else {
+					print (int) $obj->fk_project;
+				}
 			}
 			print '</td>';
 			if (!$i) {

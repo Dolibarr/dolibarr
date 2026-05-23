@@ -882,7 +882,7 @@ class Product extends CommonObject
 		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_user.rowid'),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511, 'foreignkey' => 'llx_user.rowid'),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'localtax1_tx' => array('type' => 'double(6,3)', 'label' => 'Localtax1tx', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1,),
 		'localtax1_type' => array('type' => 'varchar(10)', 'label' => 'Localtax1type', 'enabled' => 1, 'position' => 155, 'notnull' => 1, 'visible' => -1,),
@@ -892,6 +892,7 @@ class Product extends CommonObject
 		'import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+		'fk_project' 	=> array('type' => 'integer:Project:projet/class/project.class.php', 'label' => 'fk_project', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 520, 'foreignkey' => 'llx_projet.rowid'),
 		'mandatory_period' => array('type' => 'integer', 'label' => 'mandatoryperiod', 'enabled' => 1, 'visible' => -1,  'notnull' => 1, 'default' => '0', 'index' => 1,  'position' => 1000),
 		'stockable_product'	=> array('type' => 'integer', 'label' => 'stockable_product', 'enabled' => 1, 'visible' => 1, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 502),
 	);
@@ -1638,6 +1639,7 @@ class Product extends CommonObject
 			$sql .= ", cost_price = ".($this->cost_price != '' ? ((float) $this->cost_price) : 'null');
 			$sql .= ", fk_unit= ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
+			$sql .= ", fk_project= ".(!$this->fk_project ? 'NULL' : (int) $this->fk_project);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? (int) $user->id : 'NULL');
 			$sql .= ", mandatory_period = ".((int) $this->mandatory_period);
@@ -2968,7 +2970,7 @@ class Product extends CommonObject
 		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
-		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.last_main_doc,";
+		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.last_main_doc, p.fk_project,";
 		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period, p.packaging,";
 		if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
@@ -3102,6 +3104,7 @@ class Product extends CommonObject
 
 				$this->finished = $obj->finished;
 				$this->fk_default_bom = $obj->fk_default_bom;
+				$this->fk_project = $obj->fk_project;
 
 				$this->duration = $obj->duration;
 				$matches = [];
@@ -5677,6 +5680,36 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 * Count items linked to an object id in association table
+	 *
+	 * @param	int			$fk_object_where		id of object we need to get linked items
+	 * @param	string		$field_where			name of field of object we need to get linked items
+	 * @param	string		$table_element			name of association table
+	 * @param	int|null	$fk_product_type		Optional fk_product_type: 0=Products, 1=Services, default is null and that will return all kinds
+	 * @return 	int									nb of record, -1 if empty
+	 */
+	public function getCountOfItemsLinkedByProjectID($fk_object_where, $field_where, $table_element, $fk_product_type = null)
+	{
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
+
+		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix().$this->db->sanitize($table_element)." WHERE ".$this->db->sanitize($field_where)." = ".((int) $fk_object_where);
+		if (!is_null($fk_product_type)) {
+			$sql .= " AND fk_product_type = ".((int) $fk_product_type);
+		}
+		$resql = $this->db->query($sql);
+		$n = 0;
+		if ($resql) {
+			$res = $this->db->fetch_object($resql);
+			if ($res) {
+				$n = $res->nb;
+			}
+		}
+
+		return $n;
+	}
 
 	/**
 	 *  Return children of product $id

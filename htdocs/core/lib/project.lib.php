@@ -216,6 +216,68 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
+	if (isModEnabled('product') && $user->hasRight('product', 'read')) {
+		$langs->load('products');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/list.php', ['fk_project' => $project->id, 'type' => 0]);
+		$head[$h][1] = $langs->trans("Products");
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$productstatic = new Product($db);
+
+		// Enable caching of Product count
+		$nbProduct = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_product_'.$project->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbProduct = $dataretrieved;
+		} else {
+			$nbProduct = $productstatic->getCountOfItemsLinkedByProjectID($project->id, 'fk_project', 'product', 0);
+			if ($nbProduct < 0) {
+				setEventMessages($productstatic->error, $productstatic->errors, 'errors');
+			} else {
+				dol_setcache($cachekey, $nbProduct, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+			}
+		}
+		if ($nbProduct > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Products")).'">'.$nbProduct.'</span>';
+		}
+		$head[$h][2] = 'product';
+		$h++;
+	}
+
+	if (isModEnabled('service') && $user->hasRight('service', 'read')) {
+		$langs->load('products');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/list.php', ['fk_project' => $project->id, 'type' => 1]);
+		$head[$h][1] = $langs->trans("Services");
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$productstatic = new Product($db);
+		// Enable caching of Service count
+		$nbService = 0;
+		$cachekey = 'count_services_'.$project->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbService = $dataretrieved;
+		} else {
+			$nbService = $productstatic->getCountOfItemsLinkedByProjectID($project->id, 'fk_project', 'product', 1);
+			if ($nbService < 0) {
+				setEventMessages($productstatic->error, $productstatic->errors, 'errors');
+			} else {
+				dol_setcache($cachekey, $nbService, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+			}
+		}
+
+		if ($nbService > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
+			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Services")).'">'.$nbService.'</span>';
+			$head[$h][1] .= '</span>';
+		}
+		$head[$h][2] = 'service';
+		$h++;
+	}
+
 	if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$Tickettatic = new Ticket($db);
