@@ -404,26 +404,26 @@ if (!empty($project_ref) && !empty($withproject)) {
 // To show all time lines for project
 $projectidforalltimes = 0;
 if (GETPOSTINT('projectid') > 0) {
-    $projectidforalltimes = GETPOSTINT('projectid');
-    $result = $projectstatic->fetch($projectidforalltimes);
+	$projectidforalltimes = GETPOSTINT('projectid');
+	$result = $projectstatic->fetch($projectidforalltimes);
 } elseif (GETPOST('project_ref', 'alpha')) {
-    $projectstatic->fetch(0, GETPOST('project_ref', 'alpha'));
-    $projectidforalltimes = $projectstatic->id;
-    $withproject = 1;
+	$projectstatic->fetch(0, GETPOST('project_ref', 'alpha'));
+	$projectidforalltimes = $projectstatic->id;
+	$withproject = 1;
 } elseif ($id > 0) {
-    // Fetch task first to get the project ID
-    if ($object->fetch($id) > 0) {
-        // Fetch the project associated with the task
-        if ($projectstatic->fetch($object->fk_project) > 0) {
-            $projectidforalltimes = $projectstatic->id;
-        }
-    }
+	// Fetch task first to get the project ID
+	if ($object->fetch($id) > 0) {
+		// Fetch the project associated with the task
+		if ($projectstatic->fetch($object->fk_project) > 0) {
+			$projectidforalltimes = $projectstatic->id;
+		}
+	}
 }
 if ($projectidforalltimes > 0) {
-    if (!empty($projectstatic->socid)) {
-        $projectstatic->fetch_thirdparty();
-    }
-    $res = $projectstatic->fetch_optionals();
+	if (!empty($projectstatic->socid)) {
+		$projectstatic->fetch_thirdparty();
+	}
+	$res = $projectstatic->fetch_optionals();
 }
 
 // If not task selected and no project selected
