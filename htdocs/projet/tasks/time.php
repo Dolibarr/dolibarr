@@ -1663,7 +1663,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $user->socid > 0 ? $user->socid : 0, $filterproj);
 			$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 		}
-		if (empty($projectidforalltimes) && empty($allprojectforuser)) {
+		if (!empty($id)) {
 			// Limit on one task
 			$sql .= " AND t.fk_element =".((int) $object->id);
 		} elseif (!empty($projectidforalltimes)) {
