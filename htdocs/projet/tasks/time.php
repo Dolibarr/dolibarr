@@ -1464,6 +1464,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print '<input type="hidden" name="tab" value="' . $tab . '">';
 		print '<input type="hidden" name="page_y" value="">';
 
+		// Preserve task ID across search submissions
+		if (!empty($id)) {
+			print '<input type="hidden" name="id" value="' . ((int) $id) . '">';
+		}
+
 		// Form to convert time spent into invoice
 		if ($massaction == 'generateinvoice') {
 			if (!empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0) {
