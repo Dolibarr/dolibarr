@@ -99,10 +99,10 @@ $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_user = GETPOST('search_user', 'intcomma');
 $search_valuebilled = GETPOST('search_valuebilled', 'intcomma');
 $search_product_ref = GETPOST('search_product_ref', 'alpha');
-$search_company = GETPOST('$search_company', 'alpha');
-$search_company_alias = GETPOST('$search_company_alias', 'alpha');
-$search_project_ref = GETPOST('$search_project_ref', 'alpha');
-$search_project_label = GETPOST('$search_project_label', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project_label = GETPOST('search_project_label', 'alpha');
 $search_timespent_starthour = GETPOSTINT("search_timespent_duration_starthour");
 $search_timespent_startmin = GETPOSTINT("search_timespent_duration_startmin");
 $search_timespent_endhour = GETPOSTINT("search_timespent_duration_endhour");
@@ -1996,20 +1996,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Thirdparty
 		if (!empty($arrayfields['p.fk_soc']['checked'])) {
-			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company" value="' . dol_escape_htmltag($search_company) . '"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_company" value="' . dol_escape_htmltag($search_company) . '"></td>';
 		}
 
 		// Thirdparty alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company_alias" value="' . dol_escape_htmltag($search_company_alias) . '"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_company_alias" value="' . dol_escape_htmltag($search_company_alias) . '"></td>';
 		}
 
 		if (!empty($allprojectforuser)) {
 			if (!empty($arrayfields['p.project_ref']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
 			}
 			if (!empty($arrayfields['p.project_label']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
 			}
 		}
 		// Task
