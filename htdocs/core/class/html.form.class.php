@@ -6971,6 +6971,8 @@ class Form
 			// Let's add a row that acts as a spacer.
 			$formconfirm .= '<tr class="valid"><td class="valid" colspan="2" style="height: 1px; border-top: 2px solid #e0e0e0; padding-top: 30px;"></td></tr>' . "\n";
 
+			// Question row
+			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">' . $question . '</td>';
 			$formconfirm .= '<td class="valid center">';
 
