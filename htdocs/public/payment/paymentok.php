@@ -375,18 +375,23 @@ if (isModEnabled('paybox') && $paymentmethod === 'paybox') {
 	$ispaymentok = true; // We will do the rest of code
 }
 
-// For Stripe
-if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
-	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
-	if (empty($TRANSACTIONID)) {
-		$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
-		if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
-			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
-			$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
+	// For Stripe
+	if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
+		// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
+		$checkoutsessionid = GETPOST('session_id', 'alphanohtml');
+		if (empty($TRANSACTIONID)) {
+			$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+			if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
+				// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+				$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
+			}
+			if (empty($TRANSACTIONID) && $checkoutsessionid) {
+				// Stripe Checkout session id (cs_...) when STRIPE_USE_NEW_CHECKOUT is enabled.
+				$TRANSACTIONID = $checkoutsessionid;
+			}
 		}
-	}
-	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
-	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
+		$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
+		$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
 
 	$service = 'StripeTest';
 	$servicestatus = 0;
@@ -395,12 +400,16 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 		$servicestatus = 1;
 	}
 
-	// Check we are coming from the newpaymentpage
-	if (GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
-		$error++;
-		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
-		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
-	}
+		// Check we are coming from the newpaymentpage.
+		// For Stripe Checkout (cs_...), the return may come back without the PHP session (embedded contexts, strict cookie policies).
+		// In such a case, we will validate using Stripe Checkout session + client_reference_id match below.
+		$paymentoksessioncode = GETPOST('paymentoksessioncode', 'alphanohtml');
+		$hassessionkey = (!empty($_SESSION['paymentoksessioncode']) && $paymentoksessioncode === $_SESSION['paymentoksessioncode']);
+		if (!$hassessionkey && empty($checkoutsessionid) && empty($TRANSACTIONID)) {
+			$error++;
+			$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
+			dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		}
 
 	// Check on payment platform that the payment has been really validated
 	if (!$error && $TRANSACTIONID) {
@@ -414,16 +423,65 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
-			try {
-				if (empty($stripeacc)) {
-					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
-				} else {
-					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
-				}
+				try {
+					$paymentIntent = null;
+					$checkoutsession = null;
 
-				// Check amount and currency
-				// Handle zero-decimal currencies that don't use cents/subunits
-				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+					if (preg_match('/^cs_/', $TRANSACTIONID)) {
+						// Stripe hosted Checkout: retrieve Checkout Session then PaymentIntent
+						$opts = array('expand' => array('payment_intent'));
+						if (!empty($stripeacc)) {
+							$opts['stripe_account'] = $stripeacc;
+						}
+						$checkoutsession = \Stripe\Checkout\Session::retrieve($TRANSACTIONID, $opts);
+
+						// Optional: if session key is missing, rely on Checkout Session client_reference_id to prevent forged calls.
+						if (!$hassessionkey && !empty($checkoutsession->client_reference_id) && $checkoutsession->client_reference_id !== $FULLTAG) {
+							$error++;
+							$errmsg = 'Stripe payment verification failed: client_reference_id mismatch.';
+							dol_syslog($errmsg.' expected='.$FULLTAG.' got='.$checkoutsession->client_reference_id, LOG_ERR, 0, '_payment');
+						}
+
+						if (!$error) {
+							if (isset($checkoutsession->payment_status) && $checkoutsession->payment_status !== 'paid') {
+								$error++;
+								$errmsg = 'Stripe Checkout Session not paid. Status: ' . $checkoutsession->payment_status;
+								dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+							}
+						}
+
+						if (!$error) {
+							if (is_object($checkoutsession->payment_intent)) {
+								$paymentIntent = $checkoutsession->payment_intent;
+							} elseif (!empty($checkoutsession->payment_intent)) {
+								$pi = $checkoutsession->payment_intent;
+								if (empty($stripeacc)) {
+									$paymentIntent = \Stripe\PaymentIntent::retrieve($pi);
+								} else {
+									$paymentIntent = \Stripe\PaymentIntent::retrieve($pi, array("stripe_account" => $stripeacc));
+								}
+							}
+
+							// Use Stripe amounts/currency when session values are missing.
+							if (empty($FinalPaymentAmt) && isset($checkoutsession->amount_total)) {
+								$FinalPaymentAmt = ((float) $checkoutsession->amount_total) / 100;
+							}
+							if (empty($currencyCodeType) && !empty($checkoutsession->currency)) {
+								$currencyCodeType = strtoupper($checkoutsession->currency);
+							}
+						}
+					} else {
+						// Stripe PaymentIntent id (pi_...) or Charge id.
+						if (empty($stripeacc)) {
+							$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
+						} else {
+							$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
+						}
+					}
+
+					// Check amount and currency
+					// Handle zero-decimal currencies that don't use cents/subunits
+					$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
 					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
 				} else {

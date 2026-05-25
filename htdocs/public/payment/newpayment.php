@@ -2758,24 +2758,30 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 
 				$ipaddress = getUserRemoteIP();
 				$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
-				if (is_object($object)) {
-					$metadata['dol_type'] = $object->element;
-					$metadata['dol_id'] = $object->id;
+					if (is_object($object)) {
+						$metadata['dol_type'] = $object->element;
+						$metadata['dol_id'] = $object->id;
 
-					$ref = $object->ref;
-				}
+						$ref = $object->ref;
+					}
 
-				try {
-					$arrayforpaymentintent = array(
-						'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
-						"metadata" => $metadata
+					// Session keys used by paymentok/paymentko to prevent direct access.
+					$randomseckeyok = getRandomPassword(true, null, 20);
+					$randomseckeyko = getRandomPassword(true, null, 20);
+					$_SESSION['paymentoksessioncode'] = $randomseckeyok;
+					$_SESSION['paymentkosessioncode'] = $randomseckeyko;
+
+					try {
+						$arrayforpaymentintent = array(
+							'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+							"metadata" => $metadata
 					);
 					if ($TAG) {
 						$arrayforpaymentintent["statement_descriptor"] = dol_trunc($TAG, 22, 'right', 'UTF-8', 1); // 22 chars that appears on bank receipt (company + description)
 					}
 
-					$arrayforcheckout = array(
-						'payment_method_types' => array('card'),
+						$arrayforcheckout = array(
+							'payment_method_types' => array('card'),
 						'line_items' => array(array(
 							'price_data' => array(
 								'currency' => $currency,
@@ -2788,12 +2794,14 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 							),
 							'quantity' => 1,
 						)),
-						'mode' => 'payment',
-						'client_reference_id' => $FULLTAG,
-						'success_url' => $urlok,
-						'cancel_url' => $urlko,
-						'payment_intent_data' => $arrayforpaymentintent
-					);
+							'mode' => 'payment',
+							'client_reference_id' => $FULLTAG,
+							// Add a session key and Stripe checkout session id placeholder.
+							// paymentok.php uses the key to prevent direct access; session_id is used to retrieve the PaymentIntent.
+							'success_url' => $urlok.(strpos($urlok, '?') !== false ? '&' : '?').'paymentoksessioncode='.urlencode($randomseckeyok).'&session_id={CHECKOUT_SESSION_ID}',
+							'cancel_url' => $urlko.(strpos($urlko, '?') !== false ? '&' : '?').'paymentkosessioncode='.urlencode($randomseckeyko),
+							'payment_intent_data' => $arrayforpaymentintent
+						);
 					if ($stripecu) {
 						$arrayforcheckout['customer'] = $stripecu;
 					} elseif (GETPOST('email', 'alpha') && isValidEmail(GETPOST('email', 'alpha'))) {
