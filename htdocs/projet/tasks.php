@@ -46,7 +46,7 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langsLoad = array('projects', 'users', 'companies');
+$langsLoad = array('projects', 'users', 'companies', 'main');
 if (isModEnabled('eventorganization')) {
 	$langsLoad[] = 'eventorganization';
 }
@@ -610,12 +610,13 @@ if ($id > 0 || !empty($ref)) {
 
 	$arrayofmassactions = array();
 	if ($user->hasRight('projet', 'creer')) {
+		$arrayofmassactions['preassignusers'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("Users"));
 		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
-	if (in_array($massaction, array('presend', 'predelete'))) {
+	if (in_array($massaction, array('presend', 'predelete', 'preassignusers'))) {
 		$arrayofmassactions = array();
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions) ?? '';
@@ -953,6 +954,50 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$objecttmp = new Task($db);
 	$trackid = 'task'.$taskstatic->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	// Convert "pre" mass actions into confirmation actions
+	if ($massaction == 'preassignusers') {
+		$action = 'confirm_assignusers';
+	}
+
+	// Assign users confirmation form
+	if ($action == 'confirm_assignusers') {
+		// 1. Define the help text
+		$helpText = $object->public
+			? $langs->trans("HelpPublicProjectUserAssignment")
+			: $langs->trans("HelpPrivateProjectUserAssignment");
+
+		// 2. Build the visibility value (clean, no help icon here)
+		$visibilityHtml = (
+			img_picto($langs->trans($object->public ? 'SharedProject' : 'PrivateProject'), $object->public ? 'fa-globe' : 'fa-lock', 'class="paddingrightonly"') . $langs->trans($object->public ? 'SharedProject' : 'PrivateProject')
+		);
+
+		$formquestion = array(
+			// 1. Add the Visibility info as a read-only field to help the enduser understand why users in the dropdown box may be limited
+			array(
+				'type' => 'other',
+				'name' => 'visibility',
+				'label' => $langs->trans("Project").' '.$langs->trans("Visibility"),
+				'value' => $visibilityHtml
+			),
+			array(
+				'type' => 'other',
+				'name' => 'userids',
+				'label' => $langs->trans("Users"),
+				'value' => $form->select_dolusers('', 'userids[]', 1, null, 0, '', '', 0, 0, 0, '(statut:=:1)', 0, '', 'multiple class="minwidth500"')
+			),
+			array(
+				'type' => 'other',
+				'name' => 'taskrole',
+				'label' => $langs->trans("Role"),
+				'value' => $form->selectarray('taskrole', array(
+					'TASKEXECUTIVE' => $langs->trans("TypeContact_project_internal_PROJECTLEADER"),
+					'TASKCONTRIBUTOR' => $langs->trans("TypeContact_project_internal_PROJECTCONTRIBUTOR")
+				), 'TASKCONTRIBUTOR', 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200')
+			)
+		);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->transnoentities('Select1ToNUsersAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
+	}
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
