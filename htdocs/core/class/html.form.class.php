@@ -6608,9 +6608,6 @@ class Form
 			if (is_array($formquestion) && count($formquestion) > 2) {
 				$height += ((count($formquestion) - 2) * 24) + 10;
 			}
-			if (!empty($helpContent)) {
-				$height += 24; // Account for collapsed help summary
-			}
 		}
 
 		if (is_array($formquestion) && !empty($formquestion)) {
