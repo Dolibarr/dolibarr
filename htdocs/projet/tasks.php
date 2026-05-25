@@ -1041,7 +1041,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 				'TASKCONTRIBUTOR'  => $langs->trans("TypeContact_project_internal_PROJECTCONTRIBUTOR")
 			), 'TASKCONTRIBUTOR', 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200')
 		);
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->transnoentities('Select1ToNUsersGroupsAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
+
+		// Build a string of task IDs
+		$taskIdsStr = implode(',', $arrayofselected);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToNUsersGroupsAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
 	}
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
