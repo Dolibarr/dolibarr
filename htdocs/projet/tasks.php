@@ -613,12 +613,13 @@ if ($id > 0 || !empty($ref)) {
 	$arrayofmassactions = array();
 	if ($user->hasRight('projet', 'creer')) {
 		$arrayofmassactions['preassignusers'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("Users").' | '.$langs->trans("Groups"));
+		$arrayofmassactions['preassigncontacts'] = img_picto('', 'contact', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("Project").' | '.$langs->trans("ThirdPartiesArea"));
 		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
-	if (in_array($massaction, array('presend', 'predelete', 'preassignusers'))) {
+	if (in_array($massaction, array('presend', 'predelete', 'preassignusers', 'preassigncontacts'))) {
 		$arrayofmassactions = array();
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions) ?? '';
@@ -961,6 +962,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	if ($massaction == 'preassignusers') {
 		$action = 'confirm_assignusers';
 	}
+	// Convert "pre" mass actions into confirmation actions
+	if ($massaction == 'preassigncontacts') {
+		$action = 'confirm_assigncontacts';
+	}
 
 	// Assign users confirmation form
 	if ($action == 'confirm_assignusers') {
@@ -1183,6 +1188,95 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			echo '<script>window.location.href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '";</script>';
 			exit;
 		}
+	}
+
+	// Assign contacts confirmation form
+	if ($action == 'confirm_assigncontacts') {
+		// 1. Define Help Text
+		$helpText = $object->public
+			? $langs->trans("HelpPublicProjectContactAssignment")
+			: $langs->trans("HelpPrivateProjectContactAssignment");
+
+		// 2. Build Visibility Value (Kept for UI consistency)
+		$visibilityHtml = (
+			img_picto($langs->trans($object->public ? 'SharedProject' : 'PrivateProject'), $object->public ? 'fa-globe' : 'fa-lock', 'class="paddingrightonly"') . $langs->trans($object->public ? 'SharedProject' : 'PrivateProject')
+		);
+
+		// 3. Prepare Form Questions Array
+		$formquestion = array();
+
+		// --- DIV 1: Static Third Party Section ---
+		// Label: Use getNomUrl(1, '', 42)
+		// If $object->thirdparty is not loaded or invalid, this might return empty or just the ID.
+		// We do NOT validate.
+		$tpLabelHtml = '';
+		if (!empty($object->thirdparty->id)) {
+			$tpLabelHtml = $object->thirdparty->getNomUrl(1, '', 42);
+		} else {
+			// Fallback if thirdparty object is empty but fk_soc exists (shouldn't happen if fetch_thirdparty ran, but safe guard)
+			$tpLabelHtml = $langs->trans("ThirdParty") . ': ' . (empty($object->fk_soc) ? $langs->trans("None") : $object->fk_soc);
+		}
+
+		$tpContacts = array();
+		if (!empty($object->thirdparty->id)) {
+			$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.civility, t.email, t.statut";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
+			$sql .= " WHERE t.fk_soc = " . ((int) $object->thirdparty->id);
+			$sql .= " AND t.entity IN (" . getEntity('socpeople') . ")";
+			$sql .= " AND t.statut = 1"; // Only active contacts (matching show_contacts default)
+			$sql .= " ORDER BY t.lastname, t.firstname";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$contactStatic = new Contact($db);
+				while ($obj = $db->fetch_object($resql)) {
+					// Use getFullName for consistent formatting (matches Dolibarr standards)
+					$contactStatic->firstname = $obj->firstname;
+					$contactStatic->lastname = $obj->lastname;
+					$contactStatic->civility_code = $obj->civility;
+
+					$fullName = $contactStatic->getFullName($langs, 0, 1, 0);
+					if (empty($fullName)) {
+						$fullName = "Contact #" . $obj->rowid;
+					}
+
+					$emailSuffix = !empty($obj->email) ? ' (' . $obj->email . ')' : '';
+					$tpContacts[$obj->rowid] = $fullName . $emailSuffix;
+				}
+				$db->free($resql);
+			}
+		}
+
+		$tpSelectHtml = $form->multiselectarray('tp_contacts', $tpContacts, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1);
+
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'tp_section',
+			'label' => $langs->trans("ContactsOfThirdParty"),
+			'value' => '<div style="margin-bottom: 15px;">' . $tpLabelHtml . '<br>' . $tpSelectHtml . '</div>'
+		);
+
+		// Visibility Info (Always shown)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'visibility',
+			'label' => $langs->trans("Project") . ' ' . $langs->trans("Visibility"),
+			'value' => $visibilityHtml
+		);
+
+		$statictask = new Task($db);
+		$formcompany = new FormCompany($db);
+		// Role selector (always)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'taskrole',
+			'label' => $langs->trans("ContactRole"),
+			'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'internal', 'position', 0, 'minwidth200', 0, 1)
+		);
+
+		// Build a string of task IDs
+		$taskIdsStr = implode(',', $arrayofselected);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToNUsersGroupsAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
 	}
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
