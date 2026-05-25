@@ -10,8 +10,8 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 370+ occurrences
-    // PhanTypeMismatchArgument : 35+ occurrences
     // PhanUndeclaredGlobalVariable : 35+ occurrences
+    // PhanTypeMismatchArgument : 25+ occurrences
     // PhanTypeMismatchProperty : 20+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
@@ -43,18 +43,12 @@ return [
         'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/facture/class/facture.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/localtax/card.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/localtax/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/localtax/list.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/compta/paiement/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/paiement/cheque/list.php' => ['PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/resultat/clientfourn.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/resultat/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/resultat/projects.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/sociales/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgument'],
-        'htdocs/compta/tva/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/tva/quadri_detail.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_sendmails.inc.php' => ['PhanUndeclaredProperty'],
@@ -213,6 +207,7 @@ return [
         'htdocs/user/class/usergroup.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/variants/tpl/productattributevalueline_edit.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/variants/tpl/productattributevalueline_view.tpl.php' => ['PhanUndeclaredProperty'],
+        'htdocs/modulebuilder/class/NamingContract.class.php' => ['PhanCompatibleTypedProperty'],
         'htdocs/webhook/class/target.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/webhook/target_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],

@@ -1174,6 +1174,49 @@ class Products extends DolibarrApi
 	}
 
 	/**
+	 *	Get the history logs for all supplier prices of a specific product
+	 *
+	 *	@since	26.0.0	Initial implementation
+	 *
+	 *	@param	int		$id			ID of product
+	 *	@param	string	$ref		Ref of element
+	 *	@param	string	$ref_ext	Ref ext of element
+	 *	@param	string	$barcode	Barcode of element
+	 *	@return	array<int, stdClass> Array of price logs
+	 *	@phan-return array<int, stdClass>
+	 *	@phpstan-return array<int, stdClass>
+	 *
+	 *	@url GET {id}/purchase_prices/logs
+	 *
+	 *	@throws RestException 400
+	 *	@throws RestException 403
+	 *	@throws RestException 404
+	 */
+	public function getPurchasePriceLogs($id, $ref = '', $ref_ext = '', $barcode = '')
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
+			throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
+		}
+		$id = (empty($id) ? 0 : $id);
+		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
+			throw new RestException(403);
+		}
+		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
+		if (!$result) {
+			throw new RestException(404, 'Product not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		$allLogs = $this->product->fetchAllPriceLogs($this->product->id);
+
+		return $allLogs;
+	}
+
+	/**
 	 * Get attributes
 	 *
 	 * @since	11.0.0	Initial implementation

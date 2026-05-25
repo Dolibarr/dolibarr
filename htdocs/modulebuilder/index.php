@@ -55,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/NamingContractValidator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
@@ -277,9 +278,36 @@ function getLicenceHeader($user, $langs, $now)
  * Actions
  */
 
+/**
+ * Post-generation validation — logs and displays a warning if residual myobject/mymodule tokens remain.
+ *
+ * @param string       $destfile Path to the generated file
+ * @param NamingContract $nc     Contract used for generation
+ * @return void
+ */
+function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc): void
+{
+	$content = file_get_contents($destfile);
+	if ($content === false) {
+		return;
+	}
+	$validator = new StrictNamingContractValidator();
+	$errors = $validator->validateContent($content, $destfile);
+	if (!empty($errors)) {
+		dol_syslog(
+			'ModuleBuilder NamingContract validation warning in ' . $destfile . ': '
+			. implode('; ', array_slice($errors, 0, 3)),
+			LOG_WARNING
+		);
+		$safeErrors = array_map('dol_escape_htmltag', array_slice($errors, 0, 5));
+		setEventMessages(implode('<br>', $safeErrors), null, 'warnings');
+	}
+}
+
 if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
 	$modulename = dol_string_nounprintableascii(dol_string_unaccent(ucwords($modulename))); 		// Force first letter in uppercase
 	$destdir = '/not_set/';
+	$ncModule = new NamingContract($modulename);
 
 	if (preg_match('/[^a-z0-9]/i', $modulename)) {
 		$error++;
@@ -290,10 +318,10 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 		$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 		$destdir = $dirins.'/'.strtolower($modulename);
 
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename
-		);
+		$arrayreplacement = [
+			'mymodule' => $ncModule->moduleNameLower,
+			'MyModule' => $ncModule->moduleNameCase,
+		];
 		$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayreplacement);
 		//dol_mkdir($destfile);
 		if ($result <= 0) {
@@ -399,23 +427,22 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 		$licInfo = getLicenceHeader($user, $langs, $now);
 		foreach ($listofphpfilestoedit as $phpfileval) {
 			//var_dump($phpfileval['fullname']);
-			$arrayreplacement = array(
-				'mymodule' => strtolower($modulename),
-				'MyModule' => $modulename,
-				'MYMODULE' => strtoupper($modulename),
-				'My module' => $modulename,
-				'my module' => $modulename,
-				'Mon module' => $modulename,
-				'mon module' => $modulename,
-				'htdocs/modulebuilder/template' => strtolower($modulename),
-				'---Put here your own copyright and developer email---' => $licInfo,
-				'---Replace with your own copyright and developer email---' => $licInfo,
-				'Editor name' => $editorname,
-				'https://www.example.com' => $editorurl,
-				'$this->version = \'1.0\'' => '$this->version = \''.$version.'\'',
-				'$this->picto = \'generic\';' => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \''.$picto.'\';',
-				"modulefamily" => $family,
-				'500000' => $idmodule
+			$arrayreplacement = array_merge(
+				$ncModule->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template'                             => $ncModule->moduleNameLower,
+					'---Put here your own copyright and developer email---'     => $licInfo,
+					'---Replace with your own copyright and developer email---' => $licInfo,
+					'Editor name'                                               => $editorname,
+					'https://www.example.com'                                   => $editorurl,
+					'$this->version = \'1.0\''                                  => '$this->version = \'' . $version . '\'',
+					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \'' . $picto . '\';',
+					'modulefamily'                                              => $family,
+					// Key '500000' would be cast to int(500000) by PHP, then renumbered to 0 by
+					// array_merge — causing str_replace to search for '0' instead of '500000'.
+					// Use a string key that matches the exact assignment line to avoid this.
+					'$this->numero = 500000'                                    => '$this->numero = '.$idmodule,
+				]
 			);
 
 			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
@@ -518,29 +545,40 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 
 	if ($result > 0) {
 		//var_dump($phpfileval['fullname']);
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename,
-			'MYMODULE' => strtoupper($modulename),
-			'My module' => $modulename,
-			'my module' => $modulename,
-			'Mon module' => $modulename,
-			'mon module' => $modulename,
-			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'myobject' => strtolower($objectname),
-			'MyObject' => $objectname,
-			'MYOBJECT' => strtoupper($objectname),
+		try {
+			$ncApiObj = new NamingContract($modulename, $objectname);
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+			$ncApiObj = null;
+		}
 
-			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
-		);
+		if (!$error && $ncApiObj !== null) {
+			$arrayreplacement = array_merge(
+				$ncApiObj->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template'                             => $ncApiObj->moduleNameLower,
+					'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now),
+				]
+			);
 
-		if ($action == 'initapi') {			// Test on permission already done
-			if (count($objects) >= 1) {
-				addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
+			if ($action == 'initapi') {			// Test on permission already done
+				if (count($objects) >= 1) {
+					addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
+				}
+				// Fix PHPDoc header and class-declaration residuals left by addObjectsToApiFile.
+				// 'MYOBJECT' (uppercase) is excluded to preserve the /* BEGIN MODULEBUILDER API MYOBJECT */
+				// placeholder that addObjectsToApiFile keeps for future object additions.
+				$headerFix = $arrayreplacement;
+				unset($headerFix['MYOBJECT']);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				dolReplaceInFile($destfile, $headerFix);
+				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
+			} else {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				dolReplaceInFile($destfile, $arrayreplacement);
+				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
 			}
-		} else {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			dolReplaceInFile($destfile, $arrayreplacement);
 		}
 
 		if ($varnametoupdate) {
@@ -575,24 +613,28 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) /* && $user->h
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename,
-			'MYMODULE' => strtoupper($modulename),
-			'My module' => $modulename,
-			'my module' => $modulename,
-			'Mon module' => $modulename,
-			'mon module' => $modulename,
-			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'My Object' => $objectname,
-			'MyObject' => $objectname,
-			'my object' => strtolower($objectname),
-			'myobject' => strtolower($objectname),
-			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
-		);
+		try {
+			$ncSqlObj = new NamingContract($modulename, $objectname);
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+			$ncSqlObj = null;
+		}
 
-		dolReplaceInFile($destfile1, $arrayreplacement);
-		dolReplaceInFile($destfile2, $arrayreplacement);
+		if (!$error && $ncSqlObj !== null) {
+			$arrayreplacement = array_merge(
+				$ncSqlObj->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template'                             => $ncSqlObj->moduleNameLower,
+					'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now),
+				]
+			);
+
+			dolReplaceInFile($destfile1, $arrayreplacement);
+			dolReplaceInFile($destfile2, $arrayreplacement);
+			modulebuilderValidateGeneratedFile($destfile1, $ncSqlObj);
+			modulebuilderValidateGeneratedFile($destfile2, $ncSqlObj);
+		}
 	} else {
 		$langs->load("errors");
 		if ($result1 <= 0) {
@@ -1098,6 +1140,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		$tabobj = 'newobject';
 	}
 
+	try {
+		$ncObj = new NamingContract($module, $objectname);
+	} catch (\InvalidArgumentException $e) {
+		$error++;
+		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+		$ncObj = null;
+	}
+
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.strtolower($module);
 
@@ -1394,45 +1444,52 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	$filetogenerate = array();
 	if (!$error) {
 		// Copy some files
-		$filetogenerate = array(
-			'myobject_card.php' => strtolower($objectname).'_card.php',
-			'myobject_note.php' => strtolower($objectname).'_note.php',
-			'myobject_contact.php' => strtolower($objectname).'_contact.php',
-			'myobject_document.php' => strtolower($objectname).'_document.php',
-			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
-			'myobject_list.php' => strtolower($objectname).'_list.php',
-			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
-			'ajax/myobject.php' => 'ajax/'.strtolower($objectname).'.php',
-			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-			//'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
-			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
-			'sql/llx_mymodule_myobject.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
-			'sql/llx_mymodule_myobject_extrafields.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_mymodule_myobject_extrafields.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
-			//'scripts/mymodule.php' => 'scripts/'.strtolower($objectname).'.php',
-			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
-			'class/myobjectstats.class.php' => 'class/'.strtolower($objectname).'stats.class.php',
-		//'class/api_mymodule.class.php' => 'class/api_'.strtolower($module).'.class.php',
-			'stats/myobject_index.php' => 'stats/'.strtolower($objectname).'_index.php',
-		);
+		$filetogenerate = [];
+		foreach ([
+			'myobject_card.php',
+			'myobject_note.php',
+			'myobject_contact.php',
+			'myobject_document.php',
+			'myobject_agenda.php',
+			'myobject_list.php',
+			'admin/myobject_extrafields.php',
+			'ajax/myobject.php',
+			'lib/mymodule_myobject.lib.php',
+			//'test/phpunit/MyObjectTest.php',
+			'sql/llx_mymodule_myobject.sql',
+			'sql/llx_mymodule_myobject.key.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql',
+			'sql/llx_mymodule_myobject_extrafields.key.sql',
+			//'scripts/mymodule.php',
+			'class/myobject.class.php',
+			'class/myobjectstats.class.php',
+			//'class/api_mymodule.class.php',
+			'stats/myobject_index.php',
+		] as $templateFile) {
+			$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
+		}
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
 
-			$filetogenerate += array(
-				'core/modules/mymodule/mod_myobject_advanced.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
-				'core/modules/mymodule/mod_myobject_standard.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_standard.php',
-				'core/modules/mymodule/modules_myobject.php' => 'core/modules/'.strtolower($module).'/modules_'.strtolower($objectname).'.php',
-			);
+			foreach ([
+				'core/modules/mymodule/mod_myobject_advanced.php',
+				'core/modules/mymodule/mod_myobject_standard.php',
+				'core/modules/mymodule/modules_myobject.php',
+			] as $templateFile) {
+				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
+			}
 		}
 		if (GETPOST('includedocgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module).'/doc');
 
-			$filetogenerate += array(
-				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php' => 'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
-				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php' => 'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
-			);
+			foreach ([
+				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php',
+				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php',
+			] as $templateFile) {
+				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
+			}
 		}
 		$class = null;
 		if (GETPOST('generatepermissions', 'aZ09')) {
@@ -1605,9 +1662,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'user' => 2,
 			'object' => 'MyObject'
 		);";
-			$stringtoadd = preg_replace('/MyObject/', $objectname, $stringtoadd);
-			$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
-			$stringtoadd = preg_replace('/myobject/', strtolower($objectname), $stringtoadd);
+			$stringtoadd = $ncObj->applyTo($stringtoadd);
 
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 		}
@@ -1685,29 +1740,60 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$phpfileval['fullname'] = $destdir.'/'.$destfile;
 
 			//var_dump($phpfileval['fullname']);
-			$arrayreplacement = array(
-				'mymodule' => strtolower($module),
-				'MyModule' => $module,
-				'MYMODULE' => strtoupper($module),
-				'My module' => $module,
-				'my module' => $module,
-				'mon module' => $module,
-				'Mon module' => $module,
-				'htdocs/modulebuilder/template/' => strtolower($modulename),
-				'myobject' => strtolower($objectname),
-				'MyObject' => $objectname,
-				//'MYOBJECT' => strtoupper($objectname),
-				'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
-			);
+			$licenceValue = getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+				? dol_print_date($now, '%Y') . ' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+				: getLicenceHeader($user, $langs, $now);
 
-			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
-				$arrayreplacement['---Replace with your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
-			}
+			$arrayreplacement = array_merge(
+				$ncObj->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template/'                            => $ncObj->moduleNameLower,
+					'---Replace with your own copyright and developer email---' => $licenceValue,
+				]
+			);
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+			} else {
+				modulebuilderValidateGeneratedFile($phpfileval['fullname'], $ncObj);
+			}
+		}
+	}
+
+	if (!$error && $ncObj !== null) {
+		// Apply object name substitution to ALL PHP files in the module directory.
+		// initmodule only substitutes the module name; files it creates (e.g. testmodindex.php,
+		// lib/testmod.lib.php, admin/setup.php) still contain myobject/mymodule placeholders
+		// that must be resolved when an object is first added.
+		$licenceValueAll = getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+			? dol_print_date($now, '%Y') . ' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+			: getLicenceHeader($user, $langs, $now);
+		$moduleReplacementAll = array_merge(
+			$ncObj->getSubstitutionMap(),
+			[
+				'htdocs/modulebuilder/template/'                            => $ncObj->moduleNameLower,
+				'---Replace with your own copyright and developer email---' => $licenceValueAll,
+			]
+		);
+		$allModulePhpFiles = dol_dir_list($destdir, 'files', 1, '\.php$');
+		if (is_array($allModulePhpFiles) && !empty($allModulePhpFiles)) {
+			foreach ($allModulePhpFiles as $phpFileval) {
+				$result = dolReplaceInFile($phpFileval['fullname'], $moduleReplacementAll);
+				if ($result < 0) {
+					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpFileval['fullname']), null, 'warnings');
+				}
+			}
+		}
+		// Delete initmodule placeholder files superseded by initobject-generated files.
+		$moduleLowerForPlaceholder = strtolower($module);
+		foreach ([
+			$destdir . '/stats/myobject_index.php',
+			$destdir . '/lib/' . $moduleLowerForPlaceholder . '_myobject.lib.php',
+		] as $placeholder) {
+			if (file_exists($placeholder)) {
+				dol_delete_file($placeholder);
 			}
 		}
 	}
@@ -2093,32 +2179,45 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		$dir = $dirins.'/'.$modulelowercase;
 
 		// Delete some files
-		$filetodelete = array(
-			'myobject_card.php' => strtolower($objectname).'_card.php',
-			'myobject_note.php' => strtolower($objectname).'_note.php',
-			'myobject_contact.php' => strtolower($objectname).'_contact.php',
-			'myobject_document.php' => strtolower($objectname).'_document.php',
-			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
-			'myobject_list.php' => strtolower($objectname).'_list.php',
-			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
-			'ajax/myobject.lib.php' => 'ajax/'.strtolower($objectname).'.php',
-			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-			'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
-			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
-			'sql/llx_mymodule_myobject_extrafields.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_mymodule_myobject.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
-			'sql/llx_mymodule_myobject_extrafields.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
-			'scripts/myobject.php' => 'scripts/'.strtolower($objectname).'.php',
-			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
-			'class/myobjectstats.class.php' => 'class/'.strtolower($objectname).'stats.class.php',
-			'class/api_myobject.class.php' => 'class/api_'.strtolower($module).'.class.php',
-			'core/modules/mymodule/mod_myobject_advanced.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
-			'core/modules/mymodule/mod_myobject_standard.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_standard.php',
-			'core/modules/mymodule/modules_myobject.php' => 'core/modules/'.strtolower($module).'/modules_'.strtolower($objectname).'.php',
-			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php' => 'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
-			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php' => 'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php',
-			'stats/myobject_index.php' => 'stats/'.strtolower($objectname).'_index.php',
-		);
+		try {
+			$ncObjDel = new NamingContract($module, $objectname);
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+			$ncObjDel = null;
+		}
+		$filetodelete = [];
+		if (!$error && $ncObjDel !== null) {
+			foreach ([
+				'myobject_card.php',
+				'myobject_note.php',
+				'myobject_contact.php',
+				'myobject_document.php',
+				'myobject_agenda.php',
+				'myobject_list.php',
+				'admin/myobject_extrafields.php',
+				'lib/mymodule_myobject.lib.php',
+				'sql/llx_mymodule_myobject.sql',
+				'sql/llx_mymodule_myobject_extrafields.sql',
+				'sql/llx_mymodule_myobject.key.sql',
+				'sql/llx_mymodule_myobject_extrafields.key.sql',
+				'scripts/myobject.php',
+				'class/myobject.class.php',
+				'class/myobjectstats.class.php',
+				'core/modules/mymodule/mod_myobject_advanced.php',
+				'core/modules/mymodule/mod_myobject_standard.php',
+				'core/modules/mymodule/modules_myobject.php',
+				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php',
+				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php',
+				'stats/myobject_index.php',
+			] as $templateFile) {
+				$filetodelete[$templateFile] = $ncObjDel->applyToFilename($templateFile);
+			}
+			// Exceptions: target filenames differ from simple token substitution
+			$filetodelete['ajax/myobject.lib.php']         = 'ajax/' . $ncObjDel->objectNameLower . '.php';
+			$filetodelete['test/phpunit/MyObjectTest.php'] = 'test/phpunit/' . $ncObjDel->objectNameLower . 'Test.php';
+			$filetodelete['class/api_myobject.class.php']  = 'class/api_' . $ncObjDel->moduleNameLower . '.class.php';
+		}
 
 		//menu for the object selected
 		// load class and check if menu,permission,documentation exist for this object

@@ -123,8 +123,7 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 // Load variable for pagination
-$listoffset = GETPOST('listoffset');
-$listlimit = GETPOST('listlimit') > 0 ? GETPOST('listlimit') : 1000; // To avoid too long dictionaries
+$listlimit = GETPOST('listlimit') > 0 ? GETPOST('listlimit') : $conf->liste_limit; // To avoid too long dictionaries
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
@@ -820,20 +819,11 @@ if (empty($reshook)) {
 				continue; // For some pages, department buyer is not mandatory
 			}
 			// Discard check of mandatory fields for other fields
-			if ($value == 'localtax1' && !GETPOST('localtax1_type')) {
-				continue;
-			}
-			if ($value == 'localtax2' && !GETPOST('localtax2_type')) {
-				continue;
-			}
-			if ($value == 'color' && !GETPOST('color')) {
-				continue;
-			}
-			if ($value == 'formula' && !GETPOST('formula')) {
-				continue;
-			}
-			if ($value == 'dayrule' && !GETPOST('dayrule')) {
-				continue;
+			$notmandatoryarray = array('localtax1', 'localtax2', 'color', 'formula', 'dayrule', 'einvoice_vatex');
+			foreach ($notmandatoryarray as $notmandatory) {
+				if (!GETPOST($notmandatory)) {
+					continue 2;
+				}
 			}
 			if ($value == 'sortorder') {
 				continue; // For a column name 'sortorder', we use the field name 'position'
@@ -1532,13 +1522,6 @@ if ($id > 0) {
 
 	$sql .= $db->plimit($listlimit + 1, $offset);
 
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-	$num = $db->num_rows($resql);
-
 	//print $sql;
 
 	if (empty($tabfield[$id])) {
@@ -1574,7 +1557,7 @@ if ($id > 0) {
 		 */
 		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/dict.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $listlimit, 1, 0, 1);
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $listlimit, 'listlimit', 0, 1);
 
 
 		if ($action == 'create') {
@@ -2488,8 +2471,10 @@ if ($id > 0) {
 								$valuetoshow = price($valuetoshow);
 							}
 							if (in_array($value, array('private', 'joinfile', 'use_default'))) {
-								if ($valuetoshow) {
-									$valuetoshow = yn($valuetoshow);
+								if (!empty($valuetoshow) && (string) $valuetoshow != '0') {
+									$valuetoshow = img_picto('', 'tick');
+								} else {
+									$valuetoshow = '';
 								}
 							} elseif ($value == 'libelle_facture') {
 								$key = $langs->trans("PaymentCondition".strtoupper($obj->code));
