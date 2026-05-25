@@ -340,6 +340,8 @@ EnterUsersHourlyRateFirst=First, enter the hourly rate for the user(s)...
 AssignUsersToSelectedTasks=Assign selected users to selected tasks?
 Select1ToNUsersAndRole=Select 1 to n users & role
 Select1ToNUsersGroupsAndRole=Select 1 to n users / groups & 1 role
+SuccessfullyAssignedUsersTasks=Successfully performced %s assignments of users to tasks
+SkippedAlreadyAssigned=Skipped %s - already assigned
 # Help texts
 HelpPublicProjectUserAssignment=Public project: Any active user | group can be assigned.
 HelpPrivateProjectUserAssignment=Private project: Only project contacts can be assigned, so groups and other users are hidden.

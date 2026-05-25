@@ -135,6 +135,7 @@ $extrafields->fetch_name_optionals_label($taskstatic->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
 
 // Default to no permission
+$permissiontoadd = 0;
 $permissiontoread = 0;
 $permissiontodelete = 0;
 
@@ -275,6 +276,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Task';
 	$objectlabel = 'Tasks';
+	$permissiontoadd = $user->hasRight('projet', 'creer');
 	$permissiontoread = $user->hasRight('projet', 'lire');
 	$permissiontodelete = $user->hasRight('projet', 'supprimer');
 	$uploaddir = $conf->project->dir_output.'/tasks';
@@ -1045,6 +1047,139 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		// Build a string of task IDs
 		$taskIdsStr = implode(',', $arrayofselected);
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToNUsersGroupsAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
+	}
+
+	// Process the user assignment
+	if ($action == 'assignusers' && $confirm == 'yes' && $permissiontoadd) {
+		// 1. Get Task IDs from URL (safe and reliable)
+		$taskIdsRaw = GETPOST('taskselect', 'alpha'); // e.g., "5,6,7"
+		$selectedTasks = array();
+		if (!empty($taskIdsRaw)) {
+			$selectedTasks = explode(',', $taskIdsRaw);
+			$selectedTasks = array_map('intval', $selectedTasks);
+			$selectedTasks = array_unique($selectedTasks, SORT_NUMERIC); // Remove duplicates
+		}
+
+		// 2. Resolve User IDs
+		$allSelectedUserIds = array();
+
+		// A. Expand Group if selected
+		$groupid = GETPOSTINT('groupid');
+		if ($groupid > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/user/class/usergroup.class.php';
+			$usergroup = new UserGroup($db);
+			if ($usergroup->fetch($groupid) > 0) {
+				$groupUsers = $usergroup->listUsersForGroup('statut = 1', 0);
+				if (is_array($groupUsers)) {
+					foreach ($groupUsers as $u) $allSelectedUserIds[] = $u->id;
+				}
+			}
+		}
+
+		// B. Add Manual Selection
+		$useridsRaw = GETPOST('userids', 'alpha');
+		if (!empty($useridsRaw)) {
+			$manualIds = array_map('intval', explode(',', $useridsRaw));
+			$allSelectedUserIds = array_merge($allSelectedUserIds, $manualIds);
+		}
+
+		// C. Deduplicate
+		$allSelectedUserIds = array_unique($allSelectedUserIds, SORT_NUMERIC);
+
+		// 3. ENFORCE PRIVACY
+		if (!$object->public) {
+			// Get allowed IDs (ensure they are integers)
+			$allowedIds = array_map('intval', array_column($object->liste_contact(-1, 'internal'), 'id'));
+
+			if (!empty($allowedIds)) {
+				// Intersect with numeric comparison
+				$validUserIds = array_intersect($allSelectedUserIds, $allowedIds);
+				// Re-index array to avoid gaps (optional but good practice)
+				$validUserIds = array_values($validUserIds);
+			} else {
+				$validUserIds = array();
+			}
+		} else {
+			$validUserIds = $allSelectedUserIds;
+		}
+
+		// 4. Validation
+		if (empty($validUserIds)) {
+			setEventMessages($langs->trans("ErrorNoUserSelected"), null, 'errors');
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		}
+
+		// Task roles
+		$taskrole = GETPOSTINT('taskrole');
+		if (empty($taskrole)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Role")), null, 'errors');
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		}
+
+		// 6. Execute Assignment
+		$taskstatic = new Task($db);
+		$successCount = 0;
+		$failCount = 0;
+		$skippedCount = 0;
+		$failMessages = array();
+		$skipMessages = array();
+		$successMessages = array();
+
+		foreach ($selectedTasks as $taskId) {
+			if ($taskstatic->fetch($taskId) > 0) {
+				$taskLink = $taskstatic->getNomUrl(0);
+				foreach ($validUserIds as $uid) {
+					$userTmp = new User($db);
+					if ($userTmp->fetch($uid) > 0) {
+						$userLink = $userTmp->getNomUrl(0);
+						$baseMsg = '&emsp;' . $userLink . ' : ' . $taskLink;
+
+						$res = $taskstatic->add_contact($uid, $taskrole, 'internal');
+
+						if ($res > 0) {
+							$successCount++;
+							$successMessages[] = $baseMsg;
+						} elseif ($res == 0) {
+							$skippedCount++;
+							$skipMessages[] = $baseMsg;
+						} else {
+							if ($taskstatic->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$skippedCount++;
+								$skipMessages[] = $baseMsg;
+							} else {
+								$failCount++;
+								$failMessages[] = $baseMsg . ' : ' . $taskstatic->error;
+							}
+						}
+					} else {
+						$failCount++;
+						$failMessages[] = '&emsp;' . $langs->trans("User") . ' #' . $uid . ' : ' . $taskLink . ' : ' . $langs->trans("ErrorRecordNotFound");
+					}
+				}
+			}
+		}
+
+		// 7. Feedback
+		if ($successCount > 0) {
+			setEventMessages($langs->trans("SuccessfullyAssignedUsersTasks", $successCount), $successMessages, 'mesgs');
+		}
+		if ($skippedCount > 0) {
+			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
+		}
+		if ($failCount > 0) {
+			setEventMessages($langs->trans("SomeAssignmentsFailed", $failCount), $failMessages, 'errors');
+		}
+
+		if (!headers_sent()) {
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		} else {
+			// Fallback: Reload via JS or just exit (messages will show on current page)
+			echo '<script>window.location.href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '";</script>';
+			exit;
+		}
 	}
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
