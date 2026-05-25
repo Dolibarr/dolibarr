@@ -271,8 +271,8 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (1
 
 -- POLAND (id country=184)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '0','0','VAT rate 0', 1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '8','0','VAT rate - reduced',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '3','0','VAT rate - reduced',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '8','0','VAT rate 8 - reduced 2',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '5','0','VAT rate 5 - reduced 1',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,  '23','0','VAT rate - standard',1,__ENTITY__);
 
 -- PORTUGAL (id country=25)
