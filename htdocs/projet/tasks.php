@@ -276,7 +276,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Task';
 	$objectlabel = 'Tasks';
-	$permissiontoadd = $user->hasRight('projet', 'creer');
 	$permissiontoread = $user->hasRight('projet', 'lire');
 	$permissiontodelete = $user->hasRight('projet', 'supprimer');
 	$uploaddir = $conf->project->dir_output.'/tasks';
@@ -1050,6 +1049,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	}
 
 	// Process the user assignment
+	$permissiontoadd = $user->hasRight('projet', 'creer');
 	if ($action == 'assignusers' && $confirm == 'yes' && $permissiontoadd) {
 		// 1. Get Task IDs from URL (safe and reliable)
 		$taskIdsRaw = GETPOST('taskselect', 'alpha'); // e.g., "5,6,7"
