@@ -1021,7 +1021,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 				'type'  => 'other',
 				'name'  => 'groupid',
 				'label' => $langs->trans("Group"),
-				'value' => $form->select_dolgroups('', 'groupid', 1, '', 0, '', '', 0, 0, 'minwidth250')
+				'value' => $form->select_dolgroups(0, 'groupid', 1, '', 0, '', array(), 0, 0, 'minwidth250')
 			);
 		}
 
