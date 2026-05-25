@@ -1039,7 +1039,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		$formquestion[] = array(
 			'type'  => 'other',
 			'name'  => 'taskrole',
-			'label' => $langs->trans("Role"),
+			'label' => $langs->trans("ContactRole"),
 			'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'internal', 'position', 0, 'minwidth200', 0, 1)
 		);
 
@@ -1113,7 +1113,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		// Task roles
 		$taskrole = GETPOSTINT('taskrole');
 		if (empty($taskrole)) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Role")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ContactRole")), null, 'errors');
 			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 			exit;
 		}
@@ -1169,7 +1169,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
 		}
 		if ($failCount > 0) {
-			setEventMessages($langs->trans("SomeAssignmentsFailed", $failCount), $failMessages, 'errors');
+			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned", $failCount), $failMessages, 'errors');
 		}
 
 		if (!headers_sent()) {
