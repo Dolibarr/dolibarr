@@ -220,13 +220,15 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile', 'alpha')); ?>"></td></tr>
 <!-- Computed Value -->
 <tr class="extra_computed_value">
-<?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
+<?php
 	global $dolibarr_main_restrict_eval_methods;
-	if (!isset($dolibarr_main_restrict_eval_methods)) {
-		$showfunctions = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
-	} else {
-		$showfunctions = $dolibarr_main_restrict_eval_methods ? $dolibarr_main_restrict_eval_methods : $langs->transnoentitiesnoconv("None");
-	}
+if (!isset($dolibarr_main_restrict_eval_methods)) {
+	$showfunctions = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+} else {
+	$showfunctions = $dolibarr_main_restrict_eval_methods ? $dolibarr_main_restrict_eval_methods : $langs->transnoentitiesnoconv("None");
+}
+
+if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 	?>
 	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$objectoffield', $showfunctions).'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
 <?php } else {

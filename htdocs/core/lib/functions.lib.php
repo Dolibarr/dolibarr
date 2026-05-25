@@ -17331,3 +17331,22 @@ function getObjectSocId($obj)
 	}
 	return null;
 }
+
+/**
+ * Get the limit of list to show according to the screen height
+ *
+ * @return int The limit of list to show
+ */
+function getListLimitFromScreenHeight()
+{
+	$default = 10;
+	if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
+		$default = 8;
+	} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 950) {
+		$default = 10;
+	} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+		$default = 15;
+	}
+
+	return $default;
+}

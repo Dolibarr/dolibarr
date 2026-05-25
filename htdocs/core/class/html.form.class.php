@@ -7791,7 +7791,7 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
+		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -7816,6 +7816,8 @@ class Form
 					$tmparray['localtax1_type']	= $obj->localtax1_type;
 					$tmparray['localtax2']	    = $obj->localtax2;
 					$tmparray['localtax2_type']	= $obj->localtax1_type;
+					$tmparray['einvoice_vatex']	= $obj->einvoice_vatex;
+
 					$tmparray['label']			= $obj->taux . '%' . ($obj->code ? ' (' . $obj->code . ')' : ''); // Label must contains only 0-9 , . % or *
 					$tmparray['labelallrates']	= $obj->taux . '/' . ($obj->localtax1 ? $obj->localtax1 : '0') . '/' . ($obj->localtax2 ? $obj->localtax2 : '0') . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
 					$positiverates = '';

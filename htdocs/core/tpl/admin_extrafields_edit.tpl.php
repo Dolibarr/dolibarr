@@ -297,7 +297,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Computed value -->
 <tr class="extra_computed_value">
 <?php
-	global $dolibarr_main_restrict_eval_methods;
+global $dolibarr_main_restrict_eval_methods;
 if (!isset($dolibarr_main_restrict_eval_methods)) {
 	$showfunctions = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
 } else {

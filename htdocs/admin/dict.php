@@ -104,7 +104,7 @@ const DICT_ASSET_DISPOSAL_TYPE = 44;
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
+$langs->loadLangs(array("errors", "admin", "main", "companies", "compta", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -276,7 +276,7 @@ $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle A
 $tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[DICT_TYPENT] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.module, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[DICT_CURRENCIES] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.fk_department_buyer as department_buyer_id, db.nom as department_buyer, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy, t.use_default FROM ".MAIN_DB_PREFIX."c_tva as t INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_pays = c.rowid LEFT JOIN ".MAIN_DB_PREFIX."c_departements as db ON t.fk_department_buyer = db.rowid WHERE t.entity IN (".getEntity($tabname[DICT_TVA]).")";
+$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, t.einvoice_vatex, c.label as country, c.code as country_code, t.fk_pays as country_id, t.fk_department_buyer as department_buyer_id, db.nom as department_buyer, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy, t.use_default FROM ".MAIN_DB_PREFIX."c_tva as t INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_pays = c.rowid LEFT JOIN ".MAIN_DB_PREFIX."c_departements as db ON t.fk_department_buyer = db.rowid WHERE t.entity IN (".getEntity($tabname[DICT_TVA]).")";
 $tabsql[DICT_TYPE_CONTACT] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[DICT_PAYMENT_TERM] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAYMENT_TERM]).")";
 $tabsql[DICT_PAIEMENT] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.accountancy_code, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAIEMENT]).")";
@@ -370,7 +370,7 @@ $tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
 $tabfield[DICT_TYPENT] = "code,libelle,module,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfield[DICT_CURRENCIES] = "code,label,unicode";
-$tabfield[DICT_TVA] = "country_id,country,department_buyer_id,department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,use_default,note";
+$tabfield[DICT_TVA] = "country_id,country,department_buyer_id,department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note";
 $tabfield[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfield[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfield[DICT_PAIEMENT] = "code,libelle,type,accountancy_code";
@@ -417,7 +417,7 @@ $tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
 $tabfieldvalue[DICT_TYPENT] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldvalue[DICT_CURRENCIES] = "code,label,unicode";
-$tabfieldvalue[DICT_TVA] = "country,department_buyer_id,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,use_default,note";
+$tabfieldvalue[DICT_TVA] = "country,department_buyer_id,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note";
 $tabfieldvalue[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfieldvalue[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[DICT_PAIEMENT] = "code,libelle,type,accountancy_code";
@@ -464,7 +464,7 @@ $tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
 $tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
 $tabfieldinsert[DICT_TYPENT] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldinsert[DICT_CURRENCIES] = "code_iso,label,unicode";
-$tabfieldinsert[DICT_TVA] = "fk_pays,fk_department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,use_default,note,entity";
+$tabfieldinsert[DICT_TVA] = "fk_pays,fk_department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note,entity";
 $tabfieldinsert[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
 $tabfieldinsert[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[DICT_PAIEMENT] = "code,libelle,type,accountancy_code,entity";
@@ -619,7 +619,7 @@ $tabcomplete = array(
 	'c_chargesociales' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
 	'c_typent' => array('picto' => 'company', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'position' => $langs->trans("PositionIntoComboList"))),
 	'c_currencies' => array('picto' => 'multicurrency', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'unicode' => $langs->trans("UnicodeCurrency"))),
-	'c_tva' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'taux' => $langs->trans("SellTaxRate"), 'recuperableonly' => $langs->trans("RecuperableOnly"), 'localtax1_type' => $langs->trans("LocalTaxDesc"), 'localtax2_type' => $langs->trans("LocalTaxDesc"))),
+	'c_tva' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'taux' => $langs->trans("SellTaxRate"), 'recuperableonly' => $langs->trans("RecuperableOnly"), 'localtax1_type' => $langs->trans("LocalTaxDesc"), 'localtax2_type' => $langs->trans("LocalTaxDesc"), 'einvoice_vatex' => $langs->trans("VATExemptionCodeDesc").' '.$langs->trans("VATExemptionCodeDesc2").' '.$langs->trans("VATExemptionCodeDesc3"),)),
 	'c_type_contact' => array('picto' => 'contact', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'position' => $langs->trans("PositionIntoComboList"))),
 	'c_payment_term' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'type_cdr' => $langs->trans("TypeCdr", $langs->transnoentitiesnoconv("NbOfDays"), $langs->transnoentitiesnoconv("Offset"), $langs->transnoentitiesnoconv("NbOfDays"), $langs->transnoentitiesnoconv("Offset")))),
 	'c_paiement' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
@@ -1547,7 +1547,7 @@ if ($id > 0) {
 	}
 	$fieldlist = explode(',', $tabfield[$id]);
 
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag($from).'">';
 
@@ -1679,6 +1679,10 @@ if ($id > 0) {
 					}
 					if ($value == 'recuperableonly') {
 						$valuetoshow = $langs->trans("NPR");
+						$class = "center";
+					}
+					if ($value == 'einvoice_vatex') {
+						$valuetoshow = $langs->trans("VATExemptionCode");
 						$class = "center";
 					}
 					if ($value == 'nbjour') {
@@ -1910,7 +1914,7 @@ if ($id > 0) {
 
 			print '</form>';
 
-			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST" spellcheck="false">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 		}
@@ -2129,6 +2133,10 @@ if ($id > 0) {
 			if ($value == 'recuperableonly') {
 				$valuetoshow = $langs->trans("NPR");
 				$cssprefix = "center ";
+			}
+			if ($value == 'einvoice_vatex') {
+				$valuetoshow = $langs->trans("VATExemptionCode");
+				$cssprefix = "center";
 			}
 			if ($value == 'nbjour') {
 				$valuetoshow = $langs->trans("NbOfDays");
