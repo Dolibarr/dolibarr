@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 if (isModEnabled('category')) {
@@ -1031,15 +1032,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			'value' => $form->multiselectarray('userids', $userArray, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1)
 		);
 
+		$statictask = new Task($db);
+		$formcompany = new FormCompany($db);
 		// Role selector (always)
 		$formquestion[] = array(
 			'type'  => 'other',
 			'name'  => 'taskrole',
 			'label' => $langs->trans("Role"),
-			'value' => $form->selectarray('taskrole', array(
-				'TASKEXECUTIVE'	=> $langs->trans("TypeContact_project_internal_PROJECTLEADER"),
-				'TASKCONTRIBUTOR'  => $langs->trans("TypeContact_project_internal_PROJECTCONTRIBUTOR")
-			), 'TASKCONTRIBUTOR', 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200')
+			'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'internal', 'position', 0, 'minwidth200', 0, 1)
 		);
 
 		// Build a string of task IDs
