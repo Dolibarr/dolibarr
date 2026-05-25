@@ -47,7 +47,7 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langsLoad = array('projects', 'users', 'companies', 'main');
+$langsLoad = array('projects', 'users', 'companies', 'main', 'errors');
 if (isModEnabled('eventorganization')) {
 	$langsLoad[] = 'eventorganization';
 }

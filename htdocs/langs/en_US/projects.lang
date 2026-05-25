@@ -342,6 +342,7 @@ Select1ToNUsersAndRole=Select 1 to n users & role
 Select1ToNUsersGroupsAndRole=Select 1 to n users / groups & 1 role
 SuccessfullyAssignedUsersTasks=Successfully performed %s assignments of users to tasks
 SkippedAlreadyAssigned=Skipped %s - already assigned
+ErrorNoUserSelected=No valid users selected for assignment
 # Help texts
 HelpPublicProjectUserAssignment=Public project: Any active user | group can be assigned.
 HelpPrivateProjectUserAssignment=Private project: Only project contacts can be assigned, so groups and other users are hidden.
