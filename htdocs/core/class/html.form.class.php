@@ -6794,7 +6794,8 @@ class Form
 
 			// Show JQuery confirm box.
 			// Add 'flex-direction: column' and 'justify-content: space-between' to push content to top and buttons to bottom
-			$formconfirm .= '<div id="' . $dialogconfirm . '" title="' . dol_escape_htmltag($title) . '" style="display: none; display: flex; flex-direction: column; justify-content: space-between;">';
+			$formconfirm .= '<div id="' . $dialogconfirm . '" title="' . dol_escape_htmltag($title) . '" style="display: none;">';
+			$formconfirm .= '<div style="display: flex; flex-direction: column; height: 100%;">';
 			if (is_array($formquestion) && array_key_exists('text', $formquestion) && !empty($formquestion['text'])) {
 				$formconfirm .= '<div class="confirmtext">' . $formquestion['text'] . '</div>' . "\n";
 			}
@@ -6813,6 +6814,7 @@ class Form
 				$formconfirm .= $question;
 				$formconfirm .= '</div>';
 			}
+			$formconfirm .= '</div>';
 			$formconfirm .= '</div>' . "\n";
 
 			$formconfirm .= "\n<!-- begin code of popup for formconfirm page=" . $page . " -->\n";
