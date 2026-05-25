@@ -1134,7 +1134,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 					$userTmp = new User($db);
 					if ($userTmp->fetch($uid) > 0) {
 						$userLink = $userTmp->getNomUrl(0);
-						$baseMsg = '&emsp;' . $userLink . ' : ' . $taskLink;
+						$baseMsg = '&emsp;' . $taskLink . ' : ' . $userLink;
 
 						$res = $taskstatic->add_contact($uid, $taskrole, 'internal');
 
@@ -1158,6 +1158,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 						$failMessages[] = '&emsp;' . $langs->trans("User") . ' #' . $uid . ' : ' . $taskLink . ' : ' . $langs->trans("ErrorRecordNotFound");
 					}
 				}
+				$successMessages[] = '&emsp;';
+				$skipMessages[] = '&emsp;';
+				$failMessages[] = '&emsp;';
 			}
 		}
 
