@@ -73,7 +73,7 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (5
 
 -- BULGARIA (id country=59)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,   '0','0','VAT rate 0',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,   '7','0','VAT rate - reduced', 1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,   '9','0','VAT rate - reduced', 1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,  '20','0','VAT rate - standard',1,__ENTITY__);
 
 -- BELGIUM (id country=2)
