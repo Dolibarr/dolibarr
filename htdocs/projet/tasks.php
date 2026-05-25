@@ -610,7 +610,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$arrayofmassactions = array();
 	if ($user->hasRight('projet', 'creer')) {
-		$arrayofmassactions['preassignusers'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("Users"));
+		$arrayofmassactions['preassignusers'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("Users").' | '.$langs->trans("Groups"));
 		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
@@ -972,31 +972,76 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			img_picto($langs->trans($object->public ? 'SharedProject' : 'PrivateProject'), $object->public ? 'fa-globe' : 'fa-lock', 'class="paddingrightonly"') . $langs->trans($object->public ? 'SharedProject' : 'PrivateProject')
 		);
 
-		$formquestion = array(
-			// 1. Add the Visibility info as a read-only field to help the enduser understand why users in the dropdown box may be limited
-			array(
-				'type' => 'other',
-				'name' => 'visibility',
-				'label' => $langs->trans("Project").' '.$langs->trans("Visibility"),
-				'value' => $visibilityHtml
-			),
-			array(
-				'type' => 'other',
-				'name' => 'userids',
-				'label' => $langs->trans("Users"),
-				'value' => $form->select_dolusers('', 'userids[]', 1, null, 0, '', '', 0, 0, 0, '(statut:=:1)', 0, '', 'multiple class="minwidth500"')
-			),
-			array(
-				'type' => 'other',
-				'name' => 'taskrole',
-				'label' => $langs->trans("Role"),
-				'value' => $form->selectarray('taskrole', array(
-					'TASKEXECUTIVE' => $langs->trans("TypeContact_project_internal_PROJECTLEADER"),
-					'TASKCONTRIBUTOR' => $langs->trans("TypeContact_project_internal_PROJECTCONTRIBUTOR")
-				), 'TASKCONTRIBUTOR', 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200')
-			)
+		// Build user array based on project visibility
+		$userArray = array();
+
+		if ($object->public) {
+			// Public: any active internal user
+			$sql = "SELECT u.rowid, u.firstname, u.lastname";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "user u";
+			$sql .= " WHERE u.statut = 1 AND u.entity IN (" . getEntity('user') . ")";
+			$sql .= " ORDER BY u.lastname, u.firstname";
+		} else {
+			// Private: only users already assigned as internal contacts to this project
+			$sql = "SELECT u.rowid, u.firstname, u.lastname";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "user u";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "element_contact ec ON ec.fk_socpeople = u.rowid";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_type_contact ctc ON ctc.rowid = ec.fk_c_type_contact";
+			$sql .= " WHERE ec.element_id = " . ((int) $object->id);
+			$sql .= " AND ctc.element = 'project' AND ctc.source = 'internal'";
+			$sql .= " AND u.statut = 1";
+			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname";
+			$sql .= " ORDER BY u.lastname, u.firstname";
+		}
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$userArray[$obj->rowid] = dolGetFirstLastname($obj->firstname, $obj->lastname);
+			}
+			$db->free($resql);
+		}
+
+		// 4. Build formquestion
+		$formquestion = array();
+
+		// Visibility info (always)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'visibility',
+			'label' => $langs->trans("Project") . ' ' . $langs->trans("Visibility"),
+			'value' => $visibilityHtml
 		);
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->transnoentities('Select1ToNUsersAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
+
+		// Group selector (public only)
+		if ($object->public) {
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'groupid',
+				'label' => $langs->trans("Group"),
+				'value' => $form->select_dolgroups('', 'groupid', 1, '', 0, '', '', 0, 0, 'minwidth250')
+			);
+		}
+
+		// Multi-user selector (always, content varies)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'userids',
+			'label' => $langs->trans("Users"),
+			'value' => $form->multiselectarray('userids', $userArray, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1)
+		);
+
+		// Role selector (always)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'taskrole',
+			'label' => $langs->trans("Role"),
+			'value' => $form->selectarray('taskrole', array(
+				'TASKEXECUTIVE'	=> $langs->trans("TypeContact_project_internal_PROJECTLEADER"),
+				'TASKCONTRIBUTOR'  => $langs->trans("TypeContact_project_internal_PROJECTCONTRIBUTOR")
+			), 'TASKCONTRIBUTOR', 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200')
+		);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->transnoentities('Select1ToNUsersGroupsAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
 	}
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
