@@ -1817,7 +1817,7 @@ class FormTicket
 						}
 					}
 
-					// Pre-select all contacts on first load; restore POST selection on re-display
+					// Preselect all contacts on first load; restore POST selection on re-display
 					if (GETPOSTISSET('receiver_multiselect')) {
 						$withtoselected = GETPOST('receiver', 'array');
 					} else {
@@ -1847,7 +1847,7 @@ class FormTicket
 				}
 				print '<input class="minwidth200" id="sendtocc" name="sendtocc" spellcheck="false" value="'.dol_escape_htmltag($sendtocc_free).'" />';
 
-				// Reuse $withto contact list; nothing pre-selected for CC
+				// Reuse $withto contact list; nothing preselected for CC
 				if (!empty($withto)) {
 					print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
 					$withtocc_selected = GETPOSTISSET('receivercc_multiselect') ? GETPOST('receivercc', 'array') : array();
