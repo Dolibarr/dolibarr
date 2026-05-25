@@ -83,13 +83,13 @@ html,body {
 }
 
 /* Fix dropdown user menu clipped by overflow:hidden on body and #topnav under MD theme */
-.bodytakepos #topmenu-login-dropdown .dropdown-menu {
-    position: fixed;
-    top: 45px;
-    left: auto;
-    right: 0;
-    overflow-y: auto;
-    max-height: calc(100vh - 50px);
+.bodytakepos#topmenu-login-dropdown.dropdown-menu{
+	position:fixed;
+	top:45px;
+	left:auto;
+	right:0;
+	overflow-y:auto;
+	max-height:calc(100vh-50px);
 }
 
 .center {
