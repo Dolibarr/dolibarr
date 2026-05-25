@@ -6808,7 +6808,7 @@ class Form
 			if (!empty($question)) {
 				// margin-top: auto pushes this element to the bottom of the flex container
 				$formconfirm .= '<div class="confirmmessage" style="margin-top: auto; font-weight: bold; padding-top: 15px;">';
-				$formconfirm .= $question;
+				$formconfirm .= img_help(0, '') . ' ' . $question;
 				$formconfirm .= '</div>';
 			}
 			$formconfirm .= '</div>';
