@@ -6597,7 +6597,7 @@ class Form
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">' . "\n";
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
-					$size = (!empty($input['size']) ? ' size="' . $input['size'] . '"' : '');    // deprecated. Use morecss instead.
+					$size = (!empty($input['size']) ? ' size="' . $input['size'] . '"' : '');	// deprecated. Use morecss instead.
 					$moreattr = (!empty($input['moreattr']) ? ' ' . $input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' ' . $input['morecss'] : '');
 
@@ -6773,13 +6773,13 @@ class Form
 			$formconfirm .= '<script nonce="' . getNonce() . '" type="text/javascript">' . "\n";
 			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
-            $(function() {
-            	$( "#' . $dialogconfirm . '" ).dialog({
-                    autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
+			$(function() {
+				$( "#' . $dialogconfirm . '" ).dialog({
+					autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
 			if ($newselectedchoice == 'no') {
 				$formconfirm .= '
 						open: function() {
-            				$(this).parent().find("button.ui-button:eq(2)").focus();
+							$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
 
@@ -6792,35 +6792,35 @@ class Form
 			$postconfirmas = 'GET';
 
 			$formconfirm .= '
-                    resizable: false,
+					resizable: false,
 					height: \'' . dol_escape_js($height) . '\',
-                    width: \'' . dol_escape_js($width) . '\',
-                    modal: true,
-                    closeOnEscape: false,
-                    buttons: {
-                        "' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
+					width: \'' . dol_escape_js($width) . '\',
+					modal: true,
+					closeOnEscape: false,
+					buttons: {
+						"' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
 							var options = "token=' . urlencode(newToken()) . '";
-                        	var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
+							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
-                         	var pageyes = \'' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '\';
+							var pageyes = \'' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '\';
 
-                         	if (inputok.length > 0) {
-                         		$.each(inputok, function(i, inputname) {
-                         			var more = "";
+							if (inputok.length > 0) {
+								$.each(inputok, function(i, inputname) {
+									var more = "";
 									var inputvalue;
-                         			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
+									if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
 										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
-                         		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         				inputvalue = $("#" + inputname + more).val();
+										if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+										inputvalue = $("#" + inputname + more).val();
 									}
-                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
+									if (typeof inputvalue == "undefined") { inputvalue=""; }
 									console.log("formconfirm check inputname="+inputname+" inputvalue="+inputvalue);
-                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
-                         		});
-                         	}
-                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
-            				if (pageyes.length > 0) {';
+									options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
+								});
+							}
+							var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
+							if (pageyes.length > 0) {';
 			if ($postconfirmas == 'GET') {
 				$formconfirm .= 'location.href = urljump;';
 			} else {
@@ -6834,25 +6834,25 @@ class Form
 			$formconfirm .= '
 								console.log("after post ok");
 							}
-	                        $(this).dialog("close");
-                        },
-                        "' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
-                        	var options = "token=' . urlencode(newToken()) . '";
-                         	var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
+							$(this).dialog("close");
+						},
+						"' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
+							var options = "token=' . urlencode(newToken()) . '";
+							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
 							var page = "' . dol_escape_js(!empty($page) ? $page : '') . '";
-                         	var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
-                         	if (inputko.length > 0) {
-                         		$.each(inputko, function(i, inputname) {
-                         			var more = "";
-                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         			var inputvalue = $("#" + inputname + more).val();
-                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
-                         		});
-                         	}
-                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
-                         	//alert(urljump);
-            				if (pageno.length > 0) {';
+							var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
+							if (inputko.length > 0) {
+								$.each(inputko, function(i, inputname) {
+									var more = "";
+									if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+									var inputvalue = $("#" + inputname + more).val();
+									if (typeof inputvalue == "undefined") { inputvalue=""; }
+									options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
+								});
+							}
+							var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
+							//alert(urljump);
+							if (pageno.length > 0) {';
 			if ($postconfirmas == 'GET') {
 				$formconfirm .= 'location.href = urljump;';
 			} else {
@@ -6866,21 +6866,21 @@ class Form
 			$formconfirm .= '
 								console.log("after post ko");
 							}
-                            $(this).dialog("close");
-                        }
-                    }
-                }
-                );
+							$(this).dialog("close");
+						}
+					}
+				}
+				);
 
-            	var button = "' . $button . '";
-            	if (button.length > 0) {
-                	$( "#" + button ).click(function() {
-                		$("#' . $dialogconfirm . '").dialog("open");
-        			});
-                }
-            });
-            });
-            </script>';
+				var button = "' . $button . '";
+				if (button.length > 0) {
+					$( "#" + button ).click(function() {
+						$("#' . $dialogconfirm . '").dialog("open");
+					});
+				}
+			});
+			});
+			</script>';
 			$formconfirm .= "<!-- end ajax formconfirm -->\n";
 		} else {
 			$formconfirm .= "\n<!-- begin formconfirm page=" . dol_escape_htmltag($page) . " -->\n";
@@ -6949,7 +6949,6 @@ class Form
 
 		return $formconfirm;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
