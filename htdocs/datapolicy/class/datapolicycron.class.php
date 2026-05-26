@@ -4,6 +4,7 @@
  * Copyright (C) 2024      William Mead      <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW                      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025      Quentin VIAL--GOUTEYRON   <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2025      Waël Almoman              <info@almoman.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +235,7 @@ class DataPolicyCron
 				'sql_template' => $sqltemplate,
 				'class' => 'Adherent',
 				'file' => DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php',
-				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => '1900-01-01', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0', 'note_private' => '---', 'note_public' => '---', 'statut' => 0), // Force status to "canceled / résilié"
+				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => dol_mktime(0, 0, 0, 1, 1, 1900), 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0', 'note_private' => '---', 'note_public' => '---', 'statut' => 0), // Force status to "canceled / résilié"
 				'call_params' => array(
 					'delete' => array('user'),   // $object->delete($user)
 					'update' => array('user')    // $object->update($user)
@@ -426,9 +427,77 @@ class DataPolicyCron
 			}
 		}
 
+		$this->_anonymizeExtraFields($object);
+
 		$callArgs = $this->_buildCallArguments($object, $user, $policy, 'update');
 
-		return $object->update(...$callArgs);
+		$result = $object->update(...$callArgs);
+
+		if ($result > 0) {
+			$object->insertExtraFields();
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Anonymizes extra fields flagged as personal data (personal_data = 1) for a given object.
+	 * Rules applied:
+	 * - varchar/text types: replaced by '---' if not empty
+	 * - numeric types (int, double, price...): replaced by 0 if not empty
+	 * - date types: replaced by '1900-01-01 00:00:00' if not empty
+	 *
+	 * @param 	CommonObject 	$object 	The object whose extra fields must be anonymized.
+	 * @return 	void
+	 */
+	private function _anonymizeExtraFields($object)
+	{
+		if (empty($object->table_element)) {
+			return;
+		}
+
+		// Retrieve extra fields definitions flagged as personal data for this object type
+		$sql = "SELECT ef.name, ef.type";
+		$sql .= " FROM " . $this->db->prefix() . "extrafields as ef";
+		$sql .= " WHERE ef.elementtype = '" . $this->db->escape($object->table_element) . "'";
+		$sql .= " AND ef.personal_data = 1";
+		$sql .= " AND ef.entity IN (0, " . (int) (isset($GLOBALS['conf']) ? $GLOBALS['conf']->entity : 1) . ")";
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->errorCount++;
+			$this->errorMessages[] = 'Error fetching personal extra fields for ' . $object->table_element . ': ' . $this->db->lasterror();
+			return;
+		}
+
+		while ($efObj = $this->db->fetch_object($resql)) {
+			$fieldName = $efObj->name;
+			$fieldType = $efObj->type;
+
+			// Extra field values are stored in $object->array_options with key 'options_<name>'
+			$optionKey = 'options_' . $fieldName;
+
+			if (!isset($object->array_options[$optionKey])) {
+				continue;
+			}
+
+			if (empty($object->array_options[$optionKey])) {
+				continue;
+			}
+
+			if (in_array($fieldType, array('multiselect', 'checkbox'))) {
+				$object->array_options[$optionKey] = array(); // Default: treat as array
+			} elseif (in_array($fieldType, array('boolean', 'radio'))) {
+				$object->array_options[$optionKey] = '0'; // Default: treat as boolean
+			} elseif (in_array($fieldType, array('date', 'datetime', 'timestamp'))) {
+				$object->array_options[$optionKey] = dol_mktime(0, 0, 0, 1, 1, 1900); // Default: treat as timestamp
+			} elseif (in_array($fieldType, array('int', 'double', 'price', 'stars'))) {
+				$object->array_options[$optionKey] = 0; // Default: treat as numeric
+			} else {
+				$object->array_options[$optionKey] = '---'; // Default: treat as varchar/text
+			}
+		}
 	}
 
 	/**
@@ -471,7 +540,7 @@ class DataPolicyCron
 	 */
 	private function _recordActionResult($result, $object, $action)
 	{
-		if ($result <= 0) {
+		if ($result < 0) {
 			$this->errorCount++;
 			$this->errorMessages[] = 'Failed to ' . $action . ' record ID ' . $object->id . ' from class ' . get_class($object) . '. Error: ' . $object->errorsToString();
 		} else {

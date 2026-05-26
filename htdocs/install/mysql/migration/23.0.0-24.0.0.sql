@@ -34,6 +34,10 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+--noqa:disable=LT09
+--noqa:disable=RF03
+
+
 -- Vxx forgotten
 
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
@@ -48,7 +52,7 @@ ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
 
 -- V24 migration
-
+ALTER TABLE llx_expensereport_det ADD COLUMN tcheck_file	integer DEFAULT NULL after fk_ecm_files;
 ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_user;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
@@ -97,15 +101,12 @@ create table llx_categorie_mo
   import_key   varchar(14)
 )ENGINE=innodb;
 
---noqa:disable=PRS
-ALTER TABLE llx_categorie_mo ADD PRIMARY KEY pk_categorie_mo (fk_categorie, fk_mo);
---noqa:enable=PRS
+
 ALTER TABLE llx_categorie_mo ADD INDEX idx_categorie_mo_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_mo ADD INDEX idx_categorie_mo_fk_mo (fk_mo);
 
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_fk_mo_rowid FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
-
 
 ALTER TABLE llx_facture ADD COLUMN fk_thirdparty_rib_id integer NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
@@ -188,7 +189,7 @@ UPDATE llx_rights_def SET perms = 'manage_advance' WHERE module = 'ticket' AND p
 UPDATE llx_facture SET model_pdf = 'sponge' WHERE model_pdf = 'crabe';
 UPDATE llx_facture_rec SET modelpdf = 'sponge' WHERE modelpdf = 'crabe';
 UPDATE llx_const SET value = 'sponge' WHERE value = 'crabe' AND name ='FACTURE_ADDON_PDF';
-UPDATE llx_document_model SET nom = 'sponge' WHERE nom = 'crabe' AND type = 'invoice' AND NOT EXISTS (SELECT nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'sponge' AND type = 'invoice') as subquery WHERE subquery.entity = entity);
+UPDATE llx_document_model SET nom = 'sponge' WHERE nom = 'crabe' AND type = 'invoice' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'sponge' AND type = 'invoice') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'crabe' AND type = 'invoice';
 
 ALTER TABLE llx_salary ADD COLUMN model_pdf varchar(255) DEFAULT NULL;
@@ -211,8 +212,6 @@ INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CLOSE','Stock transfer closed','Executed when a stock transfer is closed after destination stock increment','stocktransfer',676);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
-
-UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;
 
@@ -529,5 +528,32 @@ ALTER TABLE llx_product_warehouse_properties ADD INDEX idx_product_warehouse_pro
 
 ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_product_warehouse_properties ADD CONSTRAINT fk_product_warehouse_properties_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_replacement integer DEFAULT NULL;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee_replacement (fk_replacement);
+
+-- Add extrafields on various payment
+CREATE TABLE llx_payment_various_extrafields
+(
+	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object                 integer NOT NULL,
+	import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_extrafields (fk_object);
+
+ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
+
+ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
+
+
+-- SQL with disabled check must be at end
+--noqa:disable=PRS
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
+--noqa:enable=PRS
+
 
 -- end of migration

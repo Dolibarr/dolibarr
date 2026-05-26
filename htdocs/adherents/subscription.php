@@ -701,7 +701,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<div class="tabsAction">';
 
 		if ($object->status > 0) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=createsubscription">'.$langs->trans("AddSubscription")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $rowid, 'action' => 'createsubscription'], true).'">'.$langs->trans("AddSubscription")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 		}
@@ -717,7 +717,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 	$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
 	$sql .= " c.rowid as crowid, c.subscription,";
 	$sql .= " c.datec, c.fk_type as cfk_type,";
-	$sql .= " c.dateadh as dateh,";
+	$sql .= " c.dateadh as dateh, c.note as clabel,";
 	$sql .= " c.datef,";
 	$sql .= " c.fk_bank,";
 	$sql .= " b.rowid as bid,";
@@ -744,6 +744,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 		print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'clabel', '', $param, '', $sortfield, $sortorder);
 		if (isModEnabled('bank')) {
 			print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 		}
@@ -762,6 +763,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 
 			$subscriptionstatic->ref = $objp->crowid;
 			$subscriptionstatic->id = $objp->crowid;
+			$subscriptionstatic->note_public = $objp->clabel;
 
 			$typeid = $objp->cfk_type;
 			if ($typeid > 0) {
@@ -779,6 +781,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
 			print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
 			print '<td class="right amount">'.price($objp->subscription).'</td>';
+			print '<td class="left">'.$objp->clabel.'</td>';
 			if (isModEnabled('bank')) {
 				print '<td class="tdoverflowmax100 right">';
 				if ($objp->bid) {

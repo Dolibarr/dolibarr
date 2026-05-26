@@ -1498,6 +1498,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$selectedcustomer = ((GETPOSTISSET('customer') && $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
 			$selectedsupplier = ((GETPOSTISSET('supplier') && $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
 
+			if ($selectedprospect && $selectedcustomer && getDolGlobalString("SOCIETE_DISABLE_PROSPECTSCUSTOMERS")) {
+				// If both are not allowed, we reset $selectedcustomer
+				$selectedcustomer = 0;
+			}
+
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
 				print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
@@ -3107,8 +3112,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<td>'.$idprof.'</td><td>';
 					$key = 'idprof'.$i;
 					print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
-					if ($object->$key) {
-						if ($object->id_prof_check($i, $object) > 0) {
+					if (!empty($object->$key)) {
+						if ($object->id_prof_check($i) > 0) {
 							$profidurl = $object->id_prof_url($i, $object);
 							if (!empty($profidurl)) {
 								print ' &nbsp; '.$profidurl;
@@ -3482,6 +3487,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($result > 0) {
 					$adh->ref = $adh->getFullName($langs);
 					print $adh->getNomUrl(-1);
+					print ' &mdash; '.$adh->getLibStatut(0);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 				}

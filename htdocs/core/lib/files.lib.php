@@ -850,6 +850,52 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	return 1;
 }
 
+/**
+ * Removes content from a file that matches a given pattern.
+ *
+ * @param string $filePath Path to the file to be processed.
+ * @param string $pattern Regular expression pattern to identify the content to remove.
+ * @return bool Returns true if the operation was successful, false otherwise.
+ */
+function removePatternFromFile(string $filePath, string $pattern): bool
+{
+	// Check if the file exists
+	if (! file_exists($filePath)) {
+		dol_syslog("files.lib.php::removePatternFromFile: File $filePath does not exist", LOG_WARNING);
+
+		return false;
+	}
+
+	// Read the file content
+	$content = file_get_contents($filePath);
+	if ($content === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Unable to read the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Remove content matching the pattern
+	$updatedContent = preg_replace($pattern, '', $content);
+	if ($updatedContent === null) {
+		dol_syslog("files.lib.php::removePatternFromFile: Error while processing the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Write the updated content back to the file
+	$result = file_put_contents($filePath, $updatedContent);
+	if ($result === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Permission denied to overwrite the target file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	dol_syslog("files.lib.php::removePatternFromFile: Content successfully removed in the file $filePath", LOG_INFO);
+
+	return true;
+}
+
+
 
 /**
  * Copy a file to another file.
@@ -1448,7 +1494,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$keyforsourcefile	Key for source file in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
- *  @param	int		$mode				0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
+ *  @param	int		$mode				0=Default mode use to move a file from the default system upload dir (/tmp/...) into $upload_dir. 1=Mode to move an uploaded file with a simple rename (when uploaded dir is in same filesystem than $upload_dir).
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
@@ -1768,6 +1814,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
+						chmod(dol_osencode("$dir/$item"), 0755);
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {

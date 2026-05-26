@@ -967,21 +967,19 @@ $help_url = 'EN:Module_Interventions|FR:Module_Fiches_d\'interventions';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
 
+// Create new intervention
 if ($action == 'create') {
-	// Create new intervention
-
 	$soc = new Societe($db);
+	if ($socid > 0) {
+		$soc->fetch($socid);
+	}
 
-	print load_fiche_titre($langs->trans("AddIntervention"), '', 'intervention');
+	print load_fiche_titre($langs->trans("NewIntervention"), '', 'intervention');
 
 	if ($error > 0) {
 		dol_htmloutput_errors($mesg);
 	} else {
 		dol_htmloutput_mesg($mesg);
-	}
-
-	if ($socid) {
-		$res = $soc->fetch($socid);
 	}
 
 	if (GETPOST('origin', 'alphanohtml') && GETPOSTINT('originid')) {
@@ -1036,6 +1034,8 @@ if ($action == 'create') {
 		}
 	} else {
 		$projectid = GETPOSTINT('projectid');
+		$note_private = GETPOST("note_private", "alpha");
+		$note_public = GETPOST("note_public", "alpha");
 	}
 
 	if (!$conf->global->FICHEINTER_ADDON) {
@@ -1051,206 +1051,192 @@ if ($action == 'create') {
 	//$modFicheinter = new $obj;
 	//$numpr = $modFicheinter->getNextValue($soc, $object);
 
+	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="socid" value='.$soc->id.'>';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+	print dol_get_fiche_head([]);
+
+	print '<table class="border centpercent">';
+
+	// Ref
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
+
+	// Ref customer
+	print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
+	print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
+	print '</tr>';
+
+	// Thirdparty
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 	if ($socid > 0) {
-		$soc = new Societe($db);
-		$soc->fetch($socid);
-
-		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="socid" value='.$soc->id.'>';
-		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
-		print dol_get_fiche_head([]);
-
-		print '<table class="border centpercent">';
-
-		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
-
-		// Ref
-		print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
-
-		// Ref customer
-		print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
-		print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
-		print '</tr>';
-
-		// Description (must be a textarea and not html must be allowed (used in list view)
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
-		print '</td></tr>';
-
-		// Project
-		if (isModEnabled('project')) {
-			$formproject = new FormProjets($db);
-
-			$langs->load("project");
-
-			print '<tr><td>'.$langs->trans("Project").'</td><td>';
-			/* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
-			if ($societe->fournisseur==1)
-				$numprojet=select_projects(-1, GETPOST("projectid", 'int'), 'projectid');
-			else
-				$numprojet=select_projects($societe->id, GETPOST("projectid", 'int'), 'projectid');
-				*/
-			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
-			if ($numprojet == 0) {
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
-			}
-			print '</td></tr>';
-		}
-
-		// Category
-		if (isModEnabled('category')) {
-			// Categories
-			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			print $form->selectCategories(Categorie::TYPE_FICHINTER, 'categories', $object);
-			print "</td></tr>";
-		}
-
-		// Contract
-		if (isModEnabled('contract') && is_object($formcontract)) {
-			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
-			// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
-			if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
-				$langs->load("contracts");
-				print '<tr><td>'.$langs->trans("Contract").'</td><td>';
-				$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
-				if ($numcontrat == 0) {
-					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
-				}
-				print '</td></tr>';
-			}
-		}
-
-		// Model
-		$liste = ModelePDFFicheinter::liste_modeles($db);
-		if (count($liste) > 0) {
-			print '<tr>';
-			print '<td>'.$langs->trans("DefaultModel").'</td>';
-			print '<td>';
-			print $form->selectarray('model', $liste, getDolGlobalString('FICHEINTER_ADDON_PDF'));
-			print "</td></tr>";
-		}
-
-		// Public note
-		print '<tr>';
-		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
-		print '<td>';
-		$doleditor = new DolEditor('note_public', (string) $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
-		print $doleditor->Create(1);
-		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
-		print '</td></tr>';
-
-		// Private note
-		if (empty($user->socid)) {
-			print '<tr>';
-			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
-			print '<td>';
-			$doleditor = new DolEditor('note_private', (string) $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
-			print $doleditor->Create(1);
-			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
-			print '</td></tr>';
-		}
-
-		// Other attributes
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		if (empty($reshook)) {
-			print $object->showOptionals($extrafields, 'create');
-		}
-
-		// Show link to origin object
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
-			$newclassname = $classname;
-			if ($newclassname == 'Propal') {
-				$langs->load('propal');
-				$newclassname = 'CommercialProposal';
-			}
-			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
-
-			// Amount
-			/* Hide amount because we only copy services so amount may differ than source
-			print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
-			print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
-			if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
-			{
-				print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1) . "</td></tr>";
-			}
-
-			if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2 IRPF
-			{
-				print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2) . "</td></tr>";
-			}
-
-			print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
-
-			if (isModEnabled("multicurrency"))
-			{
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
-			}
-			*/
-		}
-
-		print '</table>';
-
-		if (is_object($objectsrc)) {
-			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-		} elseif ($origin == 'project' && !empty($projectid)) {
-			print '<input type="hidden" name="projectid" value="'.$projectid.'">';
-		}
-
-		print dol_get_fiche_end();
-
-		print $form->buttonsSaveCancel("CreateDraftIntervention");
-
-		// Show origin lines
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && !getDolGlobalInt('FICHINTER_DISABLE_DETAILS')) {
-			$title = $langs->trans('Services');
-			print load_fiche_titre($title);
-
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
-
-			$objectsrc->printOriginLinesList(!getDolGlobalString('FICHINTER_PRINT_PRODUCTS') ? 'services' : ''); // Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
-
-			print '</table>';
-			print '</div>';
-		}
-
-		print '</form>';
+		print $soc->getNomUrl(1);
+		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+		print '</td>';
 	} else {
-		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="create">';		// We go back to create action
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
-		print dol_get_fiche_head([]);
-
-		if (is_object($objectsrc)) {
-			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-		} elseif ($origin == 'project' && !empty($projectid)) {
-			print '<input type="hidden" name="projectid" value="'.$projectid.'">';
-		}
-		print '<table class="border centpercent">';
-		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
-		print '</td></tr>';
-		print '</table>';
-
-		print dol_get_fiche_end();
-
-		print $form->buttonsSaveCancel("CreateDraftIntervention");
-
-		print '</form>';
+		print '<td>';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth150 widthcentpercentminusxx maxwidth500');
+		print ' <a href="'.dolBuildUrl(DOL_URL_ROOT . '/societe/card.php', ['action' => 'create', 'customer' => 3, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		print '</td>';
 	}
+	print '</tr>'."\n";
+
+	// Description (must be a textarea and not html must be allowed (used in list view)
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+	print '<td>';
+	print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
+	print '</td></tr>';
+
+	// Project
+	if (isModEnabled('project')) {
+		$formproject = new FormProjets($db);
+
+		$langs->load("project");
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		/* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
+		if ($societe->fournisseur==1)
+			$numprojet=select_projects(-1, GETPOST("projectid", 'int'), 'projectid');
+		else
+			$numprojet=select_projects($societe->id, GETPOST("projectid", 'int'), 'projectid');
+		*/
+		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
+		if ($numprojet == 0) {
+			print ' &nbsp; <a href="' . dolBuildUrl(DOL_URL_ROOT . '/projet/card.php', ['socid' => $soc->id, 'action' => 'create', 'status' => 1, 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'socid' => $soc->id])]) . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+		}
+		print '</td></tr>';
+	}
+
+	// Category
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		print $form->selectCategories(Categorie::TYPE_FICHINTER, 'categories', $object);
+		print "</td></tr>";
+	}
+
+	// Contract
+	if (isModEnabled('contract') && is_object($formcontract)) {
+		// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+		// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+		if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+			$langs->load("contracts");
+			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
+			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
+			if ($numcontrat == 0) {
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
+			}
+			print '</td></tr>';
+		}
+	}
+
+	// Model
+	$liste = ModelePDFFicheinter::liste_modeles($db);
+	if (count($liste) > 0) {
+		print '<tr>';
+		print '<td>'.$langs->trans("DefaultModel").'</td>';
+		print '<td>';
+		print $form->selectarray('model', $liste, getDolGlobalString('FICHEINTER_ADDON_PDF'));
+		print "</td></tr>";
+	}
+
+	// Public note
+	print '<tr>';
+	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
+	print '<td>';
+	$doleditor = new DolEditor('note_public', (string) $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	print $doleditor->Create(1);
+	//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
+	print '</td></tr>';
+
+	// Private note
+	if (empty($user->socid)) {
+		print '<tr>';
+		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
+		print '<td>';
+		$doleditor = new DolEditor('note_private', (string) $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		print $doleditor->Create(1);
+		//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
+		print '</td></tr>';
+	}
+
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook)) {
+		print $object->showOptionals($extrafields, 'create');
+	}
+
+	// Show link to origin object
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		$newclassname = $classname;
+		if ($newclassname == 'Propal') {
+			$langs->load('propal');
+			$newclassname = 'CommercialProposal';
+		}
+		print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+
+		// Amount
+		/* Hide amount because we only copy services so amount may differ than source
+		print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
+		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1) . "</td></tr>";
+		}
+
+		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2 IRPF
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2) . "</td></tr>";
+		}
+
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
+
+		if (isModEnabled("multicurrency"))
+		{
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+		}
+		*/
+	}
+
+	print '</table>';
+
+	if (is_object($objectsrc)) {
+		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+	} elseif ($origin == 'project' && !empty($projectid)) {
+		print '<input type="hidden" name="projectid" value="'.$projectid.'">';
+	}
+
+	print dol_get_fiche_end();
+
+	print $form->buttonsSaveCancel("CreateDraftIntervention");
+
+	// Show origin lines
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc) && !getDolGlobalInt('FICHINTER_DISABLE_DETAILS')) {
+		$title = $langs->trans('Services');
+		print load_fiche_titre($title);
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+
+		$objectsrc->printOriginLinesList(!getDolGlobalString('FICHINTER_PRINT_PRODUCTS') ? 'services' : ''); // Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
+
+		print '</table>';
+		print '</div>';
+	}
+
+	print '</form>';
 } elseif ($id > 0 || !empty($ref)) {
 	// View mode
 

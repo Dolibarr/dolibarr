@@ -838,7 +838,7 @@ class Mo extends CommonObject
 					//$moline->fk_warehouse = !empty($line->fk_warehouse) ? $line->fk_warehouse : (!empty($bom->fk_warehouse) ? $bom->fk_warehouse : $this->fk_warehouse);
 					if (in_array($role, array('toconsume', 'consumed'))) {
 						$moline->fk_warehouse = null;
-					} else {	// to consume / consumed
+					} else {	// to produce / produced
 						$moline->fk_warehouse = $this->fk_warehouse;		// We fill the production warehouse defined in MO. Do not use the one of the BOM, if a BOM has a production warehouse set, it should have been already copied into the MO.
 					}
 					$moline->role = $role;

@@ -3,7 +3,7 @@
  * Copyright (C) 2020   	Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,7 +148,7 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
 		}
-		if (empty($id) && empty($ref)&& empty($ref_ext)) {
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
 			throw new RestException(400, 'No invoice can be found with no criteria');
 		}
 		$result = $this->invoice->fetch($id, $ref, $ref_ext);
@@ -1898,7 +1898,8 @@ class Invoices extends DolibarrApi
 
 		// Loop on each invoice to pay
 		foreach ($arrayofamounts as $id => $amountarray) {
-			$result = $this->invoice->fetch((int) $id);
+			$id = (int) $id;  // Ensure $id is seen as int, required by function calls and array indexes.
+			$result = $this->invoice->fetch($id);
 			if (!$result) {
 				$this->db->rollback();
 				throw new RestException(404, 'Invoice ID '.$id.' not found');

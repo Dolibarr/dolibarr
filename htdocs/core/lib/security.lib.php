@@ -546,13 +546,20 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'evaluation';
 	}
 
-	// @todo check : project_task
-	// @todo possible ?
-	// elseif (substr($features, -3, 3) == 'det') {
-	// 	$features = substr($features, 0, -3);
-	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
-	// 	$features = substr($features, 0, -4);
-	// }
+	// When the object is a task (element='project_task') and $feature2 is empty,
+	// $checkUserAccessToObject() falls into the $checkproject path and uses the task ID
+	// as project ID, which always fails. Setting $feature2='project_task' triggers the
+	// normalization at line 974 that redirects to the $checktask path, which correctly
+	// resolves $task->fk_project before calling getProjectsAuthorizedForUser().
+	if (is_object($object) && in_array($object->element, array('project_task', 'task'))
+		&& (empty($features) || in_array($features, array('projet', 'project')))
+		&& empty($feature2)) {
+		$features = 'projet';
+		$feature2 = 'project_task';
+		if (empty($tableandshare)) {
+			$tableandshare = 'projet_task';
+		}
+	}
 
 	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -1409,6 +1416,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		llxFooter();
 	}
 
+	// End PHP
 	exit(0);
 }
 
