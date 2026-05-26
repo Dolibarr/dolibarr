@@ -5794,6 +5794,7 @@ class Facture extends CommonInvoice
 		$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
 		$sql .= ' AND situation_counter < '.((int) $this->situation_counter);
 		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
+		$sql .= ' AND type <> '.((int) self::TYPE_DEPOSIT); // Exclude deposit invoices from previous situations (avoid double-counting deposit amount in update_price)
 		$resql = $this->db->query($sql);
 		$res = array();
 		if ($resql && $this->db->num_rows($resql) > 0) {
