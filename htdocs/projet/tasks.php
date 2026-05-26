@@ -1241,7 +1241,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			$taskIdsStr = implode(',', $arrayofselected);
 			print $form->formconfirm(
 				$_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr,
-				$langs->transnoentities('Select1ToNContactsAndRole'),
+				$langs->transnoentities('Select1ToXAndRole', $langs->trans("ThirdPartyContacts")),
 				$langs->trans('AssignContactsToSelectedTasks', count($arrayofselected)),
 				'assignthirdcontacts',
 				$formquestion,
@@ -1288,7 +1288,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 				'type'  => 'other',
 				'name'  => 'project_contacts',
 				'label' => $langs->trans("Contacts"),
-				'value' => '<span class="warning">' . $langs->trans("NoProjectContactsFound") . '</span>'
+				'value' => '<span class="warning">' . $langs->trans("ErrorRefNotFound", $langs->trans("ProjectContact")) . '</span>'
 			);
 		} else {
 			$projectSelectHtml = $form->multiselectarray('project_contacts', $projectContacts, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1);
@@ -1313,7 +1313,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		$taskIdsStr = implode(',', $arrayofselected);
 		print $form->formconfirm(
 			$_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr,
-			$langs->transnoentities('Select1ToNContactsAndRole'),
+			$langs->transnoentities('Select1ToXAndRole', $langs->trans("ProjectContact")),
 			$langs->trans('AssignContactsToSelectedTasks', count($arrayofselected)),
 			'assignprojectcontacts',
 			$formquestion,
