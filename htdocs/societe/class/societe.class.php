@@ -5792,6 +5792,97 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 *  Get a list of contacts for this third party, formatted according to a custom field array.
+	 *  Respects MAIN_FIRSTNAME_NAME_POSITION for both display and SQL sorting.
+	 *
+	 *  @param  int     $status     Filter by status: 1=Active, 0=Inactive, -1=All
+	 *  @param  array   $fields     Array of fields/constants to concatenate.
+	 *                              Example: ['name', ' (', 'email', ')']
+	 *                              Supported: 'firstname', 'lastname', 'email', 'phone', 'phone_perso', 'phone_mobile', 'fax', 'poste', 'civility'
+	 *  @param  Translate $langs    Language object for civility translation (optional)
+	 *  @return array               Associative array [id => "formatted string"]
+	 */
+	public function getContactListFormatted($status = 1, $fields = array(), $langs = null)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $langs;
+		if (empty($langs)) $langs = $GLOBALS['langs'];
+
+		$firstnameFirst = (getDolGlobalInt('MAIN_FIRSTNAME_NAME_POSITION') == 0);
+
+		if (empty($fields)) {
+			$fields = array('firstname', 'lastname', ' (', 'email', ')');
+		}
+
+		// 1. Build SQL
+		$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.email, t.phone, t.phone_perso, t.phone_mobile, t.fax, t.poste, t.civility, t.statut";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
+		$sql .= " WHERE t.fk_soc = " . ((int) $this->id);
+		$sql .= " AND t.entity IN (" . getEntity('socpeople') . ")";
+
+		if ($status >= 0) {
+			$sql .= " AND t.statut = " . ((int) $status);
+		}
+
+		if ($firstnameFirst) {
+			$sql .= " ORDER BY t.firstname, t.lastname";
+		} else {
+			$sql .= " ORDER BY t.lastname, t.firstname";
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror();
+			return array();
+		}
+
+		$result = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$parts = array();
+
+			foreach ($fields as $field) {
+				if ($field === 'name') {
+					// Special handling: Build the name based on global setting
+					if ($firstnameFirst) {
+						$parts[] = trim($obj->firstname . ' ' . $obj->lastname);
+					} else {
+						$parts[] = trim($obj->lastname . ' ' . $obj->firstname);
+					}
+				} elseif ($field === 'email') {
+					$parts[] = $obj->email;
+				} elseif ($field === 'phone') {
+					// Prioritize: phone > phone_perso > phone_mobile
+					$parts[] = $obj->phone ?: $obj->phone_perso ?: $obj->phone_mobile;
+				} elseif ($field === 'phone_perso') {
+					$parts[] = $obj->phone_perso;
+				} elseif ($field === 'phone_mobile') {
+					$parts[] = $obj->phone_mobile;
+				} elseif ($field === 'fax') {
+					$parts[] = $obj->fax;
+				} elseif ($field === 'job' || $field === 'poste') {
+					$parts[] = $obj->poste;
+				} elseif ($field === 'civility') {
+					if (!empty($obj->civility)) {
+						$civLabel = $langs->transnoentitiesnoconv("Civility".$obj->civility);
+						$parts[] = ($civLabel != "Civility".$obj->civility) ? $civLabel : $obj->civility;
+					}
+				} elseif (property_exists($obj, $field)) {
+					$parts[] = $obj->$field;
+				} else {
+					// Literal string
+					$parts[] = $field;
+				}
+			}
+
+			// Join and clean up extra spaces
+			$formattedString = preg_replace('/\s+/', ' ', trim(implode('', $parts)));
+			$result[$obj->rowid] = $formattedString;
+		}
+
+		return $result;
+	}
+
+	/**
 	 *    Merge a company with current one, deleting the given company $soc_origin_id.
 	 *    The company given in parameter will be removed.
 	 *    This is called for example by the societe/card.php file.
