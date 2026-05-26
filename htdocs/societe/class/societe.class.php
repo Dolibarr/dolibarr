@@ -5797,8 +5797,8 @@ class Societe extends CommonObject
 	 *
 	 * @param int     $status     Filter by status: 1=Active, 0=Inactive, -1=All
 	 * @param array<int|string, string> $fields     Array of fields/constants to concatenate.
-	 *                              Example: ['name', ' (', 'email', ')']
-	 *                              Supported: 'firstname', 'lastname', 'email', 'phone', 'phone_perso', 'phone_mobile', 'fax', 'poste', 'civility'
+	 * 												Example: ['name', ' (', 'email', ')']
+	 * 												Supported: 'firstname', 'lastname', 'email', 'phone', 'phone_perso', 'phone_mobile', 'fax', 'poste', 'civility'
 	 * @param Translate|null $langs    Language object for civility translation (optional)
 	 * @return array<int, string>      Associative array [id => "formatted string"]
 	 */
