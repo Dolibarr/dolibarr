@@ -48,7 +48,7 @@ jobs:
 
             console.log('Detected language:', isEnglish ? 'english' : 'not english')
 
-            #if (hasYoutubeMusic || !isEnglish) {
+            // if (hasYoutubeMusic || !isEnglish) {
             if (hasYoutubeMusic) {
               console.log('Deleting comment...')
 
