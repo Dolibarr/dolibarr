@@ -750,7 +750,7 @@ if ($id > 0 || $ref) {
 			}
 			print '</td></tr>';
 
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Price
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
 				if ($usercancreadprice) {
@@ -1328,7 +1328,7 @@ if ($showstockdetails) {
 	print '<td class="liste_total right amount">';
 	if ($num) {
 		print '<span class="valignmiddle">';
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && $usercancreadprice) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && $usercancreadprice) {
 			print price(price2num($totalvaluesell, 'MT'), 1);
 		} else {
 			print $form->textwithpicto('', $langs->trans("Variable"));

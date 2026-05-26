@@ -228,7 +228,7 @@ if (getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS')) {
 
 if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 	$titlesellprice = $langs->trans("SellingPrice");
-	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$titlesellprice = $form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
 	}
 }
@@ -266,8 +266,8 @@ $arrayfields = array(
 	'p.volume_units' => array('label' => 'VolumeUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $type != '1'), 'position' => 31),
 	'cu.label' => array('label' => "DefaultUnitToShow", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && getDolGlobalString('PRODUCT_USE_UNITS')), 'position' => 32),
 	'p.fk_default_workstation' => array('label' => 'DefaultWorkstation', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('workstation') && $type == 1), 'position' => 33),
-	'p.sellprice' => array('label' => "SellingPrice", 'checked' => '1', 'enabled' => (string) (int) !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 40),
-	'p.tva_tx' => array('label' => "VATRate", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 41),
+	'p.sellprice' => array('label' => "SellingPrice", 'checked' => '1', 'enabled' => (string) (int) (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')), 'position' => 40),
+	'p.tva_tx' => array('label' => "VATRate", 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')), 'position' => 41),
 	'p.minbuyprice' => array('label' => "BuyingPriceMinShort", 'checked' => '1', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 42),
 	'p.numbuyprice' => array('label' => "BuyingPriceNumShort", 'checked' => '0', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 43),
 	'p.pmp' => array('label' => "PMPValueShort", 'checked' => '0', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 44),

@@ -419,7 +419,7 @@ class pdf_standard_stock extends ModelePDFStock
 
 						$pricemin = 0;
 						// Price sell min
-						if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+						if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 							$pricemin = $objp->price;
 							$pdf->SetXY($this->posxdiscount, $curY);
 							$pdf->MultiCell($this->postotalht - $this->posxdiscount, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', false);
@@ -512,7 +512,7 @@ class pdf_standard_stock extends ModelePDFStock
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, price(price2num($totalvalue, 'MT'), 0, $outputlangs), 0, 'R');
 
 						// Price sell min
-						if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+						if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 							// Total sell min
 							$pdf->SetXY($this->postotalht, $curY);
 							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', false);
