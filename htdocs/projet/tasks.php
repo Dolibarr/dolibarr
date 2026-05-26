@@ -1328,6 +1328,123 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		);
 	}
 
+	// --- BLOCK 1: Validation Check (Abort if not ready) ---
+	if ($action == 'assignthirdcontacts' || $action == 'assignprojectcontacts') {
+		$contactVarName = ($action == 'assignthirdcontacts') ? 'tp_contacts' : 'project_contacts';
+		$selectedContactIds = GETPOST($contactVarName, 'array');
+		$role = GETPOSTINT('taskrole');
+		$taskIdsRaw = GETPOST('taskselect', 'alpha');
+
+		$taskIds = array();
+		if (!empty($taskIdsRaw)) {
+			$taskIds = explode(',', $taskIdsRaw);
+			$taskIds = array_map('intval', $taskIds);
+			$taskIds = array_filter($taskIds);
+		}
+
+		if (!$user->hasRight('projet', 'creer')) {
+			setEventMessages($langs->trans("ErrorForbidden"), null, 'errors');
+			$action = '';
+			$massaction = '';
+		} elseif (empty($selectedContactIds)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("SearchIntoContacts")), null, 'errors');
+			$action = '';
+			$massaction = '';
+		} elseif (empty($role)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("ContactRole")), null, 'errors');
+			$action = '';
+			$massaction = '';
+		} elseif (empty($taskIds)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Tasks")), null, 'errors');
+			$action = '';
+			$massaction = '';
+		}
+	}
+
+	// --- BLOCK 2: Process Data (Only if ready) ---
+	// Assumes Block 1 has already validated everything.
+	if ($action == 'assignthirdcontacts' || $action == 'assignprojectcontacts') {
+		$contactVarName = ($action == 'assignthirdcontacts') ? 'tp_contacts' : 'project_contacts';
+		$selectedContactIds = GETPOST($contactVarName, 'array');
+		$role = GETPOSTINT('taskrole');
+		$taskIdsRaw = GETPOST('taskselect', 'alpha');
+
+		// Parse Task IDs (Safe extraction, no validation needed)
+		$selectedTasks = array();
+		if (!empty($taskIdsRaw)) {
+			$selectedTasks = explode(',', $taskIdsRaw);
+			$selectedTasks = array_map('intval', $selectedTasks);
+			$selectedTasks = array_unique($selectedTasks, SORT_NUMERIC);
+		}
+
+		// Execute Assignment
+		$taskStatic = new Task($db);
+		$successCount = 0;
+		$skippedCount = 0;
+		$failCount = 0;
+
+		$successMessages = array();
+		$skipMessages = array();
+		$failMessages = array();
+
+		foreach ($selectedTasks as $taskId) {
+			if ($taskStatic->fetch($taskId) > 0) {
+				$taskLink = $taskStatic->getNomUrl(0);
+
+				foreach ($selectedContactIds as $cid) {
+					$contactTmp = new Contact($db);
+					if ($contactTmp->fetch($cid) > 0) {
+						$contactLink = $contactTmp->getNomUrl(0);
+						$baseMsg = '&emsp;' . $taskLink . ' : ' . $contactLink;
+
+						$res = $taskStatic->add_contact($cid, $role, 'external');
+
+						if ($res > 0) {
+							$successCount++;
+							$successMessages[] = $baseMsg;
+						} elseif ($res == 0) {
+							// res=0 means "already added" -> Skip
+							$skippedCount++;
+							$skipMessages[] = $baseMsg;
+						} else {
+							// res < 0 means real error
+							$failCount++;
+							$failMessages[] = $baseMsg . ' : ' . $taskStatic->error;
+						}
+					} else {
+						// Should not happen if Block 1 passed, but safe fallback
+						$failCount++;
+						$failMessages[] = '&emsp;' . $langs->trans("Contact") . ' #' . $cid . ' : ' . $taskLink . ' : ' . $langs->trans("ErrorRecordNotFound");
+					}
+				}
+				// Spacing
+				$successMessages[] = '&emsp;';
+				$skipMessages[] = '&emsp;';
+				$failMessages[] = '&emsp;';
+			}
+		}
+
+		// Feedback
+		if ($successCount > 0) {
+			setEventMessages($langs->trans("SuccessfullyAssignedToTasks", $successCount), $successMessages, 'mesgs');
+		}
+		if ($skippedCount > 0) {
+			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
+		}
+		if ($failCount > 0) {
+			setEventMessages($langs->trans("ErrorNoGoodSelected", $failCount), $failMessages, 'errors');
+		}
+
+		// Redirect
+		if (!headers_sent()) {
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		} else {
+			echo '<script>window.location.href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '";</script>';
+			exit;
+		}
+	}
+
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
