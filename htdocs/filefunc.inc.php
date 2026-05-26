@@ -300,10 +300,11 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 }
 
+// @phpstan-ignore-next-line if.alwaysTrue
 if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	print "Error: Dolibarr config file content seems to be not correctly defined";
 	if (empty($dolibarr_main_document_root)) {
-		print " (dolibarr_main_document_root can't be known).<br>\n";
+		print " (dolibarr_main_document_root can't be unknown).<br>\n";
 	} else {
 		print " (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
 	}
