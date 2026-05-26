@@ -1307,17 +1307,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 		$statictask = new Task($db);
 		$formcompany = new FormCompany($db);
-		// Role selector (always)
 		$formquestion[] = array(
 			'type'  => 'other',
 			'name'  => 'taskrole',
 			'label' => $langs->trans("ContactRole"),
-			'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'internal', 'position', 0, 'minwidth200', 0, 1)
+			'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'external', 'position', 0, 'minwidth200', 0, 1)
 		);
 
 		// Build a string of task IDs
 		$taskIdsStr = implode(',', $arrayofselected);
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToNUsersGroupsAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToNContactsAndRole'), $langs->trans('AssignContactsToSelectedTasks', count($arrayofselected)), 'assigncontacts', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
 	}
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
