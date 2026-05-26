@@ -1835,9 +1835,22 @@ class Adherent extends CommonObject
 	 */
 	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null, $ref_ext = '')
 	{
-		global $user;
+		global $user, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+
+		$allowedStatusesStr = getDolGlobalString("MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS");
+		if (empty($allowedStatusesStr)) {
+			$allowedStatusesStr = '-1,0,1';
+		}
+		$allowedStatuses = array_map('intval', explode(',', $allowedStatusesStr));
+		$currentMemberStatus = $this->statut;
+		if (!in_array($currentMemberStatus, $allowedStatuses)) {
+			$currentMemberStatusStr = $this->getLibStatut();
+			dol_syslog('User='.$user->id.' tried to create subscription for member='.$this->id.' with status='.$currentMemberStatus.' only allowed are status='.$allowedStatusesStr, LOG_WARNING);
+			$this->error = $langs->trans("ErrorSubscriptionNotAllowed", $currentMemberStatusStr);
+			return -1;
+		}
 
 		$error = 0;
 
@@ -1886,6 +1899,13 @@ class Adherent extends CommonObject
 				$error++;
 			}
 
+			$result = $this->validate($user);
+			if ($result < 0) {
+				$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
+				dol_syslog("ErrorValidationFailed for member=".$this->id." which had status=".$currentMemberStatus, LOG_ERR);
+				$error++;
+			}
+
 			if (!$error) {
 				$this->db->commit();
 				return $rowid;
@@ -1894,6 +1914,21 @@ class Adherent extends CommonObject
 				return -2;
 			}
 		} else {
+			// CRITICAL FIX: Manually copy error from the child object if not set on self
+			if (empty($this->error) && isset($subscription->error) && !empty($subscription->error)) {
+				$this->error = $subscription->error;
+			}
+
+			// Also check the errors array
+			if (empty($this->error) && isset($subscription->errors) && is_array($subscription->errors) && count($subscription->errors) > 0) {
+				$this->error = $subscription->errors[0];
+			}
+
+			// If still empty, try to get the last DB error directly
+			if (empty($this->error) && !empty($this->db->lasterror)) {
+				$this->error = $this->db->lasterror;
+			}
+
 			$this->setErrorsFromObject($subscription);
 			$this->db->rollback();
 			return -1;

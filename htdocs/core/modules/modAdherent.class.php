@@ -480,7 +480,9 @@ class modAdherent extends DolibarrModules
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".((int) $conf->entity).")"
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".((int) $conf->entity).")",
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."const (name, entity, value, type, visible, note) VALUES('MEMBER_SUBSCRIPTION_ALLOWED_FOR_STATUS', ".((int) $conf->entity).", '-1,0,1', 'string', 0, 'Allowed member subscription statuses: -1 (Draft), 0 (Resiliated), 1 (Validated)')"
 		);
 
 		return $this->_init($sql, $options);
