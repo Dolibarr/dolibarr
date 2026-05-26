@@ -5792,15 +5792,15 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Get a list of contacts for this third party, formatted according to a custom field array.
-	 *  Respects MAIN_FIRSTNAME_NAME_POSITION for both display and SQL sorting.
+	 * Get a list of contacts for this third party, formatted according to a custom field array.
+	 * Respects MAIN_FIRSTNAME_NAME_POSITION for both display and SQL sorting.
 	 *
-	 *  @param  int     $status     Filter by status: 1=Active, 0=Inactive, -1=All
-	 *  @param  array   $fields     Array of fields/constants to concatenate.
+	 * @param int     $status     Filter by status: 1=Active, 0=Inactive, -1=All
+	 * @param array<int|string, string> $fields     Array of fields/constants to concatenate.
 	 *                              Example: ['name', ' (', 'email', ')']
 	 *                              Supported: 'firstname', 'lastname', 'email', 'phone', 'phone_perso', 'phone_mobile', 'fax', 'poste', 'civility'
-	 *  @param  Translate $langs    Language object for civility translation (optional)
-	 *  @return array               Associative array [id => "formatted string"]
+	 * @param Translate|null $langs    Language object for civility translation (optional)
+	 * @return array<int, string>      Associative array [id => "formatted string"]
 	 */
 	public function getContactListFormatted($status = 1, $fields = array(), $langs = null)
 	{
