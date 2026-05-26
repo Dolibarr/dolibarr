@@ -1172,7 +1172,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
 		}
 		if ($failCount > 0) {
-			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned", $failCount), $failMessages, 'errors');
+			setEventMessages($langs->trans("ErrorAssignToTasks", $failCount, $langs->trans("Users")), $failMessages, 'errors');
 		}
 
 		if (!headers_sent()) {

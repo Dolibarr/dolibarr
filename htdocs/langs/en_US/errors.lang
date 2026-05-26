@@ -481,3 +481,4 @@ ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: 
 ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s).
 SkippedAlreadyAssigned=Skipped %s - already assigned
 ErrorNoGoodSelected=No valid %s selected for assignment
+ErrorAssignToTasks=Failed to make %s assignments of %s to tasks
