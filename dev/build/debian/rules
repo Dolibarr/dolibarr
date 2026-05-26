@@ -126,5 +126,5 @@ override_dh_install:
 override_dh_fixperms:
 	dh_fixperms
 	# Give rights to the webserver on the upload directory
-	chown www-data:www-data debian/dolibarr/var/lib/dolibarr/documents
+	#chown www-data:www-data debian/dolibarr/var/lib/dolibarr/documents
 	chmod 2775 debian/dolibarr/var/lib/dolibarr/documents

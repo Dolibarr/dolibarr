@@ -816,10 +816,18 @@ class Interventions extends DolibarrApi
 		}
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->date = sanitizeVal($request_data->date);
-		$request_data->duration = sanitizeVal($request_data->duration);
-		$request_data->rang = sanitizeVal($request_data->rang);
+		if (isset($request_data->desc) || isset($request_data->description)) {
+			$objectline->desc = sanitizeVal($request_data->desc ?? $request_data->description, 'restricthtml');
+		}
+		if (isset($request_data->date)) {
+			$objectline->date = (int) sanitizeVal($request_data->date);
+		}
+		if (isset($request_data->duration)) {
+			$objectline->duration = (int) sanitizeVal($request_data->duration);
+		}
+		if (isset($request_data->rang)) {
+			$objectline->rang = (int) sanitizeVal($request_data->rang);
+		}
 
 		$updateRes = $objectline->update(DolibarrApiAccess::$user);
 

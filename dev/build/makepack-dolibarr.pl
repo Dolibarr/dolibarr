@@ -202,29 +202,46 @@ if ( !$TEMP || !-d $TEMP ) {
 $BUILDROOT = "$TEMP/buildroot";
 
 # Get version $MAJOR, $MINOR and $BUILD
-open( my $IN, "<", $SOURCE . "/htdocs/version.inc.php" )
-  or die "Error: Can't open version file "
-  . $SOURCE
-  . "/htdocs/version.inc.php\n";
-while (<$IN>) {
-	if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
-		$MAJORVERSION = $1;
-		last;
+if (! -e $SOURCE . "/htdocs/version.inc.php") {
+	open(my $IN, "<", "$SOURCE/htdocs/filefunc.inc.php")
+		or die "Error: Can't open file $SOURCE/htdocs/filefunc.inc.php\n";
+
+	while (<$IN>) {
+		if (/define\s*\(\s*['"]DOL_VERSION['"]\s*,\s*['"]([^'"]+)['"]\s*\)/) {
+			$VERSION = $1;
+			last;
+		}
 	}
-}
-close $IN;
-open( my $IN2, "<", $SOURCE . "/htdocs/version.inc.php" )
-  or die "Error: Can't open version file "
-  . $SOURCE
-  . "/htdocs/version.inc.php\n";
-while (<$IN2>) {
-	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
-		$MINORVERSION = $1;
-		last;
+
+	close($IN);
+
+	$PROJVERSION = $VERSION;
+} else {
+	open( my $IN, "<", $SOURCE . "/htdocs/version.inc.php" )
+	  or die "Error: Can't open version file "
+	  . $SOURCE
+	  . "/htdocs/version.inc.php\n";
+	while (<$IN>) {
+		if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
+			$MAJORVERSION = $1;
+			last;
+		}
 	}
+	close $IN;
+	open( my $IN2, "<", $SOURCE . "/htdocs/version.inc.php" )
+	  or die "Error: Can't open version file "
+	  . $SOURCE
+	  . "/htdocs/version.inc.php\n";
+	while (<$IN2>) {
+		if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
+			$MINORVERSION = $1;
+			last;
+		}
+	}
+	close $IN2;
+
+	$PROJVERSION = $MAJORVERSION . "." . $MINORVERSION;
 }
-close $IN2;
-$PROJVERSION = $MAJORVERSION . "." . $MINORVERSION;
 
 ( $MAJOR, $MINOR, $BUILD ) = split( /\./, $PROJVERSION, 3 );
 if ( $MINOR eq '' ) { die "Error can't detect version"; }
@@ -1457,10 +1474,13 @@ if ($nboftargetok) {
 			$cmd = "dpkg-buildpackage -us -uc --compression=gzip";
 			print "Launch DEB build ($cmd)\n";
 			$ret = `$cmd 2>&1 3>&1`;
+			$ret2 = $?;
 			print $ret. "\n";
+			print "Result = $ret2". "\n";
 
 			chdir("$olddir");
 
+			if ($ret2 eq 0) {
 			print
 "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
 			print
@@ -1475,6 +1495,7 @@ if ($nboftargetok) {
 #$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option
 			$ret = `mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
 			$ret = `mv $BUILDROOT/*.changes "$NEWDESTI/"`;
+			}
 			next;
 		}
 
