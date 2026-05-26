@@ -1273,6 +1273,38 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			'value' => $visibilityHtml
 		);
 
+		// --- DIV 2: Project Contacts Section (Only for Private Projects) ---
+		$projectContacts = array();
+
+		if (!$object->public) {
+			$rawProjectContacts = $object->liste_contact(-1, 'external');
+			if (is_array($rawProjectContacts)) {
+				$contactStatic = new Contact($db);
+				foreach ($rawProjectContacts as $contactData) {
+					$contactTmp = new Contact($db);
+					if ($contactTmp->fetch($contactData['id']) > 0 && $contactTmp->statut == 1) {
+						$fullName = trim($contactTmp->firstname . ' ' . $contactTmp->lastname);
+						if (empty($fullName)) {
+							$fullName = "Contact #" . $contactTmp->id;
+						}
+						$emailSuffix = !empty($contactTmp->email) ? ' (' . $contactTmp->email . ')' : '';
+						$projectContacts[$contactTmp->id] = $fullName . $emailSuffix;
+					}
+				}
+			}
+		}
+
+		$projectSelectHtml = '';
+		if (!$object->public) {
+			$projectSelectHtml = $form->multiselectarray('project_contacts', $projectContacts, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1);
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'project_section',
+				'label' => $langs->trans("ContactsAssignedToProject"),
+				'value' => $projectSelectHtml
+			);
+		}
+
 		$statictask = new Task($db);
 		$formcompany = new FormCompany($db);
 		// Role selector (always)
