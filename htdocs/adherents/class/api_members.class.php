@@ -665,8 +665,8 @@ class Members extends DolibarrApi
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	409		Duplicate entry
 	 * @throws	RestException	422		Malformed data
-	 * @throws	RestException	500		server error
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
@@ -686,11 +686,27 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
-		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
-		if ($result < 1) {
-			throw new RestException(500, $member->error);
-		} else {
+		try {
+			// This call might throw an exception
+			$result = $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
+
+			if ($result < 1) {
+				// If it returns -1 (graceful failure), use the error message
+				$errorMsg = $member->error ? $member->error : 'Unknown error';
+				throw new RestException(422, $errorMsg);
+			}
 			return $result;
+		} catch (Exception $e) {
+			// This catches the DB exception that escaped subscription()
+			$msg = $e->getMessage();
+
+			// Map specific DB errors to user-friendly messages
+			if (strpos($msg, 'Duplicate entry') !== false || strpos($msg, 'DB_ERROR_RECORD_ALREADY_EXISTS') !== false) {
+				throw new RestException(409, "A subscription with these parameters already exists.");
+			}
+
+			// For other DB errors, return the message or a generic one
+			throw new RestException(422, $msg);
 		}
 	}
 

@@ -1835,7 +1835,7 @@ class Adherent extends CommonObject
 	 */
 	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null, $ref_ext = '')
 	{
-		global $user;
+		global $user, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
@@ -1844,6 +1844,25 @@ class Adherent extends CommonObject
 		// Clean parameters
 		if (!$amount) {
 			$amount = 0;
+		}
+
+		$enforceStatus = getDolGlobalInt('MEMBER_ONLY_SUBSCRIPTION_ON_VALIDATED_RESILIATED');
+		if ($enforceStatus) {
+			$allowedStatuses = array(
+				Adherent::STATUS_VALIDATED,
+				Adherent::STATUS_RESILIATED
+			);
+
+			if (!in_array($this->statut, $allowedStatuses)) {
+				$this->error = $langs->trans("ErrorMemberStatusNotAllowedForSubscription", $this->getLibStatut());
+				$this->errors[] = $this->error;
+				return -1; // Fail immediately, no transaction needed
+			}
+		}
+		if ($this->statut == Adherent::STATUS_EXCLUDED) {
+			$this->error = $langs->trans("ErrorMemberStatusNotAllowedForSubscription", $this->getLibStatut());
+			$this->errors[] = $this->error;
+			return -1; // Fail immediately, no transaction needed
 		}
 
 		$this->db->begin();
@@ -1886,6 +1905,17 @@ class Adherent extends CommonObject
 				$error++;
 			}
 
+			$noAutoValidate = getDolGlobalInt('MEMBER_DO_NOT_AUTO_VALIDATE_ON_SUBSCRIPTION');
+			if (!$error && !$noAutoValidate && ($this->statut == Adherent::STATUS_DRAFT || $this->statut == Adherent::STATUS_RESILIATED)) {
+				$preStatus = $this->statut;
+				$result = $this->validate($user);
+				if ($result < 0) {
+					$this->error = $langs->trans("ErrorValidationFailed", '- '.$this->error);
+					dol_syslog("ErrorValidationFailed for member=".$this->id." which had status=".$preStatus, LOG_ERR);
+					$error++;
+				}
+			}
+
 			if (!$error) {
 				$this->db->commit();
 				return $rowid;
@@ -1894,6 +1924,21 @@ class Adherent extends CommonObject
 				return -2;
 			}
 		} else {
+			// CRITICAL FIX: Manually copy error from the child object if not set on self
+			if (empty($this->error) && isset($subscription->error) && !empty($subscription->error)) {
+				$this->error = $subscription->error;
+			}
+
+			// Also check the errors array
+			if (empty($this->error) && isset($subscription->errors) && is_array($subscription->errors) && count($subscription->errors) > 0) {
+				$this->error = $subscription->errors[0];
+			}
+
+			// If still empty, try to get the last DB error directly
+			if (empty($this->error) && !empty($this->db->lasterror)) {
+				$this->error = $this->db->lasterror;
+			}
+
 			$this->setErrorsFromObject($subscription);
 			$this->db->rollback();
 			return -1;
