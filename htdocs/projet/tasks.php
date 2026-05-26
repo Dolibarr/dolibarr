@@ -1432,7 +1432,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
 		}
 		if ($failCount > 0) {
-			setEventMessages($langs->trans("ErrorNoGoodSelected", $failCount), $failMessages, 'errors');
+			setEventMessages($langs->trans("ErrorAssignToTasks", $failCount, $langs->trans("TaskContact")), $failMessages, 'errors');
 		}
 
 		// Redirect
