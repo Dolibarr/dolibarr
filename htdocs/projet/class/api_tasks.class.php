@@ -610,8 +610,7 @@ class Tasks extends DolibarrApi
 	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
 	 *
 	 * @param   int         	$id                 Task ID
-	 * @param   datetime    	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
-	 * @phan-param string $date
+	 * @param   datetime|string	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @param   int         	$duration           Duration in seconds (3600 = 1h)
 	 * @param   int         	$product_id         The product id that is used, default is null
 	 * @param   int         	$user_id            User (Use 0 for connected user)
