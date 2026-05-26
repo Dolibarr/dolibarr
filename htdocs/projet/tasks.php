@@ -1249,12 +1249,21 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 		$tpSelectHtml = $form->multiselectarray('tp_contacts', $tpContacts, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1);
 
-		$formquestion[] = array(
-			'type'  => 'other',
-			'name'  => 'tp_section',
-			'label' => $langs->trans("ContactsOfThirdParty"),
-			'value' => '<div style="margin-bottom: 15px;">' . $tpLabelHtml . '<br>' . $tpSelectHtml . '</div>'
-		);
+		if (!empty($object->thirdparty->id)) {
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'tp_section',
+				'label' => $langs->trans("ThirdPartyName"),
+				'value' => $tpLabelHtml
+			);
+
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'tp_section',
+				'label' => $langs->trans("ThirdPartyContacts"),
+				'value' => $tpSelectHtml
+			);
+		}
 
 		// Visibility Info (Always shown)
 		$formquestion[] = array(
