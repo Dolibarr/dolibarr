@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,22 +36,22 @@
 final class NamingContract
 {
 	/** @var string PascalCase module name, e.g. "MyModule" */
-	public string $moduleNameCase;
+	public $moduleNameCase;
 
 	/** @var string Lowercase module name, e.g. "mymodule" */
-	public string $moduleNameLower;
+	public $moduleNameLower;
 
 	/** @var string Uppercase module name, e.g. "MYMODULE" */
-	public string $moduleNameUpper;
+	public $moduleNameUpper;
 
 	/** @var string PascalCase object name, e.g. "MyObject" (empty string for module-only contracts) */
-	public string $objectNameCase;
+	public $objectNameCase;
 
 	/** @var string Lowercase object name, e.g. "myobject" (empty string for module-only contracts) */
-	public string $objectNameLower;
+	public $objectNameLower;
 
 	/** @var string Uppercase object name, e.g. "MYOBJECT" (empty string for module-only contracts) */
-	public string $objectNameUpper;
+	public $objectNameUpper;
 
 	/**
 	 * @param string $moduleName Raw module name — accepts any casing, ucfirst() is applied
@@ -118,7 +119,7 @@ final class NamingContract
 	 * Apply the canonical substitution map to a string (file content).
 	 *
 	 * @param string $content File content to process
-	 * @return string
+	 * @return string Content with substitutions applied
 	 */
 	public function applyTo(string $content): string
 	{
@@ -133,7 +134,7 @@ final class NamingContract
 	 * For module-only contracts (objectNameLower = ''), myobject is not substituted.
 	 *
 	 * @param string $filename Template filename containing mymodule/myobject placeholders
-	 * @return string
+	 * @return string File name with substitutions applied
 	 */
 	public function applyToFilename(string $filename): string
 	{

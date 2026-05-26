@@ -283,7 +283,7 @@ function getLicenceHeader($user, $langs, $now)
  *
  * @param string       $destfile Path to the generated file
  * @param NamingContract $nc     Contract used for generation
- * @return void
+ * @return void						No return value, warnings reported as event messages
  */
 function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc): void
 {
