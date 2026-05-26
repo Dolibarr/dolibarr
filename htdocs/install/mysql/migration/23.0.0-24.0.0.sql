@@ -52,7 +52,7 @@ ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
 
 -- V24 migration
-
+ALTER TABLE llx_expensereport_det ADD COLUMN tcheck_file	integer DEFAULT NULL after fk_ecm_files;
 ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_user;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
@@ -545,6 +545,9 @@ ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_
 
 ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
+
+ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
+
 
 -- SQL with disabled check must be at end
 --noqa:disable=PRS

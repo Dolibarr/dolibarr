@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2017      	ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2026 	Laurent Destailleur <ldestailleur@dolicloud.com>
+ * Copyright (C) 2024-2026 	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,6 +96,25 @@ if ($action == 'update') {
 	}
 	if (!GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_IDPROF1")), null, 'errors');
+		$error++;
+	}
+
+	$country_code = GETPOST("BLOCKEDLOG_REGISTRATION_COUNTRY_CODE");
+	$tmpthirdparty = new Societe($db);
+	$tmpthirdparty->country_code = $country_code;
+	$tmpthirdparty->country_id = getCountry($country_code, '3', $db, $langs, 0);
+	$tmpthirdparty->idprof1 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1");
+
+	// Check validity of email
+	if (!isValidEMail(GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL"))) {
+		setEventMessages($langs->trans("ErrorBadEMail", GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL")), null, 'errors');
+		$error++;
+	}
+
+	// Check validity of prof id
+	if ($tmpthirdparty->idprof1 && isValidProfIds(1, $tmpthirdparty) <= 0) {
+		$langs->loadLangs(array("errors", "companies"));
+		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof1, $langs->transcountry("ProfId1Short", $tmpthirdparty->country_code)), null, 'errors');
 		$error++;
 	}
 
@@ -405,14 +424,15 @@ if (empty($mode)) {
 
 	//Company email
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_EMAIL');
-	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
+	$item->defaultFieldValue = (GETPOSTISSET('BLOCKEDLOG_REGISTRATION_EMAIL') ? GETPOST('BLOCKEDLOG_REGISTRATION_EMAIL') : getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email));
 	$item->setAsEmail();
 	$item->fieldParams['isMandatory'] = 1;
 	$item->cssClass = "minwidth300 maxwidth500 widthcentpercentminusx";
 
 	//Company IDPROF1
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_IDPROF1');
-	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	$item->defaultFieldValue = (GETPOSTISSET('BLOCKEDLOG_REGISTRATION_IDPROF1') ? GETPOST('BLOCKEDLOG_REGISTRATION_IDPROF1') : getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1));
+	$item->helpText = $langs->trans("Example").': 732 829 320';
 	$item->fieldParams['isMandatory'] = 1;
 
 	//Company country code
