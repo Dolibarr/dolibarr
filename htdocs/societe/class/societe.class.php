@@ -5749,9 +5749,10 @@ class Societe extends CommonObject
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
+	 *    @param    int         $status     Filter by contact status: 1=Active only, 0=Inactive only, -1=All (default)
 	 *    @return int[]|array<array{source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:string,rowid:int,code:string,element:string,libelle:string,status:string,fk_c_type_contact:int}>|-1		Array of contacts, -1 if error
 	 */
-	public function getContacts($list = 0, $code = '', $element = '')
+	public function getContacts($list = 0, $code = '', $element = '', $status = -1)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5767,6 +5768,11 @@ class Societe extends CommonObject
 		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
+
+		// Add status filter if requested
+		if ($status >= 0) {
+			$sql .= " AND t.statut = " . ((int) $status);
+		}
 		if (!empty($element)) {
 			$sql .= " AND tc.element = '".$this->db->escape($element)."'";
 		}

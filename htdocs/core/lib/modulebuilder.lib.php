@@ -23,6 +23,7 @@
  *  \brief		Set of function for modulebuilder management
  */
 
+require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/NamingContract.class.php';
 
 /**
  * 	Regenerate files .class.php
@@ -1045,22 +1046,17 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 	// Add methods for each object
 	$allContent = getFromFile($srcfile, '/* BEGIN MODULEBUILDER API MYOBJECT */', '/* END MODULEBUILDER API MYOBJECT */');
 	foreach ($objects as $objectname) {
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename,
-			'MYMODULE' => strtoupper($modulename),
-			'My module' => $modulename,
-			'my module' => $modulename,
-			'Mon module' => $modulename,
-			'mon module' => $modulename,
-			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'myobject' => strtolower($objectname),
-			'MyObject' => $objectname,
-			'MYOBJECT' => strtoupper($objectname),
-			'---Replace with your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
-		);
-		$contentReplaced = make_substitutions($allContent, $arrayreplacement, null);
-		//$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
+		if (strtolower($modulename) === strtolower($objectname)) {
+			dol_syslog('addObjectsToApiFile: skipping object "' . $objectname . '" — name collides with module "' . $modulename . '"', LOG_WARNING);
+			continue;
+		}
+		$nc = new NamingContract($modulename, $objectname);
+		$extraMap = [
+			'htdocs/modulebuilder/template'                              => $nc->moduleNameLower,
+			'---Replace with your own copyright and developer email---' => dol_print_date($now, '%Y') . ' ' . $user->getFullName($langs) . ($user->email ? ' <' . $user->email . '>' : ''),
+		];
+		$fullMap = array_merge($nc->getSubstitutionMap(), $extraMap);
+		$contentReplaced = str_replace(array_keys($fullMap), array_values($fullMap), $allContent);
 
 		dolReplaceInFile($file, array(
 			'/* BEGIN MODULEBUILDER API MYOBJECT */' => '/* BEGIN MODULEBUILDER API '.strtoupper($objectname).' */'.$contentReplaced."\t".'/* END MODULEBUILDER API '.strtoupper($objectname).' */'."\n\n\n\t".'/* BEGIN MODULEBUILDER API MYOBJECT */'

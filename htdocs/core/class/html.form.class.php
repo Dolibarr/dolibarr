@@ -6502,6 +6502,34 @@ class Form
 		return $output;
 	}
 
+	/**
+	 *  Generate a collapsible help block with a standard '?' icon.
+	 *  Designed for use in formconfirm() to provide context without clutter.
+	 *
+	 *  @param  string  $content        The detailed explanation text (HTML allowed)
+	 *  @param  string  $icon           FontAwesome icon class (default: 'fa-question-circle')
+	 *  @return string                  The HTML string for the help block
+	 */
+	public function getHelpBlock($content, $icon = 'fa-question-circle')
+	{
+		global $langs;
+
+		// Sanitize content (assuming it might contain HTML, but escaping text nodes if needed)
+		// We trust the caller to pass safe HTML or translated strings.
+
+		$html = '<details class="dolibarr-help-block" style="margin-top:8px;">';
+		$html .= '<summary style="cursor:pointer; color:#0056b3; font-weight:normal; list-style:none; font-size:0.9em; display:flex; align-items:center;">';
+		$html .= '<span class="fa ' . $icon . '" style="margin-right:6px;"></span>';
+		$html .= $langs->trans("Help"); // Standardized title
+		$html .= '</summary>';
+		$html .= '<div style="margin-top:6px; padding:10px; background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; font-size:0.9em; color:#555; line-height:1.5;">';
+		$html .= $content;
+		$html .= '</div>';
+		$html .= '</details>';
+
+		return $html;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
@@ -6553,9 +6581,12 @@ class Form
 	 * @param int 			$disableformtag 	1=Disable form tag. Can be used if we are already inside a <form> section.
 	 * @param string 		$labelbuttonyes 	Label for Yes
 	 * @param string 		$labelbuttonno 		Label for No
+	 * @param string 		$helpContent 		Optional help text to display in a collapsible block at the bottom left of the dialog.
+	 * 											If set, a standard '?' icon with the label "Help" will appear.
+	 * 											Clicking it expands the content provided here. Supports HTML.
 	 * @return string                        	HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No')
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '')
 	{
 		global $langs, $conf;
 
@@ -6597,7 +6628,7 @@ class Form
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">' . "\n";
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
-					$size = (!empty($input['size']) ? ' size="' . $input['size'] . '"' : '');    // deprecated. Use morecss instead.
+					$size = (!empty($input['size']) ? ' size="' . $input['size'] . '"' : '');	// deprecated. Use morecss instead.
 					$moreattr = (!empty($input['moreattr']) ? ' ' . $input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' ' . $input['morecss'] : '');
 
@@ -6759,27 +6790,41 @@ class Form
 			}
 
 			// Show JQuery confirm box.
+			// Add 'flex-direction: column' and 'justify-content: space-between' to push content to top and buttons to bottom
 			$formconfirm .= '<div id="' . $dialogconfirm . '" title="' . dol_escape_htmltag($title) . '" style="display: none;">';
+			$formconfirm .= '<div style="display: flex; flex-direction: column; height: 100%;">';
 			if (is_array($formquestion) && array_key_exists('text', $formquestion) && !empty($formquestion['text'])) {
 				$formconfirm .= '<div class="confirmtext">' . $formquestion['text'] . '</div>' . "\n";
 			}
 			if (!empty($more)) {
 				$formconfirm .= '<div class="confirmquestions">' . $more . '</div>' . "\n";
 			}
-			$formconfirm .= ($question ? '<div class="confirmmessage">' . img_help(0, '') . ' ' . $question . '</div>' : '');
+			// NEW: Add help block if content provided
+			if (!empty($helpContent)) {
+				$formconfirm .= '<div style="text-align:left; margin-top:12px; padding-top:8px; border-top:1px solid #eee; clear:both;">';
+				$formconfirm .= $this->getHelpBlock($helpContent);
+				$formconfirm .= '</div>';
+			}
+			if (!empty($question)) {
+				// margin-top: auto pushes this element to the bottom of the flex container
+				$formconfirm .= '<div class="confirmmessage" style="margin-top: auto; padding-top: 15px;">';
+				$formconfirm .= img_help(0, '') . ' ' . $question;
+				$formconfirm .= '</div>';
+			}
+			$formconfirm .= '</div>';
 			$formconfirm .= '</div>' . "\n";
 
 			$formconfirm .= "\n<!-- begin code of popup for formconfirm page=" . $page . " -->\n";
 			$formconfirm .= '<script nonce="' . getNonce() . '" type="text/javascript">' . "\n";
 			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
-            $(function() {
-            	$( "#' . $dialogconfirm . '" ).dialog({
-                    autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
+			$(function() {
+				$( "#' . $dialogconfirm . '" ).dialog({
+					autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
 			if ($newselectedchoice == 'no') {
 				$formconfirm .= '
 						open: function() {
-            				$(this).parent().find("button.ui-button:eq(2)").focus();
+							$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
 
@@ -6792,35 +6837,35 @@ class Form
 			$postconfirmas = 'GET';
 
 			$formconfirm .= '
-                    resizable: false,
+					resizable: false,
 					height: \'' . dol_escape_js($height) . '\',
-                    width: \'' . dol_escape_js($width) . '\',
-                    modal: true,
-                    closeOnEscape: false,
-                    buttons: {
-                        "' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
+					width: \'' . dol_escape_js($width) . '\',
+					modal: true,
+					closeOnEscape: false,
+					buttons: {
+						"' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
 							var options = "token=' . urlencode(newToken()) . '";
-                        	var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
+							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
-                         	var pageyes = \'' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '\';
+							var pageyes = \'' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '\';
 
-                         	if (inputok.length > 0) {
-                         		$.each(inputok, function(i, inputname) {
-                         			var more = "";
+							if (inputok.length > 0) {
+								$.each(inputok, function(i, inputname) {
+									var more = "";
 									var inputvalue;
-                         			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
+									if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
 										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
-                         		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         				inputvalue = $("#" + inputname + more).val();
+										if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+										inputvalue = $("#" + inputname + more).val();
 									}
-                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
+									if (typeof inputvalue == "undefined") { inputvalue=""; }
 									console.log("formconfirm check inputname="+inputname+" inputvalue="+inputvalue);
-                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
-                         		});
-                         	}
-                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
-            				if (pageyes.length > 0) {';
+									options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
+								});
+							}
+							var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
+							if (pageyes.length > 0) {';
 			if ($postconfirmas == 'GET') {
 				$formconfirm .= 'location.href = urljump;';
 			} else {
@@ -6834,25 +6879,25 @@ class Form
 			$formconfirm .= '
 								console.log("after post ok");
 							}
-	                        $(this).dialog("close");
-                        },
-                        "' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
-                        	var options = "token=' . urlencode(newToken()) . '";
-                         	var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
+							$(this).dialog("close");
+						},
+						"' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
+							var options = "token=' . urlencode(newToken()) . '";
+							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
 							var page = "' . dol_escape_js(!empty($page) ? $page : '') . '";
-                         	var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
-                         	if (inputko.length > 0) {
-                         		$.each(inputko, function(i, inputname) {
-                         			var more = "";
-                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         			var inputvalue = $("#" + inputname + more).val();
-                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
-                         		});
-                         	}
-                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
-                         	//alert(urljump);
-            				if (pageno.length > 0) {';
+							var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
+							if (inputko.length > 0) {
+								$.each(inputko, function(i, inputname) {
+									var more = "";
+									if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+									var inputvalue = $("#" + inputname + more).val();
+									if (typeof inputvalue == "undefined") { inputvalue=""; }
+									options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
+								});
+							}
+							var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
+							//alert(urljump);
+							if (pageno.length > 0) {';
 			if ($postconfirmas == 'GET') {
 				$formconfirm .= 'location.href = urljump;';
 			} else {
@@ -6866,21 +6911,21 @@ class Form
 			$formconfirm .= '
 								console.log("after post ko");
 							}
-                            $(this).dialog("close");
-                        }
-                    }
-                }
-                );
+							$(this).dialog("close");
+						}
+					}
+				}
+				);
 
-            	var button = "' . $button . '";
-            	if (button.length > 0) {
-                	$( "#" + button ).click(function() {
-                		$("#' . $dialogconfirm . '").dialog("open");
-        			});
-                }
-            });
-            });
-            </script>';
+				var button = "' . $button . '";
+				if (button.length > 0) {
+					$( "#" + button ).click(function() {
+						$("#' . $dialogconfirm . '").dialog("open");
+					});
+				}
+			});
+			});
+			</script>';
 			$formconfirm .= "<!-- end ajax formconfirm -->\n";
 		} else {
 			$formconfirm .= "\n<!-- begin formconfirm page=" . dol_escape_htmltag($page) . " -->\n";
@@ -6911,10 +6956,21 @@ class Form
 				$formconfirm .= '</td></tr>' . "\n";
 			}
 
-			// Line with question
+			// NEW: Help block row (between form fields and question)
+			if (!empty($helpContent)) {
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2" style="padding-top:8px; border-top:1px solid #eee;">';
+				$formconfirm .= $this->getHelpBlock($helpContent);
+				$formconfirm .= '</td></tr>' . "\n";
+			}
+
+			// Let's add a row that acts as a spacer.
+			$formconfirm .= '<tr class="valid"><td class="valid" colspan="2" style="border-top: 2px solid #e0e0e0; padding-top: 30px;"></td></tr>' . "\n";
+
+			// Question row
 			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">' . $question . '</td>';
 			$formconfirm .= '<td class="valid center">';
+
 			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
 			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
 			$formconfirm .= '</td>';
@@ -6949,7 +7005,6 @@ class Form
 
 		return $formconfirm;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 

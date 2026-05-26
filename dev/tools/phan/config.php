@@ -549,6 +549,7 @@ return [
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
 		'soap'  => PHAN_DIR . '/stubs/soap.phan_php',
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
+		'sqlite3'  => PHAN_DIR . '/stubs/sqlite3.phan_php',
 		'tidy'  => PHAN_DIR . '/stubs/tidy.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],

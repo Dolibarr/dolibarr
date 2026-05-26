@@ -2144,7 +2144,7 @@ class Project extends CommonObject
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
 	 * @param 	int		$userid			Time spent by a particular user
-	 * @return 	1|-1					Return integer <0 if OK, >0 if KO
+	 * @return 	int						Return integer <0 if OK, >=0 if KO
 	 */
 	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 	{
@@ -2180,6 +2180,7 @@ class Project extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$day = $this->db->jdate($obj->element_date); // task_date is date without hours
+
 				if (empty($dayallreadyfound[$day])) {
 					$this->weekWorkLoad[$day] = (int) $obj->element_duration; // Float in db used as int
 					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = (int) $obj->element_duration;
@@ -2191,7 +2192,7 @@ class Project extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-			return 1;
+			return $num;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
