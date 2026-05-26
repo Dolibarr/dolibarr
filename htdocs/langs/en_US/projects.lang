@@ -339,8 +339,7 @@ UpdateUndefinedWithLastHourlyRate=Update the time spent that has no hourly rate 
 EnterUsersHourlyRateFirst=First, enter the hourly rate for the user(s)...
 AssignUsersToSelectedTasks=Assign selected users to selected tasks?
 AssignContactsToSelectedTasks=Assign selected contacts to selected tasks?
-Select1ToNUsersAndRole=Select 1 to n users & role
-Select1ToNUsersGroupsAndRole=Select 1 to n users / groups & 1 role
+Select1ToXAndRole=Select 1 to n %s & 1 role
 SuccessfullyAssignedToTasks=Successfully performed %s assignments of %s to tasks
 # Help texts
 HelpPublicProjectUserAssignment=Public project: Any active user | group can be assigned.

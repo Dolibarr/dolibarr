@@ -1045,7 +1045,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 		// Build a string of task IDs
 		$taskIdsStr = implode(',', $arrayofselected);
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToNUsersGroupsAndRole'), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToXAndRole', $langs->trans("Users").' / '.$langs->trans("Groups")), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
 	}
 
 	// Process the user assignment
