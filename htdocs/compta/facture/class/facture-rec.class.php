@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026 Joris Le Blansch <ping@apio.systems>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1338,16 +1339,67 @@ class FactureRec extends CommonInvoice
 
 
 	/**
-	 * Return the next date of
+	 * Return the next date of execution
+	 * Handles end-of-month scenarios when day >= 28 for monthly recurring invoices.
+	 * If the original date is on day 28, 29, 30, or 31, the system will automatically
+	 * calculate the appropriate last day of the target month.
 	 *
-	 * @return  int|false   false if KO, timestamp if OK
+	 * @return  int|false   Timestamp of next date or false on error.
 	 */
 	public function getNextDate()
 	{
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 1);
+
+		// Get the original day of the month from date_when
+		$dateInfo = dol_getdate($this->date_when);
+		$originalDay = (int) $dateInfo['mday'];
+		$originalMonth = (int) $dateInfo['mon'];
+		$originalYear = (int) $dateInfo['year'];
+		$originalHour = (int) $dateInfo['hours'];
+		$originalMin = (int) $dateInfo['minutes'];
+		$originalSec = (int) $dateInfo['seconds'];
+
+		// Special handling for end-of-month: if day >= 28 and frequency is monthly
+		if ($originalDay >= 28 && $this->unit_frequency == 'm') {
+			// Get the last day of the original month to determine if this was an "end of month" date
+			$lastDayOfOriginalMonth = (int) date('t', $this->date_when);
+
+			// Calculate target month and year
+			$targetMonth = $originalMonth + (int) $this->frequency;
+			$targetYear = $originalYear;
+
+			// Handle year rollover
+			while ($targetMonth > 12) {
+				$targetMonth -= 12;
+				$targetYear++;
+			}
+			while ($targetMonth < 1) {
+				$targetMonth += 12;
+				$targetYear--;
+			}
+
+			// Get the last day of the target month
+			$lastDayOfTargetMonth = (int) date('t', dol_mktime(0, 0, 0, $targetMonth, 1, $targetYear));
+
+			// Determine the target day:
+			// If original was last day of month, OR original day >= 29, use end-of-month behavior
+			if ($originalDay >= $lastDayOfOriginalMonth || $originalDay >= 29) {
+				// End of month mode: use the last day of target month
+				$targetDay = $lastDayOfTargetMonth;
+			} else {
+				// Day is 28 but not end of month in a 30/31 day month
+				// Keep as 28 or use last day if target month is shorter (like February)
+				$targetDay = min($originalDay, $lastDayOfTargetMonth);
+			}
+
+			// Return the calculated date
+			return dol_mktime($originalHour, $originalMin, $originalSec, $targetMonth, $targetDay, $targetYear);
+		}
+
+		// For yearly frequency or days < 28, use standard calculation
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
 	}
 
 	/**
