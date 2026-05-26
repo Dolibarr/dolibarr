@@ -1105,7 +1105,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 		// 4. Validation
 		if (empty($validUserIds)) {
-			setEventMessages($langs->trans("ErrorNoUserSelected"), null, 'errors');
+			setEventMessages($langs->trans("ErrorNoGoodSelected", $langs->trans("Users")), null, 'errors');
 			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 			exit;
 		}
@@ -1166,7 +1166,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 		// 7. Feedback
 		if ($successCount > 0) {
-			setEventMessages($langs->trans("SuccessfullyAssignedUsersTasks", $successCount), $successMessages, 'mesgs');
+			setEventMessages($langs->trans("SuccessfullyAssignedToTasks", $successCount, $langs->trans("Users")), $successMessages, 'mesgs');
 		}
 		if ($skippedCount > 0) {
 			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
