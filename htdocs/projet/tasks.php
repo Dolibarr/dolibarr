@@ -1426,7 +1426,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 		// Feedback
 		if ($successCount > 0) {
-			setEventMessages($langs->trans("SuccessfullyAssignedToTasks", $successCount), $successMessages, 'mesgs');
+			setEventMessages($langs->trans("SuccessfullyAssignedToTasks", $successCount, $langs->trans("TaskContact")), $successMessages, 'mesgs');
 		}
 		if ($skippedCount > 0) {
 			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
