@@ -4,11 +4,10 @@
  * Copyright (C) 2004-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2018-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +81,11 @@ $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
+if (isModEnabled('mailing')) {
+	$search_no_email = GETPOSTISSET("search_no_email") ? GETPOSTINT("search_no_email") : -1;
+} else {
+	$search_no_email = -1;
+}
 $search_categ = GETPOST("search_categ", 'intcomma');
 $search_morphy = GETPOST("search_morphy", 'alpha');
 $search_import_key = trim(GETPOST("search_import_key", 'alpha'));
@@ -153,6 +157,7 @@ $fieldstosearchall = array(
 	'd.firstname' => 'Firstname',
 	'd.societe' => "Company",
 	'd.email' => 'EMail',
+	'unsubscribed' => array('label' => 'No_Email', 'checked' => '0', 'enabled' => (string) (int) isModEnabled('mailing'), 'position' => 111),
 	'd.address' => 'Address',
 	'd.zip' => 'Zip',
 	'd.town' => 'Town',
@@ -266,6 +271,7 @@ if (empty($reshook)) {
 		$search_company = "";
 		$search_type = "";
 		$search_email = "";
+		$search_no_email = -1;
 		$search_address = "";
 		$search_zip = "";
 		$search_town = "";
@@ -422,6 +428,10 @@ $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyna
 $sql .= " t.libelle as type, t.subscription,";
 $sql .= " state.code_departement as state_code, state.nom as state_name";
 
+if (isModEnabled('mailing')) {
+	$sql .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) as unsubscribed";
+}
+
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -535,6 +545,12 @@ if ($search_company) {
 }
 if ($search_email) {
 	$sql .= natural_search("d.email", $search_email);
+}
+if ($search_no_email != -1 && $search_no_email > 0) {
+	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) > 0";
+}
+if ($search_no_email != -1 && $search_no_email == 0) {
+	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) = 0 AND d.email IS NOT NULL AND d.email <> ''";
 }
 if ($search_address) {
 	$sql .= natural_search("d.address", $search_address);
@@ -684,6 +700,9 @@ if ($search_login) {
 }
 if ($search_email) {
 	$query += ['search_email' => $search_email];
+}
+if ($search_no_email != -1) {
+	$query += ['search_no_email' => $search_no_email];
 }
 if ($search_categ > 0 || $search_categ == -2) {
 	$query += ['search_categ' => $search_categ];
@@ -1017,6 +1036,13 @@ if (!empty($arrayfields['d.email']['checked'])) {
 	print '<input class="flat maxwidth75imp" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'"></td>';
 }
 
+// No email (unsubscribe)
+if (!empty($arrayfields['unsubscribed']['checked'])) {
+	print '<td class="liste_titre center">';
+	print $form->selectarray('search_no_email', array('-1' => '', '0' => $langs->trans('No'), '1' => $langs->trans('Yes')), $search_no_email);
+	print '</td>';
+}
+
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1180,6 +1206,10 @@ if (!empty($arrayfields['d.phone_mobile']['checked'])) {
 }
 if (!empty($arrayfields['d.email']['checked'])) {
 	print_liste_field_titre($arrayfields['d.email']['label'], $_SERVER["PHP_SELF"], 'd.email', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['unsubscribed']['checked'])) {
+	print_liste_field_titre($arrayfields['unsubscribed']['label'], $_SERVER["PHP_SELF"], 'unsubscribed', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.datefin']['checked'])) {
@@ -1473,6 +1503,13 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->email).'">';
 			print dol_print_email($obj->email, 0, 0, 1, 64, 1, 1);
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Unsubscribe from mass mailing
+		if (!empty($arrayfields['unsubscribed']['checked'])) {
+			print '<td class="center">'.yn(($obj->unsubscribed > 0) ? 1 : 0)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -345,17 +345,17 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
  */
 function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
 {
-	// Init to avoid warnings if not initialized yet
-	if (!isset($totalamount[$block->action][$block->module_source])) {
-		$totalhtamount[$block->action][$block->module_source] = 0;
-		$totalvatamount[$block->action][$block->module_source] = 0;
-		$totalamount[$block->action][$block->module_source] = 0;
-	}
-
 	if ($block->action == 'BILL_VALIDATE') {
 		$total_ht = $block->object_data->total_ht;
 		$total_vat = $block->object_data->total_tva;
 		$total_ttc = $block->object_data->total_ttc;
+
+		// Init to avoid warnings if not initialized yet
+		if (!isset($totalamount[$block->action][$block->module_source])) {
+			$totalhtamount[$block->action][$block->module_source] = 0;
+			$totalvatamount[$block->action][$block->module_source] = 0;
+			$totalamount[$block->action][$block->module_source] = 0;
+		}
 
 		// We add total for the invoice if "invoice validate event" not yet met.
 		// If we already met the event for this object, we keep only first one but this should not happen because edition of validated invoice is not allowed on secured versions.
@@ -372,6 +372,13 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 
 		//$actionkey = $block->action;
 		$actionkey = 'PAYMENT_CUSTOMER';
+
+		// Init to avoid warnings if not initialized yet
+		if (!isset($totalamount[$actionkey][$block->module_source])) {
+			$totalhtamount[$actionkey][$block->module_source] = 0;
+			$totalvatamount[$actionkey][$block->module_source] = 0;
+			$totalamount[$actionkey][$block->module_source] = 0;
+		}
 
 		$totalhtamount[$actionkey][$block->module_source] += $total_ht;
 		$totalvatamount[$actionkey][$block->module_source] += $total_vat;

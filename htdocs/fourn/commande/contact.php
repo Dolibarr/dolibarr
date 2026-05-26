@@ -6,6 +6,7 @@
  * Copyright (C) 2023       Christian Foellmann         <christian@foellmann.de>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Serhii Bondarenko       <serhiilabs@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,7 +37,6 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -190,8 +189,14 @@ if ($id > 0 || !empty($ref)) {
 
 		print dol_get_fiche_end();
 
-		// Contacts lines
-		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		foreach ($dirtpls as $reldir) {
+			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
+			if ($res) {
+				break;
+			}
+		}
 	} else {
 		// Contact not found
 		recordNotFound('', 0);

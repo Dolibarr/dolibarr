@@ -4271,67 +4271,29 @@ class Societe extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Check the validity of a professional identifier according to the country of the company (siren, siret, ...)
+	 *  Check the validity of a professional identifier according to the properties (country) of the thirdparty (siren, siret, ...)
 	 *
 	 *  @param	int			$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
-	 *  @param  Societe		$soc            Object societe
 	 *  @return int             			Return integer <=0 if KO, >0 if OK
-	 *  TODO better to have this in a lib than into a business class
 	 */
-	public function id_prof_check($idprof, $soc)
+	public function id_prof_check($idprof)
 	{
 		// phpcs:enable
 
-		$ok = 1;
-
-		if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
-			return 1;
-		}
-
-		// load the library necessary to check the professional identifiers
+		// Load the library necessary to check the professional identifiers
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
 
-		// Check SIREN
-		if ($idprof == 1 && $soc->country_code == 'FR' && !isValidSiren($this->idprof1)) {
-			return -1;
-		}
-
-		// Check SIRET
-		if ($idprof == 2 && $soc->country_code == 'FR' && !isValidSiret($this->idprof2)) {
-			return -1;
-		}
-
-		//Verify CIF/NIF/NIE if pays ES
-		if ($idprof == 1 && $soc->country_code == 'ES') {
-			return isValidTinForES($this->idprof1);
-		}
-
-		//Verify NIF if country is PT
-		if ($idprof == 1 && $soc->country_code == 'PT' && !isValidTinForPT($this->idprof1)) {
-			return -1;
-		}
-
-		//Verify NIF if country is DZ
-		if ($idprof == 1 && $soc->country_code == 'DZ' && !isValidTinForDZ($this->idprof1)) {
-			return -1;
-		}
-
-		//Verify ID Prof 1 if country is BE
-		if ($idprof == 1 && $soc->country_code == 'BE' && !isValidTinForBE($this->idprof1)) {
-			return -1;
-		}
-
-		return $ok;
+		return isValidProfIds($idprof, $this);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Return an url to check online a professional id or empty string
+	 *	Return an url to check online a professional id or empty string
 	 *
-	 *   @param		int		$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
-	 *   @param 	Societe	$thirdparty     Object thirdparty
-	 *   @return	string          		Url or empty string if no URL known
-	 *   TODO better in a lib than into business class
+	 *  @param	int			$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *  @param 	Societe		$thirdparty     Object thirdparty
+	 *  @return	string      	    		Url or empty string if no URL known
+	 *  TODO better to have this in the lib profid.lib.php rather than into this business class
 	 */
 	public function id_prof_url($idprof, $thirdparty)
 	{
@@ -5749,9 +5711,10 @@ class Societe extends CommonObject
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
+	 *    @param    int         $status     Filter by contact status: 1=Active only, 0=Inactive only, -1=All (default)
 	 *    @return int[]|array<array{source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:string,rowid:int,code:string,element:string,libelle:string,status:string,fk_c_type_contact:int}>|-1		Array of contacts, -1 if error
 	 */
-	public function getContacts($list = 0, $code = '', $element = '')
+	public function getContacts($list = 0, $code = '', $element = '', $status = -1)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5767,6 +5730,11 @@ class Societe extends CommonObject
 		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
+
+		// Add status filter if requested
+		if ($status >= 0) {
+			$sql .= " AND t.statut = " . ((int) $status);
+		}
 		if (!empty($element)) {
 			$sql .= " AND tc.element = '".$this->db->escape($element)."'";
 		}

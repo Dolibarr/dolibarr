@@ -194,7 +194,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
-	$paymentType        = $_SESSION['PaymentType'];
+	$paymentType        = $_SESSION['PaymentType'] ?? '';
 	$currencyCodeType   = $_SESSION['currencyCodeType'];
 	$FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
 	// From env

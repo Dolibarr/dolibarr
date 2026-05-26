@@ -701,7 +701,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<div class="tabsAction">';
 
 		if ($object->status > 0) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=createsubscription">'.$langs->trans("AddSubscription")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $rowid, 'action' => 'createsubscription'], true).'">'.$langs->trans("AddSubscription")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 		}
