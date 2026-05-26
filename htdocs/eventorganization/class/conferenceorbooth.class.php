@@ -119,6 +119,7 @@ class ConferenceOrBooth extends ActionComm
 		'num_vote' => array('type' => 'smallint', 'label' => 'NbVotes', 'enabled' => 1, 'position' => 800, 'notnull' => -1, 'visible' => 5, 'default' => '0', 'index' => 0),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'EvntOrgDraft', 1 => 'EvntOrgSuggested', 2 => 'EvntOrgConfirmed', 3 => 'EvntOrgNotQualified', 4 => 'EvntOrgDone', 9 => 'EvntOrgCancelled'),),
+		'max_participants' => array('type' => 'integer', 'label' => 'MaxParticipants', 'enabled' => 1, 'position' => 810, 'notnull' => -1, 'visible' => 1, 'index' => 0, 'help' => "MaxParticipantsHelp"),
 	);
 	/**
 	 * @var int
@@ -170,6 +171,11 @@ class ConferenceOrBooth extends ActionComm
 	 * @var ?int
 	 */
 	public $status;
+
+	/**
+	 * @var ?int
+	 */
+	public $max_participants;
 	// END MODULEBUILDER PROPERTIES
 
 	//public $pubregister;

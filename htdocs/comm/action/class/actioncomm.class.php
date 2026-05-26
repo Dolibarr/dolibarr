@@ -383,6 +383,11 @@ class ActionComm extends CommonObject
 	public $status;
 
 	/**
+	 * @var ?int
+	 */
+	public $max_participants;
+
+	/**
 	 * @var string IP address
 	 */
 	public $ip;
@@ -465,7 +470,7 @@ class ActionComm extends CommonObject
 		"num_vote" => array("type" => "integer", "label" => "Numvote", "enabled" => "1", 'position' => 235, 'notnull' => 0, "visible" => "0",),
 		"event_paid" => array("type" => "smallint(6)", "label" => "Eventpaid", "enabled" => "1", 'position' => 240, 'notnull' => 1, "visible" => "0",),
 		"status" => array("type" => "smallint(6)", "label" => "Status", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "0",),
-		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => "1", 'position' => 250, 'notnull' => 0, "visible" => "0",),
+		'max_participants' => array('type' => 'integer', 'label' => 'MaxParticipants', 'enabled' => 1, 'position' => 245, 'notnull' => -1, 'visible' => 1, 'index' => 0, 'help' => "MaxParticipantsHelp"),		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => "1", 'position' => 250, 'notnull' => 0, "visible" => "0",),
 		"fk_bookcal_calendar" => array("type" => "integer", "label" => "Fkbookcalcalendar", "enabled" => "1", 'position' => 255, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"fk_task" => array("type" => "integer", "label" => "Task", "picto" => "task", "enabled" => "1", 'position' => 260, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"fk_user_author" => array("type" => "integer", "label" => "UserCreation", "picto" => "user", "enabled" => "1", 'position' => 505, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
@@ -643,6 +648,7 @@ class ActionComm extends CommonObject
 		$sql .= "num_vote,";
 		$sql .= "event_paid,";
 		$sql .= "status,";
+		$sql .= "max_participants,";
 		$sql .= "ip";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)', ";
@@ -685,6 +691,7 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
 		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
 		$sql .= (!empty($this->status) ? (int) $this->status : "0").", ";
+		$sql .= (!empty($this->max_participants) ? (int) $this->max_participants : "null").", ";
 		$sql .= (!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
@@ -891,6 +898,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
 		$sql .= " a.fk_user_action,";
+		$sql .= " a.max_participants,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
@@ -985,6 +993,7 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
+				$this->max_participants = $obj->max_participants;
 
 				//email information
 				$this->email_msgid = $obj->email_msgid;
@@ -1282,7 +1291,7 @@ class ActionComm extends CommonObject
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
 		if (!empty($this->fk_element)) {
-			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
+			$sql .= ", fk_element=".(int) $this->fk_element;
 		}
 		if (!empty($this->elementtype)) {
 			$sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
@@ -1295,6 +1304,9 @@ class ActionComm extends CommonObject
 		}
 		if (!empty($this->status)) {
 			$sql .= ", status=".($this->status ? (int) $this->status : 0);
+		}
+		if (!empty($this->max_participants)) {
+			$sql .= ", max_participants=".(int) $this->max_participants;
 		}
 		$sql .= " WHERE id=".((int) $this->id);
 
