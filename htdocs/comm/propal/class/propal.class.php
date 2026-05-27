@@ -1530,14 +1530,28 @@ class Propal extends CommonObject
 							if ($update_prices === true) {
 								$pu_ht = $prod->price;
 								$cost_price = $line->pa_ht; // ...no change
+								$best_supplier_price = '';
+								require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
+								$supplier_product = new ProductFournisseur($this->db);
+								// best supplier price for line qty and discount
+								if ($supplier_product->find_min_price_product_fournisseur($prod->id, $line->qty) > 0) {
+									$best_supplier_price = $supplier_product->fourn_unitprice_with_discount;
+								}
 								if (getDolGlobalString('MARGIN_TYPE') == '1') {
-									// bestsupplierprice TODO
+									// bestsupplierprice
+									$cost_price = $best_supplier_price;
 								} elseif (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 									// pmp
 									$cost_price = $prod->pmp;
 								} elseif (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
-									// costprice
-									$cost_price = $prod->cost_price;
+									// Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+									if (!empty($prod->cost_price)) {
+										$cost_price = $prod->cost_price;
+									} elseif (!empty($prod->pmp)) {
+										$cost_price = $prod->pmp;
+									} elseif (!empty($best_supplier_price)) {
+										$cost_price = $best_supplier_price;
+									}
 								}
 								$tva_tx = (string) get_default_tva($mysoc, $objsoc, $prod->id);
 								$remise_percent = $objsoc->remise_percent;
