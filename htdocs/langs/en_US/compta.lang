@@ -344,6 +344,6 @@ Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
 SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
 VATExemptionCode=VAT exemption code
-VATExemptionCodeDesc=Enter here the code of the reason of your VAT exemption (VATEX code).
+VATExemptionCodeDesc=If the VAT rate is 0, you can enter here the code of the reason of the VAT exemption (VATEX code).
 VATExemptionCodeDesc2=You can pick any valid value among the list on https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/ or keep it empty to use the default code.
 VATExemptionCodeDesc3=This code is not used for accounting. It is used only if your are using an E-invoice generation module.
