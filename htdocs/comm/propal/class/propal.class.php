@@ -1545,11 +1545,11 @@ class Propal extends CommonObject
 									$cost_price = $prod->pmp;
 								} elseif (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 									// Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
-									if (!empty($prod->cost_price)) {
+									if (!empty($prod->cost_price) && $prod->cost_price > 0) {
 										$cost_price = $prod->cost_price;
-									} elseif (!empty($prod->pmp)) {
+									} elseif (!empty($prod->pmp) && $prod->pmp > 0) {
 										$cost_price = $prod->pmp;
-									} elseif (!empty($best_supplier_price)) {
+									} elseif (!empty($best_supplier_price) && $best_supplier_price > 0) {
 										$cost_price = $best_supplier_price;
 									}
 								}
