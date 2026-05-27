@@ -106,7 +106,7 @@ if ($action == 'update') {
 	$tmpthirdparty->idprof1 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1");
 
 	// Check validity of email
-	if (!isValidEMail(GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL"))) {
+	if (!isValidEmail(GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL"))) {
 		setEventMessages($langs->trans("ErrorBadEMail", GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL")), null, 'errors');
 		$error++;
 	}

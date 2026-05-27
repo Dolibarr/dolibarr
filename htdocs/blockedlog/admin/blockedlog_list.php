@@ -528,7 +528,7 @@ if (is_array($blocks)) {
 			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
 
 			// Amount
-			print '<td class="right nowraponall">';
+			print '<td class="right nowraponall"><span class="amount">';
 			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
 				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
 				if ($ingrey) {
@@ -539,7 +539,7 @@ if (is_array($blocks)) {
 					print '</span>';
 				}
 			}
-			print '</td>';
+			print '</span></td>';
 
 			// Details link
 			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</span></td>';

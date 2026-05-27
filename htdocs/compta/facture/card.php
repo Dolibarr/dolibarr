@@ -1249,6 +1249,7 @@ if (empty($reshook)) {
 
 		$originentity = GETPOSTINT('originentity');
 		$object->demand_reason_id = $inputReasonId;
+
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {

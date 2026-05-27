@@ -625,7 +625,7 @@ if (empty($error) && !empty($xml)) {
 
 		// Print list of files
 		$outforlistoffiles = '<a href="#" onclick="console.log(\'Click\'); jQuery(\'#listofunalterablefiles\').toggle(); return false;">'.$langs->trans("ShowListOfFiles").'</a><br>';
-		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12">';
+		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12" spellcheck="false">';
 		$i = 0;
 		foreach ($listoffilestoanalyze as $dirtoanalyze) {
 			$entry = array();

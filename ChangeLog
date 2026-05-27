@@ -8,9 +8,180 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-* NEW experimental module "Quick memo" to put post-it on any screens.
-
-
+NEW: Use another hash algorithm v2 based on sha256/hmac for immutable logs (#37725)
+NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
+NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
+NEW: New Stock transfer module stabilization and full functional coverage (#37557)
+NEW: WebPortal support for interventions and tickets (#37538)
+NEW: Experimental MCP server and AI Assistant (#37888)
+NEW: #25829 Can automatically send the invoice generated from a template (#36967)
+NEW: #35052 Add social contributions for Switzerland (#38236)
+NEW: #36638 Feature: Add PDF document generation to Salaries module (#36785)
+NEW: #37645 Salaries - Add shortcut buttons on date (Previous month / current month / next month) (#37704)
+NEW: #37727 phone input with country code (#37728)
+NEW: Add substitutions for deposit (#37546)
+NEW: Improve API compatibility for users, tasks and ticket attachments (#37644)
+NEW: Intervention - Add tag/category on this object (#38158)
+NEW: VAT Report - Add button to collapse / expand all rates (#36946)
+NEW: Various payments - Add extrafield (#38260)
+NEW: Add global MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND for search and attach the most recent file if none file found when send email in mass action (#36813)
+NEW: Add “Bank Account” column in invoicing views (customer & supplier invoice lists) (#36718)
+NEW: Extrafield option for tooltip  in getNomUrl (#37431)
+NEW: Fichinter model on stable version (#36873)
+NEW: Manage discount for all lines for supplier elements. (#36954)
+NEW: Replace MyObject MyModule occurrences (#38370)
+NEW: add support for label field in addline method In supplier order (#36544)
+NEW: adds visual indicators on the Sales Order card (commande/card.php)  (#37460)
+NEW: allow to save stocks as 0 on a stock movement. (#36812)
+NEW: chose which payment request to include in bank transfer (#36814)
+NEW: enable supplier external download links and expose substitution variables for supplier documents (#37386)
+NEW: hide remise_except unit price on invoice lines (#37066)
+NEW: use select label for extrafield substitution in emails (#37005)
+NEW: A page can force its value for MAIN_SECURITY_CSRF_WITH_TOKEN
+NEW: API endpoint for getting product price logs (#38420)
+NEW: API get country: load region and load states now an option (#37715)
+NEW: Accountancy - Add comparative balance with closure snapshot support (#37382)
+NEW: Accountancy - Add confirmation message with link after transaction validation (#37383)
+NEW: Accountancy - Add default options for export (#37938)
+NEW: Accountancy - Add hook in Label for accounting operation (#37838)
+NEW: Accountancy - Add matching on general account (#38040)
+NEW: Accountancy - Add option to dissociate cash sales (#38160)
+NEW: Accountancy - Add transaction model (SQL Part) (#36807)
+NEW: Accountancy - Auxiliary account - Propose an ajax search on list (#37570)
+NEW: Accountancy - Export Quadra - Add option to export thirdparty account only if not existing (#38208)
+NEW: Accountancy - Multi reports system (#37248)
+NEW: Accountancy - Select between accrual accounting and cash accounting (#37050)
+NEW: Accountancy - Transaction template system (#37286)
+NEW: Accounting codes of a product can be collapsed
+NEW: Add Batch and function to send HR information (#37542)
+NEW: Add CSV/XLSX import mode to disable triggers execution (refactoring of import, while preserving legacy SQL compatibility) (#37367)
+NEW: Add EUID number (#37222)
+NEW: Add Hook for adapting virtual stock in replenish screen (#37290)
+NEW: Add MAIN_FORCE_SYSTEM_MESSAGE Renamed hook "info_admin" into "messageOfTheDay"
+NEW: Add a protection against total change on a validated invoice.
+NEW: Add a separator between won/lost and other opportunity status in list
+NEW: Add button more on membership stat page
+NEW: Add captcha on webportail (#37726)
+NEW: Add column einvoice_vate on VAT dictionary
+NEW: Add condition to exclude unpaid invoices from profit (#36693)
+NEW: Add count tool for AI
+NEW: Add default bank account field on third party creation form (#37866)
+NEW: Add direct debit to close on home thumbs
+NEW: Add end date of membership on list of partnership
+NEW: Add field 'Commentaires' in formconfirm when adding a payment on invoices from massaction. (#37594)
+NEW: Add label column to a members subscription list (#38289)
+NEW: Add lifetime amount on the list of blockedlog
+NEW: Add mass mailing tab - with counts to project tabs (#37703)
+NEW: Add member on list of partnership
+NEW: Add method calculateVATNumberFromProperties()
+NEW: Add method dolOutputDates()
+NEW: Add method formatLogObject to allow logs in 1 line #37135
+NEW: Add new EUID number (#36997)
+NEW: Add page to control last line deletion
+NEW: Add param forcebuilddoc on createRecurringInvoices()
+NEW: Add phone of thirdparty available on list of contracts
+NEW: Add picto "AI assistant"
+NEW: Add section to help to find einvoice modules on setup page for ome countries.
+NEW: Add status canceled on direct debit payment
+NEW: Add thumbnails and stock value to product category listing (#37510)
+NEW: Add tooltip and better translation on ref field in thirdparty side when creating an object
+NEW: Better look and feel v24 in import/export tool
+NEW: Button to close/reopen bank account status
+NEW: Can add date_create on expense report update (#36936)
+NEW: Can add more tags to default tags in dolPrintHTML
+NEW: Can edit the VAT code exemption.
+NEW: Can enable/disable external calendar per calendar.
+NEW: Can request and force user to change its password (#37196)
+NEW: Can set position of search object in combo search
+NEW: Can use colored switch in setup factory
+NEW: Category - API - Add type list (#38207)
+NEW: Contact - List - Add column State & Region (#37553)
+NEW: Contract - Add consolidated total (#38249)
+NEW: Contract - Add statistics (#38136)
+NEW: Display external linked picture on product card (#37574)
+NEW: Display thirdparty name with ref in linked objects for all document types (#37906)
+NEW: Do not show the selection of template mode in creation if there is one only
+NEW: Enable AI tools on the message editor for tickets
+NEW: Filter on status of direct debit
+NEW: Force showing forms to add/link files in "Linked files" tab (#38100)
+NEW: Global option do disable email is on each email setup page
+NEW: IP restriction to CIDR range (#36855)
+NEW: Increase statement description to 12 on card payment, 22 on sepa
+NEW: Intervention - Add drag & drop file (#38138)
+NEW: Intervention - Admin - Move to button (#38314)
+NEW: Introduce THIRDPARTY_LIMIT_SIZE for a limit on thirdpaty in select list
+NEW: Invoice - List - use select2 multiselect for status (#36834)
+NEW: MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is on by default
+NEW: Member subscription tooltip includes label (#38291)
+NEW: Move deprecated option MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER into conf.php file.
+NEW: Printing the initial message from ticket creation just like any new message in tickets Events/Agenda view (#37713)
+NEW: Refactoring how the counter of print is done. Now done synchronously in documents.php or receipt.php
+NEW: Remove legacy crabe template of invoice
+NEW: Show example of ai models in setup
+NEW: Show short label of categories by default, long is in hover.
+NEW: Show total multicurrency on payment (#37070)
+NEW: Show url of blacklisted modules in tooltip
+NEW: Societe - Import/Export - Add incoterm location & add possibility to import with code (#37969)
+NEW: Specify If the Object Manages Lines for Module Builder (#32664)
+NEW: Start implementation of MAIN_RESTRICTHTML_ONLY_VALID_HTML=2 for #GHSA-5jmx-352f-p5g3
+NEW: Strings are trimmed when doing import.
+NEW: Supplier invoice - List - use select2 multiselect for status (#36887)
+NEW: Supplier invoice - Update dir_output (#37841)
+NEW: Supplier order - Update dir_output (#37858)
+NEW: Support for __AUTHOREMAIL__ in fixed notifications (#37285)
+NEW: Switch MAIN_SECURITY_CSRF_WITH_TOKEN from 2 to 3.
+NEW: Switch default value of nature of a thirdparty. Individual if no data to guess instead of company by default.
+NEW: UIUX Category - Add category type in create form (#38206)
+NEW: UIUX Intervention - Merge two-step creation form into a single unified form (#38284)
+NEW: UXUI add helptext to function formconfirm (#38435)
+NEW: Update holiday class to handle date_create field (#36918)
+NEW: Use the initAsSpecimen to generate the test invoice.
+NEW: Use the js lib into htdocs/public/includes instead of htdocs/includes
+NEW: We can now link membership contributions to invoices, orders, proposals (#37712)
+NEW: [RGPD] Add personal_data column on llx_extrafields table - Third step of anonymise extrafields #8612 (#38194)
+NEW: add Tags & Categories on MOs (#36816)
+NEW: add ai feature to spell check (#37692)
+NEW: add external contacts on the tickets event (#37870)
+NEW: add extrafields in product multiprices export (#37595)
+NEW: add image format avif (#37014)
+NEW: add import of leave balance (Implementation) (#37011)
+NEW: add label textline on massaction member subscription (#38288)
+NEW: add rule MAIN_BUILD_LOGIN_RULE = 'flastname' to build login
+NEW: add support of subtotals on more objects (#34125)
+NEW: add text field to search for label (#38306)
+NEW: adds a hook in the ticket email/message form generated by `FormTicket… (#37580)
+NEW: allow to disable freezone product on takepos (#37004)
+NEW: can add extrafield chkbxlst with table containing 200000 items (#37691)
+NEW: concatenate PDF to strato contract model (#36803)
+NEW: cron: unlock job on unexpected shutdown (#37332)
+NEW: debugbar: Add backtrace capture for database query failures (#36612)
+NEW: filter on membership start and end dates (#38309)
+NEW: import process by removing some steps (#36811)
+NEW: link to conferenceOrBoothAttendee from Proposal (#38359)
+NEW: massaction sendEmail on the list of invoices for a given product (#37937)
+NEW: product barcode label print options (#36656)
+NEW: show last 10 events on conference attendee card (#38170)
+NEW: use of rich editor is off by default on public page - #GHSA-5jmx-352f-p5g3
+NEW: webportal hooks on form list (#36844)
+NEW: New hidden option STOCK_EXPEDITION_NO_MORE_THAN_ORDER to prevent shipping more than ordered quantity (#37604)
+NEW: API create fixed amount discount (#37091)
+NEW: Add OIDC user auto-creation and fix login bugs (#37314)
+NEW: Add default_rib field to SQL query and output (#38355)
+NEW: Add mass action to cancel invoices using credit notes (#37852)
+NEW: Add personal_data flag in extrafields admin UI - next step of #8612 (#38133)
+NEW: Direct installation for community and free modules on DoliStore (#38357)
+NEW: Display thirdparty name with ref in supplier orders linked objects (#36952)
+NEW: Show bom net needs treeview by line position. (#37459)
+NEW: Show name_alias in parentheses in thirdparty dropdown lists (#37997)
+NEW: Thirdparty card +tab with events where thirdparty is attendee/booth (#37743)
+NEW: Update ticket read date when status changes (#37470)
+NEW: add hooks in reception card (#37214)
+NEW: add new hook in BonPrelevement::EnregDestinataireSEPA() function (#37419)
+NEW: add drag-and-drop functionality for managing draft expedition lines (#36311)
+NEW: Add delivery date in supplier order linked object block (#38351)
+NEW: Add hook selectForFormsListUrl in Form::selectForForms (#37447)
+NEW: A lot of look and feel enhancement in the immutable log pages.
+NEW: Enhance the tools to check file integrity.
 
 For developers:
 ---------------
@@ -19,7 +190,7 @@ For developers:
 WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* UniversalSearch Syntax is required on all filter parameters of function. Non USF filters are no more allowed.
+* Universal Search Syntax is required on all filter parameters of functions. Non USF filters are no more allowed.
 * Old option PAYMENT_SECURITY_TOKEN_UNIQUE has been removed. Can edit the XXX_ONLINE_SIGNATURE_SECURITY_TOKEN from setup.
 * Now use a default salt for online signature securekey. Old links may be wrong if not salt was set before.
 * Login API are off by default (API must be used with the bearer token). Must set API_ENABLE_LOGIN_API to have them enabled.
