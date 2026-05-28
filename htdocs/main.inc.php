@@ -1174,14 +1174,7 @@ if (!defined('NOLOGIN')) {
 	}
 	if ((int) $conf->liste_limit <= 0) {
 		// Mode automatic. Similar code than into conf.class.php
-		$conf->liste_limit = 15;
-		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-			$conf->liste_limit = 8;
-		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-			$conf->liste_limit = 10;
-		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-			$conf->liste_limit = 20;
-		}
+		$conf->liste_limit = getListLimitFromScreenHeight();
 	}
 	// Overwrite main_checkbox_left_column from user setup
 	if (isset($user->conf->MAIN_CHECKBOX_LEFT_COLUMN)) {	// If a user setup exists
@@ -1313,7 +1306,7 @@ if (!defined('NOREQUIRETRAN')) {
 	// accesskey is for Mac:               CTRL + Option + key for all browsers
 
 	// Note: $con->browser->os and $conf->browser->name may not be defined if we are in CLI mode.
-	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
+	$conf->browser->stringforfirstkey = $langs->transnoentities("KeyboardShortcut");
 	if (!empty($conf->browser->os) && $conf->browser->os == 'macintosh') {
 		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
 	} else {
@@ -1738,7 +1731,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		// Mobile appli like icon
-		$manifest = DOL_URL_ROOT.'/theme/'.$conf->theme.'/manifest.json.php';
+		$manifest = DOL_URL_ROOT.'/theme/manifest.json.php';
 		$parameters = array('manifest' => $manifest);
 		$resHook = $hookmanager->executeHooks('hookSetManifest', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($resHook > 0) {

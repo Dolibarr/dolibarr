@@ -10,7 +10,7 @@
  * Copyright (C) 2019		Nicolas Zabouri				<info@inovea-conseil.com>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		Charlene Benke				<charlene@patas-monkey.com>
  *
@@ -39,6 +39,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -162,7 +163,6 @@ if ($search_status == '') {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Contrat($db);
-$extrafields = new ExtraFields($db);
 $staticcontratligne = new ContratLigne($db);
 
 // fetch optionals attributes and labels

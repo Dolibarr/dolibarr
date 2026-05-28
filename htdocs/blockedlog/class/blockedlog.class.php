@@ -1304,7 +1304,7 @@ class BlockedLog
 		$this->object_version = DOL_VERSION;
 
 		// The object_format define the formatting rules into buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
-		$this->object_format = 'V1';	// TODO Switch to V2 for every version
+		$this->object_format = 'V2';	// TODO Switch to V2 for every version
 		if (defined('CERTIF_LNE') && in_array((int) constant('CERTIF_LNE'), array(1, 2))) {
 			$this->object_format = 'V2';
 		}

@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,12 +99,18 @@ if (defined('THEME_ONLY_CONSTANT')) {
 session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
+// From main.inc.php
+'
+@phan-var-force MenuManager $menumanager
+';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs
  * @var User $user
+ *
+ * @var MenuManager $menumanager Value set through main.inc.php
  *
  * @var string $badgeWarning
  * @var string $butactionbg

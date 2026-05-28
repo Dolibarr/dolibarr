@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  */
 class ToolCategories extends McpTool
 {
-
 	/**
 	 * 	Constructor
 	 *
@@ -407,11 +407,10 @@ class ToolCategories extends McpTool
 	 * Searches for categories based on a query and type.
 	 *
 	 * @param array<string, mixed> $args Array containing 'query' (string), 'scope' (string), 'limit' (int), 'offset' (int).
-	 * @return list<array<string, mixed>> A list of found categories or an error array.
+	 * @return array{error:string}|array{count:int}|list<array<string, mixed>> A list of found categories or an error array.
 	 */
 	private function searchCategories($args)
 	{
-
 		if (
 			!$this->user->hasRight('categorie', 'lire')
 			&& !$this->user->hasRight('produit', 'lire')
@@ -426,6 +425,15 @@ class ToolCategories extends McpTool
 		$scope_filter = !empty($args['scope']) ? $args['scope'] : '';
 		$limit = isset($args['limit']) ? max(1, min(100, (int) $args['limit'])) : 20;
 		$offset = isset($args['offset']) ? max(0, (int) $args['offset']) : 0;
+
+		// Safety fallback
+		if ($limit <= 0) {
+			$limit = 5;
+		}
+		if ($limit > 1000) {
+			dol_syslog("Search DB Error: Too many record requested", LOG_ERR);
+			return ["error" => "DB Error"];
+		}
 
 		$cat_type_map = $this->getCategoryTypeMap();
 
@@ -641,9 +649,10 @@ class ToolCategories extends McpTool
 			$path_parts[] = ["label" => $cat->label];
 			$full_path = implode(' > ', array_map(
 				/**
-				* @param array{label:string} $p
-				*/
-				function ($p) {
+				 * @param array{label:string} $p
+				 * @return string
+				 */
+				static function ($p) {
 					return $p['label'];
 				},
 				$path_parts

@@ -1365,8 +1365,8 @@ if (count($listofextcals)) {
 					}
 					// $buggedfile is set to uselocalandtzdaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtzdaylight' (for example with bluemind)
 					if ($buggedfile === 'uselocalandtzdaylight') {	// unixtime is a local date that does take daylight into account, TZID is +2 for example for 'Europe/Paris' in summer
-						$localtzs = new DateTimeZone(preg_replace('/"/', '', $icalevent['DTSTART']['TZID']));
-						$localtze = new DateTimeZone(preg_replace('/"/', '', $icalevent['DTEND']['TZID']));
+						$localtzs = new DateTimeZone((string) preg_replace('/"/', '', $icalevent['DTSTART']['TZID']));
+						$localtze = new DateTimeZone((string) preg_replace('/"/', '', $icalevent['DTEND']['TZID']));
 						$localdts = new DateTime(dol_print_date($datestart, 'dayrfc', 'gmt'), $localtzs);
 						$localdte = new DateTime(dol_print_date($dateend, 'dayrfc', 'gmt'), $localtze);
 						$tmps = -1 * $localtzs->getOffset($localdts);
@@ -2346,10 +2346,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$perusernotbusyadded = 0;
 			foreach ($cases1[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style1 .= $peruserbusyadded ? '': ' peruser_busy';
+					$style1 .= $peruserbusyadded ? '' : ' peruser_busy';
 					$peruserbusyadded++;
 				} else {
-					$style1 .= $perusernotbusyadded ? '': 'peruser_notbusy ';
+					$style1 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
 					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {
@@ -2367,10 +2367,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$perusernotbusyadded = 0;
 			foreach ($cases2[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style2 .= $peruserbusyadded ? '': ' peruser_busy';
+					$style2 .= $peruserbusyadded ? '' : ' peruser_busy';
 					$peruserbusyadded++;
 				} else {
-					$style2 .= $perusernotbusyadded ? '': 'peruser_notbusy ';
+					$style2 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
 					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {
@@ -2388,10 +2388,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$perusernotbusyadded = 0;
 			foreach ($cases3[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style3 .= $peruserbusyadded ? '': ' peruser_busy';
+					$style3 .= $peruserbusyadded ? '' : ' peruser_busy';
 					$peruserbusyadded++;
 				} else {
-					$style3 .= $perusernotbusyadded ? '': 'peruser_notbusy ';
+					$style3 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
 					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {
@@ -2409,10 +2409,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$perusernotbusyadded = 0;
 			foreach ($cases4[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style4 .= $peruserbusyadded ? '': ' peruser_busy';
+					$style4 .= $peruserbusyadded ? '' : ' peruser_busy';
 					$peruserbusyadded++;
 				} else {
-					$style4 .= $perusernotbusyadded ? '': 'peruser_notbusy ';
+					$style4 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
 					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {

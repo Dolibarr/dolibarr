@@ -633,11 +633,12 @@ class FormProduct
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $selected) {
+				} elseif ($mode == 2 && (int) $lines->scale === (int) $selected) { // Careful null !== 0 !== '0' and when 0 is saved bdd store null
 					$return .= ' selected';
 				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
+
 				$return .= '>';
 				if ($measuring_style == 'time') {
 					$return .= $langs->trans(ucfirst((string) $lines->label));

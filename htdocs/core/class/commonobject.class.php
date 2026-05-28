@@ -12,7 +12,7 @@
  * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
  * Copyright (C) 2017-2026  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
@@ -93,7 +93,13 @@ abstract class CommonObject
 	public $errors = array();
 
 	/**
-	 * @var string[]	Array of warning strings
+	 * @var string 		Warning string
+	 * @see             $warnings
+	 */
+	public $warning;
+
+	/**
+	* @var string[]	Array of warning strings
 	 */
 	public $warnings = array();
 
@@ -5695,11 +5701,14 @@ abstract class CommonObject
 			}
 
 			// Recalculate unit price with tax if not defined
-			if (empty($line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
+			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
 				// So we calculate an estimated value just to show something on screen
-				$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty, 'MU');
-				//other method is less accurate
-				// $line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+				if ($line->remise_percent != 100) {
+					$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty / (1 - $line->remise_percent / 100), 'MU');
+				} else {
+					// Other method is less accurate
+					$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+				}
 			}
 			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
@@ -10226,6 +10235,10 @@ abstract class CommonObject
 							}
 						} else {
 							$return .= '</div>';
+						}
+
+						if ($nbmax && $nbphoto >= $nbmax) {
+							break;
 						}
 					}
 				}

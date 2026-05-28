@@ -129,12 +129,13 @@ $dolibarr_main_db_user='';
 // dolibarr_main_db_pass
 // =====================
 // This parameter contains password used to read and write into Dolibarr database.
-// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.
-// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.
+// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode function.
+// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt function.
 //
 // Examples:
 // $dolibarr_main_db_pass='myadminpass';
 // $dolibarr_main_db_pass='myuserpassword';
+// $dolibarr_main_db_pass='dolcrypt:abcdef123456789';
 //
 $dolibarr_main_db_pass='';
 
@@ -208,8 +209,8 @@ $dolibarr_main_dolcrypt_key='';
 // dolibarr_main_instance_unique_id
 // ================================
 // An ID that is unique for each installation.
-// This value is also never visible and never propagated outside of Dolibarr. It can be used as a salt/key for some encryption (For example to get
-// a unique hashed key for URLs, application will hash the value to hash concatenated with this string. Example: sha256('dolibarr'+dolibarr_main_instance_unique_id)
+// This value is also never visible and never propagated outside of Dolibarr. It can be used as a salt/key for some encryption (For example to generate
+// a unique hashed key for URLs, application may hash params including this key as salt. Example: dol_hash('dolibarr'+dolibarr_main_instance_unique_id+value)
 // Default value: randomly defined during installation
 // Examples:
 // $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';

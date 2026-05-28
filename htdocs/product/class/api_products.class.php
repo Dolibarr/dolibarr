@@ -84,12 +84,16 @@ class Products extends DolibarrApi
 	 * @param  bool   $includetrans		   Load also the translations of product label and description
 	 * @return array|mixed                 Data without useless information
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
 	public function get($id, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No Product with id<1 can exist');
+		}
 		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
@@ -389,11 +393,16 @@ class Products extends DolibarrApi
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 *
+	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
 	public function put($id, $request_data = null)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No Product with id<1 can exist');
+		}
+
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'creer')) {
 			throw new RestException(403);
 		}
@@ -553,10 +562,17 @@ class Products extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @throws RestException
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500 System error
 	 */
 	public function delete($id)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No Product with id<1 can exist');
+		}
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'supprimer')) {
 			throw new RestException(403);
 		}
@@ -1155,6 +1171,49 @@ class Products extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($product_fourn_list);
+	}
+
+	/**
+	 *	Get the history logs for all supplier prices of a specific product
+	 *
+	 *	@since	26.0.0	Initial implementation
+	 *
+	 *	@param	int		$id			ID of product
+	 *	@param	string	$ref		Ref of element
+	 *	@param	string	$ref_ext	Ref ext of element
+	 *	@param	string	$barcode	Barcode of element
+	 *	@return	array<int, stdClass> Array of price logs
+	 *	@phan-return array<int, stdClass>
+	 *	@phpstan-return array<int, stdClass>
+	 *
+	 *	@url GET {id}/purchase_prices/logs
+	 *
+	 *	@throws RestException 400
+	 *	@throws RestException 403
+	 *	@throws RestException 404
+	 */
+	public function getPurchasePriceLogs($id, $ref = '', $ref_ext = '', $barcode = '')
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
+			throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
+		}
+		$id = (empty($id) ? 0 : $id);
+		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
+			throw new RestException(403);
+		}
+		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
+		if (!$result) {
+			throw new RestException(404, 'Product not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		$allLogs = $this->product->fetchAllPriceLogs($this->product->id);
+
+		return $allLogs;
 	}
 
 	/**

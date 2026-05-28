@@ -71,7 +71,7 @@ class DoubleField extends CommonField
 	{
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$autoFocus = $fieldInfos->inputAutofocus ? ' autofocus' : '';
-		$value = !$this->isEmptyValue($fieldInfos, $value) ? price((double) $value) : '';
+		$value = !$this->isEmptyValue($fieldInfos, $value) ? price((float) $value) : '';
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		return self::$form->inputType('text', $htmlName, $value, $htmlName, $moreCss, $moreAttrib . $autoFocus);
@@ -91,7 +91,7 @@ class DoubleField extends CommonField
 	 */
 	public function printOutputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
-		return !$this->isEmptyValue($fieldInfos, $value) ? price((double) $value) : '';
+		return !$this->isEmptyValue($fieldInfos, $value) ? price((float) $value) : '';
 	}
 
 	/**
@@ -166,7 +166,7 @@ class DoubleField extends CommonField
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		if (GETPOSTISSET($htmlName)) {
-			$value = (double) price2num(GETPOST($htmlName, 'alphanohtml'));
+			$value = (float) price2num(GETPOST($htmlName, 'alphanohtml'));
 		} else {
 			$value = $defaultValue;
 		}

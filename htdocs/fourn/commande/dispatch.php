@@ -1319,7 +1319,7 @@ if ($id > 0 || !empty($ref)) {
 						include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 						$lot = new Productlot($db);
 						$lot->fetch(0, $objp->pid, $objp->batch);
-						print '<td class="dispatch_batch_number">'.$lot->getNomUrl(1).'</td>';
+						print '<td class="dispatch_batch_number" data-col="batch"  data-batch="' . dolPrintHTMLForAttribute($objp->batch) . '" data-productid="' . $objp->fk_product . '" >'.$lot->getNomUrl(1).'</td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="dispatch_dlc">'.dol_print_date($lot->sellby, 'day').'</td>';
 						}
@@ -1327,7 +1327,7 @@ if ($id > 0 || !empty($ref)) {
 							print '<td class="dispatch_dluo">'.dol_print_date($lot->eatby, 'day').'</td>';
 						}
 					} else {
-						print '<td class="dispatch_batch_number"></td>';
+						print '<td class="dispatch_batch_number" data-col="batch" data-batch="" data-productid="' . $objp->fk_product . '" ></td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="dispatch_dlc"></td>';
 						}

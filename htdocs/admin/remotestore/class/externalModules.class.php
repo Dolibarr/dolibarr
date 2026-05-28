@@ -460,6 +460,54 @@ class ExternalModules
 				$images = '<img class="imgstore" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" />';
 			}
 
+			// Set and check version
+			$version = '';
+			$compatible = '';
+			if ($product["status"] == 'soon' || $product["status"] == 'development' || $product["status"] == 'experimental') {
+				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
+				$compatible = 'NotCompatible';
+			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
+				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
+					// Compatible
+					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
+						'CompatibleUpTo',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = '';
+				} else {
+					// Never compatible, module expired
+					$version = '<span class="warning">'.$langs->trans(
+						'NotCompatible',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				}
+			} else {
+				if ($product["dolibarr_min"] == 'auto' || $product["dolibarr_min"] != 'unknown') {
+					// Never compatible, module expired
+					$version = '<span class="warning">'.$langs->trans(
+						'NotCompatible',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				} else {
+					// Need update
+					$version = '<span class="compatibleafterupdate">'.$langs->trans(
+						'CompatibleAfterUpdate',
+						$dolibarrversiontouse,
+						$product["dolibarr_min"],
+						$product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				}
+			}
+
 			// free or pay ?
 			if (array_key_exists('price_ht', $product) && price2num($product["price_ht"]) > 0) {
 				$price = '<h3>'.price(price2num($product["price_ht"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
@@ -495,7 +543,7 @@ class ExternalModules
 					$download_link .= img_picto('', 'file-code', 'class="size2x paddingright colorgrey"');
 					$download_link .= '</a>';
 
-					$urlview = $product["dolistore-download"];		// In a future, we will have the download to the zip file
+					$urlview = $product["dolistore-download"];		// View on Dolistore
 					if ($urlview) {
 						$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'" rel="noopener noreferrer">';
 						$download_link .= img_picto('', 'url', 'class="size2x"');
@@ -523,53 +571,31 @@ class ExternalModules
 					//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 					$download_link .= '</a>';
 				}
-			}
 
-			// Set and check version
-			$version = '';
-			$compatible = '';
-			if ($product["status"] == 'soon' || $product["status"] == 'development' || $product["status"] == 'experimental') {
-				$version = '<span class="warning">'.$langs->trans("NotYetAvailable").' - '.$langs->trans("StillInDevelopment").'</span>';
-				$compatible = 'NotCompatible';
-			} elseif ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
-				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
-					//compatible
-					$version = '<span class="compatible hideonsmartphone">'.$langs->trans(
-						'CompatibleUpTo',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = '';
-				} else {
-					// never compatible, module expired
-					$version = '<span class="warning">'.$langs->trans(
-						'NotCompatible',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
-				}
-			} else {
-				if ($product["dolibarr_min"] == 'auto' || $product["dolibarr_min"] != 'unknown') {
-					// never compatible, module expired
-					$version = '<span class="warning">'.$langs->trans(
-						'NotCompatible',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
-				} else {
-					//need update
-					$version = '<span class="compatibleafterupdate">'.$langs->trans(
-						'CompatibleAfterUpdate',
-						$dolibarrversiontouse,
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
-					).'</span>';
-					$compatible = 'NotCompatible';
+				// Direct install
+				if (($product['direct-download'] && $product['direct-download'] == 'yes') || $product['source'] === 'dolistore') {
+					$disableInstall = ($compatible === 'NotCompatible');
+					// $disableInstall = false; // TODO: remove this.
+					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
+					$fields = ['action' => 'install', 'token' => newToken()];
+					foreach ($product as $key => $value) {
+						$fields['producttoinstall['.$key.']'] = $value;
+					}
+					$download_link .= '<hr class="margintopbottomonly"/>';
+					$download_link .= '<button class="' . ($disableInstall ? 'butActionRefused' : 'butAction') . ' paddingleft paddingright"'
+						. ($disableInfo     ? ' title="' . dol_escape_htmltag($disableInfo) . '"' : '')
+						. (!$disableInstall ? ' data-confirm' : '')
+						. (!$disableInstall ? ' data-fields="' . dol_escape_htmltag(json_encode($fields)) . '"' : '')
+						. (!$disableInstall ? ' data-url="' . dol_escape_htmltag($this->url) . '"' : '')
+						. (!$disableInstall ? ' data-confirm-title="' . dol_escape_htmltag($langs->trans("extModuleConfirmInstallTitle")) . '"' : '')
+						. (!$disableInstall ? ' data-confirm-text="' . dol_escape_htmltag($langs->transnoentities(
+							"extModuleConfirmInstallText",
+							$product['label'] ?? '',
+							$product['module_version'] ?? '',
+							$product['ref'] ?? '',
+							!empty($product['tms']) ? dol_print_date($product['tms'], '%d/%m/%Y') : ''
+						)) . '"' : '')
+						. '>' . $langs->trans("install") . '</button>';
 				}
 			}
 
@@ -582,7 +608,7 @@ class ExternalModules
 			$html .= '</div></td>';
 
 			// Description
-			$html .= '<td class="margeCote minwidth500imp"><h2 class="appTitle">';
+			$html .= '<td class="margeCote minwidth400imp"><h2 class="appTitle">';
 			$html .= dolPrintHTML(dol_string_nohtmltag(ucfirst($product["label"])));
 			if (!empty($product['author']) && $product['author'] != 'unkownauthor') {
 				$html .= '<span class="small"> &nbsp; - &nbsp; '.img_picto('', 'company', 'class="pictofixedwidth"');
@@ -664,6 +690,34 @@ class ExternalModules
 			$html .= '<br><br>';
 			$html .= '</td></tr>';
 		}
+
+		// JS for confirm install
+		$confirmLabel = dol_escape_js($langs->trans("install"));
+		$cancelLabel = dol_escape_js($langs->trans("Cancel"));
+		$html .= '<script>
+		$(document).on("click","[data-confirm]",function(){
+			var button = $(this);
+			var confirmTitle = button.data("confirm-title");
+			var confirmText = button.data("confirm-text");
+			var buttons = {};
+			buttons[button.data("confirm-label")||"' . $confirmLabel . '"] = function(){
+				var form = $("<form method=\'POST\' style=\'display:none\'>").attr("action", button.data("url"));
+				$.each(button.data("fields"), function(name, value){
+					form.append($("<input type=\'hidden\'>").attr("name", name).val(value));
+				});
+				$("body").append(form);
+				form.submit();
+				$(this).dialog("close");
+			};
+			buttons["' . $cancelLabel . '"] = function(){$(this).dialog("close");};
+			$("<div>").html(confirmText).dialog({
+				title: confirmTitle,
+				minWidth: 580,
+				modal: true,
+				buttons: buttons
+			});
+		});
+		</script>';
 
 		$this->numberOfProducts = count($this->products);
 
@@ -1258,5 +1312,148 @@ class ExternalModules
 		$labelStatusShort[1] = $langs->transnoentitiesnoconv("online");
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', array('badgeParams' => array('attr' => array('class' => 'classfortooltip', 'title' => $labelStatusShort[$status].$moretext))));
+	}
+
+
+	/**
+	 * Download a Dolibarr module from a Git repository URL or Dolistore download URL.
+	 *
+	 * @param  array<string, mixed> 	$producttoinstall Product information array
+	 * @return string|false				Path to the final ZIP file, or false on error
+	 */
+	public function getModuleZIP($producttoinstall = array())
+	{
+		global $conf;
+
+		// Check if cURL is available
+		if (!function_exists('curl_init')) {
+			dol_syslog(__METHOD__ . ': cURL is not available', LOG_ERR);
+			return false;
+		}
+
+		// Check required fields
+		if (empty($producttoinstall['ref'])) {
+			dol_syslog(__METHOD__ . ': Missing producttoinstall', LOG_ERR);
+			return false;
+		}
+
+		$current_version = $producttoinstall['module_version'] ?? '';
+		$module_name = strtolower(preg_replace('/@.*$/', '', $producttoinstall['ref'] ?? ''));
+
+		// Remove "-" followed by current version at the end of the string if it exists
+		$module_name = preg_replace('/-' . preg_quote($current_version, '/') . '$/', '', $module_name);
+
+		if (empty($module_name) || empty($current_version) || $current_version == 'unknown') {
+			dol_syslog(__METHOD__ . ': Missing or unknown module name/version for product', LOG_ERR);
+			return false;
+		}
+
+		// Create a temporary directory for the download
+		$tmpdir = $conf->admin->dir_temp . '/remotestoredl';
+		dol_mkdir($tmpdir);
+
+		$downloaded = false;
+		switch ($producttoinstall['source']) {
+			case 'dolistore':
+				if ($producttoinstall['id'] > 0) {
+					$source_url = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $producttoinstall['id'];
+					$downloaded = $this->_downloadFile($source_url, $tmpdir);
+					if (!$downloaded) {
+						dol_syslog(__METHOD__ . ': Dolistore download failed: ' . $source_url, LOG_ERR);
+						return false;
+					}
+				} else {
+					dol_syslog(__METHOD__ . ': Invalid product ID for Dolistore download: ' . $producttoinstall['id'], LOG_ERR);
+					return false;
+				}
+				break;
+			case 'githubcommunity':
+				if ($producttoinstall['direct-download'] && $producttoinstall['direct-download'] == 'yes') {
+					$source_url = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/' . $module_name . '/module_' . $module_name . '-' . $current_version . '.zip';
+					$downloaded = $this->_downloadFile($source_url, $tmpdir);
+					if (!$downloaded) {
+						dol_syslog(__METHOD__ . ': GitHub community module download failed: ' . $source_url . ', Try to find a Dolistore link', LOG_WARNING);
+						if ($producttoinstall['id'] > 0) {
+							$source_url = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $producttoinstall['id'];
+							$downloaded = $this->_downloadFile($source_url, $tmpdir);
+							if (!$downloaded) {
+								dol_syslog(__METHOD__ . ': Dolistore download failed: ' . $source_url, LOG_ERR);
+								return false;
+							}
+						} else {
+							dol_syslog(__METHOD__ . ': No direct download available for this GitHub community module', LOG_ERR);
+							return false;
+						}
+					}
+				} else {
+					dol_syslog(__METHOD__ . ': No direct download available for this GitHub community module', LOG_ERR);
+					return false;
+				}
+				break;
+			default:
+				dol_syslog(__METHOD__ . ': Unsupported source type: ' . $producttoinstall['source'], LOG_ERR);
+		}
+
+
+		dol_syslog(__METHOD__ . ': Module downloaded successfully to: ' . $downloaded, LOG_DEBUG);
+		return $downloaded;
+	}
+
+
+	/**
+	 * Download a remote URL to a local file using getURLContent (native Dolibarr).
+	 *
+	 * @param  string  $url         Remote URL to download
+	 * @param  string  $dest_path   Local path to write the downloaded file (directory, not including filename)
+	 * @return string|false         Full path of downloaded file on success, false on failure
+	 */
+	private function _downloadFile(string $url, string $dest_path)
+	{
+		// HEAD request to get real filename from Content-Disposition
+		$filename = '';
+		$head = getURLContent($url, 'HEAD');
+		// Try to extract filename from Content-Disposition header
+		if (!empty($head['header'])) {
+			if (preg_match_all('/Content-Disposition:.*filename=["\']?([^"\';\r\n]+)/i', $head['header'], $m)) {
+				$filename = trim(end($m[1]), " \t\"'");
+			}
+		}
+
+		// If filename is not found in headers, try to extract it from URL
+		if (empty($filename)) {
+			$filename = basename(parse_url($url, PHP_URL_PATH));
+		}
+
+		// If filename is still empty or file name ne match the expected pattern (module_modulename-version.zip), log error and return false
+		if (empty($filename) || !preg_match('/^module_[a-z0-9_]+-[0-9]+\.[0-9]+\.[0-9]+\.zip$/i', $filename)) {
+			dol_syslog(__METHOD__ . ': Cannot determine filename from URL: ' . $url, LOG_ERR);
+			return false;
+		}
+
+		// Download the file
+		$response = getURLContent($url, 'GET');
+		if (empty($response['content']) || (isset($response['http_code']) && $response['http_code'] !== 200)) {
+			dol_syslog(
+				__METHOD__ . ': Download failed — HTTP ' . ($response['http_code'] ?? 'unknown') . ' — ' . $url,
+				LOG_WARNING
+			);
+			return false;
+		}
+
+		// Write to destination
+		$dest_file = $dest_path . '/' . $filename;
+		if (file_exists(dol_osencode($dest_file))) { // If file already exists, try to delete it first
+			chmod(dol_osencode($dest_file), 0755);
+			@unlink(dol_osencode($dest_file));
+		}
+		$writtenfile = file_put_contents(dol_osencode($dest_file), $response['content']);
+		if ($writtenfile === false || $writtenfile === 0) {
+			dol_syslog(__METHOD__ . ': Cannot write file: ' . $dest_file, LOG_ERR);
+			@unlink(dol_osencode($dest_file));
+			return false;
+		}
+
+		dol_syslog(__METHOD__ . ': Downloaded successfully to: ' . $dest_file, LOG_DEBUG);
+		return $dest_file;
 	}
 }

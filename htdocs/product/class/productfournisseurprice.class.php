@@ -517,7 +517,29 @@ class ProductFournisseurPrice extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
-		return $this->deleteCommon($user, $notrigger);
+		$this->db->begin();
+
+		// Delete log entries first
+		$sql = "DELETE FROM " . $this->db->prefix() . "product_fournisseur_price_log";
+		$sql .= " WHERE fk_product_fournisseur = " . ((int) $this->id);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		// Delete parent record (deleteCommon nests inside our transaction)
+		$result = $this->deleteCommon($user, $notrigger);
+
+		if ($result < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+		return $result;
 	}
 
 	/**

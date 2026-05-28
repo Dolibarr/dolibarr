@@ -13,7 +13,7 @@
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,12 +108,12 @@ class Paiement extends CommonObject
 	public $multicurrency_currency;
 
 	/**
-	 * @var array<float|string> array: invoice ID => amount for that invoice (in the main currency)
+	 * @var array<int,float|string|null> array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
 	/**
-	 * @var float[] array: invoice ID => amount for that invoice (in the invoice's currency)
+	 * @var array<int,float|null> array: invoice ID => amount for that invoice (in the invoice's currency)
 	 */
 	public $multicurrency_amounts = array();
 
