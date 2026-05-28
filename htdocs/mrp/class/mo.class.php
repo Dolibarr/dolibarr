@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  		Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  		Lenin Rivas		   	<lenin@leninrivas.com>
- * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
@@ -1543,10 +1543,12 @@ class Mo extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/mrp/mo_card.php';
 		if ($option == 'production') {
-			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/mrp/mo_production.php';
 		}
+
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1555,9 +1557,10 @@ class Mo extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
