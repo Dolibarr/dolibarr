@@ -1050,10 +1050,6 @@ class Memo extends CommonObject
 			$return .= '	</div>';
 		}
 
-		$this->date_archived = dol_now();
-		$this->fk_user_archived = (int) $this->user->id;
-
-
 		$return .= '</div>';
 
 
