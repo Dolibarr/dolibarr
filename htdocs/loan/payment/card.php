@@ -97,6 +97,7 @@ $help_url = "EN:Module_Loan|FR:Module_Emprunt";
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-payment-card');
 
 $h = 0;
+$head = [];
 
 $head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("PaymentLoan");
