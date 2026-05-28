@@ -99,7 +99,7 @@ abstract class CommonObject
 	public $warning;
 
 	/**
-	 * @var string[]	Array of warning strings
+	* @var string[]	Array of warning strings
 	 */
 	public $warnings = array();
 
