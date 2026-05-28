@@ -1924,7 +1924,7 @@ class pdf_sponge extends ModelePDFFactures
 				$index++;
 			}
 
-			// Show total NET before discount except on credit note type invoices
+			// Show discount except on credit note type invoices
 			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_DISCOUNT') && $object->type != 2) {
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
