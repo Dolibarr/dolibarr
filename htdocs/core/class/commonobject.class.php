@@ -12,7 +12,7 @@
  * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
  * Copyright (C) 2017-2026  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
@@ -93,7 +93,13 @@ abstract class CommonObject
 	public $errors = array();
 
 	/**
-	 * @var string[]	Array of warning strings
+	 * @var string 		Warning string
+	 * @see             $warnings
+	 */
+	public $warning;
+
+	/**
+	* @var string[]	Array of warning strings
 	 */
 	public $warnings = array();
 

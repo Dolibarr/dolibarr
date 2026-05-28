@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017-2018  Laurent Destailleur	    <eldy@users.sourceforge.net>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,12 +106,13 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 
 		if ($action === 'BILL_UNVALIDATE') {
+			/** @var Facture $object */
+			'@phan-var-force Facture $object';
 			if ($object->isEditable() <= 0) {
 				$this->errors[] = 'Modifying this invoice is not allowed';
 				return -2;
 			}
 		}
-
 
 		/** @var Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object */
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
@@ -128,6 +129,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		// If we are here, we are on an action code that will have a control or will generate a record in blockedlog database.
 
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
+			/** @var Paiement $object */
+			'@phan-var-force Paiement $object';
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 				if (empty($object->paiementcode) && !empty($object->paiementid)) {
@@ -158,6 +161,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		// Protect against modification of data that should be immutable on a validated invoice (memory test only, no database access)
 		if ($action === 'BILL_MODIFY' && !empty($object->oldcopy) && in_array($object->element, array('invoice', 'facture')) && $object->status != 0) {
+			/** @var Facture $object */
+			'@phan-var-force Facture $object';
 			if ($object->oldcopy->ref != $object->ref) {
 				$this->errors[] = 'Modifying the property Ref of a non draft invoice is not allowed';
 				return -2;
@@ -196,9 +201,11 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
 				/** @var Don|Subscription $object */
+				'@phan-var-force Don|Subscription $object';
 				$amounts = (float) $object->amount;
 			} elseif ($action == 'CASHCONTROL_CLOSE') {
 				/** @var CashControl $object */
+				'@phan-var-force CashControl $object';
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} else {
 				if (property_exists($object, 'total_ht')) {
@@ -211,6 +218,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE' || $action === 'DONATION_PAYMENT_CREATE'
 			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE') {
+			/** @var Paiement $object */
+			'@phan-var-force Paiement $object';
 			$qualified++;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
@@ -220,6 +229,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				$amounts = $object->amount;
 			}
 		} elseif (strpos($action, 'PAYMENT') !== false && !in_array($action, array('PAYMENT_ADD_TO_BANK'))) {
+			/** @var Paiement $object */
+			'@phan-var-force Paiement $object';
 			$qualified++;
 			$amounts = (float) $object->amount;
 		}
