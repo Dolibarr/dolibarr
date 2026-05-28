@@ -1166,8 +1166,12 @@ if ($action == 'edit') {
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
-		//TODO: Test on $server && $port to prevent port scanning on internal network
-		$result = $mail->check_server_port($server, $port);
+		// Test on port to prevent port scanning
+		if (in_array($port, array(25, 465, 587, 2525))) {
+			$result = $mail->check_server_port($server, $port);
+		} else {
+			$result = false;
+		}
 		if ($result) {
 			print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", $server, $port).'</div>';
 		} else {
