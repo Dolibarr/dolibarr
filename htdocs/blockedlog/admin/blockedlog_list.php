@@ -226,11 +226,20 @@ print '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('',
 print '<br>';
 print "</div>\n";
 
+$nbrecorddone = $block_static->countRecord();
+$mindisksize = 50;	// Gb
+$maxtranspermonth = 10000;
+$nbrecordallowed = $mindisksize * 1024 * 1024 / 40 - $nbrecorddone;
+$nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
+
 $htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
-$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
+
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool3")."</span><br>";
 if ($mysoc->country_code == 'FR') {
-	$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR").'</span><br>';
 }
 
 print info_admin($htmltext, 0, 0, 'warning');
