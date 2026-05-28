@@ -21,6 +21,8 @@ class QuickMemo {
 			userDeleteRight: false,
 			elementId: 0,
 			autoResizeFontSize: true,
+			autoResizeFontMin: 1,
+			autoResizeFontMax: 1.2,
 			elementType: '',
 			context: '',
 			token: '',
@@ -1026,8 +1028,8 @@ class QuickMemo {
 		// Linearly map density to font-size
 		const densityMin = 0.0002;
 		const densityMax = 0.005;
-		const fontMin = 0.8;
-		const fontMax = 1.2;
+		const fontMin = this.param.autoResizeFontMin;
+		const fontMax = this.param.autoResizeFontMax;
 
 		// Clamp density between min & max
 		const clampedDensity = Math.max(densityMin, Math.min(densityMax, density));
