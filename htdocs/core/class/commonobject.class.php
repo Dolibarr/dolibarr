@@ -94,7 +94,7 @@ abstract class CommonObject
 
 	/**
 	 * @var string 		Warning string
-	 * @see             $warning
+	 * @see             $warnings
 	 */
 	public $warning;
 
