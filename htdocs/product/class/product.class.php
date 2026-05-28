@@ -1865,6 +1865,21 @@ class Product extends CommonObject
 				}
 			}
 
+			// Delete pricelogs so we don't have any orphan rows, see #38383
+			if (!$error) {
+				$sql = "DELETE FROM " . $this->db->prefix() . "product_fournisseur_price_log";
+				$sql .= " WHERE fk_product_fournisseur IN (";
+				$sql .= "   SELECT rowid FROM " . $this->db->prefix() . "product_fournisseur_price";
+				$sql .= "   WHERE fk_product = " . ((int) $this->id);
+				$sql .= " )";
+
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+
 			// Delete all child tables
 			if (!$error) {
 				$elements = array('product_fournisseur_price', 'product_price', 'product_lang', 'categorie_product', 'product_stock', 'product_customer_price', 'product_lot'); // product_batch is done before
@@ -2362,6 +2377,55 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 *  Get all price change logs for a product, enriched with supplier info
+	 *
+	 *  @param  int     $id         Id of the product
+	 *  @return array<int, stdClass> Array of log objects with supplier info
+	 *  @phan-return array<int, stdClass>
+	 *  @phpstan-return array<int, stdClass>
+	 */
+	public function fetchAllPriceLogs($id)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$logs = array();
+
+		$sql = "SELECT";
+		$sql .= " pl.rowid as log_rowid,";
+		$sql .= " pl.datec,";
+		$sql .= " pl.price,";
+		$sql .= " pl.quantity,";
+		$sql .= " pl.fk_user,";
+		$sql .= " pl.multicurrency_code,";
+		$sql .= " pl.multicurrency_price,";
+		// Supplier info
+		$sql .= " pp.fk_soc as supplier_id,";
+		$sql .= " pp.ref_fourn as supplier_ref,";
+		$sql .= " pp.entity as entity";
+
+		$sql .= " FROM " . $this->db->prefix() . "product_fournisseur_price_log as pl";
+		$sql .= " INNER JOIN " . $this->db->prefix() . "product_fournisseur_price as pp ON pl.fk_product_fournisseur = pp.rowid";
+
+		$sql .= " WHERE pp.fk_product = " . ((int) $id);
+		$sql .= " AND pp.entity IN (" . getEntity('product') . ")";
+		$sql .= " ORDER BY pl.datec DESC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (is_string($obj->datec)) {
+					$obj->datec = strtotime($obj->datec);
+				}
+				$logs[] = $obj;
+			}
+			$this->db->free($resql);
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		return $logs;
+	}
 
 	/**
 	 * Return price of sell of a product for a seller/buyer/product.

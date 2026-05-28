@@ -64,6 +64,21 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
+		// Protect against modification of data that should be immutable on a validated invoice (memory test only, no database access)
+		// Not required, invoice is already protected by the status Validated
+		/*
+		if ($action === 'LINEBILL_INSERT' && in_array($object->element, array('invoiceline', 'facturedet'))) {
+			$invoice = new Facture($this->db);
+			$invoice->fetch($object->fk_facture);
+
+			var_dump($invoice->status, $invoice->posmodule);exit;
+			$this->errors[] = 'Modifying the lines of invoice is not allowed';
+			return -2;
+		}
+		var_dump($object->element);exit;
+		*/
+
+
 		// List of mandatory logged actions
 		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'cashcontrol');
 
@@ -72,11 +87,12 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$listofqualifiedelement = array_merge($listofqualifiedelement, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')));
 		}
 
-		// Test if event/record is qualified
+		// Test if event/record is qualified for immutable logging
 		// If custom actions are not set or if action not into custom actions, we can exclude action if object->element is not valid
 		if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
 			return 1;
 		}
+
 
 		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
 		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
@@ -87,6 +103,15 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$this->errors[] = 'Error: You are using Dolibarr with the module to be compliant with the French Law Finance certification. In this version, the HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to be allowed the use this module in France.';
 			return -1;
 		}
+
+
+		if ($action === 'BILL_UNVALIDATE') {
+			if ($object->isEditable() <= 0) {
+				$this->errors[] = 'Modifying this invoice is not allowed';
+				return -2;
+			}
+		}
+
 
 		/** @var Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object */
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);

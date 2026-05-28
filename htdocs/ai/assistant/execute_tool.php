@@ -34,7 +34,7 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', 1);
 }
-if (!defined('NOCSRFCHECK')) {
+if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
 	define('NOCSRFCHECK', 1);
 }
 
@@ -42,7 +42,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp.class.php';
 
 // Security check
-if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 

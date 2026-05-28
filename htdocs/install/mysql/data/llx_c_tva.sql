@@ -73,7 +73,7 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (5
 
 -- BULGARIA (id country=59)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,   '0','0','VAT rate 0',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,   '7','0','VAT rate - reduced', 1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,   '9','0','VAT rate 9 - reduced', 1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (59,  '20','0','VAT rate - standard',1,__ENTITY__);
 
 -- BELGIUM (id country=2)
@@ -121,7 +121,7 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (7
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (78,    '5','0','VAT rate 5',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (78,   '19','0','VAT rate - standard',1,__ENTITY__);
 
--- DANMERK (id country=80)
+-- DENMARK (id country=80)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (80,    '0','0','VAT rate 0',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (80,   '25','0','VAT rate - standard',1,__ENTITY__);
 
@@ -162,6 +162,12 @@ insert into llx_c_tva(fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_
 insert into llx_c_tva(fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active,entity) values (102,   9, 0, '0', 0, '0', 0, 'Νήσων μειωμένος Φ.Π.Α.', 1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active,entity) values (102,   4, 0, '0', 0, '0', 0, 'Νήσων υπερμειωμένος Φ.Π.Α.', 1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active,entity) values (102,  17, 0, '0', 0, '0', 0, 'Νήσων υπερμειωμένος Φ.Π.Α.', 1,__ENTITY__);
+
+-- HUNGARY (id country=18)
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (18,	'0',	'0', 'VAT rate 0',			1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (18,	'5',	'0', 'VAT rate 5',			1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (18,	'18',	'0', 'VAT rate 18',			1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (18,	'27',	'0', 'VAT rate - standard',	1,__ENTITY__);
 
 -- ICELAND (id country=116)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (116,   '0','0','VAT rate 0',1,__ENTITY__);
@@ -271,8 +277,8 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (1
 
 -- POLAND (id country=184)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '0','0','VAT rate 0', 1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '8','0','VAT rate - reduced',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '3','0','VAT rate - reduced',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '8','0','VAT rate 8 - reduced 2',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,   '5','0','VAT rate 5 - reduced 1',1,__ENTITY__);
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (184,  '23','0','VAT rate - standard',1,__ENTITY__);
 
 -- PORTUGAL (id country=25)

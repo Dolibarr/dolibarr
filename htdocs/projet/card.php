@@ -503,6 +503,8 @@ if (empty($reshook)) {
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
+		} else {
+			setEventMessages($langs->trans("FileGenerated"), null, 'mesgs');
 		}
 	}
 

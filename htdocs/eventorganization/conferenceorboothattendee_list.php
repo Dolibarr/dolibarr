@@ -263,11 +263,7 @@ if ($conf_or_booth_id > 0) {
 		$fk_project = $confOrBooth->fk_project;
 	}
 }
-if ($confOrBooth->id > 0) {
-	$title = $langs->trans('AttendeesPerConference');
-} else {
-	$title = $langs->trans('Attendees');
-}
+$title = $langs->trans('Attendees');
 
 $subtitle = $title;
 

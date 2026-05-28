@@ -87,7 +87,7 @@ $DIR ||= '.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE = "$DIR/../..";
-$DESTI  = "$SOURCE/build";
+$DESTI  = "$SOURCE/dev/build";
 if ( $SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i ) {
 	print
 	  "Error: Launch the script $PROG.$Extension with its full path from /.\n";
@@ -202,29 +202,46 @@ if ( !$TEMP || !-d $TEMP ) {
 $BUILDROOT = "$TEMP/buildroot";
 
 # Get version $MAJOR, $MINOR and $BUILD
-open( my $IN, "<", $SOURCE . "/htdocs/version.inc.php" )
-  or die "Error: Can't open version file "
-  . $SOURCE
-  . "/htdocs/version.inc.php\n";
-while (<$IN>) {
-	if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
-		$MAJORVERSION = $1;
-		last;
+if (! -e $SOURCE . "/htdocs/version.inc.php") {
+	open(my $IN, "<", "$SOURCE/htdocs/filefunc.inc.php")
+		or die "Error: Can't open file $SOURCE/htdocs/filefunc.inc.php\n";
+
+	while (<$IN>) {
+		if (/define\s*\(\s*['"]DOL_VERSION['"]\s*,\s*['"]([^'"]+)['"]\s*\)/) {
+			$VERSION = $1;
+			last;
+		}
 	}
-}
-close $IN;
-open( my $IN2, "<", $SOURCE . "/htdocs/version.inc.php" )
-  or die "Error: Can't open version file "
-  . $SOURCE
-  . "/htdocs/version.inc.php\n";
-while (<$IN2>) {
-	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
-		$MINORVERSION = $1;
-		last;
+
+	close($IN);
+
+	$PROJVERSION = $VERSION;
+} else {
+	open( my $IN, "<", $SOURCE . "/htdocs/version.inc.php" )
+	  or die "Error: Can't open version file "
+	  . $SOURCE
+	  . "/htdocs/version.inc.php\n";
+	while (<$IN>) {
+		if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
+			$MAJORVERSION = $1;
+			last;
+		}
 	}
+	close $IN;
+	open( my $IN2, "<", $SOURCE . "/htdocs/version.inc.php" )
+	  or die "Error: Can't open version file "
+	  . $SOURCE
+	  . "/htdocs/version.inc.php\n";
+	while (<$IN2>) {
+		if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
+			$MINORVERSION = $1;
+			last;
+		}
+	}
+	close $IN2;
+
+	$PROJVERSION = $MAJORVERSION . "." . $MINORVERSION;
 }
-close $IN2;
-$PROJVERSION = $MAJORVERSION . "." . $MINORVERSION;
 
 ( $MAJOR, $MINOR, $BUILD ) = split( /\./, $PROJVERSION, 3 );
 if ( $MINOR eq '' ) { die "Error can't detect version"; }
@@ -399,7 +416,7 @@ else {
 $atleastonerpm = 0;
 foreach my $target ( sort keys %CHOOSEDTARGET ) {
 	if ( $target =~ /RPM/i ) {
-		if ( $atleastonerpm && ( $DESTI eq "$SOURCE/build" ) ) {
+		if ( $atleastonerpm && ( $DESTI eq "$SOURCE/dev/build" ) ) {
 			print
 "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell packager where it can create subdirs for each generated package.\n";
 			exit;
@@ -677,6 +694,7 @@ if ($nboftargetok) {
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.project`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
+		$ret = `rm -f  $BUILDROOT/$PROJECT/.pyproject.toml`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.settings`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.stickler.yml`;
@@ -1058,6 +1076,7 @@ if ($nboftargetok) {
 			if ( $RPMDIR eq "" ) { $RPMDIR = $ENV{'HOME'} . "/rpmbuild"; }
 
 			print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
+			print "RPMDIR = $RPMDIR\n";
 
 			print "Remove target " . $FILENAMERPM . "...\n";
 			unlink( "$NEWDESTI/" . $FILENAMERPM );
@@ -1435,22 +1454,26 @@ if ($nboftargetok) {
 			$cmd = "dpkg-buildpackage -us -uc --compression=gzip";
 			print "Launch DEB build ($cmd)\n";
 			$ret = `$cmd 2>&1 3>&1`;
+			$ret2 = $?;
 			print $ret. "\n";
+			print "Result = $ret2". "\n";
 
 			chdir("$olddir");
 
-			print "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
-			print "You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
+			if ($ret2 eq 0) {
+				print "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
+				print "You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
 
-			# Move to final dir
-			print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
-			$ret = `mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
-			$ret = `mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
-			$ret = `mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
+				# Move to final dir
+				print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
+				$ret = `mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
+				$ret = `mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
+				$ret = `mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
 
-			#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option
-			$ret = `mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
-			$ret = `mv $BUILDROOT/*.changes "$NEWDESTI/"`;
+				#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option
+				$ret = `mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
+				$ret = `mv $BUILDROOT/*.changes "$NEWDESTI/"`;
+			}
 			next;
 		}
 

@@ -230,77 +230,129 @@ class ToolReports extends McpTool
 	{
 		global $langs;
 
-		$langs->loadLangs(array("main", "bills", "companies"));
+		$langs->loadLangs(array("main", "bills", "companies", "products"));
 
-		$limit = isset($args['limit']) ? (int) $args['limit'] : 50;
+		$limit     = isset($args['limit']) ? (int) $args['limit'] : 50;
 		$dateStart = dol_stringtotime($args['date_start']);
-		$dateEnd = dol_stringtotime($args['date_end']);
-		$socid = $this->resolveThirdparty($args);
+		$dateEnd   = dol_stringtotime($args['date_end']);
+		$socid     = $this->resolveThirdparty($args);
+		$groupBy   = isset($args['group_by']) ? (string) $args['group_by'] : 'thirdparty';
 
-		$sql = "SELECT f.rowid, f.ref, f.total_ttc, f.fk_statut, f.paye, f.datef, s.nom
-				FROM " . MAIN_DB_PREFIX . "facture as f
-				LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid
-				WHERE f.entity IN (" . getEntity('facture') . ")";
-
-		$sql .= " AND f.datef >= '" . $this->db->idate($dateStart) . "'";
-		$sql .= " AND f.datef <= '" . $this->db->idate($dateEnd) . "'";
-
+		$list      = [];
+		$totalSum  = 0.0;
 		// Status Filter: Valid (1) and Paid (2). Exclude Draft (0) and Abandoned (3).
-		$sql .= " AND f.fk_statut IN (1, 2)";
+		$dateRange = " AND f.datef >= '" . $this->db->idate($dateStart)
+			. "' AND f.datef <= '" . $this->db->idate($dateEnd)
+			. "' AND f.fk_statut IN (1, 2)";
 
+		// CASE 1 -- Detailed list for a specific thirdparty.
 		if ($socid) {
-			$sql .= " AND f.fk_soc = " . (int) $socid;
-		}
+			$sql = "SELECT f.rowid, f.ref, f.total_ttc, f.fk_statut, f.paye, f.datef, s.nom FROM "
+				. MAIN_DB_PREFIX . "facture as f LEFT JOIN "
+				. MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid WHERE f.entity IN ("
+				. getEntity('facture') . ")"
+				. $dateRange
+				. " AND f.fk_soc = " . (int) $socid
+				. " ORDER BY f.datef DESC LIMIT " . ((int) $limit);
 
-		$sql .= " ORDER BY f.datef DESC LIMIT " . ((int) $limit);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($r = $this->db->fetch_object($resql)) {
+					$totalSum += (float) $r->total_ttc;
 
-		$resql = $this->db->query($sql);
-		$list = [];
-		$totalSum = 0.0;
+					$statusLabel = $langs->transnoentitiesnoconv("Unknown");
+					if ($r->fk_statut == 1 && $r->paye == 0) {
+						$statusLabel = $langs->transnoentitiesnoconv("BillStatusNotPaid");
+					} elseif ($r->fk_statut == 1 && $r->paye == 1) {
+						$statusLabel = $langs->transnoentitiesnoconv("BillStatusStarted");
+					} elseif ($r->fk_statut == 2) {
+						$statusLabel = $langs->transnoentitiesnoconv("BillStatusPaid");
+					}
 
-		if ($resql) {
-			while ($r = $this->db->fetch_object($resql)) {
-				$totalSum += (float) $r->total_ttc;
+					$url     = DOL_URL_ROOT . "/compta/facture/card.php?id=" . $r->rowid;
+					$refHtml = '<a href="' . $url . '">' . $r->ref . '</a>';
 
-				// Determine Localized Status
-				$statusLabel = $langs->transnoentitiesnoconv("Unknown");
-				if ($r->fk_statut == 1 && $r->paye == 0) {
-					$statusLabel = $langs->transnoentitiesnoconv("BillStatusNotPaid");
-				} elseif ($r->fk_statut == 1 && $r->paye == 1) {
-					$statusLabel = $langs->transnoentitiesnoconv("BillStatusStarted");
-				} elseif ($r->fk_statut == 2) {
-					$statusLabel = $langs->transnoentitiesnoconv("BillStatusPaid");
+					$list[] = [
+						$langs->transnoentitiesnoconv("Ref")      => $refHtml,
+						$langs->transnoentitiesnoconv("Date")     => dol_print_date($this->db->jdate($r->datef), 'day'),
+						$langs->transnoentitiesnoconv("Customer") => $r->nom,
+						$langs->transnoentitiesnoconv("Amount")   => price($r->total_ttc),
+						$langs->transnoentitiesnoconv("Status")   => $statusLabel
+					];
 				}
-
-				// Build relative URL
-				$url = DOL_URL_ROOT . "/compta/facture/card.php?id=" . $r->rowid;
-
-				// Make Ref clickable
-				$refHtml = '<a href="' . $url . '">' . $r->ref . '</a>';
-
-				$list[] = [
-					$langs->transnoentitiesnoconv("Ref") => $refHtml,
-					$langs->transnoentitiesnoconv("Date") => dol_print_date($this->db->jdate($r->datef), 'day'),
-					$langs->transnoentitiesnoconv("Customer") => $r->nom,
-					$langs->transnoentitiesnoconv("Amount") => price($r->total_ttc),
-					$langs->transnoentitiesnoconv("Status") => $statusLabel
-				];
+				$this->db->free($resql);
 			}
-			$this->db->free($resql);
+		} else {
+			// CASE 2 -- Global grouped report.
+			// Mirrors the pattern already used by getPurchaseReport(); previous implementation
+			// of getSalesReport() ignored $groupBy entirely and always returned a flat list.
+			$sanitizedSqlGroup = '';
+			$colName           = '';
+			$sqlJoin           = " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid";
+
+			if ($groupBy === 'month') {
+				$sanitizedSqlGroup = "DATE_FORMAT(f.datef, '%Y-%m')";
+				$colName           = $langs->transnoentitiesnoconv("Month");
+			} elseif ($groupBy === 'product') {
+				// Aggregate on product line items. Lines without product_id fall back to their description.
+				$sanitizedSqlGroup = "COALESCE(p.ref, fd.description, '?')";
+				$colName           = $langs->transnoentitiesnoconv("Product");
+				$sqlJoin .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as fd ON fd.fk_facture = f.rowid LEFT JOIN "
+					. MAIN_DB_PREFIX . "product as p ON fd.fk_product = p.rowid";
+			} else {
+				// Default: group by customer
+				$sanitizedSqlGroup = "s.nom";
+				$colName           = $langs->transnoentitiesnoconv("Customer");
+			}
+
+			// For product grouping we sum line totals (more accurate per-product);
+			// otherwise we sum the invoice total_ttc.
+			$amountExpr = ($groupBy === 'product') ? "SUM(fd.total_ttc)" : "SUM(f.total_ttc)";
+			$countExpr  = ($groupBy === 'product') ? "COUNT(DISTINCT f.rowid)" : "COUNT(f.rowid)";
+
+			$sql = "SELECT " . $sanitizedSqlGroup . " as group_key, "
+				. $amountExpr . " as total_amount, "
+				. $countExpr . " as count_inv FROM "
+				. MAIN_DB_PREFIX . "facture as f"
+				. $sqlJoin
+				. " WHERE f.entity IN (" . getEntity('facture') . ")"
+				. $dateRange
+				. " GROUP BY group_key ORDER BY total_amount DESC LIMIT "
+				. ((int) max(1, $limit));
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($r = $this->db->fetch_object($resql)) {
+					$totalSum += (float) $r->total_amount;
+					$list[] = [
+						$colName                                  => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
+						$langs->transnoentitiesnoconv("Number")   => (int) $r->count_inv,
+						$langs->transnoentitiesnoconv("Amount")   => price($r->total_amount)
+					];
+				}
+				$this->db->free($resql);
+			}
 		}
 
 		if (empty($list)) {
 			return [[$langs->transnoentitiesnoconv("Info") => $langs->transnoentitiesnoconv("NoRecordFound")]];
 		}
 
-		// Append Total Row
-		$list[] = [
-			$langs->transnoentitiesnoconv("Ref") => $langs->transnoentitiesnoconv("Total"),
-			$langs->transnoentitiesnoconv("Date") => "",
-			$langs->transnoentitiesnoconv("Customer") => "",
-			$langs->transnoentitiesnoconv("Amount") => price($totalSum),
-			$langs->transnoentitiesnoconv("Status") => ""
-		];
+		// Append Total Row (shape depends on detailed-vs-grouped path)
+		if ($socid) {
+			$list[] = [
+				$langs->transnoentitiesnoconv("Ref")      => $langs->transnoentitiesnoconv("Total"),
+				$langs->transnoentitiesnoconv("Date")     => "",
+				$langs->transnoentitiesnoconv("Customer") => "",
+				$langs->transnoentitiesnoconv("Amount")   => price($totalSum),
+				$langs->transnoentitiesnoconv("Status")   => ""
+			];
+		} else {
+			$list[] = [
+				$langs->transnoentitiesnoconv("Total")  => $langs->transnoentitiesnoconv("Total"),
+				$langs->transnoentitiesnoconv("Amount") => price($totalSum)
+			];
+		}
 
 		return $list;
 	}
@@ -323,6 +375,7 @@ class ToolReports extends McpTool
 
 		$socid = $this->resolveThirdparty($args);
 		if (!$socid) {
+			$langs->load("errors");
 			return [[$langs->transnoentitiesnoconv("Error") => $langs->transnoentitiesnoconv("ErrorThirdPartyNotFound")]];
 		}
 

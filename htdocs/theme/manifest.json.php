@@ -6,6 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  */
 
 /**
- *		\file       htdocs/theme/md/manifest.json.php
+ *		\file       htdocs/theme/manifest.json.php
  *		\brief      File for The Web App (PWA)
  */
 
@@ -54,10 +55,12 @@ if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
 
-require_once __DIR__.'/../../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
+
 /**
  * @var Conf $conf
  */
+
 top_httphead('text/json');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 header('Cache-Control: max-age=10800, public, must-revalidate');
@@ -74,6 +77,7 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$manifest->name = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $manifest->short_name = $manifest->name;
+
 
 $manifest->theme_color = getDolGlobalString('MAIN_MANIFEST_APPLI_THEME_COLOR', getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40'));
 if (!preg_match('/#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]$/', $manifest->theme_color)) {
@@ -101,7 +105,7 @@ if (getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL')) {
 	}
 	$icon->type = "image/png";
 	$manifest->icons[] = $icon;
-} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED')) {
+} else {
 	if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI')) {
 		$iconRelativePath = 'logos/thumbs/' . getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;

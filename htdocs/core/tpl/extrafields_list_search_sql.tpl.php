@@ -27,6 +27,8 @@
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var string $sql
+ *
+ * @var string $extrafieldsobjectkey
  */
 
 // Protection to avoid direct call of template
@@ -79,7 +81,9 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				}
 				$morewhere .= ")";
 			}
-		} elseif ($crit != '' && (!in_array($typ, array('select', 'sellist', 'select')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1')) {
+		} elseif ($crit != ''
+			&& (!in_array($typ, array('select', 'sellist', 'select', 'link')) || $crit != '0')
+			&& (!in_array($typ, array('link')) || ($crit != '0' && $crit != '-1'))) {
 			$mode_search = 0;
 			if (in_array($typ, array('int', 'double', 'real', 'price'))) {
 				$mode_search = 1; // Search on a numeric

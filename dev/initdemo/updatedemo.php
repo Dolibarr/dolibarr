@@ -74,7 +74,7 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
 print "***** ".$script_file." ".$confirm." *****\n";
 if (empty($confirm)) {
-	print "Usage: $script_file confirm|confirmresetblockedlog\n";
+	print "Usage: $script_file confirm|confirmcleanblockedlog|confirmemptyblockedlog\n";
 	print "Return code: 0 if success, <>0 if error\n";
 	exit(1);
 }
@@ -263,7 +263,7 @@ if ($confirm == 'confirm') {
 	}
 }
 
-if ($confirm == 'confirmresetblockedlog') {
+if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog') {
 	$year = $tmp['year'];			// Old year in demo
 	$lastyear = $tmp['year'] - 2;	// New year in demo
 
@@ -357,16 +357,18 @@ if ($confirm == 'confirmresetblockedlog') {
 	$db->query($sql);
 
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
-	print $sql;
-	print "\n";
-	$db->query($sql);
+	// If we clean all
+	if ($confirm == 'confirmemptyblockedlog') {
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
+		print $sql;
+		print "\n";
+		$db->query($sql);
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_FIRST_REGISTRATION_OK_DATE'";
-	print $sql;
-	print "\n";
-	$db->query($sql);
-
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_FIRST_REGISTRATION_OK_DATE'";
+		print $sql;
+		print "\n";
+		$db->query($sql);
+	}
 
 	/*
 	// Delete corrupted record no more used that still exists in demo image but can't exist in a production env

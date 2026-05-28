@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
  */
 class ToolCrudObjects extends McpTool
 {
-
 	/**
 	 * 	Constructor
 	 *
@@ -141,10 +141,10 @@ class ToolCrudObjects extends McpTool
 			// Order tool
 			[
 				"name" => "create_sales_order",
-				"description" => "Create a CUSTOMER SALES ORDER. This is specifically for creating ORDERS that customers place with you. USE THIS TOOL whenever user mentions: 'order', 'sales order', 'customer order', 'new order'. This is NOT for invoices or supplier orders. Examples of when to use this tool:
+				"description" => "Create a CUSTOMER SALES ORDER. This is specifically for creating ORDERS that customers place with you. USE THIS TOOL whenever user mentions: 'create', 'new' or 'add' with 'order', 'customer order' or 'sales order'. This is NOT for invoices or supplier orders. Examples of when to use this tool:
 - 'create order for customer X'
 - 'new order for Y'
-- 'order from customer Z'
+- 'add order from customer Z'
 - 'add order for X with 5 items'
 If user says 'order' without any qualifier, they mean a SALES ORDER - use this tool.",
 				"inputSchema" => [
@@ -184,7 +184,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			// Invoice tool
 			[
 				"name" => "create_customer_invoice",
-				"description" => "Create a customer invoice (bill). Do NOT use this for orders - use create_sales_order instead. Do NOT use this for payments - use pay_invoice instead. Examples: 'create invoice for customer X', 'bill customer Y'",
+				"description" => "Create a customer invoice (bill). Do NOT use this for orders - use create_sales_order instead. Do NOT use this for payments - use pay_invoice instead. Examples: 'create invoice for customer X', 'new bill customer Y'",
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
@@ -196,6 +196,12 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 						"header" => [
 							"type" => "object",
 							"description" => "Invoice header data. Must include 'socid' (Customer ID).",
+							"properties" => [
+								"socid" => ["type" => "integer", "description" => "Customer ID (Thirdparty ID)"],
+								"date" => ["type" => "string", "description" => "Invoice date (YYYY-MM-DD)"],
+								"note_public" => ["type" => "string", "description" => "Public note"],
+								"note_private" => ["type" => "string", "description" => "Private note"]
+							],
 							"required" => ["socid"]
 						],
 						"lines" => [
@@ -233,6 +239,13 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 						"header" => [
 							"type" => "object",
 							"description" => "Header data. Must include 'socid'.",
+							"properties" => [
+								"socid" => ["type" => "integer", "description" => "Thirdparty ID (Customer for proposal, Supplier for supplier_*)"],
+								"date" => ["type" => "string", "description" => "Document date (YYYY-MM-DD)"],
+								"duree_validite" => ["type" => "integer", "description" => "Validity in days (proposal only)"],
+								"note_public" => ["type" => "string", "description" => "Public note"],
+								"note_private" => ["type" => "string", "description" => "Private note"]
+							],
 							"required" => ["socid"]
 						],
 						"lines" => [
@@ -371,7 +384,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   } Arguments including type, header data, and optional lines.
 	 *
 	 * @return array<string, mixed>
-	 *
 	 */
 	private function createDocument(array $args)
 	{
@@ -495,7 +507,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   } Line arguments.
 	 *
 	 * @return array<string, mixed>
-	 *
 	 */
 	private function processAddLine(CommonObject $object, array $args)
 	{
@@ -539,8 +550,17 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		if ($productIdentifier !== '') {
 			$findResult = $this->findProduct($productIdentifier);
 			if (is_array($findResult) && isset($findResult['error'])) {
-				// Ensure the return array matches the expected shape by adding 'success' => false
-				return array_merge(['success' => false], $findResult);
+				// Only abort if the caller EXPLICITLY asked for a product (via the 'product'
+				// argument). If they only provided a free-text 'description', we silently
+				// fall through with $prod = null so Dolibarr creates a free-text line item,
+				// which is a perfectly valid Dolibarr feature.
+				// Previous behaviour aborted ALL line creations whose description didn't
+				// match an existing product reference, which broke AI-driven creation of
+				// invoices/orders/proposals from one-off line descriptions.
+				if (isset($args['product'])) {
+					return array_merge(['success' => false], $findResult);
+				}
+				// fall through: $prod stays null
 			}
 			if (is_object($findResult)) {
 				$prod = $findResult;
@@ -599,7 +619,14 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 'HT', 0, 0, $prodType);
 		} elseif ($docType === 'supplier_invoice') {
 			/** @var FactureFournisseur $object */
-			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, '', 0, 'HT', 0, $prodType);
+			// IMPORTANT: FactureFournisseur::addline() does NOT share the same signature
+			// as Facture::addline(). Its parameter order is:
+			//   ($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $remise_percent, ...)
+			// i.e. $qty is in position 6, not 3 (unlike customer Facture / Commande / Propal).
+			// The previous call passed our $qty as $txtva (-> a 1% VAT rate) and our $vat
+			// as $txlocaltax1, and position 6 ended up being a hardcoded 0 -> a line was
+			// inserted with qty=0, which Dolibarr silently dropped from the visible totals.
+			$res = $object->addline($desc, $price, $vat, 0, 0, $qty, $fkProduct, $discount, '', '', 0, 0, 'HT', $prodType);
 		} elseif ($docType === 'supplier_order') {
 			/** @var CommandeFournisseur $object */
 			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, 'HT', 0, '', '', $prodType);
@@ -656,7 +683,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * @param array{object_type:string,parent_id:int,product_id?:int,description?:string,quantity?:float|int,unit_price?:float|int,vat_rate?:float|int} $args Tool arguments for adding a line item
 	 *
 	 * @return array{success:bool,line_id?:int,error?:string}
-	 *
 	 */
 	private function addLineItem(array $args)
 	{
@@ -892,7 +918,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * @param   int    $lineId Line RowID.
 	 * @param   int    $unitId Unit RowID.
 	 *
-	 * @return  void
+	 * @return  void			Only attempts to update the database, no result indication
 	 */
 	private function updateLineUnit(string $type, int $lineId, int $unitId): void
 	{
