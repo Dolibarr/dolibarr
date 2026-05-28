@@ -131,7 +131,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 						const deleteRequest = indexedDB.deleteDatabase(dbName);
 
 						deleteRequest.onsuccess = () => {
-							Dolibarr.log('Dolibarr.tools.langs: database deleted');
+							Dolibarr.log('tools: langs: database deleted');
 							if (clearMemory) {
 								translations = {};
 								domainsLoaded = {};
@@ -140,12 +140,12 @@ document.addEventListener('Dolibarr:Init', function(e) {
 						};
 
 						deleteRequest.onerror = () => {
-							console.error('Dolibarr.tools.langs: Failed to delete DB', deleteRequest.error);
+							console.error('Dolibarr: tools: langs Failed to delete DB', deleteRequest.error);
 							reject(deleteRequest.error);
 						};
 
 						deleteRequest.onblocked = () => {
-							console.warn('Dolibarr.tools.langs: DB deletion blocked, maybe open connections exist');
+							console.warn('Dolibarr: tools: langs DB deletion blocked, maybe open connections exist');
 						};
 					});
 
@@ -153,10 +153,10 @@ document.addEventListener('Dolibarr:Init', function(e) {
 					deleteAllDolibarrLangsDbs();
 				}
 
-				Dolibarr.log('Dolibarr.tools.langs: cache cleared');
+				Dolibarr.log('tools: langs: cache cleared');
 				Dolibarr.executeHook('tools:langs:CacheCleared');
 			} catch (err) {
-				console.error('Dolibarr.tools.langs: failed to clear cache', err);
+				console.error('Dolibarr: tools: langs failed to clear cache', err);
 			}
 		}
 
@@ -171,9 +171,9 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 			for (const dbInfo of dolibarrDbs) {
 				const deleteRequest = indexedDB.deleteDatabase(dbInfo.name);
-				deleteRequest.onsuccess = () => console.log(`Database ${dbInfo.name} deleted`);
-				deleteRequest.onerror = () => console.error(`Failed to delete database ${dbInfo.name}`, deleteRequest.error);
-				deleteRequest.onblocked = () => console.warn(`Deletion of database ${dbInfo.name} blocked, maybe open connections exist`);
+				deleteRequest.onsuccess = () => Dolibarr.log(`Database ${dbInfo.name} deleted`);
+				deleteRequest.onerror = () => console.error(`Dolibarr: tools: langs Failed to delete database ${dbInfo.name}`, deleteRequest.error);
+				deleteRequest.onblocked = () => console.warn(`Dolibarr: tools: langs Deletion of database ${dbInfo.name} blocked, maybe open connections exist`);
 			}
 		}
 
@@ -189,17 +189,17 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			const dolibarrVersion = Dolibarr.getContextVar('DOL_VERSION', 0);
 
 			if (cache && cache.data && (now - cache.timestamp < CACHE_MSTIME) && cache.dolibarrVersion === dolibarrVersion) {
-				Dolibarr.log('Dolibarr.tools.langs: Load lang from cache');
+				Dolibarr.log('tools: langs: Load lang from cache');
 				return cache.data;
 			}
 
 			const langInterfaceUrl = Dolibarr.getContextVar('DOL_LANG_INTERFACE_URL', false);
 			if(!langInterfaceUrl) {
-				console.error('Dolibarr.tools.langs: missing DOL_LANG_INTERFACE_URL')
+				console.error('Dolibarr: tools: langs missing DOL_LANG_INTERFACE_URL')
 				return;
 			}
 
-			Dolibarr.log('Dolibarr.tools.langs: Load lang from interface');
+			Dolibarr.log('tools: langs: Load lang from interface');
 			const params = new URLSearchParams({ domain, local: locale });
 			const resp = await fetch(`${langInterfaceUrl}?${params.toString()}`);
 			const json = await resp.json();
@@ -261,7 +261,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				}
 			}
 
-			Dolibarr.log(`Locale changed: ${prev} -> ${locale}`);
+			Dolibarr.log(`tools:langs: Locale changed: ${prev} -> ${locale}`);
 		}
 
 
