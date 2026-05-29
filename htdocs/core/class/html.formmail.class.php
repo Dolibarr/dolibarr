@@ -2004,11 +2004,87 @@ class FormMail extends Form
 		}
 	}
 
+	/**
+	 * Normalize a text for equality checks.
+	 * @param  string $value Raw text to normalize.
+	 * @return string
+	 */
+	private static function normalizeTextForComparison($value)
+	{
+		$value = dol_string_nohtmltag((string) $value);
+		$value = preg_replace('/\s+/', ' ', $value);
+		return trim((string) $value);
+	}
 
+	/**
+	 * Return language prefix from a language code.
+	 * @param  string $langcode Full language code (for example fr_FR).
+	 * @return string
+	 */
+	private static function getLangPrefix($langcode)
+	{
+		$langcode = trim((string) $langcode);
+		if ($langcode === '') {
+			return '';
+		}
+
+		$prefix = preg_replace('/[_-].*$/', '', $langcode);
+		$prefix = strtolower((string) $prefix);
+		return preg_replace('/[^a-z]/', '', $prefix);
+	}
+
+	/**
+	 * Pick best translated label/description from product multilangs.
+	 *
+	 * @param  array<string,array{label?:string,description?:string,note?:string,other?:string}>|null $multilangs Product multilang rows indexed by language code.
+	 * @param  string                                                                                   $langcode   Preferred language code.
+	 * @return array{label:string,description:string}
+	 */
+	private static function getBestProductTranslation($multilangs, $langcode)
+	{
+		$langcode = trim((string) $langcode);
+		if ($langcode === '' || !is_array($multilangs) || empty($multilangs)) {
+			return array('label' => '', 'description' => '');
+		}
+
+		$prefix = self::getLangPrefix($langcode);
+		$candidates = array($langcode);
+		if ($prefix !== '' && $prefix !== $langcode) {
+			$candidates[] = $prefix;
+		}
+
+		foreach ($candidates as $candidate) {
+			if (empty($multilangs[$candidate]) || !is_array($multilangs[$candidate])) {
+				continue;
+			}
+			$label = trim((string) (isset($multilangs[$candidate]['label']) ? $multilangs[$candidate]['label'] : ''));
+			$description = trim((string) (isset($multilangs[$candidate]['description']) ? $multilangs[$candidate]['description'] : ''));
+			if ($label !== '' || $description !== '') {
+				return array('label' => $label, 'description' => $description);
+			}
+		}
+
+		if ($prefix !== '') {
+			foreach ($multilangs as $code => $row) {
+				if (!is_array($row)) {
+					continue;
+				}
+				if (!(strpos($code, $prefix.'_') === 0 || strpos($code, $prefix.'-') === 0)) {
+					continue;
+				}
+				$label = trim((string) (isset($row['label']) ? $row['label'] : ''));
+				$description = trim((string) (isset($row['description']) ? $row['description'] : ''));
+				if ($label !== '' || $description !== '') {
+					return array('label' => $label, 'description' => $description);
+				}
+			}
+		}
+
+		return array('label' => '', 'description' => '');
+	}
 
 	/**
 	 * Set ->substit (and ->substit_line) array from object. This is call when suggesting the email template into forms before sending email.
-	 *
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
@@ -2023,6 +2099,10 @@ class FormMail extends Form
 		complete_substitutions_array($tmparray, $outputlangs, null, $parameters);
 
 		$this->substit = $tmparray;
+		$targetLang = '';
+		if (is_object($outputlangs) && !empty($outputlangs->defaultlang)) {
+			$targetLang = trim((string) $outputlangs->defaultlang);
+		}
 
 		// Fill substit_lines with each object lines content
 		if (is_array($object->lines)) {
@@ -2050,6 +2130,28 @@ class FormMail extends Form
 					$product->fetch($line->fk_product, '', '', '1');
 					$product->fetch_optionals();
 
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $targetLang !== '' && !empty($product->multilangs) && is_array($product->multilangs)) {
+						$translated = self::getBestProductTranslation($product->multilangs, $targetLang);
+						$translatedLabel = trim((string) (isset($translated['label']) ? $translated['label'] : ''));
+						$translatedDescription = trim((string) (isset($translated['description']) ? $translated['description'] : ''));
+
+						$currentLabelNorm = self::normalizeTextForComparison($substit_line['__PRODUCT_LABEL__']);
+						$currentProductDescriptionNorm = self::normalizeTextForComparison($substit_line['__PRODUCT_DESCRIPTION__']);
+						$currentLineDescriptionNorm = self::normalizeTextForComparison($substit_line['__DESCRIPTION__']);
+						$productLabelNorm = self::normalizeTextForComparison($product->label);
+						$productDescriptionNorm = self::normalizeTextForComparison($product->description);
+
+						if ($translatedLabel !== '' && ($currentLabelNorm === '' || $currentLabelNorm === $productLabelNorm)) {
+							$substit_line['__PRODUCT_LABEL__'] = $translatedLabel;
+						}
+						if ($translatedDescription !== '' && ($currentProductDescriptionNorm === '' || $currentProductDescriptionNorm === $productDescriptionNorm)) {
+							$substit_line['__PRODUCT_DESCRIPTION__'] = $translatedDescription;
+						}
+						if ($translatedDescription !== '' && ($currentLineDescriptionNorm === '' || $currentLineDescriptionNorm === $productDescriptionNorm || $currentLineDescriptionNorm === $currentProductDescriptionNorm)) {
+							$substit_line['__DESCRIPTION__'] = $translatedDescription;
+						}
+					}
+
 					$extrafields->fetch_name_optionals_label($product->table_element, true);
 
 					if (!empty($extrafields->attributes[$product->table_element]['label']) && is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
@@ -2067,7 +2169,6 @@ class FormMail extends Form
 	/**
 	 * Get list of substitution keys available for emails. This is used for tooltips help.
 	 * This include the complete_substitutions_array.
-	 *
 	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
 	 * @param	?Object	$object		Object if applicable
 	 * @return	array<string,string>               Array of substitution values for emails.

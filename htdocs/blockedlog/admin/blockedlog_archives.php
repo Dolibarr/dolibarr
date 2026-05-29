@@ -1187,9 +1187,19 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 	$htmltext = '';
 
 	if (!userIsTaxAuditor()) {
-		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
+		$nbrecorddone = $block_static->countRecord();
+		$mindisksize = 50;	// Gb
+		$maxtranspermonth = 10000;
+		$nbrecordallowed = $mindisksize * 1024 * 1024 / 40 - $nbrecorddone;
+		$nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
+
+		$htmltext = '';
+		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
+		$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
+		$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
+
 		if ($mysoc->country_code == 'FR') {
-			$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+			$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR").'</span><br>';
 		}
 		//$htmltext .= $langs->trans("UnalterableLogTool1");
 		//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";

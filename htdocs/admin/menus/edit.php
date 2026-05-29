@@ -28,9 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin", "uxdocumentation"));
@@ -287,7 +286,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewMenu"), '', 'title_setup');
 
-	print '<form action="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId='.GETPOSTINT('menuId').'" method="POST" name="formmenucreate">';
+	print '<form action="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId='.GETPOSTINT('menuId').'" method="POST" name="formmenucreate" spellcheck="false">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -441,7 +440,7 @@ if ($action == 'create') {
 } elseif ($action == 'edit') {
 	print load_fiche_titre($langs->trans("ModifMenu"), '', 'title_setup');
 
-	print '<form action="./edit.php" method="POST" name="formmenuedit">';
+	print '<form action="./edit.php" method="POST" name="formmenuedit" specllcheck="false">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
