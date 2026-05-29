@@ -884,7 +884,7 @@ class BlockedLog
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				// Loop on each invoice the payment is part of to set the linktoref and the module_source and pos_source
 				$originofpayment = null;
-				$terminalofpayment = '';
+				$terminalofpayment = null;
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
 					if (empty($amount)) {
@@ -926,19 +926,19 @@ class BlockedLog
 					// Set the ->module_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
-							$originofpayment = $tmpobject->module_source;
+							$originofpayment = (string) $tmpobject->module_source;
 						} elseif ($originofpayment != $tmpobject->module_source) {
-							$originofpayment = 'mix';	// the payment is on several invoices with different origins
+							$originofpayment = 'mix';	// the payment is on several invoices with different origins of module
 						} else {
 							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
 					// Set the ->pos_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'pos_source')) {
-						if (is_null($originofpayment)) {
-							$terminalofpayment = $tmpobject->pos_source;
-						} elseif ($originofpayment != $tmpobject->pos_source) {
-							$terminalofpayment = 'mix';	// the payment is on several invoices with different origins
+						if (is_null($terminalofpayment)) {
+							$terminalofpayment = (string) $tmpobject->pos_source;
+						} elseif ($terminalofpayment != $tmpobject->pos_source) {
+							$terminalofpayment = 'mix';	// the payment is on several invoices with same origin of module but different terminals
 						} else {
 							$terminalofpayment = (string) $tmpobject->pos_source;
 						}
