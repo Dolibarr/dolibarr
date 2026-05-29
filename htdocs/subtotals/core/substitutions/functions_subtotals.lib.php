@@ -30,7 +30,7 @@
 */
 function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, $object, $line)
 {
-	if (defined('SUBTOTALS_SPECIAL_CODE') && (in_array(get_class($object), ['Propal', 'Commande', 'Facture', 'FactureRec', 'Expedition', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur']))) {
+	if (defined('SUBTOTALS_SPECIAL_CODE') && (in_array($object->element, CommonSubtotal::$ALLOWED_TYPES))) {
 		$substitutionarray['is_subtotals_line'] = ($line->special_code == constant('SUBTOTALS_SPECIAL_CODE'));
 		$substitutionarray['is_not_subtotals_line'] = !$substitutionarray['is_subtotals_line'];
 		$substitutionarray['is_subtotals_title'] = (($line->special_code == constant('SUBTOTALS_SPECIAL_CODE')) && $line->qty > 0);
