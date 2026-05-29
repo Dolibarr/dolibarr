@@ -76,7 +76,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$stocklimit = GETPOSTFLOAT('seuil_stock_alerte');
+$stocklimit = (GETPOST('seuil_stock_alerte') != '') ? GETPOSTFLOAT('seuil_stock_alerte') : null;
 $desiredstock = GETPOSTFLOAT('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
