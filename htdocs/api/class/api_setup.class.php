@@ -8,6 +8,7 @@
  * Copyright (C) 2024		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1584,10 +1585,6 @@ class Setup extends DolibarrApi
 	public function getExtrafields($attrname, $elementtype)
 	{
 		$answer = array();
-
-		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(403, 'Only an admin user can get list of extrafields');
-		}
 
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
