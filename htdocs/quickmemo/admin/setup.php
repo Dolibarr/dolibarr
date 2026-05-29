@@ -104,6 +104,7 @@ $item->fieldInputCallBack = function ($item) {
 
 			<input type="hidden" name="QUICKMEMO_COLORS_PRESET" id="colorsInput">
 		</div>';
+	return $item->fieldInputOverride;
 };
 
 
@@ -131,6 +132,7 @@ $item->fieldInputCallBack = function ($item) {
 		/>
 		<div id="previewMinText" class="example-of-memo-text-size">Lorem ipsum dolor sit amet</div>
 	';
+	return $item->fieldInputOverride;
 };
 
 $item = $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE');
@@ -155,6 +157,8 @@ $item->fieldInputCallBack = function ($item) {
 		<div id="previewMaxText" class="example-of-memo-text-size">Lorem ipsum dolor sit amet</div>
 
 	';
+
+	return $item->fieldInputOverride;
 };
 
 
