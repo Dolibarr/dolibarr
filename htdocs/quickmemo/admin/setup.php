@@ -73,9 +73,16 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 $item = $formSetup->newItem('QUICKMEMO_COLORS_PRESET');
+/**
+ * Callback used to generate the custom HTML input field.
+ *
+ * @param FormSetupItem $item Current form/configuration item.
+ * @return string Generated HTML content.
+ */
 $item->fieldInputCallBack = function ($item) {
 	global $langs;
-	return '
+
+	$item->fieldInputOverride = '
 		<div class="color-manager">
 			<div class="controls">
 				<input type="color" id="colorPicker" list="predefinedColors">
@@ -106,8 +113,14 @@ $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_FONT_SIZE_SECTION')->setAsTitle();
 $formSetup->newItem('QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE')->setAsYesNo();
 $item = $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE');
 $item->defaultFieldValue = '1';
-$item->fieldInputCallBack = function () {
-	return '
+/**
+ * Callback used to generate the custom HTML input field.
+ *
+ * @param FormSetupItem $item Current form/configuration item.
+ * @return string Generated HTML content.
+ */
+$item->fieldInputCallBack = function ($item) {
+	$item->fieldInputOverride = '
 		<input
 			type="range"
 			class="quickmemo-fontsize-config"
@@ -122,8 +135,14 @@ $item->fieldInputCallBack = function () {
 
 $item = $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE');
 $item->defaultFieldValue = '1.4';
-$item->fieldInputCallBack = function () {
-	return '
+/**
+ * Callback used to generate the custom HTML input field.
+ *
+ * @param FormSetupItem $item Current form/configuration item.
+ * @return string Generated HTML content.
+ */
+$item->fieldInputCallBack = function ($item) {
+	$item->fieldInputOverride = '
 		<input
 			type="range"
 			id="autoResizeFontMax"
