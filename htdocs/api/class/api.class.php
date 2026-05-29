@@ -23,8 +23,10 @@
 
 use Luracast\Restler\Restler;
 use Luracast\Restler\Defaults;
+use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
 
 /**
  * Class for API REST v1
@@ -94,11 +96,30 @@ class DolibarrApi
 	 * @param	string|string[]	$value		Value to check/clean
 	 * @param	Object			$object		Object
 	 * @return 	string|array<string,mixed>	Value cleaned
+	 * @throws	RestException 400 Bad parameters
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
 		// phpcs:enable
 		if (!is_array($value)) {
+			// Make protected values for forbidden properties
+			/* Disabled. A protection exists to check that ->entity is same than the HTTP header DOLAPIENTITY
+			if (in_array($field, array('entity'))) {
+				throw new RestException(400, 'Parameter '.$field.' is not allowed in request. To work on a different entity, you must set the entity into the HTTP header "DOLAPIENTITY: idOfEntity"');
+			}*/
+			if (in_array($field, array(
+				'db', 'table_element', 'table_rowid', 'table_ref_field', 'table_element_line', 'element', 'fk_element', 'element_for_permission', 'class_element_line',
+				'fields', 'TRIGGER_PREFIX', 'picto',
+				'restrictiononfksoc', 'ismultientitymanaged', 'isextrafieldmanaged',
+				'module', 'error', 'errorhidden', 'errors', 'warning', 'warnings', 'validateFieldsErrors',
+				'oldcopy', 'oldref', 'newref', 'context',
+				'actionmsg', 'actionmsg2', 'thirdparty', 'user', 'import_key',
+				'specimen', 'tpl', 'extraparams',
+				'childtables', 'childtablesoncascade'
+			))) {
+				throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
+			}
+
 			// Sanitize the value using its type declared into ->fields of $object
 			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
 				if (strpos($object->fields[$field]['type'], 'int') || strpos($object->fields[$field]['type'], 'double') || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {

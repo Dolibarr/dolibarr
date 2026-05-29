@@ -320,6 +320,9 @@ class Orders extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of order
+	 * @throws RestException 403 Insufficiant rights
+	 * @throws RestException 404 Third party not found
+	 * @throws RestException 500 Error when creating order
 	 */
 	public function post($request_data = null)
 	{
@@ -336,10 +339,10 @@ class Orders extends DolibarrApi
 		$thirdpartytmp = new Societe($this->db);
 		$thirdparty_result = $thirdpartytmp->fetch($socid);
 		if ($thirdparty_result < 1) {
-			throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+			throw new RestException(404, 'Third party with id='.$socid.' not found or not allowed');
 		}
 		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
-			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+			throw new RestException(404, 'Third party with id='.$thirdpartytmp->id.' not found or not allowed');
 		}
 
 		foreach ($request_data as $field => $value) {
