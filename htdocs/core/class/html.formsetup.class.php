@@ -788,8 +788,7 @@ class FormSetupItem
 			return $reshook;
 		}
 
-
-		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
+		if ($this->saveCallBack !== null && is_callable($this->saveCallBack)) {
 			return call_user_func($this->saveCallBack, $this);
 		}
 
@@ -835,7 +834,7 @@ class FormSetupItem
 	 */
 	public function setValueFromPost()
 	{
-		if (!empty($this->setValueFromPostCallBack) && is_callable($this->setValueFromPostCallBack)) {
+		if ($this->setValueFromPostCallBack !== null && is_callable($this->setValueFromPostCallBack)) {
 			return call_user_func($this->setValueFromPostCallBack);
 		}
 
@@ -915,7 +914,7 @@ class FormSetupItem
 	{
 		global $conf;
 
-		if (!empty($this->fieldInputCallBack) && is_callable($this->fieldInputCallBack)) {
+		if ($this->fieldInputCallBack !== null && is_callable($this->fieldInputCallBack)) {
 			// can be used to populate fieldInputOverride, fieldOverride or change stuff
 			$resCallback = call_user_func($this->fieldInputCallBack, $this);
 			if (!empty($resCallback)) {
@@ -1335,7 +1334,7 @@ class FormSetupItem
 	{
 		global $conf, $user, $langs;
 
-		if (!empty($this->fieldOutputCallBack) && is_callable($this->fieldOutputCallBack)) {
+		if ($this->fieldOutputCallBack !== null && is_callable($this->fieldOutputCallBack)) {
 			// can be used to populate fieldOutputOverride, fieldOverride or change stuff
 			$resCallback = call_user_func($this->fieldOutputCallBack, $this);
 			if (!empty($resCallback)) {
