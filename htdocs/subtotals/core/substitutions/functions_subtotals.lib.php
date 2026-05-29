@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2025
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 */
 function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, $object, $line)
 {
-	if (defined('SUBTOTALS_SPECIAL_CODE')) {
+	if (defined('SUBTOTALS_SPECIAL_CODE') && (in_array(get_class($object), ['Propal', 'Commande', 'Facture', 'FactureRec', 'Expedition', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur']))) {
 		$substitutionarray['is_subtotals_line'] = ($line->special_code == constant('SUBTOTALS_SPECIAL_CODE'));
 		$substitutionarray['is_not_subtotals_line'] = !$substitutionarray['is_subtotals_line'];
 		$substitutionarray['is_subtotals_title'] = (($line->special_code == constant('SUBTOTALS_SPECIAL_CODE')) && $line->qty > 0);
