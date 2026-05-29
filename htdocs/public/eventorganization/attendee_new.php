@@ -685,14 +685,14 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 			$sendto = !empty($thirdparty->email) ? $thirdparty->email :
-  			$confattendee->email;
+				$confattendee->email;
 
 			$from = getDolGlobalString('MAILING_EMAIL_FROM');
 			$urlback = $_SERVER["REQUEST_URI"];
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
 
-			if (!empty($sendto)) {       
+			if (!empty($sendto)) {
 				$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
 				$result = $mailfile->sendfile();
 				if ($result) {
@@ -700,7 +700,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				} else {
 					dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 				}
-			}   
+			}
 
 			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
