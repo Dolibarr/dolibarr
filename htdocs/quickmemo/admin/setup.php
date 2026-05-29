@@ -105,7 +105,7 @@ $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_FONT_SIZE_SECTION')->setAsTitle();
 
 $formSetup->newItem('QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE')->setAsYesNo();
 $item = $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE');
-$item->defaultFieldValue = 1;
+$item->defaultFieldValue = '1';
 $item->fieldInputCallBack = function () {
 	return '
 		<input
@@ -121,7 +121,7 @@ $item->fieldInputCallBack = function () {
 };
 
 $item = $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE');
-$item->defaultFieldValue = 1.4;
+$item->defaultFieldValue = '1.4';
 $item->fieldInputCallBack = function () {
 	return '
 		<input
