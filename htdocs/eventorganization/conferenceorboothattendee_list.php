@@ -4,6 +4,7 @@
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026  		Jon Bendtsen            	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +205,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_premassmail') {
 	$massaction = '';
 }
 
@@ -243,7 +244,133 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// Massaction add/delete recipients to/from mass mailing
+$button_add_mailing = GETPOST('button_add_mailing', 'aZ09');
+$button_delete_mailing = GETPOST('button_delete_mailing', 'aZ09');
+if ($massaction == 'confirm_premassmail' && $permissiontoread) {
+	if (!$user->hasRight('mailing', 'write')) {
+		dol_syslog('User='.$user->id.' misses permissions to write mailings', LOG_WARNING);
+		setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs->trans("EditMailing"), null, 'errors');
+		$massaction = '';
+	}
+	$langs->loadLangs(array("errors", "main", "mails", "companies"));
+	$ignorenocontact = GETPOSTINT('ignorenocontact') ? GETPOSTINT('ignorenocontact') : 0;
+	$select_mailsrc = GETPOST('select_mailsrc', 'array:int') ?? array(0);
+	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
+	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
+	if (empty($select_mailing)) {
+		setEventMessages($langs->trans("ListOfEMailings").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+	if (empty($toselect)) {
+		setEventMessages($langs->trans("Attendees").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
 
+	// Verify all eventattendees actually exist before actually inserting them, where successful insert verifies the mailing
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+	$attendeestatic = new ConferenceOrBoothAttendee($db);
+	$mailingstatic = new Mailing($db);
+	$verified_attendees = array();
+	$verified_mailings = array();
+	$whatchanged = array();
+	$info_mesgs = array();
+	$info_warnings = array();
+	$info_errors = array();
+	$changetomailing = null;
+	foreach ($toselect as $attendeeid) {
+		$faresult = $attendeestatic->fetch($attendeeid);
+		if ($faresult) {
+			$verified_attendees[] = $attendeeid;
+			foreach ($select_mailing as $mailingid) {
+				foreach ($select_mailsrc as $mailsrc) {
+					if ($button_add_mailing) {
+						$changetomailing = $attendeestatic->addToMassMailing($mailingid, $ignorenocontact, $mailsrc);
+					}
+					if ($button_delete_mailing) {
+						$changetomailing = $attendeestatic->deleteFromMassMailing($mailingid, $mailsrc);
+					}
+					if ($button_add_mailing || $button_delete_mailing) {
+						if ($changetomailing > 0) {
+							if (isset($whatchanged[$mailingid])) {
+								$verified_mailings[] = $mailingid;
+							}
+							$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
+							$info_mesgs[$mailingid][] = '&emsp;'.$attendeestatic->email;
+						} elseif ($changetomailing == 0) {
+							$verified_mailings[] = $mailingid;
+							$fmresult = $mailingstatic->fetch($mailingid);
+							if ($fmresult) {
+								$vmailing_title = $mailingstatic->title;
+							} else {
+								$vmailing_title = 'Mailing ID '.$mailingid;
+							}
+							if ($button_add_mailing) {
+								$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+							}
+						} elseif ($changetomailing == -6 && $ignorenocontact) {
+							$info_warnings[$mailingid][] = '&emsp;'.$attendeestatic->error;
+						} else {
+							$info_errors[$mailingid][] = '&emsp;'.$attendeestatic->error;
+						}
+					} else {
+						dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
+						setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
+					}
+				}
+			}
+		} else {
+			dol_syslog('fetch failed for attendee id='.$attendeeid.' in array toselect on page eventorganization/conferenceorboothattendee_list.php massaction confirm_premassmail', LOG_ERR);
+			setEventMessages($langs->trans("ErrorRefNotFound", "attendeeid=".$attendeeid), null, 'errors');
+			continue;
+		}
+	}
+
+	// report information
+	foreach ($info_mesgs as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		$actionmessage = $langs->trans("Unknown").' '.$langs->trans("BulkActions").' '.$langs->trans("RecordsModified", count($value));
+		if ($button_add_mailing) {
+			$actionmessage = $langs->trans("XTargetsAdded", count($value));
+		}
+		if ($button_delete_mailing) {
+			$actionmessage = $langs->trans("RecordsDeleted", count($value));
+		}
+		if ($verbosereporting) {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'mesgs');
+		} else {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
+		}
+	}
+	// report warnings
+	foreach ($info_warnings as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'warnings');
+	}
+	// report errors
+	foreach ($info_errors as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'errors');
+	}
+	foreach ($verified_mailings as $mailingid) {
+		if ($mailingstatic->fetch($mailingid)) {
+			$mailingstatic->countNbOfTargets($mailingid);
+		}
+	}
+}
 
 /*
  * View
@@ -312,7 +439,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
+	$sql .= " WHERE t.entity IN (".$db->sanitize(getEntity($object->element)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }
@@ -335,12 +462,12 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search($db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search($db->sanitize($key), $db->escape($search[$key]), (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
-			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
+			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type']) && !empty($search[$key])) {
 				if (preg_match('/_dtstart$/', $key)) {
 					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
 				}
@@ -829,11 +956,12 @@ $arrayofmassactions = array(
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'premassmail' => img_picto('', 'mail-bulk', 'class="pictofixedwidth"').$langs->trans("EditMailing"),
 );
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'premassmail', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -978,6 +1106,7 @@ $totalarray['nbfield'] = 0;
 
 // Fields title label
 // --------------------------------------------------------------------
+print '<!-- Fields title label -->';
 print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
@@ -1028,6 +1157,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 
 // Loop on record
 // --------------------------------------------------------------------
+print '<!-- // Loop on record -->';
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();

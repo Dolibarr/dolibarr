@@ -89,6 +89,32 @@ PUT http://{{hostnport}}/api/index.php/eventattendees/0
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: No eventattendee with id<1 can exist"}}
 
+# POST testing adding bad eventattendee id
+POST http://{{hostnport}}/api/index.php/eventattendees/addId2Mailing/0/0/0/0/0
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: No eventattendee with id<1 can exist"}}
+
+# POST testing adding bad eventattendee id
+POST http://{{hostnport}}/api/index.php/eventattendees/addId2Mailing//0/0/0/0
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: invalid value specified for `id`"}}
+
+# POST testing adding bad mailingid
+POST http://{{hostnport}}/api/index.php/eventattendees/addId2Mailing/42/0/0/0/0
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: No mass mailing with id<1 can exist"}}
+
+
+# POST testing adding bad eventattendee ref
+POST http://{{hostnport}}/api/index.php/eventattendees/addRef2Mailing//0/0/0/0
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: `ref` is required."}}
+
+# POST testing adding bad mailingid
+POST http://{{hostnport}}/api/index.php/eventattendees/addRef2Mailing/foobar/0/0/0/0
+HTTP 400
+{"error":{"code":400,"message":"Bad Request: No mass mailing with id<1 can exist"}}
+
 
 # GET eventattendees DOLAPIENTITY: 1
 GET http://{{hostnport}}/api/index.php/eventattendees

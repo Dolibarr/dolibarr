@@ -555,5 +555,10 @@ DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 --noqa:enable=PRS
 
+ALTER TABLE llx_mailing_cibles ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_mailing;
+ALTER TABLE llx_mailing_cibles ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
+ALTER TABLE llx_mailing_cibles ADD COLUMN fk_attendee integer DEFAULT NULL AFTER fk_contact;
 
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact)
 -- end of migration

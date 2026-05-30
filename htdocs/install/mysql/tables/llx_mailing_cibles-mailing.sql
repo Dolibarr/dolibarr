@@ -23,7 +23,9 @@ create table llx_mailing_cibles
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   fk_mailing		integer NOT NULL,
-  fk_contact		integer NOT NULL,
+  fk_soc		  integer NULL,
+  fk_contact		integer NULL,
+  fk_attendee		integer NULL,
   lastname			varchar(160),
   firstname			varchar(160),
   email				varchar(160) NOT NULL,

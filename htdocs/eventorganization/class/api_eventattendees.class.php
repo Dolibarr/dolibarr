@@ -1,6 +1,6 @@
 <?php
 /*
-/* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+/* Copyright (C) 2025-2026  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -455,6 +455,281 @@ class EventAttendees extends DolibarrApi
 			return $this->_fetch(0, $newref);
 		} else {
 			throw new RestException(500, end($this->event_attendees->errors));
+		}
+	}
+
+	/**
+	 * Add eventattendee to a mass mailing by id
+	 *
+	 * @param   int 	$id						ID of event attendee
+	 * @param   int 	$mailingid      		mailing ID to add to
+	 * @param	int	$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
+	 * @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 * @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 * @return  int						-1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @url	POST addId2Mailing/{id}/{mailingid}/{ignorenocontact}/{mailsrc}/{refreshNbOfTargets}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	public function addId2Mailing($id, $mailingid, $ignorenocontact = 0, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$addresult = $this->_addToMassMailing($id, '', $mailingid, $ignorenocontact, $mailsrc, $refreshNbOfTargets);
+		return $addresult;
+	}
+
+	/**
+	 * Add eventattendee to a mass mailing by ref
+	 *
+	 * @param       string	$ref					Ref of event attendee
+	 * @param   	int 	$mailingid      		mailing ID to add to
+	 * @param		int		$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
+	 * @param		int		$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 * @param		int		$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 * @return		int					-1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @url	POST addRef2Mailing/{ref}/{mailingid}/{ignorenocontact}/{mailsrc}/{refreshNbOfTargets}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	public function addRef2Mailing($ref, $mailingid, $ignorenocontact = 0, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		if ($ref == '' ) {
+			throw new RestException(400, 'No eventattendee with ref="" can exist');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$addresult = $this->_addToMassMailing(0, $ref, $mailingid, $ignorenocontact, $mailsrc, $refreshNbOfTargets);
+		return $addresult;
+	}
+
+	/**
+	 * Add eventattendee to a mass mailing
+	 *
+	 * @param   int     $id             		event attendee ID
+	 * @param   string	$ref					Ref of event attendee
+	 * @param   int     $mailingid      		mailing ID to add to
+	 * @param	int		$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
+	 * @param	int		$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 * @param	int		$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 * @return  int                     -1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	private function _addToMassMailing($id = 0, $ref = '', $mailingid = 0, $ignorenocontact = 0, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		if ($id < 1 && empty($ref)) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$accesstype = 'write';
+		$allowaccess = $this->_checkAccessRights($accesstype, 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied '.$accesstype.' access to Event attendees');
+		}
+		if ($id) {
+			$fetchresult = $this->event_attendees->fetch($id, '');
+		} else {
+			$fetchresult = $this->event_attendees->fetch(0, $ref);
+		}
+		if (!$fetchresult) {
+			throw new RestException(404, 'Event attendee with id '.$id.' not found');
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($mailingid);
+		if ($fmresult) {
+			$allowaccess = DolibarrApiAccess::$user->hasRight('mailing', $accesstype);
+			if (!$allowaccess) {
+				throw new RestException(403, 'denied '.$accesstype.' access to mass mailing');
+			}
+		} else {
+			throw new RestException(404, 'Mass mailing with id '.$id.' not found');
+		}
+
+		$addresult = $this->event_attendees->addToMassMailing($mailingid, $ignorenocontact, $mailsrc, $refreshNbOfTargets);
+		if ($addresult == 0) {
+			throw new RestException(409, 'Duplicate record already exists');
+		} elseif ($addresult == -1) {
+			throw new RestException(403, 'mailing permission denied');
+		} elseif ($addresult == -2) {
+			throw new RestException(404, 'mailingid='.$mailingid.' not found');
+		} elseif ($addresult == -3) {
+			throw new RestException(500, 'Fetching the mailing='.$mailingid.' failed');
+		} elseif ($addresult == -4) {
+			throw new RestException(500, 'Fetching the fk_project in mailing='.$mailingid.' failed');
+		} elseif ($addresult == -5) {
+			throw new RestException(409, 'No email address found, perhaps try mailsrc=0 for automatic trying other sources');
+		} elseif ($addresult == -6) {
+			throw new RestException(409, "EmailOptedOut - please don't force adding with ignorenocontact=1");
+		} elseif ($addresult == -7) {
+			throw new RestException(403, 'Not enough permissions on fk_project');
+		} else {
+			return $addresult;
+		}
+	}
+
+	/**
+	 * Delete eventattendee from a mass mailing by id
+	 *
+	 * @param   int $id						ID of event attendee
+	 * @param   int $mailingid      		mailing ID to delete from
+	 * @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 * @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 * @return  int						-1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @url	DELETE deleteIdMailing/{id}/{mailingid}/{mailsrc}/{refreshNbOfTargets}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	public function deleteIdMailing($id, $mailingid, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$delresult = $this->_deleteFromMassMailing($id, '', $mailingid, $mailsrc, $refreshNbOfTargets);
+		return $delresult;
+	}
+
+	/**
+	 * Delete eventattendee from a mass mailing by ref
+	 *
+	 * @param       string	$ref					Ref of event attendee
+	 * @param   	int 	$mailingid      		mailing ID to delete from
+	 * @param		int		$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 * @param		int		$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 * @return		int					-1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @url	DELETE deleteRefMailing/{ref}/{mailingid}/{mailsrc}/{refreshNbOfTargets}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	public function deleteRefMailing($ref, $mailingid, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		if ($ref == '' ) {
+			throw new RestException(400, 'No eventattendee with ref="" can exist');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$delresult = $this->_deleteFromMassMailing(0, $ref, $mailingid, $mailsrc, $refreshNbOfTargets);
+		return $delresult;
+	}
+
+	/**
+	 * Delete eventattendee from a mass mailing
+	 *
+	 * @param   int     $id             		event attendee ID
+	 * @param   string	$ref					Ref of event attendee
+	 * @param   int     $mailingid      		mailing ID to delete from
+	 * @param	int		$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 * @param	int		$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 * @return  int                     -1 for KO, Id >1 of created mailing_target if OK
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	private function _deleteFromMassMailing($id = 0, $ref = '', $mailingid = 0, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		if ($id < 1 && empty($ref)) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
+		if ($mailingid < 1 ) {
+			throw new RestException(400, 'No mass mailing with id<1 can exist');
+		}
+
+		$accesstype = 'write';
+		$allowaccess = $this->_checkAccessRights($accesstype, 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied '.$accesstype.' access to Event attendees');
+		}
+		if ($id) {
+			$fetchresult = $this->event_attendees->fetch($id, '');
+		} else {
+			$fetchresult = $this->event_attendees->fetch(0, $ref);
+		}
+		if (!$fetchresult) {
+			throw new RestException(404, 'Event attendee with id '.$id.' not found');
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($mailingid);
+		if ($fmresult) {
+			$allowaccess = DolibarrApiAccess::$user->hasRight('mailing', $accesstype);
+			if (!$allowaccess) {
+				throw new RestException(403, 'denied '.$accesstype.' access to mass mailing');
+			}
+		} else {
+			throw new RestException(404, 'Mass mailing with id '.$id.' not found');
+		}
+
+		$delresult = $this->event_attendees->deleteFromMassMailing($mailingid, $mailsrc, $refreshNbOfTargets);
+		if ($delresult == 0) {
+			throw new RestException(409, 'Duplicate record already exists');
+		} elseif ($delresult == -1) {
+			throw new RestException(403, 'mailing permission denied');
+		} elseif ($delresult == -2) {
+			throw new RestException(404, 'mailingid='.$mailingid.' not found');
+		} elseif ($delresult == -3) {
+			throw new RestException(500, 'Fetching the mailing='.$mailingid.' failed');
+		} elseif ($delresult == -4) {
+			throw new RestException(500, 'Fetching the fk_project in mailing='.$mailingid.' failed');
+		} elseif ($delresult == -5) {
+			throw new RestException(409, 'No email address found, perhaps try mailsrc=0 for automatic trying other sources');
+		} elseif ($delresult == -7) {
+			throw new RestException(403, 'Not enough permissions on fk_project');
+		} elseif ($delresult == -8) {
+			throw new RestException(500, 'Delete mailing='.$mailingid.' failed');
+		} else {
+			return $delresult;
 		}
 	}
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2017	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026  		Jon Bendtsen        <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +98,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_contact' => array('type' => 'integer:Contact:contact/class/contact.class.php', 'label' => 'Contact', 'enabled' => 'isModEnabled("societe")', 'position' => 44, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "LinkToCompanyContact", 'picto' => 'contact', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
 		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
 		'fk_invoice' => array('type' => 'integer:Facture:compta/facture/class/facture.class.php', 'label' => 'Invoice', 'enabled' => 'isModEnabled("invoice")', 'position' => 57, 'notnull' => 0, 'visible' => 1, 'index' => 0, 'picto' => 'bill', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
@@ -145,6 +147,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var int
 	 */
 	public $fk_soc;
+	/**
+	 * @var int Contact id that this conferenceorboothattendee is related to.
+	 */
+	public $fk_contact;
 	/**
 	 * @var string
 	 */
@@ -1147,6 +1153,235 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$ret .= dolGetFirstLastname((string) $firstname, (string) $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
+	 *  Add eventattendee to mass mailing
+	 *
+	 *  @param	int	$fk_mailing				The id of the mass mailing to add this event attendee to
+	 *  @param	int	$ignorenocontact		Ignore that this email address has requested no contact (no marketing), default 0.
+	 *  @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 *
+	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 fetch fk_project failed, -5 no valid email found, -6 must respect NoContact, -7 no permission on the fk_project, 0 if KO, Id of created mailing_target if OK
+	 */
+	public function addToMassMailing($fk_mailing, $ignorenocontact = 0, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $conf, $langs, $user;
+		$langs->loadLangs(array("errors", "admin", "main", "mailings", "user", "stock"));
+		if (!$user->hasRight('mailing', 'write')) {
+			dol_syslog('User='.$user->id.' has no write access to mailing in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("None").': '.$langs->trans("Permission222");
+			return -1;
+		}
+		if (!$fk_mailing > 0) {
+			dol_syslog('No such fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("EMailings"));
+			return -2;
+		}
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($fk_mailing);
+		if (!$fmresult) {
+			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ObjectNotFound", $langs->trans("EMailings"));
+			return -3;
+		}
+		if (!empty($this->fk_project)) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$attendeeprojectstatic = new Project($this->db);
+			$fapresult = $attendeeprojectstatic->fetch($this->fk_project);
+			if ($fapresult) {
+				if (getDolGlobalInt('USER_ONLY_NEEDS_PROJECT_READ_FOR_MAILING_ADD')) {
+					$checkProjectAccessRight = 'read';
+				} else {
+					$checkProjectAccessRight = 'write';
+				}
+				$userHasProjectRights = $attendeeprojectstatic->restrictedProjectArea($user, $checkProjectAccessRight);
+				if ($userHasProjectRights < 1) {
+					$this->error = $langs->trans("None").': '.$langs->trans("Permission142");
+					return -7;
+				}
+				$other = 'Project='.$attendeeprojectstatic->ref;
+			} else {
+				dol_syslog('Fetch failed fk_project='.$this->fk_project.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+				$this->error = $langs->trans("ObjectNotFound", $langs->trans("Project"));
+				return -4;
+			}
+		} else {
+			$other = 'Eventattendee='.$this->id;
+		}
+
+		// GUI does not allow adding an eventattendee without any email, but the database structure does allow a null value
+		// numbers are deliberately set to 10, 20, 30, 40, such that there one day is room for inserting perhaps 35 for member?
+		$email = '';
+		if ($mailsrc <= 10) {
+			$email = isValidEmail($this->email) ? $this->email : '';
+		}
+		if ($mailsrc == 20 || (empty($email) && $mailsrc == 0)) {
+			$contactstatic = new Contact($this->db);
+			if (!empty($this->fk_contact) && ($contactstatic->fetch($this->fk_contact))) {
+				$email = isValidEmail($contactstatic->email) ? $contactstatic->email : '';
+			}
+		}
+		if ($mailsrc == 30 || (empty($email) && $mailsrc == 0)) {
+			$socstatic = new Societe($this->db);
+			if (!empty($this->fk_contact) && ($socstatic->fetch($this->fk_soc))) {
+				$email = isValidEmail($socstatic->email) ? $socstatic->email : '';
+			}
+		}
+		if ($mailsrc == 40 || (empty($email) && $mailsrc == 0)) {
+			$email = isValidEmail($this->email_company) ? $this->email_company : '';
+		}
+		if (empty($email)) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in attendee='.$this->id.' with mailsrc='.$mailsrc, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("EmailAttendee"));
+			return -5;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
+		$mailingtarget = new MailingTarget($this->db);
+		$unsubscribed = $mailingtarget->checkEmailUnsubscribed($email);
+		if ($ignorenocontact > 0 || $unsubscribed == 0) {
+			$mailingtarget->fk_mailing = $fk_mailing;
+			$mailingtarget->fk_soc = $this->fk_soc;
+			$mailingtarget->fk_contact = $this->fk_contact;
+			$mailingtarget->fk_attendee = $this->id;
+			$mailingtarget->lastname = (string) $this->lastname;
+			$mailingtarget->firstname = (string) $this->firstname;
+			$mailingtarget->email = $email;
+			$mailingtarget->other = (string) $other;
+			$mailingtarget->tag = $this->db->escape(dol_hash($conf->file->instance_unique_id.";".$this->email.";".$this->lastname.";".((int) $fk_mailing).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'));
+			$mailingtarget->source_id = $this->id;
+			$mailingtarget->source_type = $this->element;
+			$mailingtarget->statut = 0;
+			$mailingtarget->status = 0;
+			$mtcresult = $mailingtarget->create($user);
+			if ($mtcresult > 0) {
+				if ($refreshNbOfTargets) {
+					$mailingstatic->refreshNbOfTargets();
+				}
+				return $mtcresult;
+			} else {
+				$this->error = $mailingtarget->error;
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return 0;
+			}
+		} elseif ($unsubscribed > 0) {
+			$this->error = $email.' - '.$langs->trans("EmailOptedOut");
+			return -6;
+		} else {
+			$this->error = $mailingtarget->error;
+			return 0;
+		}
+	}
+
+	/**
+	 *  Delete eventattendee from mass mailing
+	 *
+	 *  @param	int	$fk_mailing				The id of the mass mailing to add this event attendee to
+	 *  @param	int	$mailsrc				If the email field of this attendee is not a valid email address, then try other alternative sources: Default 0 = auto - try in the following order: 10 = attendee, 20 = Contact, 30 = Thirdparty, 40 = email_company on attendee
+	 *  @param	int	$refreshNbOfTargets		Set to 1 or higher if you really want to refresh recipient counting after each insert
+	 *
+	 *  @return		int						-1 Permission denied, -2 no fk_mailing, -3 fetch fk_mailing failed, -4 fetch fk_project failed, -5 no valid email found, -6 (this number is not used), -7 no permission on the fk_project, -8 deletion failed 0 if KO, Id of created mailing_target if OK
+	 */
+	public function deleteFromMassMailing($fk_mailing, $mailsrc = 0, $refreshNbOfTargets = 0)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $conf, $langs, $user;
+		$langs->loadLangs(array("errors", "admin", "main", "mailings", "user", "stock"));
+		if (!$user->hasRight('mailing', 'write')) {
+			dol_syslog('User='.$user->id.' has no write access to mailing in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("None").': '.$langs->trans("Permission222");
+			return -1;
+		}
+		if (!$fk_mailing > 0) {
+			dol_syslog('No such fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("EMailings"));
+			return -2;
+		}
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+		$mailingstatic = new Mailing($this->db);
+		$fmresult = $mailingstatic->fetch($fk_mailing);
+		if (!$fmresult) {
+			dol_syslog('Fetch failed fk_mailing='.$fk_mailing.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+			$this->error = $langs->trans("ObjectNotFound", $langs->trans("EMailings"));
+			return -3;
+		}
+		if (!empty($this->fk_project)) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$attendeeprojectstatic = new Project($this->db);
+			$fapresult = $attendeeprojectstatic->fetch($this->fk_project);
+			if ($fapresult) {
+				if (getDolGlobalInt('USER_ONLY_NEEDS_PROJECT_READ_FOR_MAILING_ADD')) {
+					$checkProjectAccessRight = 'read';
+				} else {
+					$checkProjectAccessRight = 'write';
+				}
+				$userHasProjectRights = $attendeeprojectstatic->restrictedProjectArea($user, $checkProjectAccessRight);
+				if ($userHasProjectRights < 1) {
+					$this->error = $langs->trans("None").': '.$langs->trans("Permission142");
+					return -7;
+				}
+				$other = 'Project='.$attendeeprojectstatic->ref;
+			} else {
+				dol_syslog('Fetch failed fk_project='.$this->fk_project.' in '.__CLASS__.'::'.__METHOD__, LOG_ERR);
+				$this->error = $langs->trans("ObjectNotFound", $langs->trans("Project"));
+				return -4;
+			}
+		} else {
+			$other = 'Eventattendee='.$this->id;
+		}
+
+		// GUI does not allow adding an eventattendee without any email, but the database structure does allow a null value
+		// numbers are deliberately set to 10, 20, 30, 40, such that there one day is room for inserting perhaps 35 for member?
+		$email = '';
+		if ($mailsrc <= 10) {
+			$email = isValidEmail($this->email) ? $this->email : '';
+		}
+		if ($mailsrc == 20 || (empty($email) && $mailsrc == 0)) {
+			$contactstatic = new Contact($this->db);
+			if (!empty($this->fk_contact) && ($contactstatic->fetch($this->fk_contact))) {
+				$email = isValidEmail($contactstatic->email) ? $contactstatic->email : '';
+			}
+		}
+		if ($mailsrc == 30 || (empty($email) && $mailsrc == 0)) {
+			$socstatic = new Societe($this->db);
+			if (!empty($this->fk_contact) && ($socstatic->fetch($this->fk_soc))) {
+				$email = isValidEmail($socstatic->email) ? $socstatic->email : '';
+			}
+		}
+		if ($mailsrc == 40 || (empty($email) && $mailsrc == 0)) {
+			$email = isValidEmail($this->email_company) ? $this->email_company : '';
+		}
+		if (empty($email)) {
+			dol_syslog(__CLASS__.'::'.__METHOD__.'::No valid email found in attendee='.$this->id.' with mailsrc='.$mailsrc, LOG_ERR);
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", $langs->trans("EmailAttendee"));
+			return -5;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
+		$mailingtarget = new MailingTarget($this->db);
+
+		$mtfresult = $mailingtarget->fetch(0, $fk_mailing, $email);
+		if ($mtfresult > 0) {
+			$delresult = $mailingtarget->delete($user);
+			if ($delresult) {
+				if ($refreshNbOfTargets) {
+					$mailingstatic->refreshNbOfTargets();
+				}
+				return $delresult;
+			} else {
+				$this->error = $mailingtarget->error;
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return -8;
+			}
+		} else {
+			$this->error = $mailingtarget->error;
+			dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+			return 0;
+		}
 	}
 }
 

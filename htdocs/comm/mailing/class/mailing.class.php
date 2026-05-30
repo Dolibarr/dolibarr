@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025-2026  Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -561,6 +561,86 @@ class Mailing extends CommonObject
 
 				$records[$record->id] = $record;
 
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
+
+	/**
+	 * Load id of mass mailings, either in a project or not
+	 *
+	 * @param	User		$user			Object user to evaluate for project permissions
+	 * @param	int			$include      	Return only the mass mailing ids which is assigned to this project, 0 means return all mass mailing and is the default
+	 * @param	int			$exclude      	Return only the mass mailing ids which is not assigned to this project, 0 means return all mass mailing and is the default
+	 * @param	int			$limit        	limit
+	 * @param	int			$offset       	Offset
+	 * @param	int			$showmin 		Mass mailings with status below this value will not be shown. Default is 0 (draft)
+	 * @param	int			$showmax 		Mass mailings with status above this value will not be shown. Default is 3 (sentcompletely)
+	 *
+	 * @return	int|int[]		-1 if KO, else OK either [] for nothing found or a list of id's
+	 */
+	public function fetchMassMailingIds($user, $include = 0, $exclude = 0, $limit = 0, $offset = 0, $showmin = 0, $showmax = 3)
+	{
+		dol_syslog(__CLASS__.'::'.__METHOD__, LOG_DEBUG);
+		if (getDolGlobalInt('USER_ONLY_NEEDS_PROJECT_READ_FOR_MAILING_ADD')) {
+			$checkProjectAccessRight = 'read';
+		} else {
+			$checkProjectAccessRight = 'write';
+		}
+		// do not want to load this at every iteration of the while loop
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		$mailingprojectstatic = new Project($this->db);
+
+
+		$records = array();
+
+		$sql = 'SELECT rowid, fk_project';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
+		if ($include > 0) {
+			$sql .= ' AND fk_project = '.(int) $include;
+		}
+		if ($exclude > 0) {
+			$sql .= ' AND (fk_project != '.(int) $exclude;
+			$sql .= ' OR fk_project IS NULL)';
+		}
+		$sql .= ' AND statut >= '.(int) $showmin;
+		$sql .= ' AND statut <= '.(int) $showmax;
+
+		if (!empty($limit)) {
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < ($limit ? min($limit, $num) : $num)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$mailing_fk_project = $obj->fk_project;
+				if (is_null($mailing_fk_project)) {
+					$records[] = $obj->rowid;
+				} elseif ($mailingprojectstatic->fetch($mailing_fk_project)) {
+					$userHasProjectRights = $mailingprojectstatic->restrictedProjectArea($user, $checkProjectAccessRight);
+					if ($userHasProjectRights > 0) {
+						$records[] = $obj->rowid;
+					} else {
+						dol_syslog('Excluding mailingid='.$obj->rowid.' with projectid='.$mailing_fk_project.' because user='.$user->id.' does not have accessRight='.$checkProjectAccessRight, LOG_DEBUG);
+					}
+				}
 				$i++;
 			}
 			$this->db->free($resql);

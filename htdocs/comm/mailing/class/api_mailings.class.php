@@ -913,6 +913,32 @@ class Mailings extends DolibarrApi
 		return $this->_cleanObjectDatas($this->mailing);
 	}
 
+	/**
+	 * Test if an email is unsubscribed or not
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param   string  $email		the email to be checked if it is unsubscribed
+	 * @return  array{unsubscribed:int}				-1 DB error, 0 not unsubscribed, 1 or higher unsubscribed
+	 *
+	 * @url	GET checkEmailUnsubscribed/{email}
+	 *
+	 * @throws RestException 500 System error
+	 */
+	public function checkEmailUnsubscribed($email)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
+		$mailingtarget = new MailingTarget($this->db);
+		$unsubscribed = $mailingtarget->checkEmailUnsubscribed($email);
+
+		if ($unsubscribed < 0) {
+			throw new RestException(500, 'Error : '.$mailingtarget->error);
+		}
+		$out = array();
+		$out["unsubscribed"] = $unsubscribed;
+		$out["status"] = "success";
+		return $out;
+	}
 
 	/**
 	 * Validate a mass mailing
