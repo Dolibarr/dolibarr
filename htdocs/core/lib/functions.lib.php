@@ -8618,7 +8618,15 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 
-					if (dol_textishtml($out)) {
+					// dol_textishtml() returns true on plain text that only happens to contain
+					// an HTML entity (for example a multi-line description with a "&" that the
+					// editor encodes as "&amp;"). In that case the content has no real tag, so
+					// it should still be normalized with dol_nl2br to keep its line breaks.
+					$ishtml = dol_textishtml($out);
+					if ($ishtml && !preg_match('/<[a-z!\/]/i', $out)) {
+						$ishtml = false;
+					}
+					if ($ishtml) {
 						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
 						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
