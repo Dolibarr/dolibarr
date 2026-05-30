@@ -337,3 +337,12 @@ TaskHourlyRateUpdated=Task's hourly rate updated
 UpdateWithLastHourlyRate=Update all recorded time spent of each user with the last hourly rate of the user
 UpdateUndefinedWithLastHourlyRate=Update the time spent that has no hourly rate defined with the last hourly rate of the user
 EnterUsersHourlyRateFirst=First, enter the hourly rate for the user(s)...
+#Merge projects
+MergeOriginProject= Project to merge :
+ConfirmMergeProjects=Are you sure you want to merge this project with the current project? All its related objects (invoices, orders, tasks ...) will be moved to the current project, and the selected project will be deleted.
+ProjectMergeSuccess=Projects have been merged successfully
+MergeProjects=Merge projects
+ErrorsProjectMerge=Error during merge project : %s
+CantMergeSameProject=You can't merge the same project
+NoFilesFound=No files found to merge
+ErrorProjectIdIsMandatory= Error id of project is Mandatory
